@@ -49,7 +49,7 @@
   <button id="signButton">Подписать</button>
   <a id="downloadLink" download="подписанный_файл.pdf">Скачать подписанный файл</a>
 
-  <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.7.570/pdf.min.js"></script>
   <script>
     document.getElementById('signButton').addEventListener('click', async () => {
       const fileInput = document.getElementById('fileInput');
@@ -72,29 +72,31 @@
     });
 
     async function signPDFWithText(arrayBuffer, signatureText) {
-      const pdfBytes = new Uint8Array(arrayBuffer);
+      const pdfData = new Uint8Array(arrayBuffer);
+      const pdf = await pdfjsLib.getDocument(pdfData).promise;
+      const page = await pdf.getPage(1); // Подписание первой страницы (нумерация с 1)
 
-      // Создание нового PDF-документа
-      const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
-      const pages = pdfDoc.getPages();
+      const viewport = page.getViewport({ scale: 1 });
 
-      // Выбор первой страницы для подписи
-      const firstPage = pages[0];
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
 
-      // Создание текстового объекта для подписи
-      const signatureObject = pdfDoc.drawText(signatureText)
-        .setFont(await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica))
-        .setFontSize(12)
-        .setX(50)
-        .setY(50);
+      const context = canvas.getContext('2d');
 
-      // Добавление текстового объекта на страницу
-      firstPage.addDrawable(signatureObject);
+      const renderContext = {
+        canvasContext: context,
+        viewport: viewport,
+      };
 
-      // Преобразование PDF-документа в массив байтов
-      const modifiedPDFBytes = await pdfDoc.save();
+      await page.render(renderContext).promise;
 
-      return modifiedPDFBytes;
+      context.font = '12px Helvetica';
+      context.fillText(signatureText, 50, 50);
+
+      const modifiedPDFData = canvas.toDataURL('image/png');
+
+      return atob(modifiedPDFData.split(',')[1]);
     }
   </script>
 </body>
