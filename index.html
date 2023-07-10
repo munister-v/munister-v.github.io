@@ -51,32 +51,29 @@
 
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.js"></script>
   <script>
-    document.getElementById('signButton').addEventListener('click', signPDF);
-
-    async function signPDF() {
+    document.getElementById('signButton').addEventListener('click', async () => {
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0];
 
       if (file) {
-        const reader = new FileReader();
-        reader.onload = async function(event) {
-          const arrayBuffer = event.target.result;
+        const arrayBuffer = await file.arrayBuffer();
 
-          // Вызов функции для подписи PDF-документа
-          const signedPDF = await signPDFWithText(arrayBuffer, 'Подпись: Ваше_имя');
+        // Вызов функции для подписи PDF-документа
+        const signedPDF = await signPDFWithText(arrayBuffer, 'Подпись: Ваше_имя');
 
-          // Создание Blob из подписанного PDF
-          const signedPDFBlob = new Blob([signedPDF], { type: 'application/pdf' });
+        // Создание Blob из подписанного PDF
+        const signedPDFBlob = new Blob([signedPDF], { type: 'application/pdf' });
 
-          // Генерация URL для скачивания подписанного файла
-          const downloadLink = document.getElementById('downloadLink');
-          downloadLink.href = URL.createObjectURL(signedPDFBlob);
-          downloadLink.download = 'подписанный_файл.pdf';
-          downloadLink.style.display = 'inline-block';
-        };
-        reader.readAsArrayBuffer(file);
+        // Генерация URL для скачивания подписанного файла
+        const downloadLink = document.getElementById('downloadLink');
+        downloadLink.href = URL.createObjectURL(signedPDFBlob);
+        downloadLink.download = 'подписанный_файл.pdf';
+        downloadLink.style.display = 'inline-block';
+
+        // Скачивание подписанного файла автоматически
+        downloadLink.click();
       }
-    }
+    });
 
     async function signPDFWithText(arrayBuffer, signatureText) {
       const pdfBytes = new Uint8Array(arrayBuffer);
