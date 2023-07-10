@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Обнаружение людей на фото</title>
+  <title>Обнаружение людей на фото (YOLO)</title>
   <style>
     canvas {
       position: absolute;
@@ -9,7 +9,7 @@
   </style>
 </head>
 <body>
-  <h1>Обнаружение людей на фото</h1>
+  <h1>Обнаружение людей на фото (YOLO)</h1>
   
   <div>
     <label for="upload-input">Выберите фотографию:</label>
@@ -21,83 +21,47 @@
   <div id="result-container"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.6.0"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
   <script>
-    // Загрузка модели Coco SSD
+    // Загрузка модели YOLO
     async function loadModel() {
-      const model = await cocoSsd.load();
+      const model = await tf.loadGraphModel('https://github.com/modelhub-ai/yolo-v3/blob/master/contrib_src/model/config.json');
       return model;
     }
 
-    // Обнаружение людей на изображении
+    // Обнаружение людей на изображении с помощью YOLO
     async function detectPeople(imageElement, model) {
-      const predictions = await model.detect(imageElement);
-      const peoplePredictions = predictions.filter((prediction) =>
-        prediction.class === 'person'
-      );
+      const imageTensor = tf.browser.fromPixels(imageElement);
+      const expandedImageTensor = imageTensor.expandDims();
+      const predictions = await model.predict(expandedImageTensor).array();
+      tf.dispose([imageTensor, expandedImageTensor]);
+      
+      const peoplePredictions = predictions.filter((prediction) => {
+        return prediction.class === 'person' && prediction.score > 0.5;
+      });
+      
       return peoplePredictions;
     }
 
-    // Обнаружение границ на изображении
-    function detectEdges(imageElement) {
+    // Отрисовка рамок вокруг обнаруженных людей
+    function drawBoundingBoxes(imageElement, predictions) {
       const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
       canvas.width = imageElement.width;
       canvas.height = imageElement.height;
+      const context = canvas.getContext('2d');
+      
       context.drawImage(imageElement, 0, 0);
+      
+      context.strokeStyle = 'red';
+      context.fillStyle = 'red';
+      predictions.forEach((prediction) => {
+        const [x, y, width, height] = prediction.bbox;
+        context.beginPath();
+        context.rect(x, y, width, height);
+        context.lineWidth = 2;
+        context.stroke();
+        context.fillText('Person', x, y > 10 ? y - 5 : 10);
+      });
 
-      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-      const grayscaleData = new Uint8ClampedArray(canvas.width * canvas.height);
-
-      // Преобразование изображения в оттенки серого
-      for (let i = 0; i < imageData.data.length; i += 4) {
-        const r = imageData.data[i];
-        const g = imageData.data[i + 1];
-        const b = imageData.data[i + 2];
-        const gray = (r + g + b) / 3;
-        grayscaleData[i / 4] = gray;
-      }
-
-      // Применение фильтра границ Кэнни
-      const edgeData = new Uint8ClampedArray(canvas.width * canvas.height);
-      const edgeThreshold = 10;
-      const sobelMatrix = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
-      const sobelMatrixSize = 3;
-
-      for (let y = 1; y < canvas.height - 1; y++) {
-        for (let x = 1; x < canvas.width - 1; x++) {
-          let sumX = 0;
-          let sumY = 0;
-
-          for (let i = 0; i < sobelMatrixSize; i++) {
-            for (let j = 0; j < sobelMatrixSize; j++) {
-              const pixelIndex = (y + i - 1) * canvas.width + (x + j - 1);
-              const pixelValue = grayscaleData[pixelIndex];
-              const weight = sobelMatrix[i * sobelMatrixSize + j];
-
-              sumX += pixelValue * weight;
-              sumY += pixelValue * weight;
-            }
-          }
-
-          const gradientMagnitude = Math.sqrt(sumX * sumX + sumY * sumY);
-          const edgeValue = gradientMagnitude > edgeThreshold ? 255 : 0;
-          edgeData[y * canvas.width + x] = edgeValue;
-        }
-      }
-
-      // Вывод границ на изображение
-      const edgeImageData = context.createImageData(canvas.width, canvas.height);
-      for (let i = 0; i < edgeData.length; i++) {
-        const edgeValue = edgeData[i];
-        edgeImageData.data[i * 4] = edgeValue;
-        edgeImageData.data[i * 4 + 1] = edgeValue;
-        edgeImageData.data[i * 4 + 2] = edgeValue;
-        edgeImageData.data[i * 4 + 3] = 255;
-      }
-      context.putImageData(edgeImageData, 0, 0);
-
-      // Вставка canvas с изображением и границами на страницу
       const resultContainer = document.getElementById('result-container');
       resultContainer.innerHTML = '';
       resultContainer.appendChild(canvas);
@@ -108,39 +72,12 @@
       const file = event.target.files[0];
       const reader = new FileReader();
 
-      reader.onload = function (event) {
+      reader.onload = async function (event) {
         const imageElement = document.createElement('img');
         imageElement.onload = async function () {
           const model = await loadModel();
           const predictions = await detectPeople(imageElement, model);
-
-          const canvas = document.createElement('canvas');
-          canvas.width = imageElement.width;
-          canvas.height = imageElement.height;
-          const context = canvas.getContext('2d');
-
-          // Отрисовка исходного изображения
-          context.drawImage(imageElement, 0, 0);
-
-          // Отрисовка рамок вокруг обнаруженных людей
-          context.strokeStyle = 'red';
-          context.fillStyle = 'red';
-          predictions.forEach((prediction) => {
-            const [x, y, width, height] = prediction.bbox;
-            context.beginPath();
-            context.rect(x, y, width, height);
-            context.lineWidth = 2;
-            context.stroke();
-            context.fillText('Person', x, y > 10 ? y - 5 : 10);
-          });
-
-          // Вставка canvas с изображением и границами на страницу
-          const resultContainer = document.getElementById('result-container');
-          resultContainer.innerHTML = '';
-          resultContainer.appendChild(canvas);
-
-          // Обнаружение границ на изображении
-          detectEdges(imageElement);
+          drawBoundingBoxes(imageElement, predictions);
         };
         imageElement.src = event.target.result;
       };
@@ -154,3 +91,4 @@
   </script>
 </body>
 </html>
+
