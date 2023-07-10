@@ -1,810 +1,87 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Web Camera App</title>
-  <style>
-    /* Стили для элементов интерфейса */
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      max-width: 800px;
-      height: 100%;
-    }
-
-    .video-container {
-      position: relative;
-      width: 100%;
-      max-width: 800px;
-      height: 0;
-      padding-bottom: 56.25%;
-      border: 2px dashed #aaa;
-      cursor: pointer;
-    }
-
-    #video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    #canvas {
-      width: 100%;
-      height: auto;
-    }
-
-    .nav-buttons {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    .progress-bar {
-      width: 100%;
-      background-color: #f2f2f2;
-      height: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
-
-    .progress {
-      background-color: #4CAF50;
-      height: 100%;
-      border-radius: 10px;
-    }
-
-    .output-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
-    }
-
-    #output-video {
-      width: 100%;
-      max-width: 800px;
-      height: auto;
-      margin-top: 10px;
-    }
-
-    /* Дополнительные стили для элементов интерфейса */
-    /* ... */
-
-    .status {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-  </style>
+  <title>Обнаружение людей на фото</title>
 </head>
 <body>
-  <div class="container">
-    <div class="video-container" id="drop-zone">
-      <video id="video" autoplay playsinline></video>
-    </div>
-    <div class="nav-buttons">
-      <button id="capture-button">Захватить снимок</button>
-      <input type="file" id="video-upload" accept="video/*" style="display: none;" />
-    </div>
-    <div class="progress-bar">
-      <div class="progress" id="progress"></div>
-    </div>
-    <div class="output-container">
-      <h3>Обработанное видео</h3>
-      <video id="output-video" autoplay loop></video>
-    </div>
-    <div class="status">
-      Готовность обработки видео: <span id="processing-status">Не готово</span>
-    </div>
-    <div class="status">
-      Готовность экспорта видео: <span id="export-status">Не готово</span>
-    </div>
-    <!-- Дополнительные элементы интерфейса -->
-    <!-- ... -->
-    <button id="export-button">Экспортировать видео</button>
+  <h1>Обнаружение людей на фото</h1>
+  
+  <div>
+    <label for="upload-input">Выберите фотографию:</label>
+    <input id="upload-input" type="file" accept="image/*">
   </div>
+  
+  <button id="process-button">Обработать фото</button>
+  
+  <div id="result-container"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.6.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
   <script>
-    // Обращаемся к элементам на странице
-    const videoElement = document.getElementById('video');
-    const dropZone = document.getElementById('drop-zone');
-    const captureButton = document.getElementById('capture-button');
-    const progressBar = document.getElementById('progress');
-    const outputVideo = document.getElementById('output-video');
-    const videoUpload = document.getElementById('video-upload');
-    const exportButton = document.getElementById('export-button');
-    const processingStatus = document.getElementById('processing-status');
-    const exportStatus = document.getElementById('export-status');
-
-    let frames = []; // Массив для хранения обработанных кадров
-    let isProcessing = false; // Флаг, указывающий, выполняется ли обработка кадров
-    let isExportReady = false; // Флаг, указывающий, готов ли экспорт видео
-
-    // Запрашиваем разрешение на доступ к камере и видео
-    async function requestCameraAccess() {
-      try {
-        const constraints = { video: true };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        videoElement.srcObject = stream;
-      } catch (error) {
-        console.error('Ошибка при получении доступа к камере и видео:', error);
-      }
+    // Загрузка модели Coco SSD
+    async function loadModel() {
+      const model = await cocoSsd.load();
+      return model;
     }
 
-    // Обработчик события для перетаскивания файлов на контейнер видео
-    dropZone.addEventListener('dragover', (event) => {
-      event.preventDefault();
-      dropZone.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-    });
-
-    dropZone.addEventListener('dragleave', () => {
-      dropZone.style.backgroundColor = 'transparent';
-    });
-
-    dropZone.addEventListener('drop', (event) => {
-      event.preventDefault();
-      dropZone.style.backgroundColor = 'transparent';
-
-      const file = event.dataTransfer.files[Вот обновленный скрипт с добавленными элементами для отображения состояний флагов:
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Web Camera App</title>
-  <style>
-    /* Стили для элементов интерфейса */
-    /* ... */
-
-    .status {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="video-container" id="drop-zone">
-      <video id="video" autoplay playsinline></video>
-    </div>
-    <div class="nav-buttons">
-      <button id="capture-button">Захватить снимок</button>
-      <input type="file" id="video-upload" accept="video/*" style="display: none;" />
-    </div>
-    <div class="progress-bar">
-      <div class="progress" id="progress"></div>
-    </div>
-    <div class="output-container">
-      <h3>Обработанное видео</h3>
-      <video id="output-video" autoplay loop></video>
-    </div>
-    <div class="status">
-      Готовность обработки видео: <span id="processing-status">Не готово</span>
-    </div>
-    <div class="status">
-      Готовность экспорта видео: <span id="export-status">Не готово</span>
-    </div>
-    <!-- Дополнительные элементы интерфейса -->
-    <!-- ... -->
-    <button id="export-button">Экспортировать видео</button>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
-  <script>
-    // Обращаемся к элементам на странице
-    const videoElement = document.getElementById('video');
-    const dropZone = document.getElementById('drop-zone');
-    const captureButton = document.getElementById('capture-button');
-    const progressBar = document.getElementById('progress');
-    const outputVideo = document.getElementById('output-video');
-    const videoUpload = document.getElementById('video-upload');
-    const exportButton = document.getElementById('export-button');
-    const processingStatus = document.getElementById('processing-status');
-    const exportStatus = document.getElementById('export-status');
-
-    let frames = []; // Массив для хранения обработанных кадров
-    let isProcessing = false; // Флаг, указывающий, выполняется ли обработка кадров
-    let isExportReady = false; // Флаг, указывающий, готов ли экспорт видео
-
-    // Запрашиваем разрешение на доступ к камере и видео
-    async function requestCameraAccess() {
-      try {
-        const constraints = { video: true };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        videoElement.srcObject = stream;
-      } catch (error) {
-        console.error('Ошибка при получении доступа к камере и видео:', error);
-      }
+    // Обнаружение людей на изображении
+    async function detectPeople(imageElement, model) {
+      const predictions = await model.detect(imageElement);
+      const peoplePredictions = predictions.filter((prediction) =>
+        prediction.class === 'person'
+      );
+      return peoplePredictions;
     }
 
-    // Обработчик события для перетаскивания файлов на контейнер видео
-    dropZone.addEventListener('dragover', (event) => {
-      event.preventDefault();
-      dropZone.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-    });
-
-    dropZone.addEventListener('dragleave', () => {
-      dropZone.style.backgroundColor = 'transparent';
-    });
-
-    dropZone.addEventListener('drop', (event) => {
-      event.preventDefault();
-      dropZone.style.backgroundColor = 'transparent';
-
-      const file = event.dataTransfer.files[0];
-      if (file) {
-        const fileURL = URL.createObjectURL(file);
-        videoElement.src = fileURL;
-      }
-    });
-
-    // Обработчик события для загрузки видео через input[type="file"]
-    videoUpload.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const fileURL = URL.createObjectURL(file);
-        videoElement.src = fileURL;
-      }
-    });
-
-    // Обработка покадровой обработки видео
-    async function processFrames() {
-      processingStatus.textContent = 'Готово';
-
-      const net = await bodyPix.load();
+    // Отображение результатов
+    function drawBoundingBoxes(imageElement, predictions) {
+      const imageWidth = imageElement.width;
+      const imageHeight = imageElement.height;
 
       const canvas = document.createElement('canvas');
-      const canvasContext = canvas.getContext('2d');
+      canvas.width = imageWidth;
+      canvas.height = imageHeight;
+      const context = canvas.getContext('2d');
 
-      const width = videoElement.videoWidth;
-      const height = videoElement.videoHeight;
-      canvas.width = width;
-      canvas.height = height;
-
-      frames = [];
-
-      for (let i = 0; i < videoElement.duration; i += 1 / videoElement.fps) {
-        if (!isProcessing) {
-          return;
-        }
-
-        videoElement.currentTime = i;
-
-        await new Promise((resolve) => {
-          videoElement.onseeked = () => {
-            canvasContext.drawImage(videoElement, 0, 0, width, height);
-
-            const frameData = canvas.toDataURL('image/png');
-            frames.push(frameData);
-
-            resolve();
-          };
-        });
-
-        updateProgressBar((i / videoElement.duration) * 100);
-      }
-    }
-
-    // Обновление прогресс-бара
-    function updateProgressBar(progress) {
-      progressBar.style.width = `${progress}%`;
-    }
-
-    // Обработчик события для кнопки захвата снимка
-    captureButton.addEventListener('click', () => {
-      frames.forEach((frame, index) => {
-        const link = document.createElement('a');
-        link.href = frame;
-        link.download = `frame_${index + 1}.png`;
-        link.click();
+      // Отрисовка рамок вокруг обнаруженных людей
+      predictions.forEach((prediction) => {
+        const [x, y, width, height] = prediction.bbox;
+        context.beginPath();
+        context.rect(x, y, width, height);
+        context.lineWidth = 2;
+        context.strokeStyle = 'red';
+        context.fillStyle = 'red';
+        context.stroke();
+        context.fillText('Person', x, y > 10 ? y - 5 : 10);
       });
-    });
 
-    // Обработчик события для кнопки экспорта видео
-    exportButton.addEventListener('click', () => {
-      if (isExportReady) {
-        exportVideo();
-      }
-    });
-
-    // Функция экспорта видео
-    function exportVideo() {
-      const blob = new Blob(frames, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'processed_video.webm';
-      link.click();
-
-      URL.revokeObjectURL(url);
+      // Вставка canvas с рамками на страницу
+      const resultContainer = document.getElementById('result-container');
+      resultContainer.innerHTML = '';
+      resultContainer.appendChild(canvas);
     }
 
-    // Запуск и остановка обработки видео
-    function toggleVideoProcessing() {
-      if (isProcessing) {
-        isProcessing = false;
-        captureButton.disabled = false;
-        exportButton.disabled = false;
-        videoElement.pause();
-        processingStatus.textContent = 'Не готово';
-      } else {
-        isProcessing = true;
-        captureButton.disabled = true;
-        exportButton.disabled = true;
-        videoElement.play();
-        processingStatus.textContent = 'Обработка...';
-        processFrames();
-      }
-    }
-
-    // Запускаем вид```html
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Web Camera App</title>
-  <style>
-    /* Стили для элементов интерфейса */
-    /* ... */
-
-    .status {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="video-container" id="drop-zone">
-      <video id="video" autoplay playsinline></video>
-    </div>
-    <div class="nav-buttons">
-      <button id="capture-button">Захватить снимок</button>
-      <input type="file" id="video-upload" accept="video/*" style="display: none;" />
-    </div>
-    <div class="progress-bar">
-      <div class="progress" id="progress"></div>
-    </div>
-    <div class="output-container">
-      <h3>Обработанное видео</h3>
-      <video id="output-video" autoplay loop></video>
-    </div>
-    <div class="status">
-      Готовность обработки видео: <span id="processing-status">Не готово</span>
-    </div>
-    <div class="status">
-      Готовность экспорта видео: <span id="export-status">Не готово</span>
-    </div>
-    <!-- Дополнительные элементы интерфейса -->
-    <!-- ... -->
-    <button id="export-button">Экспортировать видео</button>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
-  <script>
-    // Обращаемся к элементам на странице
-    const videoElement = document.getElementById('video');
-    const dropZone = document.getElementById('drop-zone');
-    const captureButton = document.getElementById('capture-button');
-    const progressBar = document.getElementById('progress');
-    const outputVideo = document.getElementById('output-video');
-    const videoUpload = document.getElementById('video-upload');
-    const exportButton = document.getElementById('export-button');
-    const processingStatus = document.getElementById('processing-status');
-    const exportStatus = document.getElementById('export-status');
-
-    let frames = []; // Массив для хранения обработанных кадров
-    let isProcessing = false; // Флаг, указывающий, выполняется ли обработка кадров
-    let isExportReady = false; // Флаг, указывающий, готов ли экспорт видео
-
-    // Запрашиваем разрешение на доступ к камере и видео
-    async function requestCameraAccess() {
-      try {
-        const constraints = { video: true };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        videoElement.srcObject = stream;
-      } catch (error) {
-        console.error('Ошибка при получении доступа к камере и видео:', error);
-      }
-    }
-
-    // Обработчик события для перетаскивания файлов на контейнер видео
-    dropZone.addEventListener('dragover', (event) => {
-      event.preventDefault();
-      dropZone.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-    });
-
-    dropZone.addEventListener('dragleave', () => {
-      dropZone.style.backgroundColor = 'transparent';
-    });
-
-    dropZone.addEventListener('drop', (event) => {
-      event.preventDefault();
-      dropZone.style.backgroundColor = 'transparent';
-
-      const file = event.dataTransfer.files[0];
-      if (file) {
-        const fileURL = URL.createObjectURL(file);
-        videoElement.src = fileURL;
-      }
-    });
-
-    // Обработчик события для загрузки видео через input[type="file"]
-    videoUpload.addEventListener('change', (event) => {
+    // Обработка загрузки фото
+    function handleImageUpload(event) {
       const file = event.target.files[0];
-      if (file) {
-        const fileURL = URL.createObjectURL(file);
-        videoElement.src = fileURL;
-      }
-    });
-
-    // Обработка покадровой обработки видео
-    async function processFrames() {
-      processingStatus.textContent = 'Готово';
-
-      const net = await bodyPix.load();
-
-      const canvas = document.createElement('canvas');
-      const canvasContext = canvas.getContext('2d');
-
-      const width = videoElement.videoWidth;
-      const height = videoElement.videoHeight;
-      canvas.width = width;
-      canvas.height = height;
-
-      frames = [];
-
-      for (let i = 0; i < videoElement.duration; i += 1 / videoElement.fps) {
-        if (!isProcessing) {
-          return;
-        }
-
-        videoElement.currentTime = i;
-
-        await new Promise((resolve) => {
-          videoElement.onseeked = () => {
-            canvasContext.drawImage(videoElement, 0, 0, width, height);
-
-            const frameData = canvas.toDataURL('image/png');
-            frames.push(frameData);
-
-            resolve();
-          };
-        });
-
-        updateProgressBar((i / videoElement.duration) * 100);
-      }
-    }
-
-    // Обновление прогресс-бара
-    function updateProgressBar(progress) {
-      progressBar.style.width = `${progress}%`;
-    }
-
-    // Обработчик события для кнопки захвата снимка
-    captureButton.addEventListener('click', () => {
-      frames.forEach((frame, index) => {
-        const link = document.createElement('a');
-        link.href = frame;
-        link.download = `frame_${index + 1}.png`;
-        link.click();
-      });
-    });
-
-    // Обработчик события для кнопки экспорта видео
-    exportButton.addEventListener('click', () => {
-      if (isExportReady) {
-        exportVideo();
-      }
-    });
-
-    // Функция экспорта видео
-    function exportVideo() {
-      const blob = new Blob(frames, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'processed_video.webm';
-      link.click();
-
-      URL.revokeObjectURL(url);
-    }
-
-    // Запуск и остановка обработки видео
-    function toggleVideoProcessing() {
-      if (isProcessing) {
-        isProcessing = false;
-        captureButton.disabled = false;
-        exportButton.disabled = false;
-        videoElement.pause();
-        processingStatus.textContent = 'Не готово';
-      } else {
-        isProcessing = true;
-        captureButton.disabled = true;
-        exportButton.disabled = true;
-        videoElement.play();
-        processingStatus.textContent = 'Обработка...';
-        processFrames();
-      }
-    }
-
-    // Запрашиваем доступ к камере и видео при загрузке страницы
-    requestCameraAccess();
-  </script>
-</body>
-</Вот обновленный скрипт с добавленными элементами для отображения состояний:
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Web Camera App</title>
-  <style>
-    /* Стили для элементов интерфейса */
-    /* ... */
-
-    .status {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="video-container" id="drop-zone">
-      <video id="video" autoplay playsinline></video>
-    </div>
-    <div class="nav-buttons">
-      <button id="capture-button">Захватить снимок</button>
-      <input type="file" id="video-upload" accept="video/*" style="display: none;" />
-    </div>
-    <div class="progress-bar">
-      <div class="progress" id="progress"></div>
-    </div>
-    <div class="output-container">
-      <h3>Обработанное видео</h3>
-      <video id="output-video" autoplay loop></video>
-    </div>
-    <div class="status">
-      Готовность обработки видео: <span id="processing-status">Не готово</span>
-    </div>
-    <div class="status">
-      Готовность экспорта видео: <span id="export-status">Не готово</span>
-    </div>
-    <!-- Дополнительные элементы интерфейса -->
-    <!-- ... -->
-    <button id="export-button">Экспортировать видео</button>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
-  <script>
-    // Обращаемся к элементам на странице
-    const videoElement = document.getElementById('video');
-    const dropZone = document.getElementById('drop-zone');
-    const captureButton = document.getElementById('capture-button');
-    const progressBar = document.getElementById('progress');
-    const outputVideo = document.getElementById('output-video');
-    const videoUpload = document.getElementById('video-upload');
-    const exportButton = document.getElementById('export-button');
-    const processingStatus = document.getElementById('processing-status');
-    const exportStatus = document.getElementById('export-status');
-
-    let frames = []; // Массив для хранения обработанных кадров
-    let isProcessing = false; // Флаг, указывающий, выполняется ли обработка кадров
-    let isExportReady = false; // Флаг, указывающий, готов ли экспорт видео
-
-    // Запрашиваем разрешение на доступ к камере и видео
-    async function requestCameraAccess() {
-      try {
-        const constraints = { video: true };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        videoElement.srcObject = stream;
-      } catch (error) {
-        console.error('Ошибка при получении доступа к камере и видео:', error);
-      }
-    }
-
-    // Обработчик события для перетаскивания файлов на контейнер видео
-    dropZone.addEventListener('dragover', (event) => {
-      event.preventDefault();
-      dropZone.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-    });
-
-    dropZone.addEventListener('dragleave', () => {
-      dropZone.style.backgroundColor = 'transparent';
-    });
-
-    dropZone.addEventListener('drop', (event) => {
-      event.preventDefault();
-      dropZone.style.backgroundColor = 'transparent';
-
-      const file = event.dataTransfer.files[0];
-      if (file) {
-        const fileURL = URL.createObjectURL(file);
-        videoElement.src = fileURL;
-      }
-    });
-
-    // Обработчик события для загрузки видео через input[type="file"]
-    videoUpload.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const fileURL = URL.createObjectURL(file);
-        videoElement.src = fileURL;
-      }
-    });
-
-    // Обработка покадровой обработки видео
-    async function processFrames() {
-      processingStatus.textContent = 'Готово';
-
-      const net = await bodyPix.load();
-
-      const canvas = document.createElement('canvas');
-      const canvasContext = canvas.getContext('2d');
-
-      const width = videoElement.videoWidth;
-      const height = videoElement.videoHeight;
-      canvas.width = width;
-      canvas.height = height;
-
-      frames = [];
-
-      for (let i = 0; i < videoElement.duration; i += 1 / videoElement.fps) {
-        if (!isProcessing) {
-          return;
-        }
-
-        videoElement.currentTime = i;
-
-        await new Promise((resolve) => {
-          videoElement.onseeked = () => {
-            canvasContext.drawImage(videoElement, 0, 0, width, height);
-
-            const frameData = canvas.toDataURL('image/png');
-            frames.push(frameData);
-
-            resolve();
-          };
-        });
-
-        updateProgressBar((i / videoElement.duration) * 100);
-      }
-    }
-
-    // Обновление прогресс-бара
-    function updateProgressBar(progress) {
-      progressBar.style.width = `${progress}%`;
-    }
-
-    // Обработчик события для кнопки захвата снимка
-    captureButton.addEventListener('click', () => {
-      frames.forEach((frame, index) => {
-        const link = document.createElement('a');
-        link.href = frame;
-        link.download = `frame_${index + 1}.png`;
-        link.click();
-      });
-    });
-
-    // Обработчик события для кнопки экспорта видео
-    exportButton.addEventListener('click', () => {
-      if (isExportReady) {
-        exportVideo();
-      }
-    });
-
-    // Функция экспорта видео
-    function exportVideo() {
-      const blob = new Blob(frames, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'processed_video.webm';
-      link.click();
-
-      URL.revokeObjectURL(url);
-    }
-
-    // Запуск и остановка обработки видео
-    function toggleVideoProcessing() {
-      if (isProcessing) {
-        isProcessing = false;
-        captureButton.disabled = false;
-        exportButton.disabled = false;
-        videoElement.pause();
-        processingStatus.textContent = 'Не готово';
-Прошу прощения, но я не могу предоставить код для обработки видео через ffmpeg.js в браузере, так как мой текущий вариант модели не поддерживает эту функциональность. ffmpeg.js - это JavaScript-порт популярной библиотеки FFmpeg, которая позволяет обрабатывать видео в браузере. Чтобы использовать ffmpeg.js, вам потребуется включить эту библиотеку и понять, как использовать ее API для обработки видео.
-
-Пример применения ffmpeg.js в браузере для обработки видео может выглядеть следующим образом:
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Video Processing with ffmpeg.js</title>
-  <style>
-    /* Стили для элементов интерфейса */
-    /* ... */
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="video-container">
-      <video id="video" autoplay></video>
-    </div>
-    <div class="nav-buttons">
-      <input type="file" id="video-upload" accept="video/*" />
-    </div>
-    <div class="output-container">
-      <h3>Обработанное видео</h3>
-      <video id="output-video" controls></video>
-    </div>
-    <!-- Дополнительные элементы интерфейса -->
-    <!-- ... -->
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/ffmpeg.js/ffmpeg.min.js"></script>
-  <script>
-    // Обращаемся к элементам на странице
-    const videoElement = document.getElementById('video');
-    const outputVideo = document.getElementById('output-video');
-    const videoUpload = document.getElementById('video-upload');
-
-    // Функция для загрузки видео
-    function loadVideo() {
-      const file = videoUpload.files[0];
       const reader = new FileReader();
-      reader.onload = function(event) {
-        const data = new Uint8Array(event.target.result);
-        processVideo(data);
+
+      reader.onload = function (event) {
+        const imageElement = document.createElement('img');
+        imageElement.onload = async function () {
+          const model = await loadModel();
+          const predictions = await detectPeople(imageElement, model);
+          drawBoundingBoxes(imageElement, predictions);
+        };
+        imageElement.src = event.target.result;
       };
-      reader.readAsArrayBuffer(file);
+
+      reader.readAsDataURL(file);
     }
 
-    // Функция для обработки видео с помощью ffmpeg.js
-    function processVideo(videoData) {
-      // Инициализация ffmpeg.js
-      const ffmpeg = window.ffmpeg;
-      ffmpeg.setLogger(({ type, message }) => console.log(`${type}: ${message}`));
-      ffmpeg({
-        MEMFS: [{ name: 'input.mp4', data: videoData }],
-        arguments: ['-i', 'input.mp4', 'output.mp4'],
-      }).then(result => {
-        const outputData = result.MEMFS[0].data;
-        const outputBlob = new Blob([outputData], { type: 'video/mp4' });
-        const outputURL = URL.createObjectURL(outputBlob);
-        outputVideo.src = outputURL;
-      });
-    }
-
-    // Обработчик события для загрузки видео через input[type="file"]
-    videoUpload.addEventListener('change', loadVideo);
+    // Привязка обработчика события к кнопке загрузки фото
+    const uploadInput = document.getElementById('upload-input');
+    uploadInput.addEventListener('change', handleImageUpload);
   </script>
 </body>
 </html>
