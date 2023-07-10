@@ -1,94 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Обнаружение людей на фото (YOLO)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Подписание PDF-документов</title>
   <style>
-    canvas {
-      position: absolute;
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #fileInput {
+      margin-bottom: 10px;
+    }
+
+    #signButton {
+      padding: 10px 20px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 4px;
+    }
+
+    #downloadLink {
+      display: none;
+      margin-top: 10px;
+      text-decoration: none;
+      padding: 10px 20px;
+      background-color: #2196f3;
+      color: white;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
-  <h1>Обнаружение людей на фото (YOLO)</h1>
-  
-  <div>
-    <label for="upload-input">Выберите фотографию:</label>
-    <input id="upload-input" type="file" accept="image/*">
-  </div>
-  
-  <button id="process-button">Обработать фото</button>
-  
-  <div id="result-container"></div>
+  <h1>Подписание PDF-документов</h1>
+  <input type="file" id="fileInput">
+  <button id="signButton">Подписать</button>
+  <a id="downloadLink">Скачать подписанный файл</a>
 
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.6.0"></script>
   <script>
-    // Загрузка модели YOLO
-    async function loadModel() {
-      const model = await tf.loadGraphModel('https://github.com/modelhub-ai/yolo-v3/blob/master/contrib_src/model/config.json');
-      return model;
-    }
+    document.getElementById('signButton').addEventListener('click', signPDF);
 
-    // Обнаружение людей на изображении с помощью YOLO
-    async function detectPeople(imageElement, model) {
-      const imageTensor = tf.browser.fromPixels(imageElement);
-      const expandedImageTensor = imageTensor.expandDims();
-      const predictions = await model.predict(expandedImageTensor).array();
-      tf.dispose([imageTensor, expandedImageTensor]);
-      
-      const peoplePredictions = predictions.filter((prediction) => {
-        return prediction.class === 'person' && prediction.score > 0.5;
-      });
-      
-      return peoplePredictions;
-    }
+    async function signPDF() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
 
-    // Отрисовка рамок вокруг обнаруженных людей
-    function drawBoundingBoxes(imageElement, predictions) {
-      const canvas = document.createElement('canvas');
-      canvas.width = imageElement.width;
-      canvas.height = imageElement.height;
-      const context = canvas.getContext('2d');
-      
-      context.drawImage(imageElement, 0, 0);
-      
-      context.strokeStyle = 'red';
-      context.fillStyle = 'red';
-      predictions.forEach((prediction) => {
-        const [x, y, width, height] = prediction.bbox;
-        context.beginPath();
-        context.rect(x, y, width, height);
-        context.lineWidth = 2;
-        context.stroke();
-        context.fillText('Person', x, y > 10 ? y - 5 : 10);
-      });
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+          const arrayBuffer = event.target.result;
 
-      const resultContainer = document.getElementById('result-container');
-      resultContainer.innerHTML = '';
-      resultContainer.appendChild(canvas);
-    }
+          // Вызов функции для подписи PDF-документа
+          const signedPDF = await signPDFWithText(arrayBuffer, 'Подпись: Ваше_имя');
 
-    // Обработка загрузки фото
-    function handleImageUpload(event) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
+          // Создание Blob из подписанного PDF
+          const signedPDFBlob = new Blob([signedPDF], { type: 'application/pdf' });
 
-      reader.onload = async function (event) {
-        const imageElement = document.createElement('img');
-        imageElement.onload = async function () {
-          const model = await loadModel();
-          const predictions = await detectPeople(imageElement, model);
-          drawBoundingBoxes(imageElement, predictions);
+          // Генерация URL для скачивания подписанного файла
+          const downloadLink = document.getElementById('downloadLink');
+          downloadLink.href = URL.createObjectURL(signedPDFBlob);
+          downloadLink.download = 'подписанный_файл.pdf';
+          downloadLink.style.display = 'inline-block';
         };
-        imageElement.src = event.target.result;
-      };
-
-      reader.readAsDataURL(file);
+        reader.readAsArrayBuffer(file);
+      }
     }
 
-    // Привязка обработчика события к кнопке загрузки фото
-    const uploadInput = document.getElementById('upload-input');
-    uploadInput.addEventListener('change', handleImageUpload);
+    async function signPDFWithText(arrayBuffer, signatureText) {
+      const pdfBytes = new Uint8Array(arrayBuffer);
+
+      // Импорт библиотеки pdf-lib
+      // Пожалуйста, убедитесь, что вы подключили pdf-lib к своему проекту
+      // Ниже приведен пример подключения через unpkg CDN: 
+      // <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.js"></script>
+
+      // Создание нового PDF-документа
+      const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
+      const pages = pdfDoc.getPages();
+
+      // Выберите первую страницу для подписи
+      const firstPage = pages[0];
+
+      // Создание текстового объекта для подписи
+      const signatureObject = pdfDoc.drawText(signatureText)
+        .setFont(await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica))
+        .setFontSize(12)
+        .setX(50)
+        .setY(50);
+
+      // Добавление текстового объекта на страницу
+      firstPage.addDrawable(signatureObject);
+
+      // Преобразование PDF-документа в массив байтов
+      const modifiedPDFBytes = await pdfDoc.save();
+
+      return modifiedPDFBytes;
+    }
   </script>
 </body>
 </html>
-
