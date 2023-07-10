@@ -48,6 +48,10 @@
       display: none;
     }
 
+    #result-canvas {
+      display: none;
+    }
+
     .controls {
       display: flex;
       align-items: center;
@@ -88,6 +92,8 @@
       <input type="file" accept="video/*" id="upload-input" />
       <button id="upload-button">Загрузить видео</button>
       <button id="capture-button">Сохранить кадр</button>
+      <button id="process-button">Обработать кадры</button>
+      <button id="save-results-button">Сохранить результаты</button>
     </div>
   </div>
 
@@ -101,6 +107,8 @@
     const uploadInput = document.getElementById('upload-input');
     const uploadButton = document.getElementById('upload-button');
     const captureButton = document.getElementById('capture-button');
+    const processButton = document.getElementById('process-button');
+    const saveResultsButton = document.getElementById('save-results-button');
     const dropZone = document.getElementById('drop-zone');
     const playPauseButton = document.getElementById('play-pause-button');
     const seekBar = document.getElementById('seek-bar');
@@ -145,6 +153,53 @@
       link.click();
     });
 
+    // Обработчик события для кнопки "Обработать кадры"
+    processButton.addEventListener('click', () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+      const context = canvas.getContext('2d');
+
+      const model = await bodyPix.load();
+      const frames = [];
+
+      const runInference = async () => {
+        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        const segmentation = await model.segmentPerson(videoElement);
+
+        // Обработка результатов сегментации
+
+        frames.push(canvas.toDataURL('image/png'));
+
+        if (!videoElement.paused) {
+          requestAnimationFrame(runInference);
+        }
+      };
+
+      runInference();
+
+      videoElement.play();
+    });
+
+    // Обработчик события для кнопки "Сохранить результаты"
+    saveResultsButton.addEventListener('click', () => {
+      const zip = new JSZip();
+
+      frames.forEach((frameData, index) => {
+        const imgData = frameData.split(',')[1]; // Извлекаем данные изображения
+        const imgBlob = b64toBlob(imgData, 'image/png'); // Преобразуем данные в Blob
+        zip.file(`frame_${index}.png`, imgBlob); // Добавляем файл в ZIP-архив
+      });
+
+      zip.generateAsync({ type: 'blob' }) // Генерируем ZIP-архив
+        .then((content) => {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(content);
+          link.download = 'processed_frames.zip';
+          link.click();
+        });
+    });
+
     // Обработка кадров видео с использованием модели нейронной сети
     async function processFrames() {
       const model = await bodyPix.load();
@@ -167,14 +222,33 @@
         const segmentation = await model.segmentPerson(videoElement);
 
         // Обработка результатов сегментации
-
         resultContext.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
         resultContext.drawImage(canvas, 0, 0, resultCanvas.width, resultCanvas.height);
+        drawContrastPoints(segmentation, resultContext);
 
         requestAnimationFrame(runInference);
       };
 
       runInference();
+    }
+
+    // Рисование контрастных точек на канвасе
+    function drawContrastPoints(segmentation, context) {
+      const { width, height, data } = segmentation;
+      const threshold = 128;
+
+      for (let i = 0; i < width * height * 4; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+
+        if (Math.abs(r - g) > threshold || Math.abs(r - b) > threshold || Math.abs(g - b) > threshold) {
+          const x = (i / 4) % width;
+          const y = Math.floor((i / 4) / width);
+          context.fillStyle = 'red';
+          context.fillRect(x, y, 1, 1);
+        }
+      }
     }
 
     // Запускаем видеопоток и обработку кадров при загрузке страницы
@@ -202,7 +276,7 @@
       }
     });
 
-    // Обработчик события для кнопки "Пауза" и полззунка прокрутки
+    // Обработчик события для кнопки "Пауза" и ползунка прокрутки
     playPauseButton.addEventListener('click', () => {
       if (videoElement.paused) {
         videoElement.play();
@@ -225,6 +299,26 @@
       const currentTime = (progress / 100) * videoElement.duration;
       videoElement.currentTime = currentTime;
     });
+
+    // Функция преобразования base64 в Blob
+    function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
+      const byteCharacters = atob(b64Data);
+      const byteArrays = [];
+
+      for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+        const byteNumbers = new Array(slice.length);
+
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+      }
+
+      return new Blob(byteArrays, { type: contentType });
+    }
   </script>
 </body>
 </html>
