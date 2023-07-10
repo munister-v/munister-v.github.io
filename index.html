@@ -25,147 +25,101 @@
     }
 
     #canvas {
-      display: none; /* Скрытие холста по умолчанию */
-    }
-
-    .button-container {
-      margin-top: 20px;
-    }
-
-    #capture-button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    #process-button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      cursor: pointer;
+      display: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="video-container">
-      <video id="video" autoplay></video>
+      <video id="video" autoplay playsinline></video>
       <canvas id="canvas"></canvas>
     </div>
-    <div class="button-container">
-      <button id="capture-button">Захватить изображение</button>
-      <button id="process-button">Обработать изображение</button>
+    <div>
+      <input type="file" accept="video/*" id="upload-input" />
+      <button id="upload-button">Загрузить видео</button>
+      <button id="capture-button">Сохранить кадр</button>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.8.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
   <script>
     // Обращаемся к элементам на странице
     const videoElement = document.getElementById('video');
+    const canvasElement = document.getElementById('canvas');
+    const uploadInput = document.getElementById('upload-input');
+    const uploadButton = document.getElementById('upload-button');
     const captureButton = document.getElementById('capture-button');
-    const processButton = document.getElementById('process-button');
-    const canvas = document.getElementById('canvas');
-    const context = canvas.getContext('2d');
 
-    // Переменная для хранения видеопотока
-    let stream;
-
-    // Переменная для хранения модели нейронной сети
-    let model;
-
-    // Функция для запуска видеопотока с веб-камеры
-    async function startVideo() {
+    // Запрашиваем разрешение на доступ к камере и видео
+    async function requestCameraAccess() {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const constraints = { video: true };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
         videoElement.srcObject = stream;
-
-        // Загрузка предобученной модели MobileNet
-        model = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/model.json');
-
-        // Обработка каждого кадра видеопотока
-        const processFrame = () => {
-          const videoWidth = videoElement.videoWidth;
-          const videoHeight = videoElement.videoHeight;
-
-          // Установка размеров холста равными размерам видеопотока
-          canvas.width = videoWidth;
-          canvas.height = videoHeight;
-
-          // Отрисовка текущего кадра на холсте
-          context.drawImage(videoElement, 0, 0, videoWidth, videoHeight);
-
-          // Рекурсивный вызов функции для обработки следующего кадра
-          requestAnimationFrame(processFrame);
-        };
-
-        // Запуск обработки первого кадра
-        requestAnimationFrame(processFrame);
       } catch (error) {
-        console.error('Ошибка при получении доступа к веб-камере:', error);
+        console.error('Ошибка при получении доступа к камере и видео:', error);
       }
     }
 
-    // Функция для остановки видеопотока
-    function stopVideo() {
-      if (stream) {
-        const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
-        videoElement.srcObject = null;
-      }
-    }
+    // Обработчик события для кнопки "Загрузить видео"
+    uploadButton.addEventListener('click', () => {
+      uploadInput.click();
+    });
 
-    // Обработчик события для кнопки "Захватить изображение"
+    // Обработчик события для выбора видеофайла
+    uploadInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        videoElement.src = fileURL;
+      }
+    });
+
+    // Обработчик события для кнопки "Сохранить кадр"
     captureButton.addEventListener('click', () => {
-      // Отображение холста и захват текущего кадра с холста
-      canvas.style.display = 'block';
+      const canvas = document.createElement('canvas');
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+      const context = canvas.getContext('2d');
       context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-      console.log('Изображение захвачено!');
+
+      // Сохранение кадра как изображения
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'frame.png';
+      link.click();
     });
 
-    // Обработчик события для кнопки "Обработать изображение"
-    processButton.addEventListener('click', async () => {
-      // Получение изображения с холста
-      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-      const tensor = tf.browser.fromPixels(imageData).expandDims();
+    // Обработка кадров видео с использованием модели нейронной сети
+    async function processFrames() {
+      const model = await bodyPix.load();
 
-      // Преобразование изображения в тензор и масштабирование значений пикселей
-      const imageTensor = tf.cast(tensor, 'float32').div(255);
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
 
-      // Применение модели MobileNet к изображению
-      const predictions = await model.predict(imageTensor);
+      const videoWidth = videoElement.videoWidth;
+      const videoHeight = videoElement.videoHeight;
 
-      // Получение предсказаний классов изображения
-      const topPredictions = tf.topk(predictions, 5);
-      const classes = topPredictions.indices.dataSync();
-      const probabilities = topPredictions.values.dataSync();
+      canvas.width = videoWidth;
+      canvas.height = videoHeight;
 
-      // Загрузка меток классов ImageNet
-      const labelsResponse = await fetch('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/class_names.json');
-      const labels = await labelsResponse.json();
+      const runInference = async () => {
+        context.drawImage(videoElement, 0, 0, videoWidth, videoHeight);
+        const segmentation = await model.segmentPerson(videoElement);
 
-      // Отображение результатов классификации на странице
-      const resultsContainer = document.createElement('div');
-      for (let i = 0; i < classes.length; i++) {
-        const className = labels[classes[i]];
-        const probability = probabilities[i];
+        // Обработка результатов сегментации
 
-        const resultElement = document.createElement('p');
-        resultElement.innerText = `${className}: ${probability.toFixed(3)}`;
-        resultsContainer.appendChild(resultElement);
-      }
+        requestAnimationFrame(runInference);
+      };
 
-      document.body.appendChild(resultsContainer);
+      runInference();
+    }
 
-      console.log('Изображение обработано!');
-    });
-
-    // Запускаем видеопоток при загрузке страницы
-    startVideo();
+    // Запускаем видеопоток и обработку кадров при загрузке страницы
+    requestCameraAccess();
+    processFrames();
   </script>
 </body>
 </html>
