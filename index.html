@@ -84,8 +84,8 @@
         stream = await navigator.mediaDevices.getUserMedia({ video: true });
         videoElement.srcObject = stream;
 
-        // Загрузка модели нейронной сети
-        model = await tf.loadLayersModel('https://example.com/model/model.json');
+        // Загрузка предобученной модели MobileNet
+        model = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/model.json');
 
         // Обработка каждого кадра видеопотока
         const processFrame = () => {
@@ -128,63 +128,41 @@
     });
 
     // Обработчик события для кнопки "Обработать изображение"
-    processButton.addEventListener('click', () => {
+    processButton.addEventListener('click', async () => {
       // Получение изображения с холста
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       const tensor = tf.browser.fromPixels(imageData).expandDims();
 
-      // Преобразование изображения в тензор
+      // Преобразование изображения в тензор и масштабирование значений пикселей
       const imageTensor = tf.cast(tensor, 'float32').div(255);
 
-      // Применение модели нейронной сети к изображению
-      const prediction = model.predict(imageTensor);
+      // Применение модели MobileNet к изображению
+      const predictions = await model.predict(imageTensor);
 
-      // Обработка результатов предсказания (детектирование границ контрастных объектов)
-      const detectedEdges = detectEdges(prediction.arraySync());
+      // Получение предсказаний классов изображения
+      const topPredictions = tf.topk(predictions, 5);
+      const classes = topPredictions.indices.dataSync();
+      const probabilities = topPredictions.values.dataSync();
 
-      // Отображение результатов детектирования на холсте
-      drawEdges(detectedEdges);
+      // Загрузка меток классов ImageNet
+      const labelsResponse = await fetch('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/class_names.json');
+      const labels = await labelsResponse.json();
+
+      // Отображение результатов классификации на странице
+      const resultsContainer = document.createElement('div');
+      for (let i = 0; i < classes.length; i++) {
+        const className = labels[classes[i]];
+        const probability = probabilities[i];
+
+        const resultElement = document.createElement('p');
+        resultElement.innerText = `${className}: ${probability.toFixed(3)}`;
+        resultsContainer.appendChild(resultElement);
+      }
+
+      document.body.appendChild(resultsContainer);
 
       console.log('Изображение обработано!');
     });
-
-    // Функция для детектирования границ контрастных объектов
-    function detectEdges(prediction) {
-      // Здесь вы можете добавить свой код для обработки предсказания и детектирования границ контрастных объектов
-      // Входные параметры:
-      // - prediction: массив значений предсказания модели
-      // Выходные данные:
-      // - detectedEdges: массив, представляющий границы контрастных объектов на изображении
-      // Заменьте этот код на вашу собственную логику обработки.
-
-      const threshold = 0.5; // Пороговое значение для детектирования границ
-      const detectedEdges = [];
-
-      for (let i = 0; i < prediction.length; i++) {
-        if (prediction[i] >= threshold) {
-          detectedEdges[i] = 255; // Установка яркости границы на максимальное значение
-        } else {
-          detectedEdges[i] = 0; // Установка яркости фона на минимальное значение
-        }
-      }
-
-      return detectedEdges;
-    }
-
-    // Функция для отображения результатов детектирования на холсте
-    function drawEdges(detectedEdges) {
-      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-
-      for (let i = 0; i < detectedEdges.length; i++) {
-        const j = i * 4;
-        imageData.data[j] = detectedEdges[i];
-        imageData.data[j + 1] = detectedEdges[i];
-        imageData.data[j + 2] = detectedEdges[i];
-        imageData.data[j + 3] = 255; // Установка альфа-канала на полностью непрозрачное значение
-      }
-
-      context.putImageData(imageData, 0, 0);
-    }
 
     // Запускаем видеопоток при загрузке страницы
     startVideo();
