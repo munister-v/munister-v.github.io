@@ -2,6 +2,11 @@
 <html>
 <head>
   <title>Обнаружение людей на фото</title>
+  <style>
+    canvas {
+      position: absolute;
+    }
+  </style>
 </head>
 <body>
   <h1>Обнаружение людей на фото</h1>
@@ -33,31 +38,67 @@
       return peoplePredictions;
     }
 
-    // Отображение результатов
-    function drawBoundingBoxes(imageElement, predictions) {
-      const imageWidth = imageElement.width;
-      const imageHeight = imageElement.height;
-
+    // Обнаружение границ на изображении
+    function detectEdges(imageElement) {
       const canvas = document.createElement('canvas');
-      canvas.width = imageWidth;
-      canvas.height = imageHeight;
       const context = canvas.getContext('2d');
+      canvas.width = imageElement.width;
+      canvas.height = imageElement.height;
+      context.drawImage(imageElement, 0, 0);
 
-      // Отрисовка рамок вокруг обнаруженных людей
-      predictions.forEach((prediction) => {
-        const [x, y, width, height] = prediction.bbox;
-        context.beginPath();
-        context.rect(x, y, width, height);
-        context.lineWidth = 2;
-        context.strokeStyle = 'red';
-        context.fillStyle = 'red';
-        context.stroke();
-        context.fillText('Person', x, y > 10 ? y - 5 : 10);
-      });
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      const grayscaleData = new Uint8ClampedArray(canvas.width * canvas.height);
 
-      // Вставка canvas с рамками на страницу
+      // Преобразование изображения в оттенки серого
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        const r = imageData.data[i];
+        const g = imageData.data[i + 1];
+        const b = imageData.data[i + 2];
+        const gray = (r + g + b) / 3;
+        grayscaleData[i / 4] = gray;
+      }
+
+      // Применение фильтра границ Кэнни
+      const edgeData = new Uint8ClampedArray(canvas.width * canvas.height);
+      const edgeThreshold = 10;
+      const sobelMatrix = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
+      const sobelMatrixSize = 3;
+
+      for (let y = 1; y < canvas.height - 1; y++) {
+        for (let x = 1; x < canvas.width - 1; x++) {
+          let sumX = 0;
+          let sumY = 0;
+
+          for (let i = 0; i < sobelMatrixSize; i++) {
+            for (let j = 0; j < sobelMatrixSize; j++) {
+              const pixelIndex = (y + i - 1) * canvas.width + (x + j - 1);
+              const pixelValue = grayscaleData[pixelIndex];
+              const weight = sobelMatrix[i * sobelMatrixSize + j];
+
+              sumX += pixelValue * weight;
+              sumY += pixelValue * weight;
+            }
+          }
+
+          const gradientMagnitude = Math.sqrt(sumX * sumX + sumY * sumY);
+          const edgeValue = gradientMagnitude > edgeThreshold ? 255 : 0;
+          edgeData[y * canvas.width + x] = edgeValue;
+        }
+      }
+
+      // Вывод границ на изображение
+      const edgeImageData = context.createImageData(canvas.width, canvas.height);
+      for (let i = 0; i < edgeData.length; i++) {
+        const edgeValue = edgeData[i];
+        edgeImageData.data[i * 4] = edgeValue;
+        edgeImageData.data[i * 4 + 1] = edgeValue;
+        edgeImageData.data[i * 4 + 2] = edgeValue;
+        edgeImageData.data[i * 4 + 3] = 255;
+      }
+      context.putImageData(edgeImageData, 0, 0);
+
+      // Вставка canvas с границами на страницу
       const resultContainer = document.getElementById('result-container');
-      resultContainer.innerHTML = '';
       resultContainer.appendChild(canvas);
     }
 
@@ -71,7 +112,36 @@
         imageElement.onload = async function () {
           const model = await loadModel();
           const predictions = await detectPeople(imageElement, model);
-          drawBoundingBoxes(imageElement, predictions);
+
+          const canvas = document.createElement('canvas');
+          canvas.width = imageElement.width;
+          canvas.height = imageElement.height;
+          const context = canvas.getContext('2d');
+
+          // Отрисовка исходной фотографии с полупрозрачной маской
+          context.globalAlpha = 0.5;
+          context.drawImage(imageElement, 0, 0);
+          context.globalAlpha = 1.0;
+
+          // Отрисовка рамок вокруг обнаруженных людей
+          predictions.forEach((prediction) => {
+            const [x, y, width, height] = prediction.bbox;
+            context.beginPath();
+            context.rect(x, y, width, height);
+            context.lineWidth = 2;
+            context.strokeStyle = 'red';
+            context.fillStyle = 'red';
+            context.stroke();
+            context.fillText('Person', x, y > 10 ? y - 5 : 10);
+          });
+
+          // Вставка canvas с маской и рамками на страницу
+          const resultContainer = document.getElementById('result-container');
+          resultContainer.innerHTML = '';
+          resultContainer.appendChild(canvas);
+
+          // Обнаружение границ на изображении
+          detectEdges(imageElement);
         };
         imageElement.src = event.target.result;
       };
