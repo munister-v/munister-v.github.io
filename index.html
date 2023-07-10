@@ -31,12 +31,23 @@
       font-size: 16px;
       border-radius: 4px;
     }
+
+    #downloadLink {
+      display: none;
+      margin-top: 10px;
+      text-decoration: none;
+      padding: 10px 20px;
+      background-color: #2196f3;
+      color: white;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
   <h1>Подписание PDF-документов</h1>
   <input type="file" id="fileInput">
   <button id="signButton">Подписать</button>
+  <a id="downloadLink" download="подписанный_файл.pdf">Скачать подписанный файл</a>
 
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.js"></script>
   <script>
@@ -54,17 +65,9 @@
         const signedPDFBlob = new Blob([signedPDF], { type: 'application/pdf' });
 
         // Генерация URL для скачивания подписанного файла
-        const downloadLink = document.createElement('a');
+        const downloadLink = document.getElementById('downloadLink');
         downloadLink.href = URL.createObjectURL(signedPDFBlob);
-        downloadLink.download = 'подписанный_файл.pdf';
-
-        // Задержка перед скачиванием подписанного файла
-        setTimeout(() => {
-          URL.revokeObjectURL(downloadLink.href);
-        }, 100);
-
-        // Скачивание подписанного файла
-        downloadLink.click();
+        downloadLink.style.display = 'inline-block';
       }
     });
 
