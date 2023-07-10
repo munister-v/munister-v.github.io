@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Web Camera App</title>
+  <style>
+    /* Стили для элементов интерфейса */
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    #video {
+      width: 100%;
+      height: auto;
+    }
+
+    .button-container {
+      margin-top: 20px;
+    }
+
+    #capture-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="video-container">
+      <video id="video" autoplay></video>
+    </div>
+    <div class="button-container">
+      <button id="capture-button">Захватить изображение</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.8.0/dist/tf.min.js"></script>
+  <script>
+    // Обращаемся к элементам на странице
+    const videoElement = document.getElementById('video');
+    const captureButton = document.getElementById('capture-button');
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    // Переменная для хранения видеопотока
+    let stream;
+
+    // Функция для запуска видеопотока с веб-камеры
+    async function startVideo() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        videoElement.srcObject = stream;
+
+        // Загрузка модели нейронной сети
+        const model = await tf.loadGraphModel('https://example.com/model/model.json');
+
+        // Обработка каждого кадра видеопотока
+        const processFrame = () => {
+          const videoWidth = videoElement.videoWidth;
+          const videoHeight = videoElement.videoHeight;
+
+          // Установка размеров холста равными размерам видеопотока
+          canvas.width = videoWidth;
+          canvas.height = videoHeight;
+
+          // Отрисовка текущего кадра на холсте
+          context.drawImage(videoElement, 0, 0, videoWidth, videoHeight);
+
+          // Получение изображения с холста
+          const imageData = context.getImageData(0, 0, videoWidth, videoHeight);
+          const tensor = tf.browser.fromPixels(imageData).expandDims();
+
+          // Применение модели нейронной сети к изображению
+          const prediction = model.predict(tensor);
+
+          // Преобразование тензора предсказания в массив JavaScript
+          const predictionArray = Array.from(await prediction.data());
+
+          // Обработка результатов предсказания (детектирование границ контрастных объектов)
+          const detectedEdges = detectEdges(predictionArray, videoWidth, videoHeight);
+
+          // Отображение результатов детектирования на холсте
+          drawEdges(detectedEdges, videoWidth, videoHeight);
+
+          // Рекурсивный вызов функции для обработки следующего кадра
+          requestAnimationFrame(processFrame);
+        };
+
+        // Запуск обработки первого кадра
+        requestAnimationFrame(processFrame);
+      } catch (error) {
+        console.error('Ошибка при получении доступа к веб-камере:', error);
+      }
+    }
+
+    // Функция для остановки видеопотока
+    function stopVideo() {
+      if (stream) {
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+        videoElement.srcObject = null;
+      }
+    }
+
+    // Обработчик события для кнопки "Захватить изображение"
+    captureButton.addEventListener('click', () => {
+      // Получение текущего кадра с холста
+      const imageData = context.getImageData(0, 0, videoElement.videoWidth, videoElement.videoHeight);
+      const tensor = tf.browser.fromPixels(imageData).expandDims();
+
+      // Применение модели нейронной сети к изображению
+      const prediction = model.predict(tensor);
+
+      // Преобразование тензора предсказания в массив JavaScript
+      const predictionArray = Array.from(await prediction.data());
+
+      // Обработка результатов предсказания (детектирование границ контрастных объектов)
+      const detectedEdges = detectEdges(predictionArray, videoElement.videoWidth, videoElement.videoHeight);
+
+      // Отображение результатов детектирования на холсте
+      drawEdges(detectedEdges, videoElement.videoWidth, videoElement.videoHeight);
+
+      console.log('Изображение захвачено!');
+    });
+
+    // Функция для детектирования границ контрастных объектов
+    function detectEdges(prediction, width, height) {
+      // Здесь вы можете добавить свой код для обработки предсказания и детектирования границ контрастных объектов
+      // Входные параметры:
+      // - prediction: массив значений предсказания модели
+      // - width: ширина изображения
+      // - height: высота изображения
+      // Выходные данные:
+      // - detectedEdges: массив, представляющий границы контрастных объектов на изображении
+      // Замените этот код на вашу собственную логику обработки
+
+      const threshold = 0.5; // Пороговое значение для детектирования границ
+      const detectedEdges = [];
+
+      for (let i = 0; i < prediction.length; i++) {
+        if (prediction[i] >= threshold) {
+          detectedEdges[i] = 255; // Установка яркости границы на максимальное значение
+        } else {
+          detectedEdges[i] = 0; // Установка яркости фона на минимальное значение
+        }
+      }
+
+      return detectedEdges;
+    }
+
+    // Функция для отображения результатов детектирования на холсте
+    function drawEdges(detectedEdges(detectedEdges, width, height) {
+      const imageData = context.createImageData(width, height);
+
+      for (let i = 0; i < detectedEdges.length; i++) {
+        const j = i * 4;
+        imageData.data[j] = detectedEdges[i];
+        imageData.data[j + 1] = detectedEdges[i];
+        imageData.data[j + 2] = detectedEdges[i];
+        imageData.data[j + 3] = 255; // Установка альфа-канала на полностью непрозрачное значение
+      }
+
+      context.putImageData(imageData, 0, 0);
+    }
+
+    // Запускаем видеопоток при загрузке страницы
+    startVideo();
+
+    // Добавляем холст на страницу
+    document.body.appendChild(canvas);
+  </script>
+</body>
+</html>
