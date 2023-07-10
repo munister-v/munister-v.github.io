@@ -7,8 +7,8 @@
     /* Стили для элементов интерфейса */
     .container {
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      flex-direction: row;
+      align-items: flex-start;
       justify-content: center;
       height: 100vh;
     }
@@ -17,6 +17,16 @@
       position: relative;
       width: 100%;
       max-width: 640px;
+      border: 2px dashed #aaa;
+      padding: 20px;
+      cursor: pointer;
+    }
+
+    .result-container {
+      width: 320px;
+      height: 240px;
+      margin-left: 20px;
+      border: 2px solid #aaa;
     }
 
     #video {
@@ -27,19 +37,36 @@
     #canvas {
       display: none;
     }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .play-pause-button {
+      margin: 0 10px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="video-container">
+    <div class="video-container" id="drop-zone">
       <video id="video" autoplay playsinline></video>
       <canvas id="canvas"></canvas>
     </div>
-    <div>
-      <input type="file" accept="video/*" id="upload-input" />
-      <button id="upload-button">Загрузить видео</button>
-      <button id="capture-button">Сохранить кадр</button>
+    <div class="result-container">
+      <canvas id="result-canvas"></canvas>
     </div>
+  </div>
+  <div class="controls">
+    <button id="play-pause-button">Пауза</button>
+    <input type="range" id="seek-bar" min="0" value="0" step="0.01">
+  </div>
+  <div>
+    <input type="file" accept="video/*" id="upload-input" />
+    <button id="upload-button">Загрузить видео</button>
+    <button id="capture-button">Сохранить кадр</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
@@ -48,9 +75,13 @@
     // Обращаемся к элементам на странице
     const videoElement = document.getElementById('video');
     const canvasElement = document.getElementById('canvas');
+    const resultCanvasElement = document.getElementById('result-canvas');
     const uploadInput = document.getElementById('upload-input');
     const uploadButton = document.getElementById('upload-button');
     const captureButton = document.getElementById('capture-button');
+    const dropZone = document.getElementById('drop-zone');
+    const playPauseButton = document.getElementById('play-pause-button');
+    const seekBar = document.getElementById('seek-bar');
 
     // Запрашиваем разрешение на доступ к камере и видео
     async function requestCameraAccess() {
@@ -97,19 +128,26 @@
       const model = await bodyPix.load();
 
       const canvas = document.createElement('canvas');
+      const resultCanvas = resultCanvasElement;
       const context = canvas.getContext('2d');
+      const resultContext = resultCanvas.getContext('2d');
 
       const videoWidth = videoElement.videoWidth;
       const videoHeight = videoElement.videoHeight;
 
       canvas.width = videoWidth;
       canvas.height = videoHeight;
+      resultCanvas.width = videoWidth;
+      resultCanvas.height = videoHeight;
 
       const runInference = async () => {
         context.drawImage(videoElement, 0, 0, videoWidth, videoHeight);
         const segmentation = await model.segmentPerson(videoElement);
 
         // Обработка результатов сегментации
+
+        resultContext.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+        resultContext.drawImage(canvas, 0, 0, resultCanvas.width, resultCanvas.height);
 
         requestAnimationFrame(runInference);
       };
@@ -120,6 +158,50 @@
     // Запускаем видеопоток и обработку кадров при загрузке страницы
     requestCameraAccess();
     processFrames();
+
+    // Обработчик события для перетаскивания файлов на контейнер видео
+    dropZone.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropZone.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.backgroundColor = 'transparent';
+    });
+
+    dropZone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropZone.style.backgroundColor = 'transparent';
+
+      const file = event.dataTransfer.files[0];
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        videoElement.src = fileURL;
+      }
+    });
+
+    // Обработчик события для кнопки "Пауза" и ползунка прокрутки
+    playPauseButton.addEventListener('click', () => {
+      if (videoElement.paused) {
+        videoElement.play();
+        playPauseButton.textContent = 'Пауза';
+      } else {
+        videoElement.pause();
+        playPauseButton.textContent = 'Воспроизведение';
+      }
+    });
+
+    videoElement.addEventListener('timeupdate', () => {
+      const currentTime = videoElement.currentTime;
+      const duration = videoElement.duration      const progress = (currentTime / duration) * 100;
+      seekBar.value = progress;
+    });
+
+    seekBar.addEventListener('input', () => {
+      const progress = seekBar.value;
+      const currentTime = (progress / 100) * videoElement.duration;
+      videoElement.currentTime = currentTime;
+    });
   </script>
 </body>
 </html>
