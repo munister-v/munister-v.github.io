@@ -24,6 +24,10 @@
       height: auto;
     }
 
+    #canvas {
+      display: none; /* Скрытие холста по умолчанию */
+    }
+
     .button-container {
       margin-top: 20px;
     }
@@ -36,15 +40,26 @@
       border: none;
       cursor: pointer;
     }
+
+    #process-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="video-container">
       <video id="video" autoplay></video>
+      <canvas id="canvas"></canvas>
     </div>
     <div class="button-container">
       <button id="capture-button">Захватить изображение</button>
+      <button id="process-button">Обработать изображение</button>
     </div>
   </div>
 
@@ -53,7 +68,8 @@
     // Обращаемся к элементам на странице
     const videoElement = document.getElementById('video');
     const captureButton = document.getElementById('capture-button');
-    const canvas = document.createElement('canvas');
+    const processButton = document.getElementById('process-button');
+    const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
     // Переменная для хранения видеопотока
@@ -69,7 +85,7 @@
         videoElement.srcObject = stream;
 
         // Загрузка модели нейронной сети
-        model = await tf.loadGraphModel('https://example.com/model/model.json');
+        model = await tf.loadLayersModel('https://example.com/model/model.json');
 
         // Обработка каждого кадра видеопотока
         const processFrame = () => {
@@ -82,22 +98,6 @@
 
           // Отрисовка текущего кадра на холсте
           context.drawImage(videoElement, 0, 0, videoWidth, videoHeight);
-
-          // Получение изображения с холста
-          const imageData = context.getImageData(0, 0, videoWidth, videoHeight);
-          const tensor = tf.browser.fromPixels(imageData).expandDims();
-
-          // Применение модели нейронной сети к изображению
-          const prediction = model.predict(tensor);
-
-          // Преобразование тензора предсказания в массив JavaScript
-          const predictionArray = Array.from(await prediction.data());
-
-          // Обработка результатов предсказания (детектирование границ контрастных объектов)
-          const detectedEdges = detectEdges(predictionArray, videoWidth, videoHeight);
-
-          // Отображение результатов детектирования на холсте
-          drawEdges(detectedEdges, videoWidth, videoHeight);
 
           // Рекурсивный вызов функции для обработки следующего кадра
           requestAnimationFrame(processFrame);
@@ -121,35 +121,41 @@
 
     // Обработчик события для кнопки "Захватить изображение"
     captureButton.addEventListener('click', () => {
-      // Получение текущего кадра с холста
-      const imageData = context.getImageData(0, 0, videoElement.videoWidth, videoElement.videoHeight);
-      const tensor = tf.browser.fromPixels(imageData).expandDims();
-
-      // Применение модели нейронной сети к изображению
-      const prediction = model.predict(tensor);
-
-      // Преобразование тензора предсказания в массив JavaScript
-      const predictionArray = Array.from(await prediction.data());
-
-      // Обработка результатов предсказания (детектирование границ контрастных объектов)
-      const detectedEdges = detectEdges(predictionArray, videoElement.videoWidth, videoElement.videoHeight);
-
-      // Отображение результатов детектирования на холсте
-      drawEdges(detectedEdges, videoElement.videoWidth, videoElement.videoHeight);
-
+      // Отображение холста и захват текущего кадра с холста
+      canvas.style.display = 'block';
+      context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
       console.log('Изображение захвачено!');
     });
 
+    // Обработчик события для кнопки "Обработать изображение"
+    processButton.addEventListener('click', () => {
+      // Получение изображения с холста
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      const tensor = tf.browser.fromPixels(imageData).expandDims();
+
+      // Преобразование изображения в тензор
+      const imageTensor = tf.cast(tensor, 'float32').div(255);
+
+      // Применение модели нейронной сети к изображению
+      const prediction = model.predict(imageTensor);
+
+      // Обработка результатов предсказания (детектирование границ контрастных объектов)
+      const detectedEdges = detectEdges(prediction.arraySync());
+
+      // Отображение результатов детектирования на холсте
+      drawEdges(detectedEdges);
+
+      console.log('Изображение обработано!');
+    });
+
     // Функция для детектирования границ контрастных объектов
-    function detectEdges(prediction, width, height) {
+    function detectEdges(prediction) {
       // Здесь вы можете добавить свой код для обработки предсказания и детектирования границ контрастных объектов
       // Входные параметры:
       // - prediction: массив значений предсказания модели
-      // - width: ширина изображения
-      // - height: высота изображения
       // Выходные данные:
       // - detectedEdges: массив, представляющий границы контрастных объектов на изображении
-      // Замените этот код на вашу собственную логику обработки
+      // Заменьте этот код на вашу собственную логику обработки.
 
       const threshold = 0.5; // Пороговое значение для детектирования границ
       const detectedEdges = [];
@@ -166,8 +172,8 @@
     }
 
     // Функция для отображения результатов детектирования на холсте
-    function drawEdges(detectedEdges, width, height) {
-      const imageData = context.createImageData(width, height);
+    function drawEdges(detectedEdges) {
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
       for (let i = 0; i < detectedEdges.length; i++) {
         const j = i * 4;
@@ -182,9 +188,6 @@
 
     // Запускаем видеопоток при загрузке страницы
     startVideo();
-
-    // Добавляем холст на страницу
-    document.body.appendChild(canvas);
   </script>
 </body>
 </html>
