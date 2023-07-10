@@ -97,8 +97,9 @@
       }
       context.putImageData(edgeImageData, 0, 0);
 
-      // Вставка canvas с границами на страницу
+      // Вставка canvas с маской и границами на страницу
       const resultContainer = document.getElementById('result-container');
+      resultContainer.innerHTML = '';
       resultContainer.appendChild(canvas);
     }
 
@@ -124,18 +125,18 @@
           context.globalAlpha = 1.0;
 
           // Отрисовка рамок вокруг обнаруженных людей
+          context.strokeStyle = 'red';
+          context.fillStyle = 'red';
           predictions.forEach((prediction) => {
             const [x, y, width, height] = prediction.bbox;
             context.beginPath();
             context.rect(x, y, width, height);
             context.lineWidth = 2;
-            context.strokeStyle = 'red';
-            context.fillStyle = 'red';
             context.stroke();
             context.fillText('Person', x, y > 10 ? y - 5 : 10);
           });
 
-          // Вставка canvas с маской и рамками на страницу
+          // Вставка canvas с маской и границами на страницу
           const resultContainer = document.getElementById('result-container');
           resultContainer.innerHTML = '';
           resultContainer.appendChild(canvas);
