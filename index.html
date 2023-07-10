@@ -49,7 +49,7 @@
   <button id="signButton">Подписать</button>
   <a id="downloadLink" download="подписанный_файл.pdf">Скачать подписанный файл</a>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.7.570/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.16.0/dist/pdf-lib.js"></script>
   <script>
     document.getElementById('signButton').addEventListener('click', async () => {
       const fileInput = document.getElementById('fileInput');
@@ -59,10 +59,10 @@
         const arrayBuffer = await file.arrayBuffer();
 
         // Вызов функции для подписи PDF-документа
-        const signedPDF = await signPDFWithText(arrayBuffer, 'Подпись: Ваше_имя');
+        const signedPDFBytes = await signPDFWithText(arrayBuffer, 'Подпись: Ваше_имя');
 
         // Создание Blob из подписанного PDF
-        const signedPDFBlob = new Blob([signedPDF], { type: 'application/pdf' });
+        const signedPDFBlob = new Blob([signedPDFBytes], { type: 'application/pdf' });
 
         // Создание ссылки для скачивания подписанного файла
         const downloadLink = document.getElementById('downloadLink');
@@ -72,31 +72,29 @@
     });
 
     async function signPDFWithText(arrayBuffer, signatureText) {
-      const pdfData = new Uint8Array(arrayBuffer);
-      const pdf = await pdfjsLib.getDocument(pdfData).promise;
-      const page = await pdf.getPage(1); // Подписание первой страницы (нумерация с 1)
+      const pdfBytes = new Uint8Array(arrayBuffer);
 
-      const viewport = page.getViewport({ scale: 1 });
+      // Создание нового PDF-документа
+      const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
+      const pages = pdfDoc.getPages();
 
-      const canvas = document.createElement('canvas');
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
+      // Выбор первой страницы для подписи
+      const firstPage = pages[0];
 
-      const context = canvas.getContext('2d');
+      // Создание текстового объекта для подписи
+      const signatureObject = pdfDoc.drawText(signatureText)
+        .setFont(await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica))
+        .setFontSize(12)
+        .setX(50)
+        .setY(50);
 
-      const renderContext = {
-        canvasContext: context,
-        viewport: viewport,
-      };
+      // Добавление текстового объекта на страницу
+      firstPage.addDrawable(signatureObject);
 
-      await page.render(renderContext).promise;
+      // Преобразование PDF-документа в массив байтов
+      const modifiedPDFBytes = await pdfDoc.save();
 
-      context.font = '12px Helvetica';
-      context.fillText(signatureText, 50, 50);
-
-      const modifiedPDFData = canvas.toDataURL('image/png');
-
-      return atob(modifiedPDFData.split(',')[1]);
+      return modifiedPDFBytes;
     }
   </script>
 </body>
