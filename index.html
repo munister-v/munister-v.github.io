@@ -25,7 +25,7 @@
 
     .video-container {
       position: relative;
-      width: 100%;
+      width: 80%;
       max-width: 640px;
       border: 2px dashed #aaa;
       padding: 20px;
@@ -41,6 +41,40 @@
       height: auto;
     }
 
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      background-color: #f2f2f2;
+      height: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .progress {
+      background-color: #4CAF50;
+      height: 100%;
+      border-radius: 10px;
+    }
+
+    .output-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    #output-image {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      margin-top: 10px;
+    }
+
     /* Дополнительные стили для элементов интерфейса */
     /* ... */
 
@@ -50,6 +84,17 @@
   <div class="container">
     <div class="video-container" id="drop-zone">
       <video id="video" autoplay playsinline></video>
+    </div>
+    <div class="nav-buttons">
+      <button id="capture-button">Захватить снимок</button>
+      <input type="file" id="video-upload" accept="video/*" style="display: none;" />
+    </div>
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="output-container">
+      <h3>Обработанный кадр</h3>
+      <img id="output-image" />
     </div>
     <!-- Дополнительные элементы интерфейса -->
     <!-- ... -->
@@ -61,7 +106,10 @@
     // Обращаемся к элементам на странице
     const videoElement = document.getElementById('video');
     const dropZone = document.getElementById('drop-zone');
-    const canvasElement = document.getElementById('canvas');
+    const captureButton = document.getElementById('capture-button');
+    const progressBar = document.getElementById('progress');
+    const outputImage = document.getElementById('output-image');
+    const videoUpload = document.getElementById('video-upload');
 
     let frames = []; // Массив для хранения обработанных кадров
     let isProcessing = false; // Флаг, указывающий, выполняется ли обработка кадров
@@ -98,31 +146,230 @@
       }
     });
 
+    // Обработчик события для загрузки видео через input[type="file"]
+    videoUpload.addEventListener('change', (event) => {
+Вот исправленный код с учетом всех изменений:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Web Camera App</title>
+  <style>
+    /* Стили для элементов интерфейса */
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 800px;
+      height: 100%;
+    }
+
+    .video-container {
+      position: relative;
+      width: 80%;
+      max-width: 640px;
+      border: 2px dashed #aaa;
+      padding: 20px;
+      cursor: pointer;
+    }
+
+    #video {
+      display: none;
+    }
+
+    #canvas {
+      width: 100%;
+      height: auto;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      background-color: #f2f2f2;
+      height: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .progress {
+      background-color: #4CAF50;
+      height: 100%;
+      border-radius: 10px;
+    }
+
+    .output-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    #output-image {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      margin-top: 10px;
+    }
+
+    /* Дополнительные стили для элементов интерфейса */
+    /* ... */
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="video-container" id="drop-zone">
+      <video id="video" autoplay playsinline></video>
+    </div>
+    <div class="nav-buttons">
+      <button id="capture-button">Захватить снимок</button>
+      <input type="file" id="video-upload" accept="video/*" style="display: none;" />
+    </div>
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="output-container">
+      <h3>Обработанный кадр</h3>
+      <img id="output-image" />
+    </div>
+    <!-- Дополнительные элементы интерфейса -->
+    <!-- ... -->
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
+  <script>
+    // Обращаемся к элементам на странице
+    const videoElement = document.getElementById('video');
+    const dropZone = document.getElementById('drop-zone');
+    const captureButton = document.getElementById('capture-button');
+    const progressBar = document.getElementById('progress');
+    const outputImage = document.getElementById('output-image');
+    const videoUpload = document.getElementById('video-upload');
+
+    let frames = []; // Массив для хранения обработанных кадров
+    let isProcessing = false; // Флаг, указывающий, выполняется ли обработка кадров
+
+    // Запрашиваем разрешение на доступ к камере и видео
+    async function requestCameraAccess() {
+      try {
+        const constraints = { video: true };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        videoElement.srcObject = stream;
+      } catch (error) {
+        console.error('Ошибка при получении доступа к камере и видео:', error);
+      }
+    }
+
+    // Обработчик события для перетаскивания файлов на контейнер видео
+    dropZone.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropZone.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.backgroundColor = 'transparent';
+    });
+
+    dropZone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropZone.style.backgroundColor = 'transparent';
+
+      const file = event.dataTransfer.files[0];
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        videoElement.src = fileURL;
+      }
+    });
+
+    // Обработчик события для загрузки видео через input[type="file"]
+    videoUpload.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        videoElement.src = fileURL;
+      }
+    });
+
     // Обработка покадровой обработки видео
     async function processFrames() {
       const net = await bodyPix.load();
 
-      const canvasContext = canvasElement.getContext('2d');
+      const canvas = document.createElement('canvas');
+      const canvasContext = canvas.getContext('2d');
 
       const width = videoElement.videoWidth;
       const height = videoElement.videoHeight;
-      canvasElement.width = width;
-      canvasElement.height = height;
+      canvas.width = width;
+      canvas.height = height;
 
       frames = [];
 
-      while (isProcessing) {
-        canvasContext.drawImage(videoElement, 0, 0, width, height);
+      for (let i = 0; i < videoElement.duration; i += 1 / videoElement.fps) {
+        if (!isProcessing) {
+          return;
+        }
 
-        const frameData = canvasElement.toDataURL('image/png');
-        frames.push(frameData);
+        videoElement.currentTime = i;
 
-        const segmentation = await net.segmentPerson(canvasElement);
-        const mask = bodyPix.toMask(segmentation);
+        await new Promise((resolve) => {
+          videoElement.onseeked = () => {
+            canvasContext.drawImage(videoElement, 0, 0, width, height);
 
-        bodyPix.drawMask(canvasElement, videoElement, mask, 0.7, 0, false);
+            const frameData = canvas.toDataURL('image/png');
+            frames.push(frameData);
 
-        await new Promise((resolve) => requestAnimationFrame(resolve));
+            resolve();
+          };
+        });
+
+        updateProgressBar((i / videoElement.duration) * 100);
+      }
+    }
+
+    // Обновление прогресс-бара
+    function updateProgressBar(progress) {
+      progressBar.style.width = `${progress}%`;
+    }
+
+    // Обработчик события для кнопки захвата снимка
+    captureButton.addEventListener('click', () => {
+      frames.forEach((frame, index) => {
+        const link = document.createElement('a');
+        link.href = frame;
+        link.download = `frame_${index + 1}.png`;
+        link.click();
+      });
+    });
+
+    // Запуск и остановка обработки видео
+    function toggleVideoProcessing() {
+      if (isProcessing) {
+        isProcessing = false;
+        captureButton.disabled = false;
+        videoElement.pause();
+      } else {
+        isProcessing = true;
+        captureButton.disabled = true;
+        videoElement.play();
+        processFrames();
       }
     }
 
