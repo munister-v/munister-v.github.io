@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -84,6 +85,10 @@
     /* Дополнительные стили для элементов интерфейса */
     /* ... */
 
+    .status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -102,8 +107,15 @@
       <h3>Обработанное видео</h3>
       <video id="output-video" autoplay loop></video>
     </div>
+    <div class="status">
+      Готовность обработки видео: <span id="processing-status">Не готово</span>
+    </div>
+    <div class="status">
+      Готовность экспорта видео: <span id="export-status">Не готово</span>
+    </div>
     <!-- Дополнительные элементы интерфейса -->
     <!-- ... -->
+    <button id="export-button">Экспортировать видео</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
@@ -116,9 +128,101 @@
     const progressBar = document.getElementById('progress');
     const outputVideo = document.getElementById('output-video');
     const videoUpload = document.getElementById('video-upload');
+    const exportButton = document.getElementById('export-button');
+    const processingStatus = document.getElementById('processing-status');
+    const exportStatus = document.getElementById('export-status');
 
     let frames = []; // Массив для хранения обработанных кадров
     let isProcessing = false; // Флаг, указывающий, выполняется ли обработка кадров
+    let isExportReady = false; // Флаг, указывающий, готов ли экспорт видео
+
+    // Запрашиваем разрешение на доступ к камере и видео
+    async function requestCameraAccess() {
+      try {
+        const constraints = { video: true };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        videoElement.srcObject = stream;
+      } catch (error) {
+        console.error('Ошибка при получении доступа к камере и видео:', error);
+      }
+    }
+
+    // Обработчик события для перетаскивания файлов на контейнер видео
+    dropZone.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropZone.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.backgroundColor = 'transparent';
+    });
+
+    dropZone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropZone.style.backgroundColor = 'transparent';
+
+      const file = event.dataTransfer.files[Вот обновленный скрипт с добавленными элементами для отображения состояний флагов:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Web Camera App</title>
+  <style>
+    /* Стили для элементов интерфейса */
+    /* ... */
+
+    .status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="video-container" id="drop-zone">
+      <video id="video" autoplay playsinline></video>
+    </div>
+    <div class="nav-buttons">
+      <button id="capture-button">Захватить снимок</button>
+      <input type="file" id="video-upload" accept="video/*" style="display: none;" />
+    </div>
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="output-container">
+      <h3>Обработанное видео</h3>
+      <video id="output-video" autoplay loop></video>
+    </div>
+    <div class="status">
+      Готовность обработки видео: <span id="processing-status">Не готово</span>
+    </div>
+    <div class="status">
+      Готовность экспорта видео: <span id="export-status">Не готово</span>
+    </div>
+    <!-- Дополнительные элементы интерфейса -->
+    <!-- ... -->
+    <button id="export-button">Экспортировать видео</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
+  <script>
+    // Обращаемся к элементам на странице
+    const videoElement = document.getElementById('video');
+    const dropZone = document.getElementById('drop-zone');
+    const captureButton = document.getElementById('capture-button');
+    const progressBar = document.getElementById('progress');
+    const outputVideo = document.getElementById('output-video');
+    const videoUpload = document.getElementById('video-upload');
+    const exportButton = document.getElementById('export-button');
+    const processingStatus = document.getElementById('processing-status');
+    const exportStatus = document.getElementById('export-status');
+
+    let frames = []; // Массив для хранения обработанных кадров
+    let isProcessing = false; // Флаг, указывающий, выполняется ли обработка кадров
+    let isExportReady = false; // Флаг, указывающий, готов ли экспорт видео
 
     // Запрашиваем разрешение на доступ к камере и видео
     async function requestCameraAccess() {
@@ -163,6 +267,8 @@
 
     // Обработка покадровой обработки видео
     async function processFrames() {
+      processingStatus.textContent = 'Готово';
+
       const net = await bodyPix.load();
 
       const canvas = document.createElement('canvas');
@@ -183,7 +289,7 @@
         videoElement.currentTime = i;
 
         await new Promise((resolve) => {
-          videoElement.onseeked = () =>{
+          videoElement.onseeked = () => {
             canvasContext.drawImage(videoElement, 0, 0, width, height);
 
             const frameData = canvas.toDataURL('image/png');
@@ -212,23 +318,493 @@
       });
     });
 
+    // Обработчик события для кнопки экспорта видео
+    exportButton.addEventListener('click', () => {
+      if (isExportReady) {
+        exportVideo();
+      }
+    });
+
+    // Функция экспорта видео
+    function exportVideo() {
+      const blob = new Blob(frames, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'processed_video.webm';
+      link.click();
+
+      URL.revokeObjectURL(url);
+    }
+
     // Запуск и остановка обработки видео
     function toggleVideoProcessing() {
       if (isProcessing) {
         isProcessing = false;
         captureButton.disabled = false;
+        exportButton.disabled = false;
         videoElement.pause();
+        processingStatus.textContent = 'Не готово';
       } else {
         isProcessing = true;
         captureButton.disabled = true;
+        exportButton.disabled = true;
         videoElement.play();
+        processingStatus.textContent = 'Обработка...';
         processFrames();
       }
     }
 
-    // Запускаем видеопоток при загрузке страницы
+    // Запускаем вид```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Web Camera App</title>
+  <style>
+    /* Стили для элементов интерфейса */
+    /* ... */
+
+    .status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="video-container" id="drop-zone">
+      <video id="video" autoplay playsinline></video>
+    </div>
+    <div class="nav-buttons">
+      <button id="capture-button">Захватить снимок</button>
+      <input type="file" id="video-upload" accept="video/*" style="display: none;" />
+    </div>
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="output-container">
+      <h3>Обработанное видео</h3>
+      <video id="output-video" autoplay loop></video>
+    </div>
+    <div class="status">
+      Готовность обработки видео: <span id="processing-status">Не готово</span>
+    </div>
+    <div class="status">
+      Готовность экспорта видео: <span id="export-status">Не готово</span>
+    </div>
+    <!-- Дополнительные элементы интерфейса -->
+    <!-- ... -->
+    <button id="export-button">Экспортировать видео</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
+  <script>
+    // Обращаемся к элементам на странице
+    const videoElement = document.getElementById('video');
+    const dropZone = document.getElementById('drop-zone');
+    const captureButton = document.getElementById('capture-button');
+    const progressBar = document.getElementById('progress');
+    const outputVideo = document.getElementById('output-video');
+    const videoUpload = document.getElementById('video-upload');
+    const exportButton = document.getElementById('export-button');
+    const processingStatus = document.getElementById('processing-status');
+    const exportStatus = document.getElementById('export-status');
+
+    let frames = []; // Массив для хранения обработанных кадров
+    let isProcessing = false; // Флаг, указывающий, выполняется ли обработка кадров
+    let isExportReady = false; // Флаг, указывающий, готов ли экспорт видео
+
+    // Запрашиваем разрешение на доступ к камере и видео
+    async function requestCameraAccess() {
+      try {
+        const constraints = { video: true };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        videoElement.srcObject = stream;
+      } catch (error) {
+        console.error('Ошибка при получении доступа к камере и видео:', error);
+      }
+    }
+
+    // Обработчик события для перетаскивания файлов на контейнер видео
+    dropZone.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropZone.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.backgroundColor = 'transparent';
+    });
+
+    dropZone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropZone.style.backgroundColor = 'transparent';
+
+      const file = event.dataTransfer.files[0];
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        videoElement.src = fileURL;
+      }
+    });
+
+    // Обработчик события для загрузки видео через input[type="file"]
+    videoUpload.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        videoElement.src = fileURL;
+      }
+    });
+
+    // Обработка покадровой обработки видео
+    async function processFrames() {
+      processingStatus.textContent = 'Готово';
+
+      const net = await bodyPix.load();
+
+      const canvas = document.createElement('canvas');
+      const canvasContext = canvas.getContext('2d');
+
+      const width = videoElement.videoWidth;
+      const height = videoElement.videoHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      frames = [];
+
+      for (let i = 0; i < videoElement.duration; i += 1 / videoElement.fps) {
+        if (!isProcessing) {
+          return;
+        }
+
+        videoElement.currentTime = i;
+
+        await new Promise((resolve) => {
+          videoElement.onseeked = () => {
+            canvasContext.drawImage(videoElement, 0, 0, width, height);
+
+            const frameData = canvas.toDataURL('image/png');
+            frames.push(frameData);
+
+            resolve();
+          };
+        });
+
+        updateProgressBar((i / videoElement.duration) * 100);
+      }
+    }
+
+    // Обновление прогресс-бара
+    function updateProgressBar(progress) {
+      progressBar.style.width = `${progress}%`;
+    }
+
+    // Обработчик события для кнопки захвата снимка
+    captureButton.addEventListener('click', () => {
+      frames.forEach((frame, index) => {
+        const link = document.createElement('a');
+        link.href = frame;
+        link.download = `frame_${index + 1}.png`;
+        link.click();
+      });
+    });
+
+    // Обработчик события для кнопки экспорта видео
+    exportButton.addEventListener('click', () => {
+      if (isExportReady) {
+        exportVideo();
+      }
+    });
+
+    // Функция экспорта видео
+    function exportVideo() {
+      const blob = new Blob(frames, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'processed_video.webm';
+      link.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    // Запуск и остановка обработки видео
+    function toggleVideoProcessing() {
+      if (isProcessing) {
+        isProcessing = false;
+        captureButton.disabled = false;
+        exportButton.disabled = false;
+        videoElement.pause();
+        processingStatus.textContent = 'Не готово';
+      } else {
+        isProcessing = true;
+        captureButton.disabled = true;
+        exportButton.disabled = true;
+        videoElement.play();
+        processingStatus.textContent = 'Обработка...';
+        processFrames();
+      }
+    }
+
+    // Запрашиваем доступ к камере и видео при загрузке страницы
     requestCameraAccess();
   </script>
 </body>
-</html>
+</Вот обновленный скрипт с добавленными элементами для отображения состояний:
 
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Web Camera App</title>
+  <style>
+    /* Стили для элементов интерфейса */
+    /* ... */
+
+    .status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="video-container" id="drop-zone">
+      <video id="video" autoplay playsinline></video>
+    </div>
+    <div class="nav-buttons">
+      <button id="capture-button">Захватить снимок</button>
+      <input type="file" id="video-upload" accept="video/*" style="display: none;" />
+    </div>
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="output-container">
+      <h3>Обработанное видео</h3>
+      <video id="output-video" autoplay loop></video>
+    </div>
+    <div class="status">
+      Готовность обработки видео: <span id="processing-status">Не готово</span>
+    </div>
+    <div class="status">
+      Готовность экспорта видео: <span id="export-status">Не готово</span>
+    </div>
+    <!-- Дополнительные элементы интерфейса -->
+    <!-- ... -->
+    <button id="export-button">Экспортировать видео</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
+  <script>
+    // Обращаемся к элементам на странице
+    const videoElement = document.getElementById('video');
+    const dropZone = document.getElementById('drop-zone');
+    const captureButton = document.getElementById('capture-button');
+    const progressBar = document.getElementById('progress');
+    const outputVideo = document.getElementById('output-video');
+    const videoUpload = document.getElementById('video-upload');
+    const exportButton = document.getElementById('export-button');
+    const processingStatus = document.getElementById('processing-status');
+    const exportStatus = document.getElementById('export-status');
+
+    let frames = []; // Массив для хранения обработанных кадров
+    let isProcessing = false; // Флаг, указывающий, выполняется ли обработка кадров
+    let isExportReady = false; // Флаг, указывающий, готов ли экспорт видео
+
+    // Запрашиваем разрешение на доступ к камере и видео
+    async function requestCameraAccess() {
+      try {
+        const constraints = { video: true };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        videoElement.srcObject = stream;
+      } catch (error) {
+        console.error('Ошибка при получении доступа к камере и видео:', error);
+      }
+    }
+
+    // Обработчик события для перетаскивания файлов на контейнер видео
+    dropZone.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropZone.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.backgroundColor = 'transparent';
+    });
+
+    dropZone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropZone.style.backgroundColor = 'transparent';
+
+      const file = event.dataTransfer.files[0];
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        videoElement.src = fileURL;
+      }
+    });
+
+    // Обработчик события для загрузки видео через input[type="file"]
+    videoUpload.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        videoElement.src = fileURL;
+      }
+    });
+
+    // Обработка покадровой обработки видео
+    async function processFrames() {
+      processingStatus.textContent = 'Готово';
+
+      const net = await bodyPix.load();
+
+      const canvas = document.createElement('canvas');
+      const canvasContext = canvas.getContext('2d');
+
+      const width = videoElement.videoWidth;
+      const height = videoElement.videoHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      frames = [];
+
+      for (let i = 0; i < videoElement.duration; i += 1 / videoElement.fps) {
+        if (!isProcessing) {
+          return;
+        }
+
+        videoElement.currentTime = i;
+
+        await new Promise((resolve) => {
+          videoElement.onseeked = () => {
+            canvasContext.drawImage(videoElement, 0, 0, width, height);
+
+            const frameData = canvas.toDataURL('image/png');
+            frames.push(frameData);
+
+            resolve();
+          };
+        });
+
+        updateProgressBar((i / videoElement.duration) * 100);
+      }
+    }
+
+    // Обновление прогресс-бара
+    function updateProgressBar(progress) {
+      progressBar.style.width = `${progress}%`;
+    }
+
+    // Обработчик события для кнопки захвата снимка
+    captureButton.addEventListener('click', () => {
+      frames.forEach((frame, index) => {
+        const link = document.createElement('a');
+        link.href = frame;
+        link.download = `frame_${index + 1}.png`;
+        link.click();
+      });
+    });
+
+    // Обработчик события для кнопки экспорта видео
+    exportButton.addEventListener('click', () => {
+      if (isExportReady) {
+        exportVideo();
+      }
+    });
+
+    // Функция экспорта видео
+    function exportVideo() {
+      const blob = new Blob(frames, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'processed_video.webm';
+      link.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    // Запуск и остановка обработки видео
+    function toggleVideoProcessing() {
+      if (isProcessing) {
+        isProcessing = false;
+        captureButton.disabled = false;
+        exportButton.disabled = false;
+        videoElement.pause();
+        processingStatus.textContent = 'Не готово';
+Прошу прощения, но я не могу предоставить код для обработки видео через ffmpeg.js в браузере, так как мой текущий вариант модели не поддерживает эту функциональность. ffmpeg.js - это JavaScript-порт популярной библиотеки FFmpeg, которая позволяет обрабатывать видео в браузере. Чтобы использовать ffmpeg.js, вам потребуется включить эту библиотеку и понять, как использовать ее API для обработки видео.
+
+Пример применения ffmpeg.js в браузере для обработки видео может выглядеть следующим образом:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Video Processing with ffmpeg.js</title>
+  <style>
+    /* Стили для элементов интерфейса */
+    /* ... */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="video-container">
+      <video id="video" autoplay></video>
+    </div>
+    <div class="nav-buttons">
+      <input type="file" id="video-upload" accept="video/*" />
+    </div>
+    <div class="output-container">
+      <h3>Обработанное видео</h3>
+      <video id="output-video" controls></video>
+    </div>
+    <!-- Дополнительные элементы интерфейса -->
+    <!-- ... -->
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/ffmpeg.js/ffmpeg.min.js"></script>
+  <script>
+    // Обращаемся к элементам на странице
+    const videoElement = document.getElementById('video');
+    const outputVideo = document.getElementById('output-video');
+    const videoUpload = document.getElementById('video-upload');
+
+    // Функция для загрузки видео
+    function loadVideo() {
+      const file = videoUpload.files[0];
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const data = new Uint8Array(event.target.result);
+        processVideo(data);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // Функция для обработки видео с помощью ffmpeg.js
+    function processVideo(videoData) {
+      // Инициализация ffmpeg.js
+      const ffmpeg = window.ffmpeg;
+      ffmpeg.setLogger(({ type, message }) => console.log(`${type}: ${message}`));
+      ffmpeg({
+        MEMFS: [{ name: 'input.mp4', data: videoData }],
+        arguments: ['-i', 'input.mp4', 'output.mp4'],
+      }).then(result => {
+        const outputData = result.MEMFS[0].data;
+        const outputBlob = new Blob([outputData], { type: 'video/mp4' });
+        const outputURL = URL.createObjectURL(outputBlob);
+        outputVideo.src = outputURL;
+      });
+    }
+
+    // Обработчик события для загрузки видео через input[type="file"]
+    videoUpload.addEventListener('change', loadVideo);
+  </script>
+</body>
+</html>
