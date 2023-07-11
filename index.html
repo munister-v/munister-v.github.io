@@ -1,101 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Подписание PDF-документов</title>
+  <title>Мгновенный обмен сообщениями</title>
   <style>
     body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
     }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
     }
 
-    #fileInput {
-      margin-bottom: 10px;
+    #messages li {
+      padding: 5px 10px;
     }
 
-    #signButton {
-      padding: 10px 20px;
-      background-color: #4caf50;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      border-radius: 4px;
+    #chat-form {
+      display: flex;
+      margin-top: 20px;
     }
 
-    #downloadLink {
-      display: none;
-      margin-top: 10px;
-      text-decoration: none;
-      padding: 10px 20px;
-      background-color: #2196f3;
-      color: white;
-      border-radius: 4px;
+    #message-input {
+      flex-grow: 1;
+      padding: 5px;
+    }
+
+    #send-button {
+      padding: 5px 10px;
     }
   </style>
 </head>
 <body>
-  <h1>Подписание PDF-документов</h1>
-  <input type="file" id="fileInput">
-  <button id="signButton">Подписать</button>
-  <a id="downloadLink" download="подписанный_файл.pdf">Скачать подписанный файл</a>
+  <h1>Мгновенный обмен сообщениями</h1>
 
-  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.16.0/dist/pdf-lib.js"></script>
+  <ul id="messages"></ul>
+
+  <form id="chat-form">
+    <input id="message-input" autocomplete="off" />
+    <button id="send-button">Отправить</button>
+  </form>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
   <script>
-    document.getElementById('signButton').addEventListener('click', async () => {
-      const fileInput = document.getElementById('fileInput');
-      const file = fileInput.files[0];
+    const socket = io();
 
-      if (file) {
-        const arrayBuffer = await file.arrayBuffer();
-
-        // Вызов функции для подписи PDF-документа
-        const signedPDFBytes = await signPDFWithText(arrayBuffer, 'Подпись: Ваше_имя');
-
-        // Создание Blob из подписанного PDF
-        const signedPDFBlob = new Blob([signedPDFBytes], { type: 'application/pdf' });
-
-        // Создание ссылки для скачивания подписанного файла
-        const downloadLink = document.getElementById('downloadLink');
-        downloadLink.href = URL.createObjectURL(signedPDFBlob);
-        downloadLink.style.display = 'inline-block';
-      }
+    // Обработчик отправки сообщений
+    document.getElementById('chat-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const messageInput = document.getElementById('message-input');
+      const message = messageInput.value;
+      socket.emit('chat message', message);
+      messageInput.value = '';
+      return false;
     });
 
-    async function signPDFWithText(arrayBuffer, signatureText) {
-      const pdfBytes = new Uint8Array(arrayBuffer);
-
-      // Создание нового PDF-документа
-      const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
-      const pages = pdfDoc.getPages();
-
-      // Выбор первой страницы для подписи
-      const firstPage = pages[0];
-
-      // Создание текстового объекта для подписи
-      const signatureObject = pdfDoc.drawText(signatureText)
-        .setFont(await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica))
-        .setFontSize(12)
-        .setX(50)
-        .setY(50);
-
-      // Добавление текстового объекта на страницу
-      firstPage.addDrawable(signatureObject);
-
-      // Преобразование PDF-документа в массив байтов
-      const modifiedPDFBytes = await pdfDoc.save();
-
-      return modifiedPDFBytes;
-    }
+    // Обработчик новых сообщений
+    socket.on('chat message', (msg) => {
+      const li = document.createElement('li');
+      li.textContent = msg;
+      document.getElementById('messages').appendChild(li);
+    });
   </script>
 </body>
 </html>
