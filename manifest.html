@@ -1,362 +1,65 @@
-
-
-<!DOCTYPE html>
-<html lang="en" >
-
-<head>
-
+<html lang="en"><head>
   <meta charset="UTF-8">
-  
-<link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png" />
-<meta name="apple-mobile-web-app-title" content="CodePen">
-
-<link rel="shortcut icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
-
-<link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
-
-
-  <title>CodePen - Magazine Grid Layout Vol. II</title>
+  <title>Munister - PhD</title>
   <link href="https://fonts.googleapis.com/css?family=Aleo|Open+Sans:600,700|Sree+Krushnadevaraya" rel="stylesheet">
 
-
-  
-  
-  
 <style>
-:root {
-  --color_base: #FFF;
-  --color_mag: #FFCDD2;
-  --color_ink: #282724;
-  --color_highlight: #FFFF00;
-  --magazine: 56rem;
-  --mag_col: 12rem;
-  --gap: 1.25rem;
-  --gap_half: calc(var(--gap) / 2);
-  --border_sm: 1px;
-  --border_md: 3px;
-}
-@media screen and (min-width: 32.5rem) {
-  :root {
-    --gap: calc(var(--magazine) / 24);
-  }
-}
 
-body {
-  min-width: 20rem;
-  background-color: var(--color_base);
-  color: var(--color_ink);
-  font-family: "Aleo", serif;
-  margin: 0;
-}
-
-figure,
-figcaption {
-  margin: 0;
-}
-
-p {
-  font-size: 0.9rem;
-  line-height: 1.7;
-  margin-top: 0;
-  text-align: justify;
-}
-@media screen and (min-width: 40.625rem) {
-  p {
-    font-size: 0.8rem;
-  }
-}
-p:last-child {
-  margin: 0;
-}
-
-::-moz-selection {
-  background-color: var(--color_highlight);
-}
-
-::selection {
-  background-color: var(--color_highlight);
-}
-
-.u-txt-center {
-  text-align: center;
-}
-
-.c-heading {
-  font-weight: normal;
-  margin: 0;
-}
-.c-heading:not(.c-heading--03) {
-  text-transform: uppercase;
-}
-.c-heading--01, .c-heading--03, .c-heading--05 {
-  font-family: "Sree Krushnadevaraya", serif;
-}
-.c-heading--02, .c-heading--04 {
-  font-family: "Open Sans", sans-serif;
-  letter-spacing: 0.2rem;
-}
-.c-heading--01 {
-  font-size: 5.5rem;
-  line-height: 1.1;
-  margin-top: -1.8rem;
-}
-@media screen and (min-width: 32.5rem) {
-  .c-heading--01 {
-    font-size: 7rem;
-  }
-}
-@media screen and (min-width: 40.625rem) {
-  .c-heading--01 {
-    font-size: 9rem;
-    margin-top: -3rem;
-  }
-}
-.c-heading--02 {
-  font-size: 1rem;
-  line-height: 1.7;
-}
-.c-heading--03 {
-  font-size: 1.5rem;
-  line-height: 1.2;
-  margin-top: calc(var(--gap_half) / -2);
-  margin-bottom: calc(var(--gap_half) / 2);
-  padding-bottom: 1rem;
-}
-@media screen and (min-width: 32.5rem) {
-  .c-heading--03 {
-    font-size: 1.7rem;
-    padding-right: 1rem;
-    padding-left: 1rem;
-  }
-}
-@media screen and (min-width: 53.125rem) {
-  .c-heading--03 {
-    font-size: 2.2rem;
-  }
-}
-.c-heading--04 {
-  border-top: var(--border_sm) solid var(--color_ink);
-  border-bottom: var(--border_sm) solid var(--color_ink);
-  font-size: 0.8rem;
-  font-weight: bold;
-  line-height: 1.3;
-  padding: 0.3rem 0;
-}
-@media screen and (min-width: 32.5rem) {
-  .c-heading--04 {
-    font-size: 0.9rem;
-  }
-}
-.c-heading--05 {
-  font-size: 1.2rem;
-  line-height: 1;
-}
-
-.o-grid {
-  --minmax: var(--mag_col);
-  max-width: var(--magazine);
-  background-color: var(--color_mag);
-  border-left: var(--border_sm) solid var(--color_ink);
-  border-right: var(--border_sm) solid var(--color_ink);
-  display: grid;
-  grid-template: auto/var(--gap) repeat(2, 1fr) minmax(var(--minmax), 1fr) var(--gap);
-  grid-template-areas: ". header header header ." ". subheader subheader subheader ." ". profile profile profile ." ". content content content ." ". work-sample work-sample work-sample ." ". footer footer footer .";
-  grid-column-gap: var(--gap);
-  grid-row-gap: var(--gap_half);
-  margin: 0 auto;
-  padding-top: var(--gap);
-}
-@media screen and (min-width: 40.625rem) {
-  .o-grid {
-    --minmax: 15rem;
-    grid-template-areas: ". header header header ." ". subheader subheader subheader ." ". content content profile ." ". work-sample work-sample profile ." ". footer footer footer .";
-  }
-}
-.o-grid__area-01 {
-  grid-area: header;
-}
-.o-grid__area-02 {
-  grid-area: subheader;
-}
-.o-grid__area-03 {
-  grid-area: profile;
-}
-.o-grid__area-04 {
-  grid-area: content;
-}
-.o-grid__area-05 {
-  grid-area: work-sample;
-}
-.o-grid__area-06 {
-  grid-area: footer;
-}
-
-.o-header {
-  border-top: var(--border_md) solid var(--color_ink);
-  border-bottom: var(--border_md) solid var(--color_ink);
-  padding: calc(var(--gap_half) / 4) 0;
-  position: relative;
-}
-.o-header:before {
-  width: 100%;
-  content: "";
-  border-top: var(--border_sm) solid var(--color_ink);
-  position: absolute;
-  top: var(--border_md);
-  left: 0;
-}
-
-.o-profile {
-  position: relative;
-}
-@media screen and (max-width: 32.438rem) {
-  .o-profile {
-    margin-bottom: var(--gap_half);
-  }
-}
-.o-profile:after {
-  width: 100%;
-  height: 100%;
-  background-color: var(--color_base);
-  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23282724' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 0;
-}
-.o-profile__inner {
-  background-color: var(--color_base);
-  border-bottom: var(--border_md) solid var(--color_ink);
-  padding: var(--gap);
-  position: relative;
-  z-index: 10;
-}
-@media screen and (min-width: 40.625rem) {
-  .o-profile__inner {
-    padding: var(--gap_half);
-  }
-}
-
-.o-media {
-  background-color: var(--color_base);
-}
-.o-media__img {
-  width: 100%;
-}
-.o-media__caption {
-  font-family: "Open Sans", sans-serif;
-  font-size: 1.2rem;
-  line-height: 1.5;
-  margin-bottom: var(--gap);
-}
-@media screen and (min-width: 32.5rem) {
-  .o-media__caption {
-    margin-bottom: var(--gap_half);
-  }
-}
-@media screen and (min-width: 40.625rem) {
-  .o-media__caption {
-    font-size: 1rem;
-  }
-}
-.o-media__legend {
-  border-bottom: var(--border_sm) solid var(--color_ink);
-  font-family: "Open Sans", sans-serif;
-  font-size: 0.8rem;
-  line-height: 1.5;
-  padding: 0 var(--gap_half) 0.3rem;
-}
-
-.o-content {
-  -moz-columns: var(--mag_col);
-       columns: var(--mag_col);
-  -moz-column-gap: var(--gap);
-       column-gap: var(--gap);
-}
-
-.o-footer {
-  margin: var(--gap_half) 0;
-}
-.o-footer p {
-  line-height: 1.3;
-  opacity: 0.2;
-  word-break: break-all;
-}
 </style>
 
   <script>
   window.console = window.console || function(t) {};
 </script>
-
-  
-  
   <script>
   if (document.location.search.match(/type=embed/gi)) {
     window.parent.postMessage("resize", "*");
   }
 </script>
 
-
 </head>
-
-<body translate="no" >
+<body translate="no">
   <article class="o-grid">
-  <header class="o-grid__area-01 o-header u-txt-center"> 
-    <h3 class="c-heading c-heading--05"> <em>1665 – 1736</em></h3>
-    <h1 class="c-heading c-heading--01">Seba</h1>
-    <h2 class="c-heading c-heading--02">Albertus Seba</h2>
+  <header class="o-grid__area-01 o-header u-txt-center">
+    <h3 class="c-heading c-heading--05"> <em></em></h3>
+    <h1 class="c-heading c-heading--01">Ph.D.</h1>
+    <h2 class="c-heading c-heading--02">MUNISTER VYACHESLAW</h2>
   </header>
-  <div class="o-grid__area-02 u-txt-center"> 
-    <h4 class="c-heading c-heading--03">A Dutch pharmacist, zoologist and collector. He published a Thesaurus of animal specimens with beautiful engravings.</h4>
-    <h5 class="c-heading c-heading--04">Taxonomy and natural history</h5>
+  <div class="o-grid__area-02 u-txt-center">
+    <h4 class="c-heading c-heading--03">Author of 35 articles in Russian, Ukrainian and foreign (Great Britain, USA), peer-reviewed scientific publications (indexed in SCOPUS, RSCI), ten educational publications (in and two scientific monographs.</h4>
+    <h5 class="c-heading c-heading--04">Payame Noor University http://www.pnu.ac.ir/</h5>
   </div>
   <section class="o-grid__area-03 o-profile">
     <div class="o-profile__inner">
-      <figure class="o-media"><img class="o-media__img" src="https://upload.wikimedia.org/wikipedia/commons/d/da/Albertus_Seba_Portrait_farbig.jpg" alt="Albertus Seba showing a lizard in a bottle"/>
-        <figcaption class="o-media__caption u-txt-center">Portrait of Albertus Seba, a 18th-century Dutch pharmacist.</figcaption>
+      <figure class="o-media"><img class="o-media__img" src="https://raw.githubusercontent.com/munister-v/munister-v.github.io/main/image.jpg" alt="Albertus Seba showing a lizard in a bottle">
+        <figcaption class="o-media__caption u-txt-center">Portrait of a doctoral student</figcaption>
       </figure>
-      <p>Seba was a collector of zoological and other natural subjects and editor of a illustrated work of reference about his collection.</p>
-      <p>He accumulated one of the largest cabinets of curiosities in the Netherlands during his time. He sold one of his cabinets in 1717 to Peter the Great of Russia. His later collections were auctioned after his death. </p>
-      <p>His early work on taxonomy and natural history influenced Swedish botanist, physician, and zoologist Carl Linnaeus.</p>
+      <p>Vyacheslav Munister is a researcher in the field of vehicle informatization of technological processes occurring in wireless and unmanned computer systems.</p>
+      <p>At one time, he published scientific works devoted to the implementation of fuzzy control tools and econometric modeling.</p>
+      <p>His works have practical implementations in the form of registered and copyrighted software.</p>
     </div>
   </section>
   <div class="o-grid__area-04 o-content">
-    <p>Born in Etzel, Seba moved to Amsterdam as an apprentice and, around 1700, opened a pharmacy near the harbour. Seba asked sailors and ship surgeons to bring exotic plants and animal products he could use for preparing drugs. Seba also started to collect snakes, birds, insects, shells and lizards in his house.</p>
+    <p>Areas of interest: Internet of things, andragogy (non scholae, sed vitae discimus), fuzzy modeling and control; information law; means of identification, measurement, transmission and processing in IoT, IoE, aspects and problems of integration of microprocessor systems within the framework of the concept of “ambient intelligence”</p>
     <p>
-       In October 1728 Seba had become a Fellow of the Royal Society. In 1734, he had published a Thesaurus of animal specimens with beautiful engravings. The full name of the Thesaurus is, with a dual Latin–Dutch title, <em>Locupletissimi rerum naturalium thesauri accurata descriptio</em> (Accurate description of the very rich thesaurus of the principal and rarest natural objects).</p>
-    <p>Today, the original 446-plate volume is on permanent exhibit at the Koninklijke Bibliotheek in The Hague, Netherlands.</p>
+      The scope of attention includes the study of tools of economic planning, town planning and urbanism, expert systems, logistics, the theory of economic mechanisms, relational contraction.</p>
+    <p>The author has carried out work on the selection, classification (ranking), systematization and formalization of the topic of organizing the functioning of digital transport ecosystems as a new phenomenon in cybernetic.</p>
     <p>
-       Seba's inclusion of fantastic beasts such as the hydra influenced Linnaeus to include the “Paradoxa,” species which may exist but which have not been found, in his <em>Systema Naturae.</em></p>
+       The importance of the role of differentiation of ecosystems into layers (levels) is substantiated: key conclusions on the comprehensive study of this topic are demonstrated</p>
     <p>
-       Seba is commemorated in the scientific names of two species and one subspecies of snakes:<em> Ninia sebae, Python sebae, </em>and <em>Oxyrhopus petola sebae.</em></p>
+      The goal was also to create a generalized characteristics of the organization of transport logistics of the enterprise in the context of the transformation of digital economy</p>
   </div>
-  <figure class="o-grid__area-05 o-media"><img class="o-media__img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Albertus_Seba_-_Hydra.jpg/1920px-Albertus_Seba_-_Hydra.jpg" alt="The Hamburg Hydra, from the Thesaurus (1734)"/>
-    <figcaption class="o-media__legend">↑ The Hamburg Hydra, from the Thesaurus (1734).</figcaption>
+  <figure class="o-grid__area-05 o-media"><img class="o-media__img" src="https://smapse.ru/storage/2019/02/u-1.jpg" alt="The Hamburg Hydra, from the Thesaurus (1734)">
+    <figcaption class="o-media__legend">By decision of the dissertation council in May 2024, an academic degree was awarded: PhD (Computer Science)</figcaption>
   </figure>
   <footer class="o-grid__area-06 o-footer">
-    <p> <small>Content adapted from Wikipedia, including text and images: https://en.wikipedia.org/wiki/Albertus_Seba</small></p>
+    <p> <small>2024</small></p>
   </footer>
 </article>
     <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-1b93190375e9ccc259df3a57c1abc0e64599724ae30d7ea4c6877eb615f89387.js"></script>
 
-  
-      <script id="rendered-js" >
-/* 
- * PURE CSS MAGAZINE GRID LAYOUT VOL. II
- * Responsive grid layout for #CodePenChallenge Stellar Scientists. 
- * A tribute to Albertus Seba.
- * CSS Grid + CSS Columns.
- *
- * Design fully inspired by a real magazine.
- * By ilithya | 2019
- */
-//# sourceURL=pen.js
+
+      <script id="rendered-js">
     </script>
 
-  
 
-</body>
-
-</html>
- 
+</body></html>
