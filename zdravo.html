@@ -5,7 +5,7 @@
 <head>
 
   <meta charset='UTF-8'>
-  <title>Demo</title>
+  <title>CodePen Demo</title>
 
   <meta name="robots" content="noindex">
 
@@ -17,7 +17,7 @@
   
 
   <style id="INLINE_PEN_STYLESHEET_ID">
-    @import url('https://fonts.googleapis.com/css?family=Manrope:700|Manrope:400');
+    @import url('https://fonts.googleapis.com/css?family=Manrope:400,700');
 
 :root {
   --text: hsl(0, 0%, 99%);
@@ -37,7 +37,7 @@
 }
 
 body {
-  font-family: 'Manrope';
+  font-family: 'Manrope', sans-serif;
   font-weight: 400;
   background-color: var(--background);
   color: var(--text);
@@ -51,13 +51,15 @@ body {
 
 nav {
   display: flex;
-  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  gap: 2rem;
   color: var(--textDim);
   width: 100%;
-  box-sizing: border-box;
-  z-index: 9999;
+  padding: 1rem;
+}
+
+.nav-icon {
+  display: none;
 }
 
 .menu:hover {
@@ -67,16 +69,16 @@ nav {
 
 .sitename {
   font-weight: bold;
+  font-size: 1.2rem;
 }
 
 .grid {
   position: absolute;
   height: 100%;
-  weight: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  align-self: center;
   z-index: -1;
 }
 
@@ -103,30 +105,29 @@ nav {
   letter-spacing: -0.8rem;
   display: flex;
   flex-direction: column;
-  position: absolute;
   justify-content: center;
   align-self: center;
   height: 100%;
   z-index: 1000;
+  text-align: center;
 }
 
 .title > p {
   margin: 0;
-  line-height: 10rem;
-  width: auto;
+  line-height: 1;
 }
 
-.title > p:nth-child(1){
-  align-self: flex-start;
+.title > p:nth-child(1) {
+  align-self: center;
 }
 
-.title > p:nth-child(2){
+.title > p:nth-child(2) {
   color: var(--primary);
-  align-self: flex-end;
+  align-self: center;
 }
 
-.title > p:nth-child(3){
-  align-self: flex-end;
+.title > p:nth-child(3) {
+  align-self: center;
 }
 
 .material-icons {
@@ -134,20 +135,18 @@ nav {
   fill: var(--text);
 }
 
-
-
 .button {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: absolute;
   text-decoration: none;
   color: inherit;
   cursor: pointer;
   height: 50px;
   width: 160px;
-  z-index: 9999;
+  position: absolute;
+  z-index: 1000;
 }
 
 button {
@@ -165,8 +164,6 @@ button {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  transform: translateY(0px);
   transition: all 0.2s ease;
 }
 
@@ -224,7 +221,6 @@ span {
   background-color: var(--secondaryHi);
 }
 
-
 .top-right {
   position: absolute;
   top: 0;
@@ -241,34 +237,107 @@ span {
   opacity: 50%;
 }
 
-
-
-
-@media screen and (max-width: 1000px) {
-  .title {
-    font-size: 4rem;
-    line-height: 
-  }
-  
-  .title > p {
-    line-height: 5rem;
-    letter-spacing: -0.3rem;
-  }
-  
-  nav > :not(.sitename, .material-icons) {
-    display: none;
+@media screen and (max-width: 800px) {
+  body {
+    padding: 0 5%;
   }
   
   nav {
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.5rem;
   }
   
-  .material-icons {
-    display: flex;
-    align-items: center;
+  .nav-icon {
+    display: block;
+    cursor: pointer;
   }
   
+  nav > :not(.sitename, .nav-icon) {
+    display: none;
+  }
+
+  .grid-svg {
+    height: 60%;
+    width: 60%;
+  }
+
+  .title {
+    font-size: 5rem;
+    letter-spacing: -0.4rem;
+  }
+  
+  .title > p {
+    line-height: 1;
+  }
+  
+  .button {
+    width: 120px;
+    height: 40px;
+    margin: 5px 0;
+  }
+  
+  button {
+    width: 120px;
+    height: 40px;
+    font-size: 0.8rem;
+  }
+
+  span {
+    width: 80px;
+    height: 40px;
+  }
 }
+
+@media screen and (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sitename {
+    font-size: 1rem;
+  }
+
+  .title {
+    font-size: 4rem;
+    letter-spacing: -0.2rem;
+  }
+  
+  .title > p {
+    line-height: 1;
+  }
+
+  .grid-svg {
+    height: 50%;
+    width: 50%;
+  }
+
+  .button {
+    width: 100px;
+    height: 35px;
+  }
+  
+  button {
+    width: 100px;
+    height: 35px;
+    font-size: 0.7rem;
+  }
+  
+  span {
+    width: 70px;
+    height: 35px;
+  }
+
+  .top-right, .bottom-left {
+    display: none;
+  }
+}
+
   </style>
 
   
@@ -280,9 +349,10 @@ span {
 
 <body>
   <nav>
-  <p class="sitename">Zdravo</p>
+  <p class="sitename">CoolSite</p>
   <p class="menu">Services</p>
   <p class="menu">Pricing</p>
+  <p class="menu">Features</p>
   <p class="menu">About us</p>
   <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 9H5c-.55 0-1 .45-1 1s.45 1 1 1h14c.55 0 1-.45 1-1s-.45-1-1-1zM5 15h14c.55 0 1-.45 1-1s-.45-1-1-1H5c-.55 0-1 .45-1 1s.45 1 1 1z"/></svg>
 </nav>
@@ -301,14 +371,14 @@ span {
 </div>
 
 <div class="title">
-  <p>Zdravo</p>
+  <p>Powerful</p>
   <p>UI Design</p>
-  <p>Studio</p>
+  <p>Tool</p>
 </div>
 
-<a href="https://dribbble.com/shots/23181733-Blurry-Glassmorphic-Modern-Landing-page" target="_blank" class="button first"><button>Our team</button><span></span></a>
+<a href="https://dribbble.com/shots/23181733-Blurry-Glassmorphic-Modern-Landing-page" target="_blank" class="button first"><button>View Source</button><span></span></a>
 
-<a href="https://youtu.be/1pW_sk-2y40" target="_blank" class="button sec"><button>Autopresentation</button><span></span></a>
+<a href="https://youtu.be/1pW_sk-2y40" target="_blank" class="button sec"><button>Watch Video</button><span></span></a>
 
 <a href="https://x.com/juxtopposed" target="_blank" class="button third"><button>Connect</button><span></span></a>
 
