@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSPF Emulator</title>
+    <style>
+        body {
+            background-color: #2b2b2b;
+            color: #c5c5c5;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        #menu {
+            background-color: #1e1e1e;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #444;
+        }
+        #menu button, #router-selector {
+            background-color: #3a3a3a;
+            color: #c5c5c5;
+            border: none;
+            padding: 10px;
+            margin: 0 10px;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        #menu button:hover {
+            background-color: #555;
+        }
+        #content {
+            display: flex;
+            height: 100%;
+        }
+        #sidebar {
+            width: 250px;
+            background-color: #1e1e1e;
+            padding: 10px;
+            box-sizing: border-box;
+            border-right: 2px solid #444;
+            overflow-y: auto;
+        }
+        .menu-content {
+            display: none;
+        }
+        .menu-content.active {
+            display: block;
+        }
+        .menu-content h2 {
+            color: #c5c5c5;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .menu-content ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .menu-content li {
+            margin: 8px 0;
+        }
+        #terminal-container {
+            flex: 1;
+            background-color: #1e1e1e;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        #terminal {
+            flex: 1;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            padding-bottom: 10px;
+        }
+        #input-line {
+            background: none;
+            border: none;
+            color: #c5c5c5;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu">
+        <div>
+            <button onclick="showMenu('tasks')">Задания</button>
+            <button onclick="showMenu('hints')">Подсказки</button>
+            <button onclick="showMenu('commands')">Команды</button>
+        </div>
+        <select id="router-selector" onchange="switchRouter()">
+            <option value="Router1">Router 1</option>
+            <option value="Router2">Router 2</option>
+        </select>
+    </div>
+    <div id="content">
+        <div id="sidebar">
+            <div id="tasks" class="menu-content active">
+                <h2>Задания</h2>
+                <ul>
+                    <li>1. Настроить интерфейс gig0 с IP 192.168.1.1/24 на Router 1</li>
+                    <li>2. Настроить интерфейс gig1 с IP 192.168.1.2/24 на Router 2</li>
+                    <li>3. Настроить OSPF на обоих роутерах</li>
+                    <li>4. Проверить соседей OSPF</li>
+                </ul>
+            </div>
+            <div id="hints" class="menu-content">
+                <h2>Подсказки</h2>
+                <ul>
+                    <li>Используйте команду <code>enable</code> для входа в привилегированный режим</li>
+                    <li>Для настройки используйте <code>configure terminal</code></li>
+                    <li>Настройка интерфейса: <code>interface [имя]</code></li>
+                    <li>Назначение IP: <code>ip address [IP] [маска]</code></li>
+                    <li>Настройка OSPF: <code>router ospf 1</code></li>
+                    <li>Добавление сети в OSPF: <code>network [сеть] [маска] area [номер]</code></li>
+                </ul>
+            </div>
+            <div id="commands" class="menu-content">
+                <h2>Команды</h2>
+                <ul>
+                    <li><code>enable</code></li>
+                    <li><code>configure terminal</code></li>
+                    <li><code>exit</code></li>
+                    <li><code>interface [имя]</code></li>
+                    <li><code>ip address [IP] [маска]</code></li>
+                    <li><code>router ospf 1</code></li>
+                    <li><code>network [сеть] [маска] area [номер]</code></li>
+                    <li><code>show ip ospf neighbor</code></li>
+                </ul>
+            </div>
+        </div>
+        <div id="terminal-container">
+            <div id="terminal"></div>
+        </div>
+    </div>
+    <script>
+        const terminal = document.getElementById('terminal');
+        const routerSelector = document.getElementById('router-selector');
+        let currentRouter = 'Router1';
+        let routers = {
+            Router1: { interfaces: {}, ospfEnabled: false, neighbors: [] },
+            Router2: { interfaces: {}, ospfEnabled: false, neighbors: [] }
+        };
+        let prompt = `${currentRouter}>`;
+
+        function showMenu(menuId) {
+            const menus = document.querySelectorAll('.menu-content');
+            menus.forEach(menu => {
+                menu.classList.remove('active');
+            });
+            document.getElementById(menuId).classList.add('active');
+        }
+
+        function switchRouter() {
+            currentRouter = routerSelector.value;
+            prompt = `${currentRouter}>`;
+            appendPrompt();
+        }
+
+        function appendPrompt() {
+            const promptDiv = document.createElement('div');
+            promptDiv.textContent = prompt;
+            terminal.appendChild(promptDiv);
+
+            const input = document.createElement('input');
+            input.id = 'input-line';
+            input.onkeydown = handleInput;
+            terminal.appendChild(input);
+            input.focus();
+        }
+
+        function handleInput(e) {
+            if (e.key === 'Enter') {
+                const input = e.target;
+                const command = input.value.trim();
+                terminal.removeChild(input);
+                processCommand(command);
+                appendPrompt();
+            }
+        }
+
+        function processCommand(command) {
+            const outputDiv = document.createElement('div');
+            outputDiv.textContent = `${prompt} ${command}`;
+            terminal.appendChild(outputDiv);
+
+            const router = routers[currentRouter];
+            const parts = command.split(' ');
+            const cmd = parts[0].toLowerCase();
+            const args = parts.slice(1);
+
+            if (cmd === 'enable') {
+                prompt = `${currentRouter}#`;
+            } else if (cmd === 'configure' && args[0] === 'terminal') {
+                prompt = `${currentRouter}(config)#`;
+            } else if (cmd === 'interface' && args[0]) {
+                const iface = args[0];
+                router.interfaces[iface] = { ip: null, mask: null };
+                prompt = `${currentRouter}(config-if)#`;
+            } else if (cmd === 'ip' && args[0] === 'address' && args[1] && args[2]) {
+                const iface = Object.keys(router.interfaces)[0];
+                if (iface) {
+                    router.interfaces[iface].ip = args[1];
+                    router.interfaces[iface].mask = args[2];
+                    updateNeighbors();
+                }
+            } else if (cmd === 'router' && args[0] === 'ospf') {
+                router.ospfEnabled = true;
+                prompt = `${currentRouter}(config-router)#`;
+                updateNeighbors();
+            } else if (cmd === 'network' && args[0] && args[2] === 'area') {
+                updateNeighbors();
+            } else if (cmd === 'exit') {
+                if (prompt.includes('(config-if)')) {
+                    prompt = `${currentRouter}(config)#`;
+                } else if (prompt.includes('(config-router)')) {
+                    prompt = `${currentRouter}(config)#`;
+                } else {
+                    prompt = `${currentRouter}>`;
+                }
+            } else if (cmd === 'show' && args[0] === 'ip' && args[1] === 'ospf' && args[2] === 'neighbor') {
+                outputDiv.textContent += '\n' + showNeighbors(router);
+            } else {
+                outputDiv.textContent += '\n% Invalid command';
+            }
+
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function updateNeighbors() {
+            const r1 = routers.Router1;
+            const r2 = routers.Router2;
+
+            if (r1.ospfEnabled && r2.ospfEnabled && r1.interfaces.gig0 && r2.interfaces.gig1) {
+                const r1Ip = r1.interfaces.gig0.ip;
+                const r2Ip = r2.interfaces.gig1.ip;
+
+                if (r1Ip && r2Ip && r1Ip.startsWith('192.168.1') && r2Ip.startsWith('192.168.1')) {
+                    r1.neighbors = [{ id: 'Router2', ip: r2Ip }];
+                    r2.neighbors = [{ id: 'Router1', ip: r1Ip }];
+                }
+            }
+        }
+
+        function showNeighbors(router) {
+            if (router.neighbors.length === 0) {
+                return 'No OSPF neighbors found.';
+            }
+            return router.neighbors.map(n => `Neighbor ID: ${n.id} IP: ${n.ip}`).join('\n');
+        }
+
+        appendPrompt();
+        showMenu('tasks');
+    </script>
+</body>
+</html>
