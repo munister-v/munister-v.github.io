@@ -1,0 +1,451 @@
+
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  
+
+    <link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png" />
+
+    <meta name="apple-mobile-web-app-title" content="CodePen">
+
+    <link rel="icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
+
+    <link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg" color="#111" />
+
+
+
+  
+  
+
+  <title>MUNISTER</title>
+
+    <link rel="canonical" href="https://codepen.io/DedaloD/pen/QwWYedd">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="module">import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
+import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
+import { gsap } from "https://cdn.skypack.dev/gsap";
+
+const camera = new THREE.PerspectiveCamera(
+  10,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.z = 13;
+
+const scene = new THREE.Scene();
+let bee;
+let mixer;
+const loader = new GLTFLoader();
+
+// Fixed GLB URL - using raw.githubusercontent.com which serves with proper CORS headers
+loader.load(
+  "https://raw.githubusercontent.com/DennysDionigi/bee-glb/94253437c023643dd868592e11a0fd2c228cfe07/demon_bee_full_texture.glb",
+  function (gltf) {
+    bee = gltf.scene;
+    scene.add(bee);
+
+    mixer = new THREE.AnimationMixer(bee);
+    mixer.clipAction(gltf.animations[0]).play();
+    modelMove();
+  },
+  function (xhr) {
+    // Progress callback
+    console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+  },
+  function (error) {
+    // Error callback
+    console.error("Error loading model:", error);
+  }
+);
+
+const renderer = new THREE.WebGLRenderer({ alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById("container3D").appendChild(renderer.domElement);
+
+// light
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
+scene.add(ambientLight);
+
+const topLight = new THREE.DirectionalLight(0xffffff, 1);
+topLight.position.set(500, 500, 500);
+scene.add(topLight);
+
+const reRender3D = () => {
+  requestAnimationFrame(reRender3D);
+  renderer.render(scene, camera);
+  if (mixer) mixer.update(0.02);
+};
+reRender3D();
+
+let arrPositionModel = [
+  {
+    id: "banner",
+    position: { x: 0, y: -1, z: 0 },
+    rotation: { x: 0, y: 1.5, z: 0 }
+  },
+  {
+    id: "intro",
+    position: { x: 1, y: -1, z: -5 },
+    rotation: { x: 0.5, y: -0.5, z: 0.5 }
+  },
+  {
+    id: "description",
+    position: { x: -1, y: -1, z: -5 },
+    rotation: { x: 0, y: 0.5, z: 0.2 }
+  },
+  {
+    id: "contact",
+    position: { x: 0.45, y: -2, z: -10 },
+    rotation: { x: 0.2, y: -0.5, z: -0.2 }
+  }
+];
+
+const modelMove = () => {
+  const sections = document.querySelectorAll(".section");
+  let currentSection;
+  sections.forEach((section) => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top <= window.innerHeight / 3) {
+      currentSection = section.id;
+    }
+  });
+  let position_active = arrPositionModel.findIndex(
+    (val) => val.id == currentSection
+  );
+  if (position_active >= 0) {
+    let new_coordinates = arrPositionModel[position_active];
+    gsap.to(bee.position, {
+      x: new_coordinates.position.x,
+      y: new_coordinates.position.y,
+      z: new_coordinates.position.z,
+      duration: 3,
+      ease: "power1.out"
+    });
+    gsap.to(bee.rotation, {
+      x: new_coordinates.rotation.x,
+      y: new_coordinates.rotation.y,
+      z: new_coordinates.rotation.z,
+      duration: 3,
+      ease: "power1.out"
+    });
+  }
+};
+
+window.addEventListener("scroll", () => {
+  if (bee) {
+    modelMove();
+  }
+});
+
+window.addEventListener("resize", () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
+</script>
+  <link rel="stylesheet" href="https://public.codepenassets.com/css/normalize-5.0.0.min.css">
+
+  
+  
+<style>
+@import url("https://fonts.cdnfonts.com/css/devil-breeze");
+@import url("https://fonts.cdnfonts.com/css/poppins");
+@import url("https://fonts.cdnfonts.com/css/bimbo");
+
+body {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  background-color: #1b1b1b;
+  color: #eef8ce;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  background-image: url(https://assets.codepen.io/453571/bg.avif),
+    repeating-linear-gradient(
+      to right,
+      transparent 0 500px,
+      #73814b33 500px 501px
+    );
+  background-size: 100%;
+}
+*::-webkit-scrollbar {
+  width: 0;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  box-sizing: border-box;
+}
+.section {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-fit {
+  width: min(1200px, 90vw);
+  margin: auto;
+  min-height: 100vh;
+  position: relative;
+  padding-block: 10em;
+}
+header {
+  padding-block: 1em;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10px;
+  -webkit-backdrop-filter: blur(20px);
+          backdrop-filter: blur(20px);
+  z-index: 100;
+  background-color: #1b1b1b11;
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent 0 500px,
+    #eee1 500px 501px
+  );
+}
+header .content-fit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: unset !important;
+  padding-block: unset !important;
+}
+header .content-fit nav ul {
+  display: flex;
+  gap: 2em;
+}
+
+#banner .title {
+  color: #d1ff48;
+  font-size: 11em;
+  font-family: "devil breeze";
+  font-weight: bold;
+  position: relative;
+  overflow: visible;
+  text-align: center;
+}
+#banner .title::before {
+  content: attr(data-before);
+  position: absolute;
+  z-index: -1;
+  color: oklch(0.78 0.17 80.01 / 0.19);
+  -webkit-mask: linear-gradient(
+    to bottom,
+    #000 -80%,
+    oklch(0 0 0/0),
+    #000,
+    oklch(0 0 0/0) 200%
+  );
+          mask: linear-gradient(
+    to bottom,
+    #000 -80%,
+    oklch(0 0 0/0),
+    #000,
+    oklch(0 0 0/0) 200%
+  );
+  transform: scaleY(-1) translateY(-0.44lh);
+}
+.section .decorate {
+  position: fixed;
+  z-index: -100;
+  pointer-events: none;
+}
+#intro .content-fit {
+  display: flex;
+  gap: 30%;
+  justify-content: space-between;
+  align-items: center;
+}
+.section .number {
+  font-family: "devil breeze";
+  font-size: 15em;
+  font-weight: bold;
+}
+.section .content-fit .title {
+  font-family: "devil breeze";
+  font-size: 5em;
+  font-weight: bold;
+}
+#description .content-fit {
+  padding-right: 30%;
+}
+#description .number {
+  font-size: 5em;
+}
+#description .title {
+  font-size: 7em;
+  font-weight: 500;
+}
+#contact .content-fit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+#contact table {
+  width: min(800px, 90vw);
+  padding-top: 2em;
+  font-size: 2em;
+  margin: auto;
+}
+#contact table td {
+  padding-block: 0.5em;
+  border-bottom: 1px dashed #445022;
+}
+#contact table td:nth-child(1) {
+  text-align: left;
+  font-weight: 500;
+}
+#contact table td:nth-child(2) {
+  text-align: right;
+  font-weight: 200;
+}
+#contact .sign {
+  font-size: 10em;
+}
+#container3D {
+  position: fixed;
+  inset: 0;
+  /* background-color: red; */
+  z-index: 100;
+  pointer-events: none;
+}
+@media screen and (max-width: 1023px) {
+  #banner .title {
+    font-size: 5em;
+  }
+  #intro .content-fit {
+    flex-direction: column;
+  }
+}
+@media screen and (max-width: 767px) {
+  #banner .title {
+    font-size: 3em;
+  }
+  #intro .content-fit {
+    flex-direction: column;
+  }
+  .section .number {
+    font-size: 5em;
+  }
+  .section .content-fit .title {
+    font-size: 2em;
+  }
+  #description .content-fit {
+    padding-right: 0;
+  }
+  #contact table {
+    font-size: 1em;
+  }
+  #contact .sign {
+    font-size: 2em;
+  }
+  #container3D {
+    position: sticky;
+  }
+}
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+</head>
+
+<body translate="no">
+  <header>
+  <div class="content-fit">
+    <div class="logo">DDX</div>
+    <nav>
+      <ul>
+        <li>Contacts</li>
+        <li>Category</li>
+        <li>Login</li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div class="section" id="banner">
+  <div class="content-fit">
+    <div class="title" data-before="3D ANIMATION">3D ANIMATION</div>
+  </div>
+  <img src="https://assets.codepen.io/453571/flower.png" class="decorate" alt="" style="width: 50vw; bottom: 0; right: 0;">
+  <img src="https://assets.codepen.io/453571/leaf.png" class="decorate" alt="" style="width: 30vw; bottom: 0; left: 0;">
+</div>
+<div class="section" id="intro">
+  <div class="content-fit">
+    <div class="number">01</div>
+    <div class="des">
+      <div class="title">3d animation design for website</div>
+      <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatibus voluptas a porro libero
+        recusandae quae, aut ratione, incidunt laborum, necessitatibus similique enim doloremque ex.
+        Laudantium obcaecati aspernatur doloremque illo beatae, maxime hic itaque consequatur nisi
+        accusantium veritatis, voluptatem ratione! Placeat numquam nisi reiciendis harum quibusdam tempore
+        eaque deleniti accusantium, veniam quae eos sed, asperiores laborum corporis odit mollitia
+        consequatur adipisci? Quibusdam quis eos debitis non esse blanditiis laudantium rerum odit tempora?
+        Corrupti maiores velit consequuntur cupiditate reiciendis similique provident repudiandae.</p>
+    </div>
+  </div>
+</div>
+<div class="section" id="description">
+  <div class="content-fit">
+    <div class="number">02</div>
+    <div class="des">
+      <div class="title">DEN DX</div>
+      <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatibus voluptas a porro libero
+        recusandae quae, aut ratione, incidunt laborum, necessitatibus similique enim doloremque ex.
+        Laudantium obcaecati aspernatur doloremque illo beatae, maxime hic itaque consequatur nisi
+        accusantium veritatis, voluptatem ratione! Placeat numquam nisi reiciendis harum quibusdam tempore
+        eaque deleniti accusantium, veniam quae eos sed, asperiores laborum corporis odit mollitia
+        consequatur adipisci? Quibusdam quis eos debitis non esse blanditiis laudantium rerum odit tempora?
+        Corrupti maiores velit consequuntur cupiditate reiciendis similique provident repudiandae.</p>
+    </div>
+  </div>
+  <img src="https://assets.codepen.io/453571/leaf1.png" class="decorate" alt="" style="width: 70vw; bottom: 0; right: 0;">
+</div>
+<div class="section" id="contact">
+  <div class="content-fit">
+    <div class="number">03</div>
+    <div class="des">
+      <div class="title">CONTACT</div>
+      <table>
+        <tr>
+          <td>Email</td>
+          <td>test@gmail.com</td>
+        </tr>
+        <tr>
+          <td>Phone</td>
+          <td>+841.231.235</td>
+        </tr>
+        <tr>
+          <td>Website</td>
+          <td>dennysdionigi.com</td>
+        </tr>
+        <tr>
+          <td>Youtube</td>
+          <td>@dennysdionigi</td>
+        </tr>
+      </table>
+      <div class="sign">Den DX</div>
+    </div>
+  </div>
+</div>
+<div id="container3D"></div>
+  
+  
+  
+</body>
+
+</html>
