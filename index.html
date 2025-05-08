@@ -4,339 +4,142 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>About me</title>
+  
 
-    <link rel="canonical" href="https://codepen.io/DedaloD/pen/QwWYedd">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-<script type="module">import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
-import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
-import { gsap } from "https://cdn.skypack.dev/gsap";
+    <link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png" />
 
-const camera = new THREE.PerspectiveCamera(
-  10,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-camera.position.z = 13;
+    <meta name="apple-mobile-web-app-title" content="CodePen">
 
-const scene = new THREE.Scene();
-let bee;
-let mixer;
-const loader = new GLTFLoader();
+    <link rel="icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
 
-loader.load(
-  "https://raw.githubusercontent.com/DennysDionigi/bee-glb/94253437c023643dd868592e11a0fd2c228cfe07/demon_bee_full_texture.glb",
-  function (gltf) {
-    bee = gltf.scene;
-    scene.add(bee);
+    <link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg" color="#111" />
 
-    mixer = new THREE.AnimationMixer(bee);
-    mixer.clipAction(gltf.animations[0]).play();
-    modelMove();
-  },
-  function (xhr) {
-    // Progress callback
-    console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-  },
-  function (error) {
-    // Error callback
-    console.error("Error loading model:", error);
-  }
-);
 
-const renderer = new THREE.WebGLRenderer({ alpha: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.getElementById("container3D").appendChild(renderer.domElement);
 
-// light
-const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
-scene.add(ambientLight);
+  
+    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
 
-const topLight = new THREE.DirectionalLight(0xffffff, 1);
-topLight.position.set(500, 500, 500);
-scene.add(topLight);
 
-const reRender3D = () => {
-  requestAnimationFrame(reRender3D);
-  renderer.render(scene, camera);
-  if (mixer) mixer.update(0.02);
-};
-reRender3D();
+  <title>Starbucks - Landing Page</title>
 
-let arrPositionModel = [
-  {
-    id: "banner",
-    position: { x: 0, y: -1, z: 0 },
-    rotation: { x: 0, y: 1.5, z: 0 }
-  },
-  {
-    id: "intro",
-    position: { x: 1, y: -1, z: -5 },
-    rotation: { x: 0.5, y: -0.5, z: 0.5 }
-  },
-  {
-    id: "description",
-    position: { x: -1, y: -1, z: -5 },
-    rotation: { x: 0, y: 0.5, z: 0.2 }
-  },
-  {
-    id: "contact",
-    position: { x: 0.45, y: -2, z: -10 },
-    rotation: { x: 0.2, y: -0.5, z: -0.2 }
-  }
-];
-
-const modelMove = () => {
-  const sections = document.querySelectorAll(".section");
-  let currentSection;
-  sections.forEach((section) => {
-    const rect = section.getBoundingClientRect();
-    if (rect.top <= window.innerHeight / 3) {
-      currentSection = section.id;
-    }
-  });
-  let position_active = arrPositionModel.findIndex(
-    (val) => val.id == currentSection
-  );
-  if (position_active >= 0) {
-    let new_coordinates = arrPositionModel[position_active];
-    gsap.to(bee.position, {
-      x: new_coordinates.position.x,
-      y: new_coordinates.position.y,
-      z: new_coordinates.position.z,
-      duration: 3,
-      ease: "power1.out"
-    });
-    gsap.to(bee.rotation, {
-      x: new_coordinates.rotation.x,
-      y: new_coordinates.rotation.y,
-      z: new_coordinates.rotation.z,
-      duration: 3,
-      ease: "power1.out"
-    });
-  }
-};
-
-window.addEventListener("scroll", () => {
-  if (bee) {
-    modelMove();
-  }
-});
-
-window.addEventListener("resize", () => {
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-});
-</script>
-  <link rel="stylesheet" href="https://public.codepenassets.com/css/normalize-5.0.0.min.css">
-
+    <link rel="canonical" href="https://codepen.io/leonam-silva-de-souza/pen/jEOogMN">
+  
+  
   
   
 <style>
-@import url("https://fonts.cdnfonts.com/css/devil-breeze");
-@import url("https://fonts.cdnfonts.com/css/poppins");
-@import url("https://fonts.cdnfonts.com/css/bimbo");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Turret+Road:wght@200;300;400;500;700;800&display=swap');
 
-body {
-  margin: 0;
-  font-family: "Montserrat", sans-serif;
-  background-color: #1b1b1b;
-  color: #eef8ce;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  background-image: url(https://assets.codepen.io/453571/bg.avif),
-    repeating-linear-gradient(
-      to right,
-      transparent 0 500px,
-      #73814b33 500px 501px
-    );
-  background-size: 100%;
+* { margin: 0; padding: 0; box-sizing: border-box; scroll-padding-top: 2rem; text-decoration: none; list-style: none; scroll-behavior: smooth; font-family: 'Poppins', sans-serif; }
+    *::selection { color: var(--white-color); background: var(--main-color); }
+:root {
+    --main-color: #008148;
+    --second-color: #1E3932;
+    --white-color: #FFFFFF;
+    --pearl-lusta-color: #EBDBC8;
+    --black-color: #000000;
 }
-*::-webkit-scrollbar {
-  width: 0;
+section { padding: 50px 10%; }
+img { width: 100%; }
+header { position: fixed; width: 100%; top: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; background: var(--white-color); 
+        box-shadow: 0 4px 41px rgb(14 55 14 / 14%); padding: 15px 10%; transition: .2s; }
+.logo { display: flex; align-items: center; }
+    .logo img { width: 40px; }
+.navbar { display: flex; }
+    .navbar a { font-size: 1rem; padding: 11px 20px; color: var(--second-color); font-weight: 600; text-transform: uppercase; }
+        .navbar a:hover { color: var(--main-color); }
+#menu-icon { font-size: 24px; cursor: pointer; z-index: 101; display: none; }
+.home { width: 100%; height: 100vh; display: flex; flex-wrap: wrap; align-items: center; background: var(--pearl-lusta-color); gap: 1rem; }
+.home-img { flex: 1 1 17rem; }
+    .home-img img { animation: animate 3s linear infinite; }
+        @keyframes animate {
+            0% { transform: translate(-11px, 0); }
+            50% { transform: translate(0, -11px); }
+            100% { transform: translate(-11px, 0); }
+        }
+.home-text { flex: 1 1 17rem; }
+    .home-text span { font-size: 1rem; text-transform: uppercase; font-weight: 600; color: var(--second-color); }
+    .home-text h1 { font-size: 3.2rem; color: var(--main-color); font-weight: bolder; }
+    .home-text h2 { font-size: 1.8rem; font-weight: 600; color: var(--second-color); text-transform: uppercase; margin: 0.5rem 0 1.4rem; }
+.btn { padding: 7px 16px; border: 2px solid var(--second-color); border-radius: 40px; color: var(--second-color); font-weight: 500; transition: .5s; }
+    .btn:hover { color: var(--white-color); background: var(--second-color); }
+.heading { text-align: center; text-transform: uppercase; }
+    .heading span { font-size: 1rem; font-weight: 600; color: var(--second-color); }
+    .heading h1 { font-size: 2rem; color: var(--main-color); }
+.shop-container { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 5rem; }
+    .shop-container .box { flex: 1 1 10rem; background: var(--main-color); padding: 20px; display: flex; text-align: center; flex-direction: column; align-items: center; margin-top: 3rem;     border-radius: .5rem; }
+        .shop-container .box .box-img { width: 150px; height: 150px; margin-top: -100px; }
+            .shop-container .box .box-img img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
+        .shop-container .box .stars i { color: var(--pearl-lusta-color); }
+            .stars { margin: 1rem 0 .1rem; }
+        .shop-container .box h2 { color: var(--pearl-lusta-color); font-size: 1.2rem; }
+        .shop-container .box span { color: var(--pearl-lusta-color); font-size: 1.4rem; font-weight: 500; margin: 0.2rem 0 0.5rem; }
+.box .btn { border: 2px solid var(--pearl-lusta-color); color: var(--pearl-lusta-color); }
+    .box .btn:hover { background: var(--pearl-lusta-color); color: var(--second-color); }
+.container { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 2rem; }
+.delivery-img, .app-img { flex: 1 1 21rem; }
+.delivery-text, .app-text { flex: 1 1 21rem; }
+    .delivery-text h2, .app-text h2 { font-size: 1.2rem; color: var(--second-color); }
+    .delivery-text p, .app-text p { margin: 0.5rem 0 1rem; text-align: justify; }
+.about { display: flex; flex-wrap: wrap; background: var(--pearl-lusta-color); gap: 1.5rem; }
+.about-img { flex: 1 1 17rem; }
+.about-text { flex: 1 1 17rem; }
+    .about-text h2 { font-size: 1.2rem; color: var(--second-color); }
+    .about-text p { margin: 0.5rem 0 1rem; text-align: justify; }
+.contact { display: flex; flex-direction: column; align-items: center; }
+.social a { font-size: 24px; margin: 0.5rem; }
+    .social a i { padding: 7px; color: var(--white-color); background: var(--black-color); border-radius: 50%; transition: .5s; }
+        .social a i:hover { background: var(--main-color); }
+.links { margin: 1rem 0 1rem; }
+    .links a { font-size: 1rem; font-weight: 500; color: var(--second-color); padding: 1rem; transition: .5s; }
+        .links a:hover { color: var(--main-color); }
+.contact p { text-align: center; }
+    .contact p a { color: var(--second-color); font-family: 'Turret Road', sans-serif; transition: .5s; font-weight: 600; }
+        .contact p a:hover { color: var(--main-color); }
+
+/* Media Queries */
+@media(max-width: 1150px) {
+    header { padding: 18px 7%; }
+    section { padding: 50px 7%; }
+    .home-text h1 { font-size: 3rem; }
+    .home-text h2 { font-size: 1.5rem; }
 }
 
-* {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  box-sizing: border-box;
-}
-.section {
-  width: 100%;
-  min-height: 100vh;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+@media(max-width: 991px){
+    header { padding: 18px 4%; }
+    section { padding: 50px 4%; }
 }
 
-.content-fit {
-  width: min(1200px, 90vw);
-  margin: auto;
-  min-height: 100vh;
-  position: relative;
-  padding-block: 10em;
-}
-header {
-  padding-block: 1em;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 10px;
-  -webkit-backdrop-filter: blur(20px);
-          backdrop-filter: blur(20px);
-  z-index: 100;
-  background-color: #1b1b1b11;
-  background-image: repeating-linear-gradient(
-    to right,
-    transparent 0 500px,
-    #eee1 500px 501px
-  );
-}
-header .content-fit {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: unset !important;
-  padding-block: unset !important;
-}
-header .content-fit nav ul {
-  display: flex;
-  gap: 2em;
+@media(max-width: 768px) {
+    header { padding: 11px 4%; }
+    #menu-icon { display: initial; }
+        header .navbar {
+            position: absolute;
+            top: -500px;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            background: var(--white-color);
+            box-shadow: 0 4px 4px rgb(14 55 14 / 14%);
+            border-top: 2px solid var(--main-color);
+            transition: .5s;
+            text-align: left;
+        }
+            .navbar.active { top: 100%; }
+            .navbar a { padding: 1.5rem; display: block; color: var(--second-color); }
+    .home-text span { font-size: .9rem; }
+    .home-text h1 { font-size: 2.4rem; }
+    .home-text h2 { font-size: 1.2rem; }
 }
 
-#banner .title {
-  color: #d1ff48;
-  font-size: 11em;
-  font-family: "devil breeze";
-  font-weight: bold;
-  position: relative;
-  overflow: visible;
-  text-align: center;
-}
-#banner .title::before {
-  content: attr(data-before);
-  position: absolute;
-  z-index: -1;
-  color: oklch(0.78 0.17 80.01 / 0.19);
-  -webkit-mask: linear-gradient(
-    to bottom,
-    #000 -80%,
-    oklch(0 0 0/0),
-    #000,
-    oklch(0 0 0/0) 200%
-  );
-          mask: linear-gradient(
-    to bottom,
-    #000 -80%,
-    oklch(0 0 0/0),
-    #000,
-    oklch(0 0 0/0) 200%
-  );
-  transform: scaleY(-1) translateY(-0.44lh);
-}
-.section .decorate {
-  position: fixed;
-  z-index: -100;
-  pointer-events: none;
-}
-#intro .content-fit {
-  display: flex;
-  gap: 30%;
-  justify-content: space-between;
-  align-items: center;
-}
-.section .number {
-  font-family: "devil breeze";
-  font-size: 15em;
-  font-weight: bold;
-}
-.section .content-fit .title {
-  font-family: "devil breeze";
-  font-size: 5em;
-  font-weight: bold;
-}
-#description .content-fit {
-  padding-right: 30%;
-}
-#description .number {
-  font-size: 5em;
-}
-#description .title {
-  font-size: 7em;
-  font-weight: 500;
-}
-#contact .content-fit {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-}
-#contact table {
-  width: min(800px, 90vw);
-  padding-top: 2em;
-  font-size: 2em;
-  margin: auto;
-}
-#contact table td {
-  padding-block: 0.5em;
-  border-bottom: 1px dashed #445022;
-}
-#contact table td:nth-child(1) {
-  text-align: left;
-  font-weight: 500;
-}
-#contact table td:nth-child(2) {
-  text-align: right;
-  font-weight: 200;
-}
-#contact .sign {
-  font-size: 10em;
-}
-#container3D {
-  position: fixed;
-  inset: 0;
-  /* background-color: red; */
-  z-index: 100;
-  pointer-events: none;
-}
-@media screen and (max-width: 1023px) {
-  #banner .title {
-    font-size: 5em;
-  }
-  #intro .content-fit {
-    flex-direction: column;
-  }
-}
-@media screen and (max-width: 767px) {
-  #banner .title {
-    font-size: 3em;
-  }
-  #intro .content-fit {
-    flex-direction: column;
-  }
-  .section .number {
-    font-size: 5em;
-  }
-  .section .content-fit .title {
-    font-size: 2em;
-  }
-  #description .content-fit {
-    padding-right: 0;
-  }
-  #contact table {
-    font-size: 1em;
-  }
-  #contact .sign {
-    font-size: 2em;
-  }
-  #container3D {
-    position: sticky;
-  }
+@media(max-width: 568px) {
+    .home-text { padding-top: inherit; }
+    .shop-container .box { margin-top: 6rem; }
+    .heading h1 { font-size: 1.5rem; }
+    .heading span { font-size: .9rem; }
+    .about { flex-direction: column-reverse; }
+    .links { display: flex; flex-direction: column; }
 }
 </style>
 
@@ -349,89 +152,196 @@ header .content-fit nav ul {
 </head>
 
 <body translate="no">
-  <header>
-  <div class="content-fit">
-    <div class="logo">Glucksritter&Munister</div>
-    <nav>
-      <ul>
-        <li></li>
-      </ul>
-    </nav>
-  </div>
-</header>
-<div class="section" id="banner">
-  <div class="content-fit">
-    <div class="title" data-before="3D ANIMATION">MUNISTERv</div>
-  </div>
-  <img src="https://assets.codepen.io/453571/flower.png" class="decorate" alt="" style="width: 50vw; bottom: 0; right: 0;">
-  <img src="https://assets.codepen.io/453571/leaf.png" class="decorate" alt="" style="width: 30vw; bottom: 0; left: 0;">
-</div>
-<div class="section" id="intro">
-  <div class="content-fit">
-    <div class="number">01</div>
-    <div class="des">
-      <div class="title">Researcher</div>
-      <p> Author of forty-five articles in peer-reviewed academic journals
-        (indexed in SCOPUS, WoS), 
-        fifteen educational publications (including five textbooks),
-        and three scientific monographs. Also the author of more than
-        ten registered software programs.</p>
-    </div>
-  </div>
-</div>
-<div class="section" id="description">
-  <div class="content-fit">
-    <div class="number">02</div>
-    <div class="des">
-      <div class="title"></div>
-   <p>The scope of interest includes the study of tools for economic planning, urban development and urban studies, expert systems, logistics,
-     the theory of economic mechanisms, relational contracting, generative adversarial networks, 
-     and ergodicity in economic theory, as well as the political and legal frameworks for ecological
-     and biosystem governance. Additionally, attention is given to interdisciplinary approaches that integrate
-     computational models with institutional analysis, enabling deeper understanding of adaptive behaviors
-     in complex systems. Research also encompasses the development of predictive tools
-     and decision-support systems for sustainable infrastructure, environmental resilience,
-     and socio-economic policy design. A particular focus lies on the intersection of machine
-     learning techniques and policy evaluation methods, aiming to improve the transparency 
-     and efficiency of public governance. Questions of fairness, accountability, and long-term
-     systemic stability are central to the inquiry, particularly in the context of global
-     climate change, demographic shifts, and resource allocation under uncertainty.
-     The research is grounded in both theoretical modeling and applied case studies, 
-     providing insights relevant to academia, public administration, and international development institutions.</p>
-    </div>
-  </div>
-  <img src="https://assets.codepen.io/453571/leaf1.png" class="decorate" alt="" style="width: 70vw; bottom: 0; right: 0;">
-</div>
-<div class="section" id="contact">
-  <div class="content-fit">
-    <div class="number">03</div>
-    <div class="des">
-      <div class="title">CONTACT</div>
-      <table>
-        <tr>
-          <td>Email</td>
-          <td>munisterv@icloud.com</td>
-        </tr>
-        <tr>
-          <td>SCOPUS</td>
-          <td>munister</td>
-        </tr>
-        <tr>
-          <td>Website</td>
-          <td>munister-v.github.io</td>
-        </tr>
-        <tr>
-          <td>telegram</td>
-          <td>@vyanetto</td>
-        </tr>
-      </table>
-      <div class="sign">inspired by DenX</div>
-    </div>
-  </div>
-</div>
-<div id="container3D"></div>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starbucks - Landing Page</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <header>
+        <a href="#" class="logo"><img src="https://i.postimg.cc/05nM4RtQ/logo.png" alt=""></a>
+        <i class='bx bx-menu' id="menu-icon" ></i>
+
+        <ul class="navbar">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#shop">Shop</a></li>
+            <li><a href="#delivery">Delivery</a></li>
+            <li><a href="#app">App</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </header>
+
+    <section class="home" id="home">
+        <div class="home-text">
+            <span>Welcome to</span>
+            <h1>Starbucks Coffee</h1>
+            <h2>Free Coffee in a <br>tap away</h2>
+            <a href="#" class="btn">Join Now</a>
+        </div>
+
+        <div class="home-img">
+            <img src="https://i.postimg.cc/50CcCV6m/home.png" alt="">
+        </div>
+    </section>
+
+    <section class="shop" id="shop">
+        <div class="heading">
+            <span>Shop Now</span>
+            <h1>Shop Coffee</h1>
+        </div>
+
+        <div class="shop-container">
+            <div class="box">
+                <div class="box-img">
+                    <img src="https://i.postimg.cc/ncHH6Xsb/shop1.png" alt="">
+                </div>
+
+                <div class="stars">
+                    <i class="ri-star-fill"></i>
+                    <i class="ri-star-fill"></i>
+                    <i class="ri-star-fill"></i>
+                    <i class="ri-star-fill"></i>
+                    <i class="ri-star-half-line"></i>
+                </div>
+
+                <h2>Strawberry Frappuccino</h2>
+                <span>$5.25</span>
+                <a href="#" class="btn">Order Now</a>
+            </div>
+
+            <div class="box">
+                <div class="box-img">
+                    <img src="https://i.postimg.cc/2y52pdhX/shop2.png" alt="">
+                </div>
+
+                <div class="stars">
+                    <i class="ri-star-fill"></i>
+                    <i class="ri-star-fill"></i>
+                    <i class="ri-star-fill"></i>
+                    <i class="ri-star-fill"></i>
+                    <i class="ri-star-line"></i>
+                </div>
+
+                <h2>Mocha Frappuccino</h2>
+                <span>$5.00</span>
+                <a href="#" class="btn">Order Now</a>
+            </div>
+
+            <div class="box">
+                <div class="box-img">
+                    <img src="https://i.postimg.cc/Zq4T80r5/shop3.png" alt="">
+                </div>
+
+                <div class="stars">
+                    <i class="ri-star-fill"></i>
+                    <i class="ri-star-fill"></i>
+                    <i class="ri-star-fill"></i>
+                    <i class="ri-star-fill"></i>
+                    <i class="ri-star-line"></i>
+                </div>
+
+                <h2>Green Tea Frappuccino</h2>
+                <span>$5.10</span>
+                <a href="#" class="btn">Order Now</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="delivery" id="delivery">
+        <div class="heading">
+            <span>Get Now</span>
+            <h1>Order with Uber Eats</h1>
+        </div>
+
+        <div class="container">
+            <div class="delivery-img">
+                <img src="https://i.postimg.cc/vHmbXD2P/delivery.png" alt="">
+            </div>
+
+            <div class="delivery-text">
+                <h2>Today deserve delivery</h2>
+                <p>Craving a Frappuccino? Reserve yours now and skip the line! Don't wait! Reserve your Starbuck Frappuccino and savor every sip, faster. Reserve your Starbuck Frappuccino online or through our app today!</p>
+                <p>Treat yourself! Reserve your favorite Frappuccino. Guarantee your delicious moment. Reserve your Frappuccino and beat the rush. Visit our website or app to reserve your Frappuccino now.</p>
+                <a href="#" class="btn">Order Now</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="app" id="app">
+        <div class="heading">
+            <span>Our App</span>
+            <h1>Download App</h1>
+        </div>
+
+        <div class="container">
+
+            <div class="app-text">
+                <h2>Download our Starbucks App</h2>
+                <p>Skip the line, score rewards, and treat yourself! Download the Starbucks app today and unlock a world of convenience and deliciousness.</p>
+                <p>Personalize your experience, and pay with ease - all from your phone. Plus, discover exclusive offers you won't find anywhere else! Download now and start enjoying the Starbucks experience.</p>
+                <a href="#" class="btn">Download Now</a>
+            </div>
+
+            <div class="app-img">
+                <img src="https://i.postimg.cc/pVfQHrFt/app.png" alt="">
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="about-img">
+            <img src="https://i.postimg.cc/Px3jpTLf/about.png" alt="">
+        </div>
+
+        <div class="about-text">
+            <h2>50 years of serving communities</h2>
+            <p>It takes many hands to craft the perfect cup of coffee - from the farmers who tend to the red-ripe coffee cherries, to the master roasters who coax the best from every bean, and to the barista who serves it with care. We are committed to the highest standards of quality and service, embracing our heritage while innovating to create new experiences to savor.</p>
+            <p>We like to say that we are not in the coffee business serving people, but in the people business serving coffee. Our employees - who we call partners - are at the heart of the Starbucks experience. We are committed to making our partners proud and investing in their health, well-being and success and to creating a culture of belonging where everyone is welcome.</p>
+            <a href="#" class="btn">Learn More</a>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="social">
+            <a href="#"><i class="ri-facebook-fill"></i></a>
+            <a href="#"><i class="ri-twitter-x-line"></i></a>
+            <a href="#"><i class="ri-instagram-line"></i></a>
+            <a href="#"><i class="ri-youtube-fill"></i></a>
+        </div>
+        <div class="links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of use</a>
+            <a href="#">Our Company</a>
+        </div>
+        <p>&#169; <a href="https://codepen.io/leonam-silva-de-souza" target="_blank">ULTRA CODE</a> All rights reserved</p>
+    </section>
+
+    <script src="main.js"></script>
+</body>
+</html>
   
-  
+      <script id="rendered-js" >
+let menu = document.querySelector('#menu-icon');
+let navbar = document.querySelector('.navbar');
+
+menu.onclick = () => {
+  menu.classList.toggle('bx-x');
+  navbar.classList.toggle('active');
+};
+
+window.onscroll = () => {
+  menu.classList.remove('bx-x');
+  navbar.classList.remove('active');
+};
+//# sourceURL=pen.js
+    </script>
+
   
 </body>
 
