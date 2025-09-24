@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SolveCart — покупка як розв’язання задачі</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1220;         /* page background */
+      --bg-2: #11152a;       /* panels backdrop tint */
+      --fg: #e6e9f5;         /* primary text */
+      --muted: #a2a8c3;      /* secondary text */
+      --primary: #7c5cff;    /* brand accent */
+      --primary-2: #22d3ee;  /* cyan accent */
+      --accent: #ff7ab6;     /* pink accent */
+      --card: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.12);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35), 0 2px 10px rgba(0,0,0,0.25);
+      --shadow-soft: 0 8px 24px rgba(0,0,0,0.25);
+      --focus: 0 0 0 3px rgba(124,92,255,0.35), 0 0 0 6px rgba(34,211,238,0.25);
+    }
+    body.light {
+      --bg: #f6f7fb;
+      --bg-2: #ffffff;
+      --fg: #0e1020;
+      --muted: #525a74;
+      --card: rgba(0,0,0,0.04);
+      --border: rgba(0,0,0,0.08);
+      --shadow: 0 10px 30px rgba(0,0,0,0.08), 0 2px 10px rgba(0,0,0,0.06);
+      --shadow-soft: 0 8px 24px rgba(0,0,0,0.06);
+      --focus: 0 0 0 3px rgba(124,92,255,0.25), 0 0 0 6px rgba(34,211,238,0.2);
+    }
+
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--fg);
+      background: radial-gradient(1200px 800px at 10% -10%, rgba(124,92,255,0.22), transparent 50%),
+                  radial-gradient(900px 600px at 100% 0%, rgba(34,211,238,0.18), transparent 55%),
+                  radial-gradient(900px 600px at -5% 80%, rgba(255,122,182,0.12), transparent 60%),
+                  var(--bg);
+      overflow-x: hidden;
+    }
+    /* анімована «аврора» */
+    body::before {
+      content: "";
+      position: fixed; inset: -20vmax; z-index: -1;
+      background: conic-gradient(from 0deg, rgba(124,92,255,0.15), rgba(34,211,238,0.12), rgba(255,122,182,0.12), rgba(124,92,255,0.15));
+      filter: blur(80px) saturate(120%);
+      animation: swirl 26s linear infinite;
+    }
+    @keyframes swirl {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(10px) saturate(140%);
+      background: linear-gradient(180deg, rgba(15,18,32,0.7), rgba(15,18,32,0.35) 60%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 72px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: var(--shadow-soft);
+      display: grid; place-items: center; color: white; font-weight: 800; font-size: 16px;
+      letter-spacing: -0.4px;
+    }
+    .brand span { font-weight: 700; font-size: 18px; color: var(--fg); letter-spacing: -0.2px; }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+
+    .btn, button {
+      --padx: 18px; --pady: 12px;
+      display: inline-grid; place-items: center;
+      padding: var(--pady) var(--padx);
+      border-radius: 999px;
+      border: 1px solid transparent;
+      color: #0f1220; font-weight: 700; letter-spacing: 0.2px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 6px 18px rgba(124,92,255,0.35), 0 2px 8px rgba(34,211,238,0.25);
+      cursor: pointer; transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    .btn:active { transform: translateY(0); }
+    .btn-ghost {
+      color: var(--fg);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border-color: var(--border);
+      box-shadow: none;
+    }
+
+    .hero {
+      padding: 56px 0 28px;
+      display: grid; gap: 32px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.05; margin: 0;
+      letter-spacing: -0.8px; font-weight: 800;
+    }
+    .hero p { color: var(--muted); font-size: 16px; margin: 10px 0 0; }
+
+    .grid {
+      display: grid; gap: 18px;
+      grid-template-columns: repeat(12, 1fr);
+    }
+
+    .panel {
+      grid-column: span 7;
+      background: linear-gradient(180deg, var(--card), rgba(255,255,255,0.04));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      backdrop-filter: blur(14px) saturate(140%);
+      box-shadow: var(--shadow);
+    }
+    .panel.secondary { grid-column: span 5; }
+
+    .section-title {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px; gap: 12px;
+    }
+    .section-title h2 { font-size: 18px; margin: 0; letter-spacing: -0.2px; }
+    .hint { color: var(--muted); font-size: 13px; }
+
+    form.solve {
+      display: grid; gap: 14px;
+      grid-template-columns: repeat(12, 1fr);
+    }
+    .field { grid-column: span 12; display: grid; gap: 8px; }
+    .field.inline { grid-template-columns: 1fr 1fr; gap: 12px; }
+    label { font-size: 13px; color: var(--muted); }
+
+    .control, select, input[type="text"], input[type="number"], input[type="date"], input[type="datetime-local"] {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px; color: var(--fg);
+      outline: none; transition: box-shadow .2s ease, border-color .2s ease, background .2s ease;
+      backdrop-filter: blur(6px);
+    }
+    .control:focus, select:focus, input:focus { box-shadow: var(--focus); border-color: rgba(124,92,255,0.4); }
+
+    .range {
+      -webkit-appearance: none; appearance: none; height: 8px; border-radius: 999px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+      outline: none;
+    }
+    .range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 2px solid var(--primary); box-shadow: 0 4px 10px rgba(124,92,255,0.35); cursor: pointer; }
+    .range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 2px solid var(--primary); box-shadow: 0 4px 10px rgba(124,92,255,0.35); cursor: pointer; }
+
+    .opts { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip { display: inline-flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--fg); font-size: 13px; }
+
+    .solve-actions { display: flex; gap: 10px; align-items: center; margin-top: 6px; }
+
+    .passport {
+      display: grid; gap: 12px;
+    }
+    .passport .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .badge { padding: 8px 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 10px; font-size: 12px; color: var(--muted); }
+
+    .cards { display: grid; gap: 12px; grid-template-columns: 1fr; }
+    .card-item {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px; display: grid; gap: 8px;
+    }
+    .card-item h3 { margin: 0; font-size: 16px; }
+    .card-item p { margin: 0; color: var(--muted); font-size: 13px; }
+
+    .alt { display: grid; gap: 10px; grid-template-columns: 1fr; }
+
+    .footer { margin: 28px 0 40px; color: var(--muted); font-size: 13px; text-align: center; }
+
+    @media (min-width: 860px) {
+      .hero { grid-template-columns: 1.2fr 1fr; align-items: center; }
+      .cards { grid-template-columns: repeat(3, 1fr); }
+      .alt { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* helper */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#">
+        <div class="logo">SC</div>
+        <span>SolveCart</span>
+      </a>
+      <div class="nav-actions">
+        <button class="btn-ghost" id="themeToggle" aria-label="Перемкнути тему">Тема</button>
+        <a class="btn" href="#demo">Демо</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <h1>Покупка як розв’язання задачі</h1>
+        <p>Сформулюй мету словами, задай пріоритети — і отримай оптимальний набір із зрозумілим поясненням. Ніяких здогадок.</p>
+        <div class="cards" style="margin-top:18px">
+          <div class="card-item"><h3>Прозорість</h3><p>Кожен кошик супроводжується «паспортом рішення»: мета, активні обмеження, вклад критеріїв.</p></div>
+          <div class="card-item"><h3>Контроль</h3><p>Рухаєш пріоритети — результат перераховується миттєво. Зберігай «формулу покупки» посиланням.</p></div>
+          <div class="card-item"><h3>Творчість</h3><p>Музичне введення за бажанням: короткий мотив перетворюється на вектор пріоритетів.</p></div>
+        </div>
+      </div>
+      <div id="demo" class="panel">
+        <div class="section-title">
+          <h2>Спробуй запит</h2>
+          <span class="hint">MVP‑макет</span>
+        </div>
+        <form class="solve" onsubmit="event.preventDefault(); fakeSolve();">
+          <div class="field">
+            <label for="goal">Мета</label>
+            <input id="goal" class="control" type="text" placeholder="Навчальний комплект: ноут ≤ 1,5 кг + навушники + рюкзак" />
+          </div>
+          <div class="field inline">
+            <div>
+              <label for="budget">Бюджет, ₴</label>
+              <input id="budget" class="control" type="number" inputmode="numeric" placeholder="25000" />
+            </div>
+            <div>
+              <label for="deadline">Термін</label>
+              <input id="deadline" class="control" type="datetime-local" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Пріоритети</label>
+            <div class="opts">
+              <span class="badge">Ціна</span>
+              <input class="range" id="wPrice" type="range" min="0" max="100" value="40" />
+              <span class="badge">Надійність</span>
+              <input class="range" id="wReliability" type="range" min="0" max="100" value="80" />
+              <span class="badge">Швидкість</span>
+              <input class="range" id="wSpeed" type="range" min="0" max="100" value="60" />
+              <span class="badge">Екологія</span>
+              <input class="range" id="wEco" type="range" min="0" max="100" value="40" />
+            </div>
+          </div>
+
+          <div class="field inline">
+            <div>
+              <label for="hard1">Жорсткі умови</label>
+              <input id="hard1" class="control" type="text" placeholder="Офіційна гарантія; сумісність аксесуарів" />
+            </div>
+            <div>
+              <label for="weight">Обмеження за вагою, кг</label>
+              <input id="weight" class="control" type="number" step="0.1" placeholder="1.5" />
+            </div>
+          </div>
+
+          <div class="solve-actions">
+            <button type="submit" class="btn" style="min-width:150px">Solve</button>
+            <button type="button" class="btn-ghost" onclick="fillExample()">Приклад</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="grid" style="margin-top:10px">
+      <aside class="panel secondary" id="passportPanel">
+        <div class="section-title">
+          <h2>Паспорт рішення</h2>
+          <span class="hint">пояснення вибору</span>
+        </div>
+        <div class="passport">
+          <div class="row"><span class="badge">Мета:</span><span id="pGoal" class="badge">—</span></div>
+          <div class="row"><span class="badge">Активні обмеження:</span><span id="pConstraints" class="badge">—</span></div>
+          <div class="row"><span class="badge">Вклад критеріїв:</span><span id="pContrib" class="badge">—</span></div>
+          <div class="row"><span class="badge">Економія/прискорення:</span><span id="pGain" class="badge">—</span></div>
+        </div>
+      </aside>
+
+      <section class="panel" id="resultsPanel" style="grid-column: span 7;">
+        <div class="section-title">
+          <h2>Рішення та альтернативи</h2>
+          <span class="hint">демо‑прев’ю</span>
+        </div>
+        <div class="alt" id="solutions">
+          <div class="card-item">
+            <h3>Тут з’явиться оптимальний набір</h3>
+            <p>Натисни «Solve», щоб побачити результат і 1–2 близькі альтернативи.</p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <p class="footer">© 2025 SolveCart. Цей макет — статичний шаблон головної сторінки (HTML5 + CSS). Для інтерактивності додайте власний бекенд/розв’язувач.</p>
+  </main>
+
+  <script>
+    const $ = sel => document.querySelector(sel);
+
+    // проста демо‑логіка без реального розв’язувача
+    function fakeSolve() {
+      const goal = $('#goal').value || 'Навчальний комплект: ноут ≤ 1,5 кг + навушники + рюкзак';
+      const budget = $('#budget').value || '25000';
+      const deadline = $('#deadline').value || 'завтра ввечері';
+      const weight = $('#weight').value || '1.5';
+      const wPrice = +$('#wPrice').value, wRel = +$('#wReliability').value, wSpeed = +$('#wSpeed').value, wEco = +$('#wEco').value;
+
+      $('#pGoal').textContent = goal;
+      $('#pConstraints').textContent = `бюджет ≤ ₴${budget}; вага ≤ ${weight} кг; доставка: ${deadline}; гарантія: офіційна; сумісність аксесуарів`;
+      $('#pContrib').textContent = `ціна ${wPrice} • надійність ${wRel} • швидкість ${wSpeed} • екологія ${wEco}`;
+      $('#pGain').textContent = 'економія на аксесуарах без переплати за бренд; прискорення завдяки близькому складу';
+
+      const main = {
+        title: 'Базове рішення',
+        body: `Ноутбук 14″ (1.35 кг, гарантія 12 міс), дротові навушники, рюкзак 15″. Вартість ~₴22 900. Доставка: завтра 19:00–22:00.`
+      };
+      const altFast = {
+        title: 'Альтернатива — швидше',
+        body: 'Поставка завтра вдень, трохи дорожче (~₴24 100), параметри схожі, усі «не можна» дотримано.'
+      };
+      const altBudget = {
+        title: 'Альтернатива — бюджетніше',
+        body: 'Ціна нижча (~₴21 900), доставка післязавтра, продавець менш відомий (надійність трохи нижча).'
+      };
+
+      const wrap = document.getElementById('solutions');
+      wrap.innerHTML = '';
+      [main, altFast, altBudget].forEach((s) => {
+        const el = document.createElement('div');
+        el.className = 'card-item';
+        el.innerHTML = `<h3>${s.title}</h3><p>${s.body}</p>`;
+        wrap.appendChild(el);
+      });
+    }
+
+    function fillExample(){
+      $('#goal').value = 'Навчальний комплект: ноут ≤ 1,5 кг + навушники + рюкзак';
+      $('#budget').value = '25000';
+      const now = new Date(); now.setDate(now.getDate()+1); now.setHours(19,0,0,0);
+      $('#deadline').value = new Date(now.getTime() - (new Date().getTimezoneOffset()*60000)).toISOString().slice(0,16);
+      $('#weight').value = '1.5';
+      fakeSolve();
+    }
+
+    // Тема (світла/темна)
+    const themeBtn = document.getElementById('themeToggle');
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('light');
+      themeBtn.textContent = document.body.classList.contains('light') ? 'Тема: світла' : 'Тема';
+    });
+  </script>
+</body>
+</html>
