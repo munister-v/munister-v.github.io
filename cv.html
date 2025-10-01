@@ -1,111 +1,257 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <link rel="shortcut icon" href="https://github.githubassets.com/favicons/favicon.svg"/>
-  <link rel="mask-icon" href="https://github.githubassets.com/favicons/favicon.svg" color="#111"/>
-  <link rel="stylesheet" href="style3.css"/>
-  <title>Munister – Online CV</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <script>
-    window.console = window.console || function(t) {};
-  </script>
-  <script>
-    if (document.location.search.match(/type=embed/gi)) {
-      window.parent.postMessage("resize", "*");
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+  <meta name="theme-color" content="#0a0d13"/>
+  <title>Vyacheslav Munister — CV</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+  :root{
+    --bg:#0a0d13; --panel:#0c0f14; --ink:#e9eaee; --muted:rgba(233,234,238,.74);
+    --rule:rgba(255,255,255,.10); --accent:#d4b673;
+    --base:4px; --sp1:4px; --sp2:8px; --sp3:12px; --sp4:16px; --sp6:24px; --sp8:32px;
+    --radius:14px;
+  }
+  * { box-sizing: border-box; }
+  html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font: 16px/1.65 Inter, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial; }
+  h1,h2,h3,h4{ font-family:"Bodoni Moda","Spectral","Cormorant Garamond",serif; letter-spacing:.01em; line-height:1.2; margin:0 0 var(--sp3); }
+  h1{ font-size:clamp(1.6rem, 4vw, 2.2rem); }
+  h2{ font-size:clamp(1.25rem, 2.6vw, 1.6rem); margin-top:var(--sp6); }
+  h3{ font-size:1.05rem; letter-spacing:.02em; text-transform:uppercase; color:rgba(255,255,255,.86); }
+  p, li{ max-inline-size: 72ch; }
+  a{ color:#cfe1ff; text-decoration:none; }
+  a:hover{ text-decoration:underline; text-underline-offset:2px; }
+
+  .container{ --w:min(1120px, 92vw); width:var(--w); margin-inline:auto; padding-inline:clamp(12px,3vw,24px);}
+  .section{ padding: var(--sp8) 0; border-top:1px solid var(--rule);}
+  .lede{ color:var(--muted); }
+
+  /* Header */
+  header{ position:sticky; top:0; z-index:20; background:linear-gradient(180deg, rgba(10,13,19,.94), rgba(10,13,19,.88)); backdrop-filter:saturate(120%) blur(4px); border-bottom:1px solid var(--rule);}
+  header .bar{ display:flex; align-items:center; justify-content:space-between; padding:.75rem 0; gap:1rem; }
+  .brand{ font-family:"Bodoni Moda","Spectral","Cormorant Garamond",serif; letter-spacing:.04em; font-size:clamp(1.1rem,2.2vw,1.35rem); }
+  nav{ display:flex; gap:clamp(.5rem,1.4vw,1rem); align-items:center; flex-wrap:wrap; }
+  nav a{ padding:.5rem .2rem; }
+  nav a[aria-current]{ box-shadow: inset 0 -2px 0 var(--accent); }
+
+  /* Mobile menu */
+  .menu-toggle{ display:none; min-width:44px; height:38px; padding:0 .75rem; border-radius:12px; border:1px solid var(--rule); background:rgba(255,255,255,.02); color:inherit; }
+  @media (max-width: 960px){
+    nav{ display:none; }
+    .menu-toggle{ display:inline-flex; align-items:center; justify-content:center; }
+    #mobile-panel{ position:fixed; inset:0; z-index:90; display:none; flex-direction:column; gap:12px;
+      background:rgba(10,13,19,.98); backdrop-filter:saturate(120%) blur(4px);
+      padding: calc(env(safe-area-inset-top) + 70px) clamp(16px,4vw,24px) calc(env(safe-area-inset-bottom) + 24px);
     }
-  </script>
+    body.menu-open #mobile-panel{ display:flex; }
+    #mobile-panel a{ font-size:1.1rem; padding:.6rem .2rem; }
+  }
+
+  /* Content patterns */
+  .grid-two{ display:grid; grid-template-columns: 1.2fr .8fr; gap:var(--sp6); align-items:start; }
+  @media (max-width: 900px){ .grid-two{ grid-template-columns: 1fr; } }
+  .card{ background:linear-gradient(var(--panel),var(--panel)) padding-box, linear-gradient(180deg,#2b2b2f,#c9ad6a55 50%,#2b2b2f) border-box; border:1px solid transparent; border-radius:var(--radius); padding:var(--sp6); box-shadow:0 .5px .5px rgba(0,0,0,.04), 0 6px 16px rgba(0,0,0,.05);}
+  .list-compact{ margin:.4rem 0 0; padding-left:1.25rem; }
+  .list-compact li{ margin:.25rem 0; }
+  .meta{ color:var(--muted); font-size:.95rem; }
+  .pill{ display:inline-block; padding:.25rem .6rem; border-radius:999px; border:1px solid var(--rule); margin-right:.4rem; margin-bottom:.4rem; font-size:.85rem; color:rgba(235,235,240,.9);}
+
+  /* Mini footer */
+  footer.site-footer{ border-top:1px solid var(--rule); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.005)); }
+  footer.site-footer .mini-row{ display:flex; align-items:center; justify-content:center; gap:.6rem; padding:.85rem 0 .95rem; flex-wrap:wrap; font-size:.95rem; color:var(--muted);}
+  footer.site-footer a{ color:rgba(235,235,240,.9); }
+  footer.site-footer a:hover{ color:#fff; }
+  @media (max-width:640px){
+    footer.site-footer .email, footer.site-footer .tg, footer.site-footer .sep{ display:none !important; }
+  }
+  
+/* Fix: Hide mobile panel by default; only used on small screens */
+#mobile-panel{ display:none; }
+@media (max-width: 960px){
+  #mobile-panel{
+    position:fixed; inset:0; z-index:90; display:none; 
+    flex-direction:column; gap:12px;
+    background:rgba(10,13,19,.98);
+    backdrop-filter:saturate(120%) blur(4px);
+    padding: calc(env(safe-area-inset-top) + 70px) clamp(16px,4vw,24px) calc(env(safe-area-inset-bottom) + 24px);
+  }
+  body.menu-open #mobile-panel{ display:flex; }
+  #mobile-panel a{ font-size:1.1rem; padding:.6rem .2rem; display:block; }
+}
+
+</style>
 </head>
 <body>
-  <div id="resume">
-    <a href="https://munister-v.github.io/index.html" target="_blank">
-      <img src="https://raw.githubusercontent.com/munister-v/munister-v.github.io/main/images/photo_2024-03-08_20-52-19.jpg" alt="Avatar"/>
-    </a>
-    <h1>Vyacheslav Munister</h1>
-    <p>Web: <a href="munister-v.github.io">munister-v.github.io</a></p>
-    <p>Email: <a href="mailto:munister@outlook.com">munister@outlook.com</a></p>
-    <p>SCOPUS: <a href="https://www.scopus.com/authid/detail.uri?authorId=57224310522">ID 57224310522</a></p>
-    <p>ORCID: <a href="https://orcid.org/0000-0002-2603-9531">0000-0002-2603-9531</a></p>
-    <p>ResearchGate: <a href="https://www.researchgate.net/scientific-contributions/V-D-Munister-2194878329">ID 2194878329</a></p>
-    <p>Semantic Scholar: <a href="https://www.semanticscholar.org/author/V.-D.-Munister/2106557029?sort=influence">ID 2106557029</a></p>
-    <p>Google Scholar: <a href="https://scholar.google.com/citations?user=kdqMqoQAAAAJ&amp;hl=ru">ID</a></p>
-    <dl>
-      <dt>Interests</dt>
-      <dd>
-        <h2>Summary</h2>
-        <p>Author of 45 articles in peer-reviewed scientific journals (indexed in SCOPUS), 15 educational publications (including 5 textbooks), and 3 scientific monographs. Author of over 10 registered computer programs.</p>
-        <h2>Scientific Interests</h2>
-        <p>Areas of interest: Internet of Things, andragogy (non scholae, sed vitae discimus), fuzzy modeling and control; information law; means of identification, measurement, transmission and processing in IoT, IoE; issues of integration of microprocessor systems in the concept of ambient intelligence; computer vision; ubiquitous computing and machine interactions in geoinformation systems; context-dependent user interfaces.</p>
-        <h2>Additionally</h2>
-        <p>Further interests: economic planning tools, urban studies, expert systems, logistics, theory of economic mechanisms, relational contracting, generative adversarial networks (GAN) and ergodicity in economic theory, legal and political security of national defense.</p>
-      </dd>
-    </dl>
-  
-<dl>
-  <dt>Training, advanced courses, and retraining programs:</dt>
-  <dd>
-    <p>1. Certificate of completion of the online course "Computer Science 50" by Harvard University [April 2021]</p>
-    <p>2. Advanced course “Teaching Information Technology in Accordance with TOP-50 Vocational Education Standards” – Certificate No. PK №0091368, registration number 91147, organizer: Teacher Training Institute (108 hours), [April 1–23, 2024]</p>
-    <p>3. Professional retraining course “Methodological Activity in Secondary Vocational Education and Additional Education” (540 hours) [April 26 – July 25, 2024]</p>
-    <p>4. Professional retraining course: “Teaching English, German, and French in Vocational Education” (470 hours) [September 22 – January 2025]</p>
-  </dd>
-</dl>
+  <header id="top">
+    <div class="container bar">
+      <div class="brand">Vyacheslav Munister</div>
+      <nav aria-label="Main">
+        <a href="#about" aria-current="page">About</a>
+        <a href="#interests">Interests</a>
+        <a href="#training">Training</a>
+        <a href="#software">Software</a>
+        <a href="#publications">Publications</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="menu-toggle" aria-label="Menu">Menu</button>
+    </div>
+  </header>
 
-<dl>
-  <dt>Registered Computer Programs:</dt>
-  <dd>
-    <ul>
-      <li>Hashing module for network traffic in an energy-efficient LoraWAN network with quantum transition integration</li>
-      <li>Human–machine interface module for an autonomous vehicle control system</li>
-      <li>Ventilation management system for suspended particles in an autonomous vehicle microclimate system</li>
-      <li>Risk simulator for vehicle movement with non-standard aerodynamic properties</li>
-      <li>Automatic Cisco network hardware configuration generator – (18.10.2023)</li>
-      <li>Educational program for simulating digital devices with fuzzy inference – (14.09.2023)</li>
-      <li>Wireless network logic analyzer with MIMO WiFi6E monitoring</li>
-      <li>SSID verifier with forwarding mechanism</li>
-      <li>Network traffic simulator between routers with static routing and proxy tables</li>
-      <li>Network environment condition monitoring system using fuzzy logic and artificial intelligence</li>
-      <li>Task scheduling system for ventilation in autonomous vehicles</li>
-    </ul>
-  </dd>
-</dl>
+  <div id="mobile-panel" aria-hidden="true"></div>
 
-<dl>
-  <dt>Scientific and Educational Publications:</dt>
-  <dd>
-    <h2>Books and Scientific Editions: <span>2019 – present</span></h2>
-    <ul>
-      <li>1. Mathematics for IoT Digital Devices. Automata Theory – 2021, 91 pp.</li>
-      <li>2. Smart City and IoT – 2021, 115 pp.</li>
-      <li>3. Knowledge Economy. Blockchain and Smart Contracts – 2021, 126 pp.</li>
-    </ul>
-  </dd>
-</dl>
-
-<dl>
-  <dt>Co-authors:</dt>
-  <dd>
-    V. Bobkov, M. Kuzmin, N. Zavialova, I. Poskryakov, A. Yumashev, S. Popova, V. Boskhomdzhieva, V. Varshavskij, L. Kunigina, A. Verbitskiy, S. Shamina, V. Dragulenko, O. Bogaevskaya, A. Yumashev, A. Kornetov, E. Dudukalov, V. Ozhiganov, P. Yudanov, O. Kosnikova, V. Tikhonov, I. Slabodenuk, N. Amirov.
-  </dd>
-</dl>
-<dl>
-  <dt>Citations of my works:</dt>
-  <dd>
-    <ul>
-      <li>1. Yershova O. L., Bazhan L. I. – Smart City: Concept, Models, Technologies, Standardization (Statistics of Ukraine, 2020)</li>
-      <li>2. Golovachev A. M., Paksyutkin V. M. – Application of ZIGBEE Interfaces in Frequency Conversion (Science and Youth, 2020)</li>
-      <li>3. Solovyova E. V., Maksimova T. A. – Smart Home in the IoT Ecosystem (IT in Economics and Management, 2020)</li>
-      <li>4–5. Klimyuk Y. E. – Syllabi for IoT-related subjects (Ukraine, 2020–2021)</li>
-      <li>6. Javaid M. et al. – AI in Industry 4.0 (Journal of Industrial Integration and Management, 2021)</li>
-      <li>7. Fomicheva T. L. – Smart Contract (Local Government, 2021)</li>
-      <li>8. Shumilina M. A. et al. – Cluster as an Object of Economic Interaction (Penza, 2021)</li>
-      <li>9. Belov D. A. et al. – DNA Melting Characteristics Using Polynomial Regression (JPCS, 2021)</li>
-      <li>10–12. Filatov V. V. et al. – Designing Information Systems for Industry (2020–2021)</li>
-      <li>13. Xu L. – Emerging Technologies for Industry 4.0 (Information Systems Frontiers, 2022)</li>
-      <li>14. Kuleshov V. V. et al. – Occupational Safety System in Transport Industry (Transportation Research Procedia, 2022)</li>
-    </ul>
-  </dd>
-</dl>
+  <main>
+    <section id="about" class="section">
+      <div class="container grid-two">
+        <div>
+          <h1>Curriculum Vitae</h1>
+          <p class="lede">Author of 45 peer‑reviewed journal articles (SCOPUS indexed), 15 educational publications (incl. 5 textbooks), and 3 scientific monographs. Author of 10+ registered software tools.</p>
+          <p class="meta">Profiles: 
+            <a href="https://www.scopus.com/authid/detail.uri?authorId=57224310522">SCOPUS</a> · 
+            <a href="https://orcid.org/0000-0002-2603-9531">ORCID</a> · 
+            <a href="https://www.researchgate.net/profile">ResearchGate</a> · 
+            <a href="https://www.semanticscholar.org/author/2106557029">Semantic Scholar</a> · 
+            <a href="https://scholar.google.com">Google Scholar</a>
+          </p>
+        </div>
+        <div class="card">
+          <h3>Contacts</h3>
+          <p>Email: <a href="mailto:munister@outlook.com">munister@outlook.com</a><br/>
+             Telegram: <a href="https://t.me/vyanetto1">@vyanetto1</a></p>
+          <div class="meta">Open for collaborations & talks</div>
+        
+<div class="card" style="margin-top:16px">
+  <h3>Google Scholar metrics</h3>
+  <p class="meta">as of 2025-10-01</p>
+  <ul class="list-compact">
+    <li><strong>Citations:</strong> 523 total · 456 since 2020</li>
+    <li><strong>h-index:</strong> 11</li>
+    <li><strong>i10-index:</strong> 12</li>
+  </ul>
+  <p class="meta">Profile: <a href="https://scholar.google.com/citations?user=kdqMqoQAAAAJ&hl=en">scholar.google.com/citations?user=kdqMqoQAAAAJ</a></p>
 </div>
+
+      </div>
+      </div>
+    </section>
+
+    <section id="interests" class="section">
+      <div class="container">
+        <h2>Scientific Interests</h2>
+        <p>Areas of interest: Internet of Things, andragogy (non scholae, sed vitae discimus), fuzzy modeling and control; information law; means of identification, measurement, transmission and processing in IoT/IoE; integration of microprocessor systems in ambient intelligence; computer vision; ubiquitous computing and machine interactions in geoinformation systems; context‑dependent user interfaces.</p>
+        <h3 style="margin-top:1rem;">Additionally</h3>
+        <p>Further interests: economic planning tools, urban studies, expert systems, logistics, theory of economic mechanisms, relational contracting, GANs and ergodicity in economic theory, legal and political security of national defense.</p>
+      </div>
+    </section>
+
+    <section id="training" class="section">
+      <div class="container">
+        <h2>Training & Retraining</h2>
+        <ol class="list-compact">
+          <li>Harvard CS50 — completed (April 2021)</li>
+          <li>“Teaching IT in Accordance with TOP‑50 Vocational Standards” — Cert No. PK №0091368, reg. 91147, Teacher Training Institute, 108 hours (Apr 1–23, 2024)</li>
+          <li>Professional retraining “Methodological Activity in Secondary Vocational and Additional Education” — 540 hours (Apr 26 – Jul 25, 2024)</li>
+          <li>Professional retraining “Teaching English, German, and French in Vocational Education” — 470 hours (Sep 22 – Jan 2025)</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="software" class="section">
+      <div class="container">
+        <h2>Registered Software</h2>
+        <ul class="list-compact">
+          <li>Hashing module for network traffic in an energy‑efficient LoRaWAN network with quantum transition integration</li>
+          <li>Human–machine interface module for an autonomous vehicle control system</li>
+          <li>Ventilation management system for suspended particles in an autonomous vehicle microclimate system</li>
+          <li>Risk simulator for vehicle movement with non‑standard aerodynamic properties</li>
+          <li>Automatic Cisco network hardware configuration generator (18.10.2023)</li>
+          <li>Educational program for simulating digital devices with fuzzy inference (14.09.2023)</li>
+          <li>Wireless network logic analyzer with MIMO WiFi6E monitoring</li>
+          <li>SSID verifier with forwarding mechanism</li>
+          <li>Network traffic simulator between routers with static routing and proxy tables</li>
+          <li>Network environment condition monitoring system using fuzzy logic and AI</li>
+          <li>Task scheduling system for ventilation in autonomous vehicles</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="publications" class="section">
+      <div class="container">
+        <h2>Books & Scientific Editions (2019—present)</h2>
+        <ul class="list-compact">
+          <li><em>Mathematics for IoT Digital Devices. Automata Theory</em> — 2021, 91 pp.</li>
+          <li><em>Smart City and IoT</em> — 2021, 115 pp.</li>
+          <li><em>Knowledge Economy. Blockchain and Smart Contracts</em> — 2021, 126 pp.</li>
+        </ul>
+        <p class="meta">Full publication list available on the profiles above.</p>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <div class="container grid-two">
+        <div>
+          <h2>Contact</h2>
+          <p>For collaborations and talks, please include a brief outline (topic, audience, timeline) and constraints (on‑prem, data privacy, standards).</p>
+        </div>
+        <div class="card">
+          <p>Email: <a href="mailto:munister@outlook.com">munister@outlook.com</a><br/>
+             Telegram: <a href="https://t.me/vyanetto1">@vyanetto1</a></p>
+          <p class="meta">© 2025 Vyacheslav Munister</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer mini">
+    <div class="container mini-row">
+      <span class="copy">© 2025 Vyacheslav Munister</span>
+      <span class="sep">·</span>
+      <a class="email" href="mailto:munister@outlook.com">munister@outlook.com</a>
+      <span class="sep">·</span>
+      <a class="tg" href="https://t.me/vyanetto1">@vyanetto1</a>
+    </div>
+  </footer>
+
+  <script>
+(function(){
+  const btn = document.querySelector('.menu-toggle');
+  const nav = document.querySelector('header nav');
+  const panel = document.getElementById('mobile-panel');
+  if(!btn || !nav || !panel) return;
+
+  const ensureCloned = () => {
+    if(panel.childElementCount) return;
+    nav.querySelectorAll('a').forEach(a => panel.appendChild(a.cloneNode(true)));
+  };
+
+  const open = () => {
+    ensureCloned();
+    document.body.classList.add('menu-open');
+    btn.setAttribute('aria-expanded','true');
+    // lock scroll
+    document.documentElement.style.overflow='hidden';
+    document.body.style.overflow='hidden';
+  };
+
+  const close = () => {
+    document.body.classList.remove('menu-open');
+    btn.setAttribute('aria-expanded','false');
+    document.documentElement.style.overflow='';
+    document.body.style.overflow='';
+  };
+
+  btn.addEventListener('click', () => {
+    if(document.body.classList.contains('menu-open')) close(); else open();
+  });
+
+  panel.addEventListener('click', (e) => {
+    if(e.target.tagName === 'A') close();
+  });
+
+  window.addEventListener('keydown', (e) => { if(e.key === 'Escape') close(); });
+})();
+</script>
 </body>
 </html>
