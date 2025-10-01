@@ -1,151 +1,1298 @@
-<html lang="en"><head>
-<meta charset="UTF-8">
-	
-<link rel="shortcut icon" type="image/x-icon" href="https://github.githubassets.com/favicons/favicon.svg" />
-<link rel="mask-icon" type="" href="https://github.githubassets.com/favicons/favicon.svg" color="#111" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="style1.css">
-	
-<title> Glucksritter Munister</title>
-<meta name="viewport" content="width=device-width, initial-scale=1"> 	
-  <script>
-  window.console = window.console || function(t) {};
-	  
-  if (document.location.search.match(/type=embed/gi)) {
-    window.parent.postMessage("resize", "*");
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vyacheslav Munister — Research</title>
+  <meta name="description" content="Research portfolio — IoT, digital manufacturing, control, knowledge-based modeling." />
+  <link rel="canonical" href="https://munister-v.github.io/" />
+
+  <!-- Editorial Luxe Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,600;6..96,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== Editorial Luxe — tokens ===== */
+    :root{
+      --bg:#ffffff;          /* paper */
+      --ink:#101010;         /* rich black */
+      --ink-2:#3a3a3a;       /* secondary */
+      --muted:#6f747a;       /* captions */
+      --rule:#e8e8e8;        /* hairline */
+      --accent:#b79b57;      /* muted gold */
+      --radius:14px;
+      --maxw:1160px;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{ --bg:#0b0b0c; --ink:#f2f2f2; --ink-2:#d0d0d0; --muted:#9aa0a6; --rule:#1a1a1c; --accent:#c9ad6a; }
+    }
+
+    html{scroll-behavior:smooth}
+    body{ margin:0; background:var(--bg); color:var(--ink); font:16px/1.7 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; -webkit-font-smoothing:antialiased; }
+    .container{ width:min(100% - 2rem, var(--maxw)); margin-inline:auto; }
+
+    /* Header — severe, fashion-like */
+    header{ position:sticky; top:0; z-index:10; background:color-mix(in oklab, var(--bg) 92%, transparent); border-bottom:1px solid var(--rule); backdrop-filter:saturate(140%) blur(8px); }
+    .mast{ display:flex; align-items:center; justify-content:space-between; padding:.9rem 0; }
+    .brand{ font-family:"Bodoni Moda", serif; font-weight:600; letter-spacing:.06em; font-size:1.25rem; text-transform:uppercase; }
+    nav a{ color:var(--ink); text-decoration:none; font-weight:600; letter-spacing:.02em; margin-left:1.2rem; padding-bottom:.25rem; border-bottom:2px solid transparent; }
+    nav a:hover{ border-color:var(--ink); }
+    .menu-btn{ display:none; }
+    @media (max-width:900px){
+      nav{ display:none; }
+      nav.open{ display:grid; gap:.6rem; padding-bottom:.8rem; }
+      .menu-btn{ display:inline-flex; border:1px solid var(--rule); background:transparent; color:var(--ink); padding:.5rem .7rem; border-radius:8px; }
+      .mast{ flex-wrap:wrap; }
+    }
+
+    /* Hero — split editorial grid */
+    .hero{ padding:3.2rem 0 2.6rem; border-bottom:1px solid var(--rule); }
+    .grid-hero{ display:grid; grid-template-columns: 1.1fr .9fr; gap:2.2rem; align-items:end; }
+    @media (max-width:1000px){ .grid-hero{ grid-template-columns:1fr; gap:1rem; } }
+
+    h1{ font-family:"Bodoni Moda", serif; font-weight:700; font-size:clamp(2.4rem,3.6vw + 1rem,4.2rem); line-height:1.04; letter-spacing:.01em; margin:0; }
+    .kicker{ letter-spacing:.18em; text-transform:uppercase; font-weight:700; font-size:.8rem; color:var(--muted); }
+    .lead{ color:var(--ink-2); max-width:64ch; }
+
+    /* Section headings — numbered, understated */
+    main{ counter-reset: section; }
+    .section{ padding:2.4rem 0; border-bottom:1px solid var(--rule); }
+    .section h2{ font-family:"Bodoni Moda", serif; font-weight:600; letter-spacing:.04em; margin:0 0 .8rem; text-transform:uppercase; }
+    .section h2::before{ counter-increment: section; content: "" counter(section, upper-roman) ". "; color:var(--accent); font-weight:700; }
+
+    /* Subheads */
+    h3{ font-family:"Bodoni Moda", serif; font-weight:600; letter-spacing:.02em; margin:0 0 .4rem; }
+
+    /* Cards — hairline luxury */
+    .cards{ display:grid; gap:1rem; grid-template-columns:repeat(3,1fr); }
+    @media (max-width:1000px){ .cards{ grid-template-columns:1fr 1fr; }}
+    @media (max-width:680px){ .cards{ grid-template-columns:1fr; }}
+    .card{ border:1px solid var(--rule); border-radius:var(--radius); padding:1.1rem 1.2rem; background:color-mix(in oklab, var(--bg) 98%, transparent); }
+
+    /* Buttons */
+    .btnrow{ display:flex; gap:.8rem; flex-wrap:wrap; margin-top:1.1rem; }
+    .btn{ display:inline-flex; align-items:center; gap:.5rem; border:1px solid var(--rule); padding:.7rem .95rem; border-radius:999px; text-decoration:none; color:var(--ink); font-weight:700; }
+    .btn.primary{ border-color:var(--ink); }
+
+    /* Publications — minimal timeline */
+    .timeline{ display:grid; grid-template-columns: 7rem 1fr; column-gap:1.4rem; row-gap:1rem; }
+    .timeyear{ color:var(--muted); padding-top:.2rem; font-weight:700; }
+    .timeitem{ border-left:2px solid var(--rule); padding-left:1rem; }
+
+    /* Meta bits */
+    .muted{ color:var(--muted); }
+    .list{ margin:0; padding-left:1.1rem; }
+
+    footer{ color:var(--muted); padding:2.2rem 0 3rem; }
+
+    /* Micro-interactions */
+    a{ transition:border-color .2s ease, color .2s ease, background .2s ease; }
+
+    /* Print */
+    @media print{
+      header, .btnrow{ display:none !important; }
+      .container{ width:auto; margin:0 14mm; }
+      .section{ break-inside: avoid; }
+    }
+  </style>
+
+  <style>
+
+/* === Dark Luxe patch v1 — richer links, focus, cards, buttons, timeline, a11y === */
+
+/* Link tokens */
+:root{
+  --link:#0b57d0;
+  --link-hover:#b79b57;    /* muted gold */
+  --link-visited:#6b4fd3;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --link:#8ab4ff;
+    --link-hover:#c9ad6a;  /* gold in dark reads richer */
+    --link-visited:#b39ddb;
   }
-</script>
+}
+
+/* Global dark baseline (keeps existing palette but ensures contrast) */
+body{
+  background:#0b0b0c;       /* fallback for older engines */
+  color:#e9e9ec;
+}
+
+/* Default link styling (outside the header nav) */
+main a{
+  color:var(--link);
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+main a:hover{
+  color:var(--link-hover);
+  text-decoration-thickness:2px;
+}
+main a:visited{ color:var(--link-visited); }
+
+/* Visible keyboard focus */
+a:focus-visible, button:focus-visible, [role="button"]:focus-visible{
+  outline:2px solid var(--link-hover);
+  outline-offset:3px;
+  border-radius:8px;
+}
+
+/* Slightly stronger divider in dark */
+@media (prefers-color-scheme: dark){
+  :root{ --rule:#242427; } /* was often too low-contrast */
+}
+
+/* Anchor offset when using sticky header */
+section, .section{ scroll-margin-top:72px; }
+
+/* Cards — add a bit of "material" */
+.cards{ gap:1.2rem; }
+.card{
+  background:#0b0b0c; /* fallback */
+  background:color-mix(in oklab, #0b0b0c 96%, transparent);
+  box-shadow: 0 0.5px 0.5px rgba(0,0,0,.06), 0 6px 18px rgba(0,0,0,.06);
+  border-radius: var(--radius, 14px);
+}
+
+/* Buttons — stronger primary, subtle hover on others */
+button, .btn{ transition:filter .2s ease, background-color .2s ease, border-color .2s ease; }
+.btn.primary, button.primary{
+  background: var(--ink, #e9e9ec);
+  color: var(--bg, #0b0b0c);
+  border-color: transparent;
+}
+.btn.primary:hover, button.primary:hover{ filter:brightness(1.06); }
+
+.btn:hover{
+  background: color-mix(in oklab, #0b0b0c 94%, transparent);
+}
+
+/* Mobile menu panel when open */
+@media (max-width: 900px){
+  nav.open{
+    background: color-mix(in oklab, #0b0b0c 92%, transparent);
+    border:1px solid var(--rule, #242427);
+    padding:.8rem;
+    border-radius:12px;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; animation:none !important; }
+}
+
+/* Typographic comfort on wide viewports */
+@media (min-width: 1200px){
+  body{ font-size:17.5px; line-height:1.75; }
+}
+
+/* Active nav item (fallback) */
+nav a[aria-current="true"],
+nav a:hover{ border-color:var(--ink, #e9e9ec); }
+
+  </style>
+
+  <style>
+
+/* === Luxe Design Upgrade Pack — v2 === */
+/* 2) Fluid editorial typography */
+:root{ --lead:1.75; }
+h1{ font-size:clamp(2rem,1.6rem + 1.6vw,3rem); text-wrap:balance; letter-spacing:.01em; }
+h2{ font-size:clamp(1.3rem,1.1rem + 0.6vw,1.8rem); text-wrap:balance; }
+p{ max-inline-size:68ch; line-height:var(--lead); text-wrap:pretty; hyphens:auto; }
+
+/* 3) Animated underline ("gold thread") for links in main */
+main a{
+  color:var(--link);
+  text-decoration:none;
+  background-image:linear-gradient(currentColor,currentColor);
+  background-repeat:no-repeat;
+  background-position:0 100%;
+  background-size:0% 1px;
+  transition:background-size .25s ease, color .2s ease;
+}
+main a:hover{ color:var(--link-hover); background-size:100% 1px; }
+main a:visited{ color:var(--link-visited); }
+
+/* 4) Gradient border for cards (subtle gilded edge) */
+.card{
+  border:1px solid transparent;
+  background:
+    linear-gradient(var(--bg, #0b0b0c), var(--bg, #0b0b0c)) padding-box,
+    linear-gradient(180deg,#2b2b2f,#c9ad6a 50%,#2b2b2f) border-box;
+}
+
+/* 5) Timeline with pearls */
+.timeline{ position:relative; border-left:1px solid var(--rule); }
+.timeitem{
+  position:relative;
+  padding-left:1rem;
+  border-left:none; /* override previous border-left */
+}
+.timeitem::before{
+  content:""; position:absolute; left:-.58rem; top:.6rem;
+  width:.5rem; height:.5rem; border-radius:50%;
+  background:radial-gradient(circle,#c9ad6a 30%, #6b5b2e 70%);
+  box-shadow:0 0 0 2px #0b0b0c inset, 0 0 0 1px var(--rule);
+}
+.timeyear{
+  position:sticky; top:4.5rem; font-weight:800; color:var(--muted);
+  background:linear-gradient(0deg, rgba(11,11,12,.75), rgba(11,11,12,.75));
+  padding:.1rem 0;
+}
+
+/* 7) Second accent for tech feel */
+:root{ --accent-2:#2EA3A5; }
+.muted a:hover{ color:var(--accent-2); }
+code, kbd{ color:var(--accent-2); border:1px solid color-mix(in oklab,var(--accent-2) 40%, transparent); padding:.1rem .3rem; border-radius:.4rem; background:color-mix(in oklab, var(--bg) 96%, transparent); }
+
+/* 11) Reading progress bar */
+#progress{
+  position:fixed; inset:0 0 auto 0; height:2px; background:#c9ad6a; width:0;
+  z-index:9999; box-shadow:0 0 8px rgba(201,173,106,.38);
+}
+
+  </style>
+
+  <style>
+
+/* === Microtypography & Readability — v3 (fixed injection) === */
+::selection{ background:#c9ad6a33; color:#ffffff; }
+::-moz-selection{ background:#c9ad6a33; color:#ffffff; }
+
+h1,h2,h3,h4{
+  font-optical-sizing:auto;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.kicker{ 
+  font-variant-caps:all-small-caps; letter-spacing:.08em; color:var(--muted);
+  display:block; margin-bottom:.35rem;
+}
+p{ max-inline-size:68ch; }
+p + p{ margin-top:.7em; }
+
+ul,ol{ padding-inline-start:1.1rem; }
+ul li::marker{ color:var(--link-hover); }
+li{ margin-block:.25rem; }
+
+blockquote{
+  margin:1rem 0; padding:.9rem 1rem;
+  border-inline-start:2px solid var(--rule);
+  background:color-mix(in oklab, var(--bg) 96%, transparent);
+  border-radius:10px; color:color-mix(in oklab, var(--ink) 82%, var(--muted));
+  font-style:italic;
+}
+
+figure{ margin:1.2rem 0; }
+figcaption{ color:var(--muted); font-size:.95em; margin-top:.4rem; }
+
+abbr[title]{ text-decoration:underline dotted; text-underline-offset:2px; cursor:help; }
+small{ opacity:.85; letter-spacing:.01em; }
+
+.prose{ font-variant-numeric: lining-nums proportional-nums; }
+.tablelike, .num{ font-variant-numeric: lining-nums tabular-nums; }
+
+h1,h2,h3{ text-wrap:balance; }
+
+  </style>
+
+  <style>
+
+/* === Competition Luxe Pack — fixed + mini features === */
+
+/* Monogram watermark */
+.section.is-branded{ position:relative; isolation:isolate; }
+.section.is-branded::after{
+  content:"V. MUNISTER"; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  opacity:.035; letter-spacing:.35em; display:grid; place-items:center; text-align:center;
+  font-family:"Bodoni Moda", serif; font-weight:700; font-size:clamp(3rem, 8vw, 9rem);
+  background:repeating-linear-gradient(90deg, transparent 0 36px, #ffffff08 36px 37px);
+  -webkit-mask: radial-gradient(60% 60% at 50% 50%, #000 70%, transparent);
+          mask: radial-gradient(60% 60% at 50% 50%, #000 70%, transparent);
+}
+
+/* Drop-cap lede */
+.lede p:first-of-type::first-letter{
+  float:left; font-family:"Bodoni Moda", serif; font-weight:700;
+  font-size:3.8em; line-height:.8; padding:.06em .2em 0 0; color:#c9ad6a;
+}
+
+/* Chips + timeline years */
+.chip{display:inline-block;padding:.22rem .5rem;border-radius:999px;
+  border:1px solid color-mix(in oklab,#c9ad6a 55%,transparent);
+  background:color-mix(in oklab,var(--bg) 95%,transparent);
+  font-size:.82rem; letter-spacing:.03em; color:#c9ad6a;
+}
+.chip.alt{ color:#2EA3A5; border-color:color-mix(in oklab,#2EA3A5 55%,transparent); }
+.timeyear{
+  display:inline-block; padding:.22rem .5rem; border-radius:999px;
+  border:1px solid color-mix(in oklab,#c9ad6a 40%,transparent);
+  background:color-mix(in oklab,var(--bg) 95%,transparent);
+  color:#c9ad6a; font-weight:800; position:sticky; top:4.5rem;
+}
+
+/* Scroll-underline (graceful fallback) */
+.section h2{
+  text-decoration:underline; text-underline-offset:.24em; text-decoration-thickness:2px;
+  text-decoration-color:transparent;
+}
+@supports (animation-timeline: view()){
+  .section h2{ animation: underline 1s both; animation-timeline: view(); animation-range: entry 20% cover 30%; }
+  @keyframes underline{ to{ text-decoration-color:#c9ad6a; } }
+}
+
+/* Nav magnet + active gleam */
+nav a{ position:relative; transition:transform .12s ease; }
+nav a:hover{ transform:translateY(-1px); }
+nav a[aria-current="true"]::after{
+  content:""; position:absolute; left:0; right:0; bottom:-10px; height:2px;
+  background:linear-gradient(90deg,transparent,#c9ad6a,transparent);
+}
+
+/* Card inlay */
+.card{
+  position:relative; overflow:hidden;
+  background:linear-gradient(#0b0b0c,#0b0b0c) padding-box,
+             linear-gradient(180deg,#2b2b2f,#c9ad6a55 50%,#2b2b2f) border-box;
+  border:1px solid transparent;
+}
+.card:focus-within{ box-shadow:0 0 0 1px #c9ad6a33 inset, 0 0 0 2px #c9ad6a22; }
+
+/* Right sticky TOC */
+.toc{ 
+  position:fixed; right:max(16px, 4vw); top:96px; width:240px; 
+  display:none; z-index:50;
+  background:color-mix(in oklab, var(--bg) 92%, transparent);
+  border:1px solid var(--rule); border-radius:12px; padding:.6rem;
+  backdrop-filter:saturate(120%) blur(6px);
+}
+@media (min-width:1100px){ .toc{ display:block; } }
+.toc h4{ margin:.2rem .4rem .3rem; font-size:.88rem; color:var(--muted); letter-spacing:.06em; }
+.toc a{ display:block; padding:.35rem .5rem; border-left:1px solid var(--rule); opacity:.8; text-decoration:none; color:inherit; }
+.toc a:hover{ opacity:1; color:#c9ad6a; }
+.toc a[aria-current="true"]{ color:#c9ad6a; opacity:1; border-left-color:#c9ad6a; font-weight:700; }
+
+/* Print mode */
+@media print{
+  header, nav, #progress, .toc{ display:none !important; }
+  a{ color:#111; text-decoration:none; }
+  .card{ box-shadow:none; border-color:#ddd; }
+  .section{ break-inside:avoid; }
+}
+
+/* Mini feature: back-to-top dot */
+#backtotop{
+  position:fixed; right:max(16px,4vw); bottom:18px; width:38px; height:38px;
+  border-radius:999px; border:1px solid var(--rule);
+  background:color-mix(in oklab, var(--bg) 90%, transparent);
+  display:none; align-items:center; justify-content:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+}
+#backtotop.show{ display:flex; }
+#backtotop span{ font-size:16px; line-height:1; color:#c9ad6a; }
+
+/* Mini feature: copy-email button */
+.copy-mail{
+  display:inline-flex; align-items:center; gap:.25rem; margin-left:.5rem;
+  padding:.15rem .45rem; border-radius:999px; font-size:.78rem;
+  border:1px solid color-mix(in oklab,#c9ad6a 40%, transparent);
+  color:#c9ad6a; background:color-mix(in oklab,var(--bg) 95%, transparent);
+  cursor:pointer;
+}
+.copy-mail[aria-pressed="true"]{ color:#2EA3A5; border-color:color-mix(in oklab,#2EA3A5 50%, transparent); }
+
+  </style>
+
+<style id="elegance-pack-v10">
+/* === Elegance Clean v10 — no TOC, just crisp layout & footer === */
+
+:root{
+  --bg:#0a0d13;
+  --ink:#e9eaee;
+  --muted:rgba(233,234,238,.72);
+  --rule:rgba(255,255,255,.10);
+  --accent:#d4b673;
+  --base:4px;
+  --sp-1: calc(var(--base)*1);
+  --sp-2: calc(var(--base)*2);
+  --sp-3: calc(var(--base)*3);
+  --sp-4: calc(var(--base)*4);
+  --sp-6: calc(var(--base)*6);
+  --sp-8: calc(var(--base)*8);
+}
+
+html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+body{ background:var(--bg); color:var(--ink); line-height:1.6; }
+h1,h2,h3{ line-height:1.2; letter-spacing:.01em; margin:0 0 var(--sp-3); }
+h2{ margin-top:var(--sp-6); }
+
+/* Container */
+.container{ --container-w:min(1120px, 92vw); width:var(--container-w); margin-inline:auto; padding-inline:clamp(12px,3vw,24px); }
+.section{ padding-block: var(--sp-8); }
+
+/* Nav tidy */
+header .container{ display:flex; align-items:baseline; gap: var(--sp-4); }
+header nav{ display:flex; gap: clamp(.6rem,1.6vw,1rem); align-items:baseline; }
+header nav a{ text-decoration:none; padding-block:.75rem; color:var(--ink); opacity:.9; }
+header nav a:hover{ opacity:1; }
+header nav a[aria-current], header nav a.active{ box-shadow: inset 0 -2px 0 var(--accent); }
+
+/* Cards & lists */
+.cards{ display:grid; gap: var(--sp-4); grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); }
+.card{ border-radius:14px; padding: var(--sp-4);
+  background:linear-gradient(#0b0b0c,#0b0b0c) padding-box,
+             linear-gradient(180deg,#2b2b2f,#c9ad6a55 50%,#2b2b2f) border-box;
+  border:1px solid transparent; box-shadow:0 .5px .5px rgba(0,0,0,.04), 0 6px 16px rgba(0,0,0,.05);
+}
+ul{ padding-left:1.25rem; margin: var(--sp-3) 0; }
+li{ margin:.25rem 0; }
+li::marker{ color: color-mix(in oklab, var(--accent) 45%, white); }
+
+/* Links — calm and consistent */
+main a{ color: #cfe1ff; text-decoration:none; }
+main a:hover{ text-decoration:underline; text-underline-offset:2px; }
+
+/* Footer — simple, calm, aligned */
+.site-footer{ margin-top: var(--sp-8); border-top:1px solid var(--rule); background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.005)); }
+.site-footer .footer-inner{
+  display:grid; gap: var(--sp-4);
+  grid-template-columns: 2fr 1fr 1fr;
+  padding-block: var(--sp-4);
+  align-items:start;
+}
+@media (max-width: 960px){ .site-footer .footer-inner{ grid-template-columns:1fr; } }
+.site-footer .brand{ font-family: "Bodoni Moda","Spectral","Cormorant Garamond",serif; letter-spacing:.04em; }
+.site-footer .muted{ color:var(--muted); }
+.site-footer .footer-links{ display:grid; gap:.35rem; }
+.site-footer a{ color:rgba(230,230,235,.92); text-decoration:none; }
+.site-footer a:hover{ color:#fff; text-decoration:underline; text-underline-offset:2px; }
+.site-footer .footer-bottom{ display:flex; justify-content:space-between; align-items:center; padding-block:.8rem; border-top:1px solid var(--rule); color:var(--muted); }
+.site-footer .backtop{ text-decoration:none; padding:.35rem .7rem; border-radius:999px; border:1px solid var(--rule); }
+.site-footer .backtop:hover{ background:rgba(255,255,255,.06); color:#fff; }
+
+/* Chips only in footer */
+.chip{ display:inline-flex; align-items:center; gap:.4rem; padding:.35rem .75rem; border-radius:999px; border:1px solid var(--rule); background:transparent; color:var(--ink); font-size:.85rem; }
+</style>
 
 </head>
+<body>
+  <div id=\"progress\"></div>
+  <div id=\"progress\"></div>
+  <header>
+    <div class="container mast">
+      <div class="brand">Vyacheslav Munister</div>
+      <button class="menu-btn" aria-expanded="false" aria-controls="topnav">Menu</button>
+      <nav id="topnav" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#research">Research</a>
+        <a href="#publications">Publications</a>
+        <a href="#projects">Projects</a>
+        <a href="#software">Software</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-<body translate="no">
-<body onmousedown="return false;" onclick="return true;">
-  <div class="hero-section">	
-		<div class="section-center">
-			<div class="container-fluid">
-				<div class="row justify-content-center">
-					<div class="col-12 text-center">
-						<h1>Vyacheslav<br>Munister</h1>
-					</div>
-					<div class="col-12 text-center mb-2">
-						
-					</div>
-					<div class="col-12 text-center">
-						<p>
-<span class="travel hover-target"><a href="https://munister-v.github.io/cv.html" target="_blank"> about me </a></span> 
-<span class="nature hover-target"><a href="https://t.me/vyanetto1" target="_blank">contact </a></span>
-						</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>	
-	
-	<div class="about-section">	
-		<div class="about-close hover-target"></div>
-		<div class="section-center">
-			<div class="container">
-				<div class="row justify-content-center">
-					<div class="col-12 text-center">
-						 <img src="https://raw.githubusercontent.com/munister-v/munister-v.github.io/main/images/back2version.jpg" alt="">
-					</div>
-					<div class="col-lg-8 text-center mt-3">
-						<p class="mb-1">S</p>
-					</div>
-					<div class="col-12 text-center">
-						<p class="mb-0"><span>C</span></p>
-					</div>
-				</div>
-			</div>
-		</div>		
-	</div>
-	
-	
-	
-	<div class="cursor" id="cursor" style="left: 749px; top: 738px;"></div>
-	<div class="cursor2" id="cursor2" style="left: 749px; top: 738px;"></div>
-	<div class="cursor3" id="cursor3" style="left: 749px; top: 738px;"></div>
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container grid-hero">
+        <div>
+          <div class="kicker">Research</div>
+          <h1>IoT, Digital Manufacturing & Control</h1>
+        </div>
+        <div>
+          <p class="lead">Mission: build local‑first, audit‑ready control and twin systems that run on‑prem with low latency. Deliver reproducible research that ships as production‑grade tools.</p>
+          <div class="btnrow">
+            <a class="btn primary" href="#contact">Contact</a>
+            <a class="btn" href="/cv.html">Full CV</a>
+          </div>
+        </div>
+      </div>
+    </section>
 
-	<!-- Link to page
-	================================================== -->
+    <!-- ABOUT -->
+    <section id="about" class="section">
+      <div class="container">
+        <h2>About</h2>
+        <div class="cards" style="grid-template-columns:1.2fr .8fr;">
+          <div class="card">
+            <p>I work at the junction of research and production: edge computing for manufacturing, CNC/CAM workflows, and data‑driven control under on‑prem constraints. I favor privacy‑first stacks and reproducible methods suitable for academic and industrial environments.</p>
+            <p class="muted">Kyiv region, Ukraine · Remote & on‑site</p>
+          </div>
+          <div class="card">
+            <h3>Profiles</h3>
+            <ul class="list">
+              <li><a href="https://orcid.org/0000-0002-2603-9531">ORCID</a></li>
+              <li><a href="https://www.scopus.com/">SCOPUS</a></li>
+              <li><a href="https://scholar.google.com/">Google Scholar</a></li>
+              <li><a href="https://www.researchgate.net/">ResearchGate</a></li>
+              <li><a href="https://www.semanticscholar.org/">Semantic Scholar</a></li>
+              <li><a href="https://t.me/vyanetto1">Telegram</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
 
-	<a href="https://front.codes/" class="logo hover-target" target="_blank">
-		<img src="https://assets.codepen.io/1462889/fcy.png" alt="">
-	</a>
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-1b93190375e9ccc259df3a57c1abc0e64599724ae30d7ea4c6877eb615f89387.js"></script>
+    <!-- RESEARCH AREAS -->
+    <section id="research" class="section">
+      <div class="container">
+        <h2>Research Areas</h2>
+<div class="muted" style="margin:.3rem 0 .8rem"><span class="chip">on‑prem</span> <span class="chip alt">low‑latency</span> <span class="chip">audit‑ready</span></div>
+        <div class="cards">
+          <div class="card"><h3>Industrial IoT & Edge</h3><p class="muted">Sensor fusion, robust control, energy‑aware pipelines; local‑first stacks for factory floors.</p></div>
+          <div class="card"><h3>Digital Twins</h3><p class="muted">Process twins and verification models for logistics and production; simulation‑assisted MPC.</p></div>
+          <div class="card"><h3>Vision‑driven QA</h3><p class="muted">Lightweight CV modules for defect detection and metrology on commodity hardware.</p></div>
+          <div class="card"><h3>Knowledge‑based Modeling</h3><p class="muted">Relational / “non‑ontological” frameworks for DSLs and decision support.</p></div>
+          <div class="card"><h3>Secure Infrastructure</h3><p class="muted">On‑prem automation, data minimization, and auditability for regulated industries.</p></div>
+          <div class="card"><h3>Education & Tooling</h3><p class="muted">Hands‑on curricula, simulators, and open stacks for labs and SMEs.</p></div>
+        </div>
+      </div>
+    </section>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-      <script id="rendered-js">
+    <!-- PUBLICATIONS (timeline) -->
+    <section id="publications" class="section">
+      <div class="container">
+        <h2>Selected Publications</h2>
+        <div class="timeline" style="margin-top:.8rem;">
+          <div class="timeyear">2025</div>
+          <div class="timeitem"><strong>Edge‑enabled temperature control for manufacturing</strong> — predictive module and evaluation (preprint).</div>
 
-(function ($) {"use strict";
+          <div class="timeyear">2024</div>
+          <div class="timeitem"><strong>Digital twins for logistics safety</strong> — verification and expert support methods.</div>
 
-  //Page cursors
+          <div class="timeyear">2024</div>
+          <div class="timeitem"><strong>Knowledge‑based modeling for intelligent production</strong> — relational DSLs.</div>
+        </div>
+        <p class="muted" style="margin-top:1rem;">Full list in the <a href="/cv.html">CV</a>.</p>
+      </div>
+    </section>
 
-  document.getElementsByTagName("body")[0].addEventListener("mousemove", function (n) {
-    t.style.left = n.clientX + "px",
-    t.style.top = n.clientY + "px",
-    e.style.left = n.clientX + "px",
-    e.style.top = n.clientY + "px",
-    i.style.left = n.clientX + "px",
-    i.style.top = n.clientY + "px";
-  });
-  var t = document.getElementById("cursor"),
-  e = document.getElementById("cursor2"),
-  i = document.getElementById("cursor3");
-  function n(t) {
-    e.classList.add("hover"), i.classList.add("hover");
+    <!-- PROJECTS -->
+    <section id="projects" class="section">
+      <div class="container">
+        <h2>Projects</h2>
+        <div class="cards">
+          <div class="card">
+            <h3>CNCera</h3>
+            <p class="muted">Local CNC/CAM platform (Docker, Python, n8n, PostgreSQL, Redis). File‑to‑result loop with on‑prem automation.</p>
+            <div class="muted"><span class="chip">on‑prem</span> <span class="chip alt">low‑latency</span></div>
+          </div>
+          <div class="card">
+            <h3>Edge Control</h3>
+            <p class="muted">Predictive temperature control and digital fabrication utilities for resin/FDM 3D printing workflows.</p>
+            <div class="muted"><span class="chip alt">low‑latency</span> <span class="chip">on‑device</span></div>
+          </div>
+          <div class="card">
+            <h3>Verification Models</h3>
+            <p class="muted">Forklift & logistics verification with 30+ parameters; safety and throughput evaluation.</p>
+            <div class="muted"><span class="chip">audit‑ready</span> <span class="chip">standards</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOFTWARE -->
+    <section id="software" class="section">
+      <div class="container">
+        <h2>Registered Software (highlights)</h2>
+        <ul class="list">
+          <li>Wireless network logic analyzer with MIMO Wi‑Fi 6E monitoring.</li>
+          <li>SSID verifier with forwarding mechanism.</li>
+          <li>Network traffic simulator with proxy tables.</li>
+          <li>Fuzzy‑inference simulator for digital devices.</li>
+          <li>Automatic Cisco network hardware configuration generator.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section">
+      <div class="container">
+        <h2>Contact</h2>
+        <div class="cards" style="grid-template-columns:1fr 1fr;">
+          <div class="card">
+            <p>Email: <a href="mailto:munister@outlook.com">munister@outlook.com</a><br>Telegram: <a href="https://t.me/vyanetto1">@vyanetto1</a></p>
+          </div>
+          <div class="card">
+            <p>For collaborations and talks, please include a brief outline (topic, audience, timeline) and constraints (on‑prem, data privacy, standards).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>
+      <div class="brand">Vyacheslav Munister — Editorial edition</div>
+      <div class="muted">Researcher in digital manufacturing, IIoT & intelligent production systems.</div>
+    </div>
+    <div>
+      <strong class="muted" style="display:block;margin:0 0 .6rem;">Navigate</strong>
+      <nav class="footer-links">
+        <a href="#about">About</a>
+        <a href="#research">Research</a>
+        <a href="#publications">Publications</a>
+        <a href="#projects">Projects</a>
+        <a href="#software">Software</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+    <div>
+      <strong class="muted" style="display:block;margin:0 0 .6rem;">Connect</strong>
+      <div class="footer-links">
+        <a href="mailto:munister@outlook.com">munister@outlook.com</a>
+        <a href="https://t.me/vyanetto1">Telegram: @vyanetto1</a>
+      </div>
+      <div class="pref-chips" style="margin-top:.6rem;">
+        <button id="bg-toggle" class="chip" role="switch" aria-checked="true">
+          <span data-plain="Plain" data-depth="Depth">Depth</span>
+        </button>
+        <button id="mute-toggle" class="chip" role="switch" aria-checked="true">
+          <span data-on="Sound on" data-off="Sound off">Sound on</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <div>© 2025 Vyacheslav Munister</div>
+    <a class="backtop" href="#top" aria-label="Back to top">↑ Back to top</a>
+  </div>
+</footer>
+
+
+  <script>
+    // Year
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Mobile menu
+    const btn = document.querySelector('.menu-btn');
+    const nav = document.getElementById('topnav');
+    btn.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  </script>
+
+  <script>
+
+// === Dark Luxe patch v1: active nav & robust anchor focus ===
+(() => {
+  // Active nav highlighting via IntersectionObserver
+  const sections = Array.from(document.querySelectorAll('section[id]'));
+  const navLinks = Array.from(document.querySelectorAll('nav a[href^="#"]'));
+  const byHash = Object.fromEntries(navLinks.map(a => [a.getAttribute('href'), a]));
+
+  if (sections.length && navLinks.length && 'IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          const href = `#${entry.target.id}`;
+          navLinks.forEach(a => a.removeAttribute('aria-current'));
+          if (byHash[href]) byHash[href].setAttribute('aria-current', 'true');
+        }
+      });
+    }, { rootMargin: "-50% 0px -40% 0px", threshold: [0, .2, .4, .6, .8, 1] });
+    sections.forEach(s => io.observe(s));
   }
-  function s(t) {
-    e.classList.remove("hover"), i.classList.remove("hover");
+
+  // Improve skip-to-content when navigating with keyboard
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target){
+        // allow native scroll then focus
+        setTimeout(() => {
+          target.setAttribute('tabindex', '-1');
+          target.focus({ preventScroll: true });
+        }, 0);
+      }
+    });
+  });
+})();
+
+  </script>
+
+  <script>
+
+// Luxe Pack v2 — reading progress
+(() => {
+  const bar = document.getElementById('progress');
+  if (!bar) return;
+  const set = () => {
+    const h = document.documentElement;
+    const p = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    bar.style.width = Math.max(0, Math.min(100, p)) + '%';
+  };
+  addEventListener('scroll', set, { passive:true });
+  addEventListener('resize', set);
+  set();
+})();
+
+  </script>
+
+  <script>
+
+// === Microtypography helpers v3 (fixed) ===
+(() => {
+  const tighten = (el) => {
+    const t = el.textContent.trim();
+    const parts = t.split(/\s+/);
+    if (parts.length > 3){
+      parts[parts.length-2] = parts[parts.length-2] + '\u00A0' + parts[parts.length-1];
+      parts.pop();
+      el.textContent = parts.join(' ');
+    }
+  };
+  document.querySelectorAll('h1, h2, h3').forEach(tighten);
+
+  document.querySelectorAll('.timeline, .timeitem').forEach(node => {
+    node.innerHTML = node.innerHTML
+      .replace(/(\b\d{4})\s*-\s*(\d{4}\b)/g, '$1\u2013$2')
+      .replace(/\s+-\s+/g, ' \u2013 ');
+  });
+
+  document.querySelectorAll('main a[href^="http"]').forEach(a => {
+    if (a.hostname !== location.hostname){
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+    }
+  });
+
+  const fixNbsp = (root) => {
+    root.querySelectorAll('[lang="uk"], [lang="ru"]').forEach(el => {
+      el.innerHTML = el.innerHTML
+        .replace(/(\s|^)([вВуУіІЙй])\s+/g, '$1$2\u00A0')
+        .replace(/(\s|^)([кК]|[іІ]|[уУ]|[вВ])\s+/g, '$1$2\u00A0');
+    });
+  };
+  fixNbsp(document);
+
+  document.querySelectorAll('figcaption, .tagline').forEach(el => tighten(el));
+})();
+
+  </script>
+
+  <script>
+
+// === Competition Luxe Pack — fixed injection + mini features ===
+(() => {
+  // Brand few sections and set lede
+  ['research','publications'].forEach(id => {
+    const s = document.getElementById(id);
+    if (s) s.classList.add('is-branded');
+  });
+  const firstSection = document.querySelector('main section');
+  if (firstSection) firstSection.classList.add('lede');
+
+  // Build right-side TOC
+  const secs = Array.from(document.querySelectorAll('main section[id]'));
+  if (secs.length){
+    const toc = document.createElement('aside');
+    toc.className = 'toc';
+    toc.innerHTML = '<h4>On this page</h4>';
+    secs.forEach(s => {
+      const h2 = s.querySelector('h2'); if (!h2) return;
+      const a = document.createElement('a');
+      a.href = `#${s.id}`;
+      a.textContent = h2.textContent.replace(/^[IVXLCDM]+\.\s+/, '');
+      toc.appendChild(a);
+    });
+    document.body.appendChild(toc);
+    const tocLinks = Array.from(toc.querySelectorAll('a'));
+    const linkByHash = Object.fromEntries(tocLinks.map(a => [a.getAttribute('href'), a]));
+    if ('IntersectionObserver' in window){
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if (e.isIntersecting){
+            const href = `#${e.target.id}`;
+            tocLinks.forEach(a => a.removeAttribute('aria-current'));
+            if (linkByHash[href]) linkByHash[href].setAttribute('aria-current','true');
+          }
+        });
+      }, { rootMargin: "-50% 0px -40% 0px", threshold: [0,.2,.4,.6,.8,1] });
+      secs.forEach(s => io.observe(s));
+    }
   }
-  s();
-  for (var r = document.querySelectorAll(".hover-target"), a = r.length - 1; a >= 0; a--) {if (window.CP.shouldStopExecution(0)) break;
-    o(r[a]);
-  }window.CP.exitedLoop(0);
-  function o(t) {
-    t.addEventListener("mouseover", n), t.addEventListener("mouseout", s);
+
+  // Mini: Back-to-top dot
+  const dot = document.createElement('button');
+  dot.id = 'backtotop';
+  dot.type = 'button';
+  dot.setAttribute('aria-label','Back to top');
+  dot.innerHTML = '<span>↑</span>';
+  document.body.appendChild(dot);
+  dot.addEventListener('click', ()=> window.scrollTo({ top:0, behavior:'smooth' }));
+  const showDot = () => {
+    const sc = document.documentElement.scrollTop || document.body.scrollTop;
+    dot.classList.toggle('show', sc > 600);
+  };
+  addEventListener('scroll', showDot, { passive:true });
+  addEventListener('resize', showDot);
+  showDot();
+
+  // Mini: Copy-email next to mailto links
+  document.querySelectorAll('a[href^="mailto:"]').forEach(a => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-mail';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', async () => {
+      try{
+        const email = a.getAttribute('href').replace(/^mailto:/,'');
+        await navigator.clipboard.writeText(email);
+        try{
+          if (localStorage && localStorage.getItem('vm_mute')==='1') { /* muted */ } else {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (AC){
+            if (!window.__vm_ac) window.__vm_ac = new AC();
+            const ac = window.__vm_ac; if (ac.state === 'suspended') await ac.resume();
+            const o = ac.createOscillator(); const g = ac.createGain();
+            o.type = 'triangle'; o.frequency.value = 1250; g.gain.value = 0.045;
+            o.connect(g).connect(ac.destination);
+            const now = ac.currentTime; o.start(now); o.stop(now + 0.055);
+          }
+        }
+        }catch(_e){}
+        btn.setAttribute('aria-pressed','true');
+        btn.textContent = 'Copied';
+        setTimeout(()=>{ btn.removeAttribute('aria-pressed'); btn.textContent = 'Copy'; }, 1600);
+      }catch(e){ /* ignore */ }
+    });
+    a.after(btn);
+  });
+
+  // View Transitions for anchor navigation if supported
+  if (document.startViewTransition){
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        if (!target) return;
+        e.preventDefault();
+        document.startViewTransition(() => { location.hash = id; });
+      });
+    });
+  }
+})();
+
+  </script>
+
+  <style>
+    /* Keyboard-first hint bubble */
+    .kbd-hint{
+      position:fixed; z-index:9999; padding:.22rem .45rem; font-size:.78rem;
+      border-radius:8px; border:1px solid var(--rule);
+      background:color-mix(in oklab, var(--bg) 95%, transparent);
+      color:var(--muted); box-shadow:0 6px 16px rgba(0,0,0,.14);
+      pointer-events:none; opacity:0; transform:translateY(2px);
+      transition:opacity .12s ease, transform .12s ease;
+    }
+    .kbd-hint.show{ opacity:1; transform:translateY(0); }
+    @media (prefers-reduced-motion: reduce){
+      .kbd-hint{ transition:none; }
+    }
+  </style>
+
+
+  <script>
+  // Keyboard-first hint: show on Tab focus
+  (() => {
+    let keyboardMode = false;
+    let bubble;
+    const HINT_TEXT = 'Press Enter to open';
+    const eligible = (el) => el && (el.matches('a, button, [role="button"]') || el.getAttribute('tabindex') === '0');
+
+    const ensureBubble = () => {
+      if (!bubble){
+        bubble = document.createElement('div');
+        bubble.className = 'kbd-hint';
+        bubble.textContent = HINT_TEXT;
+        document.body.appendChild(bubble);
+      }
+      return bubble;
+    };
+
+    addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') keyboardMode = true;
+    }, { capture: true });
+
+    addEventListener('mousedown', () => { keyboardMode = false; }, { capture: true });
+    addEventListener('touchstart', () => { keyboardMode = false; }, { capture: true });
+
+    const hide = () => { if (bubble) bubble.classList.remove('show'); };
+    const showFor = (el) => {
+      const b = ensureBubble();
+      const r = el.getBoundingClientRect();
+      const top = Math.max(12, r.top + window.scrollY - 36);
+      const left = Math.min(window.scrollX + r.left, window.scrollX + window.innerWidth - 160);
+      b.style.top = top + 'px';
+      b.style.left = left + 'px';
+      b.classList.add('show');
+      setTimeout(hide, 1400);
+    };
+
+    addEventListener('focusin', (e) => {
+      if (!keyboardMode) return;
+      const el = e.target;
+      if (eligible(el)){
+        showFor(el);
+      }
+    });
+    addEventListener('blur', hide, true);
+  })();
+  </script>
+
+
+  <style>
+    /* === Tokens & adaptive refinements === */
+    :root{
+      --chip-bg: color-mix(in oklab, var(--fg) 6%, transparent);
+      --chip-fg: var(--muted);
+      --chip-alt-bg: color-mix(in oklab, var(--accent, #6ea8fe) 24%, transparent);
+      --chip-alt-fg: color-mix(in oklab, var(--fg) 10%, #000);
+      --dim-opacity: .38;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:.35rem;
+      padding:.18rem .5rem; border-radius:999px;
+      border:1px solid var(--rule); background:var(--chip-bg); color:var(--chip-fg);
+      font-size:.78rem; line-height:1.2; white-space:nowrap; user-select:none;
+    }
+    .chip.alt{ background:var(--chip-alt-bg); color:var(--chip-alt-fg); border-color:transparent; }
+    .chip[role="switch"], .chip[role="button"], .chip[data-filter]{ cursor:pointer; }
+    .chip.active{ outline:2px solid color-mix(in oklab, var(--accent, #6ea8fe) 45%, transparent); outline-offset:2px; }
+    .dim{ opacity:var(--dim-opacity); filter:saturate(.75) grayscale(.25); transition:opacity .18s ease, filter .18s ease; }
+
+    /* Cards grid – try to target common patterns without breaking custom CSS */
+    .cards, .grid.cards, .projects .cards, .projects .grid{
+      display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;
+    }
+    .card{ border-radius:16px; padding:1rem; }
+    @media (max-width: 900px){
+      .lead{ font-size:1rem; }
+      .card{ padding:.9rem; }
+    }
+    @media (max-width: 640px){
+      h1{ font-size:1.75rem; }
+      .lead{ font-size:.95rem; }
+      .chip{ font-size:.74rem; }
+      .cards, .grid.cards, .projects .cards, .projects .grid{ gap:.8rem; }
+    }
+  </style>
+
+  <script>
+  (() => {
+    const norm = (s) => (s||'').toLowerCase().trim();
+    const splitTags = (s) => norm(s).split(/[,\s]+/).filter(Boolean);
+
+    // Ensure an element acts like a "card"
+    const asCard = (el) => el.closest('[data-card], .card, article, li, section, div');
+
+    // 4.1 Backfill or generate chips
+    document.querySelectorAll('[data-tags]').forEach(el => {
+      const tags = splitTags(el.getAttribute('data-tags'));
+      const card = asCard(el) || el;
+      card.dataset.tags = tags.join(' ');
+      if (!card.querySelector('.chipbox')){
+        const box = document.createElement('div');
+        box.className = 'chipbox muted';
+        tags.forEach(t => {
+          const chip = document.createElement('span');
+          chip.className = 'chip' + (t.includes('low-latency') || t.includes('on-device') ? ' alt' : '');
+          chip.dataset.filter = t;
+          chip.textContent = t;
+          box.appendChild(chip);
+        });
+        (card.querySelector('.muted') || card).appendChild(box);
+      }
+    });
+
+    // If there are chips but no data-tags on the card, infer and set
+    document.querySelectorAll('.chip').forEach(ch => {
+      const card = asCard(ch);
+      if (card && !card.dataset.tags){
+        const inferred = Array.from(card.querySelectorAll('.chip')).map(c => norm(c.textContent));
+        if (inferred.length) card.dataset.tags = inferred.join(' ');
+      }
+    });
+
+    // 4.2 Click-to-filter logic
+    let activeTag = null;
+    const getCards = () => Array.from(document.querySelectorAll('[data-tags]'));
+
+    const updateFilter = () => {
+      const chips = Array.from(document.querySelectorAll('.chip[data-filter]'));
+      chips.forEach(c => c.classList.toggle('active', norm(c.dataset.filter) === activeTag));
+      getCards().forEach(card => {
+        const has = (card.dataset.tags || '').split(/\s+/).includes(activeTag);
+        card.classList.toggle('dim', !!activeTag && !has);
+      });
+      // Reflect active filter in :root data (optionally for CSS hooks)
+      document.documentElement.dataset.activeTag = activeTag || '';
+    };
+
+    // Delegate clicks
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.chip[data-filter]');
+      if (!btn) return;
+      const tag = norm(btn.dataset.filter || btn.textContent);
+      activeTag = (activeTag === tag) ? null : tag;
+      updateFilter();
+    });
+
+    // Escape clears filter
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && activeTag){ activeTag = null; updateFilter(); }
+    });
+
+    // 4.3 Mute toggle wiring
+    const muteBtn = document.getElementById('mute-toggle');
+    if (muteBtn){
+      const loadState = () => (localStorage.getItem('vm_mute') === '1');
+      const apply = (muted) => {
+        muteBtn.setAttribute('aria-checked', String(!muted));
+        const label = muteBtn.querySelector('[data-on]');
+        if (label){
+          label.textContent = muted ? label.getAttribute('data-off') : label.getAttribute('data-on');
+        }
+      };
+      apply(loadState());
+      muteBtn.addEventListener('click', () => {
+        const muted = !(localStorage.getItem('vm_mute') === '1') ? true : false; // toggle
+        localStorage.setItem('vm_mute', muted ? '1' : '0');
+        apply(muted);
+      });
+    }
+
+    // 4.4 Progressive enhancement: mark existing text chips clickable for filtering
+    document.querySelectorAll('.chip').forEach(ch => {
+      if (!ch.dataset.filter){
+        ch.dataset.filter = norm(ch.textContent);
+      }
+      ch.setAttribute('tabindex','0');
+      ch.setAttribute('role','button');
+      ch.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          ch.click();
+        }
+      });
+    });
+
+  })();
+  </script>
+
+  <script>
+  (() => {
+    const map = {
+      "cncera": "on-prem low-latency",
+      "edge control": "low-latency on-device",
+      "verification models": "audit-ready standards"
+    };
+    document.querySelectorAll('h3').forEach(h => {
+      const key = (h.textContent || '').toLowerCase().trim();
+      if (map[key]){
+        const card = h.closest('[data-card], .card, article, li, section, div');
+        if (card && !card.hasAttribute('data-tags')){
+          card.setAttribute('data-tags', map[key]);
+        }
+      }
+    });
+  })();
+  </script>
+
+
+  <style>
+    /* Smooth, restrained animation */
+    .card { transition: opacity .18s ease, transform .18s ease, filter .18s ease; will-change: opacity, transform; }
+    .dim { transform: scale(.985); }
+    @media (prefers-reduced-motion: reduce){
+      .card { transition: none; }
+      .dim { transform: none; }
+    }
+
+    /* Focus outline for keyboard nav */
+    :focus-visible { outline: 2px solid color-mix(in oklab, var(--accent, #6ea8fe) 60%, transparent); outline-offset: 2px; border-radius: 8px; }
+
+    /* Dark backgrounds: plain vs depth (subtle gradients) */
+    body { background: var(--bg, #0b0e14); }
+    body.bg-depth {
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(255,255,255,.03), transparent 70%),
+        radial-gradient(1000px 500px at 95% 10%, rgba(255,255,255,.02), transparent 70%),
+        linear-gradient(180deg, #0a0d13 0%, #0a0c11 30%, #0b0e14 100%);
+      background-attachment: fixed;
+    }
+  </style>
+
+  <script id="research-tags-data" type="application/json">
+    ["on-prem","low-latency","audit-ready","local-first","deterministic"]
+  </script>
+  <script>
+  (() => {
+    const box = document.getElementById('research-tags-box');
+    const dataEl = document.getElementById('research-tags-data');
+    if (box && dataEl){
+      try{
+        const tags = JSON.parse(dataEl.textContent).filter(Boolean);
+        box.innerHTML = "";
+        tags.forEach(t => {
+          const s = document.createElement('span');
+          s.className = 'chip' + (String(t).includes('low-latency') ? ' alt' : '');
+          s.dataset.filter = t;
+          s.textContent = t;
+          box.appendChild(s);
+        });
+      }catch(_e){ /* ignore */ }
+    }
+  })();
+  </script>
+
+  <script>
+  (() => {
+    const norm = (s) => (s||'').toLowerCase().trim();
+    const syncUI = (tag) => {
+      const t = norm(tag);
+      const chips = document.querySelectorAll('.chip[data-filter]');
+      const cards = document.querySelectorAll('[data-tags]');
+
+      chips.forEach(c => {
+        const ct = norm(c.dataset.filter || c.textContent);
+        c.classList.toggle('active', !!t && ct === t);
+      });
+      cards.forEach(card => {
+        const has = (card.dataset.tags || '').split(/\s+/).includes(t);
+        card.classList.toggle('dim', !!t && !has);
+      });
+    };
+
+    const setTag = (t) => {
+      // store on <html> so the previous script remains a single source of truth
+      document.documentElement.dataset.activeTag = t || "";
+      syncUI(t);
+      // reflect in URL
+      const url = new URL(location.href);
+      if (t) url.searchParams.set('tag', t);
+      else url.searchParams.delete('tag');
+      history.replaceState(null, "", url);
+    };
+
+    const applyFromURL = () => {
+      const t = (new URL(location.href)).searchParams.get('tag') || "";
+      setTag(norm(t));
+    };
+
+    // initial
+    applyFromURL();
+    // back/forward
+    addEventListener('popstate', applyFromURL);
+
+    // also watch changes from the other script (dataset change)
+    const mo = new MutationObserver(() => {
+      const t = document.documentElement.dataset.activeTag || "";
+      syncUI(t);
+      // keep URL in sync (no loop; replaceState is idempotent)
+      const url = new URL(location.href);
+      if (t) url.searchParams.set('tag', t);
+      else url.searchParams.delete('tag');
+      history.replaceState(null, "", url);
+    });
+    mo.observe(document.documentElement, { attributes:true, attributeFilter:['data-active-tag'] });
+  })();
+  </script>
+
+  <script>
+  (() => {
+    const btn = document.getElementById('bg-toggle');
+    if (!btn) return;
+    const load = () => (localStorage.getItem('vm_bg') || 'depth');
+    const apply = (mode) => {
+      const depth = (mode === 'depth');
+      document.body.classList.toggle('bg-depth', depth);
+      btn.setAttribute('aria-checked', String(depth));
+      const label = btn.querySelector('[data-plain]');
+      if (label){
+        label.textContent = depth ? label.getAttribute('data-depth') : label.getAttribute('data-plain');
+      }
+    };
+    let mode = load();
+    apply(mode);
+    btn.addEventListener('click', () => {
+      mode = (mode === 'depth') ? 'plain' : 'depth';
+      localStorage.setItem('vm_bg', mode);
+      apply(mode);
+    });
+  })();
+  </script>
+
+
+  <script>
+  // Remove any "On this page" TOC-like block
+  (() => {
+    const cands = Array.from(document.querySelectorAll('nav, aside, section, div')).filter(el => {
+      const txt = (el.textContent || '').trim();
+      return /on\s+this\s+page/i.test(txt) && el.querySelector('a[href^="#"]');
+    });
+    cands.forEach(el => el.remove());
+    // Remember preference so other scripts won't touch it
+    localStorage.setItem('vm_toc_remove','1');
+  })();
+  </script>
+
+
+<script id="elegance-pack-v10-js">
+(()=>{
+  const moveTogglesToFooter = ()=>{
+    const target = document.querySelector('footer .pref-chips');
+    if(!target) return;
+    ['bg-toggle','mute-toggle'].forEach(id=>{
+      const nodes = Array.from(document.querySelectorAll('#'+id));
+      nodes.forEach((n,idx)=>{ if(!n.closest('footer')) target.appendChild(n); if(idx>0) n.remove(); });
+    });
+  };
+  moveTogglesToFooter();
+
+  // Depth toggle
+  const bgBtn = document.getElementById('bg-toggle');
+  if(bgBtn){
+    const current = localStorage.getItem('vm_bg_depth') || 'on';
+    if(current==='on') document.body.classList.add('bg-depth');
+    bgBtn.setAttribute('aria-checked', current==='on' ? 'true' : 'false');
+    bgBtn.addEventListener('click', ()=>{
+      const on = document.body.classList.toggle('bg-depth');
+      localStorage.setItem('vm_bg_depth', on ? 'on' : 'off');
+      bgBtn.setAttribute('aria-checked', on ? 'true' : 'false');
+      const span = bgBtn.querySelector('span');
+      if(span){ span.textContent = on ? (span.dataset.depth||'Depth') : (span.dataset.plain||'Plain'); }
+    });
   }
 
+  // Mute toggle
+  const muteBtn = document.getElementById('mute-toggle');
+  if(muteBtn){
+    const muted = localStorage.getItem('vm_mute_ui') === '1';
+    muteBtn.setAttribute('aria-checked', muted ? 'true' : 'false');
+    const span = muteBtn.querySelector('span');
+    if(span){ span.textContent = muted ? (span.dataset.off||'Sound off') : (span.dataset.on||'Sound on'); }
+    muteBtn.addEventListener('click', ()=>{
+      const now = !(localStorage.getItem('vm_mute_ui') === '1');
+      localStorage.setItem('vm_mute_ui', now ? '1' : '0');
+      muteBtn.setAttribute('aria-checked', now ? 'true' : 'false');
+      if(span){ span.textContent = now ? (span.dataset.off||'Sound off') : (span.dataset.on||'Sound on'); }
+    });
+  }
+})();
+</script>
 
-  //About page
-
-  $(".about-text").on('click', function () {
-    $("body").addClass("about-on");
-  });
-  $(".about-close").on('click', function () {
-    $("body").removeClass("about-on");
-  });
-
-
-  // portfolio page
-
-  $(".travel").on('click', function () {
-    $("body").addClass("travel-on");
-  });
-  $(".travel-close").on('click', function () {
-    $("body").removeClass("travel-on");
-  });
-
-  // portfolio page
-
-  $(".wildlife").on('click', function () {
-    $("body").addClass("wildlife-on");
-  });
-  $(".wildlife-close").on('click', function () {
-    $("body").removeClass("wildlife-on");
-  });
-
-
-  // portfolio page
-
-  $(".nature").on('click', function () {
-    $("body").addClass("nature-on");
-  });
-  $(".nature-close").on('click', function () {
-    $("body").removeClass("nature-on");
-  });
-
-})(jQuery);
-    </script>
- 
-</body></html>
+</body>
+</html>
