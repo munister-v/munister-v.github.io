@@ -459,27 +459,172 @@ img, video{ max-width:100%; height:auto; display:block; }
 a, .link{ word-break: break-word; overflow-wrap: anywhere; }
 a, button{ min-height: var(--tap); touch-action: manipulation; -webkit-tap-highlight-color: rgba(255,255,255,.05); }
 @media (max-width: 480px){ h1{ font-size: clamp(1.45rem, 4.8vw, 1.9rem); } h2{ font-size: clamp(1.15rem, 4.2vw, 1.35rem); } body{ font-size: clamp(15px, 3.8vw, 16px); } }
-
-/* Header: hamburger */
-header .menu-toggle{ display:none; align-items:center; justify-content:center; width:var(--tap); height:var(--tap); border-radius:12px; border:1px solid var(--rule); background:transparent; color:inherit; }
-header .menu-toggle span{ position:relative; width:18px; height:2px; background:currentColor; display:block; }
-header .menu-toggle span::before, header .menu-toggle span::after{ content:""; position:absolute; left:0; width:18px; height:2px; background:currentColor; transition: transform .25s ease, opacity .25s ease; }
-header .menu-toggle span::before{ transform: translateY(-6px); } header .menu-toggle span::after{ transform: translateY(6px); }
-
-@media (max-width: 960px){
-  header .menu-toggle{ display:inline-flex; }
-  header .container{ justify-content:space-between; }
-  header nav{ position: fixed; inset:0 0 auto 0; height:100vh; height:100svh; background: rgba(10,13,19,.98); backdrop-filter: saturate(120%) blur(4px); padding: calc(env(safe-area-inset-top) + 70px) var(--container-pad) calc(env(safe-area-inset-bottom) + 24px); display:flex; flex-direction:column; gap:12px; transform: translateY(-100%); transition: transform .28s ease; z-index:80; }
-  body.menu-open header nav{ transform: translateY(0); }
-  header nav a{ font-size: 1.1rem; padding: .6rem .1rem; box-shadow:none !important; background:none !important; }
-  header nav a[aria-current], header nav a.active{ text-decoration: underline; text-underline-offset:3px; box-shadow:none !important; }
-  body.menu-open header .menu-toggle span{ background:transparent; }
-  body.menu-open header .menu-toggle span::before{ transform: rotate(45deg); } body.menu-open header .menu-toggle span::after{ transform: rotate(-45deg); }
-}
-
 @media (max-width: 720px){ .cards{ grid-template-columns: 1fr !important; } .grid-two{ grid-template-columns: 1fr !important; } }
 .site-footer{ padding-bottom: env(safe-area-inset-bottom); }
 .site-footer .footer-bottom{ flex-wrap:wrap; row-gap:.6rem; }
+</style>
+
+
+<style id="elegance-pack-v12-footer">
+.site-footer .footer-inner{
+  display:grid; gap: clamp(12px, 2.2vw, 18px);
+  grid-template-columns: 3fr 2fr;
+  padding-block: clamp(16px, 3vw, 24px);
+  align-items:start;
+}
+.site-footer .footer-left .brand{
+  font-family:"Bodoni Moda","Spectral","Cormorant Garamond",serif;
+  letter-spacing:.04em; margin-bottom:.35rem;
+}
+.site-footer .footer-left .small{ font-size:.95rem; margin:0 0 .6rem; }
+.site-footer .footer-nav-grid{
+  display:grid; grid-template-columns: auto auto;
+  column-gap: clamp(16px, 4vw, 32px); row-gap:.35rem;
+  margin-top:.4rem;
+}
+.site-footer .footer-nav-grid a{
+  background-image:none !important; box-shadow:none !important; text-decoration:none;
+  color:rgba(230,230,235,.92);
+}
+.site-footer .footer-nav-grid a:hover{ color:#fff; text-decoration:underline; text-underline-offset:2px; }
+@media (max-width: 960px){ .site-footer .footer-inner{ grid-template-columns: 1fr; } }
+@media (max-width: 640px){ .site-footer .footer-nav-grid{ display:none; } }
+</style>
+
+
+<style id="compact-mobile-nav">
+@media (max-width: 960px){
+  header nav{ display:none !important; } /* hide inline nav entirely */
+  header .menu-toggle{ display:inline-flex !important; align-items:center; justify-content:center;
+    min-width:44px; height:36px; padding:0 .75rem; border-radius:12px; border:1px solid var(--rule); background:rgba(255,255,255,.02); }
+  #mobile-panel{
+    position:fixed; inset:0; z-index:90; display:none; flex-direction:column; gap:12px;
+    background: rgba(10,13,19,.98); backdrop-filter: saturate(120%) blur(4px);
+    padding: calc(env(safe-area-inset-top) + 70px) clamp(16px,4vw,24px) calc(env(safe-area-inset-bottom) + 24px);
+  }
+  body.menu-open #mobile-panel{ display:flex; }
+  #mobile-panel a{ font-size:1.1rem; padding:.6rem .2rem; text-decoration:none; }
+  #mobile-panel a:active{ opacity:.86; }
+}
+</style>
+
+
+<style id="elegance-pack-v13-mobile-refine">
+/* === v13: calm mobile footer & controls === */
+:root{ --hair: rgba(255,255,255,.10); }
+
+/* Footer density & spacing */
+.site-footer{ border-top:1px solid var(--hair); }
+.site-footer .footer-inner{ row-gap: .8rem; }
+.site-footer .footer-right .footer-links{ display:grid; gap:.35rem; align-items:center; }
+
+/* Inline copy button next to email (no full-width pill) */
+.site-footer .footer-right .footer-links button,
+.site-footer .footer-right .footer-links .btn-copy{
+  display:inline-flex; align-items:center; gap:.35rem;
+  width:auto; padding:.35rem .6rem; border-radius:10px;
+  border:1px solid var(--hair); background:transparent; color:rgba(235,235,240,.9);
+  font-size:.85rem; line-height:1; vertical-align:middle;
+  margin-left:.5rem;
+}
+.site-footer .footer-right .footer-links button:hover{ background:rgba(255,255,255,.06); }
+
+/* Preference chips — quieter, or hidden on phones */
+.site-footer .pref-chips .chip{ border-color: var(--hair); color: rgba(235,235,240,.82); }
+@media (max-width: 640px){
+  .site-footer .pref-chips{ display:none; }
+}
+
+/* Back-to-top as text on phones */
+@media (max-width: 640px){
+  .site-footer .backtop{ border:0; padding:0; background:none; }
+  .site-footer .footer-bottom{ justify-content:center; }
+}
+
+/* Menu button optical tune */
+@media (max-width: 960px){
+  header .menu-toggle{ height:38px; border-color: var(--hair); background: rgba(255,255,255,.02); }
+}
+</style>
+
+
+<style id="elegance-pack-v14-ribbon-footer">
+/* === v14: Editorial ribbon footer === */
+:root{ --hair: rgba(255,255,255,.10); --muted: rgba(233,234,238,.72); }
+
+.site-footer.ribbon{ border-top:1px solid var(--hair);
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.005)); }
+.site-footer.ribbon .ribbon-row{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  gap: .5rem 1rem; padding: .95rem 0 1rem;
+}
+.site-footer.ribbon .brandline{
+  font-family:"Bodoni Moda","Spectral","Cormorant Garamond",serif;
+  letter-spacing:.04em; font-size: clamp(1rem, 2.2vw, 1.15rem);
+  color: rgba(255,255,255,.92);
+}
+.site-footer.ribbon .brandline .dash{ opacity:.8; padding: 0 .35rem; }
+.site-footer.ribbon .edition{ opacity:.9; }
+
+.site-footer.ribbon .micro-nav, .site-footer.ribbon .contact-inline{
+  display:flex; flex-wrap:wrap; align-items:center; gap:.35rem .65rem;
+}
+.site-footer.ribbon .micro-nav a,
+.site-footer.ribbon .contact-inline a{
+  color: rgba(235,235,240,.9); text-decoration:none;
+}
+.site-footer.ribbon .micro-nav a:hover,
+.site-footer.ribbon .contact-inline a:hover{
+  color:#fff; text-decoration:underline; text-underline-offset:2px;
+}
+.site-footer.ribbon .sep{ opacity:.5; }
+.site-footer.ribbon .fineprint{
+  border-top:1px solid var(--hair); margin-top:.6rem; padding-top:.6rem;
+  font-size:.92rem; color: var(--muted);
+}
+
+/* Hide noisy controls inherited from previous versions if present */
+.site-footer .pref-chips, .site-footer .backtop, .site-footer .footer-inner, .site-footer .footer-bottom{ display:none !important; }
+.site-footer .btn-copy{ display:none !important; }
+
+/* Mobile: stack gracefully; hide Top link for compactness */
+@media (max-width: 640px){
+  .site-footer.ribbon .ribbon-row{ flex-direction:column; align-items:flex-start; gap:.5rem; }
+  .site-footer.ribbon .hide-sm{ display:none; }
+  .site-footer.ribbon .contact-inline{ opacity:.95; }
+}
+</style>
+
+
+<style id="elegance-pack-v15-mobile-polish">
+/* === v15: mobile polish === */
+
+/* Make body text breathe naturally on phones (no forced narrow columns / hyphens) */
+@media (max-width: 640px){
+  p, .lead, .muted, li{ max-inline-size: none !important; hyphens: none !important; }
+}
+
+/* Ribbon footer tweaks */
+.site-footer.ribbon .ribbon-row{ padding: .8rem 0 .9rem; gap: .35rem .75rem; }
+.site-footer.ribbon .micro-nav{ gap:.25rem .55rem; }
+.site-footer.ribbon .micro-nav .sep{ opacity:.35; }
+@media (max-width: 640px){
+  .site-footer.ribbon .micro-nav{ gap:.35rem .55rem; overflow-x:auto; -webkit-overflow-scrolling: touch; }
+  .site-footer.ribbon .micro-nav .sep{ display:none; } /* dots look messy when wrapping */
+  .site-footer.ribbon .brandline{ font-size: 1rem; }
+}
+
+/* Inline Copy link style (subtle) */
+.site-footer.ribbon .copy-inline{
+  font-size:.88rem; opacity:.85; text-decoration:none; border-bottom:1px dotted rgba(255,255,255,.35);
+  padding-bottom:1px; margin-left:.45rem;
+}
+.site-footer.ribbon .copy-inline:hover{ opacity:1; border-bottom-color:rgba(255,255,255,.6); }
+
+/* Hide any chunky copy buttons / float back-to-top on phones */
+@media (max-width: 640px){
+  .btn-copy, .chip, .pref-chips, .backtop, a.backtop, [aria-label="Back to top"]{ display:none !important; }
+}
 </style>
 
 </head>
@@ -632,44 +777,36 @@ header .menu-toggle span::before{ transform: translateY(-6px); } header .menu-to
   </main>
 
   
-<footer class="site-footer">
-  <div class="container footer-inner">
-    <div>
-      <div class="brand">Vyacheslav Munister — Editorial edition</div>
-      <div class="muted">Researcher in digital manufacturing, IIoT & intelligent production systems.</div>
-    </div>
-    <div>
-      <strong class="muted" style="display:block;margin:0 0 .6rem;">Navigate</strong>
-      <nav class="footer-links">
+
+<footer class="site-footer ribbon">
+  <div class="container">
+    <div class="ribbon-row">
+      <div class="brandline">
+        <span class="brand">Vyacheslav Munister</span>
+        <span class="dash">—</span>
+        <span class="edition">Editorial edition</span>
+      </div>
+      <nav class="micro-nav" aria-label="Footer navigation">
         <a href="#about">About</a>
-        <a href="#research">Research</a>
+        <span class="sep">·</span>
         <a href="#publications">Publications</a>
+        <span class="sep">·</span>
         <a href="#projects">Projects</a>
-        <a href="#software">Software</a>
+        <span class="sep">·</span>
         <a href="#contact">Contact</a>
+        <span class="sep hide-sm">·</span>
+        <a class="top-link hide-sm" href="#top" aria-label="Back to top">↑ Top</a>
       </nav>
-    </div>
-    <div>
-      <strong class="muted" style="display:block;margin:0 0 .6rem;">Connect</strong>
-      <div class="footer-links">
+      <div class="contact-inline">
         <a href="mailto:munister@outlook.com">munister@outlook.com</a>
-        <a href="https://t.me/vyanetto1">Telegram: @vyanetto1</a>
-      </div>
-      <div class="pref-chips" style="margin-top:.6rem;">
-        <button id="bg-toggle" class="chip" role="switch" aria-checked="true">
-          <span data-plain="Plain" data-depth="Depth">Depth</span>
-        </button>
-        <button id="mute-toggle" class="chip" role="switch" aria-checked="true">
-          <span data-on="Sound on" data-off="Sound off">Sound on</span>
-        </button>
+        <span class="sep">·</span>
+        <a href="https://t.me/vyanetto1">@vyanetto1</a>
       </div>
     </div>
-  </div>
-  <div class="container footer-bottom">
-    <div>© 2025 Vyacheslav Munister</div>
-    <a class="backtop" href="#top" aria-label="Back to top">↑ Back to top</a>
+    <div class="fineprint">© 2025 Vyacheslav Munister</div>
   </div>
 </footer>
+
 
 
   <script>
@@ -1253,25 +1390,75 @@ header .menu-toggle span::before{ transform: translateY(-6px); } header .menu-to
   </script>
 
 
-<script id="elegance-pack-v11-mobile-js">
-(()=>{
-  const moveTogglesToFooter = ()=>{
-    const target = document.querySelector('footer .pref-chips'); if(!target) return;
-    ['bg-toggle','mute-toggle'].forEach(id=>{
-      const nodes = Array.from(document.querySelectorAll('#'+id));
-      nodes.forEach((n,idx)=>{ if(!n.closest('footer')) target.appendChild(n); if(idx>0) n.remove(); });
-    });
-  };
-  moveTogglesToFooter();
+<div id="mobile-panel" aria-hidden="true"></div>
 
+<script id="compact-mobile-nav-js">
+(()=>{
   const btn = document.querySelector('header .menu-toggle');
   const nav = document.querySelector('header nav');
-  if(!btn || !nav) return;
+  const panel = document.getElementById('mobile-panel');
+  if(!btn || !panel || !nav) return;
+
+  // Populate panel with links from the main nav
+  if(panel.childElementCount === 0){
+    const links = nav.querySelectorAll('a');
+    links.forEach(a => {
+      const c = a.cloneNode(true);
+      c.removeAttribute('style');
+      c.classList.remove('active');
+      panel.appendChild(c);
+    });
+  }
+
   const open = ()=>{ document.body.classList.add('menu-open'); btn.setAttribute('aria-expanded','true'); document.documentElement.style.overflow='hidden'; document.body.style.overflow='hidden'; };
   const close = ()=>{ document.body.classList.remove('menu-open'); btn.setAttribute('aria-expanded','false'); document.documentElement.style.overflow=''; document.body.style.overflow=''; };
+
   btn.addEventListener('click', ()=>{ document.body.classList.contains('menu-open') ? close() : open(); });
-  nav.addEventListener('click', (e)=>{ const a = e.target.closest('a'); if(a) close(); });
+  panel.addEventListener('click', (e)=>{ if(e.target.tagName === 'A') close(); });
   window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
+})();
+</script>
+
+
+<script id="elegance-pack-v13-js">
+(()=>{
+  const footer = document.querySelector('footer .footer-right .footer-links');
+  if(!footer) return;
+  // Find email link
+  const mail = footer.querySelector('a[href^="mailto:"]');
+  // Find any sibling button with "Copy" text in this block
+  const btn = footer.querySelector('button, .btn-copy');
+  if(mail && btn && btn !== mail.nextElementSibling){
+    mail.insertAdjacentElement('afterend', btn);
+    btn.classList.add('btn-copy');
+    btn.textContent = (btn.textContent || 'Copy').trim();
+  }
+})();
+</script>
+
+
+<script id="elegance-pack-v15-js">
+(()=>{
+  // Replace any existing "Copy" pill in footer with a small [Copy] link next to email
+  const contact = document.querySelector('footer.ribbon .contact-inline') || document.querySelector('footer .footer-right .footer-links');
+  if(contact){
+    // remove big copy buttons
+    contact.querySelectorAll('button, .btn-copy').forEach(b=>b.remove());
+    const mail = contact.querySelector('a[href^="mailto:"]');
+    if(mail && !mail.nextElementSibling?.classList?.contains('copy-inline')){
+      const link = document.createElement('a');
+      link.href = '#copy-email'; link.className = 'copy-inline'; link.textContent = 'Copy';
+      link.addEventListener('click', (e)=>{
+        e.preventDefault();
+        try{
+          navigator.clipboard.writeText((mail.textContent||'').trim());
+          link.textContent = 'Copied';
+          setTimeout(()=>{ link.textContent = 'Copy'; }, 1500);
+        }catch(err){ /* no-op */ }
+      });
+      mail.insertAdjacentElement('afterend', link);
+    }
+  }
 })();
 </script>
 
