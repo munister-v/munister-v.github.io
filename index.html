@@ -5,51 +5,132 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Viacheslav Munister — Researcher</title>
 <meta name="description" content="Industrial IoT · Digital Manufacturing · Control">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<!-- Inline SVG favicon to avoid missing file errors -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0d13'/%3E%3Cpath d='M12 40 L32 12 L52 40' stroke='%237dd3fc' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <meta name="theme-color" content="#0a0d13">
+<meta name="color-scheme" content="dark light">
 <style>
-  :root{ --bg:#0a0d13; --bg-2:#0c1118; --ink:#e9eaee; --muted:rgba(233,234,238,.88); --accent:#7dd3fc; --rule:#1a2230; --chip:#0e141d; --radius:18px }
+  :root{
+    --bg:#0a0d13; --bg-2:#0c1118; --ink:#e9eaee; --muted:rgba(233,234,238,.88);
+    --accent:#7dd3fc; --rule:#1a2230; --chip:#0e141d; --radius:18px;
+    --pad: clamp(16px,3.2vw,28px);
+    --stick-top: 64px;
+  }
   html{ background:var(--bg); color:var(--ink); color-scheme:dark; scroll-behavior:smooth }
   body{ margin:0; font:16px/1.65 ui-sans-serif, system-ui, -apple-system, Segoe UI, Inter, Roboto, Arial, sans-serif }
   a{ color:var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset:.2em }
-  .container{ max-width:1180px; margin:0 auto; padding: clamp(16px,3vw,28px) }
-  header{ position:sticky; top:0; backdrop-filter:saturate(120%) blur(8px); background:linear-gradient(180deg, rgba(0,0,0,.24), rgba(0,0,0,.04) 70%, transparent); border-bottom:1px solid var(--rule); z-index:10 }
-  nav{ display:flex; align-items:center; justify-content:space-between; gap:12px }
-  .brand{ font-weight:700 }
-  .navlinks a{ margin-left:16px; opacity:.9 }
+  a:focus-visible, button:focus-visible{ outline:2px dashed var(--accent); outline-offset:3px }
+  .container{ width: min(100% - var(--pad)*2, 1180px); margin-inline:auto; padding-inline:var(--pad) }
+  .muted{ color:var(--muted) }
+
+  /* Header / nav */
+  .site-header{ position:sticky; top:0; z-index:20; backdrop-filter:saturate(120%) blur(8px);
+    background:linear-gradient(180deg, rgba(0,0,0,.24), rgba(0,0,0,.04) 70%, transparent);
+    border-bottom:1px solid var(--rule)
+  }
+  .navwrap{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding-block:.5rem }
+  .brand{ font-weight:700; letter-spacing:.2px }
+  .navlinks{ display:flex; align-items:center; gap:16px }
+  .navlinks a{ opacity:.9; padding:.4rem .2rem; border-radius:10px }
   .navlinks a:hover,.navlinks a.active{ opacity:1; text-decoration-thickness:3px }
+  .nav-toggle{ display:none; border:1px solid var(--rule); background:var(--chip); color:var(--ink);
+    padding:.55rem .8rem; border-radius:999px; min-height:44px; cursor:pointer }
+
+  /* Sections */
+  section{ padding-block: clamp(18px, 5vw, 36px) }
+  #about, #highlights, #works, #contact{ scroll-margin-top: 72px } /* anchor comfort */
+
   h1{ font-size: clamp(30px,3.6vw,50px); line-height:1.12; margin:.6rem 0 }
   h2{ font-size: clamp(20px,2.2vw,28px); margin:0 0 .6rem }
   p{ color:var(--muted); margin:.2rem 0 1rem; max-width: 68ch }
   .eyebrow{ color:#9aa3af; text-transform:uppercase; letter-spacing:.18em; font-size:.8rem; margin-bottom:.5rem }
-  .chips{ display:flex; flex-wrap:wrap; gap:8px } .chip{ padding:.45rem .75rem; border:1px solid var(--rule); border-radius:999px; background:var(--chip) }
+
+  .chips{ display:flex; flex-wrap:wrap; gap:8px }
+  .chip{ padding:.45rem .75rem; border:1px solid var(--rule); border-radius:999px; background:var(--chip) }
+
   .card{ border:1px solid var(--rule); border-radius:var(--radius); background:var(--bg-2); padding: clamp(16px,2.2vw,22px) }
-  .metrics{ display:grid; grid-template-columns: repeat(3,1fr); gap:12px }
+
+  /* Metrics & grids become fluid */
+  .metrics{
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+    gap:12px
+  }
   .metrics div{ border:1px solid var(--rule); padding:14px; border-radius:16px; background:var(--bg-2) }
   .num{ font-size: clamp(24px,3vw,34px); font-weight:700 }
-  .grid3{ display:grid; grid-template-columns: repeat(3,1fr); gap: clamp(12px,2.5vw,22px) }
-  .w-meta{ color:#9aa3af; font-size:.88rem; margin:.1rem 0 .6rem }
+
+  .grid3{
+    display:grid; gap: clamp(12px,2.5vw,22px);
+    grid-template-columns: repeat(auto-fit, minmax(260px,1fr))
+  }
+
+  .w-meta{ color:#9aa3af; font-size:.9rem; margin:.1rem 0 .6rem }
   .w-links a{ text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset:.18rem }
-  .w-bullets{ margin:.2rem 0 .8rem; padding-left:1.1rem } .w-bullets li{ margin:.18rem 0 }
-  .deemph{ opacity:.38; filter: grayscale(.2) }
-  .filterbar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:.4rem 0 1rem }
-  .chipbtn{ padding:.45rem .8rem; border:1px solid var(--rule); border-radius:999px; background:var(--chip); cursor:pointer }
-  @media (max-width:980px){ .grid3{ grid-template-columns: repeat(2,1fr) } }
-  @media (max-width:560px){ .grid3{ grid-template-columns: 1fr } .metrics{ grid-template-columns:1fr } }
+  .w-bullets{ margin:.2rem 0 .8rem; padding-left:1.1rem }
+  .w-bullets li{ margin:.18rem 0 }
+
+  .filterbar{
+    position: sticky;
+    top: var(--stick-top);
+    z-index: 15;
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    padding: .5rem var(--pad) .6rem;
+    margin-inline: calc(-1 * var(--pad)); /* stretch full-bleed inside container */
+    background: var(--bg);
+    background: color-mix(in srgb, var(--bg) 88%, black);
+    border-bottom: 1px solid var(--rule);
+    backdrop-filter: blur(8px) saturate(120%);
+  }
+  .filterchips{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
+  .chipbtn{
+    padding:.55rem .9rem; border:1px solid var(--rule);
+    border-radius:999px; background:var(--chip); cursor:pointer; min-height:44px
+  }
+  .chipbtn[aria-pressed="true"]{ outline:2px solid var(--accent) }
+
+  .deemph{ filter: grayscale(.2); opacity:.5 } /* kept for progressive enhancement */
+
+  /* Skip link */
+  .skip{ position:absolute; inset-inline-start:-9999px; inset-block-start:auto }
+  .skip:focus{ position:fixed; inset-inline-start:var(--pad); inset-block-start:var(--pad); z-index:30;
+    background:var(--bg-2); color:var(--ink); padding:.6rem .8rem; border-radius:10px; border:1px solid var(--rule) }
+
+  footer small{ color:#9aa3af }
+
+  /* Mobile tweaks */
+  @media (max-width: 800px){
+    .nav-toggle{ display:inline-flex; align-items:center; gap:8px }
+    .navlinks{
+      position: fixed; left:0; right:0; top: calc(env(safe-area-inset-top) + 56px);
+      background: var(--bg-2); border-bottom:1px solid var(--rule);
+      padding:12px var(--pad) 16px; display:none; flex-direction:column; align-items:flex-start; gap:8px
+    }
+    .navlinks.open{ display:flex }
+    /* center Contact + footer on mobile */
+    #contact .container, footer .container{ text-align:center }
+    /* center Filter bar content on mobile */
+    .filterbar{ justify-content:center; }
+    .filterchips{ justify-content:center; width:100%; }
+  }
+
+  /* Motion safety */
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none!important; transition:none!important; scroll-behavior:auto }
+  }
 </style>
 </head>
 <body>
 
-<header id="top">
-  <div class="container">
-    <nav>
-      <div class="brand">Viacheslav Munister</div>
-      <div class="navlinks">
-        <a href="#about">About</a>
-        <a href="#highlights">Highlights</a>
-        <a href="#works">Selected Papers</a>
-        <a href="#contact">Contact</a>
-      </div>
+<a class="skip" href="#content">Skip to content</a>
+
+<header id="top" class="site-header">
+  <div class="container navwrap">
+    <div class="brand">Viacheslav Munister</div>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation">Menu</button>
+    <nav id="primary-nav" class="navlinks" aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#highlights">Highlights</a>
+      <a href="#works">Selected Papers</a>
+      <a href="#contact">Contact</a>
     </nav>
   </div>
 </header>
@@ -62,7 +143,7 @@
       <p>I work at the intersection of <b>Industrial IoT</b>, <b>Digital Manufacturing</b>, and <b>Control</b> — building models and prototypes that help factories become smarter, safer, and more efficient.</p>
       <div class="chips">
         <span class="chip">Edge IIoT</span><span class="chip">Robust MPC</span><span class="chip">Digital Twins</span>
-        <span class="chip">Vision‑based QC</span><span class="chip">C/C++</span><span class="chip">Swift</span><span class="chip">PlantUML</span>
+        <span class="chip">Vision-based QC</span><span class="chip">C/C++</span><span class="chip">Swift</span><span class="chip">PlantUML</span>
       </div>
     </div>
   </section>
@@ -83,123 +164,116 @@
   <section id="works">
     <div class="container">
       <div class="eyebrow">Selected Papers</div>
+
       <div class="filterbar" role="toolbar" aria-label="Filter by tag">
-        <span class="muted">Filter:</span>
-        <button class="chipbtn" data-chip="control" aria-pressed="false">control</button>
-        <button class="chipbtn" data-chip="iiot" aria-pressed="false">iiot</button>
-        <button class="chipbtn" data-chip="ml" aria-pressed="false">ml</button>
-        <button class="chipbtn" data-chip="measurement" aria-pressed="false">measurement</button>
-        <button class="chipbtn" data-chip="education" aria-pressed="false">education</button>
-        <button class="chipbtn" data-chip="" aria-pressed="false" title="Clear">clear</button>
+        <div class="filterchips">
+          <span class="muted" aria-hidden="true">Filter:</span>
+          <button class="chipbtn" data-chip="control" aria-pressed="false">control</button>
+          <button class="chipbtn" data-chip="iiot" aria-pressed="false">iiot</button>
+          <button class="chipbtn" data-chip="ml" aria-pressed="false">ml</button>
+          <button class="chipbtn" data-chip="measurement" aria-pressed="false">measurement</button>
+          <button class="chipbtn" data-chip="education" aria-pressed="false">education</button>
+          <button class="chipbtn" data-chip="" aria-pressed="false" title="Clear filters">clear</button>
+        </div>
       </div>
+
       <div class="grid3" id="workgrid">
 
-    <article class='card work' data-tags='hardware,perceptron,quantum,hashing,iiot' tabindex='0'>
-      <h3 class='w-title'>Principles of organizing a hardware of information collection system perceptron for a quantum hashing problem</h3>
-      <div class='w-meta'>AIP Conference Proceedings 2969(1):050018 • 2024 • conference paper</div>
-      <p class='w-excerpt muted'>Hardware-oriented perceptron scheme for fast acquisition in quantum hashing tasks; focuses on throughput and resilience to input noise.</p>
-      <ul class='w-bullets'><li>Perceptron-based front-end for quantum-hash data paths</li><li>Latency/throughput estimates and hardware resource notes</li></ul>
-      <p class='w-links'><a target='_blank' rel='noopener' href='https://scholar.google.com/scholar?q=Principles+of+organizing+a+hardware+of+information+collection+system+perceptron+for+a+quantum+hashing+problem'>Scholar</a></p>
-    </article>
+        <article class="card work" data-tags="hardware,perceptron,quantum,hashing,iiot" tabindex="0">
+          <h3 class="w-title">Principles of organizing a hardware of information collection system perceptron for a quantum hashing problem</h3>
+          <div class="w-meta">AIP Conference Proceedings 2969(1):050018 • 2024 • conference paper</div>
+          <p class="w-excerpt muted">Hardware-oriented perceptron scheme for fast acquisition in quantum hashing tasks; focuses on throughput and resilience to input noise.</p>
+          <ul class="w-bullets"><li>Perceptron-based front-end for quantum-hash data paths</li><li>Latency/throughput estimates and hardware resource notes</li></ul>
+          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Principles+of+organizing+a+hardware+of+information+collection+system+perceptron+for+a+quantum+hashing+problem">Scholar</a></p>
+        </article>
 
+        <article class="card work" data-tags="control,regression,industry4.0,manufacturing" tabindex="0">
+          <h3 class="w-title">Synthesis of the control system for the machinery production using regression analysis in the conditions of Industry 4.0</h3>
+          <div class="w-meta">AIP Conference Proceedings 3021(1):040003 • 2024 • conference paper</div>
+          <p class="w-excerpt muted">Regression-driven control design workflow for machinery lines; emphasizes data sufficiency and model validation.</p>
+          <ul class="w-bullets"><li>Regression models for setpoint/actuation planning</li><li>Validation under production disturbances</li></ul>
+          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Synthesis+of+the+control+system+for+the+machinery+production+using+regression+analysis+in+the+conditions+of+Industry+4.0">Scholar</a></p>
+        </article>
 
-    <article class='card work' data-tags='control,regression,industry4.0,manufacturing' tabindex='0'>
-      <h3 class='w-title'>Synthesis of the control system for the machinery production using regression analysis in the conditions of Industry 4.0</h3>
-      <div class='w-meta'>AIP Conference Proceedings 3021(1):040003 • 2024 • conference paper</div>
-      <p class='w-excerpt muted'>Regression-driven control design workflow for machinery lines; emphasizes data sufficiency and model validation.</p>
-      <ul class='w-bullets'><li>Regression models for setpoint/actuation planning</li><li>Validation under production disturbances</li></ul>
-      <p class='w-links'><a target='_blank' rel='noopener' href='https://scholar.google.com/scholar?q=Synthesis+of+the+control+system+for+the+machinery+production+using+regression+analysis+in+the+conditions+of+Industry+4.0'>Scholar</a></p>
-    </article>
+        <article class="card work" data-tags="algorithms,optimization,medical-computing" tabindex="0">
+          <h3 class="w-title">Comparative analysis of heuristic algorithms of minimization of functions of several variables using modern medical computer technologies</h3>
+          <div class="w-meta">AIP Conference Proceedings 2812(1):020006 • 2023 • conference paper</div>
+          <p class="w-excerpt muted">Benchmarks of heuristic minimization algorithms on multi-variable functions with a medical-computing toolchain.</p>
+          <ul class="w-bullets"><li>Heuristic solvers vs. baselines on test manifolds</li><li>Runtime and stability under measurement noise</li></ul>
+          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Comparative+analysis+of+heuristic+algorithms+of+minimization+of+functions+of+several+variables+using+modern+medical+computer+technologies">Scholar</a></p>
+        </article>
 
+        <article class="card work" data-tags="anfis,actuator,neural-network,control" tabindex="0">
+          <h3 class="w-title">Use of the adaptive neuro-fuzzy system on the example of adjusting the parameters of a neural network in an actuator</h3>
+          <div class="w-meta">AIP Conference Proceedings 2402(1):070003 • 2021 • conference paper</div>
+          <p class="w-excerpt muted">ANFIS-based scheme for tuning NN parameters inside an actuator loop; shows improved stability vs. manual tuning.</p>
+          <ul class="w-bullets"><li>Adaptive neuro-fuzzy tuning of embedded NN</li><li>Stability margins and convergence behavior</li></ul>
+          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Use+of+the+adaptive+neuro-fuzzy+system+on+the+example+of+adjusting+the+parameters+of+a+neural+network+in+an+actuator">Scholar</a></p>
+        </article>
 
-    <article class='card work' data-tags='algorithms,optimization,medical-computing' tabindex='0'>
-      <h3 class='w-title'>Comparative analysis of heuristic algorithms of minimization of functions of several variables using modern medical computer technologies</h3>
-      <div class='w-meta'>AIP Conference Proceedings 2812(1):020006 • 2023 • conference paper</div>
-      <p class='w-excerpt muted'>Benchmarks of heuristic minimization algorithms on multi-variable functions with a medical-computing toolchain.</p>
-      <ul class='w-bullets'><li>Heuristic solvers vs. baselines on test manifolds</li><li>Runtime and stability under measurement noise</li></ul>
-      <p class='w-links'><a target='_blank' rel='noopener' href='https://scholar.google.com/scholar?q=Comparative+analysis+of+heuristic+algorithms+of+minimization+of+functions+of+several+variables+using+modern+medical+computer+technologies'>Scholar</a></p>
-    </article>
+        <article class="card work" data-tags="fog,edge,iiot,measurement" tabindex="0">
+          <h3 class="w-title">Introduction of fog computations to measuring system collection and accounting of data of distributed Internet of Things</h3>
+          <div class="w-meta">Journal of Physics: Conference Series 2096(1):012155 • 2021 • conference paper</div>
+          <p class="w-excerpt muted">Fog-computing layer for metering systems in distributed IoT: data reduction near the edge and accounting consistency.</p>
+          <ul class="w-bullets"><li>Edge/fog aggregation patterns for sensors</li><li>Consistency model for metering streams</li></ul>
+          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Introduction+of+fog+computations+to+measuring+system+collection+and+accounting+of+data+of+distributed+Internet+of+Things">Scholar</a></p>
+        </article>
 
+        <article class="card work" data-tags="ml,predictive-maintenance,manufacturing" tabindex="0">
+          <h3 class="w-title">Application of machine learning for optimization of operational processes in industrial drum units</h3>
+          <div class="w-meta">AIP Conference Proceedings 2467(1):030001 • 2022 • conference paper</div>
+          <p class="w-excerpt muted">ML pipeline for drum-unit operation optimization with predictive maintenance and process KPI uplift.</p>
+          <ul class="w-bullets"><li>Feature engineering from vibration/thermal logs</li><li>Throughput and downtime improvements</li></ul>
+          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Application+of+machine+learning+for+optimization+of+operational+processes+in+industrial+drum+units">Scholar</a></p>
+        </article>
 
-    <article class='card work' data-tags='anfis,actuator,neural-network,control' tabindex='0'>
-      <h3 class='w-title'>Use of the adaptive neuro-fuzzy system on the example of adjusting the parameters of a neural network in an actuator</h3>
-      <div class='w-meta'>AIP Conference Proceedings 2402(1):070003 • 2021 • conference paper</div>
-      <p class='w-excerpt muted'>ANFIS-based scheme for tuning NN parameters inside an actuator loop; shows improved stability vs. manual tuning.</p>
-      <ul class='w-bullets'><li>Adaptive neuro-fuzzy tuning of embedded NN</li><li>Stability margins and convergence behavior</li></ul>
-      <p class='w-links'><a target='_blank' rel='noopener' href='https://scholar.google.com/scholar?q=Use+of+the+adaptive+neuro-fuzzy+system+on+the+example+of+adjusting+the+parameters+of+a+neural+network+in+an+actuator'>Scholar</a></p>
-    </article>
+        <article class="card work" data-tags="ai,automation,industry4.0" tabindex="0">
+          <h3 class="w-title">Features of the implementation of artificial intelligence and digital technologies in industrial production: promising directions and modern trends in automation</h3>
+          <div class="w-meta">Journal of Physics: Conference Series 1889(2):022012 • 2021 • conference paper</div>
+          <p class="w-excerpt muted">Survey of AI/digital adoption patterns in industrial production with a focus on automation trends and readiness.</p>
+          <ul class="w-bullets"><li>Readiness factors and barriers to adoption</li><li>Roadmap for pilot-to-scale transitions</li></ul>
+          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Features+of+the+implementation+of+artificial+intelligence+and+digital+technologies+in+industrial+production%3A+promising+directions+and+modern+trends+in+automation">Scholar</a></p>
+        </article>
 
+        <article class="card work" data-tags="environment,measurement,ml" tabindex="0">
+          <h3 class="w-title">Features of the synthesis of information and measurement systems using machine learning for conducting of environmental monitoring</h3>
+          <div class="w-meta">Journal of Physics: Conference Series 1889(3):032008 • 2021 • conference paper</div>
+          <p class="w-excerpt muted">Design considerations for ML-driven information/measurement systems applied to environmental monitoring tasks.</p>
+          <ul class="w-bullets"><li>Sensor fusion schemes for environmental metrics</li><li>Model validation under field conditions</li></ul>
+          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Features+of+the+synthesis+of+information+and+measurement+systems+using+machine+learning+for+conducting+of+environmental+monitoring">Scholar</a></p>
+        </article>
 
-    <article class='card work' data-tags='fog,edge,iiot,measurement' tabindex='0'>
-      <h3 class='w-title'>Introduction of fog computations to measuring system collection and accounting of data of distributed Internet of Things</h3>
-      <div class='w-meta'>Journal of Physics: Conference Series 2096(1):012155 • 2021 • conference paper</div>
-      <p class='w-excerpt muted'>Fog-computing layer for metering systems in distributed IoT: data reduction near the edge and accounting consistency.</p>
-      <ul class='w-bullets'><li>Edge/fog aggregation patterns for sensors</li><li>Consistency model for metering streams</li></ul>
-      <p class='w-links'><a target='_blank' rel='noopener' href='https://scholar.google.com/scholar?q=Introduction+of+fog+computations+to+measuring+system+collection+and+accounting+of+data+of+distributed+Internet+of+Things'>Scholar</a></p>
-    </article>
+        <article class="card work" data-tags="medicine,diagnostics,measurement" tabindex="0">
+          <h3 class="w-title">Analysis of modern computer diagnostic and measurement methods in medicine</h3>
+          <div class="w-meta">Journal of Physics: Conference Series 1889(5):052005 • 2021 • conference paper</div>
+          <p class="w-excerpt muted">Overview of diagnostic and measurement methodologies in computational medicine; accuracy and workflow aspects.</p>
+          <ul class="w-bullets"><li>Modalities: imaging, biosignals, hybrid approaches</li><li>Accuracy vs. cost and integration challenges</li></ul>
+          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Analysis+of+modern+computer+diagnostic+and+measurement+methods+in+medicine">Scholar</a></p>
+        </article>
 
+        <article class="card work" data-tags="education,ai,metrology" tabindex="0">
+          <h3 class="w-title">Application of artificial intelligence and digital technologies in the organization of the educational process of specialists in the field of physics, engineering and metrology</h3>
+          <div class="w-meta">Journal of Physics: Conference Series 1889(2):022015 • 2021 • conference paper</div>
+          <p class="w-excerpt muted">Guidelines for embedding AI/digital tools into training pipelines for physics/engineering/metrology specialists.</p>
+          <ul class="w-bullets"><li>Curriculum modules and lab patterns</li><li>Assessment and tooling alignment</li></ul>
+          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Application+of+artificial+intelligence+and+digital+technologies+in+the+organization+of+the+educational+process+of+specialists+in+the+field+of+physics%2C+engineering+and+metrology">Scholar</a></p>
+        </article>
 
-    <article class='card work' data-tags='ml,predictive-maintenance,manufacturing' tabindex='0'>
-      <h3 class='w-title'>Application of machine learning for optimization of operational processes in industrial drum units</h3>
-      <div class='w-meta'>AIP Conference Proceedings 2467(1):030001 • 2022 • conference paper</div>
-      <p class='w-excerpt muted'>ML pipeline for drum-unit operation optimization with predictive maintenance and process KPI uplift.</p>
-      <ul class='w-bullets'><li>Feature engineering from vibration/thermal logs</li><li>Throughput and downtime improvements</li></ul>
-      <p class='w-links'><a target='_blank' rel='noopener' href='https://scholar.google.com/scholar?q=Application+of+machine+learning+for+optimization+of+operational+processes+in+industrial+drum+units'>Scholar</a></p>
-    </article>
+        <article class="card work" data-tags="greenhouse,neuro-fuzzy,iot,control" tabindex="0">
+          <h3 class="w-title">An example of intelligent greenhousing synthesis based on modern digital systems, neuro-fuzzy technologies and IoT</h3>
+          <div class="w-meta">IOP Conf. Ser.: Earth and Environmental Science 981(3):032001 • 2022 • conference paper</div>
+          <p class="w-excerpt muted">Conceptual greenhousing control using neuro-fuzzy components and IoT telemetry to stabilize microclimate.</p>
+          <ul class="w-bullets"><li>Rule bases and membership functions</li><li>Energy–yield trade-off sketches</li></ul>
+          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=An+example+of+intelligent+greenhousing+synthesis+based+on+modern+digital+systems%2C+neuro-fuzzy+technologies+and+IoT">Scholar</a></p>
+        </article>
 
-
-    <article class='card work' data-tags='ai,automation,industry4.0' tabindex='0'>
-      <h3 class='w-title'>Features of the implementation of artificial intelligence and digital technologies in industrial production: promising directions and modern trends in automation</h3>
-      <div class='w-meta'>Journal of Physics: Conference Series 1889(2):022012 • 2021 • conference paper</div>
-      <p class='w-excerpt muted'>Survey of AI/digital adoption patterns in industrial production with a focus on automation trends and readiness.</p>
-      <ul class='w-bullets'><li>Readiness factors and barriers to adoption</li><li>Roadmap for pilot-to-scale transitions</li></ul>
-      <p class='w-links'><a target='_blank' rel='noopener' href='https://scholar.google.com/scholar?q=Features+of+the+implementation+of+artificial+intelligence+and+digital+technologies+in+industrial+production%3A+promising+directions+and+modern+trends+in+automation'>Scholar</a></p>
-    </article>
-
-
-    <article class='card work' data-tags='environment,measurement,ml' tabindex='0'>
-      <h3 class='w-title'>Features of the synthesis of information and measurement systems using machine learning for conducting of environmental monitoring</h3>
-      <div class='w-meta'>Journal of Physics: Conference Series 1889(3):032008 • 2021 • conference paper</div>
-      <p class='w-excerpt muted'>Design considerations for ML-driven information/measurement systems applied to environmental monitoring tasks.</p>
-      <ul class='w-bullets'><li>Sensor fusion schemes for environmental metrics</li><li>Model validation under field conditions</li></ul>
-      <p class='w-links'><a target='_blank' rel='noopener' href='https://scholar.google.com/scholar?q=Features+of+the+synthesis+of+information+and+measurement+systems+using+machine+learning+for+conducting+of+environmental+monitoring'>Scholar</a></p>
-    </article>
-
-
-    <article class='card work' data-tags='medicine,diagnostics,measurement' tabindex='0'>
-      <h3 class='w-title'>Analysis of modern computer diagnostic and measurement methods in medicine</h3>
-      <div class='w-meta'>Journal of Physics: Conference Series 1889(5):052005 • 2021 • conference paper</div>
-      <p class='w-excerpt muted'>Overview of diagnostic and measurement methodologies in computational medicine; accuracy and workflow aspects.</p>
-      <ul class='w-bullets'><li>Modalities: imaging, biosignals, hybrid approaches</li><li>Accuracy vs. cost and integration challenges</li></ul>
-      <p class='w-links'><a target='_blank' rel='noopener' href='https://scholar.google.com/scholar?q=Analysis+of+modern+computer+diagnostic+and+measurement+methods+in+medicine'>Scholar</a></p>
-    </article>
-
-
-    <article class='card work' data-tags='education,ai,metrology' tabindex='0'>
-      <h3 class='w-title'>Application of artificial intelligence and digital technologies in the organization of the educational process of specialists in the field of physics, engineering and metrology</h3>
-      <div class='w-meta'>Journal of Physics: Conference Series 1889(2):022015 • 2021 • conference paper</div>
-      <p class='w-excerpt muted'>Guidelines for embedding AI/digital tools into training pipelines for physics/engineering/metrology specialists.</p>
-      <ul class='w-bullets'><li>Curriculum modules and lab patterns</li><li>Assessment and tooling alignment</li></ul>
-      <p class='w-links'><a target='_blank' rel='noopener' href='https://scholar.google.com/scholar?q=Application+of+artificial+intelligence+and+digital+technologies+in+the+organization+of+the+educational+process+of+specialists+in+the+field+of+physics%2C+engineering+and+metrology'>Scholar</a></p>
-    </article>
-
-
-    <article class='card work' data-tags='greenhouse,neuro-fuzzy,iot,control' tabindex='0'>
-      <h3 class='w-title'>An example of intelligent greenhousing synthesis based on modern digital systems, neuro-fuzzy technologies and IoT</h3>
-      <div class='w-meta'>IOP Conf. Ser.: Earth and Environmental Science 981(3):032001 • 2022 • conference paper</div>
-      <p class='w-excerpt muted'>Conceptual greenhousing control using neuro‑fuzzy components and IoT telemetry to stabilize microclimate.</p>
-      <ul class='w-bullets'><li>Rule bases and membership functions</li><li>Energy–yield trade-off sketches</li></ul>
-      <p class='w-links'><a target='_blank' rel='noopener' href='https://scholar.google.com/scholar?q=An+example+of+intelligent+greenhousing+synthesis+based+on+modern+digital+systems%2C+neuro-fuzzy+technologies+and+IoT'>Scholar</a></p>
-    </article>
-
-
-    <article class='card work' data-tags='metrology,iiot,governance' tabindex='0'>
-      <h3 class='w-title'>Metrological support integration in conditions of digital transformation</h3>
-      <div class='w-meta'>Journal of Physics: Conference Series 1889(3):032012 • 2021 • conference paper</div>
-      <p class='w-excerpt muted'>Integration path for metrological support during digital transformation: traceability, calibration, and data governance.</p>
-      <ul class='w-bullets'><li>Traceability chains for IIoT measurements</li><li>Calibration policies and auditability</li></ul>
-      <p class='w-links'><a target='_blank' rel='noopener' href='https://scholar.google.com/scholar?q=Metrological+support+integration+in+conditions+of+digital+transformation'>Scholar</a></p>
-    </article>
+        <article class="card work" data-tags="metrology,iiot,governance" tabindex="0">
+          <h3 class="w-title">Metrological support integration in conditions of digital transformation</h3>
+          <div class="w-meta">Journal of Physics: Conference Series 1889(3):032012 • 2021 • conference paper</div>
+          <p class="w-excerpt muted">Integration path for metrological support during digital transformation: traceability, calibration, and data governance.</p>
+          <ul class="w-bullets"><li>Traceability chains for IIoT measurements</li><li>Calibration policies and auditability</li></ul>
+          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Metrological+support+integration+in+conditions+of+digital+transformation">Scholar</a></p>
+        </article>
 
       </div>
     </div>
@@ -208,7 +282,7 @@
   <section id="contact">
     <div class="container">
       <div class="eyebrow">Contact</div>
-      <p>Email: <a href="mailto:munister@outlook.com">munister@outlook.com</a> · 
+      <p>Email: <a href="mailto:munister@outlook.com">munister@outlook.com</a> ·
          <a href="https://github.com/munister-v" target="_blank" rel="noopener">GitHub</a> ·
          <a href="https://scholar.google.com/citations?user=kdqMqoQAAAAJ" target="_blank" rel="noopener">Scholar</a> ·
          <a href="https://www.researchgate.net/scientific-contributions/V-D-Munister-2194878329" target="_blank" rel="noopener">ResearchGate</a>
@@ -224,25 +298,57 @@
 </footer>
 
 <script>
-// Filter using SSR cards (no templates; progressive enhancement)
+/* Mobile nav toggle + active link highlight */
+(function(){
+  const btn = document.querySelector('.nav-toggle');
+  const nav = document.getElementById('primary-nav');
+  const links = nav.querySelectorAll('a');
+
+  function setOpen(open){
+    nav.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  btn.addEventListener('click', ()=> setOpen(!nav.classList.contains('open')));
+  links.forEach(a=>a.addEventListener('click', ()=> setOpen(false)));
+
+  /* Active link via IntersectionObserver */
+  const sections = [...document.querySelectorAll('main section[id]')];
+  const byId = Object.fromEntries([...links].map(a=>[a.getAttribute('href').slice(1), a]));
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id = e.target.id;
+        links.forEach(a=>a.classList.toggle('active', a===byId[id]));
+      }
+    });
+  }, { rootMargin:'-40% 0px -55% 0px', threshold:0 });
+
+  sections.forEach(s=>obs.observe(s));
+})();
+
+/* Filter: hide non-matching cards and sync ?tag= */
 (function(){
   const btns=[...document.querySelectorAll('.chipbtn')];
   const cards=[...document.querySelectorAll('article.work')];
   const url=new URL(location.href);
+
   function apply(tag){
     const t=(tag||'').trim().toLowerCase();
-    let shown=0;
     cards.forEach(c=>{
       const tags=(c.dataset.tags||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
       const match=!t || tags.includes(t);
-      c.classList.toggle('deemph', !match && t);
-      if(match) shown++;
+      c.hidden = !!t && !match;
+      c.classList.toggle('deemph', !match);
     });
     btns.forEach(b=>b.setAttribute('aria-pressed',(b.dataset.chip||'')===t?'true':'false'));
     if(t){ url.searchParams.set('tag',t); } else { url.searchParams.delete('tag'); }
     history.replaceState(null,'',url);
   }
-  btns.forEach(b=>b.addEventListener('click',()=>{ const t=(b.dataset.chip||'').toLowerCase(); const on=b.getAttribute('aria-pressed')==='true'; apply(on?'':t); }));
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    const t=(b.dataset.chip||'').toLowerCase();
+    const on=b.getAttribute('aria-pressed')==='true';
+    apply(on?'':t);
+  }));
   apply(url.searchParams.get('tag')||'');
 })();
 </script>
