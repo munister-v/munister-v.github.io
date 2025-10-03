@@ -4,11 +4,41 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Viacheslav Munister — Researcher</title>
-<meta name="description" content="Industrial IoT · Digital Manufacturing · Control">
+<meta name="description" content="Research in robust control for IIoT and digital manufacturing; selected peer‑reviewed papers and prototypes.">
+<link rel="canonical" href="https://munister-v.github.io/">
+
+<!-- Open Graph / Twitter -->
+<meta property="og:title" content="Viacheslav Munister — Researcher">
+<meta property="og:description" content="Industrial IoT · Digital Manufacturing · Control. Selected papers and collaborations.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://munister-v.github.io/">
+<meta property="og:image" content="https://munister-v.github.io/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+
 <!-- Inline SVG favicon to avoid missing file errors -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0d13'/%3E%3Cpath d='M12 40 L32 12 L52 40' stroke='%237dd3fc' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <meta name="theme-color" content="#0a0d13">
 <meta name="color-scheme" content="dark light">
+
+<!-- Person JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Person",
+  "name":"Viacheslav Munister",
+  "jobTitle":"Researcher",
+  "affiliation":[{"@type":"Organization","name":"State Tax University"}],
+  "knowsAbout":["Industrial IoT","Digital Manufacturing","Control","Robust MPC","Digital Twins"],
+  "email":"mailto:munister@outlook.com",
+  "sameAs":[
+    "https://scholar.google.com/citations?user=kdqMqoQAAAAJ",
+    "https://github.com/munister-v",
+    "https://www.researchgate.net/scientific-contributions/V-D-Munister-2194878329"
+  ],
+  "url":"https://munister-v.github.io/"
+}
+</script>
+
 <style>
   :root{
     --bg:#0a0d13; --bg-2:#0c1118; --ink:#e9eaee; --muted:rgba(233,234,238,.88);
@@ -38,7 +68,7 @@
 
   /* Sections */
   section{ padding-block: clamp(18px, 5vw, 36px) }
-  #about, #highlights, #works, #contact{ scroll-margin-top: 72px } /* anchor comfort */
+  #about, #highlights, #works, #collab, #contact{ scroll-margin-top: 72px } /* anchor comfort */
 
   h1{ font-size: clamp(30px,3.6vw,50px); line-height:1.12; margin:.6rem 0 }
   h2{ font-size: clamp(20px,2.2vw,28px); margin:0 0 .6rem }
@@ -50,7 +80,7 @@
 
   .card{ border:1px solid var(--rule); border-radius:var(--radius); background:var(--bg-2); padding: clamp(16px,2.2vw,22px) }
 
-  /* Metrics & grids become fluid */
+  /* Metrics & grids */
   .metrics{
     display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
     gap:12px
@@ -75,7 +105,6 @@
     display:flex; align-items:center; gap:12px; flex-wrap:wrap;
     padding: .5rem var(--pad) .6rem;
     margin-inline: calc(-1 * var(--pad)); /* stretch full-bleed inside container */
-    background: var(--bg);
     background: color-mix(in srgb, var(--bg) 88%, black);
     border-bottom: 1px solid var(--rule);
     backdrop-filter: blur(8px) saturate(120%);
@@ -87,7 +116,11 @@
   }
   .chipbtn[aria-pressed="true"]{ outline:2px solid var(--accent) }
 
-  .deemph{ filter: grayscale(.2); opacity:.5 } /* kept for progressive enhancement */
+  .deemph{ filter: grayscale(.2); opacity:.5 }
+
+  /* CTA */
+  #collab .card{ text-align:center }
+  #collab .chip{ display:inline-block; margin:.25rem .35rem; cursor:pointer }
 
   /* Skip link */
   .skip{ position:absolute; inset-inline-start:-9999px; inset-block-start:auto }
@@ -112,7 +145,6 @@
     .filterchips{ justify-content:center; width:100%; }
   }
 
-  /* Motion safety */
   @media (prefers-reduced-motion: reduce){
     *{ animation:none!important; transition:none!important; scroll-behavior:auto }
   }
@@ -130,6 +162,7 @@
       <a href="#about">About</a>
       <a href="#highlights">Highlights</a>
       <a href="#works">Selected Papers</a>
+      <a href="#collab">Collaborate</a>
       <a href="#contact">Contact</a>
     </nav>
   </div>
@@ -173,108 +206,157 @@
           <button class="chipbtn" data-chip="ml" aria-pressed="false">ml</button>
           <button class="chipbtn" data-chip="measurement" aria-pressed="false">measurement</button>
           <button class="chipbtn" data-chip="education" aria-pressed="false">education</button>
-          <button class="chipbtn" data-chip="" aria-pressed="false" title="Clear filters">clear</button>
+          <button class="chipbtn" data-chip="" aria-pressed="false" aria-label="Clear filters" title="Clear filters">clear</button>
         </div>
       </div>
 
       <div class="grid3" id="workgrid">
 
-        <article class="card work" data-tags="hardware,perceptron,quantum,hashing,iiot" tabindex="0">
-          <h3 class="w-title">Principles of organizing a hardware of information collection system perceptron for a quantum hashing problem</h3>
+        <article class="card work" data-tags="hardware,perceptron,quantum,hashing,iiot" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
+          <h3 class="w-title" itemprop="name">Principles of organizing a hardware of information collection system perceptron for a quantum hashing problem</h3>
           <div class="w-meta">AIP Conference Proceedings 2969(1):050018 • 2024 • conference paper</div>
           <p class="w-excerpt muted">Hardware-oriented perceptron scheme for fast acquisition in quantum hashing tasks; focuses on throughput and resilience to input noise.</p>
           <ul class="w-bullets"><li>Perceptron-based front-end for quantum-hash data paths</li><li>Latency/throughput estimates and hardware resource notes</li></ul>
-          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Principles+of+organizing+a+hardware+of+information+collection+system+perceptron+for+a+quantum+hashing+problem">Scholar</a></p>
+          <meta itemprop="author" content="Viacheslav Munister">
+          <meta itemprop="datePublished" content="2024">
+          <meta itemprop="isPartOf" content="AIP Conference Proceedings">
+          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Principles+of+organizing+a+hardware+of+information+collection+system+perceptron+for+a+quantum+hashing+problem" itemprop="sameAs">Scholar</a>
         </article>
 
-        <article class="card work" data-tags="control,regression,industry4.0,manufacturing" tabindex="0">
-          <h3 class="w-title">Synthesis of the control system for the machinery production using regression analysis in the conditions of Industry 4.0</h3>
+        <article class="card work" data-tags="control,regression,industry4.0,manufacturing" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
+          <h3 class="w-title" itemprop="name">Synthesis of the control system for the machinery production using regression analysis in the conditions of Industry 4.0</h3>
           <div class="w-meta">AIP Conference Proceedings 3021(1):040003 • 2024 • conference paper</div>
           <p class="w-excerpt muted">Regression-driven control design workflow for machinery lines; emphasizes data sufficiency and model validation.</p>
           <ul class="w-bullets"><li>Regression models for setpoint/actuation planning</li><li>Validation under production disturbances</li></ul>
-          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Synthesis+of+the+control+system+for+the+machinery+production+using+regression+analysis+in+the+conditions+of+Industry+4.0">Scholar</a></p>
+          <meta itemprop="author" content="Viacheslav Munister">
+          <meta itemprop="datePublished" content="2024">
+          <meta itemprop="isPartOf" content="AIP Conference Proceedings">
+          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Synthesis+of+the+control+system+for+the+machinery+production+using+regression+analysis+in+the+conditions+of+Industry+4.0" itemprop="sameAs">Scholar</a>
         </article>
 
-        <article class="card work" data-tags="algorithms,optimization,medical-computing" tabindex="0">
-          <h3 class="w-title">Comparative analysis of heuristic algorithms of minimization of functions of several variables using modern medical computer technologies</h3>
+        <article class="card work" data-tags="algorithms,optimization,medical-computing" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
+          <h3 class="w-title" itemprop="name">Comparative analysis of heuristic algorithms of minimization of functions of several variables using modern medical computer technologies</h3>
           <div class="w-meta">AIP Conference Proceedings 2812(1):020006 • 2023 • conference paper</div>
           <p class="w-excerpt muted">Benchmarks of heuristic minimization algorithms on multi-variable functions with a medical-computing toolchain.</p>
           <ul class="w-bullets"><li>Heuristic solvers vs. baselines on test manifolds</li><li>Runtime and stability under measurement noise</li></ul>
-          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Comparative+analysis+of+heuristic+algorithms+of+minimization+of+functions+of+several+variables+using+modern+medical+computer+technologies">Scholar</a></p>
+          <meta itemprop="author" content="Viacheslav Munister">
+          <meta itemprop="datePublished" content="2023">
+          <meta itemprop="isPartOf" content="AIP Conference Proceedings">
+          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Comparative+analysis+of+heuristic+algorithms+of+minimization+of+functions+of+several+variables+using+modern+medical+computer+technologies" itemprop="sameAs">Scholar</a>
         </article>
 
-        <article class="card work" data-tags="anfis,actuator,neural-network,control" tabindex="0">
-          <h3 class="w-title">Use of the adaptive neuro-fuzzy system on the example of adjusting the parameters of a neural network in an actuator</h3>
+        <article class="card work" data-tags="anfis,actuator,neural-network,control" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
+          <h3 class="w-title" itemprop="name">Use of the adaptive neuro-fuzzy system on the example of adjusting the parameters of a neural network in an actuator</h3>
           <div class="w-meta">AIP Conference Proceedings 2402(1):070003 • 2021 • conference paper</div>
           <p class="w-excerpt muted">ANFIS-based scheme for tuning NN parameters inside an actuator loop; shows improved stability vs. manual tuning.</p>
           <ul class="w-bullets"><li>Adaptive neuro-fuzzy tuning of embedded NN</li><li>Stability margins and convergence behavior</li></ul>
-          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Use+of+the+adaptive+neuro-fuzzy+system+on+the+example+of+adjusting+the+parameters+of+a+neural+network+in+an+actuator">Scholar</a></p>
+          <meta itemprop="author" content="Viacheslav Munister">
+          <meta itemprop="datePublished" content="2021">
+          <meta itemprop="isPartOf" content="AIP Conference Proceedings">
+          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Use+of+the+adaptive+neuro-fuzzy+system+on+the+example+of+adjusting+the+parameters+of+a+neural+network+in+an+actuator" itemprop="sameAs">Scholar</a>
         </article>
 
-        <article class="card work" data-tags="fog,edge,iiot,measurement" tabindex="0">
-          <h3 class="w-title">Introduction of fog computations to measuring system collection and accounting of data of distributed Internet of Things</h3>
+        <article class="card work" data-tags="fog,edge,iiot,measurement" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
+          <h3 class="w-title" itemprop="name">Introduction of fog computations to measuring system collection and accounting of data of distributed Internet of Things</h3>
           <div class="w-meta">Journal of Physics: Conference Series 2096(1):012155 • 2021 • conference paper</div>
           <p class="w-excerpt muted">Fog-computing layer for metering systems in distributed IoT: data reduction near the edge and accounting consistency.</p>
           <ul class="w-bullets"><li>Edge/fog aggregation patterns for sensors</li><li>Consistency model for metering streams</li></ul>
-          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Introduction+of+fog+computations+to+measuring+system+collection+and+accounting+of+data+of+distributed+Internet+of+Things">Scholar</a></p>
+          <meta itemprop="author" content="Viacheslav Munister">
+          <meta itemprop="datePublished" content="2021">
+          <meta itemprop="isPartOf" content="Journal of Physics: Conference Series">
+          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Introduction+of+fog+computations+to+measuring+system+collection+and+accounting+of+data+of+distributed+Internet+of+Things" itemprop="sameAs">Scholar</a>
         </article>
 
-        <article class="card work" data-tags="ml,predictive-maintenance,manufacturing" tabindex="0">
-          <h3 class="w-title">Application of machine learning for optimization of operational processes in industrial drum units</h3>
+        <article class="card work" data-tags="ml,predictive-maintenance,manufacturing" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
+          <h3 class="w-title" itemprop="name">Application of machine learning for optimization of operational processes in industrial drum units</h3>
           <div class="w-meta">AIP Conference Proceedings 2467(1):030001 • 2022 • conference paper</div>
           <p class="w-excerpt muted">ML pipeline for drum-unit operation optimization with predictive maintenance and process KPI uplift.</p>
           <ul class="w-bullets"><li>Feature engineering from vibration/thermal logs</li><li>Throughput and downtime improvements</li></ul>
-          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Application+of+machine+learning+for+optimization+of+operational+processes+in+industrial+drum+units">Scholar</a></p>
+          <meta itemprop="author" content="Viacheslav Munister">
+          <meta itemprop="datePublished" content="2022">
+          <meta itemprop="isPartOf" content="AIP Conference Proceedings">
+          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Application+of+machine+learning+for+optimization+of+operational+processes+in+industrial+drum+units" itemprop="sameAs">Scholar</a>
         </article>
 
-        <article class="card work" data-tags="ai,automation,industry4.0" tabindex="0">
-          <h3 class="w-title">Features of the implementation of artificial intelligence and digital technologies in industrial production: promising directions and modern trends in automation</h3>
+        <article class="card work" data-tags="ai,automation,industry4.0" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
+          <h3 class="w-title" itemprop="name">Features of the implementation of artificial intelligence and digital technologies in industrial production: promising directions and modern trends in automation</h3>
           <div class="w-meta">Journal of Physics: Conference Series 1889(2):022012 • 2021 • conference paper</div>
           <p class="w-excerpt muted">Survey of AI/digital adoption patterns in industrial production with a focus on automation trends and readiness.</p>
           <ul class="w-bullets"><li>Readiness factors and barriers to adoption</li><li>Roadmap for pilot-to-scale transitions</li></ul>
-          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Features+of+the+implementation+of+artificial+intelligence+and+digital+technologies+in+industrial+production%3A+promising+directions+and+modern+trends+in+automation">Scholar</a></p>
+          <meta itemprop="author" content="Viacheslav Munister">
+          <meta itemprop="datePublished" content="2021">
+          <meta itemprop="isPartOf" content="Journal of Physics: Conference Series">
+          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Features+of+the+implementation+of+artificial+intelligence+and+digital+technologies+in+industrial+production%3A+promising+directions+and+modern+trends+in+automation" itemprop="sameAs">Scholar</a>
         </article>
 
-        <article class="card work" data-tags="environment,measurement,ml" tabindex="0">
-          <h3 class="w-title">Features of the synthesis of information and measurement systems using machine learning for conducting of environmental monitoring</h3>
+        <article class="card work" data-tags="environment,measurement,ml" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
+          <h3 class="w-title" itemprop="name">Features of the synthesis of information and measurement systems using machine learning for conducting of environmental monitoring</h3>
           <div class="w-meta">Journal of Physics: Conference Series 1889(3):032008 • 2021 • conference paper</div>
           <p class="w-excerpt muted">Design considerations for ML-driven information/measurement systems applied to environmental monitoring tasks.</p>
           <ul class="w-bullets"><li>Sensor fusion schemes for environmental metrics</li><li>Model validation under field conditions</li></ul>
-          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Features+of+the+synthesis+of+information+and+measurement+systems+using+machine+learning+for+conducting+of+environmental+monitoring">Scholar</a></p>
+          <meta itemprop="author" content="Viacheslav Munister">
+          <meta itemprop="datePublished" content="2021">
+          <meta itemprop="isPartOf" content="Journal of Physics: Conference Series">
+          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Features+of+the+synthesis+of+information+and+measurement+systems+using+machine+learning+for+conducting+of+environmental+monitoring" itemprop="sameAs">Scholar</a>
         </article>
 
-        <article class="card work" data-tags="medicine,diagnostics,measurement" tabindex="0">
-          <h3 class="w-title">Analysis of modern computer diagnostic and measurement methods in medicine</h3>
+        <article class="card work" data-tags="medicine,diagnostics,measurement" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
+          <h3 class="w-title" itemprop="name">Analysis of modern computer diagnostic and measurement methods in medicine</h3>
           <div class="w-meta">Journal of Physics: Conference Series 1889(5):052005 • 2021 • conference paper</div>
           <p class="w-excerpt muted">Overview of diagnostic and measurement methodologies in computational medicine; accuracy and workflow aspects.</p>
           <ul class="w-bullets"><li>Modalities: imaging, biosignals, hybrid approaches</li><li>Accuracy vs. cost and integration challenges</li></ul>
-          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Analysis+of+modern+computer+diagnostic+and+measurement+methods+in+medicine">Scholar</a></p>
+          <meta itemprop="author" content="Viacheslav Munister">
+          <meta itemprop="datePublished" content="2021">
+          <meta itemprop="isPartOf" content="Journal of Physics: Conference Series">
+          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Analysis+of+modern+computer+diagnostic+and+measurement+methods+in+medicine" itemprop="sameAs">Scholar</a>
         </article>
 
-        <article class="card work" data-tags="education,ai,metrology" tabindex="0">
-          <h3 class="w-title">Application of artificial intelligence and digital technologies in the organization of the educational process of specialists in the field of physics, engineering and metrology</h3>
+        <article class="card work" data-tags="education,ai,metrology" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
+          <h3 class="w-title" itemprop="name">Application of artificial intelligence and digital technologies in the organization of the educational process of specialists in the field of physics, engineering and metrology</h3>
           <div class="w-meta">Journal of Physics: Conference Series 1889(2):022015 • 2021 • conference paper</div>
           <p class="w-excerpt muted">Guidelines for embedding AI/digital tools into training pipelines for physics/engineering/metrology specialists.</p>
           <ul class="w-bullets"><li>Curriculum modules and lab patterns</li><li>Assessment and tooling alignment</li></ul>
-          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Application+of+artificial+intelligence+and+digital+technologies+in+the+organization+of+the+educational+process+of+specialists+in+the+field+of+physics%2C+engineering+and+metrology">Scholar</a></p>
+          <meta itemprop="author" content="Viacheslav Munister">
+          <meta itemprop="datePublished" content="2021">
+          <meta itemprop="isPartOf" content="Journal of Physics: Conference Series">
+          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Application+of+artificial+intelligence+and+digital+technologies+in+the+organization+of+the+educational+process+of+specialists+in+the+field+of+physics%2C+engineering+and+metrology" itemprop="sameAs">Scholar</a>
         </article>
 
-        <article class="card work" data-tags="greenhouse,neuro-fuzzy,iot,control" tabindex="0">
-          <h3 class="w-title">An example of intelligent greenhousing synthesis based on modern digital systems, neuro-fuzzy technologies and IoT</h3>
+        <article class="card work" data-tags="greenhouse,neuro-fuzzy,iot,control" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
+          <h3 class="w-title" itemprop="name">An example of intelligent greenhousing synthesis based on modern digital systems, neuro-fuzzy technologies and IoT</h3>
           <div class="w-meta">IOP Conf. Ser.: Earth and Environmental Science 981(3):032001 • 2022 • conference paper</div>
           <p class="w-excerpt muted">Conceptual greenhousing control using neuro-fuzzy components and IoT telemetry to stabilize microclimate.</p>
           <ul class="w-bullets"><li>Rule bases and membership functions</li><li>Energy–yield trade-off sketches</li></ul>
-          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=An+example+of+intelligent+greenhousing+synthesis+based+on+modern+digital+systems%2C+neuro-fuzzy+technologies+and+IoT">Scholar</a></p>
+          <meta itemprop="author" content="Viacheslav Munister">
+          <meta itemprop="datePublished" content="2022">
+          <meta itemprop="isPartOf" content="IOP Conference Series: Earth and Environmental Science">
+          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=An+example+of+intelligent+greenhousing+synthesis+based+on+modern+digital+systems%2C+neuro-fuzzy+technologies+and+IoT" itemprop="sameAs">Scholar</a>
         </article>
 
-        <article class="card work" data-tags="metrology,iiot,governance" tabindex="0">
-          <h3 class="w-title">Metrological support integration in conditions of digital transformation</h3>
+        <article class="card work" data-tags="metrology,iiot,governance" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
+          <h3 class="w-title" itemprop="name">Metrological support integration in conditions of digital transformation</h3>
           <div class="w-meta">Journal of Physics: Conference Series 1889(3):032012 • 2021 • conference paper</div>
           <p class="w-excerpt muted">Integration path for metrological support during digital transformation: traceability, calibration, and data governance.</p>
           <ul class="w-bullets"><li>Traceability chains for IIoT measurements</li><li>Calibration policies and auditability</li></ul>
-          <p class="w-links"><a target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Metrological+support+integration+in+conditions+of+digital+transformation">Scholar</a></p>
+          <meta itemprop="author" content="Viacheslav Munister">
+          <meta itemprop="datePublished" content="2021">
+          <meta itemprop="isPartOf" content="Journal of Physics: Conference Series">
+          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Metrological+support+integration+in+conditions+of+digital+transformation" itemprop="sameAs">Scholar</a>
         </article>
 
+      </div>
+    </div>
+  </section>
+
+  <section id="collab">
+    <div class="container">
+      <div class="card">
+        <h2>Open to collaborations</h2>
+        <p class="muted">Edge IIoT · Robust MPC · Digital Twins · Vision‑based QC</p>
+        <p>
+          <a class="chip" href="mailto:munister@outlook.com">Email me</a>
+          <a class="chip" href="#works">See selected papers</a>
+        </p>
       </div>
     </div>
   </section>
