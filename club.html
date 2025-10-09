@@ -4,243 +4,151 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SoftEng Research Hub — студентський науковий гурток</title>
-  <meta name="description" content="Студентський гурток з комп’ютерних наук: події, проєкти, участь у змаганнях, наукова співпраця. Долучайся до команди!">
+  <meta name="description" content="Офіційна сторінка гуртка SoftEng Research Hub (КІТС ДПУ). Щомісячні засідання та активності за Планом роботи 2025–2026 н.р.">
   <meta name="theme-color" content="#0B0C0F">
   <link rel="icon" href="/assets/icon.svg">
   <style>
-    /* =========
-       БАЗА / ТОКЕНИ (Diia-inspired, dark-first)
-       ========= */
-    :root {
-      --bg: #0B0C0F;
-      --surface: #14161A;
-      --elev-1: #1B1E23;
-      --text: #E6EAF2;
-      --text-dim: #A9B0BC;
-      --border: #2A2F37;
-      --accent: #00B3FF;
-      --success: #22C55E;
-      --warning: #F59E0B;
-      --danger: #EF4444;
+    /* =========================
+       Токени (Diia-inspired)
+       ========================= */
+    :root{
+      --bg:#0B0C0F; --surface:#101217; --elev-1:#151923; --elev-2:#1A1F2B;
+      --text:#E9EDF5; --text-dim:#A9B2C0; --border:#2A3140; --accent:#00B3FF;
+      --ok:#22C55E; --warn:#F59E0B; --err:#EF4444;
 
-      --radius-lg: 16px;
-      --radius-md: 12px;
-      --radius-sm: 8px;
+      --r-lg:16px; --r-md:12px; --r-sm:10px;
+      --s-1:6px; --s-2:10px; --s-3:14px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px;
 
-      --space-1: 4px;
-      --space-2: 8px;
-      --space-3: 12px;
-      --space-4: 16px;
-      --space-5: 24px;
-      --space-6: 32px;
-      --space-7: 48px;
-
-      --shadow-1: 0 1px 2px rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.25);
-
-      --container: 1200px;
+      --shadow-1:0 6px 22px rgba(0,0,0,.25), 0 1px 1px rgba(0,0,0,.35);
+      --container:1160px;
+      --ring:0 0 0 2px color-mix(in srgb, var(--accent) 75%, transparent);
     }
-    /* Light theme (вимикач теми) */
-    [data-theme="light"] {
-      --bg: #F7F8FA;
-      --surface: #FFFFFF;
-      --elev-1: #F1F3F6;
-      --text: #0B0C0F;
-      --text-dim: #40454F;
-      --border: #D7DBE0;
-      --accent: #0077FF;
-      --shadow-1: 0 1px 2px rgba(0,0,0,.08), 0 6px 20px rgba(0,0,0,.08);
+    /* Light (за бажанням користувача) */
+    [data-theme="light"]{
+      --bg:#F7F8FA; --surface:#FFFFFF; --elev-1:#F3F5F8; --elev-2:#EEF1F6;
+      --text:#0B0C0F; --text-dim:#465162; --border:#D7DEE7; --accent:#0077FF;
+      --shadow-1:0 10px 24px rgba(0,0,0,.08), 0 1px 1px rgba(0,0,0,.08);
     }
 
-    /* =========
-       ГЛОБАЛЬНІ СТИЛІ
-       ========= */
-    html, body {
-      height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      -webkit-text-size-adjust: 100%;
-      text-rendering: optimizeLegibility;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, "e-Ukraine", "e-Ukraine Head", Arial, sans-serif;
-      line-height: 1.5;
+    /* =========================
+       База
+       ========================= */
+    html,body{height:100%;background:var(--bg);color:var(--text);
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Inter,Arial,sans-serif;line-height:1.55}
+    *{box-sizing:border-box}
+    img{max-width:100%;height:auto;display:block}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{width:min(100% - 2*var(--s-4),var(--container));margin-inline:auto}
+    .muted{color:var(--text-dim)}
+    :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:8px}
+
+    /* =========================
+       Хедер
+       ========================= */
+    header{
+      position:sticky; top:0; z-index:40; border-bottom:1px solid var(--border);
+      backdrop-filter:saturate(150%) blur(10px);
+      background:color-mix(in srgb, var(--bg) 88%, transparent);
     }
-    * { box-sizing: border-box; }
-    img { max-width: 100%; height: auto; display: block; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .sr-only {
-      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    .nav{display:flex;align-items:center;justify-content:space-between;padding-block:12px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.2px}
+    .logo{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+      background:linear-gradient(180deg, var(--elev-1), var(--elev-2)); border:1px solid var(--border);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
+    .nav-links{display:none;gap:18px}
+    .nav-links a{color:var(--text);font-weight:600;padding:8px 12px;border-radius:10px}
+    .nav-links a[aria-current="page"]{background:var(--elev-1);border:1px solid var(--border)}
+    .icon-btn{background:transparent;border:1px solid var(--border);border-radius:12px;padding:9px;color:var(--text)}
+    .burger{display:inline-grid}
+    @media (min-width:900px){.nav-links{display:flex}.burger{display:none}}
+    .mobile-panel{display:none;padding:14px;border-top:1px solid var(--border);background:var(--bg)}
+    .mobile-panel.open{display:block}
+
+    /* =========================
+       Кнопки / чипи / картки
+       ========================= */
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;border:none;
+      background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 92%, #fff 0%), var(--accent));
+      color:#001018;font-weight:700;box-shadow:var(--shadow-1)}
+    .btn.secondary{background:transparent;color:var(--text);border:1px solid var(--border)}
+    .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);
+      background:var(--elev-1);color:var(--text);padding:8px 12px;border-radius:12px}
+    .card{position:relative;background:linear-gradient(180deg, var(--surface), var(--elev-1));
+      border:1px solid var(--border);border-radius:16px;padding:var(--s-5);box-shadow:var(--shadow-1)}
+    .card:hover{transform:translateY(-1px); transition:transform .12s ease-out}
+
+    .pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;
+      background:var(--elev-2);border:1px solid var(--border);color:var(--text-dim);font-size:13px}
+
+    /* =========================
+       Hero
+       ========================= */
+    .hero{padding-block:var(--s-8); position:relative; overflow:hidden}
+    .hero::after{
+      content:""; position:absolute; inset:auto -30% -60% -30%; height:220px;
+      background:radial-gradient(100% 100% at 50% 0%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 60%);
+      pointer-events:none; filter:blur(30px);
     }
-    .container {
-      width: min(100% - 2*var(--space-4), var(--container));
-      margin-inline: auto;
-    }
-    .btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: var(--accent); color: #001018;
-      padding: 12px 16px; border-radius: var(--radius-md);
-      border: none; font-weight: 600; box-shadow: var(--shadow-1);
-    }
-    .btn.secondary {
-      background: transparent; color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .chip {
-      display: inline-flex; align-items: center; gap: 8px;
-      border: 1px solid var(--border); padding: 8px 12px;
-      border-radius: var(--radius-md); color: var(--text);
-      background: var(--surface);
-    }
-    .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: var(--space-5);
-      box-shadow: var(--shadow-1);
-    }
-    .grid {
-      display: grid; gap: var(--space-5);
-    }
-    @media (min-width: 768px) {
-      .grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
-      .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
-    }
-    @media (min-width: 1024px) {
-      .grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .hero h1{font-size:clamp(30px,4.4vw,44px);line-height:1.15;margin:0 0 var(--s-3);letter-spacing:.2px}
+    .hero p{max-width:70ch;margin:0 0 var(--s-5)} 
+    .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+
+    /* =========================
+       Грід / секції
+       ========================= */
+    section{padding-block:var(--s-7)}
+    .grid{display:grid;gap:var(--s-5)}
+    @media (min-width:768px){
+      .cols-2{grid-template-columns:repeat(2,1fr)}
+      .cols-3{grid-template-columns:repeat(3,1fr)}
     }
 
-    /* =========
-       ХЕДЕР / НАВ
-       ========= */
-    header {
-      position: sticky; top: 0; z-index: 40;
-      backdrop-filter: saturate(180%) blur(10px);
-      background: color-mix(in srgb, var(--bg) 90%, transparent);
-      border-bottom: 1px solid var(--border);
+    /* =========================
+       Timeline для плану
+       ========================= */
+    .timeline{position:relative;padding-left:18px}
+    .timeline::before{
+      content:""; position:absolute; left:6px; top:0; bottom:0; width:2px; background:var(--border);
     }
-    .nav {
-      display: flex; align-items: center; justify-content: space-between;
-      padding-block: 12px;
+    .tl-item{position:relative; margin:0 0 var(--s-5)}
+    .tl-item::before{
+      content:""; position:absolute; left:-2px; top:4px; width:10px; height:10px; border-radius:50%;
+      background:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
     }
-    .brand {
-      display: flex; align-items: center; gap: 12px; font-weight: 800;
-      letter-spacing: .2px;
-    }
-    .brand .logo {
-      width: 32px; height: 32px; border-radius: 8px;
-      display: grid; place-items: center; background: var(--elev-1);
-      border: 1px solid var(--border);
-    }
-    .nav-actions { display: flex; gap: 8px; align-items: center; }
-    .nav-links {
-      display: none; gap: 18px; align-items: center;
-    }
-    .nav-links a {
-      color: var(--text); font-weight: 600; padding: 8px 10px; border-radius: 10px;
-    }
-    .nav-links a[aria-current="page"] {
-      background: var(--elev-1); border: 1px solid var(--border);
-    }
-    .icon-btn {
-      background: transparent; border: 1px solid var(--border);
-      border-radius: 12px; padding: 8px; color: var(--text);
-      display: inline-grid; place-items: center;
-    }
-    .burger { display: inline-grid; }
-    @media (min-width: 900px) {
-      .burger { display: none; }
-      .nav-links { display: flex; }
-    }
-    .mobile-panel {
-      display: none; padding: var(--space-4); border-top: 1px solid var(--border);
-      background: var(--bg);
-    }
-    .mobile-panel.open { display: block; }
+    .tl-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .tl-month{font-weight:800; letter-spacing:.2px}
+    .tl-body{background:var(--elev-2);border:1px solid var(--border);border-radius:14px;padding:14px}
+    .tl-body ul{margin:0 0 6px 18px}
+    .tl-foot{font-size:13px;color:var(--text-dim)}
 
-    /* =========
-       HERO
-       ========= */
-    .hero {
-      padding-block: var(--space-7);
-    }
-    .hero h1 {
-      font-size: clamp(28px, 4vw, 40px); line-height: 1.2; margin: 0 0 var(--space-4);
-      letter-spacing: .3px;
-    }
-    .hero p {
-      color: var(--text-dim); max-width: 70ch; margin: 0 0 var(--space-5);
-    }
-    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
-
-    /* =========
-       СЕКЦІЇ
-       ========= */
-    section { padding-block: var(--space-6); }
-    section header h2 {
-      font-size: clamp(22px, 3vw, 28px); margin: 0 0 var(--space-4);
-    }
-    .muted { color: var(--text-dim); }
-
-    /* Подія «Наступна зустріч» */
-    .event-meta {
-      display: grid; gap: var(--space-3);
-    }
-    .event-meta div {
-      display: flex; align-items: center; gap: 10px; color: var(--text);
-    }
-    .event-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: var(--space-4); }
-
-    /* Сітка чипсів-напрямів */
-    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
-
-    /* Картки проєктів/новин/доків */
-    .card h3 { margin: 0 0 8px; font-size: 18px; }
-    .card p { margin: 0; color: var(--text-dim); }
-    .card .meta { margin-top: 10px; font-size: 14px; color: var(--text-dim); }
-
-    /* ФУТЕР */
-    footer {
-      border-top: 1px solid var(--border);
-      padding-block: var(--space-6);
-      color: var(--text-dim);
-    }
-
-    /* АДАПТИВНІСТЬ / ПРЕФЕРЕНСИ */
-    @media (prefers-reduced-motion: reduce) {
-      * { transition: none !important; animation: none !important; }
-    }
-    :focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-      border-radius: 8px;
-    }
+    footer{border-top:1px solid var(--border);padding-block:var(--s-7);color:var(--text-dim)}
+    @media (prefers-reduced-motion: reduce){*{transition:none !important; animation:none !important}}
   </style>
 </head>
 <body>
-  <a class="sr-only" href="#main">Перейти до вмісту</a>
+  <a class="pill" href="#main" style="position:absolute;left:-9999px" onfocus="this.style.left='12px'">Перейти до вмісту</a>
 
+  <!-- Хедер -->
   <header>
     <div class="container nav" role="navigation" aria-label="Головна навігація">
       <div class="brand">
         <div class="logo" aria-hidden="true">
-          <!-- Простий логотип -->
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor"/>
+            <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor"/>
             <path d="M7 12h10M12 7v10" stroke="currentColor" stroke-width="1.5"/>
           </svg>
         </div>
         <span>SoftEng Research Hub</span>
       </div>
-
-      <nav class="nav-links" aria-label="Основні посилання">
+      <nav class="nav-links">
         <a href="/" aria-current="page">Головна</a>
         <a href="/events/">Події</a>
-        <a href="/projects/">Проєкти</a>
-        <a href="/team/">Команда</a>
         <a href="/docs/">Документи</a>
       </nav>
-
-      <div class="nav-actions">
-        <button class="icon-btn" id="themeToggle" aria-label="Перемкнути тему" title="Тема">
-          <!-- іконка тема -->
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="pill" aria-hidden="true">В-414 · третій четвер · 13:20</span>
+        <button class="icon-btn" id="themeToggle" title="Тема" aria-label="Перемкнути тему">
           <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M12 3a9 9 0 0 0 0 18 9 9 0 0 1 0-18Z" stroke="currentColor" stroke-width="1.5"/>
           </svg>
@@ -252,13 +160,10 @@
         </button>
       </div>
     </div>
-
-    <div id="mobileMenu" class="mobile-panel" role="region" aria-label="Мобільне меню">
-      <nav class="container grid" style="gap: 8px;">
+    <div id="mobileMenu" class="mobile-panel">
+      <nav class="container grid" style="gap:8px">
         <a href="/" aria-current="page">Головна</a>
         <a href="/events/">Події</a>
-        <a href="/projects/">Проєкти</a>
-        <a href="/team/">Команда</a>
         <a href="/docs/">Документи</a>
       </nav>
     </div>
@@ -269,122 +174,207 @@
     <section class="hero">
       <div class="container">
         <h1>Студентський науковий гурток з комп’ютерних наук</h1>
-        <p>
-          Досліджуємо сучасну розробку ПЗ, створюємо навчальні та реальні проєкти,
-          готуємо учасників до олімпіад і хакатонів, публікуємо результати досліджень.
-          Приєднуйся — і зростай разом з командою.
+        <p class="muted">
+          Працюємо за <strong>Планом роботи 2025–2026</strong>: щомісячні засідання та тематичні активності.
+          Регулярний слот — <strong>третій четвер місяця, 13:20</strong>, ауд. <strong>В-414</strong> (КІТС, ДПУ).
         </p>
         <div class="cta-row">
-          <a class="btn" href="https://forms.gle/TODO-join" target="_blank" rel="noopener">Вступити</a>
-          <a class="btn secondary" href="https://t.me/TODO_chat" target="_blank" rel="noopener">Долучитися в чат</a>
+          <a class="btn" href="https://dpu.edu.ua/studentskyi-naukovyi-hurtok-softeng-research-hub" target="_blank" rel="noopener">Офіційна сторінка</a>
+          <a class="btn secondary" href="/docs/plan-2025-2026.pdf" target="_blank" rel="noopener">План роботи (PDF)</a>
         </div>
       </div>
     </section>
 
-    <!-- Наступна зустріч + Напрями -->
+    <!-- Найближча зустріч -->
     <section>
-      <div class="container grid cols-2">
+      <div class="container">
         <article class="card">
-          <header>
-            <h2>Наступна зустріч</h2>
-            <p class="muted">Регулярний слот: третій четвер місяця, 13:20, ауд. В-414</p>
+          <header style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+            <h2 style="margin:0">Найближча зустріч за планом</h2>
+            <span class="pill">ауд. В-414</span>
           </header>
-          <div class="event-meta">
-            <div>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3v4M17 3v4M4 9h16M5 12h4m3 0h7M5 16h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-              <span><strong>Четвер, 16 жовтня 2025</strong> · 13:20–14:40</span>
-            </div>
-            <div>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2a8 8 0 0 0-8 8c0 7 8 12 8 12s8-5 8-12a8 8 0 0 0-8-8Zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" stroke="currentColor" stroke-width="1.5"/></svg>
-              <span>КІТС, ауд. В-414 · <a href="/events/2025-10-16/">Деталі події</a></span>
-            </div>
-          </div>
-          <div class="event-actions">
-            <a class="btn secondary" href="/assets/calendar/softenghub.ics">Додати в календар</a>
-            <a class="btn" href="https://example.com/stream" target="_blank" rel="noopener">Трансляція</a>
-          </div>
+          <p style="margin:.6rem 0 0">Дата: <strong>четвер, 16 жовтня 2025</strong></p>
+          <p class="muted" style="margin:.2rem 0 0">Формат і теми згідно з річним планом. Оголошення уточнюють деталі, залежні від зовнішніх графіків.</p>
         </article>
+      </div>
+    </section>
 
-        <aside class="card">
-          <header><h2>Напрями</h2></header>
-          <div class="chips" role="list">
-            <span class="chip" role="listitem">Програмування</span>
-            <span class="chip" role="listitem">Веб</span>
-            <span class="chip" role="listitem">Графіка/Моушн</span>
-            <span class="chip" role="listitem">3D-моделювання</span>
-            <span class="chip" role="listitem">Робототехніка</span>
-            <span class="chip" role="listitem">Research</span>
+    <!-- Річний план: Timeline (строго по документу) -->
+    <section aria-labelledby="plan">
+      <div class="container">
+        <header style="margin-bottom:var(--s-4)">
+          <h2 id="plan" style="margin:0 0 6px">План роботи 2025–2026</h2>
+          <p class="muted" style="margin:0">Витяг з офіційного плану. Без доповнень.</p>
+        </header>
+
+        <div class="timeline">
+          <!-- Вересень -->
+          <div class="tl-item">
+            <div class="tl-head">
+              <div class="tl-month">Вересень</div>
+              <span class="pill">третій четвер · 13:20</span>
+            </div>
+            <div class="tl-body">
+              <ul>
+                <li><strong>Організаційне засідання:</strong> ознайомлення з метою і завданнями; розподіл напрямів; обговорення річного плану.</li>
+                <li><strong>Лекція-дискусія:</strong> наукова діяльність у сфері КН; академічна доброчесність.</li>
+              </ul>
+              <div class="tl-foot">Місце: ауд. В-414</div>
+            </div>
           </div>
-          <p class="meta">Обери свій трек під час вступу — або комбінуй декілька.</p>
-        </aside>
-      </div>
-    </section>
 
-    <!-- Проєкти (прев’ю) -->
-    <section aria-labelledby="projects">
-      <div class="container">
-        <header>
-          <h2 id="projects">Останні проєкти</h2>
-          <p class="muted">Навчальні та дослідницькі ініціативи учасників.</p>
-        </header>
-        <div class="grid cols-3">
-          <article class="card">
-            <h3><a href="/projects/teg-bot/">TEG Bot — Telegram-асистент</a></h3>
-            <p>Бот для анонсів подій, реєстрацій та розсилок матеріалів. Стек: Python, aiogram, Sheets API.</p>
-            <p class="meta">Статус: у розробці · Репозиторій: <a href="https://github.com/org/repo" target="_blank" rel="noopener">GitHub</a></p>
-          </article>
-          <article class="card">
-            <h3><a href="/projects/3d-gallery/">Віртуальна 3D-галерея робіт</a></h3>
-            <p>Онлайн-простір для демонстрації 3D-моделей студентів. Стек: Three.js, glTF, Vite.</p>
-            <p class="meta">Статус: демо · <a href="https://demo.example" target="_blank" rel="noopener">Дивитися</a></p>
-          </article>
-          <article class="card">
-            <h3><a href="/projects/vision-robot/">Vision-робот для лінії</a></h3>
-            <p>Автономна платформа з комп’ютерним зором для слідування лінією. Стек: OpenCV, Arduino/RPi.</p>
-            <p class="meta">Статус: ідея · Потрібна команда</p>
-          </article>
-        </div>
-        <p style="margin-top: var(--space-5);"><a class="btn secondary" href="/projects/">Усі проєкти</a></p>
-      </div>
-    </section>
+          <!-- Жовтень -->
+          <div class="tl-item">
+            <div class="tl-head">
+              <div class="tl-month">Жовтень</div>
+              <span class="pill">третій четвер · 13:20</span>
+            </div>
+            <div class="tl-body">
+              <ul>
+                <li><strong>Семінар:</strong> актуальні проблеми сучасної програмної інженерії.</li>
+                <li><strong>Практичне заняття:</strong> пошук наукової інформації в базах даних, бібліографія, оформлення джерел.</li>
+                <li><strong>Індивідуальна робота:</strong> вибір тем міні-досліджень.</li>
+              </ul>
+              <div class="tl-foot">Місце: ауд. В-414</div>
+            </div>
+          </div>
 
-    <!-- Новини / Оновлення -->
-    <section aria-labelledby="news">
-      <div class="container">
-        <header>
-          <h2 id="news">Новини</h2>
-          <p class="muted">Оголошення, звіти зі зустрічей та корисні матеріали.</p>
-        </header>
-        <div class="grid">
-          <article class="card">
-            <h3><a href="/news/2025-10-demo-day/">Відкритий Demo Day — листопад</a></h3>
-            <p>Готуємо демо-день: короткі доповіді команд, зовнішні гості з індустрії, збір фідбеку.</p>
-            <p class="meta">Опубліковано: 9 жовтня 2025</p>
-          </article>
-          <article class="card">
-            <h3><a href="/news/2025-09-kickoff/">Kickoff осені: набір у треки</a></h3>
-            <p>Оголошуємо набір на треки «Веб», «Research» і «Робототехніка». Розподіл команд — на слід. зустрічі.</p>
-            <p class="meta">Опубліковано: 18 вересня 2025</p>
-          </article>
+          <!-- Листопад -->
+          <div class="tl-item">
+            <div class="tl-head">
+              <div class="tl-month">Листопад</div>
+              <span class="pill">третій четвер · 13:20</span>
+            </div>
+            <div class="tl-body">
+              <ul>
+                <li><strong>Семінар:</strong> основи академічного письма і правила оформлення наукових робіт.</li>
+                <li><strong>Засідання гуртка:</strong> короткі повідомлення студентів за обраними темами.</li>
+              </ul>
+              <div class="tl-foot">Місце: ауд. В-414</div>
+            </div>
+          </div>
+
+          <!-- Грудень -->
+          <div class="tl-item">
+            <div class="tl-head">
+              <div class="tl-month">Грудень</div>
+              <span class="pill">третій четвер · 13:20</span>
+            </div>
+            <div class="tl-body">
+              <ul>
+                <li><strong>Майстер-клас:</strong> системи контролю версій (Git) і дослідження в колективній роботі.</li>
+                <li><strong>Індивідуальна робота:</strong> підготовка тез до студентської наукової конференції.</li>
+              </ul>
+              <div class="tl-foot">Місце: ауд. В-414</div>
+            </div>
+          </div>
+
+          <!-- Січень -->
+          <div class="tl-item">
+            <div class="tl-head">
+              <div class="tl-month">Січень</div>
+              <span class="pill">третій четвер · 13:20</span>
+            </div>
+            <div class="tl-body">
+              <ul>
+                <li><strong>Дискусія:</strong> сучасні мови програмування та їх застосування.</li>
+                <li><strong>Засідання гуртка:</strong> проміжний звіт про виконання міні-досліджень.</li>
+              </ul>
+              <div class="tl-foot">Місце: ауд. В-414</div>
+            </div>
+          </div>
+
+          <!-- Лютий -->
+          <div class="tl-item">
+            <div class="tl-head">
+              <div class="tl-month">Лютий</div>
+              <span class="pill">третій четвер · 13:20</span>
+            </div>
+            <div class="tl-body">
+              <ul>
+                <li><strong>Брейнштормінг:</strong> обговорення ідей студентських стартапів.</li>
+              </ul>
+              <div class="tl-foot">Місце: ауд. В-414</div>
+            </div>
+          </div>
+
+          <!-- Березень -->
+          <div class="tl-item">
+            <div class="tl-head">
+              <div class="tl-month">Березень</div>
+              <span class="pill">третій четвер · 13:20</span>
+            </div>
+            <div class="tl-body">
+              <ul>
+                <li><strong>Практикум:</strong> основи роботи з віртуальними середовищами (на прикладі Python venv).</li>
+              </ul>
+              <div class="tl-foot">Місце: ауд. В-414</div>
+            </div>
+          </div>
+
+          <!-- Квітень -->
+          <div class="tl-item">
+            <div class="tl-head">
+              <div class="tl-month">Квітень</div>
+              <span class="pill">третій четвер · 13:20</span>
+            </div>
+            <div class="tl-body">
+              <ul>
+                <li><strong>Засідання гуртка:</strong> виступи студентів з проміжними результатами досліджень.</li>
+                <li><strong>Конференція:</strong> участь у студентській науковій конференції.</li>
+              </ul>
+              <div class="tl-foot">Регулярна зустріч — В-414; конференція — за графіком організаторів.</div>
+            </div>
+          </div>
+
+          <!-- Травень -->
+          <div class="tl-item">
+            <div class="tl-head">
+              <div class="tl-month">Травень</div>
+              <span class="pill">третій четвер · 13:20</span>
+            </div>
+            <div class="tl-body">
+              <ul>
+                <li><strong>Воркшоп:</strong> основи DevOps: контейнеризація застосунку з Docker. Навіщо потрібен Docker?</li>
+                <li><strong>Семінар:</strong> методології розробки ПЗ: Agile, Scrum, DevOps.</li>
+              </ul>
+              <div class="tl-foot">Місце: ауд. В-414</div>
+            </div>
+          </div>
+
+          <!-- Червень -->
+          <div class="tl-item" style="margin-bottom:0">
+            <div class="tl-head">
+              <div class="tl-month">Червень</div>
+              <span class="pill">третій четвер · 13:20</span>
+            </div>
+            <div class="tl-body">
+              <ul>
+                <li><strong>Засідання гуртка:</strong> презентації результатів студентських досліджень.</li>
+                <li><strong>Підсумкове засідання:</strong> підбиття підсумків роботи гуртка; відзначення активних учасників; формування планів на наступний рік.</li>
+              </ul>
+              <div class="tl-foot">Місце: ауд. В-414</div>
+            </div>
+          </div>
         </div>
-        <p style="margin-top: var(--space-5);"><a class="btn secondary" href="/news/">Усі новини</a></p>
       </div>
     </section>
 
     <!-- Документи -->
     <section aria-labelledby="docs">
       <div class="container">
-        <header><h2 id="docs">Документи</h2></header>
+        <header style="margin-bottom:var(--s-4)">
+          <h2 id="docs" style="margin:0">Документи</h2>
+          <p class="muted" style="margin:0">Офіційні джерела без змін.</p>
+        </header>
         <div class="grid cols-2">
           <article class="card">
-            <h3><a href="/docs/polozhennya.pdf" target="_blank" rel="noopener">Положення гуртка (PDF)</a></h3>
-            <p>Цілі, завдання, форми роботи, порядок членства і управління.</p>
-            <p class="meta">Версія: 2025 · Джерело: кафедра</p>
+            <h3 style="margin-top:0"><a href="https://dpu.edu.ua/studentskyi-naukovyi-hurtok-softeng-research-hub" target="_blank" rel="noopener">Положення гуртка (офіційна сторінка)</a></h3>
+            <p class="muted">Цілі, завдання, форми роботи, членство та управління.</p>
           </article>
           <article class="card">
-            <h3><a href="/docs/plan-2025-2026.pdf" target="_blank" rel="noopener">План роботи 2025–2026 (PDF)</a></h3>
-            <p>Помесячний план активностей, регулярні зустрічі, спецподії.</p>
-            <p class="meta">Версія: вересень 2025</p>
+            <h3 style="margin-top:0"><a href="https://dpu.edu.ua/studentskyi-naukovyi-hurtok-softeng-research-hub" target="_blank" rel="noopener">План роботи 2025–2026 (PDF / витяг)</a></h3>
+            <p class="muted">Місячні активності і регулярний слот «третій четвер, 13:20, В-414».</p>
           </article>
         </div>
       </div>
@@ -392,93 +382,42 @@
   </main>
 
   <footer role="contentinfo">
-    <div class="container grid">
+    <div class="container grid cols-3">
       <div>
         <strong>SoftEng Research Hub</strong>
         <p class="muted">КІТС · Державний податковий університет</p>
       </div>
       <div>
-        <p class="muted">
-          Листи: <a href="mailto:club@example.edu">club@example.edu</a><br>
-          Чат: <a href="https://t.me/TODO_chat" target="_blank" rel="noopener">@softenghub</a>
-        </p>
+        <p class="muted">Керівник гуртка: В.В. Лаговський, к.е.н., доцент</p>
       </div>
-      <div>
-        <p class="muted">© 2025 · <a href="/privacy/">Політика конфіденційності</a></p>
+      <div style="text-align:right">
+        <p class="muted">© 2025</p>
       </div>
     </div>
   </footer>
 
-  <!-- Структуровані дані -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Organization",
-    "name":"SoftEng Research Hub",
-    "url":"https://example.edu/softeng-hub",
-    "logo":"https://example.edu/assets/icon.png",
-    "department":"Кафедра інформаційних технологій та систем (КІТС)",
-    "sameAs":[
-      "https://dpu.edu.ua/studentskyi-naukovyi-hurtok-softeng-research-hub",
-      "https://t.me/TODO_chat"
-    ]
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Event",
-    "name":"Щомісячна зустріч гуртка",
-    "startDate":"2025-10-16T13:20:00+03:00",
-    "endDate":"2025-10-16T14:40:00+03:00",
-    "eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode",
-    "location":{
-      "@type":"Place",
-      "name":"КІТС, ауд. В-414",
-      "address":"Ірпінь, Україна"
-    },
-    "organizer":{
-      "@type":"Organization",
-      "name":"SoftEng Research Hub"
-    },
-    "url":"https://example.edu/softeng-hub/events/2025-10-16"
-  }
-  </script>
-
-  <!-- Мінімальний JS: тема/бургер + збереження вибору -->
+  <!-- JS -->
   <script>
     (function(){
-      const root = document.documentElement;
-      const THEME_KEY = "softeng_theme";
-      const saved = localStorage.getItem(THEME_KEY);
-      // Якщо користувач не обирав — шануємо prefers-color-scheme
+      const root=document.documentElement, KEY="softeng_theme";
+      const saved=localStorage.getItem(KEY);
       if(!saved){
-        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const prefersDark=window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
         root.setAttribute("data-theme", prefersDark ? "dark" : "light");
-      } else {
-        root.setAttribute("data-theme", saved);
-      }
-      // Перемикач теми
-      const toggle = document.getElementById("themeToggle");
-      toggle?.addEventListener("click", () => {
-        const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-        root.setAttribute("data-theme", next);
-        localStorage.setItem(THEME_KEY, next);
+      } else root.setAttribute("data-theme", saved);
+
+      document.getElementById("themeToggle")?.addEventListener("click", ()=>{
+        const next=root.getAttribute("data-theme")==="dark"?"light":"dark";
+        root.setAttribute("data-theme", next); localStorage.setItem(KEY, next);
       });
-      // Мобільне меню
-      const burger = document.getElementById("burger");
-      const panel = document.getElementById("mobileMenu");
-      burger?.addEventListener("click", () => {
-        const open = panel.classList.toggle("open");
+
+      const burger=document.getElementById("burger");
+      const panel=document.getElementById("mobileMenu");
+      burger?.addEventListener("click", ()=>{
+        const open=panel.classList.toggle("open");
         burger.setAttribute("aria-expanded", String(open));
       });
     })();
   </script>
-
-  <noscript>
-    <div class="container" style="padding:16px; color: var(--text-dim);">
-      Для повноцінної роботи сайту увімкніть JavaScript (перемикач теми та мобільне меню).
-    </div>
-  </noscript>
 </body>
 </html>
