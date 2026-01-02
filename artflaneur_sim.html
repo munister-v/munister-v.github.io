@@ -1,0 +1,3930 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Art Flâneur — Gameplay Visual Atlas (MVP)</title>
+<style>
+    :root{
+      --bg:#0b0c10;
+      --text:rgba(245,245,247,.92);
+      --muted:rgba(245,245,247,.62);
+      --line:rgba(255,255,255,.12);
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.04);
+      --shadow: 0 18px 55px rgba(0,0,0,.38);
+
+      --lblBg: rgba(0,0,0,.28);
+      --lblStroke: rgba(255,255,255,.14);
+      --lblText: rgba(245,245,247,.82);
+      --focus: rgba(87,166,255,.55);
+
+      --a:rgba(87,166,255,.95);
+      --b:rgba(168,132,255,.92);
+      --c:rgba(74,214,178,.92);
+      --y:rgba(255,198,87,.92);
+      --r:rgba(255,107,107,.92);
+
+      --bggrad:
+        radial-gradient(1100px 620px at 10% 0%, rgba(87,166,255,.22), transparent 60%),
+        radial-gradient(1100px 620px at 92% 8%, rgba(168,132,255,.22), transparent 60%),
+        radial-gradient(900px 560px at 50% 102%, rgba(74,214,178,.12), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+    }
+    [data-theme="light"]{
+      --bg:#f7f8fb;
+      --text:rgba(25,25,28,.92);
+      --muted:rgba(25,25,28,.62);
+      --line:rgba(0,0,0,.10);
+      --card:rgba(0,0,0,.04);
+      --card2:rgba(0,0,0,.03);
+      --shadow: 0 18px 55px rgba(0,0,0,.12);
+      --lblBg: rgba(255,255,255,.86);
+      --lblStroke: rgba(0,0,0,.10);
+      --lblText: rgba(20,20,25,.82);
+      --focus: rgba(87,166,255,.55);
+      --bggrad:
+        radial-gradient(1100px 620px at 10% 0%, rgba(87,166,255,.18), transparent 60%),
+        radial-gradient(1100px 620px at 92% 8%, rgba(168,132,255,.18), transparent 60%),
+        radial-gradient(900px 560px at 50% 102%, rgba(74,214,178,.10), transparent 62%),
+        linear-gradient(180deg, rgba(0,0,0,.02), rgba(0,0,0,0));
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0; background:var(--bggrad), var(--bg); color:var(--text); overflow-x:hidden;
+      font-family: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,"Noto Sans","Liberation Sans",sans-serif;}
+    a{color:inherit; text-decoration:none}
+    .top{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(12px);
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(0,0,0,.40), rgba(0,0,0,.12));
+    }
+    [data-theme="light"] .top{background: linear-gradient(180deg, rgba(255,255,255,.80), rgba(255,255,255,.55));}
+    .topIn{max-width:1240px; margin:0 auto; padding:12px 16px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;}
+    
+    /* ===== v10: Compact Header + unified TopPlate ===== */
+    .statusChip{
+      display:inline-flex; align-items:center; gap:10px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      border-radius: 999px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-weight: 950;
+      box-shadow: 0 14px 40px rgba(0,0,0,.20);
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    [data-theme="light"] .statusChip{background: rgba(0,0,0,.03); box-shadow: 0 14px 40px rgba(0,0,0,.08);}
+    .statusChip:hover{transform: translateY(-1px);}
+    .statusChip:active{transform: translateY(0px);}
+    .liveDot{width:10px; height:10px; border-radius:99px; background: rgba(255,255,255,.18); border:1px solid var(--line);}
+    .liveDot.isRun{background: rgba(87,166,255,.85); box-shadow: 0 0 0 6px rgba(87,166,255,.14); border-color: rgba(87,166,255,.55);}
+    .sr{position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;}
+
+    .top{padding-bottom: 6px;}
+    .topIn{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .topPlate{
+      max-width:1240px;
+      margin: 10px auto 0;
+      padding: 10px 16px 14px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .plate{
+      border:1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      backdrop-filter: blur(14px);
+      box-shadow: 0 22px 70px rgba(0,0,0,.22);
+      overflow:hidden;
+    }
+    [data-theme="light"] .plate{background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.60)); box-shadow: 0 18px 55px rgba(0,0,0,.10);}
+    .topPlate .navRow{padding:10px 12px 8px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+    .topPlate .navRow a{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.10);
+      color: var(--muted);
+      font-weight: 950;
+      font-size: 12px;
+    }
+    [data-theme="light"] .topPlate .navRow a{background: rgba(0,0,0,.03); border-color: rgba(0,0,0,.10);}
+    .topPlate .navRow a:hover{color:var(--text); transform: translateY(-1px);}
+    .topPlate .navRow a.isOn{color:var(--text); background: rgba(87,166,255,.12); border-color: rgba(87,166,255,.32);}
+
+    .topPlate .cmdRow{
+      margin:0;
+      padding: 10px 12px 12px;
+      border-top:1px solid var(--line);
+      display:flex;
+      gap:12px;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .tog.mini{padding:8px 10px; font-size:12px; opacity:.95}
+    .top.isCompact .topPlate{display:none;}
+    .top.isCompact .brandMeta{display:none;}
+    .top.isCompact .brandTitle{font-size:14px;}
+    .top.isCompact .topIn{padding-bottom: 6px;}
+.brand{display:flex; gap:10px; align-items:center; font-weight:980; letter-spacing:.2px; flex-wrap:wrap;}
+    .dot{width:10px; height:10px; border-radius:999px; background:var(--a); box-shadow: 0 0 0 6px rgba(87,166,255,.12);}
+    .pill{display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); background:rgba(255,255,255,.06);
+      border-radius:999px; padding:8px 10px; color:var(--muted); font-weight:900; font-size:12px; white-space:nowrap;}
+    [data-theme="light"] .pill{background:rgba(0,0,0,.03);}
+    .btn{border:1px solid var(--line); background:rgba(255,255,255,.06); color:var(--text);
+      border-radius:999px; padding:10px 12px; font-weight:900; cursor:pointer; transition:transform .08s ease, background .12s ease;}
+    [data-theme="light"] .btn{background:rgba(0,0,0,.04);}
+    .btn:hover{background:rgba(255,255,255,.10)}
+    [data-theme="light"] .btn:hover{background:rgba(0,0,0,.06)}
+    .btn:active{transform:translateY(1px)}
+    .wrap{max-width:1240px; margin:0 auto; padding:18px 16px 54px;}
+
+    .layout{display:grid; grid-template-columns: 1.15fr .85fr; gap:16px; align-items:start; margin-top:14px;}
+    .card{border:1px solid var(--line); background:var(--card); border-radius:22px; box-shadow:var(--shadow); overflow:hidden;}
+    [data-theme="light"] .card{background:rgba(255,255,255,.86);}
+    .head{padding:12px 14px; border-bottom:1px solid var(--line); display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;}
+    .head b{font-weight:980;}
+    .sub{color:var(--muted); font-size:12px; font-weight:850;}
+    .body{padding:14px 14px;}
+
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .seg{display:inline-flex; border:1px solid var(--line); border-radius:999px; overflow:hidden; background:rgba(255,255,255,.10);}
+    [data-theme="light"] .seg{background:rgba(0,0,0,.03);}
+    .seg button{border:0; background:transparent; padding:10px 12px; font-weight:950; color:var(--text); cursor:pointer;}
+    .seg button.isOn{background: rgba(87,166,255,.16);}
+    .tog{display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:999px; padding:8px 10px;
+      background:rgba(255,255,255,.06); font-weight:900; color:var(--muted); user-select:none;}
+    [data-theme="light"] .tog{background:rgba(0,0,0,.03);}
+    .tog input{width:18px; height:18px; accent-color: rgba(87,166,255,.95);}
+
+    .canvas{position:relative; min-height: 560px; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:18px; overflow:hidden;}
+    [data-theme="light"] .canvas{background:rgba(0,0,0,.02);}
+    .svg{position:absolute; inset:0; pointer-events:none;}
+    .nodes{position:relative; padding:12px; display:grid; grid-template-columns: repeat(12,1fr); gap:10px;}
+    .node{grid-column: span 4; border:1px solid var(--line); border-radius:18px; padding:12px 12px;
+      background:rgba(255,255,255,.04); cursor:pointer; transition:transform .10s ease, background .12s ease; box-shadow: 0 16px 30px rgba(0,0,0,.16);
+    }
+    [data-theme="light"] .node{background:rgba(0,0,0,.03);}
+    .node:hover{transform: translateY(-2px); background:rgba(255,255,255,.06);}
+
+.node:focus-visible{outline:3px solid var(--focus); outline-offset:2px;}
+.tab:focus-visible,.btn:focus-visible{outline:3px solid var(--focus); outline-offset:2px;}
+.tab.isDisabled{opacity:.45;}
+.node.isSel{outline:2px solid rgba(255,198,87,.22); box-shadow: 0 18px 70px rgba(255,198,87,.10);}
+@media (prefers-reduced-motion: reduce){
+  *{scroll-behavior:auto !important;}
+  .btn,.node{transition:none !important;}
+}
+    .nodeTop{display:flex; gap:10px; align-items:center; justify-content:space-between;}
+    .node b{font-weight:980; letter-spacing:.2px;}
+    .ico{width:34px; height:34px; border-radius:14px; border:1px solid var(--line); display:grid; place-items:center; background:rgba(255,255,255,.04);}
+    [data-theme="light"] .ico{background:rgba(0,0,0,.02);}
+    .ico svg{width:18px; height:18px; opacity:.92;}
+    .bar{margin-top:10px; height:8px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.03); overflow:hidden;}
+    .bar > i{display:block; height:100%; width:0%; background:linear-gradient(90deg, var(--a), var(--b), var(--c), var(--y)); opacity:.75;}
+    .nodeMeta{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+    .chip{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); border-radius:999px; padding:6px 8px; font-size:11px; font-weight:950;
+      color:var(--muted); background:rgba(255,255,255,.04);}
+    [data-theme="light"] .chip{background:rgba(0,0,0,.03);}
+    .dot2{width:9px; height:9px; border-radius:999px; display:inline-block;}
+    .a{background:var(--a);}
+    .b{background:var(--b);}
+    .c{background:var(--c);}
+    .y{background:var(--y);}
+    .r{background:var(--r);}
+
+    .node.isDim{opacity:.28; filter:saturate(.6);}
+    .node.isHot{outline:2px solid rgba(87,166,255,.22); box-shadow: 0 18px 60px rgba(87,166,255,.14);}
+    .node.isPath{outline:2px solid rgba(74,214,178,.18); box-shadow: 0 18px 60px rgba(74,214,178,.12);}
+
+    .tabs{display:flex; gap:8px; flex-wrap:wrap;}
+    .tab{border:1px solid var(--line); background:rgba(255,255,255,.04); border-radius:999px; padding:8px 10px; font-weight:950; color:var(--muted); cursor:pointer;}
+    [data-theme="light"] .tab{background:rgba(0,0,0,.03);}
+    .tab.isOn{background:rgba(87,166,255,.14); color:var(--text);}
+
+    .panel{margin-top:12px; display:grid; gap:10px;}
+    .mini{border:1px solid var(--line); background:var(--card2); border-radius:18px; padding:12px; overflow:hidden;}
+    [data-theme="light"] .mini{background:rgba(0,0,0,.02);}
+    .miniTop{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+    .miniTop b{font-weight:980;}
+    .badge{display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:999px; padding:6px 10px; font-size:11px; font-weight:950; color:var(--muted); background:rgba(255,255,255,.04);}
+    [data-theme="light"] .badge{background:rgba(0,0,0,.03);}
+    .kv{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+
+    .heat{margin-top:10px; border:1px solid var(--line); border-radius:18px; overflow:hidden;}
+    .heatHead{display:flex; justify-content:space-between; gap:10px; padding:10px 12px; border-bottom:1px solid var(--line); background:rgba(255,255,255,.02);}
+    .heatBody{display:grid; grid-template-columns: 1fr 1fr; gap:0; }
+    .cell{padding:12px; border-right:1px solid var(--line); border-bottom:1px solid var(--line);}
+    .heatBody .cell:nth-child(2n){border-right:0;}
+    .meter{height:10px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.03); overflow:hidden; margin-top:8px;}
+    .meter i{display:block; height:100%; width:60%; background:linear-gradient(90deg, var(--c), var(--a), var(--b), var(--y)); opacity:.75;}
+    .label{display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight:950; font-size:12px;}
+    .label small{color:var(--muted); font-weight:850;}
+
+    .strip{display:grid; grid-template-columns: repeat(5,1fr); gap:10px; margin-top:12px;}
+    .frame{border:1px solid var(--line); border-radius:18px; background:rgba(255,255,255,.03); overflow:hidden; min-height:92px; position:relative;}
+    [data-theme="light"] .frame{background:rgba(0,0,0,.02);}
+    .frame b{position:absolute; left:10px; top:10px; font-size:12px; font-weight:980;}
+    .frame .cap{position:absolute; left:10px; bottom:10px; right:10px; color:var(--muted); font-size:11px; font-weight:850; line-height:1.35;}
+    .frame:before{content:""; position:absolute; inset:0; background:
+      radial-gradient(180px 120px at 20% 30%, rgba(87,166,255,.22), transparent 60%),
+      radial-gradient(200px 120px at 70% 45%, rgba(168,132,255,.18), transparent 62%),
+      radial-gradient(200px 140px at 50% 100%, rgba(74,214,178,.10), transparent 62%);
+      opacity:.75;
+    }
+
+    .drawer{position:fixed; right:16px; bottom:16px; width:min(560px, calc(100vw - 32px));
+  border:1px solid var(--line); border-radius:22px; background:rgba(0,0,0,.55); backdrop-filter: blur(12px);
+  box-shadow:var(--shadow); padding:12px; display:none; z-index:60;}
+.drawer.isOpen{display:block;}
+[data-theme="light"] .drawer{background:rgba(255,255,255,.90);}
+    .drawerTop{display:flex; gap:10px; justify-content:space-between; align-items:center;}
+    .drawerTop b{font-weight:980;}
+    .x{border:1px solid var(--line); border-radius:999px; padding:8px 10px; background:rgba(255,255,255,.06); cursor:pointer; font-weight:900;}
+    [data-theme="light"] .x{background:rgba(0,0,0,.03);}
+    .drawerP{margin:10px 0 0 0; color:var(--muted); font-size:12px; line-height:1.6;}
+    .grid2{margin-top:10px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;}
+    .box{border:1px solid var(--line); border-radius:18px; padding:10px; background:rgba(255,255,255,.04);}
+    [data-theme="light"] .box{background:rgba(0,0,0,.02);}
+    .box b{display:block; font-size:12px;}
+    .box .kv{margin-top:8px;}
+
+    @media (max-width: 1100px){ .layout{grid-template-columns: 1fr;} }
+    @media (max-width: 740px){ .node{grid-column: span 12;} .strip{grid-template-columns:1fr;} .grid2{grid-template-columns:1fr;} }
+  
+  
+    /* ===== v10: Organization visuals ===== */
+    .orgGrid{display:grid; grid-template-columns: 1fr 1fr; gap:14px;}
+    .orgBlock{border:1px solid var(--stroke); border-radius:18px; padding:12px; background: rgba(255,255,255,.04);}
+    [data-theme="light"] .orgBlock{background: rgba(0,0,0,.02);}
+    .orgTitle{font-weight:980; margin-bottom:4px;}
+    .orgHint{color:var(--muted); font-size:12px; font-weight:850; margin-bottom:10px;}
+    .pipeline{display:flex; gap:10px; flex-wrap:wrap;}
+    .pStep{flex: 1 1 160px; min-width: 160px; border:1px solid var(--stroke); border-radius:16px; padding:10px 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .pStep:hover{transform: translateY(-1px);}
+    .pStep.isSel{border-color: rgba(87,166,255,.45); background: rgba(87,166,255,.10);}
+    .pStep.isSim{box-shadow: 0 0 0 6px rgba(255,198,87,.10); border-color: rgba(255,198,87,.40);}
+    .pTop{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+    .pName{font-weight:980;}
+    .pDots{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;}
+    .pDot{width:9px; height:9px; border-radius:99px; border:1px solid var(--line); background: rgba(255,255,255,.12); opacity:.35;}
+    .pDot.on{opacity:1;}
+    .pDot[data-layer="ui"].on{background: rgba(87,166,255,.75); border-color: rgba(87,166,255,.45);}
+    .pDot[data-layer="engine"].on{background: rgba(255,198,87,.75); border-color: rgba(255,198,87,.45);}
+    .pDot[data-layer="events"].on{background: rgba(163,140,255,.75); border-color: rgba(163,140,255,.45);}
+    .pDot[data-layer="ledger"].on{background: rgba(255,108,108,.70); border-color: rgba(255,108,108,.45);}
+    .pDot[data-layer="analytics"].on{background: rgba(120,240,200,.70); border-color: rgba(120,240,200,.40);}
+    .pDot[data-layer="domain"].on{background: rgba(255,255,255,.60);}
+    .pDot[data-layer="cache"].on{background: rgba(87,166,255,.55);}
+    .pDot[data-layer="sync"].on{background: rgba(120,240,200,.55);}
+    .pDot[data-layer="privacy"].on{background: rgba(163,140,255,.55);}
+
+    .sysMap{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;}
+    .sysItem{border:1px solid var(--stroke); border-radius:16px; padding:10px; background: rgba(255,255,255,.04);
+      display:flex; flex-direction:column; gap:4px; min-height:74px; transition: transform .12s ease, border-color .12s ease;
+    }
+    .sysItem:hover{transform: translateY(-1px);}
+    .sysItem.isOn{border-color: rgba(87,166,255,.45); background: rgba(87,166,255,.09);}
+    .sysIco{font-size:14px; opacity:.9}
+    .sysMeta{color:var(--muted); font-size:12px; font-weight:850}
+
+    .swimWrap{margin-top:14px; border:1px solid var(--stroke); border-radius:18px; padding:12px; background: rgba(255,255,255,.03);}
+    .swim{overflow:auto; border-radius:14px;}
+    .swGrid{min-width: 860px; display:grid; grid-template-columns: 140px repeat(7, minmax(120px,1fr)); gap:6px;}
+    .swCell{border:1px solid rgba(255,255,255,.10); border-radius:12px; padding:8px 10px; background: rgba(0,0,0,.10);}
+    [data-theme="light"] .swCell{background: rgba(0,0,0,.02); border-color: rgba(0,0,0,.10);}
+    .swHead{font-weight:980; color:var(--muted); background: rgba(255,255,255,.04);}
+    .swRowHead{font-weight:980;}
+    .swDot{width:10px; height:10px; border-radius:99px; border:1px solid var(--line); background: rgba(255,255,255,.10); opacity:.32; display:inline-block;}
+    .swDot.on{opacity:1;}
+    .swDot.on.ui{background: rgba(87,166,255,.70); border-color: rgba(87,166,255,.45);}
+    .swDot.on.engine{background: rgba(255,198,87,.70); border-color: rgba(255,198,87,.45);}
+    .swDot.on.events{background: rgba(163,140,255,.70); border-color: rgba(163,140,255,.45);}
+    .swDot.on.ledger{background: rgba(255,108,108,.70); border-color: rgba(255,108,108,.45);}
+    .swDot.on.analytics{background: rgba(120,240,200,.65); border-color: rgba(120,240,200,.40);}
+    .swDot.on.domain{background: rgba(255,255,255,.55);}
+    .swDot.on.cache{background: rgba(87,166,255,.50);}
+    .swDot.on.sync{background: rgba(120,240,200,.50);}
+    .swDot.on.privacy{background: rgba(163,140,255,.50);}
+
+    @media (max-width: 980px){
+      .orgGrid{grid-template-columns: 1fr;}
+      .sysMap{grid-template-columns: repeat(2, 1fr);}
+    }
+
+@media print{
+    body{background:#fff !important; color:#111 !important;}
+    .top{position:static; backdrop-filter:none;}
+    .btn, .seg, .tog{display:none !important;}
+    .layout{grid-template-columns:1fr !important;}
+    .card{box-shadow:none !important;}
+    .canvas{min-height:auto !important;}
+    .drawer{display:block !important; position:static !important; width:100% !important; right:auto !important; bottom:auto !important; background:#fff !important; backdrop-filter:none !important; margin-top:14px;}
+    .drawerTop .x{display:none !important;}
+    .frame:before{opacity:.20 !important;}
+  }
+
+
+    /* ===== Atlas (extra visual detail) ===== */
+    .atlas{display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:16px;}
+    .atlas .wide{grid-column:1 / -1;}
+    @media (max-width: 1100px){ .atlas{grid-template-columns:1fr;} }
+
+    .timeline{display:flex; gap:10px; align-items:stretch; overflow-x:auto; padding-bottom:6px;}
+    .step{flex:1; min-width:170px; border:1px solid var(--line); border-radius:18px; padding:10px 10px 12px;
+      background:rgba(255,255,255,.04); cursor:pointer; transition:transform .12s ease, background .12s ease; position:relative;}
+    [data-theme="light"] .step{background:rgba(0,0,0,.03);}
+    .step:hover{transform:translateY(-1px); background:rgba(255,255,255,.06);}
+    .step.isActive{outline:2px solid rgba(255,198,87,.22); box-shadow: 0 18px 70px rgba(255,198,87,.10);}
+    .stepTop{display:flex; justify-content:space-between; gap:10px; align-items:center;}
+    .step b{font-weight:980;}
+    .dur{font-size:12px; color:var(--muted); font-weight:900;}
+    .miniBar{height:10px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.08); overflow:hidden; margin-top:10px;}
+    [data-theme="light"] .miniBar{background:rgba(0,0,0,.04);}
+    .miniBar i{display:block; height:100%; width:50%; background:linear-gradient(90deg, rgba(255,198,87,.65), rgba(90,201,255,.55));}
+    .miniNote{margin-top:10px; color:var(--muted); font-size:12px; line-height:1.55;}
+
+    .kpis{display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:10px;}
+    @media (max-width: 740px){ .kpis{grid-template-columns: repeat(2,1fr);} }
+    .kpi{border:1px solid var(--line); border-radius:18px; padding:10px 10px 12px; background:rgba(255,255,255,.04);}
+    [data-theme="light"] .kpi{background:rgba(0,0,0,.03);}
+    .kpi .k{color:var(--muted); font-size:12px; font-weight:900;}
+    .kpi .v{font-size:22px; font-weight:990; letter-spacing:-0.02em; margin-top:2px;}
+    .kpi .s{margin-top:8px; height:10px; border-radius:999px; border:1px solid var(--line); overflow:hidden; background:rgba(255,255,255,.08);}
+    [data-theme="light"] .kpi .s{background:rgba(0,0,0,.04);}
+    .kpi .s i{display:block; height:100%; width:40%; background:linear-gradient(90deg, rgba(90,201,255,.65), rgba(170,255,147,.55));}
+
+    .simLog{height:260px; overflow:auto; border:1px solid var(--line); border-radius:18px; padding:10px;
+      background:rgba(0,0,0,.22); font-size:12px; line-height:1.4;}
+    [data-theme="light"] .simLog{background:rgba(0,0,0,.03);}
+    .logRow{display:flex; gap:8px; align-items:flex-start; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,.10);}
+    [data-theme="light"] .logRow{border-bottom:1px dashed rgba(0,0,0,.12);}
+    .logRow:last-child{border-bottom:0;}
+    .t{color:var(--muted); font-weight:900; min-width:62px;}
+    .logMain{display:flex; flex-wrap:wrap; gap:6px; align-items:center;}
+    .pill2{display:inline-flex; gap:6px; align-items:center; border-radius:999px; padding:6px 8px;
+      border:1px solid var(--line); background:rgba(255,255,255,.06); font-weight:950;}
+    [data-theme="light"] .pill2{background:rgba(0,0,0,.03);}
+    .pill2.err{border-color:rgba(255,82,82,.35);}
+
+    .svgBox{border:1px solid var(--line); border-radius:18px; overflow:hidden; background:rgba(255,255,255,.03);}
+    [data-theme="light"] .svgBox{background:rgba(0,0,0,.02);}
+    .covWrap{display:grid; grid-template-columns: 1fr 1fr; gap:14px; align-items:start;}
+    @media (max-width: 1100px){ .covWrap{grid-template-columns:1fr;} }
+    .covTitle{font-weight:980; margin-bottom:8px;}
+    .matrix{display:grid; grid-template-columns: 170px repeat(3, 1fr); gap:8px;}
+    @media (max-width: 740px){ .matrix{grid-template-columns: 1fr; } }
+    .mHead{font-weight:980; color:var(--muted); font-size:12px;}
+    .mRow{display:contents;}
+    .mCell{border:1px solid var(--line); border-radius:14px; padding:10px; background:rgba(255,255,255,.04); font-weight:900;}
+    [data-theme="light"] .mCell{background:rgba(0,0,0,.03);}
+    .mCell.on{background:linear-gradient(135deg, rgba(170,255,147,.12), rgba(90,201,255,.08));}
+    .mCell.dim{opacity:.55;}
+    .mLabel{display:flex; gap:8px; align-items:center;}
+    .mDot{width:10px; height:10px; border-radius:99px; background:rgba(255,198,87,.8); box-shadow:0 0 0 6px rgba(255,198,87,.08);}
+
+    /* ===== v5: Micro-subflow + Failure Drill + Live Heat ===== */
+    .subflow{margin-top:14px; padding:12px; border:1px solid var(--stroke); border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+    }
+    .subflowHead{display:flex; align-items:baseline; justify-content:space-between; gap:12px;}
+    .substeps{margin-top:10px; display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:10px;}
+    @media (max-width: 1100px){ .substeps{grid-template-columns:repeat(3, minmax(0,1fr));} }
+    @media (max-width: 720px){ .substeps{grid-template-columns:repeat(2, minmax(0,1fr));} }
+    .mStep{border:1px solid var(--stroke); border-radius:16px; padding:10px 10px 12px; background:rgba(255,255,255,.04);
+      cursor:pointer; transition:transform .12s ease, border-color .15s ease, background .15s ease;
+      min-height:60px;
+    }
+    .mStep:hover{transform:translateY(-1px); border-color:rgba(87,166,255,.45); background:rgba(87,166,255,.06);}
+    .mStep.isActive{border-color:rgba(255,198,87,.55); box-shadow:0 0 0 3px rgba(255,198,87,.16) inset; background:rgba(255,198,87,.06);}
+    .mStepTop{display:flex; justify-content:space-between; gap:10px; align-items:baseline;}
+    .mStepTop b{font-size:12px; letter-spacing:.2px;}
+    .mStepTop .tag{font-size:11px; color:var(--muted);}
+    .mMiniBar{height:8px; border-radius:999px; background:rgba(255,255,255,.06); overflow:hidden; margin-top:10px;}
+    .mMiniBar i{display:block; height:100%; width:0%; background:linear-gradient(90deg, rgba(90,201,255,.95), rgba(255,198,87,.92));}
+
+    .failBox{margin-bottom:12px; padding:12px; border:1px solid var(--stroke); border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,98,112,.08), rgba(255,255,255,.03));
+    }
+    .failRow{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
+    .sel{appearance:none; border:1px solid var(--stroke); background:rgba(255,255,255,.04); color:var(--text);
+      padding:8px 12px; border-radius:14px; font-weight:800; font-size:12px;
+    }
+    .failLast{margin-top:10px; padding:10px 12px; border-radius:14px; border:1px dashed rgba(255,255,255,.18);
+      font-size:12px; color:var(--muted); line-height:1.5; min-height:38px;
+    }
+    .failLast b{color:var(--text);}
+    .failLast .pill2{margin-right:6px;}
+
+    .heat .label{display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
+    .heat .val{font-weight:1000; font-size:12px; color:var(--text); opacity:.92;}
+
+    /* Coverage heat overlay */
+    .mCell{position:relative;}
+    .mCnt{position:absolute; bottom:6px; right:8px; font-size:11px; font-weight:900; opacity:.72; pointer-events:none;}
+    .mCell.dim .mCnt{display:none;}
+    .mRow.isActive .mLabel{color:var(--text);}
+    .mRow.isActive .mDot{box-shadow:0 0 0 4px rgba(255,198,87,.18);}
+
+
+
+
+/* ============================================================
+   v7 — Dashboard UX upgrade (command bar + tooltips + polish)
+   ============================================================ */
+
+:root{
+  --radius-xl: 26px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 14px;
+  --space-4: 18px;
+  --space-5: 24px;
+
+  --cardBorder: rgba(255,255,255,.14);
+  --cardGlow: rgba(255,255,255,.05);
+  --shadow2: 0 18px 70px rgba(0,0,0,.42);
+}
+[data-theme="light"]{
+  --cardBorder: rgba(0,0,0,.10);
+  --cardGlow: rgba(255,255,255,.70);
+}
+
+html{scroll-behavior:smooth}
+#core, #inspector, #org, #atlas, #simulator, #layers, #coverage{ scroll-margin-top: 112px; }
+
+.top{
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(0,0,0,.56), rgba(0,0,0,.18));
+}
+[data-theme="light"] .top{
+  background: linear-gradient(180deg, rgba(255,255,255,.86), rgba(255,255,255,.64));
+  border-bottom: 1px solid rgba(0,0,0,.10);
+}
+.topIn{
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 12px 18px;
+  display:flex;
+  gap: 14px;
+  align-items:center;
+  justify-content:space-between;
+}
+.brand{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.brand span:nth-child(2){letter-spacing:.2px}
+.pill{
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+}
+[data-theme="light"] .pill{
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(0,0,0,.03);
+}
+
+.topRight{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.status{
+  display:flex;
+  gap: 10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.status .kpi{
+  display:flex; gap:8px; align-items:baseline;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.05);
+}
+[data-theme="light"] .status .kpi{
+  border: 1px solid rgba(0,0,0,.10);
+  background: rgba(0,0,0,.03);
+}
+.status .k{font-size:11px; color:var(--muted); letter-spacing:.2px}
+.status .v{font-weight:860}
+
+.actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+.btn{
+  border-radius: 999px;
+  padding: 9px 12px;
+  transition: transform .10s ease, background .15s ease, border-color .15s ease;
+}
+.btn:hover{transform: translateY(-1px)}
+.btn:active{transform: translateY(0px) scale(.99)}
+.btn:focus{outline:none; box-shadow: 0 0 0 4px var(--focus);}
+
+[data-theme="light"] .subnav{
+  background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.60));
+}
+.subnav a{
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  font-weight: 720;
+  font-size: 13px;
+}
+[data-theme="light"] .subnav a{
+  border: 1px solid rgba(0,0,0,.10);
+  background: rgba(0,0,0,.03);
+}
+.subnav a:hover{ background: rgba(255,255,255,.08); }
+
+.wrap{
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 18px;
+}
+.layout{
+  grid-template-columns: 1.35fr 0.95fr;
+  gap: 18px;
+}
+@media (max-width: 1100px){
+  .topIn{align-items:flex-start}
+  .subnav{top: 78px}
+  .layout{grid-template-columns: 1fr;}
+}
+
+.card{
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--cardBorder);
+  background:
+    radial-gradient(900px 480px at 18% 0%, rgba(87,166,255,.08), transparent 55%),
+    radial-gradient(900px 520px at 100% 0%, rgba(168,132,255,.08), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  box-shadow: var(--shadow2);
+  overflow: hidden;
+}
+[data-theme="light"] .card{
+  background:
+    radial-gradient(900px 480px at 18% 0%, rgba(87,166,255,.12), transparent 60%),
+    radial-gradient(900px 520px at 100% 0%, rgba(168,132,255,.10), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,.86), rgba(255,255,255,.72));
+  box-shadow: 0 18px 60px rgba(0,0,0,.10);
+}
+.head{
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+}
+[data-theme="light"] .head{ border-bottom: 1px solid rgba(0,0,0,.10); }
+.body{ padding: 14px 16px 16px; }
+.sub{opacity:.88}
+
+.canvas{
+  border-radius: var(--radius-lg);
+  border: 1px dashed rgba(255,255,255,.14);
+  background:
+    radial-gradient(1200px 700px at 60% 0%, rgba(74,214,178,.06), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.00));
+}
+[data-theme="light"] .canvas{
+  border: 1px dashed rgba(0,0,0,.14);
+  background: linear-gradient(180deg, rgba(0,0,0,.02), rgba(0,0,0,.00));
+}
+
+.node{
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  transition: transform .12s ease, border-color .12s ease, background .15s ease, box-shadow .15s ease;
+}
+[data-theme="light"] .node{
+  border: 1px solid rgba(0,0,0,.10);
+  background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.70));
+}
+.node:hover{
+  transform: translateY(-2px);
+  border-color: rgba(87,166,255,.35);
+  box-shadow: 0 14px 34px rgba(0,0,0,.24);
+}
+[data-theme="light"] .node:hover{ box-shadow: 0 14px 34px rgba(0,0,0,.10); }
+.node.isSel{
+  border-color: rgba(87,166,255,.70);
+  box-shadow: 0 0 0 4px rgba(87,166,255,.18), 0 18px 55px rgba(0,0,0,.40);
+}
+[data-theme="light"] .node.isSel{
+  box-shadow: 0 0 0 4px rgba(87,166,255,.18), 0 18px 55px rgba(0,0,0,.12);
+}
+
+.seg{
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.03);
+  padding: 4px;
+}
+.seg button{border-radius:999px; padding:8px 10px}
+.seg button.isOn{
+  background: rgba(87,166,255,.20);
+  border-color: rgba(87,166,255,.45);
+}
+
+.drawer{
+  right: 16px;
+  top: 108px;
+  bottom: 16px;
+  height: auto;
+  max-height: calc(100vh - 124px);
+  overflow: auto;
+  display:none;
+  transform: translateY(8px);
+  transition: transform .18s ease, opacity .18s ease;
+  opacity: 0;
+}
+.drawer.isOpen{
+  display:block;
+  transform: translateY(0);
+  opacity: 1;
+}
+.drawerTop{
+  position: sticky;
+  top: 0;
+  padding: 8px 0 10px;
+  background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.22));
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+[data-theme="light"] .drawerTop{
+  background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.72));
+  border-bottom: 1px solid rgba(0,0,0,.10);
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important; animation:none !important}
+}
+
+@media print{
+  .subnav, #statusBar{display:none !important;}
+  .drawer{display:block !important; position:static !important; transform:none !important; opacity:1 !important; max-height:none !important;}
+  .top{border:none !important;}
+}
+
+
+
+/* ===== v7: Command Bar + Tooltips + Dashboard polish ===== */
+.subnav{display:block; overflow:visible;}
+.subnav .navRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+.subnav .cmdRow{
+  margin-top:10px;
+  display:flex;
+  gap:12px;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+}
+.cmdLeft{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+.cmdTogs{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+.cmdRight{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end;}
+.legend{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+.legend .chip{padding:6px 8px;}
+
+.btn.ghost{
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.12);
+}
+[data-theme="light"] .btn.ghost{
+  background: rgba(0,0,0,.03);
+  border: 1px solid rgba(0,0,0,.12);
+}
+.subnav a.isActive{
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.18);
+}
+[data-theme="light"] .subnav a.isActive{
+  background: rgba(0,0,0,.06);
+  border-color: rgba(0,0,0,.14);
+}
+
+/* Tooltips (no extra text on canvas, only hover) */
+.tip[data-tip]{position:relative;}
+.tip[data-tip]:hover::after{
+  content: attr(data-tip);
+  position:absolute;
+  left:50%;
+  top: calc(100% + 10px);
+  transform: translateX(-50%);
+  max-width: 320px;
+  white-space: nowrap;
+  padding: 7px 9px;
+  border-radius: 12px;
+  background: rgba(0,0,0,.86);
+  color: rgba(255,255,255,.92);
+  font-size: 11px;
+  letter-spacing: .2px;
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 18px 60px rgba(0,0,0,.45);
+  z-index: 80;
+  pointer-events:none;
+}
+.tip[data-tip]:hover::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top: calc(100% + 4px);
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: rgba(0,0,0,.86);
+  border-left: 1px solid rgba(255,255,255,.14);
+  border-top: 1px solid rgba(255,255,255,.14);
+  transform: translateX(-50%) rotate(45deg);
+  z-index: 79;
+  pointer-events:none;
+}
+[data-theme="light"] .tip[data-tip]:hover::after{
+  background: rgba(255,255,255,.98);
+  color: rgba(0,0,0,.86);
+  border: 1px solid rgba(0,0,0,.12);
+  box-shadow: 0 18px 60px rgba(0,0,0,.18);
+}
+[data-theme="light"] .tip[data-tip]:hover::before{
+  background: rgba(255,255,255,.98);
+  border-left: 1px solid rgba(0,0,0,.12);
+  border-top: 1px solid rgba(0,0,0,.12);
+}
+
+/* Log & numbers look like an instrument panel */
+.simLog{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.06) 0px, rgba(255,255,255,.06) 1px, transparent 1px, transparent 26px);
+}
+[data-theme="light"] .simLog{
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.02)),
+    repeating-linear-gradient(180deg, rgba(0,0,0,.06) 0px, rgba(0,0,0,.06) 1px, transparent 1px, transparent 26px);
+}
+.logRow{padding:7px 0;}
+.pill2{font-weight:820;}
+.t{font-weight:800; opacity:.85;}
+
+/* Heat meters: cleaner */
+.heatBody{display:grid; grid-template-columns: repeat(2, 1fr); gap:10px;}
+@media (max-width: 740px){ .heatBody{grid-template-columns: 1fr;} }
+.heat .cell{padding:12px 14px;}
+.heat .label{font-variant-numeric: tabular-nums;}
+.meter{height:10px;}
+.meter i{border-radius:999px; box-shadow: 0 10px 30px rgba(0,0,0,.25);}
+
+/* Locate pulse */
+.node.pulse{animation:pulseNode .9s ease-out 1;}
+@keyframes pulseNode{
+  0%{ box-shadow: 0 0 0 0 rgba(90,201,255,.28), var(--shadow2); }
+  100%{ box-shadow: 0 0 0 20px rgba(90,201,255,0), var(--shadow2); }
+}
+
+/* ===== v8: header polish (more organic top) ===== */
+.top{
+  background:
+    radial-gradient(1200px 320px at 20% -40%, rgba(90,201,255,.18), transparent 62%),
+    radial-gradient(900px 280px at 90% -30%, rgba(160,120,255,.16), transparent 60%),
+    linear-gradient(180deg, rgba(0,0,0,.46), rgba(0,0,0,.18));
+  box-shadow: 0 18px 55px rgba(0,0,0,.38);
+}
+.topIn{
+  padding: 14px 16px 10px;
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items:center;
+}
+.brand{align-items:flex-start; gap:12px;}
+.brandText{display:flex; flex-direction:column; gap:4px; min-width: 260px;}
+.brandTitle{font-weight: 990; letter-spacing: .2px; font-size: 15.5px; line-height: 1.2;}
+.brandMeta{display:flex; gap:8px; flex-wrap:wrap;}
+.brand .pill{font-size: 11px; padding: 6px 9px; background: rgba(255,255,255,.05);}
+.topRight{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
+
+.status{
+  border-radius: 16px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.04);
+}
+.kpi{
+  border: none;
+  background: transparent;
+  padding: 6px 10px;
+  border-radius: 12px;
+}
+.kpi + .kpi{ border-left: 1px solid rgba(255,255,255,.10); }
+.kpi .k{ font-size: 10px; letter-spacing:.22px; text-transform: uppercase; opacity:.78; }
+.kpi .v{ font-size: 13px; font-weight: 950; }
+
+.actions{
+  display:flex;
+  gap: 8px;
+  align-items:center;
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.04);
+}
+.top .btn{ padding: 8px 10px; font-size: 13px; }
+
+.subnav{
+  position: relative;
+  top: auto;
+  z-index: auto;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 16px 12px;
+  border-bottom: none;
+  backdrop-filter: none;
+  background: transparent;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.navRow, .cmdRow{
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 8px 10px;
+}
+.subnav a{
+  background: transparent;
+  border-color: rgba(255,255,255,.16);
+}
+.subnav a:hover{ background: rgba(255,255,255,.06); }
+.subnav a.isActive{
+  background: rgba(255,255,255,.10);
+  border-color: rgba(255,255,255,.20);
+}
+.cmdRow{justify-content:space-between;}
+.cmdLeft{gap:10px;}
+.cmdTogs{gap:8px;}
+.top .seg button{ padding: 8px 10px; font-size: 13px; }
+.top .tog{
+  padding: 7px 10px;
+  font-size: 13px;
+  background: rgba(255,255,255,.04);
+}
+.legend .chip{ background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.12); }
+
+#core, #inspector, #org, #atlas, #simulator, #layers, #coverage{ scroll-margin-top: 180px; }
+
+@media (max-width: 900px){
+  .topIn{grid-template-columns: 1fr; align-items:flex-start;}
+  .topRight{justify-content:flex-start;}
+}
+
+
+/* ===== v9: top controls as single organic plate ===== */
+.subnav{
+  display:flex;
+  flex-direction: row;
+  align-items:center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 12px;
+  margin: 0 auto 10px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+.navRow, .cmdRow{
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+.navRow{display:flex; gap:8px; flex-wrap:wrap; align-items:center; flex: 1 1 320px;}
+.cmdRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end; flex: 2 2 520px; margin-left:auto;}
+.subnav a{
+  padding: 7px 10px;
+  border-radius: 14px;
+  border-color: rgba(255,255,255,.14);
+  background: rgba(255,255,255,.02);
+}
+.subnav a.isActive{ background: rgba(255,255,255,.10); }
+@media (max-width: 900px){
+  .subnav{padding: 10px 10px;}
+  .cmdRow{justify-content:flex-start; margin-left:0;}
+}
+
+
+    /* ===== Simulator v11 (interesting) ===== */
+    .inp{border:1px solid var(--line); background:rgba(0,0,0,.18); color:var(--text);
+      border-radius:12px; padding:8px 10px; font-weight:800; outline:none;}
+    [data-theme="light"] .inp{background:rgba(0,0,0,.03);}
+
+    .simPane{display:grid; grid-template-columns: 1.15fr .85fr; gap:14px;}
+    @media(max-width:1100px){ .simPane{grid-template-columns:1fr;} }
+
+    .simHud{border:1px solid var(--line); border-radius:22px; padding:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.18));
+      box-shadow: 0 14px 40px rgba(0,0,0,.22);
+    }
+    [data-theme="light"] .simHud{background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.65)); box-shadow: 0 10px 26px rgba(0,0,0,.10);}
+
+    .simStory{font-weight:950; letter-spacing:.2px; font-size:14px;}
+    .simSub{margin-top:4px; color:var(--muted); font-weight:800; font-size:12px;}
+
+    .simStats{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+    .statChip{display:inline-flex; align-items:center; gap:8px; padding:6px 10px;
+      border-radius:999px; border:1px solid var(--line); background:rgba(0,0,0,.16);
+      font-weight:900; font-size:12px; color:var(--text); }
+    [data-theme="light"] .statChip{background:rgba(0,0,0,.02);}
+
+    .simBars{margin-top:12px;}
+    .barRow{display:flex; justify-content:space-between; align-items:center; gap:10px; margin:6px 2px;}
+    .barRow .k{color:var(--muted); font-weight:900; font-size:12px;}
+    .barRow .v{font-weight:950; font-size:12px;}
+    .meter.big{height:10px; border-radius:999px;}
+    .meter.big i{border-radius:999px;}
+
+    .simTrail{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; min-height:34px;}
+    .trailChip{display:inline-flex; align-items:center; gap:8px; padding:6px 10px;
+      border-radius:999px; border:1px solid var(--line); background:rgba(0,0,0,.14);
+      font-weight:950; font-size:12px; cursor:pointer; user-select:none;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    }
+    [data-theme="light"] .trailChip{background:rgba(0,0,0,.02);}
+    .trailChip:hover{transform: translateY(-1px); box-shadow: 0 12px 22px rgba(0,0,0,.18);}
+    .trailChip.isNow{box-shadow: 0 0 0 2px rgba(255,255,255,.10), 0 18px 40px rgba(0,0,0,.22);}
+
+    .trailChip .miniDot{width:9px; height:9px; border-radius:50%;}
+    .miniDot.ux{background:rgba(85, 210, 180, .95);}
+    .miniDot.loop{background:rgba(255, 209, 102, .95);}
+    .miniDot.rules{background:rgba(155, 126, 255, .95);}
+    .miniDot.state{background:rgba(102, 153, 255, .95);}
+    .miniDot.risk{background:rgba(255, 110, 110, .95);}
+
+    .actBar{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+    .actBtn{border:1px solid var(--line); border-radius:14px; padding:10px 12px;
+      background:rgba(0,0,0,.14); color:var(--text); font-weight:950; cursor:pointer;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+    }
+    [data-theme="light"] .actBtn{background:rgba(0,0,0,.02);}
+    .actBtn:hover{transform: translateY(-1px); box-shadow: 0 12px 22px rgba(0,0,0,.18);}
+    .actBtn.reco{border-color: rgba(135, 180, 255, .65); background: rgba(135, 180, 255, .12);}
+    [data-theme="light"] .actBtn.reco{background: rgba(135, 180, 255, .10);}
+    .actBtn:active{transform: translateY(0px) scale(.99);}
+
+    .badgeRack{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; min-height:34px;}
+    .badge{display:inline-flex; align-items:center; gap:8px; padding:7px 10px; border-radius:999px;
+      border:1px solid var(--line); background:rgba(0,0,0,.16); font-weight:950; font-size:12px;}
+    [data-theme="light"] .badge{background:rgba(0,0,0,.02);}
+    .badge .ico{filter: saturate(1.15);}
+
+    .simConsole{border:1px solid var(--line); border-radius:22px; padding:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.16));
+      box-shadow: 0 14px 40px rgba(0,0,0,.20);
+    }
+    [data-theme="light"] .simConsole{background:linear-gradient(180deg, rgba(255,255,255,.86), rgba(255,255,255,.62)); box-shadow: 0 10px 26px rgba(0,0,0,.10);}
+    .consoleTitle{font-weight:950; letter-spacing:.2px; margin-bottom:10px;}
+    .knobRow{margin:10px 0;}
+    .knobRow .tog{width:100%; justify-content:space-between;}
+    .knobRow input[type="range"]{width: 180px;}
+
+    .spark{display:block; width:100%; height:46px; margin-top:12px; border:1px solid var(--line);
+      border-radius:18px; background:rgba(0,0,0,.14);}
+    [data-theme="light"] .spark{background:rgba(0,0,0,.02);}
+
+    .toastHost{position:fixed; right:16px; bottom:16px; display:flex; flex-direction:column; gap:10px; z-index:1000; pointer-events:none;}
+    .toast{pointer-events:none; border:1px solid var(--line); border-radius:18px; padding:10px 12px;
+      background:rgba(0,0,0,.40); color:var(--text); font-weight:900; max-width: 340px;
+      box-shadow: 0 18px 44px rgba(0,0,0,.35);
+      transform: translateY(8px); opacity:0; animation: toastIn .18s ease forwards, toastOut .18s ease forwards 3.2s;
+    }
+    [data-theme="light"] .toast{background:rgba(255,255,255,.86); box-shadow: 0 12px 28px rgba(0,0,0,.16);}
+    .toast small{display:block; color:var(--muted); font-weight:800; margin-top:4px;}
+    @keyframes toastIn{to{transform: translateY(0); opacity:1;}}
+    @keyframes toastOut{to{transform: translateY(8px); opacity:0;}}
+
+
+/* v12 — Branch Map + Daily Loop + Boss Failure */
+.branchBox{
+  margin-top: 10px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border-radius: 14px;
+  padding: 10px 10px 8px;
+}
+.branchHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.branchTitle{font-weight:800;letter-spacing:.2px}
+.branchHint{opacity:.72;font-size:12px}
+.branchSvg{width:100%;height:120px;display:block;border-radius:12px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.08)}
+.branchLegend{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.branchLegend .chip{padding:6px 10px}
+
+.dailyBox{
+  margin-top: 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border-radius: 16px;
+  padding: 10px 10px 10px;
+}
+.dailyTop{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:8px}
+.dailyTitle{font-weight:800}
+.dailySub{opacity:.72;font-size:12px}
+.dailyGrid{display:grid;grid-template-columns:1fr;gap:8px}
+.dailyRow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dailyRow .tog{flex:1;min-width:240px}
+.dailyBtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.dailySummary{
+  margin-top: 10px;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  font-variant-numeric: tabular-nums;
+  padding: 10px;
+  border-radius: 14px;
+  background: rgba(0,0,0,.18);
+  border: 1px solid rgba(255,255,255,.08);
+  line-height: 1.4;
+}
+.queueLine{margin-top:8px;opacity:.75;font-size:12px}
+.queueLine b{opacity:.95}
+
+</style>
+</head>
+<body data-theme="dark">
+<div class="top">
+<div class="topIn">
+<div class="brand">
+<span aria-hidden="true" class="dot"></span>
+<div class="brandText">
+<div class="brandTitle">Art Flâneur — Gameplay Visual Atlas</div>
+<div class="brandMeta">
+<span class="pill">v12.1 • 2026-01-02</span>
+<span class="pill">визуально &gt; текст • microflow • fail drill • live heat</span>
+</div>
+</div>
+</div>
+<div class="topRight">
+<button class="statusChip tip" data-tip="Клик: перейти в Inspector • Двойной клик: закрепить/снять Compact Header" id="statusChip"><span aria-hidden="true" class="liveDot" id="simDot"></span><span id="statusText">Discover • Explorer • Idle</span><span class="sr" id="statusSr">Node Discover. Persona Explorer. Simulator Idle.</span></button>
+<div aria-label="Actions" class="actions">
+<button class="btn ghost tip" data-tip="Compact Header: свернуть/развернуть блок управления сверху" id="topCompactBtn">Compact</button><label class="tog mini tip" data-tip="Auto-compact при прокрутке (после ~120px)"><input checked="" id="topAutoCompact" type="checkbox"/>Auto</label><button class="btn" id="themeBtn">Theme</button>
+<button class="btn" id="printBtn">Print / PDF</button>
+<button class="btn" id="resetBtn" title="Сбросить состояние">Reset</button>
+</div>
+</div>
+</div><div class="topPlate"><div class="plate"><div aria-label="Sections" class="navRow">
+<a href="#core">Core Loop</a>
+<a href="#inspector">Inspector</a><a href="#org">Org</a>
+<a href="#atlas">Atlas</a>
+<a href="#simulator">Simulator</a>
+<a href="#layers">Layers</a>
+<a href="#coverage">Coverage</a>
+</div><div aria-label="Command bar" class="cmdRow">
+<div class="cmdLeft">
+<div class="seg" id="personaSeg">
+<button class="isOn" data-persona="explorer">Explorer</button>
+<button data-persona="collector">Collector</button>
+<button data-persona="completionist">Completionist</button>
+</div>
+<div aria-label="Overlays &amp; modes" class="cmdTogs">
+<label class="tog tip" data-tip="Показывать/скрывать слой событий (edges)"><input checked="" id="toggleEvents" type="checkbox"/>Events</label>
+<label class="tog tip" data-tip="Показывать/скрывать телеметрию (edges)"><input checked="" id="toggleTelemetry" type="checkbox"/>Telemetry</label>
+<label class="tog tip" data-tip="Показывать micro-steps (μ) в симуляторе"><input id="simMicro" type="checkbox"/>Micro</label>
+<label class="tog tip" data-tip="Авто-открывать drawer при каждом шаге симулятора"><input id="simAutoOpen" type="checkbox"/>Auto</label>
+<label class="tog tip" data-tip="Failure drill: инъекция сбоев + checks/rollback"><input id="failOn" type="checkbox"/>Failure</label>
+</div>
+</div>
+<div class="cmdRight">
+<div aria-label="Legend" class="legend">
+<span class="chip tip" data-tip="UX / screens"><span class="dot2 c"></span>UX</span>
+<span class="chip tip" data-tip="Progress / loop"><span class="dot2 y"></span>Loop</span>
+<span class="chip tip" data-tip="Rules / triggers"><span class="dot2 b"></span>Rules</span>
+<span class="chip tip" data-tip="State / ledger"><span class="dot2 a"></span>State</span>
+<span class="chip tip" data-tip="Risk / dedupe"><span class="dot2 r"></span>Risk</span>
+</div>
+<button class="btn ghost tip" data-tip="Прокрутить к выбранному узлу" id="jumpNodeBtn">Locate</button>
+</div>
+</div></div>
+</div>
+
+</div>
+
+<div class="wrap">
+<div class="layout">
+<div class="card" id="core">
+<div class="head">
+<div>
+<b>Core Gameplay Loop</b>
+<div class="sub">клик по узлам • персона-подсветка • overlay событий/телеметрии</div>
+</div>
+</div>
+<div class="body">
+<div class="canvas" id="flowCanvas">
+<svg class="svg" id="flowSvg"></svg>
+<div class="nodes" id="nodes">
+<div class="node" data-id="discover" role="button" style="grid-column:span 4;" tabindex="0">
+<div class="nodeTop">
+<div class="ico">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="11" cy="11" r="6"></circle>
+<path d="M20 20l-4-4"></path>
+</svg>
+</div>
+<b>Discover</b>
+<span class="chip"><span class="dot2 a"></span>UX</span>
+</div>
+<div class="bar"><i style="width:72%"></i></div>
+<div class="nodeMeta">
+<span class="chip"><span class="dot2 c"></span>screen</span>
+<span class="chip"><span class="dot2 a"></span>catalog</span>
+<span class="chip"><span class="dot2 b"></span>events</span>
+</div>
+</div>
+<div class="node" data-id="location" role="button" style="grid-column:span 4;" tabindex="0">
+<div class="nodeTop">
+<div class="ico">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 21s7-4.5 7-11a7 7 0 0 0-14 0c0 6.5 7 11 7 11z"></path>
+<circle cx="12" cy="10" r="2"></circle>
+</svg>
+</div>
+<b>Location</b>
+<span class="chip"><span class="dot2 a"></span>World</span>
+</div>
+<div class="bar"><i style="width:64%"></i></div>
+<div class="nodeMeta">
+<span class="chip"><span class="dot2 c"></span>screen</span>
+<span class="chip"><span class="dot2 y"></span>quests</span>
+<span class="chip"><span class="dot2 b"></span>cta</span>
+</div>
+</div>
+<div class="node" data-id="quest" role="button" style="grid-column:span 4;" tabindex="0">
+<div class="nodeTop">
+<div class="ico">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path>
+<path d="M7 7v10"></path>
+</svg>
+</div>
+<b>Quest</b>
+<span class="chip"><span class="dot2 y"></span>Loop</span>
+</div>
+<div class="bar"><i style="width:78%"></i></div>
+<div class="nodeMeta">
+<span class="chip"><span class="dot2 y"></span>progress</span>
+<span class="chip"><span class="dot2 a"></span>state</span>
+<span class="chip"><span class="dot2 b"></span>contracts</span>
+</div>
+</div>
+<div class="node" data-id="reward" role="button" style="grid-column:span 4;" tabindex="0">
+<div class="nodeTop">
+<div class="ico">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7"></path>
+<path d="M12 12V3"></path><path d="M8 7l4-4 4 4"></path>
+</svg>
+</div>
+<b>Reward</b>
+<span class="chip"><span class="dot2 y"></span>Txn</span>
+</div>
+<div class="bar"><i style="width:58%"></i></div>
+<div class="nodeMeta">
+<span class="chip"><span class="dot2 a"></span>ledger</span>
+<span class="chip"><span class="dot2 b"></span>emit</span>
+<span class="chip"><span class="dot2 r"></span>dedup</span>
+</div>
+</div>
+<div class="node" data-id="engine" role="button" style="grid-column:span 4;" tabindex="0">
+<div class="nodeTop">
+<div class="ico">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 2v4"></path>
+<path d="M12 18v4"></path>
+<path d="M4.93 4.93l2.83 2.83"></path>
+<path d="M16.24 16.24l2.83 2.83"></path>
+<path d="M2 12h4"></path>
+<path d="M18 12h4"></path>
+<path d="M4.93 19.07l2.83-2.83"></path>
+<path d="M16.24 7.76l2.83-2.83"></path>
+<circle cx="12" cy="12" r="3"></circle>
+</svg>
+</div>
+<b>Engine</b>
+<span class="chip"><span class="dot2 b"></span>Rules</span>
+</div>
+<div class="bar"><i style="width:66%"></i></div>
+<div class="nodeMeta">
+<span class="chip"><span class="dot2 b"></span>triggers</span>
+<span class="chip"><span class="dot2 y"></span>cooldowns</span>
+<span class="chip"><span class="dot2 a"></span>routing</span>
+<span class="chip"><span class="dot2 c"></span>A/B</span>
+</div>
+</div>
+<div class="node" data-id="events" role="button" style="grid-column:span 4;" tabindex="0">
+<div class="nodeTop">
+<div class="ico">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M6 7h12"></path>
+<path d="M6 12h12"></path>
+<path d="M6 17h12"></path>
+<circle cx="4" cy="7" r="1"></circle>
+<circle cx="4" cy="12" r="1"></circle>
+<circle cx="4" cy="17" r="1"></circle>
+</svg>
+</div>
+<b>Events</b>
+<span class="chip"><span class="dot2 c"></span>Bus</span>
+</div>
+<div class="bar"><i style="width:58%"></i></div>
+<div class="nodeMeta">
+<span class="chip"><span class="dot2 c"></span>schema</span>
+<span class="chip"><span class="dot2 b"></span>retry</span>
+<span class="chip"><span class="dot2 r"></span>dedup</span>
+<span class="chip"><span class="dot2 a"></span>privacy</span>
+</div>
+</div>
+<div class="node" data-id="ledger" role="button" style="grid-column:span 4;" tabindex="0">
+<div class="nodeTop">
+<div class="ico">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<rect height="18" rx="3" width="16" x="4" y="3"></rect>
+<path d="M8 7h8"></path>
+<path d="M8 11h8"></path>
+<path d="M8 15h6"></path>
+</svg>
+</div>
+<b>Ledger</b>
+<span class="chip"><span class="dot2 r"></span>Trust</span>
+</div>
+<div class="bar"><i style="width:62%"></i></div>
+<div class="nodeMeta">
+<span class="chip"><span class="dot2 r"></span>idempotent</span>
+<span class="chip"><span class="dot2 b"></span>atomic</span>
+<span class="chip"><span class="dot2 a"></span>sync</span>
+<span class="chip"><span class="dot2 y"></span>audit</span>
+</div>
+</div>
+<div class="node" data-id="badges" role="button" style="grid-column:span 4;" tabindex="0">
+<div class="nodeTop">
+<div class="ico">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7z"></path>
+</svg>
+</div>
+<b>Badges</b>
+<span class="chip"><span class="dot2 b"></span>Eval</span>
+</div>
+<div class="bar"><i style="width:70%"></i></div>
+<div class="nodeMeta">
+<span class="chip"><span class="dot2 y"></span>meta</span>
+<span class="chip"><span class="dot2 a"></span>ledger</span>
+<span class="chip"><span class="dot2 b"></span>rules</span>
+</div>
+</div>
+<div class="node" data-id="next" role="button" style="grid-column:span 4;" tabindex="0">
+<div class="nodeTop">
+<div class="ico">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M14 7l5 5-5 5"></path><path d="M5 12h14"></path>
+</svg>
+</div>
+<b>Next</b>
+<span class="chip"><span class="dot2 c"></span>CTA</span>
+</div>
+<div class="bar"><i style="width:52%"></i></div>
+<div class="nodeMeta">
+<span class="chip"><span class="dot2 c"></span>prompt</span>
+<span class="chip"><span class="dot2 a"></span>recos</span>
+<span class="chip"><span class="dot2 b"></span>track</span>
+</div>
+</div>
+</div>
+</div>
+<div class="strip">
+<div class="frame"><b>Discover</b><div class="cap">вход • поиск • фильтры</div></div>
+<div class="frame"><b>Location</b><div class="cap">витрина • CTA квеста</div></div>
+<div class="frame"><b>Quest</b><div class="cap">шаги • прогресс</div></div>
+<div class="frame"><b>Reward</b><div class="cap">начисление • ledger</div></div>
+<div class="frame"><b>Badges / Next</b><div class="cap">unlock • продолжить</div></div>
+</div>
+</div>
+</div>
+<div class="head">
+<div>
+<b id="pTitle">Discover</b>
+<div class="sub" id="pSub">узел игрового процесса</div>
+</div>
+<div class="tabs" id="tabs">
+<div class="tab isOn" data-tab="events">Events</div>
+<div class="tab" data-tab="state">State</div>
+<div class="tab" data-tab="telemetry">Telemetry</div>
+<div class="tab" data-tab="checks">Checks</div>
+</div>
+</div>
+<div class="body">
+<div class="panel" id="panel"></div>
+<div class="heat">
+<div class="heatHead">
+<b>Gameplay Heat (live)</b>
+<span class="sub">узкие места петли</span>
+</div>
+<div class="heatBody">
+<div class="cell">
+<div class="label">Discover → Location <small>CTR</small> <span class="val" id="heatCtrVal">—</span></div>
+<div class="meter"><i id="heatCtrBar" style="width:0%"></i></div>
+</div>
+<div class="cell">
+<div class="label">Quest start → complete <small>Completion</small> <span class="val" id="heatCompVal">—</span></div>
+<div class="meter"><i id="heatCompBar" style="width:0%"></i></div>
+</div>
+<div class="cell">
+<div class="label">Reward latency <small>ms</small> <span class="val" id="heatLatVal">—</span></div>
+<div class="meter"><i id="heatLatBar" style="width:0%"></i></div>
+</div>
+<div class="cell">
+<div class="label">Badge unlock rate <small>%</small> <span class="val" id="heatBadgeVal">—</span></div>
+<div class="meter"><i id="heatBadgeBar" style="width:0%"></i></div>
+</div>
+</div>
+</div>
+<div style="margin-top:12px; color:var(--muted); font-size:12px; line-height:1.55;">
+            Детали спрятаны в drawer: <b>меньше текста на странице</b>, больше визуальных блоков.
+          </div>
+</div>
+</div>
+</div>
+<!-- ATLAS: extra visual layers (timeline • simulator • state/model maps • coverage) -->
+<div class="atlas" id="atlas">
+<div class="card wide">
+<div class="head">
+<div>
+<b>Gameplay Loop Timeline</b>
+<div class="sub">кликабельный таймлайн • подсветка текущего узла • “петля” как путь</div>
+</div>
+<div class="row">
+<span class="pill">Discover → Location → Quest → Reward → Badges → Next</span>
+</div>
+</div>
+<div class="body">
+<div class="timeline" id="loopTimeline"></div>
+<div aria-label="Micro subflow" class="subflow" id="subflowBox">
+<div class="subflowHead">
+<b>Subflow</b>
+<span class="sub" id="subflowTitle">micro-steps for selected node</span>
+</div>
+<div class="substeps" id="subSteps" role="list"></div>
+<div class="miniNote" id="subNote">Клик по micro-step: логирует μ-событие (если включён Micro) и подсвечивает карты.</div>
+</div>
+<div class="miniNote">Подсказка: клик по шагу выделяет узел и обновляет “State layers” и “Data model”.</div>
+</div>
+</div><div class="card wide" id="org">
+<div class="head">
+<div>
+<b>System Organization</b>
+<div class="sub">pipeline, подсистемы и активные слои (живые подсветки)</div>
+</div>
+<div class="row">
+<span class="pill tip" data-tip="Подсветка зависит от выбранного узла и шага симулятора">live</span>
+<button class="btn ghost tip" data-tip="Сфокусировать Organization на текущем узле" id="orgFocusBtn">Focus</button>
+</div>
+</div>
+<div class="body">
+<div class="orgGrid">
+<div class="orgBlock">
+<div class="orgTitle">Pipeline Overview</div>
+<div class="orgHint">узел → активные слои (UI / Engine / Events / Ledger / Analytics ...)</div>
+<div class="pipeline" id="pipeline"></div>
+</div>
+<div class="orgBlock">
+<div class="orgTitle">Subsystem Map</div>
+<div class="orgHint">подсистемы подсвечиваются по layer-focus выбранного шага</div>
+<div class="sysMap" id="sysMap">
+<div class="sysItem" data-layer="ui"><span class="sysIco">⬚</span><b>UI Shell</b><span class="sysMeta">screens • components</span></div>
+<div class="sysItem" data-layer="domain"><span class="sysIco">◆</span><b>Domain</b><span class="sysMeta">entities • rules</span></div>
+<div class="sysItem" data-layer="engine"><span class="sysIco">⚙</span><b>Quest Engine</b><span class="sysMeta">triggers • cooldowns</span></div>
+<div class="sysItem" data-layer="events"><span class="sysIco">⇄</span><b>Events Bus</b><span class="sysMeta">schema • retry • dedup</span></div>
+<div class="sysItem" data-layer="ledger"><span class="sysIco">▦</span><b>Ledger</b><span class="sysMeta">idempotent • audit</span></div>
+<div class="sysItem" data-layer="analytics"><span class="sysIco">◔</span><b>Analytics</b><span class="sysMeta">funnels • KPIs</span></div>
+<div class="sysItem" data-layer="cache"><span class="sysIco">⧉</span><b>Cache</b><span class="sysMeta">media • LKG</span></div>
+<div class="sysItem" data-layer="sync"><span class="sysIco">⇪</span><b>Sync</b><span class="sysMeta">offline • push</span></div>
+<div class="sysItem" data-layer="privacy"><span class="sysIco">◉</span><b>Privacy</b><span class="sysMeta">redact • consent</span></div>
+</div>
+</div>
+</div>
+<div class="swimWrap">
+<div class="orgTitle">Swimlanes (step × system)</div>
+<div class="orgHint">микро-визуализация: где выполняется работа на каждом шаге</div>
+<div class="swim" id="swimlanes"></div>
+</div>
+</div>
+</div>
+
+<div class="card" id="simulator">
+  <div class="head">
+    <div>
+      <b>Event Stream Simulator</b>
+      <div class="sub">сценарии • ветвления • microflow • fail drill • live heat</div>
+    </div>
+    <div class="row">
+      <label class="tog" title="Сценарий симуляции (влияет на ритм, ветвления, награды и риск)">
+        <span class="pill">Scenario</span>
+        <select class="sel" id="simScenario" style="min-width:180px">
+          <option value="museum">Museum Walk</option>
+          <option value="street">Street Hunt</option>
+          <option value="biennale">Biennale Sprint</option>
+          <option value="night">Night Mode</option>
+        </select>
+      </label>
+
+      <label class="tog" title="Seed для воспроизводимой симуляции (одинаковый seed → похожая трасса)">
+        <span class="pill">Seed</span>
+        <input class="inp" id="simSeed" value="2026" style="width:96px" />
+      </label>
+
+      <button class="btn" id="simStepBtn" title="Сделать один шаг (работает и на паузе)">Step</button>
+      <button class="btn" id="simExportBtn" title="Экспорт трассы (JSON)">Export</button>
+
+      <button class="btn" id="simPlayBtn">Play</button>
+      <button class="btn" id="simClearBtn">Clear</button>
+
+      <label class="tog" title="скорость симуляции">
+        <input id="simSpeed" max="3.2" min="0.6" step="0.2" style="width:120px;" type="range" value="1.0"/>
+        <span class="pill" id="simSpeedPill">1.0×</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="simPane">
+      <div class="simLeft">
+        <div class="simHud">
+          <div class="simStory" id="simStory">—</div>
+          <div class="simSub" id="simSub">—</div>
+
+          <div class="simStats" id="simStats">
+            <span class="statChip" id="statSession">session: —</span>
+            <span class="statChip" id="statStep">step: —</span>
+            <span class="statChip" id="statQuest">quest: —</span>
+            <span class="statChip" id="statXP">xp: —</span>
+            <span class="statChip" id="statCoins">coins: —</span>
+            <span class="statChip" id="statStreak">streak: —</span>
+          </div>
+
+          <div class="simBars">
+            <div class="barRow">
+              <span class="k">Quest progress</span>
+              <span class="v" id="questPct">—</span>
+            </div>
+            <div class="meter big"><i id="questBar" style="width:0%"></i></div>
+
+            <div class="barRow" style="margin-top:10px;">
+              <span class="k">Session momentum</span>
+              <span class="v" id="momPct">—</span>
+            </div>
+            <div class="meter big"><i id="momBar" style="width:0%"></i></div>
+          </div>
+
+          <div class="simTrail" id="simTrail" aria-label="Trace trail"></div>
+
+          <div class="actBar" id="simActionBar" aria-label="Action bar">
+            <button class="actBtn" data-act="discover" title="Сгенерировать интерес (Discover)">🔍 Discover</button>
+            <button class="actBtn" data-act="location" title="Переход/локация (Location)">📍 Location</button>
+            <button class="actBtn" data-act="quest" title="Квест/контракт (Quest)">📜 Quest</button>
+            <button class="actBtn" data-act="reward" title="Награда/транзакция (Reward)">🎁 Reward</button>
+            <button class="actBtn" data-act="badges" title="Бейджи/мета-мотивация (Badges)">🏅 Badges</button>
+            <button class="actBtn" data-act="next" title="Следующий шаг/CTA (Next)">➡️ Next</button>
+          </div>
+
+          <div class="badgeRack" id="simBadges" aria-label="Unlocked badges"></div>
+
+          <canvas class="spark" id="simSpark" width="720" height="90" aria-label="Mini chart"></canvas>
+
+          <div class="branchBox" aria-label="Branch map">
+            <div class="branchHead">
+              <div>
+                <div class="branchTitle">Branch Map</div>
+                <div class="branchHint">последние шаги: “метро‑линии” по core‑состояниям • ошибки • микро‑точки</div>
+              </div>
+              <span class="chip tip" data-tip="Показывает путь симуляции по core-состояниям. Вертикальные дорожки — Discover/Location/Quest/Reward/Badges/Next. Красные узлы = ошибка.">?</span>
+            </div>
+            <svg class="branchSvg" id="branchSvg" viewBox="0 0 720 120" preserveAspectRatio="none" role="img" aria-label="Branch map SVG"></svg>
+            <div class="branchLegend">
+              <span class="chip"><span class="miniDot ux"></span>Discover</span>
+              <span class="chip"><span class="miniDot world"></span>Location</span>
+              <span class="chip"><span class="miniDot loop"></span>Quest</span>
+              <span class="chip"><span class="miniDot txn"></span>Reward</span>
+              <span class="chip"><span class="miniDot eval"></span>Badges</span>
+              <span class="chip"><span class="miniDot cta"></span>Next</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="simRight">
+        <div class="simConsole" aria-label="Simulation knobs">
+          <div class="consoleTitle">Simulation knobs</div>
+
+          <div class="knobRow">
+            <label class="tog" title="Насколько пользователь вовлечён (ветвления и вероятность завершения)">
+              <span class="pill">Engagement</span>
+              <input id="simEng" max="1" min="0" step="0.05" type="range" value="0.70"/>
+              <span class="pill" id="simEngPill">70%</span>
+            </label>
+          </div>
+
+          <div class="knobRow">
+            <label class="tog" title="Качество сети/устройства (латентность и таймауты)">
+              <span class="pill">Network</span>
+              <input id="simNet" max="1" min="0" step="0.05" type="range" value="0.75"/>
+              <span class="pill" id="simNetPill">75%</span>
+            </label>
+          </div>
+
+          <div class="knobRow">
+            <label class="tog" title="Насыщенность контентом (скорость прогресса и ценность награды)">
+              <span class="pill">Content</span>
+              <input id="simContent" max="1" min="0" step="0.05" type="range" value="0.70"/>
+              <span class="pill" id="simContentPill">70%</span>
+            </label>
+          </div>
+
+          <div class="knobRow">
+            <label class="tog" title="Хаос/шум (ошибки, дедуп, конфликт ledger, непредсказуемые ветвления)">
+              <span class="pill">Chaos</span>
+              <input id="simChaos" max="1" min="0" step="0.05" type="range" value="0.20"/>
+              <span class="pill" id="simChaosPill">20%</span>
+            </label>
+          </div>
+
+          <div class="miniNote" style="margin-top:10px;">
+            Подсказка: включи <b>Micro</b> и <b>Failure</b> в верхней панели, затем Play/Step.
+          </div>
+        </div>
+
+        <div aria-label="Failure drill" class="failBox">
+          <div class="failRow">
+            <select aria-label="Failure type" class="sel" id="failType">
+              <option value="auto">auto</option>
+              <option value="timeout">timeout</option>
+              <option value="dedupe">dedupe collision</option>
+              <option value="ledger">ledger conflict</option>
+              <option value="prereq">prereq / gating</option>
+              <option value="asset">asset missing</option>
+            </select>
+
+            <label class="tog" title="вероятность сбоя в режиме Failure drill">
+              <input id="failProb" max="0.45" min="0" step="0.01" type="range" value="0.15"/>
+              <span class="pill" id="failProbPill">15%</span>
+            </label>
+
+            <button class="btn" id="failNowBtn" title="вставить сбой прямо сейчас">Fail now</button>
+          </div>
+          <div class="failLast" id="failLast">—</div>
+        </div>
+
+        <div class="kpis" id="simKpis"></div>
+      </div>
+    </div>
+
+    <div aria-label="Event Stream Log" class="simLog" id="simLog"></div>
+  </div>
+</div>
+<div class="card" id="layers">
+<div class="head">
+<div>
+<b>State Layers Map</b>
+<div class="sub">UI ↔ Domain ↔ Engine ↔ Events ↔ Ledger ↔ Analytics</div>
+</div>
+<div class="row">
+<span class="chip"><span class="dot2 a"></span>state</span>
+<span class="chip"><span class="dot2 b"></span>rules</span>
+<span class="chip"><span class="dot2 c"></span>telemetry</span>
+<span class="chip"><span class="dot2 r"></span>ledger</span>
+</div>
+</div>
+<div class="body">
+<div class="svgBox">
+<svg aria-label="State Layers Diagram" id="layersSvg" role="img" viewbox="0 0 760 360"></svg>
+</div>
+<div class="miniNote">Подсветка зависит от выбранного узла (и от persona).</div>
+</div>
+</div>
+<div class="card wide" id="coverage">
+<div class="head">
+<div>
+<b>Coverage + Data Model</b>
+<div class="sub">матрица персона→узлы + мини-карта объектов данных</div>
+</div>
+<div class="row">
+<span class="pill">focus</span>
+<span class="pill">reliability</span>
+<span class="pill">idempotency</span>
+</div>
+</div>
+<div class="body">
+<div class="covWrap">
+<div>
+<div class="covTitle">Persona Coverage Matrix</div>
+<div class="matrix" id="covMatrix"></div>
+</div>
+<div>
+<div class="covTitle">Data Model Map</div>
+<div class="svgBox">
+<svg aria-label="Data Model Diagram" id="modelSvg" role="img" viewbox="0 0 760 360"></svg>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="drawer" id="drawer">
+<div class="drawerTop">
+<b id="dTitle">—</b>
+<button class="x" id="dClose">Close</button>
+</div>
+<p class="drawerP" id="dBody">—</p>
+<div class="grid2" id="dGrid"></div>
+</div>
+<script>
+  (() => {
+    const root = document.body;
+    const $ = (sel, el=document) => el.querySelector(sel);
+    const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+
+    // Top status chips
+    const nowNodeEl = $("#nowNode");
+    const nowPersonaEl = $("#nowPersona");
+    const nowSimEl = $("#nowSim");
+// Top status (v10: unified chip)
+    const statusChip = $("#statusChip");
+    const statusTextEl = $("#statusText");
+    const simDotEl = $("#simDot");
+    let simStatus = "Idle";
+    const updateStatusChip = () => {
+      const nodeTitle = (N[state.node]?.title || titleCase(state.node));
+      const persona = titleCase(state.persona);
+      if(statusTextEl) statusTextEl.textContent = `${nodeTitle} • ${persona} • ${simStatus}`;
+      if(simDotEl) simDotEl.classList.toggle("isRun", simStatus === "Running");
+    };
+    const setText = (el, v) => { if(el) el.textContent = v; };
+    const titleCase = (s) => (s||"").toString().replace(/(^|\s|_)([a-zа-яё])/gi, (m, a, b)=> a + b.toUpperCase()).replace(/_/g," ");
+
+
+    const storeKey = "af_gameplay_v10";
+    const legacyKey = "af_gameplay_v6";
+    const defaults = {
+      theme: "dark",
+      persona: "explorer",
+      node: "discover",
+      tab: "events",
+      events: true,
+      telemetry: true,
+      simSpeed: 1.0,
+      simAutoOpen: false,
+      simMicro: false,
+      failOn: false,
+      failType: "auto",
+      failProb: 0.15,
+      simScenario: "museum",
+      simSeed: "2026",
+      simEng: 0.70,
+      simNet: 0.75,
+      simContent: 0.70,
+      simChaos: 0.20,
+      headerCompact: false,
+      headerAuto: true
+    };
+
+    const readState = () => {
+      try{
+        const raw = localStorage.getItem(storeKey) || localStorage.getItem(legacyKey);
+        if(!raw) return {};
+        const s = JSON.parse(raw);
+        return (s && typeof s === "object") ? s : {};
+      }catch(e){ return {}; }
+    };
+    const writeState = (s) => {
+      try{ localStorage.setItem(storeKey, JSON.stringify(s)); }catch(e){}
+    };
+
+    let state = Object.assign({}, defaults, readState());
+
+    // Top controls
+    const themeBtn = $("#themeBtn");
+    const printBtn = $("#printBtn");
+    const resetBtn = $("#resetBtn");
+
+    const setTheme = (t) => {
+      root.setAttribute("data-theme", t);
+      state.theme = t;
+      writeState(state);
+      try{ localStorage.removeItem(legacyKey); }catch(e){}
+      scheduleDraw();
+    };
+
+    themeBtn.addEventListener("click", () => {
+      setTheme(root.getAttribute("data-theme")==="dark" ? "light" : "dark");
+    });
+    printBtn.addEventListener("click", () => window.print());
+    resetBtn.addEventListener("click", () => {
+      state = Object.assign({}, defaults);
+      writeState(state);
+      applyState();
+    });
+
+    // Drawer
+    const drawer = $("#drawer");
+    const dTitle = $("#dTitle");
+    const dBody = $("#dBody");
+    const dGrid = $("#dGrid");
+    const closeBtn = $("#dClose");
+    const closeDrawer = () => drawer.classList.remove("isOpen");
+    closeBtn.addEventListener("click", closeDrawer);
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape") closeDrawer();
+    });
+
+    // Data model
+    const N = {
+      discover:{title:"Discover",hint:"вход в контент",
+        events:["discover_open","filter_apply","search_submit","location_open"],
+        telemetry:["ui_view(discover)","search_zero_results","content_missing_asset"],
+        state:["ui.filters","ui.searchQuery","nav.history"],
+        checks:["пустые списки","битые изображения","dead links","slow load > threshold"],
+        ui:["search","filters","cards grid","quick preview","empty states"],
+        failure:["no results","slow search","bad ranking","broken thumbnails"],
+        long:"Экран входа: поиск/фильтры/подборки → переход к локации."
+      },
+      location:{title:"Location",hint:"витрина мира",
+        events:["location_open","quest_cta_click","artwork_open"],
+        telemetry:["ui_view(location)","time_to_first_content","broken_link_detected"],
+        state:["world.locationCache","ui.currentLocation","user.favorites"],
+        checks:["валидность prereqs","скорость медиа","доступность квеста","fallback LKG"],
+        ui:["hero artwork","CTA quest","map chip","favorites","share"],
+        failure:["missing media","broken deeplink","slow load","wrong locale"],
+        long:"Локация показывает контент и CTA к квесту."
+      },
+      quest:{title:"Quest",hint:"ядро петли",
+        events:["quest_started","quest_progress","quest_completed"],
+        telemetry:["quest_funnel(step)","quest_error(code)","quest_abandon"],
+        state:["user.quests.sessions","user.quests.progress","user.quests.ledger"],
+        checks:["start idempotent","completion idempotent","offline retry","atomic progress"],
+        ui:["step list","progress ring","hint panel","checkpoint toast","retry CTA"],
+        failure:["duplicate start","lost progress","step stuck","abandon spike"],
+        long:"Прогресс/шаги + идемпотентный completion."
+      },
+      reward:{title:"Reward",hint:"транзакция",
+        events:["reward_granted","inventory_updated","progress_snapshot"],
+        telemetry:["reward_latency_ms","reward_duplicate_prevented","grant_amount_bucket"],
+        state:["user.wallet","user.inventory","user.ledger.rewards"],
+        checks:["ledger once","idempotency key","replay-safe","no double grant"],
+        ui:["reward modal","xp counter","inventory toast","badge tease","next CTA"],
+        failure:["double credit","stale balance","rollback mismatch","fraud patterns"],
+        long:"Начисления и запись в ledger без дублей."
+      },
+      badges:{title:"Badges",hint:"мета-мотивация",
+        events:["badge_evaluate","badge_unlocked","badge_progress"],
+        telemetry:["badge_unlock_rate","badge_eval_latency","badge_miss_reason(top)"],
+        state:["user.badges.owned","user.badges.progress","user.ledger.badges"],
+        checks:["deterministic eval","unlock key","audit trail","rule tuning"],
+        ui:["badge grid","unlock animation","progress bars","collection map","share badge"],
+        failure:["wrong unlock","missing badge art","progress reset","abuse farming"],
+        long:"Правила + eval по событиям → unlock/progress."
+      },
+      next:{title:"Next",hint:"следующий шаг",
+        events:["next_suggested","return_to_discover","chain_continue"],
+        telemetry:["next_click_through_rate","post_reward_dropoff","recommendation_exposure"],
+        state:["ui.nextPrompt","user.recoSignals","nav.history"],
+        checks:["ясный CTA","не перегружать","измерять drop-off","fallback"],
+        ui:["continue carousel","recommendations","next quest CTA","cooldown notice","return home"],
+        failure:["dead-end","repetition fatigue","bad recommenders","cta spam"],
+        long:"Подсказки “что дальше” и возврат в петлю."
+      }
+    };
+
+    const personaPaths = {
+      explorer: new Set(["discover","location","quest","reward","next"]),
+      collector: new Set(["discover","location","quest","reward","badges","next"]),
+      completionist: new Set(["discover","location","quest","reward","badges","next"])
+    };
+
+    // UI refs
+    const personaSeg = $("#personaSeg");
+    const toggleEvents = $("#toggleEvents");
+    const toggleTelemetry = $("#toggleTelemetry");
+
+    const nodes = $$(".node");
+    const canvas = $("#flowCanvas");
+    const svg = $("#flowSvg");
+    const nodesGrid = $("#nodes");
+
+    const pTitle = $("#pTitle");
+    const pSub = $("#pSub");
+    const tabs = $$(".tab");
+    const panel = $("#panel");
+
+    // Edges
+    const edges = [
+      {from:"discover", to:"location", kind:"ux", label:"open"},
+      {from:"location", to:"quest", kind:"ux", label:"start"},
+      {from:"quest", to:"reward", kind:"y", label:"complete"},
+      {from:"reward", to:"badges", kind:"b", label:"trigger"},
+      {from:"badges", to:"next", kind:"ux", label:"notify"},
+      {from:"reward", to:"next", kind:"ux", label:"next"},
+      {from:"next", to:"discover", kind:"ux", label:"loop"}
+    ];
+
+    // Helpers
+    const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+    const col = (kind) => {
+      const cs = getComputedStyle(root);
+      if(kind==="ux") return cs.getPropertyValue("--c").trim();
+      if(kind==="b") return cs.getPropertyValue("--b").trim();
+      if(kind==="y") return cs.getPropertyValue("--y").trim();
+      return cs.getPropertyValue("--a").trim();
+    };
+    const labelCols = () => {
+      const cs = getComputedStyle(root);
+      return {
+        bg: cs.getPropertyValue("--lblBg").trim(),
+        stroke: cs.getPropertyValue("--lblStroke").trim(),
+        text: cs.getPropertyValue("--lblText").trim()
+      };
+    };
+
+    const center = (el) => {
+      const r = el.getBoundingClientRect();
+      const cr = canvas.getBoundingClientRect();
+      return {x:(r.left-cr.left)+r.width/2, y:(r.top-cr.top)+r.height/2};
+    };
+    const mid = (a,b) => ({x:(a.x+b.x)/2, y:(a.y+b.y)/2});
+    const curve = (p1,p2) => {
+      const m = mid(p1,p2);
+      const bend = 0.18;
+      const cx = m.x + (p1.y-p2.y)*bend;
+      const cy = m.y + (p2.x-p1.x)*bend;
+      return `M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}`;
+    };
+
+    // Draw (debounced)
+    let raf = 0;
+    function scheduleDraw(){
+      if(raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        drawEdges();
+      });
+    }
+
+    function drawEdges(){
+      if(!canvas || !svg) return;
+      const W = canvas.clientWidth;
+      const H = canvas.clientHeight;
+      if(W < 10 || H < 10) return;
+
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      svg.setAttribute("width", W);
+      svg.setAttribute("height", H);
+
+      const lc = labelCols();
+      const defs = `
+        <defs>
+          <marker id="arrUx" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+            <path d="M0,0 L12,6 L0,12 Z" fill="${col("ux")}" fill-opacity="0.55"></path>
+          </marker>
+          <marker id="arrB" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+            <path d="M0,0 L12,6 L0,12 Z" fill="${col("b")}" fill-opacity="0.55"></path>
+          </marker>
+          <marker id="arrY" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+            <path d="M0,0 L12,6 L0,12 Z" fill="${col("y")}" fill-opacity="0.55"></path>
+          </marker>
+        </defs>
+      `;
+
+      const nodeById = new Map(nodes.map(n => [n.dataset.id, n]));
+      const parts = [defs];
+
+      edges.forEach(e => {
+        if(e.kind==="b" && !toggleEvents.checked) return;
+        const a = nodeById.get(e.from);
+        const b = nodeById.get(e.to);
+        if(!a || !b) return;
+
+        const p1 = center(a);
+        const p2 = center(b);
+        const d = curve(p1,p2);
+
+        const stroke = col(e.kind);
+        const sw = e.kind==="y" ? 4 : 3;
+        const marker = e.kind==="b" ? "url(#arrB)" : (e.kind==="y" ? "url(#arrY)" : "url(#arrUx)");
+
+        parts.push(`<path d="${d}" stroke="${stroke}" stroke-width="${sw}" fill="none" opacity="0.55" marker-end="${marker}" />`);
+
+        // Labels keep minimal, but adapt colors per theme
+        const m = mid(p1,p2);
+        const lbl = e.label;
+        const w = clamp(10 + lbl.length*7, 44, 160);
+        parts.push(`
+          <g opacity="0.94">
+            <rect x="${m.x-w/2}" y="${m.y-12}" width="${w}" height="22" rx="11" fill="${lc.bg}" stroke="${lc.stroke}"></rect>
+            <text x="${m.x}" y="${m.y+4}" text-anchor="middle" font-size="11" font-weight="900" fill="${lc.text}">${lbl}</text>
+          </g>
+        `);
+      });
+
+      svg.innerHTML = parts.join("");
+    }
+
+    // Persona application
+    const applyPersona = (p) => {
+      state.persona = p;
+      const path = personaPaths[p] || personaPaths.explorer;
+
+      nodes.forEach(n => {
+        const id = n.dataset.id;
+        n.classList.toggle("isPath", path.has(id));
+        n.classList.remove("isDim","isHot");
+      });
+
+      if(p==="explorer") document.querySelector('.node[data-id="badges"]')?.classList.add("isDim");
+      if(p==="collector") document.querySelector('.node[data-id="badges"]')?.classList.add("isHot");
+      if(p==="completionist"){
+        ["quest","reward","badges"].forEach(x => document.querySelector(`.node[data-id="${x}"]`)?.classList.add("isHot"));
+      }
+
+      // aria pressed + segment UI
+      personaSeg.querySelectorAll("button").forEach(btn => {
+        const on = btn.dataset.persona === p;
+        btn.classList.toggle("isOn", on);
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+
+      setText(nowPersonaEl, titleCase(p));
+
+      writeState(state);
+    };
+
+    // Tabs & panel
+    const titleMap = {events:"Contracts / Events", state:"State touched", telemetry:"MVP-safe Telemetry", checks:"Checks / Edge cases"};
+    const dotByTab = (tab) => tab==="events" ? "b" : (tab==="telemetry" ? "c" : (tab==="state" ? "a" : "y"));
+
+    const getList = (meta, tab) => {
+      if(tab==="events" && !toggleEvents.checked) return ["events hidden"];
+      if(tab==="telemetry" && !toggleTelemetry.checked) return ["telemetry hidden"];
+      return meta[tab] || [];
+    };
+
+    const updateTabsState = () => {
+      tabs.forEach(t => {
+        const tab = t.dataset.tab;
+        t.classList.toggle("isDisabled", (tab==="events" && !toggleEvents.checked) || (tab==="telemetry" && !toggleTelemetry.checked));
+        t.classList.toggle("isOn", tab === state.tab);
+        t.setAttribute("aria-selected", tab === state.tab ? "true" : "false");
+      });
+    };
+
+    const renderPanel = () => {
+      const meta = N[state.node] || N.discover;
+
+      pTitle.textContent = meta.title;
+      pSub.textContent = meta.hint;
+
+      updateTabsState();
+
+      const list = getList(meta, state.tab);
+      const dot = dotByTab(state.tab);
+
+      panel.innerHTML = `
+        <div class="mini">
+          <div class="miniTop">
+            <b>${titleMap[state.tab] || state.tab}</b>
+            <span class="badge"><span class="dot2 ${dot}"></span>${state.tab}</span>
+          </div>
+          <div class="kv">
+            ${list.map(x => `<span class="chip"><span class="dot2 ${dot}"></span>${x}</span>`).join("")}
+          </div>
+        </div>
+        <div class="mini">
+          <div class="miniTop"><b>One-liner</b><span class="sub">подробности по клику</span></div>
+          <div style="margin-top:10px; color:var(--muted); font-size:12px; line-height:1.6;">${meta.long}</div>
+          <div style="margin-top:10px;"><button class="btn" id="openDrawerBtn">Open details</button></div>
+        </div>
+      `;
+
+      $("#openDrawerBtn")?.addEventListener("click", () => openDrawer(meta));
+   
+
+      // v10: org visuals refresh
+      ensureOrg();
+      updateOrg(state.node);
+      updateStatusChip();
+      try{ applyTopCompact(); }catch(e){}
+ };
+
+    function openDrawer(meta){
+      dTitle.textContent = `${meta.title} — details`;
+      dBody.textContent = meta.long;
+
+      const mk = (name, arr, cls) => `
+        <div class="box">
+          <b>${name}</b>
+          <div class="kv">${arr.map(x => `<span class="chip"><span class="dot2 ${cls}"></span>${x}</span>`).join("")}</div>
+        </div>
+      `;
+
+      dGrid.innerHTML =
+        mk("Events", getList(meta, "events"), "b") +
+        mk("Telemetry", getList(meta, "telemetry"), "c") +
+        mk("State", getList(meta, "state"), "a") +
+        mk("Checks", getList(meta, "checks"), "y") +
+        mk("UI blocks", getList(meta, "ui"), "c") +
+        mk("Failure modes", getList(meta, "failure"), "r");
+
+      drawer.classList.add("isOpen");
+    }
+
+    const selectNode = (id, open=true) => {
+      state.node = id in N ? id : "discover";
+      nodes.forEach(n => n.classList.toggle("isSel", n.dataset.id === state.node));
+      writeState(state);
+      renderPanel();
+      setText(nowNodeEl, N[state.node]?.title || titleCase(state.node)); updateStatusChip();
+      if(typeof window.__af_updateAtlas === "function") window.__af_updateAtlas();
+      if(open) openDrawer(N[state.node]);
+    };
+
+    // Wire persona buttons
+    personaSeg.querySelectorAll("button").forEach(btn => {
+      btn.addEventListener("click", () => applyPersona(btn.dataset.persona));
+    });
+
+    // Tabs
+    tabs.forEach(t => {
+      t.setAttribute("role", "tab");
+      t.setAttribute("tabindex", "0");
+      t.addEventListener("click", () => {
+        state.tab = t.dataset.tab;
+        writeState(state);
+        renderPanel();
+      });
+      t.addEventListener("keydown", (e) => {
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          t.click();
+        }
+      });
+    });
+
+    // Nodes click + keyboard
+    nodes.forEach(n => {
+      n.addEventListener("click", () => selectNode(n.dataset.id, true));
+      n.addEventListener("keydown", (e) => {
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          selectNode(n.dataset.id, true);
+        }
+      });
+    });
+
+    // Toggles
+    toggleEvents.addEventListener("change", () => {
+      state.events = !!toggleEvents.checked;
+      writeState(state);
+      scheduleDraw();
+      renderPanel();
+    });
+    toggleTelemetry.addEventListener("change", () => {
+      state.telemetry = !!toggleTelemetry.checked;
+      writeState(state);
+      renderPanel();
+    });
+
+    // Observers for layout changes (more stable edges)
+    try{
+      const ro = new ResizeObserver(() => scheduleDraw());
+      ro.observe(canvas);
+      ro.observe(nodesGrid);
+    }catch(e){
+      window.addEventListener("resize", scheduleDraw);
+    }
+
+    // Apply initial state (persisted)
+    
+
+    /* ===== Atlas (timeline • simulator • maps • coverage) ===== */
+    const loopOrder = ["discover","location","quest","reward","badges","next"];
+    
+    const primaryNodes = ["discover","location","quest","reward","engine","events","ledger","badges","next"];
+
+    // v5: micro-subflows (3–6 micro-steps per node)
+    const SUB = {
+      discover: [
+        {t:"Open", tag:"ui", w:45, ev:"discover_open"},
+        {t:"Filter", tag:"ui", w:55, ev:"filter_apply"},
+        {t:"Preview", tag:"content", w:65, ev:"content_preview"},
+        {t:"Select", tag:"nav", w:62, ev:"location_open"}
+      ],
+      location: [
+        {t:"Load media", tag:"assets", w:52, ev:"media_load"},
+        {t:"Render", tag:"ui", w:58, ev:"location_render"},
+        {t:"Teaser", tag:"quest", w:64, ev:"quest_teaser"},
+        {t:"Open art", tag:"content", w:60, ev:"artwork_open"}
+      ],
+      quest: [
+        {t:"Prereqs", tag:"gate", w:48, ev:"quest_prereq_check"},
+        {t:"Start", tag:"session", w:58, ev:"quest_start"},
+        {t:"Progress", tag:"actions", w:72, ev:"quest_progress"},
+        {t:"Complete", tag:"commit", w:78, ev:"quest_complete"}
+      ],
+      reward: [
+        {t:"Compute", tag:"rules", w:56, ev:"reward_compute"},
+        {t:"Ledger", tag:"write", w:62, ev:"ledger_write"},
+        {t:"Grant", tag:"grant", w:66, ev:"reward_grant"},
+        {t:"Sync", tag:"sync", w:52, ev:"sync_push"}
+      ],
+      badges: [
+        {t:"Evaluate", tag:"rules", w:56, ev:"badge_eval"},
+        {t:"Unlock", tag:"grant", w:64, ev:"badge_unlock"},
+        {t:"Toast", tag:"ui", w:44, ev:"badge_toast"}
+      ],
+      next: [
+        {t:"Recommend", tag:"recos", w:66, ev:"next_reco"},
+        {t:"Cooldown", tag:"rules", w:46, ev:"cooldown_check"},
+        {t:"CTA", tag:"ui", w:54, ev:"next_cta"}
+      ],
+      engine: [
+        {t:"Eval rules", tag:"engine", w:62, ev:"engine_eval"},
+        {t:"Trigger", tag:"engine", w:60, ev:"engine_trigger"},
+        {t:"Cooldown", tag:"engine", w:46, ev:"engine_cooldown"},
+        {t:"Route A/B", tag:"ab", w:58, ev:"engine_ab"}
+      ],
+      events: [
+        {t:"Emit", tag:"events", w:56, ev:"event_emit"},
+        {t:"Dedupe", tag:"dedupe", w:44, ev:"event_dedupe"},
+        {t:"Retry", tag:"retry", w:52, ev:"event_retry"},
+        {t:"Persist", tag:"store", w:62, ev:"event_persist"}
+      ],
+      ledger: [
+        {t:"Atomic", tag:"tx", w:58, ev:"ledger_atomic"},
+        {t:"Idempotent", tag:"idem", w:52, ev:"ledger_idempotent"},
+        {t:"Audit", tag:"audit", w:44, ev:"ledger_audit"},
+        {t:"Sync", tag:"sync", w:52, ev:"ledger_sync"}
+      ]
+    };
+
+    // v5: failure drill library (checks / rollback / where it hits)
+    const FAIL = {
+      timeout: {pill:"timeout", hits:["location","quest"], checks:["slow load > threshold","retry(backoff)","fallback cache"], rollback:["cancel request","use cached asset"]},
+      dedupe:  {pill:"dedupe", hits:["events"], checks:["dedupe key","idempotency gate","retry envelope"], rollback:["drop duplicate","merge counters"]},
+      ledger:  {pill:"ledger", hits:["reward","ledger"], checks:["atomic write","idempotency token","conflict detect"], rollback:["rollback tx","replay safe grant"]},
+      prereq:  {pill:"prereq", hits:["quest"], checks:["prereqs valid","state gate","cooldown"], rollback:["deny start","show hint"]},
+      asset:   {pill:"asset", hits:["location","quest"], checks:["missing asset","placeholder","report broken"], rollback:["swap placeholder","queue re-download"]}
+    };
+
+
+    const timelineEl = $("#loopTimeline");
+    const simPlayBtn = $("#simPlayBtn");
+    const simClearBtn = $("#simClearBtn");
+    const simLog = $("#simLog");
+    const simSpeed = $("#simSpeed");
+    const simSpeedPill = $("#simSpeedPill");
+    const simAutoOpen = $("#simAutoOpen");
+    const simKpis = $("#simKpis");
+    const simMicro = $("#simMicro");
+    const failOn = $("#failOn");
+    const failType = $("#failType");
+    const failProb = $("#failProb");
+    const failProbPill = $("#failProbPill");
+    const failNowBtn = $("#failNowBtn");
+    const failLast = $("#failLast");
+    const subSteps = $("#subSteps");
+    const subflowTitle = $("#subflowTitle");
+    const subNote = $("#subNote");
+    const heatCtrBar = $("#heatCtrBar"), heatCtrVal = $("#heatCtrVal");
+    const heatCompBar = $("#heatCompBar"), heatCompVal = $("#heatCompVal");
+    const heatLatBar = $("#heatLatBar"), heatLatVal = $("#heatLatVal");
+    const heatBadgeBar = $("#heatBadgeBar"), heatBadgeVal = $("#heatBadgeVal");
+    const layersSvg = $("#layersSvg");
+    const modelSvg = $("#modelSvg");
+    const covMatrix = $("#covMatrix");
+
+    const durMap = {discover: 4, location: 6, quest: 18, reward: 7, badges: 5, next: 4}; // seconds (illustrative)
+
+    const layerFocus = {
+      discover: ["ui","domain","analytics","cache","events"],
+      location: ["ui","domain","cache","events","analytics"],
+      quest: ["ui","domain","engine","events","ledger","analytics"],
+      reward: ["ui","domain","ledger","events","analytics"],
+      engine: ["engine","domain","events","analytics"],
+      events: ["events","analytics","privacy"],
+      ledger: ["ledger","domain","events","sync"],
+      badges: ["ui","domain","ledger","events","analytics"],
+      next: ["ui","domain","engine","events","analytics"]
+    };
+
+    const modelFocus = {
+      discover: ["Artwork","SearchIndex","UserProfile","Event"],
+      location: ["Artwork","Location","MediaCache","Event"],
+      quest: ["QuestSession","QuestStep","UserProfile","Event","LedgerEntry"],
+      reward: ["Reward","LedgerEntry","UserProfile","Event"],
+      engine: ["Rule","QuestSession","Event"],
+      events: ["Event","TelemetryBatch","PrivacyFlag"],
+      ledger: ["LedgerEntry","Receipt","SyncState"],
+      badges: ["Badge","BadgeProgress","UserProfile","Event"],
+      next: ["Recommendation","UserProfile","Event"]
+    };
+
+    // ===== v10: Organization visuals (pipeline + swimlanes) =====
+    const pipelineEl = $("#pipeline");
+    const sysMapEl = $("#sysMap");
+    const swimEl = $("#swimlanes");
+    const orgFocusBtn = $("#orgFocusBtn");
+    const ORG_LAYERS = ["ui","domain","engine","events","ledger","analytics","cache","sync","privacy"];
+
+    const ensureOrg = () => {
+      if(!pipelineEl || pipelineEl.dataset.ready === "1") return;
+      pipelineEl.dataset.ready = "1";
+      pipelineEl.innerHTML = loopOrder.map(id => {
+        const title = N[id]?.title || titleCase(id);
+        const dots = ORG_LAYERS.map(l => {
+          const on = (layerFocus[id]||[]).includes(l) ? "on" : "";
+          return `<span class="pDot ${on}" data-layer="${l}" title="${l}"></span>`;
+        }).join("");
+        return `
+          <div class="pStep" data-node="${id}" role="button" tabindex="0" aria-label="pipeline step ${title}">
+            <div class="pTop"><span class="pName">${title}</span><span class="pDots">${dots}</span></div>
+          </div>
+        `;
+      }).join("");
+
+      // Click on step selects node
+      pipelineEl.querySelectorAll(".pStep").forEach(step => {
+        const go = () => selectNode(step.dataset.node, false);
+        step.addEventListener("click", go);
+        step.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } });
+      });
+
+      // Build swimlanes grid
+      if(swimEl){
+        const head = `<div class="swCell swHead"></div>` + loopOrder.map(id => `<div class="swCell swHead">${N[id]?.title || titleCase(id)}</div>`).join("");
+        const rows = ORG_LAYERS.map(layer => {
+          const cells = loopOrder.map(id => {
+            const on = (layerFocus[id]||[]).includes(layer);
+            const dot = `<span class="swDot ${on?("on "+layer):""}"></span>`;
+            return `<div class="swCell">${dot}</div>`;
+          }).join("");
+          return `<div class="swCell swRowHead">${layer}</div>${cells}`;
+        }).join("");
+        swimEl.innerHTML = `<div class="swGrid">${head}${rows}</div>`;
+      }
+
+      if(orgFocusBtn){
+        orgFocusBtn.addEventListener("click", () => {
+          const el = $("#org");
+          if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+        });
+      }
+    };
+
+    const updateOrg = (activeNode = state.node) => {
+      if(pipelineEl){
+        pipelineEl.querySelectorAll(".pStep").forEach(step => {
+          const isSel = step.dataset.node === activeNode;
+          step.classList.toggle("isSel", isSel);
+          step.classList.toggle("isSim", (simStatus === "Running") && isSel);
+        });
+      }
+      if(sysMapEl){
+        const activeLayers = new Set(layerFocus[activeNode] || []);
+        sysMapEl.querySelectorAll(".sysItem").forEach(it => {
+          it.classList.toggle("isOn", activeLayers.has(it.dataset.layer));
+        });
+      }
+    };
+
+
+    const buildTimeline = () => {
+      if(!timelineEl) return;
+      timelineEl.innerHTML = loopOrder.map(id => {
+        const t = (N[id]||{title:id}).title || id;
+        const d = durMap[id] || 6;
+        const w = Math.min(100, Math.max(18, d*4));
+        return `
+          <div class="step" data-step="${id}" role="button" tabindex="0" aria-label="step ${t}">
+            <div class="stepTop">
+              <b>${t}</b>
+              <span class="dur">~${d}s</span>
+            </div>
+            <div class="miniBar" aria-hidden="true"><i style="width:${w}%"></i></div>
+          </div>
+        `;
+      }).join("");
+
+      $$(".step", timelineEl).forEach(st => {
+        st.addEventListener("click", () => selectNode(st.dataset.step, false));
+        st.addEventListener("keydown", (e) => {
+          if(e.key==="Enter" || e.key===" "){ e.preventDefault(); selectNode(st.dataset.step, false); }
+        });
+      });
+    };
+
+    const buildCoverage = () => {
+      if(!covMatrix) return;
+      const personas = ["explorer","collector","completionist"];
+      const header = `
+        <div class="mHead"></div>
+        ${personas.map(p => `<div class="mHead">${p}</div>`).join("")}
+      `;
+      const rows = primaryNodes.map(nid => {
+        const meta = N[nid] || {title:nid};
+        const label = `
+          <div class="mCell">
+            <div class="mLabel"><span class="mDot"></span>${meta.title || nid}</div>
+          </div>
+        `;
+        const cells = personas.map(p => {
+          const on = personaPaths[p] && personaPaths[p].has(nid);
+          const cls = "mCell" + (on ? " on" : " dim");
+          return `<div class="${cls}" data-p="${p}" data-n="${nid}" title="${p} → ${meta.title || nid}"><span class="mMark">${on ? "✓" : "—"}</span><span class="mCnt"></span></div>`;
+        }).join("");
+        return `<div class="mRow" data-nid="${nid}">${label}${cells}</div>`;
+      }).join("");
+      covMatrix.innerHTML = header + rows;
+    };
+
+    const buildLayersSvg = () => {
+      if(!layersSvg) return;
+      const node = (id, x,y, label) => `
+        <g class="lNode" data-lid="${id}">
+          <rect x="${x}" y="${y}" rx="18" ry="18" width="150" height="56" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.16)"></rect>
+          <circle cx="${x+20}" cy="${y+28}" r="7" fill="rgba(255,198,87,.9)"></circle>
+          <text x="${x+36}" y="${y+34}" fill="currentColor" font-size="14" font-weight="900">${label}</text>
+        </g>
+      `;
+      const link = (x1,y1,x2,y2) => `<path d="M${x1},${y1} C ${(x1+x2)/2},${y1} ${(x1+x2)/2},${y2} ${x2},${y2}" stroke="rgba(90,201,255,.35)" stroke-width="2" fill="none"></path>`;
+      layersSvg.innerHTML = `
+        <g opacity="0.95">
+          ${link(155,90, 200,90)}  ${link(350,90, 380,90)} ${link(530,90, 560,90)}
+          ${link(275,118, 275,190)} ${link(455,118, 455,190)} ${link(635,118, 635,190)}
+          ${link(155,220, 200,220)} ${link(350,220, 380,220)} ${link(530,220, 560,220)}
+          ${link(635,248, 635,290)}
+        </g>
+
+        ${node("ui", 20, 62, "UI State")}
+        ${node("domain", 200, 62, "Domain State")}
+        ${node("engine", 380, 62, "Rule Engine")}
+        ${node("events", 560, 62, "Event Bus")}
+
+        ${node("cache", 20, 192, "Media Cache")}
+        ${node("ledger", 200, 192, "Ledger")}
+        ${node("analytics", 380, 192, "Analytics")}
+        ${node("sync", 560, 192, "Sync / Offline")}
+
+        ${node("privacy", 560, 292, "Privacy Guard")}
+      `;
+    };
+
+    const buildModelSvg = () => {
+      if(!modelSvg) return;
+      const box = (id, x,y, w,h, label) => `
+        <g class="mNode" data-mid="${id}">
+          <rect x="${x}" y="${y}" rx="16" ry="16" width="${w}" height="${h}" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.16)"></rect>
+          <text x="${x+14}" y="${y+28}" fill="currentColor" font-size="13" font-weight="950">${label}</text>
+        </g>
+      `;
+      const arrow = (x1,y1,x2,y2) => `<path d="M${x1},${y1} C ${(x1+x2)/2},${y1} ${(x1+x2)/2},${y2} ${x2},${y2}" stroke="rgba(170,255,147,.30)" stroke-width="2" fill="none"></path>`;
+      modelSvg.innerHTML = `
+        ${arrow(190,70, 210,70)} ${arrow(380,70, 400,70)} ${arrow(570,70, 590,70)}
+        ${arrow(105,238, 105,280)} ${arrow(295,238, 295,280)} ${arrow(485,238, 485,280)} ${arrow(665,238, 665,280)}
+        ${box("UserProfile", 20, 40, 170, 58, "UserProfile")}
+        ${box("SearchIndex", 210, 40, 170, 58, "SearchIndex")}
+        ${box("Artwork", 400, 40, 170, 58, "Artwork")}
+        ${box("Location", 590, 40, 150, 58, "Location")}
+
+        ${box("QuestSession", 20, 180, 170, 58, "QuestSession")}
+        ${box("QuestStep", 210, 180, 170, 58, "QuestStep")}
+        ${box("Reward", 400, 180, 170, 58, "Reward")}
+        ${box("Badge", 590, 180, 150, 58, "Badge")}
+
+        ${box("LedgerEntry", 20, 280, 170, 58, "LedgerEntry")}
+        ${box("Receipt", 210, 280, 170, 58, "Receipt")}
+        ${box("MediaCache", 400, 280, 170, 58, "MediaCache")}
+        ${box("Event", 590, 280, 150, 58, "Event")}
+        ${box("TelemetryBatch", 590, 324, 150, 32, "TelemetryBatch")}
+        ${box("PrivacyFlag", 400, 324, 170, 32, "PrivacyFlag")}
+        ${box("SyncState", 210, 324, 170, 32, "SyncState")}
+        ${box("BadgeProgress", 20, 324, 170, 32, "BadgeProgress")}
+        ${box("Recommendation", 400, 120, 170, 34, "Recommendation")}
+      `;
+    };
+
+    const updateAtlas = () => {
+      if(timelineEl){
+        $$(".step", timelineEl).forEach(st => st.classList.toggle("isActive", st.dataset.step === state.node));
+      }
+      if(layersSvg){
+        const set = new Set(layerFocus[state.node] || []);
+        layersSvg.querySelectorAll(".lNode").forEach(g => {
+          const on = set.has(g.dataset.lid);
+          g.style.opacity = on ? "1" : "0.45";
+          g.querySelector("rect")?.setAttribute("stroke", on ? "rgba(255,198,87,.35)" : "rgba(255,255,255,.16)");
+        });
+      }
+      if(modelSvg){
+        const set = new Set(modelFocus[state.node] || []);
+        modelSvg.querySelectorAll(".mNode").forEach(g => {
+          const on = set.has(g.dataset.mid);
+          g.style.opacity = on ? "1" : "0.45";
+          g.querySelector("rect")?.setAttribute("stroke", on ? "rgba(255,198,87,.35)" : "rgba(255,255,255,.16)");
+        });
+      }
+    
+      // v5: subflow + heat overlay refresh
+      renderSubflow(state.node);
+      updateCoverageHeat();
+      if(subNote){
+        const s = getSub(state.node)[microFocus.idx] || getSub(state.node)[0];
+        subNote.textContent = "μ-step: " + (s?.t || "—") + " • event: " + (s?.ev || "—");
+      }
+    };
+
+    
+    window.__af_updateAtlas = updateAtlas;
+
+    /* ===== v5: Subflow + Live Heat + Failure Drill ===== */
+    let microFocus = { node: "discover", idx: 0 };
+    let pendingFail = false;
+
+    const getSub = (nodeId) => SUB[nodeId] || SUB.discover;
+
+    const renderSubflow = (nodeId) => {
+      if(!subSteps) return;
+      const steps = getSub(nodeId);
+      microFocus.node = nodeId;
+
+      // Rebuild only if count differs or node changed
+      const key = nodeId + ":" + steps.length;
+      if(subSteps.dataset.key !== key){
+        subSteps.dataset.key = key;
+        subSteps.innerHTML = steps.map((s, i) => `
+          <div class="mStep" data-mi="${i}" role="button" tabindex="0" aria-label="micro step ${s.t}">
+            <div class="mStepTop"><b>${s.t}</b><span class="tag">${s.tag}</span></div>
+            <div class="mMiniBar" aria-hidden="true"><i style="width:${Math.max(16, Math.min(100, s.w||50))}%"></i></div>
+          </div>
+        `).join("");
+
+        $$(".mStep", subSteps).forEach(el => {
+          const mi = parseInt(el.dataset.mi, 10) || 0;
+          const act = () => {
+            microFocus.idx = mi;
+            // selection without forced drawer
+            selectNode(nodeId, false);
+            // μ-log (respects toggles)
+            if(simMicro && simMicro.checked){
+              const s = getSub(nodeId)[mi];
+              if(state.events) logLine("μ", nodeId, s.ev || ("micro_"+mi), "micro");
+              bumpHeat(nodeId, false);
+              updateHeatUI();
+            }
+            updateHeatUI();
+      updateAtlas();
+          };
+          el.addEventListener("click", act);
+          el.addEventListener("keydown", (e) => {
+            if(e.key==="Enter" || e.key===" "){ e.preventDefault(); act(); }
+          });
+        });
+      }
+
+      // Title / note
+      if(subflowTitle){
+        const meta = N[nodeId] || {title:nodeId};
+        subflowTitle.textContent = (meta.title || nodeId) + " • micro-steps";
+      }
+      if(subNote){
+        const s = getSub(nodeId)[microFocus.idx] || getSub(nodeId)[0];
+        subNote.textContent = "μ-step: " + (s?.t || "—") + " • event: " + (s?.ev || "—");
+      }
+
+      // active state
+      $$(".mStep", subSteps).forEach(el => el.classList.toggle("isActive", (parseInt(el.dataset.mi,10)||0) === microFocus.idx));
+    };
+
+    // Heat runtime (per persona / node)
+    const heat = { explorer:{}, collector:{}, completionist:{} };
+    const initHeat = () => {
+      Object.keys(heat).forEach(p => {
+        heat[p] = {};
+        primaryNodes.forEach(n => heat[p][n] = {v:0, e:0});
+      });
+    };
+    initHeat();
+
+    const perf = { latSum:0, latN:0, badge:0, discover:0, location:0, questStart:0, questComplete:0 };
+
+    const bumpHeat = (nodeId, isErr) => {
+      const p = (state.persona in heat) ? state.persona : "explorer";
+      const cell = heat[p] && heat[p][nodeId];
+      if(cell){
+        cell.v++;
+        if(isErr) cell.e++;
+      }
+      // global counters for the "Gameplay Heat" meters
+      if(nodeId==="discover") perf.discover++;
+      if(nodeId==="location") perf.location++;
+      if(nodeId==="quest") perf.questStart++;
+      if(nodeId==="next") perf.questComplete++;
+      if(nodeId==="reward"){
+        // synthetic latency sample
+        const sample = 250 + Math.round(Math.random()*1450);
+        perf.latSum += sample; perf.latN++;
+      }
+      if(nodeId==="badges"){
+        // synthetic badge unlock
+        if(Math.random() < 0.42) perf.badge++;
+      }
+    };
+
+    const updateCoverageHeat = () => {
+      if(!covMatrix) return;
+      covMatrix.querySelectorAll(".mCell[data-p]").forEach(cell => {
+        const p = cell.dataset.p, n = cell.dataset.n;
+        const h = heat[p]?.[n];
+        const v = h?.v || 0;
+        const e = h?.e || 0;
+        const cnt = cell.querySelector(".mCnt");
+        if(cnt) cnt.textContent = v ? String(v) : "";
+        const alpha = Math.min(0.62, (v/22) * 0.62);
+        const rAlpha = Math.min(0.58, (e/8) * 0.58);
+
+        if(v === 0 && e === 0){
+          cell.style.background = "";
+          cell.style.borderColor = "";
+          return;
+        }
+        if(e > 0){
+          cell.style.background = `linear-gradient(135deg, rgba(255,98,112,${rAlpha}), rgba(87,166,255,${alpha}))`;
+          cell.style.borderColor = `rgba(255,98,112,${Math.min(0.85, 0.22 + rAlpha)})`;
+        }else{
+          cell.style.background = `rgba(87,166,255,${alpha})`;
+          cell.style.borderColor = "";
+        }
+      });
+
+      // active row highlight
+      covMatrix.querySelectorAll(".mRow[data-nid]").forEach(r => r.classList.toggle("isActive", r.dataset.nid === state.node));
+    };
+
+    const setBar = (barEl, valEl, pct, txt) => {
+      if(barEl) barEl.style.width = Math.max(0, Math.min(100, pct)) + "%";
+      if(valEl) valEl.textContent = txt;
+    };
+
+    const updateHeatUI = () => {
+      // CTR
+      const ctr = Math.round((perf.location / Math.max(1, perf.discover)) * 100);
+      // Completion
+      const comp = Math.round((perf.questComplete / Math.max(1, perf.questStart)) * 100);
+      // Latency (avg)
+      const lat = perf.latN ? Math.round(perf.latSum / perf.latN) : 0;
+      const latPct = lat ? Math.max(0, Math.min(100, 100 - (lat/2000)*100)) : 0; // lower is worse
+      // Badge rate
+      const badgePct = Math.round((perf.badge / Math.max(1, stats.rewards)) * 100);
+
+      setBar(heatCtrBar, heatCtrVal, ctr, ctr + "%");
+      setBar(heatCompBar, heatCompVal, comp, comp + "%");
+      setBar(heatLatBar, heatLatVal, latPct, (lat ? lat + "ms" : "—"));
+      setBar(heatBadgeBar, heatBadgeVal, badgePct, badgePct + "%");
+
+      updateCoverageHeat();
+    };
+
+    const failSummary = (f, nodeId) => {
+      if(!failLast) return;
+      const meta = N[nodeId] || {title:nodeId};
+      const pills = [
+        `<span class="pill2 err"><span class="dot2 r"></span>FAIL</span>`,
+        `<span class="pill2"><span class="dot2 a"></span>${meta.title || nodeId}</span>`,
+        `<span class="pill2">${f.pill}</span>`
+      ].join("");
+      const chk = f.checks.map(x => `<span class="pill2">${x}</span>`).join("");
+      const rb = f.rollback.map(x => `<span class="pill2">${x}</span>`).join("");
+      failLast.innerHTML = `${pills}<div style="margin-top:8px;"><b>checks</b>: ${chk || "—"}</div><div style="margin-top:6px;"><b>rollback</b>: ${rb || "—"}</div>`;
+    };
+
+    const pickFailure = (nodeId) => {
+      const type = (failType?.value || state.failType || "auto");
+      const keys = Object.keys(FAIL);
+
+      // Choose a failure that actually "hits" this node when possible
+      let k = type;
+      if(type === "auto"){
+        const local = keys.filter(x => (FAIL[x]?.hits || []).includes(nodeId));
+        const pool = local.length ? local : keys;
+        k = pool[Math.floor(Math.random()*pool.length)];
+      }
+      const f = FAIL[k];
+      if(!f) return null;
+
+      // If explicitly chosen type doesn't hit this node, ignore (unless forced)
+      if(type !== "auto" && !f.hits.includes(nodeId) && !pendingFail) return null;
+      return {key:k, ...f};
+    };
+
+
+
+    
+    /* ===== Simulator ===== */
+    let simTimer = null;
+    // simStatus is defined in the top status chip section
+    const stats = {sessions:0, completes:0, rewards:0, errors:0};
+
+    // Extra simulator UI
+    const simScenario = $("#simScenario");
+    const simSeed = $("#simSeed");
+    const simStepBtn = $("#simStepBtn");
+    const simExportBtn = $("#simExportBtn");
+    const simEng = $("#simEng");
+    const simNet = $("#simNet");
+    const simContent = $("#simContent");
+    const simChaos = $("#simChaos");
+    const simEngPill = $("#simEngPill");
+    const simNetPill = $("#simNetPill");
+    const simContentPill = $("#simContentPill");
+    const simChaosPill = $("#simChaosPill");
+
+    const simStory = $("#simStory");
+    const simSub = $("#simSub");
+    const simTrail = $("#simTrail");
+    const simBadges = $("#simBadges");
+    const simSpark = $("#simSpark");
+    const branchSvg = $("#branchSvg");
+
+    const daySessions = $("#daySessions");
+    const daySessionsPill = $("#daySessionsPill");
+    const dayRetention = $("#dayRetention");
+    const dayRetentionPill = $("#dayRetentionPill");
+    const dayFatigue = $("#dayFatigue");
+    const dayFatiguePill = $("#dayFatiguePill");
+    const dayDays = $("#dayDays");
+    const dayDaysPill = $("#dayDaysPill");
+    const runDayBtn = $("#runDayBtn");
+    const runWeekBtn = $("#runWeekBtn");
+    const dayResetBtn = $("#dayResetBtn");
+    const daySummary = $("#daySummary");
+
+    const bossMode = $("#bossMode");
+    const bossFailBtn = $("#bossFailBtn");
+    const bossQueueLine = $("#bossQueueLine");
+
+    const toastHost = $("#toastHost");
+
+    const statSession = $("#statSession");
+    const statStep = $("#statStep");
+    const statQuest = $("#statQuest");
+    const statXP = $("#statXP");
+    const statCoins = $("#statCoins");
+    const statStreak = $("#statStreak");
+    const questBar = $("#questBar");
+    const questPct = $("#questPct");
+    const momBar = $("#momBar");
+    const momPct = $("#momPct");
+
+    const simActionBar = $("#simActionBar");
+
+    // Scenario presets
+    const SCENARIOS = {
+      museum: {
+        title: "Museum Walk",
+        baseFail: 0.02,
+        tempo: 0.95,
+        rewardMul: 0.95,
+        weights: {discover: 1.15, location: 1.10, quest: 1.00, reward: 0.90, badges: 0.92, next: 0.85}
+      },
+      street: {
+        title: "Street Hunt",
+        baseFail: 0.04,
+        tempo: 1.05,
+        rewardMul: 1.10,
+        weights: {discover: 1.20, location: 1.15, quest: 1.00, reward: 1.05, badges: 1.05, next: 0.90}
+      },
+      biennale: {
+        title: "Biennale Sprint",
+        baseFail: 0.06,
+        tempo: 1.18,
+        rewardMul: 1.20,
+        weights: {discover: 1.05, location: 1.10, quest: 1.15, reward: 1.10, badges: 1.15, next: 1.05}
+      },
+      night: {
+        title: "Night Mode",
+        baseFail: 0.05,
+        tempo: 1.08,
+        rewardMul: 1.05,
+        weights: {discover: 1.10, location: 0.95, quest: 1.05, reward: 1.10, badges: 1.20, next: 0.95}
+      }
+    };
+
+    // Badges (lightweight “game feel”)
+    const BADGES = [
+      {key:"first",  ico:"✨", title:"First Steps",  rule:(s)=> s.sessions >= 1},
+      {key:"flow3",  ico:"🌊", title:"Flow x3",      rule:(s)=> s.streak >= 3},
+      {key:"coin50", ico:"💰", title:"Collector 50", rule:(s)=> s.coins >= 50},
+      {key:"coin120",ico:"🏦", title:"Collector 120",rule:(s)=> s.coins >= 120},
+      {key:"q3",     ico:"✅", title:"Quest x3",     rule:(s)=> s.questDone >= 3},
+      {key:"resil",  ico:"🛡️", title:"Resilient",   rule:(s)=> s.recovered >= 2},
+      {key:"fast",   ico:"⚡", title:"Fast Lane",    rule:(s)=> s.avgLat < 260 && s.steps > 10},
+      {key:"noDup",  ico:"🧬", title:"No Duplicate", rule:(s)=> s.dedupeHits >= 2 && s.errors === 0}
+    ];
+
+    // Seeded RNG (reproducible)
+    const hash32 = (str) => {
+      let h = 2166136261 >>> 0;
+      for(let i=0;i<str.length;i++){
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return h >>> 0;
+    };
+    const mulberry32 = (a) => () => {
+      let t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+
+    const clamp01 = (x) => Math.max(0, Math.min(1, x));
+    const pct = (x) => Math.round(clamp01(x) * 100);
+
+    const toast = (msg, sub="") => {
+      if(!toastHost) return;
+      const el = document.createElement("div");
+      el.className = "toast";
+      el.innerHTML = `${msg}${sub ? `<small>${sub}</small>` : ""}`;
+      toastHost.appendChild(el);
+      setTimeout(()=>{ try{ toastHost.removeChild(el); }catch(e){} }, 3600);
+    };
+
+    const nodeKind = (id) => {
+      if(["discover","location","events"].includes(id)) return "ux";
+      if(["quest","reward","badges","next"].includes(id)) return "loop";
+      if(["engine"].includes(id)) return "rules";
+      if(["ledger"].includes(id)) return "risk";
+      return "state";
+    };
+
+    const weightedPick = (w, rnd) => {
+      const keys = Object.keys(w);
+      let sum = 0;
+      keys.forEach(k => sum += Math.max(0, w[k] || 0));
+      if(sum <= 0) return keys[0] || "discover";
+      let r = rnd() * sum;
+      for(const k of keys){
+        r -= Math.max(0, w[k] || 0);
+        if(r <= 0) return k;
+      }
+      return keys[keys.length-1] || "discover";
+    };
+
+    // Simulator core state
+    const sim = {
+      rng: mulberry32(hash32("2026")),
+      scenarioKey: "museum",
+      steps: 0,
+      sessions: 0,
+      core: "discover",
+      plan: ["discover","events"],
+      pi: 0,
+      quest: 0,
+      xp: 0,
+      coins: 0,
+      streak: 0,
+      questDone: 0,
+      recovered: 0,
+      dedupeHits: 0,
+      lastWasErr: false,
+      momentum: 0.55,
+      trace: [],
+      series: {lat: [], mom: [], quest: [], err: []},
+      unlocked: new Set(),
+      forcedCore: null,
+      avgLat: 380
+    };
+
+    const scenario = () => SCENARIOS[sim.scenarioKey] || SCENARIOS.museum;
+
+    const recalcAvgLat = () => {
+      const a = sim.series.lat;
+      if(!a.length) return 380;
+      const n = Math.min(a.length, 24);
+      let s = 0;
+      for(let i=a.length-n;i<a.length;i++) s += a[i];
+      sim.avgLat = Math.round(s / n);
+      return sim.avgLat;
+    };
+
+    const personaBias = (persona) => {
+      if(persona === "explorer") return {discover: 1.15, location: 1.12, quest: 1.0, reward: 0.9, badges: 0.9, next: 0.92};
+      if(persona === "collector") return {discover: 0.95, location: 1.0, quest: 0.95, reward: 1.18, badges: 1.20, next: 0.95};
+      if(persona === "completionist") return {discover: 0.9, location: 0.95, quest: 1.22, reward: 1.05, badges: 1.05, next: 1.15};
+      return {discover: 1, location: 1, quest: 1, reward: 1, badges: 1, next: 1};
+    };
+
+    const chooseNextCore = (from) => {
+      const sc = scenario();
+      const persona = state.persona || "explorer";
+
+      // base transition weights (coherent loop)
+      const base = {
+        discover: {location: 1.25, quest: 1.05, discover: 0.75},
+        location: {quest: 1.25, discover: 0.95, reward: 0.55},
+        quest: {reward: 1.20, badges: 0.95, next: 0.85, location: 0.65},
+        reward: {badges: 1.10, next: 0.95, discover: 0.75},
+        badges: {next: 1.10, discover: 1.05, quest: 0.65},
+        next: {discover: 1.45, location: 0.85}
+      }[from] || {discover:1};
+
+      // dynamic gating
+      const eng = clamp01(parseFloat(simEng?.value || state.simEng || 0.7));
+      const content = clamp01(parseFloat(simContent?.value || state.simContent || 0.7));
+      const chaos = clamp01(parseFloat(simChaos?.value || state.simChaos || 0.2));
+
+      const d = Object.assign({}, base);
+      // if quest low -> push quest
+      if(sim.quest < 35) d.quest = (d.quest || 0.6) + 0.55;
+      // if quest high -> push reward/next
+      if(sim.quest > 75) { d.reward = (d.reward || 0.6) + 0.55; d.next = (d.next || 0.5) + 0.35; }
+      // if coins high -> push badges
+      if(sim.coins > 60) d.badges = (d.badges || 0.5) + 0.45;
+
+      // “boredom breaker” if too many same nodes
+      if(sim.trace.length > 3){
+        const last = sim.trace[sim.trace.length-1]?.core;
+        const last2 = sim.trace[sim.trace.length-2]?.core;
+        if(last && last === last2 && d[last] != null) d[last] *= 0.55;
+      }
+
+      // apply scenario weights, persona bias, and chaos branching
+      const pb = personaBias(persona);
+      const out = {};
+      Object.keys(d).forEach(k => {
+        const w = (d[k] || 0) * (sc.weights[k] || 1) * (pb[k] || 1);
+        // chaos slightly increases explore-y branching
+        const c = (["discover","location"].includes(k) ? (1 + chaos*0.25) : 1);
+        // engagement increases chance to progress in loop
+        const e = (["quest","reward","next"].includes(k) ? (0.75 + eng*0.55) : 1);
+        // content increases reward/badges
+        const ct = (["reward","badges"].includes(k) ? (0.85 + content*0.55) : 1);
+        out[k] = w * c * e * ct;
+      });
+
+      return weightedPick(out, sim.rng);
+    };
+
+    const planForCore = (core) => {
+      const chaos = clamp01(parseFloat(simChaos?.value || state.simChaos || 0.2));
+      const base = {
+        discover: ["discover","events"],
+        location: ["location","events"],
+        quest: ["quest","engine","events"],
+        reward: ["reward","ledger"],
+        badges: ["badges","ledger","events"],
+        next: ["next","engine"]
+      }[core] || [core];
+
+      // chaos may insert extra infra hop
+      if(chaos > 0.55 && sim.rng() < (chaos - 0.5)){
+        const add = (core === "reward" || core === "badges") ? "events" : "ledger";
+        base.splice(Math.min(1, base.length), 0, add);
+      }
+      return base;
+    };
+
+    const resetSim = (keepLog=false) => {
+      sim.steps = 0;
+      sim.sessions = 0;
+      sim.core = "discover";
+      sim.plan = planForCore(sim.core);
+      sim.pi = 0;
+      sim.quest = 0;
+      sim.xp = 0;
+      sim.coins = 0;
+      sim.streak = 0;
+      sim.questDone = 0;
+      sim.recovered = 0;
+      sim.dedupeHits = 0;
+      sim.lastWasErr = false;
+      sim.momentum = 0.55;
+      sim.trace = keepLog ? sim.trace : [];
+      sim.series = {lat: [], mom: [], quest: [], err: []};
+      sim.unlocked = new Set();
+      stats.sessions = 0; stats.completes = 0; stats.rewards = 0; stats.errors = 0;
+
+      if(!keepLog && simLog) simLog.innerHTML = "";
+      kpiView();
+      renderBadges();
+      renderTrail();
+      renderBranchMap();
+      renderHud();
+      drawSpark();
+      updateHeatUI();
+      updateAtlas();
+      toast("🔄 Simulation reset", scenario().title);
+    };
+
+    const kpiView = () => {
+      if(!simKpis) return;
+      const pct1 = (v, m) => Math.round((v/Math.max(1,m))*100);
+      simKpis.innerHTML = `
+        <div class="kpi"><div class="k">sessions</div><div class="v">${stats.sessions}</div><div class="s"><i style="width:${pct1(stats.sessions, 18)}%"></i></div></div>
+        <div class="kpi"><div class="k">completes</div><div class="v">${stats.completes}</div><div class="s"><i style="width:${pct1(stats.completes, 18)}%"></i></div></div>
+        <div class="kpi"><div class="k">rewards</div><div class="v">${stats.rewards}</div><div class="s"><i style="width:${pct1(stats.rewards, 18)}%"></i></div></div>
+        <div class="kpi"><div class="k">errors</div><div class="v">${stats.errors}</div><div class="s"><i style="width:${pct1(Math.max(1, 18-stats.errors), 18)}%"></i></div></div>
+      `;
+    };
+
+    const logLine = (kind, nodeId, label, extra="", isErr=false) => {
+      if(!simLog) return;
+      const now = new Date();
+      const t = now.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+      const meta = N[nodeId] || {title: nodeId};
+      const cls = "pill2" + (isErr ? " err" : "");
+      const row = document.createElement("div");
+      row.className = "logRow";
+      row.innerHTML = `
+        <div class="t">${t}</div>
+        <div class="logMain">
+          <span class="${cls}"><span class="dot2 ${isErr ? "r" : "b"}"></span>${kind}</span>
+          <span class="pill2"><span class="dot2 p"></span>${meta.title || nodeId}</span>
+          <span class="pill2">${label}</span>
+          ${extra ? `<span class="pill2">${extra}</span>` : ``}
+        </div>
+      `;
+      simLog.appendChild(row);
+      simLog.scrollTop = simLog.scrollHeight;
+    };
+
+    const renderHud = () => {
+      const eng = clamp01(parseFloat(simEng?.value || state.simEng || 0.7));
+      const net = clamp01(parseFloat(simNet?.value || state.simNet || 0.75));
+      const content = clamp01(parseFloat(simContent?.value || state.simContent || 0.7));
+      const chaos = clamp01(parseFloat(simChaos?.value || state.simChaos || 0.2));
+
+      if(simEngPill) simEngPill.textContent = pct(eng) + "%";
+      if(simNetPill) simNetPill.textContent = pct(net) + "%";
+      if(simContentPill) simContentPill.textContent = pct(content) + "%";
+      if(simChaosPill) simChaosPill.textContent = pct(chaos) + "%";
+
+      if(statSession) statSession.textContent = `session: ${sim.sessions}`;
+      if(statStep) statStep.textContent = `step: ${sim.steps}`;
+      if(statQuest) statQuest.textContent = `quest: ${Math.round(sim.quest)}%`;
+      if(statXP) statXP.textContent = `xp: ${Math.round(sim.xp)}`;
+      if(statCoins) statCoins.textContent = `coins: ${Math.round(sim.coins)}`;
+      if(statStreak) statStreak.textContent = `streak: ${sim.streak}`;
+
+      if(questBar) questBar.style.width = `${clamp01(sim.quest/100)*100}%`;
+      if(questPct) questPct.textContent = `${Math.round(sim.quest)}%`;
+      if(momBar) momBar.style.width = `${clamp01(sim.momentum)*100}%`;
+      if(momPct) momPct.textContent = `${pct(sim.momentum)}%`;
+    };
+
+    const renderTrail = () => {
+      if(!simTrail) return;
+      const tail = sim.trace.slice(Math.max(0, sim.trace.length - 18));
+      simTrail.innerHTML = "";
+      tail.forEach((e, idx) => {
+        const chip = document.createElement("div");
+        chip.className = "trailChip" + (idx === tail.length-1 ? " isNow" : "");
+        const k = nodeKind(e.node);
+        chip.innerHTML = `<span class="miniDot ${k}"></span>${titleCase(e.node)}${e.err ? " ⚠️" : ""}`;
+        chip.title = `core=${e.core} • lat=${e.lat}ms` + (e.err ? " • error" : "");
+        chip.addEventListener("click", () => selectNode(e.node, true));
+        simTrail.appendChild(chip);
+      });
+    };
+
+    const renderBadges = () => {
+      if(!simBadges) return;
+      const arr = Array.from(sim.unlocked);
+      if(!arr.length){
+        simBadges.innerHTML = `<span class="pill">no badges yet</span>`;
+        return;
+      }
+      simBadges.innerHTML = "";
+      arr.forEach(key => {
+        const b = BADGES.find(x => x.key === key);
+        if(!b) return;
+        const el = document.createElement("span");
+        el.className = "badge";
+        el.innerHTML = `<span class="ico">${b.ico}</span>${b.title}`;
+        simBadges.appendChild(el);
+      });
+    };
+
+    const maybeUnlock = () => {
+      const snap = {
+        sessions: sim.sessions,
+        streak: sim.streak,
+        coins: sim.coins,
+        questDone: sim.questDone,
+        recovered: sim.recovered,
+        avgLat: sim.avgLat,
+        steps: sim.steps,
+        dedupeHits: sim.dedupeHits,
+        errors: stats.errors
+      };
+      BADGES.forEach(b => {
+        if(sim.unlocked.has(b.key)) return;
+        if(b.rule(snap)){
+          sim.unlocked.add(b.key);
+          toast(`${b.ico} Badge unlocked: ${b.title}`, `persona=${titleCase(state.persona)} • scenario=${scenario().title}`);
+          renderBadges();
+          // badge rate metric
+          perf.badge++;
+        }
+      });
+    };
+    const renderBranchMap = () => {
+      if(!branchSvg) return;
+
+      // lanes (top to bottom)
+      const lanes = ["discover","location","quest","reward","badges","next"];
+      const laneY = {};
+      lanes.forEach((k,i) => laneY[k] = 18 + i*16);
+
+      const W = 720, H = 120;
+      const tail = sim.trace.slice(Math.max(0, sim.trace.length - 42));
+
+      const esc = (s) => String(s).replace(/[&<>"]/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+
+      // background grid + lane labels
+      let svg = "";
+      svg += `<rect x="0" y="0" width="${W}" height="${H}" rx="12" ry="12" fill="rgba(0,0,0,.14)" />`;
+      for(let i=0;i<lanes.length;i++){
+        const y = laneY[lanes[i]];
+        svg += `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="rgba(255,255,255,.10)" stroke-width="1"/>`;
+      }
+      // labels
+      lanes.forEach((k,i)=>{
+        const y = laneY[k];
+        svg += `<text x="10" y="${y-4}" fill="rgba(255,255,255,.55)" font-size="10" font-family="ui-sans-serif, system-ui" >${esc(titleCase(k))}</text>`;
+      });
+
+      if(tail.length < 2){
+        branchSvg.innerHTML = svg;
+        return;
+      }
+
+      // points across time
+      const leftPad = 86;
+      const rightPad = 10;
+      const usable = W - leftPad - rightPad;
+      const stepX = usable / Math.max(1, tail.length-1);
+
+      const pt = (i, core) => [leftPad + i*stepX, laneY[core] || laneY.discover];
+
+      // draw polyline segments for core transitions (core-level)
+      let prev = null;
+      for(let i=0;i<tail.length;i++){
+        const e = tail[i];
+        const core = e.core || e.node || "discover";
+        const cur = pt(i, core);
+        if(prev){
+          svg += `<line x1="${prev[0]}" y1="${prev[1]}" x2="${cur[0]}" y2="${cur[1]}" stroke="rgba(255,255,255,.32)" stroke-width="2" stroke-linecap="round" />`;
+        }
+        prev = cur;
+      }
+
+      // nodes (micro points + error highlight)
+      for(let i=0;i<tail.length;i++){
+        const e = tail[i];
+        const core = e.core || "discover";
+        const [x,y] = pt(i, core);
+        const isErr = !!e.err;
+
+        // core node
+        svg += `<circle cx="${x}" cy="${y}" r="${isErr ? 4.2 : 3.2}" fill="${isErr ? "rgba(255,95,95,.95)" : "rgba(255,255,255,.75)"}" stroke="rgba(0,0,0,.35)" stroke-width="1"/>`;
+
+        // micro marker: if node differs from core (microflow)
+        if(e.node && e.node !== core){
+          const my = Math.min(H-10, y + 6);
+          svg += `<circle cx="${x}" cy="${my}" r="2.2" fill="rgba(160,210,255,.55)" />`;
+        }
+
+        // now marker
+        if(i === tail.length-1){
+          svg += `<circle cx="${x}" cy="${y}" r="8.5" fill="none" stroke="rgba(120,185,255,.55)" stroke-width="2"/>`;
+        }
+      }
+
+      // Session separators (when core=discover and previous was next)
+      for(let i=1;i<tail.length;i++){
+        const a = tail[i-1], b = tail[i];
+        if(a.core === "next" && b.core === "discover"){
+          const x = leftPad + i*stepX;
+          svg += `<line x1="${x}" y1="6" x2="${x}" y2="${H-6}" stroke="rgba(255,255,255,.12)" stroke-width="1" stroke-dasharray="3 4"/>`;
+        }
+      }
+
+      branchSvg.innerHTML = svg;
+    };
+
+
+
+    const drawSpark = () => {
+      if(!simSpark) return;
+      const ctx = simSpark.getContext("2d");
+      if(!ctx) return;
+
+      const w = simSpark.width, h = simSpark.height;
+      ctx.clearRect(0,0,w,h);
+
+      // grid
+      ctx.globalAlpha = 0.35;
+      ctx.strokeStyle = "rgba(255,255,255,.22)";
+      if(document.documentElement.getAttribute("data-theme")==="light") ctx.strokeStyle = "rgba(0,0,0,.12)";
+      ctx.lineWidth = 1;
+      for(let i=1;i<=3;i++){
+        const y = Math.round((h/4)*i);
+        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      const lat = sim.series.lat.slice(-36);
+      const mom = sim.series.mom.slice(-36);
+      const err = sim.series.err.slice(-36);
+
+      const drawSeries = (arr, scaleMax, alpha=0.9) => {
+        if(arr.length < 2) return;
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        arr.forEach((v,i)=>{
+          const x = (i/(arr.length-1))*w;
+          const y = h - (clamp01(v/scaleMax))*h;
+          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        });
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      };
+
+      // latency (scaled 900ms)
+      ctx.strokeStyle = "rgba(135, 180, 255, .95)";
+      drawSeries(lat, 900, 0.95);
+
+      // momentum (scaled 1.0)
+      ctx.strokeStyle = "rgba(85, 210, 180, .90)";
+      drawSeries(mom, 1.0, 0.90);
+
+      // errors spikes (scaled 1.0)
+      ctx.strokeStyle = "rgba(255, 110, 110, .80)";
+      drawSeries(err, 1.0, 0.75);
+    };
+
+    const describe = (core, node, meta) => {
+      const sc = scenario();
+      const persona = titleCase(state.persona);
+      const templates = {
+        discover: [
+          `${persona} замечает скрытую деталь и открывает новую ветку.`,
+          `${persona} пролистывает каталог и находит “золото” для маршрута.`,
+          `${persona} запускает поиск — всплывает неожиданный инсайт.`
+        ],
+        location: [
+          `${persona} переходит в локацию: контекст усиливает мотивацию.`,
+          `${persona} приближается к объекту — карта и подсказки синхронизируются.`,
+          `${persona} отмечает точку на маршруте и фиксирует “place memory”.`
+        ],
+        quest: [
+          `Квест формируется: правило + ограничение времени + “почему это важно”.`,
+          `Контракт квеста подписан: прогресс начинает считаться.`,
+          `Задача уточняется: появляются микро-условия и награда.`
+        ],
+        reward: [
+          `Награда рассчитана и записана в ledger (idempotent).`,
+          `Получена награда: XP/coins добавлены, событие отправлено в bus.`,
+          `Reward minted: метрика обновлена, ready-to-share.`
+        ],
+        badges: [
+          `Бейджи проверяются: критерии → “unlock?”`,
+          `Мета-мотивация: коллекция растёт, streak удерживается.`,
+          `Badge pipeline: eligibility → mint → notify.`
+        ],
+        next: [
+          `CTA предлагает следующий шаг: “ещё один объект?”`,
+          `Переход к следующему шагу: петля замыкается.`,
+          `Next: система подстраивает рекомендацию под ${persona}.`
+        ]
+      };
+      const arr = templates[core] || templates.discover;
+      const t = arr[Math.floor(sim.rng() * arr.length)];
+      const extras = [];
+      extras.push(`scenario=${sc.title}`);
+      if(meta && meta.title) extras.push(`node=${meta.title}`);
+      extras.push(`avgLat≈${recalcAvgLat()}ms`);
+      return {main: t, sub: extras.join(" • ")};
+    };
+
+    const shouldFailNow = (nodeId, coreId, lat) => {
+      const sc = scenario();
+      const drill = !!(failOn && failOn.checked);
+      const prob = parseFloat(failProb?.value || state.failProb || "0.15") || 0.15;
+
+      const net = clamp01(parseFloat(simNet?.value || state.simNet || 0.75));
+      const chaos = clamp01(parseFloat(simChaos?.value || state.simChaos || 0.2));
+
+      const base = sc.baseFail + 0.018 + (1-net)*0.085 + chaos*0.12;
+      const timeoutBoost = (lat > 620 ? 0.05 : 0);
+
+      // pendingFail comes from "Fail now"
+      if(pendingFail) return {yes:true, drill:true};
+
+
+      // Boss failure queue (scheduled chain)
+      if(sim.bossQ && sim.bossQ.length && sim.bossQ[0].atStep <= sim.steps){
+        const it = sim.bossQ.shift();
+        sim.forcedFailKey = it.key;
+        updateBossQueueUI();
+        return {yes:true, drill:true, boss:true};
+      }
+
+      const r = sim.rng();
+      if(drill && r < prob) return {yes:true, drill:true};
+      if(!drill && r < (base + timeoutBoost)) return {yes:true, drill:false};
+      return {yes:false};
+    };
+
+    const pickFailureSmart = (nodeId) => {
+      // Boss chain may force a specific failure type for this tick
+      if(sim.forcedFailKey){
+        const k = sim.forcedFailKey;
+        sim.forcedFailKey = null;
+        if(FAIL[k]) return {key:k, ...FAIL[k]};
+      }
+
+      const desired = String(failType?.value || state.failType || "auto");
+      if(desired !== "auto"){
+        return FAIL[desired] || pickFailure(nodeId);
+      }
+      // auto: bias by node kind and knobs
+      const net = clamp01(parseFloat(simNet?.value || state.simNet || 0.75));
+      const chaos = clamp01(parseFloat(simChaos?.value || state.simChaos || 0.2));
+      const r = sim.rng();
+
+      if(net < 0.35 && r < 0.55) return FAIL.timeout;
+      if(["reward","badges","ledger"].includes(nodeId) && r < (0.30 + chaos*0.20)) return FAIL.ledger;
+      if(["reward","events"].includes(nodeId) && r < (0.22 + chaos*0.25)) return FAIL.dedupe;
+      if(["quest","next"].includes(nodeId) && r < (0.18 + chaos*0.15)) return FAIL.prereq;
+      if(["discover","location"].includes(nodeId) && r < (0.18 + chaos*0.12)) return FAIL.asset;
+      return pickFailure(nodeId);
+    };
+
+    const bumpEconomy = (core, ok) => {
+      const eng = clamp01(parseFloat(simEng?.value || state.simEng || 0.7));
+      const content = clamp01(parseFloat(simContent?.value || state.simContent || 0.7));
+      const sc = scenario();
+      const mul = sc.rewardMul;
+
+      if(!ok){
+        sim.momentum = clamp01(sim.momentum - (0.08 + (1-eng)*0.05));
+        return {dxp:0, dcoin:0, dquest:0};
+      }
+
+      let dxp = 0, dcoin = 0, dquest = 0;
+      if(core === "discover"){ dxp = 1 + Math.round(2*content); sim.momentum = clamp01(sim.momentum + 0.03 + eng*0.02); }
+      if(core === "location"){ dxp = 2 + Math.round(3*content); sim.momentum = clamp01(sim.momentum + 0.04 + eng*0.02); }
+      if(core === "quest"){
+        dquest = 8 + Math.round(14 * eng * (0.45 + content*0.75));
+        dxp = 3 + Math.round(5*content);
+        sim.momentum = clamp01(sim.momentum + 0.05 + eng*0.03);
+      }
+      if(core === "reward"){
+        dcoin = Math.round((6 + sim.rng()*10) * (0.55 + content*0.85) * mul);
+        dxp = 6 + Math.round(7*content*mul);
+        sim.momentum = clamp01(sim.momentum + 0.06 + eng*0.03);
+      }
+      if(core === "badges"){ dxp = 1 + Math.round(4*content); sim.momentum = clamp01(sim.momentum + 0.02 + eng*0.02); }
+      if(core === "next"){
+        // completion attempt
+        const pass = sim.quest >= 72 && sim.momentum >= 0.32;
+        if(pass){
+          stats.completes++;
+          sim.questDone++;
+          sim.streak = sim.streak + 1;
+          sim.quest = 0; // new session quest
+          toast("🎯 Quest completed", `streak=${sim.streak}`);
+        }else{
+          sim.streak = 0;
+          sim.momentum = clamp01(sim.momentum - 0.06);
+        }
+      }
+
+      sim.xp += dxp;
+      sim.coins += dcoin;
+      sim.quest = clamp01((sim.quest + dquest)/100) * 100;
+
+      return {dxp, dcoin, dquest};
+    };
+
+    const applyReco = (nextCore) => {
+      if(!simActionBar) return;
+      const btns = simActionBar.querySelectorAll(".actBtn");
+      btns.forEach(b => b.classList.remove("reco"));
+      const hit = simActionBar.querySelector(`.actBtn[data-act="${nextCore}"]`);
+      if(hit) hit.classList.add("reco");
+    };
+
+    const tick = () => {
+      const sc = scenario();
+
+      // set RNG from seed if changed (lightweight)
+      const seedVal = String(simSeed?.value || state.simSeed || "2026");
+      if(seedVal !== String(state.simSeed || "2026")){
+        state.simSeed = seedVal;
+        writeState(state);
+      }
+
+      sim.steps++;
+      sim.forcedFailKey = null;
+
+      // auto-spawn boss chain when enabled
+      if(bossMode && bossMode.checked && (!sim.bossQ || sim.bossQ.length===0)){
+        const chaos = clamp01(parseFloat(simChaos?.value || state.simChaos || 0.20));
+        const net = clamp01(parseFloat(simNet?.value || state.simNet || 0.75));
+        const pBoss = 0.002 + chaos*0.020 + (1-net)*0.006;
+        if(sim.steps > 6 && sim.rng() < pBoss){
+          scheduleBossChain("auto");
+        }
+      }
+
+
+      // forced action (from buttons) sets core and resets plan
+      if(sim.forcedCore){
+        sim.core = sim.forcedCore;
+        sim.plan = planForCore(sim.core);
+        sim.pi = 0;
+        sim.forcedCore = null;
+      }
+
+      // micro plan stepping
+      const microOn = !!(simMicro && simMicro.checked);
+      if(microOn){
+        if(sim.pi >= sim.plan.length){
+          const nextCore = chooseNextCore(sim.core);
+          applyReco(nextCore);
+          // session boundary
+          if(sim.core === "next" && nextCore === "discover"){
+            sim.sessions++;
+            stats.sessions++;
+            if(sim.sessions === 1) toast("✨ New session started", `scenario=${sc.title}`);
+          }
+          sim.core = nextCore;
+          sim.plan = planForCore(sim.core);
+          sim.pi = 0;
+        }
+      }else{
+        const nextCore = chooseNextCore(sim.core);
+        applyReco(nextCore);
+        if(sim.core === "next" && nextCore === "discover"){
+          sim.sessions++;
+          stats.sessions++;
+          if(sim.sessions === 1) toast("✨ New session started", `scenario=${sc.title}`);
+        }
+        sim.core = nextCore;
+        sim.plan = planForCore(sim.core);
+        sim.pi = 0;
+      }
+
+      const nodeId = microOn ? sim.plan[sim.pi++] : sim.core;
+      const meta = N[nodeId] || {};
+      microFocus = { node: nodeId, idx: 0 };
+
+      // Select node in UI (auto-open respects command bar)
+      selectNode(nodeId, !!(simAutoOpen && simAutoOpen.checked));
+
+      // synthetic latency depends on network + tempo
+      const net = clamp01(parseFloat(simNet?.value || state.simNet || 0.75));
+      const chaos = clamp01(parseFloat(simChaos?.value || state.simChaos || 0.2));
+      const baseLat = (140 + sim.rng()*260) * (0.85 + (1-net)*1.85) * sc.tempo;
+      const lat = Math.max(70, Math.round(baseLat * (0.80 + sim.rng()*0.60)));
+      sim.series.lat.push(lat);
+
+      // events + telemetry labels
+      const ev = (meta.events && meta.events.length) ? meta.events[Math.floor(sim.rng()*meta.events.length)] : (nodeId + "_event");
+      const tl = (meta.telemetry && meta.telemetry.length) ? meta.telemetry[Math.floor(sim.rng()*meta.telemetry.length)] : (nodeId + "_telemetry");
+
+      // failure logic
+      const fail = shouldFailNow(nodeId, sim.core, lat);
+      const isFail = !!fail.yes;
+
+      if(isFail){
+        stats.errors++;
+        const f = pickFailureSmart(nodeId);
+        pendingFail = false;
+
+        // “recover” metric
+        if(sim.lastWasErr === false) sim.lastWasErr = true;
+
+        logLine("error", nodeId, "runtime_error", `lat=${lat}ms • ${f.pill}`, true);
+        bumpHeat(nodeId, true);
+        failSummary(f, nodeId);
+
+        // penalty + possible rollback plan
+        sim.momentum = clamp01(sim.momentum - (0.10 + chaos*0.10));
+        sim.series.err.push(1);
+
+        // show a “recovery” micro hop next
+        if(microOn){
+          sim.plan.splice(sim.pi, 0, "events");
+          if(sim.rng() < 0.55) sim.plan.splice(sim.pi, 0, "ledger");
+        }
+
+      }else{
+        // success
+        logLine("event", nodeId, ev, `lat=${lat}ms`);
+        if(toggleTelemetry && toggleTelemetry.checked){
+          logLine("telemetry", nodeId, tl, `lat=${lat}ms`);
+        }
+        bumpHeat(nodeId, false);
+        sim.series.err.push(0);
+
+        // economy updates only on core step (or core-equivalent nodes)
+        const econ = bumpEconomy(sim.core, true);
+
+        // dedupe hits simulation (for badge)
+        if(["reward","events"].includes(nodeId) && sim.rng() < (0.05 + chaos*0.12)){
+          sim.dedupeHits++;
+          logLine("check", nodeId, "dedupe_pass", "idempotent_key=ok");
+        }
+
+        // recovery counter: error followed by success
+        if(sim.lastWasErr){
+          sim.recovered++;
+          sim.lastWasErr = false;
+          logLine("recovery", nodeId, "retry_success", `recovered=${sim.recovered}`);
+          toast("🛠️ Recovered after failure", `recovered=${sim.recovered}`);
+        }
+
+        // rewards counter
+        if(sim.core === "reward") stats.rewards++;
+
+        // story + sub
+        const d = describe(sim.core, nodeId, meta);
+        if(simStory) simStory.textContent = d.main;
+        if(simSub) simSub.textContent = d.sub + (econ.dcoin ? ` • +${econ.dcoin} coins` : "") + (econ.dxp ? ` • +${econ.dxp} xp` : "");
+
+      }
+
+      // Update series for spark
+      sim.series.mom.push(sim.momentum);
+      sim.series.quest.push(sim.quest);
+
+      // Push trace
+      sim.trace.push({t: Date.now(), node: nodeId, core: sim.core, lat, err: isFail, sc: sim.scenarioKey, persona: state.persona});
+      // cap trace to keep memory stable
+      if(sim.trace.length > 250) sim.trace.shift();
+
+      recalcAvgLat();
+      renderHud();
+      renderTrail();
+      renderBranchMap();
+      drawSpark();
+      maybeUnlock();
+
+      kpiView();
+      updateHeatUI();
+      updateAtlas();
+      updateOrg(state.node);
+    };
+
+    const stopSim = () => {
+      if(simTimer){ clearInterval(simTimer); simTimer = null; }
+      if(simPlayBtn) simPlayBtn.textContent = "Play";
+      simStatus = "Idle";
+      setText(nowSimEl, "Idle");
+      updateStatusChip();
+      updateOrg(state.node);
+    };
+
+    const startSim = () => {
+      stopSim();
+      const speed = parseFloat(simSpeed?.value || "1") || 1;
+      const sc = scenario();
+      const ms = Math.max(220, Math.round((950 / speed) / (sc.tempo || 1)));
+      simTimer = setInterval(tick, ms);
+      if(simPlayBtn) simPlayBtn.textContent = "Pause";
+      simStatus = "Running";
+      setText(nowSimEl, "Running");
+      updateStatusChip();
+      updateOrg(state.node);
+    };
+
+    const downloadJSON = (obj, name="trace.json") => {
+      const data = JSON.stringify(obj, null, 2);
+      const blob = new Blob([data], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=> URL.revokeObjectURL(url), 800);
+    };
+
+    const wireSim = () => {
+      const updDayPills = () => {
+        if(daySessionsPill) daySessionsPill.textContent = String(daySessions?.value || state.daySessions || 4);
+        if(dayRetentionPill) dayRetentionPill.textContent = `${pct(parseFloat(dayRetention?.value || state.dayRetention || 0.65))}%`;
+        if(dayFatiguePill) dayFatiguePill.textContent = `${pct(parseFloat(dayFatigue?.value || state.dayFatigue || 0.25))}%`;
+        if(dayDaysPill) dayDaysPill.textContent = String(dayDays?.value || state.dayDays || 1);
+      };
+
+      // daily sliders
+      if(daySessions) daySessions.addEventListener("input", () => { state.daySessions = parseInt(daySessions.value||"4",10); writeState(state); updDayPills(); });
+      if(dayRetention) dayRetention.addEventListener("input", () => { state.dayRetention = parseFloat(dayRetention.value||"0.65"); writeState(state); updDayPills(); });
+      if(dayFatigue) dayFatigue.addEventListener("input", () => { state.dayFatigue = parseFloat(dayFatigue.value||"0.25"); writeState(state); updDayPills(); });
+      if(dayDays) dayDays.addEventListener("input", () => { state.dayDays = parseInt(dayDays.value||"1",10); writeState(state); updDayPills(); });
+
+      // boss mode
+      if(bossMode) bossMode.addEventListener("change", () => { state.bossMode = !!bossMode.checked; writeState(state); updateBossQueueUI(); });
+
+      if(bossFailBtn) bossFailBtn.addEventListener("click", () => {
+        scheduleBossChain("manual");
+        if(!simTimer) tick();
+      });
+
+      const dayReport = (rep) => {
+        if(!daySummary) return;
+        const b = Array.from(sim.unlocked || []).slice(-8);
+        daySummary.innerHTML =
+          `Day report: <b>${rep.days}</b> day(s), <b>${rep.sessions}</b> sessions, ` +
+          `<b>${rep.quests}</b> quests, <b>+${rep.coins}</b> coins, <b>+${rep.xp}</b> xp, ` +
+          `<b>${rep.errs}</b> errors, <b>${rep.recov}</b> recoveries` +
+          (b.length ? `<br/>Unlocked: ${b.map(x=>`<span class="chip" style="display:inline-flex;gap:6px;align-items:center;margin:4px 6px 0 0"><span class="miniDot eval"></span>${titleCase(x)}</span>`).join("")}` : "");
+      };
+
+      const runDays = (daysCount) => {
+        // fast-forward: simulate multiple sessions with retention/fatigue
+        const targetDays = Math.max(1, daysCount|0);
+        const sessionsPerDay = Math.max(1, parseInt(daySessions?.value || state.daySessions || 4,10));
+        const retention = clamp01(parseFloat(dayRetention?.value || state.dayRetention || 0.65));
+        const fatigue = clamp01(parseFloat(dayFatigue?.value || state.dayFatigue || 0.25));
+
+        let rep = {days:0, sessions:0, quests:0, coins:0, xp:0, errs:0, recov:0};
+        const startCoins = sim.coins, startXp = sim.xp, startQ = sim.questDone, startRec = sim.recovered, startErr = stats.errors;
+
+        const runOneSession = (capSteps=220) => {
+          const before = sim.sessions;
+          let guard = 0;
+          while(sim.sessions === before && guard < capSteps){
+            tick();
+            guard++;
+          }
+          return sim.sessions > before;
+        };
+
+        const runOneDay = () => {
+          let did = 0;
+          for(let i=0;i<sessionsPerDay;i++){
+            // chance to start next session
+            const rewardBoost = clamp01((sim.coins % 120)/120) * 0.12;
+            const pReturn = clamp01(retention + rewardBoost - (1-sim.momentum)*0.10);
+            if(i>0 && sim.rng() > pReturn) break;
+
+            const ok = runOneSession(220);
+            if(!ok) break;
+            did++;
+
+            // apply fatigue: reduce engagement a bit (but keep >=0.2)
+            const e = clamp01(parseFloat(simEng?.value || state.simEng || 0.70));
+            const nextE = clamp01(e * (1 - fatigue*0.25) - fatigue*0.02);
+            if(simEng){ simEng.value = String(nextE.toFixed(2)); state.simEng = nextE; writeState(state); }
+          }
+          return did;
+        };
+
+        // execute days
+        for(let d=0; d<targetDays; d++){
+          rep.days++;
+          const sDone = runOneDay();
+          rep.sessions += sDone;
+          // small overnight recovery to momentum
+          sim.momentum = clamp01(sim.momentum * (0.92 + 0.10*sim.rng()));
+        }
+
+        rep.coins = Math.max(0, sim.coins - startCoins);
+        rep.xp = Math.max(0, sim.xp - startXp);
+        rep.quests = Math.max(0, sim.questDone - startQ);
+        rep.recov = Math.max(0, sim.recovered - startRec);
+        rep.errs = Math.max(0, stats.errors - startErr);
+
+        sim.day.runs++;
+        sim.day.days += rep.days;
+        sim.day.sessions += rep.sessions;
+        sim.day.quests += rep.quests;
+        sim.day.coins += rep.coins;
+        sim.day.xp += rep.xp;
+        sim.day.errs += rep.errs;
+        sim.day.recov += rep.recov;
+        sim.day.lastReport = rep;
+
+        dayReport(rep);
+        renderHud();
+        renderTrail();
+        renderBranchMap();
+        drawSpark();
+      };
+
+      if(runDayBtn) runDayBtn.addEventListener("click", () => runDays(1));
+      if(runWeekBtn) runWeekBtn.addEventListener("click", () => runDays(Math.max(1, parseInt(dayDays?.value || state.dayDays || 7,10))));
+      if(dayResetBtn) dayResetBtn.addEventListener("click", () => {
+        sim.day = {runs:0, days:0, sessions:0, quests:0, coins:0, xp:0, errs:0, recov:0, lastReport:null};
+        if(daySummary) daySummary.textContent = "Day stats сброшены. Нажми Run day.";
+      });
+
+      // initial pills
+      updDayPills();
+
+      const updPills = () => { renderHud(); };
+      if(simEng) simEng.addEventListener("input", () => { state.simEng = parseFloat(simEng.value||"0.7"); writeState(state); updPills(); });
+      if(simNet) simNet.addEventListener("input", () => { state.simNet = parseFloat(simNet.value||"0.75"); writeState(state); updPills(); });
+      if(simContent) simContent.addEventListener("input", () => { state.simContent = parseFloat(simContent.value||"0.7"); writeState(state); updPills(); });
+      if(simChaos) simChaos.addEventListener("input", () => { state.simChaos = parseFloat(simChaos.value||"0.2"); writeState(state); updPills(); });
+
+      if(simScenario){
+        simScenario.addEventListener("change", () => {
+          sim.scenarioKey = String(simScenario.value || "museum");
+          state.simScenario = sim.scenarioKey;
+          writeState(state);
+          toast("🎬 Scenario", scenario().title);
+          resetSim(false);
+        });
+      }
+
+      if(simSeed){
+        const seedApply = () => {
+          const v = String(simSeed.value || "2026").trim() || "2026";
+          simSeed.value = v;
+          state.simSeed = v;
+          writeState(state);
+          sim.rng = mulberry32(hash32(v + "|" + sim.scenarioKey + "|" + (state.persona||"explorer")));
+          toast("🎲 Seed applied", v);
+          resetSim(false);
+        };
+        simSeed.addEventListener("change", seedApply);
+      }
+
+      if(simSpeed && simSpeedPill){
+        const upd = () => {
+          const v = parseFloat(simSpeed.value || "1") || 1;
+          simSpeedPill.textContent = v.toFixed(1) + "×";
+          state.simSpeed = v;
+          writeState(state);
+          if(simTimer) startSim();
+        };
+        simSpeed.addEventListener("input", upd);
+      }
+
+      if(failProb && failProbPill){
+        const upd = () => {
+          const v = parseFloat(failProb.value || "0.15") || 0.15;
+          failProbPill.textContent = Math.round(v*100) + "%";
+          state.failProb = v;
+          writeState(state);
+        };
+        failProb.addEventListener("input", upd);
+      }
+      if(failType){
+        failType.addEventListener("change", () => {
+          state.failType = String(failType.value || "auto");
+          writeState(state);
+        });
+      }
+
+      if(simPlayBtn){
+        simPlayBtn.addEventListener("click", () => {
+          if(simTimer) stopSim(); else startSim();
+        });
+      }
+
+      if(simStepBtn){
+        simStepBtn.addEventListener("click", () => {
+          if(!simTimer){ tick(); }
+          else{ tick(); }
+        });
+      }
+
+      if(simExportBtn){
+        simExportBtn.addEventListener("click", () => {
+          const name = `af_trace_${sim.scenarioKey}_${Date.now()}.json`;
+          downloadJSON({meta:{scenario: sim.scenarioKey, seed: (simSeed?.value||state.simSeed||"2026"), persona: state.persona, bossMode: !!state.bossMode, knobs:{eng: state.simEng, net: state.simNet, content: state.simContent, chaos: state.simChaos}, day: sim.day}, trace: sim.trace}, name);
+          toast("⬇️ Trace exported", name);
+        });
+      }
+
+      if(simClearBtn){
+        simClearBtn.addEventListener("click", () => {
+          resetSim(false);
+        });
+      }
+
+      if(failNowBtn){
+        failNowBtn.addEventListener("click", () => {
+          pendingFail = true;
+          toast("⚠️ Failure injected", "next tick will fail");
+          if(!simTimer) tick();
+        });
+      }
+
+      if(simActionBar){
+        simActionBar.addEventListener("click", (e) => {
+          const btn = e.target?.closest?.(".actBtn");
+          if(!btn) return;
+          const act = String(btn.getAttribute("data-act") || "").trim();
+          if(!act) return;
+          sim.forcedCore = act;
+          toast("🧭 Forced action", titleCase(act));
+          if(!simTimer) tick();
+        });
+      }
+
+      // initial rendering
+      if(simScenario){
+        simScenario.value = String(state.simScenario || "museum");
+        sim.scenarioKey = String(simScenario.value || "museum");
+      }else{
+        sim.scenarioKey = String(state.simScenario || "museum");
+      }
+      if(simSeed){
+        simSeed.value = String(state.simSeed || "2026");
+        sim.rng = mulberry32(hash32(String(simSeed.value || "2026") + "|" + sim.scenarioKey + "|" + (state.persona||"explorer")));
+      }
+      if(simEng) simEng.value = String(state.simEng ?? 0.70);
+      if(simNet) simNet.value = String(state.simNet ?? 0.75);
+      if(simContent) simContent.value = String(state.simContent ?? 0.70);
+      if(simChaos) simChaos.value = String(state.simChaos ?? 0.20);
+
+      if(bossMode) bossMode.checked = !!state.bossMode;
+
+      if(daySessions) daySessions.value = String(state.daySessions ?? 4);
+      if(dayRetention) dayRetention.value = String(state.dayRetention ?? 0.65);
+      if(dayFatigue) dayFatigue.value = String(state.dayFatigue ?? 0.25);
+      if(dayDays) dayDays.value = String(state.dayDays ?? 1);
+      updateBossQueueUI();
+
+      renderHud();
+      renderBadges();
+      drawSpark();
+      applyReco("location");
+      kpiView();
+    };
+
+
+    const initAtlas = () => {
+      buildTimeline();
+      buildCoverage();
+      buildLayersSvg();
+      buildModelSvg();
+      wireSim();
+      updateAtlas();
+    };
+
+function applyState(){
+      setTheme(state.theme === "light" ? "light" : "dark");
+      toggleEvents.checked = !!state.events;
+      toggleTelemetry.checked = !!state.telemetry;
+      if(simSpeed) simSpeed.value = String(state.simSpeed || 1.0);
+      if(simSpeedPill) simSpeedPill.textContent = (parseFloat(simSpeed?.value||"1")||1).toFixed(1)+"×";
+      if(simAutoOpen) simAutoOpen.checked = !!state.simAutoOpen;
+      if(simMicro) simMicro.checked = !!state.simMicro;
+      if(failOn) failOn.checked = !!state.failOn;
+      if(failType) failType.value = String(state.failType || "auto");
+      if(failProb) failProb.value = String(state.failProb ?? 0.15);
+      if(failProbPill) failProbPill.textContent = Math.round((parseFloat(failProb?.value||"0.15")||0)*100) + "%";
+
+      // v11 simulator knobs
+      if(simScenario) simScenario.value = String(state.simScenario || "museum");
+      if(simSeed) simSeed.value = String(state.simSeed || "2026");
+      if(simEng) simEng.value = String(state.simEng ?? 0.70);
+      if(simNet) simNet.value = String(state.simNet ?? 0.75);
+      if(simContent) simContent.value = String(state.simContent ?? 0.70);
+      if(simChaos) simChaos.value = String(state.simChaos ?? 0.20);
+      if(simEngPill) simEngPill.textContent = Math.round((parseFloat(simEng?.value||"0.7")||0)*100) + "%";
+      if(simNetPill) simNetPill.textContent = Math.round((parseFloat(simNet?.value||"0.75")||0)*100) + "%";
+      if(simContentPill) simContentPill.textContent = Math.round((parseFloat(simContent?.value||"0.7")||0)*100) + "%";
+      if(simChaosPill) simChaosPill.textContent = Math.round((parseFloat(simChaos?.value||"0.2")||0)*100) + "%";
+
+
+      applyPersona(state.persona in personaPaths ? state.persona : "explorer");
+      state.tab = ["events","state","telemetry","checks"].includes(state.tab) ? state.tab : "events";
+      selectNode(state.node, false);
+    simStatus = "Idle"; setText(nowSimEl, "Idle"); updateStatusChip(); updateOrg(state.node);
+    setText(nowPersonaEl, titleCase(state.persona)); updateStatusChip();
+    setText(nowNodeEl, N[state.node]?.title || titleCase(state.node)); updateStatusChip();
+
+      renderPanel();
+      scheduleDraw();
+
+      // one extra draw after fonts/layout settle
+      setTimeout(scheduleDraw, 140);
+      setTimeout(scheduleDraw, 420);
+
+      // init Atlas visuals
+      try{ initAtlas(); }catch(e){}
+    }
+
+    
+
+    // v7: command bar helpers
+    const jumpNodeBtn = $("#jumpNodeBtn");
+    if(jumpNodeBtn){
+      jumpNodeBtn.addEventListener("click", () => {
+        const sel = document.querySelector('.node.isSel') || document.querySelector(`.node[data-id="${state.node}"]`);
+        const core = $("#core");
+        if(sel){
+          sel.scrollIntoView({behavior:"smooth", block:"center"});
+          sel.classList.remove("pulse");
+          // restart animation
+          void sel.offsetWidth;
+          sel.classList.add("pulse");
+        }else if(core){
+          core.scrollIntoView({behavior:"smooth", block:"start"});
+        }
+      });
+    }
+
+    
+    // v10: compact header behavior
+    const topEl = document.querySelector('.top');
+    const topCompactBtn = $("#topCompactBtn");
+    const topAutoCompact = $("#topAutoCompact");
+    const applyTopCompact = () => {
+      const should = !!(state.headerCompact || (state.headerAuto && window.scrollY > 120));
+      if(topEl) topEl.classList.toggle("isCompact", should);
+    };
+    if(topCompactBtn){
+      topCompactBtn.addEventListener("click", () => {
+        state.headerCompact = !state.headerCompact;
+        writeState(state);
+        try{ applyTopCompact(); }catch(e){}
+      });
+    }
+    if(topAutoCompact){
+      topAutoCompact.checked = !!state.headerAuto;
+      topAutoCompact.addEventListener("change", (e) => {
+        state.headerAuto = !!e.target.checked;
+        writeState(state);
+        try{ applyTopCompact(); }catch(e){}
+      });
+    }
+    window.addEventListener("scroll", () => { if(state.headerAuto) try{ applyTopCompact(); }catch(e){} }, {passive:true});
+
+    // v10: status chip shortcuts
+    if(statusChip){
+      statusChip.addEventListener("click", () => {
+        const ins = $("#inspector") || document.querySelector("#inspector");
+        if(ins) ins.scrollIntoView({behavior:"smooth", block:"start"});
+      });
+      statusChip.addEventListener("dblclick", () => {
+        state.headerCompact = !state.headerCompact;
+        writeState(state);
+        try{ applyTopCompact(); }catch(e){}
+      });
+    }
+
+    // v7: active section highlight in subnav
+    const navLinks = Array.from(document.querySelectorAll('.topPlate .navRow a'));
+    const sections = navLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+    if('IntersectionObserver' in window && navLinks.length && sections.length){
+      const obs = new IntersectionObserver((entries) => {
+        const vis = entries
+          .filter(e => e.isIntersecting)
+          .sort((a,b) => (b.intersectionRatio||0) - (a.intersectionRatio||0))[0];
+        if(!vis) return;
+        const id = "#" + vis.target.id;
+        navLinks.forEach(a => a.classList.toggle('isActive', a.getAttribute('href') === id));
+      }, {threshold:[0.2,0.35,0.5,0.65]});
+      sections.forEach(s => obs.observe(s));
+    }
+
+applyState();
+  })();
+  </script>
+
+<div class="toastHost" id="toastHost" aria-label="toasts"></div>
+</body>
+</html>
