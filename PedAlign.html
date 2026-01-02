@@ -1,0 +1,2465 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Pedagogical Alignment SimCore (Lab) — Criteria Atlas + Simulator</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --bg2:#0e1621;
+      --panel:#0f1722;
+      --panel2:#111c2a;
+      --card:#101a27;
+      --muted:#93a4b8;
+      --text:#e7eef8;
+      --line:rgba(231,238,248,.10);
+      --line2:rgba(231,238,248,.16);
+      --shadow:0 12px 34px rgba(0,0,0,.35);
+      --r:14px;
+      --r2:18px;
+      --pad:14px;
+      --pad2:18px;
+      --chip:rgba(231,238,248,.08);
+      --chip2:rgba(231,238,248,.12);
+      --good:rgba(231,238,248,.92);
+      --warn:rgba(231,238,248,.78);
+      --bad:rgba(231,238,248,.60);
+      --accent:rgba(168,235,255,.95);
+      --accent2:rgba(168,235,255,.22);
+      --ok:rgba(166, 255, 212, .85);
+      --err:rgba(255, 191, 191, .85);
+      --amber:rgba(255, 234, 163, .85);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      --tab: tabular-nums;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(168,235,255,.08), transparent 60%),
+        radial-gradient(900px 520px at 90% 10%, rgba(166,255,212,.06), transparent 60%),
+        radial-gradient(800px 500px at 50% 110%, rgba(255,234,163,.05), transparent 60%),
+        linear-gradient(180deg, var(--bg) 0%, #070a0e 100%);
+      color:var(--text);
+      font-family:var(--sans);
+      letter-spacing:.1px;
+      overflow-x:hidden;
+    }
+    a{color:inherit}
+    .wrap{max-width:1200px;margin:0 auto;padding:18px 16px 38px}
+    .topPlate{
+      position:sticky;top:10px;z-index:30;
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:linear-gradient(180deg, rgba(17,28,42,.82), rgba(12,18,28,.72));
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .topPlateInner{padding:14px 14px 10px}
+    .brandRow{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+    .brandLeft{min-width:260px;flex:1}
+    .title{
+      font-size:15px;
+      letter-spacing:.2px;
+      display:flex;align-items:center;gap:10px;
+      margin:0;
+      font-weight:650;
+    }
+    .logoDot{
+      width:10px;height:10px;border-radius:999px;
+      background:var(--accent);
+      box-shadow: 0 0 0 6px rgba(168,235,255,.12);
+      flex:0 0 auto;
+    }
+    .subtitle{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.35}
+    .metaRight{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .statusChip{
+      display:flex;align-items:center;gap:10px;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(231,238,248,.08);
+      border:1px solid var(--line);
+      cursor:pointer;
+      user-select:none;
+    }
+    .statusDot{
+      width:8px;height:8px;border-radius:999px;
+      background:rgba(231,238,248,.35);
+      box-shadow: 0 0 0 0 rgba(168,235,255,0);
+      transition:.25s;
+    }
+    .statusDot.running{
+      background:var(--accent);
+      box-shadow: 0 0 0 7px rgba(168,235,255,.12);
+    }
+    .statusText{font-size:12px;color:rgba(231,238,248,.92);display:flex;gap:10px;align-items:center}
+    .statusText b{font-variant-numeric:var(--tab)}
+    .statusSep{width:1px;height:12px;background:var(--line2)}
+    .pillBtn, .segBtn, .sel{
+      border:1px solid var(--line);
+      background:rgba(231,238,248,.05);
+      color:rgba(231,238,248,.92);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+      transition:.15s ease;
+    }
+    .pillBtn:hover, .segBtn:hover{background:rgba(231,238,248,.08)}
+    .pillBtn:active, .segBtn:active{transform:translateY(1px)}
+    .pillBtn.primary{border-color:rgba(168,235,255,.30);background:rgba(168,235,255,.10)}
+    .pillBtn.danger{border-color:rgba(255,191,191,.20);background:rgba(255,191,191,.08)}
+    .pillBtn.ghost{background:transparent}
+    .sel{
+      border-radius:12px;
+      padding:7px 10px;
+      outline:none;
+      cursor:pointer;
+    }
+    .navRow{
+      display:flex;gap:8px;flex-wrap:wrap;
+      margin-top:10px;padding:0 4px 6px;
+      align-items:center;
+    }
+    .navA{
+      font-size:12px;
+      color:rgba(231,238,248,.82);
+      text-decoration:none;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid transparent;
+      background:transparent;
+    }
+    .navA:hover{background:rgba(231,238,248,.06);border-color:var(--line)}
+    .navA.active{background:rgba(168,235,255,.10);border-color:rgba(168,235,255,.25);color:rgba(231,238,248,.96)}
+    .cmdRow{
+      margin-top:6px;
+      display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      padding:10px 10px 12px;
+      border-top:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(231,238,248,.02), rgba(231,238,248,.01));
+    }
+    .cmdGroup{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .label{font-size:11px;color:var(--muted);margin-right:2px}
+    .toggle{
+      display:flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid var(--line);background:rgba(231,238,248,.04);
+      cursor:pointer;user-select:none;font-size:12px;
+    }
+    .toggle .knob{
+      width:34px;height:18px;border-radius:999px;
+      border:1px solid var(--line2);
+      background:rgba(231,238,248,.06);
+      position:relative;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+      flex:0 0 auto;
+    }
+    .toggle .knob:before{
+      content:"";
+      width:14px;height:14px;border-radius:999px;
+      background:rgba(231,238,248,.55);
+      position:absolute;top:1px;left:2px;
+      transition:.15s ease;
+    }
+    .toggle.on{border-color:rgba(168,235,255,.22);background:rgba(168,235,255,.07)}
+    .toggle.on .knob{border-color:rgba(168,235,255,.28);background:rgba(168,235,255,.08)}
+    .toggle.on .knob:before{left:18px;background:var(--accent)}
+    .miniTip{position:relative}
+    .miniTip[data-tip]:hover:after{
+      content:attr(data-tip);
+      position:absolute;left:0;top:calc(100% + 8px);
+      min-width:240px;max-width:320px;
+      background:rgba(12,18,28,.92);
+      border:1px solid var(--line2);
+      box-shadow:var(--shadow);
+      color:rgba(231,238,248,.92);
+      padding:10px 11px;
+      border-radius:14px;
+      font-size:11.5px;line-height:1.35;
+      z-index:100;
+      pointer-events:none;
+    }
+    .grid{display:grid;gap:14px;margin-top:14px}
+    @media (min-width: 1100px){
+      .grid{grid-template-columns: 1.25fr .75fr;}
+    }
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(17,28,42,.62), rgba(12,18,28,.58));
+      border-radius:var(--r2);
+      box-shadow: 0 10px 30px rgba(0,0,0,.28);
+      overflow:hidden;
+      min-width:0;
+    }
+    .cardHeader{
+      padding:14px 16px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap;
+    }
+    .cardHeader h2{margin:0;font-size:13px;letter-spacing:.2px}
+    .cardHeader p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.35;max-width:70ch}
+    .cardBody{padding:14px 16px 16px}
+    .split{display:grid;gap:12px}
+    @media (min-width: 780px){
+      .split{grid-template-columns: 1fr 1fr}
+    }
+    .canvasWrap{
+      position:relative;
+      border:1px solid var(--line);
+      background:radial-gradient(700px 300px at 20% 20%, rgba(168,235,255,.05), transparent 60%),
+                 linear-gradient(180deg, rgba(231,238,248,.02), rgba(231,238,248,.01));
+      border-radius:18px;
+      padding:12px;
+      overflow:hidden;
+    }
+    .nodesGrid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:10px;
+      align-items:stretch;
+    }
+    @media (max-width: 920px){
+      .nodesGrid{grid-template-columns: repeat(2, minmax(0, 1fr));}
+    }
+    @media (max-width: 560px){
+      .nodesGrid{grid-template-columns: 1fr;}
+    }
+    .node{
+      border:1px solid var(--line);
+      background:rgba(231,238,248,.03);
+      border-radius:16px;
+      padding:10px 10px 9px;
+      cursor:pointer;
+      transition:.15s ease;
+      min-height:78px;
+      position:relative;
+      outline:none;
+    }
+    .node:hover{background:rgba(231,238,248,.05);border-color:rgba(168,235,255,.22);transform:translateY(-1px)}
+    .node:focus{box-shadow:0 0 0 4px rgba(168,235,255,.12);border-color:rgba(168,235,255,.30)}
+    .node.sel{border-color:rgba(168,235,255,.36);background:rgba(168,235,255,.08)}
+    .nodeTop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+    .nodeTitle{font-size:12px;font-weight:650;letter-spacing:.15px}
+    .tag{font-size:10.5px;color:rgba(231,238,248,.78);padding:3px 7px;border-radius:999px;border:1px solid var(--line);background:rgba(231,238,248,.03)}
+    .nodeDesc{margin-top:6px;color:var(--muted);font-size:11.5px;line-height:1.3}
+    .edgesSvg{
+      position:absolute;inset:0;
+      pointer-events:none;
+    }
+    .edgeLbl{
+      font-family:var(--sans);
+      font-size:10.5px;
+      fill:rgba(231,238,248,.78);
+      paint-order: stroke fill;
+      stroke: rgba(12,18,28,.88);
+      stroke-width: 4px;
+      stroke-linejoin: round;
+    }
+    .edgeLine{stroke:rgba(231,238,248,.22);stroke-width:1.6;fill:none}
+    .edgeLine.strong{stroke:rgba(168,235,255,.30);stroke-width:2.0}
+    .edgeLine.warn{stroke:rgba(255,234,163,.26);stroke-width:1.8;stroke-dasharray:4 4}
+    .edgeLine.err{stroke:rgba(255,191,191,.28);stroke-width:1.8;stroke-dasharray:3 6}
+    .section{scroll-margin-top:140px}
+    .kv{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .kchip{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:7px 9px;border-radius:999px;border:1px solid var(--line);
+      background:rgba(231,238,248,.03);
+      font-size:12px;color:rgba(231,238,248,.88);
+    }
+    .kchip small{color:var(--muted);font-size:11px}
+    .mono{font-family:var(--mono);font-variant-numeric:var(--tab)}
+    .barGrid{
+      display:grid;gap:10px;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+    }
+    @media (min-width: 900px){
+      .barGrid{grid-template-columns: repeat(4, minmax(0,1fr));}
+    }
+    .metric{
+      border:1px solid var(--line);
+      background:rgba(231,238,248,.03);
+      border-radius:16px;
+      padding:10px;
+    }
+    .metric .mTop{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .metric .mName{font-size:11px;color:var(--muted)}
+    .metric .mVal{font-size:15px;font-weight:650;font-variant-numeric:var(--tab)}
+    .spark{
+      margin-top:8px;
+      width:100%;height:38px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.12);
+      display:block;
+    }
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .row.tight{gap:8px}
+    .slider{
+      display:flex;align-items:center;gap:10px;
+      padding:8px 10px;border:1px solid var(--line);
+      background:rgba(231,238,248,.03);
+      border-radius:14px;
+      min-width: 240px;
+    }
+    .slider input{width:120px}
+    input[type=range]{accent-color:rgba(168,235,255,.9)}
+    .slider .v{font-variant-numeric:var(--tab);font-family:var(--mono);font-size:11.5px;color:rgba(231,238,248,.86)}
+    .subgrid{display:grid;gap:12px}
+    @media(min-width: 900px){ .subgrid{grid-template-columns: 1.15fr .85fr;} }
+    .log{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.18);
+      border-radius:16px;
+      padding:10px;
+      height:220px;
+      overflow:auto;
+      font-family:var(--mono);
+      font-size:11.3px;
+      line-height:1.35;
+      font-variant-numeric:var(--tab);
+      position:relative;
+    }
+    .log:before{
+      content:"";
+      position:absolute;inset:0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(231,238,248,.03) 0,
+        rgba(231,238,248,.03) 1px,
+        transparent 1px,
+        transparent 20px
+      );
+      pointer-events:none;
+      opacity:.55;
+    }
+    .log > div{position:relative}
+    .heat{
+      display:grid;
+      grid-template-columns: 220px repeat(6, minmax(0, 1fr));
+      gap:6px;
+      align-items:stretch;
+    }
+    @media(max-width: 980px){
+      .heat{grid-template-columns: 1fr}
+    }
+    .heatHead{
+      font-size:11px;color:var(--muted);
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:rgba(231,238,248,.02);
+    }
+    .heatCell{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:8px 10px;
+      background:rgba(231,238,248,.02);
+      display:flex;justify-content:space-between;gap:10px;align-items:center;
+      min-height:36px;
+      position:relative;
+      overflow:hidden;
+    }
+    .heatCell:before{
+      content:"";
+      position:absolute;inset:0;
+      background: rgba(168,235,255,.0);
+      opacity:0;
+      transition:.12s ease;
+    }
+    .heatCell strong{font-size:11.5px}
+    .heatCell span{font-family:var(--mono);font-size:11px;color:rgba(231,238,248,.88)}
+    .heatCell.bad:before{background:rgba(255,191,191,.25);opacity:1}
+    .heatCell.ok:before{background:rgba(166,255,212,.18);opacity:1}
+    .heatCell.warn:before{background:rgba(255,234,163,.20);opacity:1}
+    .heatCell .inner{position:relative;display:flex;justify-content:space-between;gap:10px;align-items:center;width:100%}
+    .branchWrap{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(0,0,0,.14);
+      padding:10px;
+    }
+    .branchCanvas{width:100%;height:140px;display:block;border-radius:12px}
+    .miniLegend{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;color:var(--muted);font-size:11px}
+    .miniLegend .dot{width:8px;height:8px;border-radius:999px;background:rgba(231,238,248,.30);display:inline-block;margin-right:6px}
+    .miniLegend .dot.err{background:rgba(255,191,191,.75)}
+    .miniLegend .dot.micro{background:rgba(168,235,255,.85)}
+    .miniLegend .dot.sess{background:rgba(255,234,163,.75)}
+    .drawer{
+      position:fixed;top:12px;right:12px;bottom:12px;
+      width:min(420px, calc(100vw - 24px));
+      background:linear-gradient(180deg, rgba(17,28,42,.86), rgba(12,18,28,.82));
+      border:1px solid var(--line2);
+      border-radius:22px;
+      box-shadow: var(--shadow);
+      transform: translateX(calc(100% + 16px));
+      transition: .22s ease;
+      z-index:50;
+      display:flex;flex-direction:column;
+      overflow:hidden;
+    }
+    .drawer.open{transform: translateX(0)}
+    .drawerHead{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+      position:sticky;top:0;background:rgba(12,18,28,.60);backdrop-filter: blur(10px);
+    }
+    .drawerHead h3{margin:0;font-size:13px}
+    .drawerHead p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.35}
+    .drawerBody{padding:12px 14px 16px;overflow:auto}
+    .drawerClose{border-radius:12px;padding:8px 10px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+    .chip{
+      padding:7px 9px;border-radius:999px;border:1px solid var(--line);
+      background:rgba(231,238,248,.03);
+      font-size:11.5px;color:rgba(231,238,248,.88);
+    }
+    .chip.bad{border-color:rgba(255,191,191,.20);background:rgba(255,191,191,.08)}
+    .chip.ok{border-color:rgba(166,255,212,.18);background:rgba(166,255,212,.07)}
+    .chip.warn{border-color:rgba(255,234,163,.20);background:rgba(255,234,163,.07)}
+    .microSteps{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.12);
+      border-radius:16px;
+      padding:10px;
+      margin-top:10px;
+    }
+    .microSteps h4{margin:0 0 8px;font-size:12px;color:rgba(231,238,248,.90)}
+    .step{
+      display:flex;gap:10px;align-items:flex-start;
+      padding:8px 9px;border-radius:14px;border:1px solid transparent;
+      color:rgba(231,238,248,.88);
+      font-size:11.5px;
+    }
+    .step .n{font-family:var(--mono);color:rgba(231,238,248,.72)}
+    .step.active{background:rgba(168,235,255,.08);border-color:rgba(168,235,255,.22)}
+    .step small{color:var(--muted)}
+    .kbd{font-family:var(--mono);font-size:11px;color:rgba(231,238,248,.85);padding:2px 7px;border-radius:999px;border:1px solid var(--line);background:rgba(231,238,248,.03)}
+    .foot{margin-top:14px;color:var(--muted);font-size:12px}
+    .hide{display:none !important}
+    @media print{
+      body{background:#fff;color:#000}
+      .topPlate{position:static;box-shadow:none}
+      .drawer{display:none}
+      .card{box-shadow:none}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topPlate" id="topPlate">
+    <div class="topPlateInner">
+      <div class="brandRow">
+        <div class="brandLeft">
+          <h1 class="title"><span class="logoDot"></span>Pedagogical Alignment SimCore (Lab)</h1>
+          <div class="subtitle">
+            Концептуальное ядро для <span class="mono">Criteria for Assessing Pedagogical Alignment in AI‑Based Instructional Systems</span>:
+            карта критериев + инспектор + microflow + симулятор экспериментов + fail drill + live heat + экспорт trace.
+          </div>
+        </div>
+        <div class="metaRight">
+          <div class="statusChip miniTip" id="statusChip" data-tip="Клик: открыть Inspector. ● Running загорается при Play.">
+            <span class="statusDot" id="statusDot"></span>
+            <div class="statusText">
+              <span><small style="color:var(--muted)">Node</small> <b id="stNode">Objectives</b></span>
+              <span class="statusSep"></span>
+              <span><small style="color:var(--muted)">Role</small> <b id="stRole">Learner</b></span>
+              <span class="statusSep"></span>
+              <span><small style="color:var(--muted)">Sim</small> <b id="stSim">Idle</b></span>
+            </div>
+          </div>
+          <button class="pillBtn ghost miniTip" id="btnCompact" data-tip="Compact Header: свернуть/развернуть управление.">Compact</button>
+          <button class="pillBtn ghost miniTip" id="btnTheme" data-tip="Псевдо-тема: меняет контраст панелей (без перезагрузки).">Theme</button>
+          <button class="pillBtn ghost miniTip" id="btnPrint" data-tip="Print/PDF: печать в браузере.">Print</button>
+          <button class="pillBtn danger miniTip" id="btnReset" data-tip="Reset: сброс состояния (localStorage).">Reset</button>
+        </div>
+      </div>
+
+      <div class="navRow" id="navRow">
+        <a class="navA" href="#core" data-sec="core">Core Map</a>
+        <a class="navA" href="#org" data-sec="org">Org</a>
+        <a class="navA" href="#atlas" data-sec="atlas">Atlas</a>
+        <a class="navA" href="#simulator" data-sec="simulator">Simulator</a>
+        <a class="navA" href="#criteria" data-sec="criteria">Criteria Heat</a>
+        <a class="navA" href="#log" data-sec="log">Trace</a>
+      </div>
+
+      <div class="cmdRow" id="cmdRow">
+        <div class="cmdGroup">
+          <span class="label">Scenario</span>
+          <select class="sel" id="simScenario" style="min-width:220px">
+            <option value="cognitive_drift">Cognitive Drift Study</option>
+            <option value="prompt_bias">Prompt Bias Experiment</option>
+            <option value="scaffold_erosion">Scaffold Erosion Trial</option>
+            <option value="ethical_stress">Ethical Stress Test</option>
+          </select>
+
+          <span class="label" style="margin-left:6px">Role</span>
+          <select class="sel" id="roleSel" style="min-width:150px">
+            <option value="learner">Learner</option>
+            <option value="teacher">Teacher</option>
+            <option value="evaluator">Evaluator</option>
+            <option value="researcher">Researcher</option>
+          </select>
+
+          <span class="label" style="margin-left:6px">Seed</span>
+          <input class="sel mono" id="seedInp" style="width:140px" value="4201337" />
+          <button class="pillBtn" id="btnReseed">Reseed</button>
+        </div>
+
+        <div class="cmdGroup">
+          <div class="toggle miniTip" id="tgMicro" data-tip="Micro: разворачивает каждый core шаг в 3–6 микрошагов.">
+            <div class="knob"></div><span>Micro</span>
+          </div>
+          <div class="toggle miniTip" id="tgFailure" data-tip="Failure drill: инжекция педагогических сбоев и проверка checks/rollback.">
+            <div class="knob"></div><span>Failure</span>
+          </div>
+          <div class="toggle miniTip" id="tgBoss" data-tip="Boss: цепочки связанных сбоев (objective mismatch → hallucination → bias/privacy).">
+            <div class="knob"></div><span>Boss</span>
+          </div>
+          <button class="pillBtn primary" id="btnPlay">Play</button>
+          <button class="pillBtn" id="btnStep">Step</button>
+          <button class="pillBtn" id="btnPause">Pause</button>
+          <button class="pillBtn danger" id="btnStop">Stop</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <section id="core" class="card section">
+        <div class="cardHeader">
+          <div>
+            <h2>Core Map — Pedagogical Alignment Loop</h2>
+            <p>Кликабельная карта ключевых стадий: постановка целей → дизайн → AI‑инструкция → взаимодействие → доказательства → скоринг критериев → корректировка и мониторинг.</p>
+          </div>
+          <div class="kv">
+            <span class="kchip"><small>Hotkeys</small> <span class="kbd">Esc</span> close • <span class="kbd">Enter</span>/<span class="kbd">Space</span> select</span>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="canvasWrap" id="mapWrap">
+            <svg class="edgesSvg" id="edgesSvg" aria-hidden="true"></svg>
+            <div class="nodesGrid" id="nodesGrid" role="list"></div>
+          </div>
+          <div class="foot">Примечание: это исследовательская визуализация (Lab View). Все метрики — синтетические, для демонстрации логики критериев и процедур аудита.</div>
+        </div>
+      </section>
+
+      <section id="org" class="card section" style="margin-top:14px">
+        <div class="cardHeader">
+          <div>
+            <h2>Organization — Subsystems × Loop Steps</h2>
+            <p>Организация модуля как исследовательского контура: подсистемы (AI stack, evidence, rubric engine, governance) подсвечиваются по выбранному шагу / текущему тик‑состоянию симулятора.</p>
+          </div>
+          <div class="kv">
+            <span class="kchip"><small>Mode</small> <span id="orgMode">Contextual highlight</span></span>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="subgrid">
+            <div class="card" style="box-shadow:none">
+              <div class="cardHeader" style="border-bottom:1px solid var(--line);background:transparent">
+                <div><h2 style="font-size:12px;margin:0">Subsystem Map</h2><p style="margin:6px 0 0">Что задействовано сейчас (по шагу / микрошагу).</p></div>
+              </div>
+              <div class="cardBody" style="padding:12px 12px 14px">
+                <div id="sysMap" class="split" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:10px"></div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none">
+              <div class="cardHeader" style="border-bottom:1px solid var(--line);background:transparent">
+                <div><h2 style="font-size:12px;margin:0">Swimlanes</h2><p style="margin:6px 0 0">Step × Layer матрица активности.</p></div>
+              </div>
+              <div class="cardBody" style="padding:12px 12px 14px">
+                <div id="swim" style="display:grid;gap:6px"></div>
+                <div class="miniLegend">
+                  <span><span class="dot micro"></span>active layer</span>
+                  <span><span class="dot sess"></span>governance</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="atlas" class="card section" style="margin-top:14px">
+        <div class="cardHeader">
+          <div>
+            <h2>Atlas — Microflow Inspector</h2>
+            <p>Второй уровень детализации. При выборе узла показываются микрошаги (3–6) и привязка к критериям/метрикам/проверкам.</p>
+          </div>
+          <div class="kv">
+            <span class="kchip"><small>Selection</small> <span id="selLabel" class="mono">Objectives</span></span>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="split">
+            <div class="metric">
+              <div class="mTop"><div class="mName">Active micro-step</div><div class="mVal mono" id="microNow">—</div></div>
+              <canvas class="spark" id="sparkMicro"></canvas>
+              <div class="foot" style="margin-top:10px">Индикатор “согласованности” (alignment) на микрошаге: растёт при корректном evidence→rubric→feedback цикле.</div>
+            </div>
+
+            <div class="metric">
+              <div class="mTop"><div class="mName">Checks & Mitigations</div><div class="mVal mono" id="chkNow">—</div></div>
+              <canvas class="spark" id="sparkRisk"></canvas>
+              <div class="foot" style="margin-top:10px">Риск‑индикатор (synthetic): растёт при drift/bias/privacy и падает после audit/rollback.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="simulator" class="card section" style="margin-top:14px">
+        <div class="cardHeader">
+          <div>
+            <h2>Simulator — Experiment Runner</h2>
+            <p>Сценарии исследований, ручки (knobs), Daily Loop, Branch Map, Fail drill и экспорт trace (JSON). Все изменения отражаются в live heatmap критериев.</p>
+          </div>
+          <div class="kv">
+            <span class="kchip"><small>Tick</small> <span class="mono" id="tick">0</span></span>
+            <span class="kchip"><small>Session</small> <span class="mono" id="session">0</span></span>
+            <span class="kchip"><small>Phase</small> <span class="mono" id="phase">define</span></span>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="barGrid">
+            <div class="metric">
+              <div class="mTop"><div class="mName">Alignment Index</div><div class="mVal mono" id="mAlign">0.72</div></div>
+              <canvas class="spark" id="spAlign"></canvas>
+            </div>
+            <div class="metric">
+              <div class="mTop"><div class="mName">Drift Entropy</div><div class="mVal mono" id="mDrift">0.12</div></div>
+              <canvas class="spark" id="spDrift"></canvas>
+            </div>
+            <div class="metric">
+              <div class="mTop"><div class="mName">Ethical Deviation</div><div class="mVal mono" id="mEth">0.03</div></div>
+              <canvas class="spark" id="spEth"></canvas>
+            </div>
+            <div class="metric">
+              <div class="mTop"><div class="mName">Feedback Precision</div><div class="mVal mono" id="mFb">0.66</div></div>
+              <canvas class="spark" id="spFb"></canvas>
+            </div>
+          </div>
+
+          <div class="split" style="margin-top:12px">
+            <div>
+              <div class="row tight" style="margin:0 0 10px">
+                <button class="pillBtn" id="btnDiscover">Define</button>
+                <button class="pillBtn" id="btnDesign">Design</button>
+                <button class="pillBtn" id="btnTeach">AI‑Teach</button>
+                <button class="pillBtn" id="btnInteract">Interact</button>
+                <button class="pillBtn" id="btnEvidence">Evidence</button>
+                <button class="pillBtn" id="btnScore">Score</button>
+                <button class="pillBtn" id="btnIterate">Iterate</button>
+                <button class="pillBtn" id="btnAudit">Audit</button>
+              </div>
+
+              <div class="row">
+                <div class="slider miniTip" data-tip="Rigor: строгость рубрики/критериев (0–1). Выше — больше санкция за несоответствие.">
+                  <span class="label">Rigor</span>
+                  <input type="range" min="0" max="100" value="70" id="knRigor"/>
+                  <span class="v" id="vRigor">0.70</span>
+                </div>
+                <div class="slider miniTip" data-tip="Creativity: генеративность/вариативность AI (0–1). Выше — риск дрейфа/галлюцинаций.">
+                  <span class="label">Creativity</span>
+                  <input type="range" min="0" max="100" value="48" id="knCreat"/>
+                  <span class="v" id="vCreat">0.48</span>
+                </div>
+                <div class="slider miniTip" data-tip="Load: когнитивная нагрузка (0–1). Выше — растёт риск mismatch (уровень задач > цели).">
+                  <span class="label">Load</span>
+                  <input type="range" min="0" max="100" value="52" id="knLoad"/>
+                  <span class="v" id="vLoad">0.52</span>
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:10px">
+                <div class="slider miniTip" data-tip="Drift rate: скорость смещения целей/подмены задачи.">
+                  <span class="label">Drift</span>
+                  <input type="range" min="0" max="100" value="18" id="knDrift"/>
+                  <span class="v" id="vDrift">0.18</span>
+                </div>
+                <div class="slider miniTip" data-tip="Audit frequency: насколько часто выполняется аудит (скоринг и проверки).">
+                  <span class="label">Audit</span>
+                  <input type="range" min="0" max="100" value="45" id="knAudit"/>
+                  <span class="v" id="vAudit">0.45</span>
+                </div>
+                <div class="slider miniTip" data-tip="Noise: внешняя вариативность (данные/контекст).">
+                  <span class="label">Noise</span>
+                  <input type="range" min="0" max="100" value="22" id="knNoise"/>
+                  <span class="v" id="vNoise">0.22</span>
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:12px">
+                <div class="toggle miniTip" id="tgDaily" data-tip="Daily Loop: прогон дней/сессий как экспериментальный цикл.">
+                  <div class="knob"></div><span>Daily Loop</span>
+                </div>
+                <div class="slider miniTip" data-tip="Sessions/day: число сессий в день (экспериментальных эпизодов).">
+                  <span class="label">Sess/day</span>
+                  <input type="range" min="1" max="20" value="6" id="knSessDay"/>
+                  <span class="v" id="vSessDay">6</span>
+                </div>
+                <div class="slider miniTip" data-tip="Retention: вероятность, что участник продолжит на следующую сессию (0–1).">
+                  <span class="label">Retention</span>
+                  <input type="range" min="0" max="100" value="74" id="knRet"/>
+                  <span class="v" id="vRet">0.74</span>
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:10px">
+                <div class="slider miniTip" data-tip="Fatigue: уменьшение engagement по мере дня (0–1).">
+                  <span class="label">Fatigue</span>
+                  <input type="range" min="0" max="100" value="28" id="knFat"/>
+                  <span class="v" id="vFat">0.28</span>
+                </div>
+                <div class="slider miniTip" data-tip="Days: число дней в прогоне (для Run days).">
+                  <span class="label">Days</span>
+                  <input type="range" min="1" max="21" value="5" id="knDays"/>
+                  <span class="v" id="vDays">5</span>
+                </div>
+                <button class="pillBtn" id="btnRunDay">Run day</button>
+                <button class="pillBtn" id="btnRunDays">Run days</button>
+              </div>
+
+              <div class="metric" style="margin-top:12px">
+                <div class="mTop"><div class="mName">Day report</div><div class="mVal mono" id="dayRep">—</div></div>
+                <div class="foot" id="dayRep2" style="margin-top:8px">Используй Daily Loop, чтобы получить агрегаты по дням (sessions, audits, errors, recoveries).</div>
+              </div>
+            </div>
+
+            <div>
+              <div class="metric">
+                <div class="mTop"><div class="mName">Failure drill</div><div class="mVal mono" id="failStat">off</div></div>
+                <div class="row tight" style="margin-top:10px">
+                  <span class="label">Type</span>
+                  <select class="sel" id="failType" style="min-width:220px">
+                    <option value="objective_mismatch">Objective mismatch</option>
+                    <option value="hallucination">Hallucination / unsupported claim</option>
+                    <option value="bias_fairness">Bias / fairness deviation</option>
+                    <option value="assessment_mismatch">Assessment rubric mismatch</option>
+                    <option value="privacy_leak">Privacy / data leak risk</option>
+                  </select>
+                  <span class="label">p</span>
+                  <input type="range" min="0" max="40" value="8" id="failP" style="width:120px">
+                  <span class="v mono" id="failPv">0.08</span>
+                </div>
+                <div class="row tight" style="margin-top:10px">
+                  <button class="pillBtn danger" id="btnFailNow">Fail now</button>
+                  <button class="pillBtn danger" id="btnBossNow">Boss fail</button>
+                  <button class="pillBtn" id="btnExport">Export trace</button>
+                  <button class="pillBtn" id="btnCopy">Copy last event</button>
+                </div>
+                <div class="foot" style="margin-top:10px" id="failExplain">Включи Failure, затем Play/Step. Boss создаёт цепочку связанных сбоев и проверок.</div>
+
+                <div class="microSteps" style="margin-top:12px">
+                  <h4>Last failure — checks & rollback</h4>
+                  <div id="failBlock" style="color:rgba(231,238,248,.90);font-size:11.5px;line-height:1.35">
+                    —
+                  </div>
+                </div>
+              </div>
+
+              <div class="branchWrap" style="margin-top:12px">
+                <div class="mTop" style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+                  <div>
+                    <div class="mName">Branch Map</div>
+                    <div style="color:var(--muted);font-size:11px;margin-top:4px">Ветвления core‑состояний + микрошаги + ошибки + границы сессий.</div>
+                  </div>
+                  <div class="mono" id="branchHint" style="color:rgba(231,238,248,.82);font-size:11px">N=64</div>
+                </div>
+                <canvas class="branchCanvas" id="branch"></canvas>
+                <div class="miniLegend">
+                  <span><span class="dot"></span>core step</span>
+                  <span><span class="dot micro"></span>micro step</span>
+                  <span><span class="dot err"></span>error</span>
+                  <span><span class="dot sess"></span>session boundary</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section id="criteria" class="card section" style="margin-top:14px">
+        <div class="cardHeader">
+          <div>
+            <h2>Criteria Heat — Live C‑Matrix</h2>
+            <p>6 доменов критериев × 6 измерений оценки. Ячейки изменяются в реальном времени по результатам симуляции (интенсивность: посещения/вес; статус: ok/warn/bad).</p>
+          </div>
+          <div class="kv">
+            <span class="kchip"><small>Update</small> <span class="mono" id="heatUpd">live</span></span>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div id="heat" class="heat"></div>
+          <div class="foot">Логика: критерии активируются в зависимости от шага (define/design/teach/interact/evidence/score/iterate/audit) и сценария (drift/bias/erosion/stress). “Bad” чаще при высоких creativity/drift/noise и низком audit/rigor.</div>
+        </div>
+      </section>
+
+      <section id="log" class="card section" style="margin-top:14px">
+        <div class="cardHeader">
+          <div>
+            <h2>Trace — Event Log (JSON‑like)</h2>
+            <p>Прозрачный трейс эксперимента: phase, microstep, критерии, метрики, сбои, проверки и корректировки. Экспортируется как JSON.</p>
+          </div>
+          <div class="kv">
+            <span class="kchip"><small>Buffer</small> <span class="mono" id="logCount">0</span></span>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="log" id="logBox"><div id="logInner"></div></div>
+        </div>
+      </section>
+    </div>
+
+    <aside>
+      <section class="card section" id="inspector">
+        <div class="cardHeader">
+          <div>
+            <h2>Inspector — Scorecard Summary</h2>
+            <p>Компактная панель: текущая конфигурация, активные критерии, последние проверки, и “почему” индекс alignment движется.</p>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="metric">
+            <div class="mTop"><div class="mName">Config</div><div class="mVal mono" id="cfg">—</div></div>
+            <div class="chips" id="cfgChips"></div>
+          </div>
+          <div class="metric" style="margin-top:12px">
+            <div class="mTop"><div class="mName">Active criteria (top)</div><div class="mVal mono" id="critTop">—</div></div>
+            <div class="chips" id="critChips"></div>
+          </div>
+          <div class="metric" style="margin-top:12px">
+            <div class="mTop"><div class="mName">Explain (synthetic)</div><div class="mVal mono" id="explain">—</div></div>
+            <div class="foot" id="explain2" style="margin-top:8px">—</div>
+          </div>
+          <div class="foot" style="margin-top:12px">Подсказка: кликни по узлу на карте — откроется подробный drawer с критериями/метриками/микрошагами.</div>
+        </div>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawerHead">
+    <div>
+      <h3 id="drTitle">Objectives</h3>
+      <p id="drDesc">—</p>
+    </div>
+    <button class="pillBtn drawerClose" id="drClose">Close</button>
+  </div>
+  <div class="drawerBody">
+    <div class="chips" id="drChips"></div>
+    <div class="microSteps">
+      <h4>Microflow (3–6 steps)</h4>
+      <div id="drMicro"></div>
+    </div>
+    <div class="microSteps">
+      <h4>Criteria touched</h4>
+      <div id="drCriteria" class="chips"></div>
+    </div>
+    <div class="microSteps">
+      <h4>Checks / Governance</h4>
+      <div id="drChecks" class="chips"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================
+   Pedagogical Alignment SimCore
+   (c) offline single-file demo
+   ============================ */
+
+/* --- Utils: RNG with seed (Mulberry32) --- */
+function hashStrToInt(s){
+  let h = 2166136261 >>> 0;
+  for (let i=0;i<s.length;i++){
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+function mulberry32(a){
+  return function(){
+    let t = a += 0x6D2B79F5;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+}
+function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+function lerp(a,b,t){ return a + (b-a)*t; }
+function fmt(x, d=2){ return (+x).toFixed(d); }
+function nowISO(){
+  const d=new Date();
+  const p=(n)=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+function pickWeighted(rng, items){
+  // items: [{k, w}]
+  const sum = items.reduce((s,it)=>s+it.w,0);
+  let r = rng()*sum;
+  for (const it of items){
+    r -= it.w;
+    if (r <= 0) return it.k;
+  }
+  return items[items.length-1].k;
+}
+function el(id){ return document.getElementById(id); }
+function setOn(elm, on){ elm.classList.toggle('on', !!on); }
+function debounceRAF(fn){
+  let raf=0;
+  return (...args)=>{
+    cancelAnimationFrame(raf);
+    raf=requestAnimationFrame(()=>fn(...args));
+  }
+}
+function downloadText(filename, text){
+  const blob = new Blob([text], {type:'application/json;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* --- Model: nodes, edges, subsystems, criteria --- */
+const NODES = [
+  {id:"objectives", title:"Objectives", tag:"define", desc:"Operationalize learning goals (standards, outcomes, success criteria). Map to cognitive level and evidence plan.",
+   chips:["standards mapping","Bloom/SOLO target","success criteria","constraints & context"], criteria:["Cognitive fit","Assessment validity","Transparency"], checks:["goal drift monitor","traceable objectives","privacy scope"]},
+  {id:"design", title:"Instructional Design", tag:"design", desc:"Select pedagogy (scaffolding, sequencing, practice, inquiry) and assessment strategy; define feedback policy.",
+   chips:["strategy selection","scaffold plan","task sequencing","feedback policy"], criteria:["Method coherence","Feedback adequacy","Adaptivity"], checks:["design consistency","over-scaffolding check","equity lens"]},
+  {id:"ai_stack", title:"AI System Stack", tag:"ai", desc:"Model + prompt + tools + retrieval + guardrails. Controls creativity, groundedness, safety filtering.",
+   chips:["prompt protocol","retrieval grounding","tool calls","guardrails"], criteria:["Transparency","Safety & privacy","Bias & fairness"], checks:["grounded generation","safety filters","prompt audits"]},
+  {id:"teach", title:"AI Instruction", tag:"teach", desc:"Generate instruction, examples, questions; adapt to learner model; maintain alignment to objectives.",
+   chips:["instruction generation","questioning","adaptation","explanations"], criteria:["Cognitive fit","Method coherence","Feedback adequacy"], checks:["hallucination scan","objective match","tone safety"]},
+  {id:"interact", title:"Learner Interaction", tag:"interact", desc:"Student actions, responses, misconceptions, engagement. Updates learner model and evidence store.",
+   chips:["response capture","misconception signals","engagement proxies","accessibility"], criteria:["Adaptivity","Equity & access","Feedback adequacy"], checks:["accessibility check","data minimization","consent state"]},
+  {id:"evidence", title:"Evidence Capture", tag:"evidence", desc:"Collect artifacts, logs, rubric-aligned indicators; ensure validity and privacy; prepare for scoring.",
+   chips:["artifact store","event schema","validity flags","anonymization"], criteria:["Assessment validity","Safety & privacy","Transparency"], checks:["PII scrub","sampling bias check","idempotent logging"]},
+  {id:"rubric", title:"Rubric & Criteria Engine", tag:"score", desc:"Compute sub-scores per criterion; aggregate Alignment Index; generate explanations and recommendations.",
+   chips:["sub-score calc","aggregation","explainability","thresholds"], criteria:["Transparency","Assessment validity","Bias & fairness"], checks:["calibration drift","inter-rater hooks","fairness audit"]},
+  {id:"iterate", title:"Refine & Iterate", tag:"iterate", desc:"Apply recommendations: prompt edits, content changes, scaffolding tuning; run A/B and re-evaluate alignment.",
+   chips:["change proposals","A/B variants","re-run tests","versioning"], criteria:["Method coherence","Adaptivity","Transparency"], checks:["change log","rollback plan","approval gate"]},
+  {id:"telemetry", title:"Telemetry & Analytics", tag:"telemetry", desc:"Metrics, dashboards, alerts: drift, errors, coverage, outcomes; supports research analysis and monitoring.",
+   chips:["metrics pipeline","dashboards","alerts","export datasets"], criteria:["Transparency","Assessment validity","Cognitive fit"], checks:["metric validity","alert fatigue","data governance"]},
+  {id:"govern", title:"Governance & Audit", tag:"audit", desc:"Ethics, privacy, fairness, approvals, audit logs; periodic reviews and incident response.",
+   chips:["policy checks","audit log","approvals","incident response"], criteria:["Safety & privacy","Bias & fairness","Transparency"], checks:["privacy DPIA","bias stress test","audit trails"]}
+];
+
+const EDGES = [
+  ["objectives","design","alignment contract","strong"],
+  ["design","ai_stack","policy + prompt","strong"],
+  ["ai_stack","teach","generation","strong"],
+  ["teach","interact","task & feedback","strong"],
+  ["interact","evidence","events + artifacts","strong"],
+  ["evidence","rubric","features","strong"],
+  ["rubric","iterate","recommendations","strong"],
+  ["iterate","teach","new variant","warn"],
+  ["telemetry","rubric","monitoring signals","warn"],
+  ["telemetry","objectives","drift alerts","warn"],
+  ["govern","ai_stack","guardrails","err"],
+  ["govern","evidence","privacy rules","err"],
+  ["govern","rubric","fairness reviews","err"],
+  ["rubric","telemetry","metrics export","strong"],
+  ["interact","telemetry","engagement data","strong"],
+  ["evidence","govern","audit trail","err"]
+];
+
+const SUBSYSTEMS = [
+  {id:"ui", name:"UI/UX Layer", desc:"Learner-facing flows; accessibility; multimodal artifacts."},
+  {id:"learner_model", name:"Learner Model", desc:"Knowledge state, misconceptions, pacing, preferences."},
+  {id:"ai_stack", name:"AI Stack", desc:"Model/prompt/tools/RAG/guardrails."},
+  {id:"design", name:"Instructional Design", desc:"Pedagogy, sequencing, scaffolding, assessment plan."},
+  {id:"evidence", name:"Evidence Store", desc:"Artifacts/events, validity flags, anonymization."},
+  {id:"rubric", name:"Rubric Engine", desc:"Sub-scores, aggregation, explainability."},
+  {id:"telemetry", name:"Telemetry", desc:"Metrics, dashboards, drift monitors."},
+  {id:"gov", name:"Governance", desc:"Privacy/fairness approvals, audit logs, incident response."}
+];
+
+// Per node -> active subsystems (for org highlighting)
+const NODE_SYS = {
+  objectives:["design","rubric","telemetry","gov"],
+  design:["design","ai_stack","rubric","gov"],
+  ai_stack:["ai_stack","gov","telemetry"],
+  teach:["ai_stack","design","learner_model","ui","telemetry"],
+  interact:["ui","learner_model","telemetry","evidence","gov"],
+  evidence:["evidence","telemetry","gov"],
+  rubric:["rubric","telemetry","gov"],
+  iterate:["design","ai_stack","rubric","telemetry","gov"],
+  telemetry:["telemetry","evidence","rubric","gov"],
+  govern:["gov","ai_stack","evidence","rubric","telemetry"]
+};
+
+// Criteria dimensions (columns) and domains (rows)
+const HEAT_COLS = ["Relevance","Validity","Equity","Safety","Explain","Adapt"];
+const HEAT_ROWS = [
+  {id:"cog", name:"Cognitive fit"},
+  {id:"meth", name:"Method coherence"},
+  {id:"fb", name:"Feedback adequacy"},
+  {id:"assess", name:"Assessment validity"},
+  {id:"fair", name:"Bias & fairness"},
+  {id:"priv", name:"Safety & privacy"}
+];
+
+/* --- State --- */
+const S = {
+  selected:"objectives",
+  role:"learner",
+  scenario:"cognitive_drift",
+  sim:"idle",
+  compact:false,
+  themeAlt:false,
+  micro:false,
+  failure:false,
+  boss:false,
+  tick:0,
+  session:0,
+  phase:"define",
+  // knobs
+  rigor:.70,
+  creativity:.48,
+  load:.52,
+  drift:.18,
+  audit:.45,
+  noise:.22,
+  daily:false,
+  sessDay:6,
+  ret:.74,
+  fat:.28,
+  days:5,
+  // metrics
+  align:.72,
+  driftEnt:.12,
+  ethDev:.03,
+  fbPrec:.66,
+  risk:.18,
+  // traces
+  trace:[],
+  lastEvent:null,
+  // branch
+  branch:[], // {t, core, micro, err, sess}
+  // boss queue
+  bossQ:[],
+  // heat values: row x col: {v, status}
+  heat:{},
+  // micro timeline
+  microSeries:[],
+  riskSeries:[],
+  // chart series
+  series:{
+    align:[], drift:[], eth:[], fb:[]
+  },
+  dayStats:{day:0, sessions:0, audits:0, errors:0, recover:0}
+};
+
+let rng = mulberry32(hashStrToInt("4201337"));
+let timer = null;
+
+/* --- Persistence --- */
+const LS_KEY = "pedalign_simcore_v1";
+function save(){
+  const keep = {
+    selected:S.selected, role:S.role, scenario:S.scenario,
+    compact:S.compact, themeAlt:S.themeAlt, micro:S.micro, failure:S.failure, boss:S.boss,
+    seed: el("seedInp").value,
+    knobs: {rigor:S.rigor, creativity:S.creativity, load:S.load, drift:S.drift, audit:S.audit, noise:S.noise, daily:S.daily, sessDay:S.sessDay, ret:S.ret, fat:S.fat, days:S.days}
+  };
+  localStorage.setItem(LS_KEY, JSON.stringify(keep));
+}
+function load(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    const st = JSON.parse(raw);
+    if(st.selected) S.selected = st.selected;
+    if(st.role) S.role = st.role;
+    if(st.scenario) S.scenario = st.scenario;
+    if(typeof st.compact==="boolean") S.compact=st.compact;
+    if(typeof st.themeAlt==="boolean") S.themeAlt=st.themeAlt;
+    if(typeof st.micro==="boolean") S.micro=st.micro;
+    if(typeof st.failure==="boolean") S.failure=st.failure;
+    if(typeof st.boss==="boolean") S.boss=st.boss;
+    if(st.seed) el("seedInp").value = st.seed;
+    if(st.knobs){
+      Object.assign(S, {
+        rigor: st.knobs.rigor ?? S.rigor,
+        creativity: st.knobs.creativity ?? S.creativity,
+        load: st.knobs.load ?? S.load,
+        drift: st.knobs.drift ?? S.drift,
+        audit: st.knobs.audit ?? S.audit,
+        noise: st.knobs.noise ?? S.noise,
+        daily: st.knobs.daily ?? S.daily,
+        sessDay: st.knobs.sessDay ?? S.sessDay,
+        ret: st.knobs.ret ?? S.ret,
+        fat: st.knobs.fat ?? S.fat,
+        days: st.knobs.days ?? S.days
+      });
+    }
+  }catch(e){}
+}
+
+/* --- UI Build: nodes + edges --- */
+const nodesGrid = el("nodesGrid");
+const edgesSvg = el("edgesSvg");
+function buildNodes(){
+  nodesGrid.innerHTML = "";
+  for(const n of NODES){
+    const d=document.createElement("div");
+    d.className="node";
+    d.tabIndex=0;
+    d.setAttribute("role","listitem");
+    d.dataset.id=n.id;
+    d.innerHTML = `
+      <div class="nodeTop">
+        <div class="nodeTitle">${n.title}</div>
+        <div class="tag">${n.tag}</div>
+      </div>
+      <div class="nodeDesc">${n.desc}</div>
+    `;
+    d.addEventListener("click",()=>selectNode(n.id,true));
+    d.addEventListener("keydown",(e)=>{
+      if(e.key==="Enter"||e.key===" "){
+        e.preventDefault(); selectNode(n.id,true);
+      }
+    });
+    nodesGrid.appendChild(d);
+  }
+}
+function nodeEl(id){
+  return nodesGrid.querySelector(`.node[data-id="${id}"]`);
+}
+function layoutEdges(){
+  // compute centers of node cards relative to wrap
+  const wrap = el("mapWrap");
+  const rectW = wrap.getBoundingClientRect();
+  const centers = {};
+  nodesGrid.querySelectorAll(".node").forEach(nd=>{
+    const r = nd.getBoundingClientRect();
+    const id = nd.dataset.id;
+    centers[id] = {
+      x: (r.left - rectW.left) + r.width/2,
+      y: (r.top - rectW.top) + r.height/2,
+      w: r.width, h: r.height,
+      left: (r.left-rectW.left), top:(r.top-rectW.top)
+    };
+  });
+
+  const w = rectW.width, h = rectW.height;
+  edgesSvg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  edgesSvg.innerHTML = `
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(231,238,248,.28)"></path>
+      </marker>
+      <marker id="arrowStrong" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(168,235,255,.38)"></path>
+      </marker>
+      <marker id="arrowWarn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(255,234,163,.35)"></path>
+      </marker>
+      <marker id="arrowErr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(255,191,191,.35)"></path>
+      </marker>
+    </defs>
+  `;
+
+  function pathBetween(a,b){
+    const A=centers[a], B=centers[b];
+    if(!A||!B) return null;
+    const dx=B.x-A.x, dy=B.y-A.y;
+    const mx=A.x + dx*0.5;
+    const my=A.y + dy*0.5;
+    const bend = Math.min(80, Math.max(24, Math.abs(dx)*0.18));
+    const c1x = mx, c1y = A.y + (dy>0? bend : -bend);
+    const c2x = mx, c2y = B.y - (dy>0? bend : -bend);
+    return {A,B, d:`M ${A.x} ${A.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${B.x} ${B.y}`, mx, my};
+  }
+
+  for(const [from,to,label,cls] of EDGES){
+    const p = pathBetween(from,to);
+    if(!p) continue;
+    const line = document.createElementNS("http://www.w3.org/2000/svg","path");
+    line.setAttribute("d", p.d);
+    line.setAttribute("class", `edgeLine ${cls||""}`);
+    const marker = cls==="strong" ? "url(#arrowStrong)" : cls==="warn" ? "url(#arrowWarn)" : cls==="err" ? "url(#arrowErr)" : "url(#arrow)";
+    line.setAttribute("marker-end", marker);
+    edgesSvg.appendChild(line);
+
+    // label
+    const t = document.createElementNS("http://www.w3.org/2000/svg","text");
+    t.setAttribute("class","edgeLbl");
+    t.setAttribute("x", p.mx);
+    t.setAttribute("y", p.my);
+    t.setAttribute("text-anchor","middle");
+    t.textContent = label;
+    edgesSvg.appendChild(t);
+  }
+}
+const relayout = debounceRAF(layoutEdges);
+
+/* --- Org section build --- */
+function buildSysMap(){
+  const box = el("sysMap");
+  box.innerHTML = "";
+  for(const s of SUBSYSTEMS){
+    const d=document.createElement("div");
+    d.className="metric";
+    d.style.padding="10px";
+    d.style.borderRadius="16px";
+    d.dataset.sys = s.id;
+    d.innerHTML = `
+      <div class="mTop"><div class="mName">${s.name}</div><div class="mVal mono" style="font-size:12px" id="sys-${s.id}">off</div></div>
+      <div class="foot" style="margin-top:8px">${s.desc}</div>
+    `;
+    box.appendChild(d);
+  }
+}
+function buildSwim(){
+  const swim = el("swim");
+  const steps = ["define","design","ai","teach","interact","evidence","score","iterate","telemetry","audit"];
+  swim.innerHTML = "";
+  // header row
+  const head = document.createElement("div");
+  head.style.display="grid";
+  head.style.gridTemplateColumns=`120px repeat(${steps.length}, minmax(0, 1fr))`;
+  head.style.gap="6px";
+  head.innerHTML = `
+    <div class="heatHead">Layer</div>
+    ${steps.map(s=>`<div class="heatHead mono" style="text-align:center">${s}</div>`).join("")}
+  `;
+  swim.appendChild(head);
+
+  for(const layer of SUBSYSTEMS){
+    const row = document.createElement("div");
+    row.style.display="grid";
+    row.style.gridTemplateColumns=`120px repeat(${steps.length}, minmax(0, 1fr))`;
+    row.style.gap="6px";
+    row.dataset.layer = layer.id;
+    row.innerHTML = `
+      <div class="heatHead">${layer.id==="gov" ? "Governance" : layer.name.split(" ")[0]}</div>
+      ${steps.map(st=>`<div class="heatCell" data-layer="${layer.id}" data-step="${st}"><div class="inner"><strong class="mono" style="opacity:.8">•</strong><span class="mono" style="opacity:.7">0</span></div></div>`).join("")}
+    `;
+    swim.appendChild(row);
+  }
+}
+
+/* --- Heatmap build --- */
+function heatKey(r,c){ return `${r}__${c}`; }
+function initHeat(){
+  S.heat = {};
+  for(const r of HEAT_ROWS){
+    for(const c of HEAT_COLS){
+      S.heat[heatKey(r.id,c)] = {v:0, status:"ok"};
+    }
+  }
+}
+function buildHeat(){
+  const box = el("heat");
+  box.innerHTML = "";
+  if(window.innerWidth <= 980){
+    // stacked
+    for(const r of HEAT_ROWS){
+      const h = document.createElement("div");
+      h.className="heatHead";
+      h.textContent = r.name;
+      box.appendChild(h);
+      for(const c of HEAT_COLS){
+        const cell = document.createElement("div");
+        cell.className="heatCell";
+        cell.dataset.r=r.id; cell.dataset.c=c;
+        cell.innerHTML = `<div class="inner"><strong>${c}</strong><span class="mono">0.00</span></div>`;
+        box.appendChild(cell);
+      }
+    }
+  } else {
+    box.appendChild(Object.assign(document.createElement("div"),{className:"heatHead",textContent:"Criteria domain"}));
+    for(const c of HEAT_COLS){
+      box.appendChild(Object.assign(document.createElement("div"),{className:"heatHead",textContent:c}));
+    }
+    for(const r of HEAT_ROWS){
+      const rh = document.createElement("div");
+      rh.className="heatHead";
+      rh.textContent = r.name;
+      box.appendChild(rh);
+      for(const c of HEAT_COLS){
+        const cell = document.createElement("div");
+        cell.className="heatCell";
+        cell.dataset.r=r.id; cell.dataset.c=c;
+        cell.innerHTML = `<div class="inner"><strong class="mono" style="opacity:.0">.</strong><span class="mono">0.00</span></div>`;
+        box.appendChild(cell);
+      }
+    }
+  }
+  renderHeat();
+}
+function renderHeat(){
+  const box = el("heat");
+  box.querySelectorAll(".heatCell").forEach(cell=>{
+    const r=cell.dataset.r, c=cell.dataset.c;
+    const hv = S.heat[heatKey(r,c)];
+    const value = hv ? hv.v : 0;
+    const status = hv ? hv.status : "ok";
+    cell.classList.remove("ok","warn","bad");
+    cell.classList.add(status);
+    const span = cell.querySelector("span");
+    if(span) span.textContent = fmt(value,2);
+
+    // intensity via overlay opacity
+    const op = Math.max(0.04, Math.min(0.35, value*0.22));
+    cell.style.setProperty("--op", op);
+    // use :before opacity trick
+    const beforeOpacity = status==="ok" ? op : status==="warn" ? Math.min(0.55, op+0.18) : Math.min(0.65, op+0.24);
+    cell.style.setProperty("opacity","1");
+    cell.style.setProperty("filter","none");
+    cell.style.setProperty("--beforeOpacity", beforeOpacity);
+    cell.style.setProperty("position","relative");
+    cell.style.setProperty("overflow","hidden");
+    // set pseudo via inline by toggling background in :before already; we can't set pseudo opacity directly,
+    // so we approximate by setting boxShadow intensity:
+    cell.style.boxShadow = `inset 0 0 0 1px rgba(255,255,255,.00), 0 0 0 0 rgba(0,0,0,0)`;
+    // Hack: set background alpha
+    if(status==="ok") cell.style.background = `rgba(166,255,212,${op*0.12})`;
+    if(status==="warn") cell.style.background = `rgba(255,234,163,${op*0.15})`;
+    if(status==="bad") cell.style.background = `rgba(255,191,191,${op*0.18})`;
+  });
+}
+
+/* --- Drawer --- */
+const drawer = el("drawer");
+function openDrawer(){
+  drawer.classList.add("open");
+  drawer.setAttribute("aria-hidden","false");
+}
+function closeDrawer(){
+  drawer.classList.remove("open");
+  drawer.setAttribute("aria-hidden","true");
+}
+el("drClose").addEventListener("click", closeDrawer);
+document.addEventListener("keydown",(e)=>{
+  if(e.key==="Escape") closeDrawer();
+});
+
+/* --- Select node --- */
+function selectNode(id, open=true){
+  S.selected = id;
+  // update selection UI
+  nodesGrid.querySelectorAll(".node").forEach(n=>n.classList.toggle("sel", n.dataset.id===id));
+  const n = NODES.find(x=>x.id===id) || NODES[0];
+  el("selLabel").textContent = n.title;
+  el("stNode").textContent = n.title;
+  // drawer content
+  el("drTitle").textContent = n.title;
+  el("drDesc").textContent = n.desc;
+  const drChips = el("drChips");
+  drChips.innerHTML = n.chips.map(s=>`<span class="chip">${s}</span>`).join("");
+  const drCrit = el("drCriteria");
+  drCrit.innerHTML = n.criteria.map(s=>`<span class="chip ok">${s}</span>`).join("");
+  const drChecks = el("drChecks");
+  drChecks.innerHTML = n.checks.map(s=>`<span class="chip warn">${s}</span>`).join("");
+
+  // micro steps
+  const micro = microForNode(n.id);
+  el("drMicro").innerHTML = micro.map((s,i)=>`<div class="step ${i===0?"active":""}"><span class="n">μ${i+1}</span><div>${s}<br><small>${microHint(n.id,i)}</small></div></div>`).join("");
+
+  // org highlight
+  renderOrg();
+
+  // inspector update
+  updateInspector();
+
+  if(open) openDrawer();
+  save();
+}
+
+/* --- Microflow definitions --- */
+function microForNode(id){
+  const M = {
+    objectives:[
+      "Extract standards/outcomes → normalize goals",
+      "Map to Bloom/SOLO level + success criteria",
+      "Define evidence plan + acceptable uncertainty",
+      "Register objective contract (traceable)",
+    ],
+    design:[
+      "Select pedagogy + activity structure",
+      "Plan scaffolding + fading schedule",
+      "Define assessment items + rubric hooks",
+      "Set feedback policy + safety constraints",
+    ],
+    ai_stack:[
+      "Assemble prompt protocol + tool policies",
+      "Configure retrieval grounding + citations",
+      "Enable guardrails + refusal policy",
+      "Run prompt-unit tests + logging schema",
+    ],
+    teach:[
+      "Generate instruction step (grounded)",
+      "Ask/pose task aligned to objective level",
+      "Generate feedback template + hints",
+      "Update learner model signal (expected)",
+    ],
+    interact:[
+      "Capture response + time-on-task",
+      "Detect misconception / uncertainty",
+      "Adapt next prompt (scaffold vs challenge)",
+      "Log accessibility + engagement proxies",
+    ],
+    evidence:[
+      "Persist artifacts + event schema validation",
+      "Anonymize/PII scrub + consent checks",
+      "Compute validity flags + sampling notes",
+      "Prepare rubric features (signals)",
+    ],
+    rubric:[
+      "Compute sub-scores per criterion",
+      "Aggregate Alignment Index + confidence",
+      "Generate explanation + counterfactual",
+      "Emit recommendations + audit triggers",
+    ],
+    iterate:[
+      "Apply change proposal (prompt/content/scaffold)",
+      "Version & rollback plan",
+      "Run A/B or counterfactual replay",
+      "Re-evaluate alignment + monitor",
+    ],
+    telemetry:[
+      "Update dashboards + alerts",
+      "Detect drift/bias/anomaly",
+      "Compute coverage + missing evidence",
+      "Export dataset snapshot",
+    ],
+    govern:[
+      "Run privacy & fairness checks",
+      "Review audit log + approvals",
+      "Incident response / remediation",
+      "Finalize compliance report",
+    ]
+  };
+  return (M[id] || ["—"]).slice(0,6);
+}
+function microHint(id,i){
+  const H = {
+    objectives:["scope","taxonomy","evidence validity","auditability"],
+    design:["coherence","scaffold control","rubric alignment","safety"],
+    ai_stack:["prompting","grounding","policy","verification"],
+    teach:["alignment","cognitive level","feedback quality","modeling"],
+    interact:["measurement","diagnosis","adaptation","ethics"],
+    evidence:["integrity","privacy","validity","features"],
+    rubric:["scoring","aggregation","explainability","recommendation"],
+    iterate:["change mgmt","versioning","experiment","monitoring"],
+    telemetry:["observability","drift","coverage","export"],
+    govern:["compliance","oversight","response","report"]
+  };
+  return (H[id] && H[id][i]) ? `focus: ${H[id][i]}` : "—";
+}
+
+/* --- Simulator: phases & transitions --- */
+const PHASES = ["define","design","teach","interact","evidence","score","iterate","audit"];
+const PHASE_TO_NODE = {
+  define:"objectives",
+  design:"design",
+  teach:"teach",
+  interact:"interact",
+  evidence:"evidence",
+  score:"rubric",
+  iterate:"iterate",
+  audit:"govern"
+};
+
+// Core "lanes" for Branch map
+const LANE = {
+  define:0, design:1, teach:2, interact:3, evidence:4, score:5, iterate:6, audit:7
+};
+
+function nextPhaseCore(){
+  // scenario/role/metrics influence
+  const r = rng();
+  const scenario = S.scenario;
+
+  // base progression around loop, with occasional audit
+  const idx = PHASES.indexOf(S.phase);
+  const baseNext = PHASES[(idx+1) % PHASES.length];
+
+  // audit trigger probability depends on audit knob + risk
+  const auditP = clamp01(0.03 + S.audit*0.20 + S.risk*0.25);
+  const loopP = clamp01(0.10 + (1-S.rigor)*0.12 + S.creativity*0.08);
+
+  // scenario biases
+  let driftBias = scenario==="cognitive_drift" ? S.drift*0.35 : S.drift*0.18;
+  let biasBias  = scenario==="prompt_bias" ? 0.14 + S.noise*0.12 : 0.06 + S.noise*0.06;
+  let erosionBias = scenario==="scaffold_erosion" ? 0.16 + (1-S.audit)*0.08 : 0.07;
+  let stressBias = scenario==="ethical_stress" ? 0.18 + (1-S.audit)*0.10 : 0.06;
+
+  // role influences: evaluator triggers score/audit more
+  const role = S.role;
+  const roleAuditBoost = role==="evaluator" ? 0.10 : role==="researcher" ? 0.14 : role==="teacher" ? 0.06 : 0.0;
+
+  // weighted choices
+  const choices = [];
+  // typical next
+  choices.push({k:baseNext, w: 0.62});
+  // sometimes loop back to define/design if drift
+  if (r < driftBias){
+    choices.push({k:"define", w: 0.20 + driftBias});
+    choices.push({k:"design", w: 0.16});
+  }
+  // sometimes revisit teach/interact if scaffold erosion or bias study
+  choices.push({k:"teach", w: 0.08 + erosionBias*0.12});
+  choices.push({k:"interact", w: 0.07 + biasBias*0.10});
+  // audit step
+  choices.push({k:"audit", w: auditP + roleAuditBoost});
+  // score more often under evaluator
+  if(role==="evaluator" || role==="researcher"){
+    choices.push({k:"score", w: 0.10});
+  }
+  // iterate
+  choices.push({k:"iterate", w: loopP});
+
+  return pickWeighted(rng, choices);
+}
+
+function phaseMicroSteps(phase){
+  const node = PHASE_TO_NODE[phase];
+  return microForNode(node);
+}
+
+/* --- Failure model --- */
+function failureEvent(kind){
+  const checks = {
+    objective_mismatch:["objective match check","cognitive level check","task re-scope"],
+    hallucination:["grounding check","evidence requirement","citation enforcement"],
+    bias_fairness:["group parity audit","counterfactual probes","dataset slice review"],
+    assessment_mismatch:["rubric calibration","item validity check","human moderation"],
+    privacy_leak:["PII scrub","consent gate","data minimization"]
+  };
+  const rollbacks = {
+    objective_mismatch:["rollback to last aligned prompt","re-derive objectives","freeze creativity"],
+    hallucination:["disable tool chain","force retrieval grounding","tighten refusal policy"],
+    bias_fairness:["apply fairness constraints","re-sample evidence","trigger governance review"],
+    assessment_mismatch:["rebuild rubric mapping","increase human review","lock scoring thresholds"],
+    privacy_leak:["purge sensitive logs","rotate identifiers","incident response playbook"]
+  };
+  return {kind, checks:checks[kind]||[], rollback:rollbacks[kind]||[]};
+}
+
+function maybeInjectFailure(force=false){
+  if(!S.failure && !force) return null;
+
+  // boss queue has priority
+  if(S.bossQ.length){
+    const k = S.bossQ.shift();
+    return failureEvent(k);
+  }
+
+  const p = parseInt(el("failP").value,10)/100;
+  if(force || (rng() < p)){
+    const kind = el("failType").value;
+    return failureEvent(kind);
+  }
+
+  // boss mode random chain
+  if(S.boss && rng() < (p*0.7 + 0.03)){
+    S.bossQ.push("objective_mismatch","hallucination","bias_fairness","privacy_leak");
+    return failureEvent(S.bossQ.shift());
+  }
+
+  return null;
+}
+
+/* --- Heat logic (research-ish) --- */
+function criteriaActivation(phase, scenario){
+  // returns weights per heat row
+  const base = {
+    cog: 0.10, meth: 0.10, fb: 0.10, assess: 0.10, fair: 0.10, priv: 0.10
+  };
+  const bump = (k, v)=> base[k] = (base[k]||0)+v;
+
+  // phase effects
+  if(phase==="define"){ bump("cog",0.22); bump("assess",0.14); }
+  if(phase==="design"){ bump("meth",0.26); bump("fb",0.14); }
+  if(phase==="teach"){ bump("cog",0.20); bump("fb",0.22); bump("meth",0.10); }
+  if(phase==="interact"){ bump("fb",0.18); bump("cog",0.12); bump("fair",0.12); bump("priv",0.10); }
+  if(phase==="evidence"){ bump("assess",0.28); bump("priv",0.18); bump("fair",0.10); }
+  if(phase==="score"){ bump("assess",0.18); bump("fair",0.20); bump("meth",0.10); }
+  if(phase==="iterate"){ bump("meth",0.16); bump("cog",0.12); bump("fb",0.12); }
+  if(phase==="audit"){ bump("priv",0.28); bump("fair",0.22); bump("assess",0.14); }
+
+  // scenario effects
+  if(scenario==="cognitive_drift"){ bump("cog",0.18); bump("meth",0.10); }
+  if(scenario==="prompt_bias"){ bump("fair",0.24); bump("assess",0.10); }
+  if(scenario==="scaffold_erosion"){ bump("fb",0.22); bump("meth",0.10); }
+  if(scenario==="ethical_stress"){ bump("priv",0.22); bump("fair",0.16); }
+
+  return base;
+}
+
+function updateHeat(phase, failureObj){
+  const act = criteriaActivation(phase, S.scenario);
+
+  // map domains -> columns with research dimensions
+  // columns: Relevance, Validity, Equity, Safety, Explain, Adapt
+  // derive some modifiers from metrics/knobs
+  const severity = clamp01(S.risk*0.9 + S.driftEnt*0.5 + S.ethDev*0.9);
+  const auditBoost = clamp01(0.05 + S.audit*0.20);
+  const noise = S.noise;
+  const creativity = S.creativity;
+  const rigor = S.rigor;
+
+  for(const row of HEAT_ROWS){
+    for(const col of HEAT_COLS){
+      const key = heatKey(row.id,col);
+      const cell = S.heat[key];
+      // value increment
+      let inc = act[row.id] || 0.1;
+      // per col
+      if(col==="Relevance") inc *= (0.9 + (phase==="define"||phase==="design"?0.4:0.0));
+      if(col==="Validity") inc *= (0.9 + (phase==="evidence"||phase==="score"?0.55:0.0));
+      if(col==="Equity") inc *= (0.9 + (row.id==="fair"?0.8:0.0));
+      if(col==="Safety") inc *= (0.9 + (row.id==="priv"?0.9:0.0));
+      if(col==="Explain") inc *= (0.85 + (phase==="score"||phase==="iterate"?0.5:0.0));
+      if(col==="Adapt") inc *= (0.85 + (phase==="teach"||phase==="interact"?0.5:0.0));
+
+      // normalize and decay
+      cell.v = clamp01(cell.v*0.985 + inc*0.06);
+
+      // status logic
+      let badness = 0;
+      if(row.id==="cog") badness = clamp01((S.load*0.45 + S.drift*0.35 + creativity*0.22) - auditBoost*0.4);
+      if(row.id==="meth") badness = clamp01((S.drift*0.25 + noise*0.18 + creativity*0.12) - rigor*0.20 - auditBoost*0.25);
+      if(row.id==="fb") badness = clamp01((S.load*0.20 + (1-S.audit)*0.25 + creativity*0.12) - rigor*0.15);
+      if(row.id==="assess") badness = clamp01((noise*0.30 + (1-S.audit)*0.28) - rigor*0.18);
+      if(row.id==="fair") badness = clamp01((noise*0.25 + creativity*0.14 + severity*0.22) - auditBoost*0.25);
+      if(row.id==="priv") badness = clamp01((severity*0.28 + noise*0.18) - auditBoost*0.35);
+
+      // failure spikes
+      if(failureObj){
+        if(failureObj.kind==="objective_mismatch" && row.id==="cog") badness = clamp01(badness + 0.45);
+        if(failureObj.kind==="hallucination" && row.id==="assess") badness = clamp01(badness + 0.35);
+        if(failureObj.kind==="bias_fairness" && row.id==="fair") badness = clamp01(badness + 0.55);
+        if(failureObj.kind==="assessment_mismatch" && row.id==="assess") badness = clamp01(badness + 0.50);
+        if(failureObj.kind==="privacy_leak" && row.id==="priv") badness = clamp01(badness + 0.60);
+      }
+
+      // status thresholds differ by column
+      const t1 = col==="Safety"||col==="Equity" ? 0.42 : 0.50;
+      const t2 = col==="Safety"||col==="Equity" ? 0.66 : 0.72;
+
+      if(badness > t2) cell.status="bad";
+      else if(badness > t1) cell.status="warn";
+      else cell.status="ok";
+    }
+  }
+  renderHeat();
+}
+
+/* --- Metrics update --- */
+function updateMetrics(phase, failureObj){
+  // Synthetic dynamics with knobs and scenario
+  const sc = S.scenario;
+  const n = S.noise;
+  const cr = S.creativity;
+  const rg = S.rigor;
+  const ld = S.load;
+  const dr = S.drift;
+  const au = S.audit;
+
+  // drift entropy
+  const driftPush = (sc==="cognitive_drift" ? 0.014 : 0.009) * (0.6 + dr*1.3) * (0.6 + cr*0.8);
+  const driftPull = (0.010 + au*0.020) * (0.55 + rg*0.9);
+  S.driftEnt = clamp01(S.driftEnt + driftPush - driftPull + (rng()-0.5)*n*0.012);
+
+  // ethical deviation
+  const ethPush = (sc==="ethical_stress" ? 0.016 : 0.007) * (0.55 + n*1.0) * (0.6 + cr*0.6);
+  const ethPull = (0.010 + au*0.022) * (0.55 + rg*0.8);
+  S.ethDev = clamp01(S.ethDev + ethPush - ethPull + (rng()-0.5)*n*0.010);
+
+  // feedback precision
+  const fbGain = (phase==="teach"||phase==="interact") ? 0.010*(0.7+rg*0.8) : 0.004*(0.7+rg*0.4);
+  const fbLoss = 0.008*(0.5+ld*0.9) + 0.006*(0.4+cr*0.9) + 0.004*(0.4+S.driftEnt);
+  S.fbPrec = clamp01(S.fbPrec + fbGain - fbLoss + (rng()-0.5)*n*0.010);
+
+  // risk index
+  S.risk = clamp01(0.16 + S.driftEnt*0.55 + S.ethDev*0.70 + (1-au)*0.18 + (cr*0.08) + (n*0.08));
+
+  // alignment index (penalize drift, ethics, mismatch)
+  const stepBonus = (phase==="score"||phase==="iterate"||phase==="audit") ? 0.018*(0.6+au*0.8) : 0.006*(0.5+au*0.5);
+  const stepPenalty = 0.015*(S.driftEnt*0.9 + S.ethDev*1.0 + ld*0.25) + 0.010*(cr*0.5) + 0.008*n;
+
+  S.align = clamp01(S.align + stepBonus - stepPenalty);
+
+  // failures impact
+  if(failureObj){
+    const spike = (failureObj.kind==="privacy_leak"||failureObj.kind==="bias_fairness") ? 0.08 : 0.05;
+    S.align = clamp01(S.align - spike*(0.7+rg*0.3));
+    S.risk = clamp01(S.risk + 0.12);
+  }
+
+  // scenario nuance
+  if(sc==="scaffold_erosion" && (phase==="teach"||phase==="interact")){
+    S.fbPrec = clamp01(S.fbPrec - 0.012*(0.5+ (1-au)));
+  }
+  if(sc==="prompt_bias" && phase==="score"){
+    S.ethDev = clamp01(S.ethDev + 0.010*(0.4+n));
+  }
+
+  // save series
+  pushSeries("align", S.align);
+  pushSeries("drift", S.driftEnt);
+  pushSeries("eth", S.ethDev);
+  pushSeries("fb", S.fbPrec);
+}
+
+function pushSeries(k, v){
+  const arr = S.series[k];
+  arr.push(v);
+  if(arr.length>120) arr.shift();
+}
+
+/* --- Rendering charts (sparklines) --- */
+function drawSpark(canvas, arr, opts={}){
+  const ctx=canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  canvas.width = Math.floor(w*dpr);
+  canvas.height = Math.floor(h*dpr);
+  ctx.scale(dpr,dpr);
+
+  // bg
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = "rgba(231,238,248,.02)";
+  ctx.fillRect(0,0,w,h);
+
+  // grid
+  ctx.strokeStyle = "rgba(231,238,248,.08)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for(let i=1;i<4;i++){
+    const y = i*h/4;
+    ctx.moveTo(0,y); ctx.lineTo(w,y);
+  }
+  ctx.stroke();
+
+  if(!arr || arr.length<2) return;
+  let min=0, max=1;
+  if(opts.auto){
+    min = Math.min(...arr);
+    max = Math.max(...arr);
+    const pad = (max-min)*0.15 + 1e-6;
+    min -= pad; max += pad;
+  }
+  const xStep = w/(arr.length-1);
+  ctx.strokeStyle = "rgba(168,235,255,.85)";
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  for(let i=0;i<arr.length;i++){
+    const v = (arr[i]-min)/(max-min);
+    const x = i*xStep;
+    const y = h - v*h;
+    if(i===0) ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // last dot
+  const last = arr[arr.length-1];
+  const v = (last-min)/(max-min);
+  ctx.fillStyle = "rgba(231,238,248,.92)";
+  ctx.beginPath();
+  ctx.arc(w-2, h - v*h, 2.4, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function renderSparks(){
+  drawSpark(el("spAlign"), S.series.align, {auto:false});
+  drawSpark(el("spDrift"), S.series.drift, {auto:false});
+  drawSpark(el("spEth"), S.series.eth, {auto:false});
+  drawSpark(el("spFb"), S.series.fb, {auto:false});
+  drawSpark(el("sparkMicro"), S.microSeries, {auto:true});
+  drawSpark(el("sparkRisk"), S.riskSeries, {auto:true});
+}
+
+/* --- Branch Map --- */
+function pushBranch(item){
+  S.branch.push(item);
+  if(S.branch.length>64) S.branch.shift();
+  el("branchHint").textContent = `N=${S.branch.length}`;
+}
+function drawBranch(){
+  const c = el("branch");
+  const ctx = c.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const w = c.clientWidth, h = c.clientHeight;
+  c.width = Math.floor(w*dpr); c.height = Math.floor(h*dpr);
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
+
+  // lanes
+  const laneCount = 8;
+  const top=12, bottom=12;
+  const laneH = (h-top-bottom)/(laneCount-1);
+  ctx.strokeStyle = "rgba(231,238,248,.07)";
+  ctx.lineWidth = 1;
+  for(let i=0;i<laneCount;i++){
+    const y = top + i*laneH;
+    ctx.beginPath();
+    ctx.moveTo(0,y); ctx.lineTo(w,y);
+    ctx.stroke();
+  }
+
+  // labels
+  ctx.fillStyle="rgba(147,164,184,.85)";
+  ctx.font="11px "+getComputedStyle(document.documentElement).getPropertyValue('--mono');
+  const labels=["define","design","teach","interact","evidence","score","iterate","audit"];
+  for(let i=0;i<labels.length;i++){
+    ctx.fillText(labels[i], 6, top + i*laneH - 4);
+  }
+
+  // plot
+  const arr = S.branch;
+  if(arr.length<2) return;
+  const xStep = (w-20)/(arr.length-1);
+  ctx.lineWidth = 1.6;
+
+  // polyline for core steps
+  ctx.strokeStyle="rgba(231,238,248,.28)";
+  ctx.beginPath();
+  for(let i=0;i<arr.length;i++){
+    const it=arr[i];
+    const y = top + (LANE[it.core]||0)*laneH;
+    const x = 18 + i*xStep;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // points
+  for(let i=0;i<arr.length;i++){
+    const it=arr[i];
+    const x = 18 + i*xStep;
+    const y = top + (LANE[it.core]||0)*laneH;
+
+    // session boundary
+    if(it.sess){
+      ctx.strokeStyle="rgba(255,234,163,.55)";
+      ctx.lineWidth=1.2;
+      ctx.beginPath();
+      ctx.setLineDash([4,4]);
+      ctx.moveTo(x, 6); ctx.lineTo(x, h-6);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // core dot
+    ctx.fillStyle = it.err ? "rgba(255,191,191,.82)" : "rgba(231,238,248,.78)";
+    ctx.beginPath();
+    ctx.arc(x,y,2.7,0,Math.PI*2);
+    ctx.fill();
+
+    // micro dot (below)
+    if(it.micro){
+      ctx.fillStyle = "rgba(168,235,255,.85)";
+      ctx.beginPath();
+      ctx.arc(x, y+6, 2.1, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+}
+
+/* --- Org highlight --- */
+function renderOrg(){
+  // sys map on/off + swim counts
+  const active = NODE_SYS[S.selected] || [];
+  // update sys tiles
+  el("sysMap").querySelectorAll(".metric").forEach(tile=>{
+    const id = tile.dataset.sys;
+    const on = active.includes(id);
+    tile.style.borderColor = on ? "rgba(168,235,255,.25)" : "rgba(231,238,248,.10)";
+    tile.style.background = on ? "rgba(168,235,255,.07)" : "rgba(231,238,248,.03)";
+    const t = el(`sys-${id}`);
+    if(t) t.textContent = on ? "active" : "off";
+  });
+
+  // swim: mark activations by step for current selection
+  const selectedNode = S.selected;
+  // map node tag to step column
+  const node = NODES.find(n=>n.id===selectedNode);
+  const step = node ? node.tag : "define";
+  document.querySelectorAll('#swim .heatCell').forEach(cell=>{
+    const layer = cell.dataset.layer;
+    const st = cell.dataset.step;
+    let count = 0;
+    // active only at current step if layer included
+    if(st===step){
+      if(active.includes(layer)) count = 1;
+      if(layer==="gov" && active.includes("gov")) count = 2;
+    }
+    cell.querySelector('span').textContent = String(count);
+    cell.classList.remove("ok","warn","bad");
+    if(count===0){
+      cell.style.background="rgba(231,238,248,.02)";
+      cell.style.borderColor="rgba(231,238,248,.10)";
+    } else {
+      cell.style.background = layer==="gov" ? "rgba(255,234,163,.08)" : "rgba(168,235,255,.06)";
+      cell.style.borderColor = layer==="gov" ? "rgba(255,234,163,.18)" : "rgba(168,235,255,.20)";
+    }
+  });
+}
+
+/* --- Inspector --- */
+function updateInspector(){
+  const cfg = `rigor=${fmt(S.rigor)} creat=${fmt(S.creativity)} load=${fmt(S.load)} drift=${fmt(S.drift)} audit=${fmt(S.audit)} noise=${fmt(S.noise)}`;
+  el("cfg").textContent = cfg;
+  el("cfgChips").innerHTML = [
+    `Scenario: ${S.scenario}`,
+    `Role: ${S.role}`,
+    `Micro: ${S.micro?"on":"off"}`,
+    `Failure: ${S.failure?"on":"off"}`
+  ].map(s=>`<span class="chip">${s}</span>`).join("");
+
+  // top criteria by heat values aggregated per row
+  const rowAgg = {};
+  for(const r of HEAT_ROWS){
+    let sum=0;
+    for(const c of HEAT_COLS){
+      sum += S.heat[heatKey(r.id,c)].v;
+    }
+    rowAgg[r.name] = sum/HEAT_COLS.length;
+  }
+  const top = Object.entries(rowAgg).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  el("critTop").textContent = top.map(x=>x[0]).join(" • ");
+  el("critChips").innerHTML = top.map(([name,v])=>{
+    const cls = v>0.55 ? "warn" : "ok";
+    return `<span class="chip ${cls}">${name} <span class="mono" style="opacity:.8">(${fmt(v,2)})</span></span>`;
+  }).join("");
+
+  // explain
+  const driftBad = S.driftEnt > 0.45;
+  const ethBad = S.ethDev > 0.40;
+  const align = S.align;
+  let msg = align>0.72 ? "Aligned" : align>0.55 ? "Borderline" : "Misaligned";
+  el("explain").textContent = msg;
+  el("explain2").textContent =
+    `alignment=${fmt(S.align)} • drift=${fmt(S.driftEnt)} • ethics=${fmt(S.ethDev)} • feedback=${fmt(S.fbPrec)} • risk=${fmt(S.risk)}. ` +
+    `Главные драйверы: ${driftBad?"drift↑ ":""}${ethBad?"ethics↑ ":""}${S.audit>0.55?"audit↑ ":""}${S.creativity>0.6?"creativity↑ ":""}${S.load>0.6?"load↑ ":""}`.trim();
+}
+
+/* --- Log --- */
+function logEvent(ev){
+  S.lastEvent = ev;
+  S.trace.push(ev);
+  if(S.trace.length>600) S.trace.shift();
+  // append formatted line
+  const line = `${ev.ts}  t=${String(ev.t).padStart(4,'0')}  s=${ev.sess}  phase=${ev.phase}${ev.micro?`/μ${ev.microIdx+1}`:""}  align=${fmt(ev.metrics.align)} drift=${fmt(ev.metrics.drift)} eth=${fmt(ev.metrics.eth)} fb=${fmt(ev.metrics.fb)} ${ev.fail?` FAIL=${ev.fail.kind}`:""}`;
+  const div = document.createElement("div");
+  div.textContent = line;
+  el("logInner").appendChild(div);
+  // trim DOM
+  const maxLines = 240;
+  while(el("logInner").childNodes.length>maxLines){
+    el("logInner").removeChild(el("logInner").firstChild);
+  }
+  el("logCount").textContent = String(S.trace.length);
+  el("logBox").scrollTop = el("logBox").scrollHeight;
+}
+
+/* --- Control: apply knobs --- */
+function syncKnobsUI(){
+  const setV=(id,v)=>el(id).textContent = fmt(v, (id==="vSessDay"||id==="vDays")?0:2);
+  setV("vRigor", S.rigor);
+  setV("vCreat", S.creativity);
+  setV("vLoad", S.load);
+  setV("vDrift", S.drift);
+  setV("vAudit", S.audit);
+  setV("vNoise", S.noise);
+  el("vSessDay").textContent = String(S.sessDay);
+  setV("vRet", S.ret);
+  setV("vFat", S.fat);
+  el("vDays").textContent = String(S.days);
+
+  el("simScenario").value = S.scenario;
+  el("roleSel").value = S.role;
+
+  setOn(el("tgMicro"), S.micro);
+  setOn(el("tgFailure"), S.failure);
+  setOn(el("tgBoss"), S.boss);
+  setOn(el("tgDaily"), S.daily);
+
+  el("failStat").textContent = S.failure ? (S.boss ? "on (boss)" : "on") : "off";
+}
+
+/* --- Simulation tick --- */
+function setSim(state){
+  S.sim = state;
+  el("stSim").textContent = state==="running" ? "Running" : "Idle";
+  el("statusDot").classList.toggle("running", state==="running");
+}
+
+function setPhase(p){
+  S.phase = p;
+  el("phase").textContent = p;
+  // select node by phase (for map highlight), but don't force open drawer
+  const nid = PHASE_TO_NODE[p] || "objectives";
+  selectNode(nid, false);
+  // also update status chip node text already done
+}
+
+function applyManualPhase(p){
+  S.session = Math.max(S.session, 1);
+  setPhase(p);
+  // tick once as manual action
+  stepOnce({manual:true});
+}
+
+function stepOnce(opts={}){
+  S.tick += 1;
+  el("tick").textContent = String(S.tick);
+
+  // daily fatigue effect
+  if(S.daily){
+    // degrade alignment/feedback slightly as fatigue accumulates within session/day
+    const fatigue = S.fat * 0.010;
+    S.fbPrec = clamp01(S.fbPrec - fatigue);
+    S.align  = clamp01(S.align - fatigue*0.6);
+  }
+
+  // microflow: if enabled, sometimes emit micro steps for same phase
+  let micro = null;
+  let microIdx = -1;
+
+  const phase = S.phase;
+  const microSteps = phaseMicroSteps(phase);
+
+  let emitMicro = S.micro && (rng() < 0.75);
+  if(opts.manual) emitMicro = S.micro; // prefer micro when manual
+  if(emitMicro){
+    microIdx = Math.floor(rng()*Math.min(6,microSteps.length));
+    micro = microSteps[microIdx];
+    // micro series - an "instant micro alignment"
+    const microAlign = clamp01(S.align + (rng()-0.5)*S.noise*0.10 + (phase==="score"||phase==="audit"?0.04:0.0) - (S.risk*0.02));
+    S.microSeries.push(microAlign);
+    if(S.microSeries.length>120) S.microSeries.shift();
+    const microRisk = clamp01(S.risk + (rng()-0.5)*S.noise*0.10);
+    S.riskSeries.push(microRisk);
+    if(S.riskSeries.length>120) S.riskSeries.shift();
+    el("microNow").textContent = `μ${microIdx+1}: ${microSteps[microIdx].slice(0,28)}…`;
+    el("chkNow").textContent = `risk≈${fmt(microRisk)}`;
+  } else {
+    el("microNow").textContent = "—";
+    el("chkNow").textContent = `risk≈${fmt(S.risk)}`;
+  }
+
+  // failure injection
+  const fail = maybeInjectFailure(false);
+
+  // update metrics
+  updateMetrics(phase, fail);
+
+  // update heat
+  updateHeat(phase, fail);
+
+  // decide next phase core (advance at a lower probability if micro emitted)
+  let nextP = phase;
+  const adv = (!micro) || (rng() < 0.35);
+  if(adv){
+    nextP = nextPhaseCore();
+    // session boundary: after audit or score sometimes begin new session
+    if(nextP==="define" && phase==="audit"){
+      S.session += 1;
+      el("session").textContent = String(S.session);
+      pushBranch({t:S.tick, core:phase, micro:!!micro, err:!!fail, sess:true});
+    }
+    setPhase(nextP);
+  }
+
+  // update UI metrics
+  el("mAlign").textContent = fmt(S.align);
+  el("mDrift").textContent = fmt(S.driftEnt);
+  el("mEth").textContent = fmt(S.ethDev);
+  el("mFb").textContent = fmt(S.fbPrec);
+
+  // branch push (core step is current phase before changing? we store phase from event)
+  pushBranch({t:S.tick, core:phase, micro:!!micro, err:!!fail, sess:false});
+
+  // failure UI
+  if(fail){
+    el("failBlock").innerHTML = `
+      <div class="mono">kind: ${fail.kind}</div>
+      <div style="margin-top:6px"><b>checks</b>: ${fail.checks.map(x=>`<span class="chip warn">${x}</span>`).join(" ")}</div>
+      <div style="margin-top:6px"><b>rollback</b>: ${fail.rollback.map(x=>`<span class="chip bad">${x}</span>`).join(" ")}</div>
+    `;
+    // recovery counters
+    S.dayStats.errors += 1;
+    if(rng() < (0.55 + S.audit*0.35)) S.dayStats.recover += 1;
+  }
+
+  // auditing counters
+  if(phase==="audit") S.dayStats.audits += 1;
+
+  // log event
+  const ev = {
+    ts: nowISO(),
+    t: S.tick,
+    sess: S.session,
+    scenario: S.scenario,
+    role: S.role,
+    phase,
+    micro: micro || null,
+    microIdx: microIdx,
+    node: PHASE_TO_NODE[phase],
+    fail: fail ? {kind: fail.kind, checks: fail.checks, rollback: fail.rollback} : null,
+    metrics: {align:S.align, drift:S.driftEnt, eth:S.ethDev, fb:S.fbPrec, risk:S.risk},
+    knobs: {rigor:S.rigor, creativity:S.creativity, load:S.load, drift:S.drift, audit:S.audit, noise:S.noise},
+    heatTop: topHeatSnapshot()
+  };
+  logEvent(ev);
+
+  // redraw charts
+  renderSparks();
+  drawBranch();
+
+  // status chip role + node
+  el("stRole").textContent = S.role.charAt(0).toUpperCase() + S.role.slice(1);
+  el("logCount").textContent = String(S.trace.length);
+
+  // inspector update
+  updateInspector();
+
+  save();
+}
+
+function topHeatSnapshot(){
+  // return top 3 rows by avg
+  const rowAgg = HEAT_ROWS.map(r=>{
+    let sum=0;
+    for(const c of HEAT_COLS) sum += S.heat[heatKey(r.id,c)].v;
+    return {row:r.name, v:sum/HEAT_COLS.length, status: maxStatusForRow(r.id)};
+  }).sort((a,b)=>b.v-a.v).slice(0,3);
+  return rowAgg;
+}
+function maxStatusForRow(rid){
+  let s="ok";
+  for(const c of HEAT_COLS){
+    const st = S.heat[heatKey(rid,c)].status;
+    if(st==="bad") return "bad";
+    if(st==="warn") s="warn";
+  }
+  return s;
+}
+
+/* --- Daily loop --- */
+function resetDayStats(){
+  S.dayStats = {day:0, sessions:0, audits:0, errors:0, recover:0};
+  el("dayRep").textContent = "—";
+  el("dayRep2").textContent = "Используй Daily Loop, чтобы получить агрегаты по дням (sessions, audits, errors, recoveries).";
+}
+function runOneDay(){
+  S.dayStats.day += 1;
+  const sessionsTarget = S.sessDay;
+  let sessionsDone = 0;
+
+  // ensure session starts
+  if(S.session===0){ S.session=1; el("session").textContent="1"; }
+  // day resets: slight recovery from fatigue
+  if(S.daily){
+    S.align = clamp01(S.align + 0.02);
+    S.fbPrec = clamp01(S.fbPrec + 0.03);
+  }
+
+  // per day sessions with retention/dropout
+  while(sessionsDone < sessionsTarget){
+    sessionsDone++;
+    S.dayStats.sessions += 1;
+
+    // within a session, run a small number of ticks
+    const steps = 10 + Math.floor(rng()*10);
+    for(let i=0;i<steps;i++){
+      stepOnce({manual:false});
+    }
+
+    // apply fatigue across sessions
+    if(S.daily){
+      const fatigueLoss = S.fat * 0.03;
+      S.align = clamp01(S.align - fatigueLoss);
+      S.fbPrec = clamp01(S.fbPrec - fatigueLoss*1.1);
+    }
+
+    // retention check
+    if(rng() > S.ret){
+      break;
+    } else {
+      // new session boundary marker
+      S.session += 1;
+      el("session").textContent = String(S.session);
+      pushBranch({t:S.tick, core:S.phase, micro:false, err:false, sess:true});
+    }
+  }
+
+  // report
+  el("dayRep").textContent = `day=${S.dayStats.day} sessions=${S.dayStats.sessions} audits=${S.dayStats.audits}`;
+  el("dayRep2").textContent = `errors=${S.dayStats.errors} recoveries=${S.dayStats.recover} align=${fmt(S.align)} drift=${fmt(S.driftEnt)} eth=${fmt(S.ethDev)} fb=${fmt(S.fbPrec)}`;
+  save();
+}
+function runManyDays(){
+  resetDayStats();
+  for(let i=0;i<S.days;i++){
+    runOneDay();
+  }
+}
+
+/* --- Controls wiring --- */
+function hookControls(){
+  // nav highlighting by scroll
+  const navLinks = Array.from(document.querySelectorAll('.navA'));
+  const secs = navLinks.map(a=>({a, id:a.getAttribute('href').slice(1)}));
+  const obs = new IntersectionObserver((entries)=>{
+    const vis = entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio);
+    if(vis.length){
+      const id = vis[0].target.id;
+      navLinks.forEach(a=>a.classList.toggle("active", a.getAttribute("href")==="#"+id));
+    }
+  }, {rootMargin:"-140px 0px -70% 0px", threshold:[0.05,0.15,0.35]});
+  secs.forEach(s=>{
+    const sec = document.getElementById(s.id);
+    if(sec) obs.observe(sec);
+  });
+
+  // status chip opens drawer
+  el("statusChip").addEventListener("click", ()=> openDrawer());
+
+  // theme toggle (contrast)
+  el("btnTheme").addEventListener("click", ()=>{
+    S.themeAlt = !S.themeAlt;
+    document.documentElement.style.setProperty("--panel", S.themeAlt ? "#0b1420" : "#0f1722");
+    document.documentElement.style.setProperty("--panel2", S.themeAlt ? "#0c1726" : "#111c2a");
+    save();
+  });
+  el("btnPrint").addEventListener("click", ()=>window.print());
+
+  el("btnReset").addEventListener("click", ()=>{
+    localStorage.removeItem(LS_KEY);
+    location.reload();
+  });
+
+  // compact header
+  el("btnCompact").addEventListener("click", ()=>{
+    S.compact = !S.compact;
+    document.getElementById("cmdRow").classList.toggle("hide", S.compact);
+    document.getElementById("navRow").style.paddingBottom = S.compact ? "10px" : "6px";
+    save();
+  });
+
+  // toggles
+  el("tgMicro").addEventListener("click", ()=>{S.micro=!S.micro; syncKnobsUI(); save();});
+  el("tgFailure").addEventListener("click", ()=>{S.failure=!S.failure; syncKnobsUI(); save();});
+  el("tgBoss").addEventListener("click", ()=>{S.boss=!S.boss; syncKnobsUI(); save();});
+  el("tgDaily").addEventListener("click", ()=>{S.daily=!S.daily; syncKnobsUI(); save();});
+
+  // selects
+  el("simScenario").addEventListener("change", (e)=>{S.scenario=e.target.value; save(); updateInspector();});
+  el("roleSel").addEventListener("change", (e)=>{S.role=e.target.value; el("stRole").textContent = S.role.charAt(0).toUpperCase()+S.role.slice(1); save();});
+
+  // reseed
+  el("btnReseed").addEventListener("click", ()=>{
+    const v = el("seedInp").value.trim() || String(Math.floor(Math.random()*1e9));
+    el("seedInp").value = v;
+    rng = mulberry32(hashStrToInt(v));
+    // reset series slightly
+    S.series.align=[]; S.series.drift=[]; S.series.eth=[]; S.series.fb=[];
+    S.microSeries=[]; S.riskSeries=[];
+    save();
+  });
+
+  // knobs
+  const hookRange=(id, setter)=>{
+    el(id).addEventListener("input",(e)=>{setter(parseInt(e.target.value,10)/100); syncKnobsUI(); save();});
+  };
+  hookRange("knRigor", v=>S.rigor=v);
+  hookRange("knCreat", v=>S.creativity=v);
+  hookRange("knLoad", v=>S.load=v);
+  hookRange("knDrift", v=>S.drift=v);
+  hookRange("knAudit", v=>S.audit=v);
+  hookRange("knNoise", v=>S.noise=v);
+
+  el("knSessDay").addEventListener("input",(e)=>{S.sessDay=parseInt(e.target.value,10); syncKnobsUI(); save();});
+  el("knRet").addEventListener("input",(e)=>{S.ret=parseInt(e.target.value,10)/100; syncKnobsUI(); save();});
+  el("knFat").addEventListener("input",(e)=>{S.fat=parseInt(e.target.value,10)/100; syncKnobsUI(); save();});
+  el("knDays").addEventListener("input",(e)=>{S.days=parseInt(e.target.value,10); syncKnobsUI(); save();});
+
+  // sim buttons
+  el("btnPlay").addEventListener("click", ()=>{
+    if(timer) return;
+    setSim("running");
+    timer = setInterval(()=>stepOnce({}), 520);
+    save();
+  });
+  el("btnPause").addEventListener("click", ()=>{
+    if(timer){ clearInterval(timer); timer=null; }
+    setSim("idle");
+    save();
+  });
+  el("btnStop").addEventListener("click", ()=>{
+    if(timer){ clearInterval(timer); timer=null; }
+    setSim("idle");
+    // reset run-specific
+    S.tick=0; S.session=0; el("tick").textContent="0"; el("session").textContent="0";
+    S.phase="define"; el("phase").textContent="define";
+    S.trace=[]; S.branch=[]; S.bossQ=[];
+    el("logInner").innerHTML=""; el("logCount").textContent="0";
+    initHeat(); renderHeat();
+    resetDayStats();
+    // reset metrics to baseline (keep knobs)
+    S.align=.72; S.driftEnt=.12; S.ethDev=.03; S.fbPrec=.66; S.risk=.18;
+    S.series.align=[]; S.series.drift=[]; S.series.eth=[]; S.series.fb=[];
+    S.microSeries=[]; S.riskSeries=[];
+    el("mAlign").textContent=fmt(S.align);
+    el("mDrift").textContent=fmt(S.driftEnt);
+    el("mEth").textContent=fmt(S.ethDev);
+    el("mFb").textContent=fmt(S.fbPrec);
+    setPhase("define");
+    renderSparks();
+    drawBranch();
+    updateInspector();
+    save();
+  });
+  el("btnStep").addEventListener("click", ()=>{
+    if(S.session===0){ S.session=1; el("session").textContent="1"; }
+    stepOnce({manual:true});
+  });
+
+  // action bar (force phase)
+  el("btnDiscover").addEventListener("click", ()=>applyManualPhase("define"));
+  el("btnDesign").addEventListener("click", ()=>applyManualPhase("design"));
+  el("btnTeach").addEventListener("click", ()=>applyManualPhase("teach"));
+  el("btnInteract").addEventListener("click", ()=>applyManualPhase("interact"));
+  el("btnEvidence").addEventListener("click", ()=>applyManualPhase("evidence"));
+  el("btnScore").addEventListener("click", ()=>applyManualPhase("score"));
+  el("btnIterate").addEventListener("click", ()=>applyManualPhase("iterate"));
+  el("btnAudit").addEventListener("click", ()=>applyManualPhase("audit"));
+
+  // fail controls
+  el("failP").addEventListener("input",(e)=>{el("failPv").textContent = fmt(parseInt(e.target.value,10)/100,2); save();});
+  el("btnFailNow").addEventListener("click", ()=>{
+    const fail = maybeInjectFailure(true);
+    // show in panel immediately (and count)
+    if(fail){
+      el("failBlock").innerHTML = `
+        <div class="mono">kind: ${fail.kind}</div>
+        <div style="margin-top:6px"><b>checks</b>: ${fail.checks.map(x=>`<span class="chip warn">${x}</span>`).join(" ")}</div>
+        <div style="margin-top:6px"><b>rollback</b>: ${fail.rollback.map(x=>`<span class="chip bad">${x}</span>`).join(" ")}</div>
+      `;
+      S.dayStats.errors += 1;
+      if(rng() < (0.55 + S.audit*0.35)) S.dayStats.recover += 1;
+    }
+  });
+  el("btnBossNow").addEventListener("click", ()=>{
+    S.bossQ.push("objective_mismatch","hallucination","bias_fairness","privacy_leak");
+    el("failExplain").textContent = `Boss queue: ${S.bossQ.join(" → ")}`;
+    save();
+  });
+
+  // export/copy
+  el("btnExport").addEventListener("click", ()=>{
+    const out = {
+      meta:{ts:nowISO(), seed:el("seedInp").value.trim(), scenario:S.scenario, role:S.role},
+      knobs:{rigor:S.rigor, creativity:S.creativity, load:S.load, drift:S.drift, audit:S.audit, noise:S.noise},
+      trace:S.trace
+    };
+    downloadText(`pedalign_trace_${Date.now()}.json`, JSON.stringify(out, null, 2));
+  });
+  el("btnCopy").addEventListener("click", async ()=>{
+    if(!S.lastEvent) return;
+    const txt = JSON.stringify(S.lastEvent, null, 2);
+    try{ await navigator.clipboard.writeText(txt); el("btnCopy").textContent="Copied"; setTimeout(()=>el("btnCopy").textContent="Copy last event", 900); }catch(e){}
+  });
+
+  // daily loop buttons
+  el("btnRunDay").addEventListener("click", ()=>{
+    if(!S.daily){ S.daily=true; setOn(el("tgDaily"), true); }
+    runOneDay();
+    save();
+  });
+  el("btnRunDays").addEventListener("click", ()=>{
+    if(!S.daily){ S.daily=true; setOn(el("tgDaily"), true); }
+    runManyDays();
+    save();
+  });
+
+  // resize
+  window.addEventListener("resize", ()=>{
+    relayout();
+    buildHeat();
+    renderSparks();
+    drawBranch();
+  });
+}
+
+/* --- Init --- */
+function init(){
+  load();
+
+  // seed rng from input
+  const seed = el("seedInp").value.trim() || "4201337";
+  rng = mulberry32(hashStrToInt(seed));
+
+  buildNodes();
+  buildSysMap();
+  buildSwim();
+  initHeat();
+  buildHeat();
+
+  // initial selection and org
+  selectNode(S.selected, false);
+  renderOrg();
+
+  // apply UI state
+  syncKnobsUI();
+  if(S.compact) el("cmdRow").classList.add("hide");
+  // toggles reflect classes
+  setOn(el("tgMicro"), S.micro);
+  setOn(el("tgFailure"), S.failure);
+  setOn(el("tgBoss"), S.boss);
+  setOn(el("tgDaily"), S.daily);
+  el("stRole").textContent = S.role.charAt(0).toUpperCase()+S.role.slice(1);
+
+  // series baseline
+  for(let i=0;i<15;i++){
+    pushSeries("align", S.align + (rng()-0.5)*0.02);
+    pushSeries("drift", S.driftEnt + (rng()-0.5)*0.02);
+    pushSeries("eth", S.ethDev + (rng()-0.5)*0.01);
+    pushSeries("fb", S.fbPrec + (rng()-0.5)*0.02);
+  }
+  renderSparks();
+  drawBranch();
+  updateInspector();
+
+  // edges after layout
+  requestAnimationFrame(()=>layoutEdges());
+  const ro = new ResizeObserver(()=>relayout());
+  ro.observe(el("mapWrap"));
+
+  hookControls();
+  resetDayStats();
+
+  // initial phase
+  setPhase("define");
+  setSim("idle");
+  save();
+}
+
+init();
+</script>
+</body>
+</html>
