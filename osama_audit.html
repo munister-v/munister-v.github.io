@@ -1,0 +1,981 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OSAMA.com.ua — Візуалізація проблемних елементів (Tech Audit, v2)</title>
+  <style>
+    :root{
+      --bg:#f6f1e8;
+      --paper:#fffaf2;
+      --ink:#111214;
+      --muted:#555a63;
+      --line:#c9bfae;
+      --warn:#b42318;
+      --ok:#067647;
+      --info:#1d4ed8;
+      --chip:#efe7db;
+      --shadow: 0 10px 34px rgba(17,18,20,.10);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color:var(--ink);
+      background:
+        radial-gradient(1000px 600px at 12% -10%, rgba(17,18,20,.06), transparent 55%),
+        radial-gradient(900px 520px at 95% 5%, rgba(17,18,20,.05), transparent 60%),
+        var(--bg);
+      line-height:1.35;
+    }
+    a{color:inherit}
+    .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 90px}
+    header{
+      background: linear-gradient(180deg, rgba(255,250,242,.95), rgba(255,250,242,.55));
+      border:1px solid rgba(17,18,20,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 26px 22px;
+      position: relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-90px -90px auto auto;
+      width:280px; height:280px; border-radius:999px;
+      background: rgba(17,18,20,.06);
+      transform: rotate(18deg);
+    }
+    .kicker{
+      display:flex; gap:10px; align-items:center;
+      color:var(--muted);
+      font-weight:750;
+      letter-spacing:.35px;
+      font-size:12.5px;
+      text-transform: uppercase;
+      flex-wrap: wrap;
+    }
+    .title{
+      font-size:44px;
+      letter-spacing:-.7px;
+      margin:10px 0 10px;
+      font-weight:900;
+    }
+    .subtitle{
+      max-width: 920px;
+      font-size:16px;
+      color:var(--muted);
+      margin:0;
+    }
+    .underline{height:2px;background:var(--line);margin:18px 0 0;width:100%}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:16px;
+      margin-top:16px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      .title{font-size:34px}
+    }
+    .card{
+      background: rgba(255,250,242,.78);
+      border:1px solid rgba(17,18,20,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px 18px;
+    }
+    .card h2{margin:0 0 8px;font-size:20px;letter-spacing:-.2px}
+    .card p{margin:0;color:var(--muted);font-size:14.5px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .chip{
+      padding:7px 10px;border-radius:999px;
+      background: var(--chip);
+      border: 1px solid rgba(17,18,20,.08);
+      font-size:12.5px;color:var(--muted);
+      font-weight:750;
+    }
+    .chip strong{color:var(--ink)}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 10px;border-radius:999px;
+      background: rgba(17,18,20,.06);
+      border:1px solid rgba(17,18,20,.10);
+      font-weight:900;font-size:12px;
+    }
+    .spark{width:10px;height:10px;border-radius:999px;background:rgba(17,18,20,.32)}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;border-radius:999px;
+      font-weight:900;font-size:12px;
+      border:1px solid rgba(17,18,20,.12);
+      background: rgba(255,250,242,.75);
+      white-space:nowrap;
+    }
+    .pill.p0{border-color: rgba(180,35,24,.25); background: rgba(180,35,24,.08); color: var(--warn)}
+    .pill.p1{border-color: rgba(17,18,20,.18); background: rgba(17,18,20,.06); color: var(--ink)}
+    .pill.p2{border-color: rgba(6,118,71,.22); background: rgba(6,118,71,.08); color: var(--ok)}
+    .pill.p3{border-color: rgba(29,78,216,.18); background: rgba(29,78,216,.06); color: var(--info)}
+    .nav{
+      margin-top:14px;
+      display:flex;gap:10px;flex-wrap:wrap;
+    }
+    .nav a{
+      text-decoration:none;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid rgba(17,18,20,.12);
+      background: rgba(255,250,242,.72);
+      font-weight:900;font-size:12.5px;color:var(--muted);
+    }
+    .nav a:hover{color:var(--ink);background: rgba(17,18,20,.06)}
+    .section{
+      margin-top:18px;
+      background: rgba(255,250,242,.55);
+      border:1px solid rgba(17,18,20,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .section-head{
+      padding:18px 18px 14px;
+      display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+      border-bottom:1px solid rgba(17,18,20,.08);
+      background: rgba(255,250,242,.76);
+      flex-wrap: wrap;
+    }
+    .section-head h3{margin:0;font-size:22px;letter-spacing:-.2px}
+    .section-head .meta{margin-top:6px;color:var(--muted);font-size:13.8px;max-width:820px}
+    .section-body{padding:16px 18px 18px}
+    .two{display:grid; grid-template-columns: 1fr 1fr; gap:14px}
+    @media (max-width: 980px){.two{grid-template-columns:1fr}}
+    .mock{
+      border-radius: 16px;
+      border:1px solid rgba(17,18,20,.10);
+      background: rgba(255,255,255,.55);
+      overflow:hidden;
+    }
+    .mock .topbar{
+      display:flex;align-items:center;gap:8px;
+      padding:10px 12px;
+      background: rgba(17,18,20,.05);
+      border-bottom:1px solid rgba(17,18,20,.08);
+      font-size:12.5px;color:var(--muted);font-weight:800;
+    }
+    .dots{display:flex;gap:6px;margin-right:6px}
+    .dot{width:10px;height:10px;border-radius:999px;background:rgba(17,18,20,.16)}
+    .addr{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mock .content{padding:14px 14px 16px}
+    .kbd{
+      font-family:var(--mono); font-size:12.2px;
+      background: rgba(17,18,20,.06);
+      border:1px solid rgba(17,18,20,.10);
+      padding:2px 6px;border-radius:8px
+    }
+    .warn{
+      border-left: 4px solid var(--warn);
+      background: rgba(180,35,24,.06);
+      padding:10px 12px;border-radius: 14px;
+      color: var(--ink);
+    }
+    .ok{
+      border-left: 4px solid var(--ok);
+      background: rgba(6,118,71,.06);
+      padding:10px 12px;border-radius: 14px;
+      color: var(--ink);
+    }
+    .info{
+      border-left: 4px solid var(--info);
+      background: rgba(29,78,216,.06);
+      padding:10px 12px;border-radius: 14px;
+      color: var(--ink);
+    }
+    .list{
+      margin:10px 0 0;padding-left: 18px;
+      color: var(--muted);font-size: 14px;
+    }
+    .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+    .btn{
+      cursor:pointer;user-select:none;
+      padding:9px 12px;border-radius: 999px;
+      border:1px solid rgba(17,18,20,.14);
+      background: rgba(255,250,242,.82);
+      font-weight:950;font-size:12.5px;color: var(--ink);
+      box-shadow: 0 2px 10px rgba(17,18,20,.06);
+      transition: transform .06s ease, background .2s ease;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{background: rgba(17,18,20,.08)}
+    .btn.bad{background: rgba(180,35,24,.10); border-color: rgba(180,35,24,.25); color: var(--warn)}
+    .btn.good{background: rgba(6,118,71,.10); border-color: rgba(6,118,71,.25); color: var(--ok)}
+    .btn.info{background: rgba(29,78,216,.08); border-color: rgba(29,78,216,.18); color: var(--info)}
+    pre{
+      margin:0;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.45;
+      background: rgba(17,18,20,.06);
+      border:1px solid rgba(17,18,20,.10);
+      border-radius: 14px;
+      padding: 12px 12px;
+      overflow:auto;
+      color:#14161a;
+      white-space: pre;
+    }
+    .code-title{
+      font-size:12px;color:var(--muted);
+      font-weight:950;margin: 0 0 8px;
+      text-transform: uppercase; letter-spacing: .35px;
+    }
+    .cols{display:grid;grid-template-columns: 1fr 1fr 1fr; gap:12px}
+    @media (max-width: 980px){.cols{grid-template-columns:1fr}}
+    .mini h4{margin:0 0 8px;font-size:14.5px;letter-spacing:-.1px}
+    .mini p{margin:0;color:var(--muted);font-size:13.5px}
+    .footer{
+      margin-top:22px;color:var(--muted);
+      font-size:12.5px;display:flex;justify-content:space-between;
+      gap:10px;flex-wrap:wrap;opacity:.9;
+    }
+    .spinner{
+      width:18px;height:18px;border-radius:999px;
+      border:2px solid rgba(17,18,20,.18);
+      border-top-color: rgba(17,18,20,.55);
+      animation: spin 1s linear infinite;
+      display:inline-block;vertical-align:middle;margin-right:8px;
+    }
+    @keyframes spin{to{transform: rotate(360deg)}}
+    .skeleton{display:grid;gap:10px;margin-top:8px}
+    .sk{
+      height:12px;border-radius:10px;background: rgba(17,18,20,.10);
+      position:relative;overflow:hidden;
+    }
+    .sk:after{
+      content:"";
+      position:absolute;inset:0;
+      transform:translateX(-40%);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+      animation: shimmer 1.2s infinite;
+    }
+    @keyframes shimmer{0%{transform:translateX(-70%)}100%{transform:translateX(70%)}}
+    .callout{
+      margin-top:12px;border-radius: 16px;
+      border:1px dashed rgba(17,18,20,.18);
+      background: rgba(255,250,242,.72);
+      padding:12px 12px;color: var(--muted);
+      font-size: 13.8px;
+    }
+    .callout strong{color:var(--ink)}
+    .tabrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .tab{
+      cursor:pointer;
+      padding:8px 10px;border-radius: 999px;
+      border:1px solid rgba(17,18,20,.14);
+      background: rgba(255,250,242,.86);
+      font-weight:950;font-size:12.5px;color: var(--muted);
+    }
+    .tab.active{color:var(--ink); background: rgba(17,18,20,.08)}
+    .hidden{display:none !important}
+    .divider{height:1px;background:rgba(17,18,20,.08);margin:14px 0}
+    .kv{
+      display:grid;grid-template-columns: 1fr 1fr;
+      gap:12px;margin-top:10px
+    }
+    @media (max-width: 980px){.kv{grid-template-columns:1fr}}
+    .kv .item{
+      padding:12px 12px;border-radius: 14px;
+      border:1px solid rgba(17,18,20,.10);
+      background: rgba(255,255,255,.45);
+    }
+    .kv .item b{display:block;margin-bottom:4px}
+    .kv .item span{color:var(--muted);font-size:13.5px}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="kicker">
+        <span class="badge"><span class="spark"></span> HTML5 / продакшн-візуалізація</span>
+        <span>OSAMA.com.ua</span>
+        <span style="opacity:.7">•</span>
+        <span>Tech Audit v2</span>
+      </div>
+      <div class="title">Проблемні елементи — детально (з пунктами)</div>
+      <p class="subtitle">
+        Це “живий документ” для команди: <strong>що бачить користувач</strong>, <strong>чому це стається</strong>,
+        <strong>як фіксити в Next.js</strong>, <strong>як тестувати</strong>. У кожній секції є перемикачі.
+      </p>
+      <div class="underline"></div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>Що в пріоритеті (P0/P1)</h2>
+          <p>
+            Якщо зробити тільки 3 речі — це буде максимальний ефект: (1) прибрати <strong>undefined</strong> у meta,
+            (2) прибрати порожні значення на <strong>delivery</strong>, (3) додати <strong>SSR/ISR</strong> для меню.
+          </p>
+          <div class="chips">
+            <span class="chip"><strong>P0</strong> meta/title без undefined</span>
+            <span class="chip"><strong>P0</strong> delivery: цифри або чесний fallback</span>
+            <span class="chip"><strong>P1</strong> меню: SSR/ISR + кеш</span>
+            <span class="chip"><strong>P1</strong> checkout: fail-state замість “вічно”</span>
+          </div>
+          <div class="nav">
+            <a href="#s1">1) undefined</a>
+            <a href="#s2">2) меню Loading</a>
+            <a href="#s3">3) delivery пусто</a>
+            <a href="#s4">4) checkout</a>
+            <a href="#s5">5) SEO мета</a>
+            <a href="#s6">6) перформанс</a>
+            <a href="#s7">7) безпека</a>
+            <a href="#s8">8) тест/моніторинг</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Як використовувати</h2>
+          <p>
+            Це не “звіт для галочки”. Це список задач у беклозі з прикладами.
+            Секції роби по черзі: <strong>P0</strong> → <strong>P1</strong> → покращення.
+          </p>
+          <div class="callout">
+            <strong>Порада:</strong> якщо ви на white-label платформі — частина фіксів може бути “в налаштуваннях”.
+            Але <strong>undefined</strong>, “порожні цифри” і “вічний Loading” все одно потрібно виправляти на рівні витрини/шаблону.
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- SECTION 1 -->
+    <section class="section" id="s1">
+      <div class="section-head">
+        <div>
+          <div class="pill p0">P0 • SEO/довіра</div>
+          <h3>1) “undefined” у заголовку (місто/філія)</h3>
+          <div class="meta">
+            Це виглядає як баг/шахрайство у Google і в прев’ю соцмереж. Причина — meta формується без валідного BranchConfig.
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn bad" data-toggle="undef" data-state="bad">Погано</button>
+          <button class="btn good" data-toggle="undef" data-state="good">Після фіксу</button>
+          <button class="btn info" data-toggle="undef" data-state="why">Чому так</button>
+        </div>
+      </div>
+
+      <div class="section-body two">
+        <div class="mock" id="undef-bad">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">https://osama.com.ua/obuhiv</div><span class="kbd">meta</span></div>
+          <div class="content">
+            <div class="warn"><strong>&lt;title&gt;</strong>: Доставка суші в <strong>undefined</strong> • OSAMA</div>
+            <ul class="list">
+              <li>Низька довіра: “у них щось не працює”</li>
+              <li>Поганий CTR у видачі (Google/Maps)</li>
+              <li>Зайві/биті сторінки можуть потрапляти в індекс</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mock hidden" id="undef-good">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">https://osama.com.ua/obuhiv</div><span class="kbd">SSR</span></div>
+          <div class="content">
+            <div class="ok"><strong>&lt;title&gt;</strong>: Доставка суші в <strong>Обухові</strong> • OSAMA</div>
+            <ul class="list">
+              <li>Meta формується на сервері з валідного конфігу</li>
+              <li>Невідомий slug → 404 або редирект на вибір міста</li>
+              <li>Соцмережі отримують нормальний OpenGraph</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mock hidden" id="undef-why">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">Що відбувається в коді</div><span class="kbd">root cause</span></div>
+          <div class="content">
+            <div class="info"><strong>Типова причина:</strong> meta береться з даних, які приходять <em>після</em> першого рендеру.</div>
+            <div class="kv">
+              <div class="item"><b>Варіант A</b><span>Title формує клієнт, а <span class="kbd">router.query</span> ще порожній.</span></div>
+              <div class="item"><b>Варіант B</b><span>Slug не знайдено, але ви повертаєте “порожній об’єкт” замість 404.</span></div>
+              <div class="item"><b>Варіант C</b><span>API-конфіг філії інколи падає/повільний → даних нема.</span></div>
+              <div class="item"><b>Варіант D</b><span>Нема runtime-валидації — <span class="kbd">null</span> стає “нормою”.</span></div>
+            </div>
+            <div class="callout"><strong>Правило продакшну:</strong> не генерувати SEO-мету з невалідаваних даних.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-body">
+        <div class="cols">
+          <div class="mini card" style="background:rgba(255,250,242,.72)">
+            <h4>Fix (обов’язково)</h4>
+            <p>Server metadata/SSR + валідатор slug → 404/redirect. Ніяких “undefined” у title.</p>
+          </div>
+          <div class="mini card" style="background:rgba(255,250,242,.72)">
+            <h4>Додатково</h4>
+            <p>Кеш-мапа slug→branchId (CDN/edge) щоб не бити API на кожен хіт.</p>
+          </div>
+          <div class="mini card" style="background:rgba(255,250,242,.72)">
+            <h4>Перевірка</h4>
+            <p>Playwright smoke: title не містить undefined; 404 для невідомих slugs.</p>
+          </div>
+        </div>
+
+        <div style="margin-top:12px" class="two">
+          <div>
+            <div class="code-title">Server metadata (app router)</div>
+            <pre>// app/[branchSlug]/layout.tsx (idea)
+export async function generateMetadata({ params }) {
+  const cfg = await getBranchConfig(params.branchSlug);
+  if (!cfg) return { title: "OSAMA — доставка суші" };
+  return { title: `Доставка суші в ${cfg.cityName} • OSAMA` };
+}</pre>
+          </div>
+          <div>
+            <div class="code-title">Middleware: unknown slug → redirect</div>
+            <pre>// middleware.ts (idea)
+import { NextResponse } from "next/server";
+export async function middleware(req) {
+  const slug = req.nextUrl.pathname.split("/")[1];
+  if (!slug) return NextResponse.next();
+  if (!(await isKnownBranchSlug(slug))) {
+    return NextResponse.redirect(new URL("/choose-city", req.url));
+  }
+  return NextResponse.next();
+}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section class="section" id="s2">
+      <div class="section-head">
+        <div>
+          <div class="pill p1">P1 • перформанс/SEO</div>
+          <h3>2) Меню/категорії як “Loading…” (CSR)</h3>
+          <div class="meta">
+            Якщо перший HTML порожній, а товари підтягуються клієнтом — ви втрачаєте швидкість і частину SEO.
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn bad" data-toggle="menu" data-state="bad">Погано</button>
+          <button class="btn good" data-toggle="menu" data-state="good">Після фіксу</button>
+          <button class="btn info" data-toggle="menu" data-state="list">Пункти</button>
+        </div>
+      </div>
+
+      <div class="section-body two">
+        <div class="mock" id="menu-bad">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">/kyiv-bazhana/menu/sets</div><span class="kbd">CSR</span></div>
+          <div class="content">
+            <div class="warn"><span class="spinner"></span><strong>Loading…</strong> (товари ще не приїхали)</div>
+            <div class="skeleton">
+              <div class="sk" style="width:68%"></div><div class="sk" style="width:92%"></div>
+              <div class="sk" style="width:78%"></div><div class="sk" style="width:55%"></div>
+            </div>
+            <ul class="list">
+              <li>На слабкому інтернеті — довго/зависання</li>
+              <li>Якщо API впало — “вічний Loading”</li>
+              <li>SEO: менше змісту в HTML</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mock hidden" id="menu-good">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">/kyiv-bazhana/menu/sets</div><span class="kbd">SSR/ISR</span></div>
+          <div class="content">
+            <div class="ok"><strong>Товари одразу в HTML</strong> + фонове оновлення</div>
+            <div style="display:grid;gap:10px;margin-top:10px">
+              <div class="card" style="margin:0;padding:12px 12px;background:rgba(255,250,242,.78)">
+                <strong>Сет “Osama Classic”</strong><br/>
+                <span style="color:var(--muted);font-size:13px">24 шт • 680 г</span>
+                <div style="margin-top:6px;font-weight:950">399 грн</div>
+              </div>
+              <div class="card" style="margin:0;padding:12px 12px;background:rgba(255,250,242,.78)">
+                <strong>Сет “Kyiv Mix”</strong><br/>
+                <span style="color:var(--muted);font-size:13px">32 шт • 920 г</span>
+                <div style="margin-top:6px;font-weight:950">529 грн</div>
+              </div>
+            </div>
+            <div class="callout"><strong>Продакшн:</strong> якщо API недоступне — показати кеш/повідомлення, а не порожнечу.</div>
+          </div>
+        </div>
+
+        <div class="mock hidden" id="menu-list">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">Пункти, які треба зробити</div><span class="kbd">checklist</span></div>
+          <div class="content">
+            <div class="info"><strong>План (коротко):</strong></div>
+            <ul class="list">
+              <li>Дати SSR/ISR для сторінок меню (категорії + список товарів)</li>
+              <li>Кешувати відповіді (revalidate 30–120 сек)</li>
+              <li>Додати Error boundary (зрозуміле повідомлення + “Оновити”)</li>
+              <li>Додати skeleton, але не як “єдиний” стан</li>
+              <li>Перевірити Web Vitals (TTFB/LCP) саме на меню</li>
+            </ul>
+            <div class="callout"><strong>Орієнтир:</strong> перший екран меню має бути видимий ≤ 2 секунди на 4G.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-body">
+        <div class="two">
+          <div>
+            <div class="code-title">ISR + кеш (Next.js)</div>
+            <pre>// app/[branch]/menu/[cat]/page.tsx (idea)
+export const revalidate = 60;
+export default async function Page({ params }) {
+  const data = await fetchMenu(params.branch, params.cat, {
+    next: { revalidate: 60 },
+  });
+  return <Menu data={data} />;
+}</pre>
+          </div>
+          <div>
+            <div class="code-title">Error boundary</div>
+            <pre>// app/[branch]/menu/[cat]/error.tsx (idea)
+"use client";
+export default function Error() {
+  return (
+    <div role="alert">
+      Не вдалося завантажити меню. Оновіть сторінку або зателефонуйте.
+    </div>
+  );
+}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section class="section" id="s3">
+      <div class="section-head">
+        <div>
+          <div class="pill p0">P0 • конверсія</div>
+          <h3>3) Delivery: порожні цифри/час</h3>
+          <div class="meta">
+            “Вартість доставки —  грн” — це зупиняє покупку. Тут потрібна валідація + fallback.
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn bad" data-toggle="del" data-state="bad">Погано</button>
+          <button class="btn good" data-toggle="del" data-state="good">Після фіксу</button>
+          <button class="btn info" data-toggle="del" data-state="list">Пункти</button>
+        </div>
+      </div>
+
+      <div class="section-body two">
+        <div class="mock" id="del-bad">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">/delivery</div><span class="kbd">config?</span></div>
+          <div class="content">
+            <div class="warn"><strong>Вартість доставки —  грн</strong>, безкоштовно від <strong> грн</strong></div>
+            <div style="height:10px"></div>
+            <div class="warn"><strong>Час доставки: з -</strong></div>
+            <ul class="list">
+              <li>Користувач не знає, чи йому вигідно замовляти</li>
+              <li>Виглядає як баг: “вони не контролюють процес”</li>
+              <li>Навіть якщо помилка “інколи” — вона дорога</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mock hidden" id="del-good">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">/delivery</div><span class="kbd">SSR+validate</span></div>
+          <div class="content">
+            <div class="ok"><strong>Вартість доставки — 49 грн</strong>, безкоштовно від <strong>499 грн</strong></div>
+            <div style="height:10px"></div>
+            <div class="ok"><strong>Час доставки:</strong> 45–90 хв (залежить від зони)</div>
+            <div class="callout"><strong>Якщо даних нема:</strong> показати “Уточніть у чаті/по телефону” + лог у моніторинг.</div>
+          </div>
+        </div>
+
+        <div class="mock hidden" id="del-list">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">Що зробити (пункти)</div><span class="kbd">checklist</span></div>
+          <div class="content">
+            <ul class="list">
+              <li>Зробити сторінку delivery SSR (щоб цифри були в HTML)</li>
+              <li>Валідувати конфіг (Zod / schema) до рендеру</li>
+              <li>Не показувати шаблон без даних — тільки fallback</li>
+              <li>Зберігати “останній валідний конфіг” у кеші</li>
+              <li>Алерт, якщо <span class="kbd">deliveryFee/freeFrom</span> стає null/NaN</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-body">
+        <div class="two">
+          <div>
+            <div class="code-title">Zod: runtime-валидація</div>
+            <pre>// lib/schema.ts (idea)
+import { z } from "zod";
+export const DeliveryCfg = z.object({
+  deliveryFee: z.number().nonnegative(),
+  freeFrom: z.number().nonnegative(),
+  etaMin: z.number().int().positive(),
+  etaMax: z.number().int().positive(),
+});</pre>
+          </div>
+          <div>
+            <div class="code-title">Fallback без “порожніх шаблонів”</div>
+            <pre>// DeliveryInfo.tsx (idea)
+export function DeliveryInfo({ cfg }) {
+  if (!cfg) return <div>Умови тимчасово недоступні. Уточніть у чаті.</div>;
+  return <>Доставка — {cfg.deliveryFee} грн…</>;
+}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section class="section" id="s4">
+      <div class="section-head">
+        <div>
+          <div class="pill p0">P0 • checkout</div>
+          <h3>4) Checkout: “вічний Loading” та відсутність fail-state</h3>
+          <div class="meta">
+            Чекаут — найдорогіша сторінка. Тут не має бути ситуації “все зникло, просто грузиться”.
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn bad" data-toggle="chk" data-state="bad">Погано</button>
+          <button class="btn good" data-toggle="chk" data-state="good">Після фіксу</button>
+          <button class="btn info" data-toggle="chk" data-state="list">Пункти</button>
+        </div>
+      </div>
+
+      <div class="section-body two">
+        <div class="mock" id="chk-bad">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">/checkout</div><span class="kbd">state?</span></div>
+          <div class="content">
+            <div class="warn"><span class="spinner"></span><strong>Loading…</strong> (нема зрозумілого стану)</div>
+            <ul class="list">
+              <li>Користувач не розуміє, що робити</li>
+              <li>Якщо API/платіж/адреси впали — втрата замовлення</li>
+              <li>Нема “плану B”: телефон/чат/повтор</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mock hidden" id="chk-good">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">/checkout</div><span class="kbd">resilient</span></div>
+          <div class="content">
+            <div class="ok"><strong>Чекаут живий навіть при збоях</strong></div>
+            <div class="kv">
+              <div class="item"><b>Якщо даних нема</b><span>Показати причину + “Оновити” + телефон.</span></div>
+              <div class="item"><b>Якщо зона недоступна</b><span>Попросити змінити адресу або вибрати іншу філію.</span></div>
+              <div class="item"><b>Якщо ціна змінилась</b><span>Показати повідомлення та попросити підтвердити.</span></div>
+              <div class="item"><b>Якщо API впало</b><span>Показати кеш + відкласти замовлення локально.</span></div>
+            </div>
+            <div class="callout"><strong>Обов’язково:</strong> Error boundary + таймаут + “контакти поруч”.</div>
+          </div>
+        </div>
+
+        <div class="mock hidden" id="chk-list">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">Пункти (чекаут)</div><span class="kbd">checklist</span></div>
+          <div class="content">
+            <ul class="list">
+              <li>Додати чіткі стани: loading / error / retry / offline</li>
+              <li>Таймаут на всі критичні запити (4–6 сек) + retry</li>
+              <li>Локально зберігати кошик (і адресні дані) на випадок перезавантаження</li>
+              <li>Виводити телефон/чат у чекауті як “рятівний вихід”</li>
+              <li>Smoke-тест: можна дійти до підтвердження замовлення</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-body">
+        <div class="two">
+          <div>
+            <div class="code-title">Error boundary для checkout</div>
+            <pre>// app/checkout/error.tsx (idea)
+"use client";
+export default function Error() {
+  return (
+    <div role="alert">
+      Не вдалося завантажити оформлення. Оновіть сторінку або зателефонуйте.
+    </div>
+  );
+}</pre>
+          </div>
+          <div>
+            <div class="code-title">UX: зберегти кошик локально</div>
+            <pre>// idea
+// localStorage/sessionStorage:
+// cart + branchSlug + deliveryZone + contactDraft
+// -> щоб user не втрачав прогрес</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section class="section" id="s5">
+      <div class="section-head">
+        <div>
+          <div class="pill p1">P1 • SEO</div>
+          <h3>5) Canonical / OpenGraph / hreflang (мета-структура)</h3>
+          <div class="meta">
+            SEO не тільки про текст: важливо, щоб canonical не вказував на “биті” URL, а OG працював для соцмереж.
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn info" data-toggle="seo" data-state="list">Пункти</button>
+          <button class="btn primary" data-toggle="seo" data-state="code">Шаблон meta</button>
+        </div>
+      </div>
+      <div class="section-body two">
+        <div class="mock" id="seo-list">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">SEO checklist</div><span class="kbd">meta</span></div>
+          <div class="content">
+            <ul class="list">
+              <li>Canonical завжди на валідний URL (без undefined)</li>
+              <li>OpenGraph: title/description/image заповнені</li>
+              <li>Структуровані дані (Restaurant/LocalBusiness) — опційно</li>
+              <li>Sitemap генерується зі “джерела істини” (філії + категорії)</li>
+              <li>404 сторінки не індексуються (noindex)</li>
+            </ul>
+            <div class="callout"><strong>Швидкий виграш:</strong> хороший OG збільшує кліки з соцмереж.</div>
+          </div>
+        </div>
+
+        <div class="mock hidden" id="seo-code">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">generateMetadata()</div><span class="kbd">Next</span></div>
+          <div class="content">
+            <div class="code-title">Шаблон</div>
+            <pre>// app/[branchSlug]/layout.tsx (idea)
+export async function generateMetadata({ params }) {
+  const cfg = await getBranchConfig(params.branchSlug);
+  if (!cfg) return { title: "OSAMA — доставка суші", robots: { index:false } };
+
+  const url = `https://osama.com.ua/${cfg.slug}`;
+  return {
+    title: `Доставка суші в ${cfg.cityName} • OSAMA`,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `OSAMA • ${cfg.cityName}`,
+      url,
+      images: [{ url: "/og-default.jpg" }],
+    },
+  };
+}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section class="section" id="s6">
+      <div class="section-head">
+        <div>
+          <div class="pill p1">P1 • перформанс</div>
+          <h3>6) Перформанс: бандл, зображення, кеш</h3>
+          <div class="meta">
+            Ціль: швидкий перший екран. Меню/чекаут повинні працювати навіть на слабкому телефоні.
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn info" data-toggle="perf" data-state="list">Пункти</button>
+          <button class="btn primary" data-toggle="perf" data-state="code">Приклади</button>
+        </div>
+      </div>
+      <div class="section-body two">
+        <div class="mock" id="perf-list">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">Performance checklist</div><span class="kbd">LCP</span></div>
+          <div class="content">
+            <ul class="list">
+              <li>SSR/ISR для меню (щоб HTML не був порожній)</li>
+              <li>Lazy-load великих блоків (але не critical UI)</li>
+              <li>Перевірити розмір JS: прибрати зайві бібліотеки</li>
+              <li>Оптимізувати картинки (Next Image, правильні розміри)</li>
+              <li>Cache-control для статичних ресурсів</li>
+            </ul>
+            <div class="callout"><strong>Метрики:</strong> TTFB, LCP, CLS саме на меню/checkout.</div>
+          </div>
+        </div>
+
+        <div class="mock hidden" id="perf-code">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">Кеш та images</div><span class="kbd">examples</span></div>
+          <div class="content">
+            <div class="code-title">Image: правильні пропорції</div>
+            <pre>// idea
+// <Image src={...} width={640} height={480} sizes="(max-width: 768px) 100vw, 640px" />
+// уникати “гігантських” фото там, де достатньо 640px</pre>
+            <div class="divider"></div>
+            <div class="code-title">Кеш для API</div>
+            <pre>// fetch(..., { next: { revalidate: 60 } })
+// + не оновлювати кеш, якщо runtime-валидація не пройшла</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section class="section" id="s7">
+      <div class="section-head">
+        <div>
+          <div class="pill p1">P1 • безпека</div>
+          <h3>7) Security headers / cookies / PII</h3>
+          <div class="meta">
+            На чекауті збираються телефон/адреса. Потрібні базові захисти: headers, cookies, rate-limit.
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn info" data-toggle="sec" data-state="list">Пункти</button>
+          <button class="btn primary" data-toggle="sec" data-state="code">Headers</button>
+        </div>
+      </div>
+      <div class="section-body two">
+        <div class="mock" id="sec-list">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">Security checklist</div><span class="kbd">prod</span></div>
+          <div class="content">
+            <ul class="list">
+              <li>HSTS (HTTPS), X-Frame-Options, X-Content-Type-Options</li>
+              <li>CSP (хоча б базова) — мінімізує ризик XSS</li>
+              <li>Cookies: Secure, HttpOnly, SameSite (де доречно)</li>
+              <li>Rate limit для оформлення/пошуку (антиспам)</li>
+              <li>Не передавати PII в URL/query params та у сторонню аналітику</li>
+            </ul>
+            <div class="callout"><strong>Мінімум:</strong> не допускати витоків телефону/адреси в логи та аналітику.</div>
+          </div>
+        </div>
+
+        <div class="mock hidden" id="sec-code">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">Next headers()</div><span class="kbd">security</span></div>
+          <div class="content">
+            <div class="code-title">next.config.js (idea)</div>
+            <pre>// next.config.js (idea)
+module.exports = {
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "geolocation=(), microphone=(), camera=()" },
+        ],
+      },
+    ];
+  },
+};</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section class="section" id="s8">
+      <div class="section-head">
+        <div>
+          <div class="pill p1">P1 • QA/моніторинг</div>
+          <h3>8) Smoke-тести + алерти</h3>
+          <div class="meta">
+            Без автоматичних перевірок баги повертаються. Тут мінімальний набір тестів і алертів.
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn primary" data-toggle="qa" data-state="code">Playwright</button>
+          <button class="btn info" data-toggle="qa" data-state="list">Пункти</button>
+        </div>
+      </div>
+      <div class="section-body two">
+        <div class="mock" id="qa-code">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">tests/smoke.spec.ts</div><span class="kbd">QA</span></div>
+          <div class="content">
+            <pre>// idea (скорочено)
+import { test, expect } from "@playwright/test";
+
+const slugs = ["obuhiv","mukachevo","kyiv-bazhana"];
+
+for (const slug of slugs) {
+  test("title no undefined", async ({ page }) => {
+    await page.goto(`/${slug}`);
+    await expect(page).not.toHaveTitle(/undefined/i);
+  });
+
+  test("menu has items", async ({ page }) => {
+    await page.goto(`/${slug}/menu/sets`);
+    await expect(page.locator("[data-item-card]")).toHaveCountGreaterThan(0);
+  });
+
+  test("delivery shows numbers OR fallback", async ({ page }) => {
+    await page.goto(`/delivery`);
+    // expect numbers OR contains 'Уточніть'
+  });
+}</pre>
+          </div>
+        </div>
+
+        <div class="mock hidden" id="qa-list">
+          <div class="topbar"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="addr">Monitoring checklist</div><span class="kbd">Sentry</span></div>
+          <div class="content">
+            <ul class="list">
+              <li>Алерт: regex “undefined” у title/meta</li>
+              <li>Алерт: deliveryFee/freeFrom/eta = null/NaN</li>
+              <li>Метрика: “Loading…” більше X секунд на меню/checkout</li>
+              <li>Web Vitals: LCP/TTFB на меню та checkout</li>
+              <li>Логи API: частота таймаутів/5xx</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div>© OSAMA.com.ua • Tech Audit v2 • HTML5</div>
+      <div>Файл можна зберегти у репозиторій як <span class="kbd">/docs/osama-audit-visual.html</span></div>
+    </div>
+  </div>
+
+<script>
+  // Toggle groups with multiple states
+  function showOne(prefix, state){
+    const nodes = document.querySelectorAll(`[id^="${prefix}-"]`);
+    nodes.forEach(n => n.classList.add("hidden"));
+    const el = document.getElementById(`${prefix}-${state}`);
+    if (el) el.classList.remove("hidden");
+  }
+
+  document.querySelectorAll("[data-toggle]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      showOne(btn.dataset.toggle, btn.dataset.state);
+    });
+  });
+
+  // Defaults
+  showOne("undef","bad");
+  showOne("menu","bad");
+  showOne("del","bad");
+  showOne("chk","bad");
+  showOne("seo","list");
+  showOne("perf","list");
+  showOne("sec","list");
+  showOne("qa","code");
+</script>
+</body>
+</html>
