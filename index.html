@@ -1,533 +1,648 @@
-<!doctype html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Viacheslav Munister — Researcher</title>
-<meta name="description" content="Research in robust control for IIoT and digital manufacturing; selected peer-reviewed papers and prototypes.">
-<link rel="canonical" href="https://munister-v.github.io/">
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Viacheslav Munister — Researcher</title>
+    <meta name="description" content="Industrial IoT · Digital Manufacturing · Control. Selected papers and collaborations." />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              neutral: {
+                850: '#1f1f1f',
+                900: '#171717',
+                950: '#0a0a0a', 
+              }
+            }
+          }
+        }
+      }
+    </script>
 
-<!-- Open Graph / Twitter -->
-<meta property="og:title" content="Viacheslav Munister — Researcher">
-<meta property="og:description" content="Industrial IoT · Digital Manufacturing · Control. Selected papers and collaborations.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://munister-v.github.io/">
-<meta property="og:image" content="https://munister-v.github.io/og-cover.png">
-<meta name="twitter:card" content="summary_large_image">
+    <!-- React & Dependencies (UMD) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
 
-<!-- Inline SVG favicon to avoid missing file errors -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0d13'/%3E%3Cpath d='M12 40 L32 12 L52 40' stroke='%237dd3fc' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<meta name="theme-color" content="#0a0d13">
-<meta name="color-scheme" content="dark light">
-
-<!-- Person JSON-LD -->
-<script type="application/ld+json">
+    <style>
+      /* Custom scrollbar for a premium feel */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0a0a0a; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #333; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555; 
+      }
+      body {
+        background-color: #0a0a0a;
+        color: #e5e5e5;
+      }
+    </style>
+  <script type="importmap">
 {
-  "@context":"https://schema.org",
-  "@type":"Person",
-  "name":"Viacheslav Munister",
-  "jobTitle":"Researcher",
-  "affiliation":[{"@type":"Organization","name":"State Tax University"}],
-  "knowsAbout":["Industrial IoT","Digital Manufacturing","Control","Robust MPC","Digital Twins"],
-  "email":"mailto:munister@outlook.com",
-  "sameAs":[
-    "https://scholar.google.com/citations?user=kdqMqoQAAAAJ",
-    "https://github.com/munister-v",
-    "https://www.researchgate.net/scientific-contributions/V-D-Munister-2194878329"
-  ],
-  "url":"https://munister-v.github.io/"
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "framer-motion": "https://esm.sh/framer-motion@^12.26.1"
+  }
 }
 </script>
-
-<style>
-  :root{
-    --bg:#0a0d13; --bg-2:#0c1118; --ink:#e9eaee; --muted:rgba(233,234,238,.88);
-    --accent:#7dd3fc; --rule:#1a2230; --chip:#0e141d; --radius:18px;
-    --pad: clamp(16px,3.2vw,28px);
-    --stick-top: 64px;
-    --control-bg: #0e141d;
-  }
-  html{ background:var(--bg); color:var(--ink); color-scheme:dark; scroll-behavior:smooth }
-  body{ margin:0; font:16px/1.65 ui-sans-serif, system-ui, -apple-system, Segoe UI, Inter, Roboto, Arial, sans-serif }
-  a{ color:var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset:.2em }
-  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{ outline:2px dashed var(--accent); outline-offset:3px }
-  .container{ width: min(100% - var(--pad)*2, 1180px); margin-inline:auto; padding-inline:var(--pad) }
-  .muted{ color:var(--muted) }
-
-  /* Header / nav */
-  .site-header{ position:sticky; top:0; z-index:20; backdrop-filter:saturate(120%) blur(8px);
-    background:linear-gradient(180deg, rgba(0,0,0,.24), rgba(0,0,0,.04) 70%, transparent);
-    border-bottom:1px solid var(--rule)
-  }
-  .navwrap{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding-block:.5rem }
-  .brand{ font-weight:700; letter-spacing:.2px }
-  .navlinks{ display:flex; align-items:center; gap:16px }
-  .navlinks a{ opacity:.9; padding:.4rem .2rem; border-radius:10px }
-  .navlinks a:hover,.navlinks a.active{ opacity:1; text-decoration-thickness:3px }
-  .nav-toggle{ display:none; border:1px solid var(--rule); background:var(--chip); color:var(--ink);
-    padding:.55rem .8rem; border-radius:999px; min-height:44px; cursor:pointer }
-
-  /* Sections */
-  section{ padding-block: clamp(18px, 5vw, 36px) }
-  #about, #highlights, #works, #collab, #contact{ scroll-margin-top: 72px }
-
-  h1{ font-size: clamp(30px,3.6vw,50px); line-height:1.12; margin:.6rem 0 }
-  h2{ font-size: clamp(20px,2.2vw,28px); margin:0 0 .6rem }
-  p{ color:var(--muted); margin:.2rem 0 1rem; max-width: 68ch }
-  .eyebrow{ color:#9aa3af; text-transform:uppercase; letter-spacing:.18em; font-size:.8rem; margin-bottom:.5rem }
-
-  .chips{ display:flex; flex-wrap:wrap; gap:8px }
-  .chip{ padding:.45rem .75rem; border:1px solid var(--rule); border-radius:999px; background:var(--chip) }
-
-  .card{ border:1px solid var(--rule); border-radius:var(--radius); background:var(--bg-2); padding: clamp(16px,2.2vw,22px) }
-
-  /* Metrics & grids */
-  .metrics{
-    display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
-    gap:12px
-  }
-  .metrics div{ border:1px solid var(--rule); padding:14px; border-radius:16px; background:var(--bg-2) }
-  .num{ font-size: clamp(24px,3vw,34px); font-weight:700 }
-
-  .grid3{
-    display:grid; gap: clamp(12px,2.5vw,22px);
-    grid-template-columns: repeat(auto-fit, minmax(260px,1fr))
-  }
-
-  .w-meta{ color:#9aa3af; font-size:.9rem; margin:.1rem 0 .6rem }
-  .w-links a{ text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset:.18rem }
-  .w-bullets{ margin:.2rem 0 .8rem; padding-left:1.1rem }
-  .w-bullets li{ margin:.18rem 0 }
-
-  /* Filter/Search/Sort toolbar */
-  .filterbar{
-    position: sticky;
-    top: var(--stick-top);
-    z-index: 15;
-    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
-    padding: .5rem var(--pad) .6rem;
-    margin-inline: calc(-1 * var(--pad));
-    background: color-mix(in srgb, var(--bg) 88%, black);
-    border-bottom: 1px solid var(--rule);
-    backdrop-filter: blur(8px) saturate(120%);
-  }
-  .filterchips{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
-  .chipbtn{
-    padding:.55rem .9rem; border:1px solid var(--rule);
-    border-radius:999px; background:var(--chip); cursor:pointer; min-height:44px
-  }
-  .chipbtn[aria-pressed="true"]{ outline:2px solid var(--accent) }
-
-  .controls{ display:flex; align-items:center; gap:10px; margin-left:auto; flex-wrap:wrap }
-  .control{ display:inline-flex; align-items:center; gap:8px; border:1px solid var(--rule); background:var(--control-bg); border-radius:12px; padding:.5rem .7rem }
-  .control input[type="search"]{ background:transparent; border:0; color:var(--ink); outline:none; min-width:12ch }
-  .control select{ background:transparent; border:0; color:var(--ink); outline:none }
-
-  .deemph{ filter: grayscale(.2); opacity:.5 }
-
-  /* CTA */
-  #collab .card{ text-align:center }
-  #collab .chip{ display:inline-block; margin:.25rem .35rem; cursor:pointer }
-
-  /* Skip link */
-  .skip{ position:absolute; inset-inline-start:-9999px; inset-block-start:auto }
-  .skip:focus{ position:fixed; inset-inline-start:var(--pad); inset-block-start:var(--pad); z-index:30;
-    background:var(--bg-2); color:var(--ink); padding:.6rem .8rem; border-radius:10px; border:1px solid var(--rule) }
-
-  footer small{ color:#9aa3af }
-
-  /* Mobile tweaks */
-  @media (max-width: 800px){
-    .nav-toggle{ display:inline-flex; align-items:center; gap:8px }
-    .navlinks{
-      position: fixed; left:0; right:0; top: calc(env(safe-area-inset-top) + 56px);
-      background: var(--bg-2); border-bottom:1px solid var(--rule);
-      padding:12px var(--pad) 16px; display:none; flex-direction:column; align-items:flex-start; gap:8px
-    }
-    .navlinks.open{ display:flex }
-    /* center Contact + footer on mobile */
-    #contact .container, footer .container{ text-align:center }
-    /* center Filter bar content on mobile */
-    .filterbar{ justify-content:center; }
-    .filterchips{ justify-content:center; width:100%; }
-    .controls{ justify-content:center; margin-left:0 }
-    .control input[type="search"]{ min-width: 16ch }
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ animation:none!important; transition:none!important; scroll-behavior:auto }
-  }
-</style>
+<link rel="stylesheet" href="/index.css">
 </head>
-<body>
+  <body>
+    <div id="root"></div>
 
-<a class="skip" href="#content">Skip to content</a>
+    <script type="text/babel">
+      const { useState, useEffect, useMemo } = React;
+      const { motion, AnimatePresence } = window.Motion;
 
-<header id="top" class="site-header">
-  <div class="container navwrap">
-    <div class="brand">Viacheslav Munister</div>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation">Menu</button>
-    <nav id="primary-nav" class="navlinks" aria-label="Primary">
-      <a href="#about">About</a>
-      <a href="#highlights">Highlights</a>
-      <a href="#works">Selected Papers</a>
-      <a href="#collab">Collaborate</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </div>
-</header>
+      // --- ICONS (Inlined to avoid UMD issues) ---
+      const IconWrapper = ({ children, size = 24, className = "", ...props }) => (
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width={size} 
+          height={size} 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          className={className} 
+          {...props}
+        >
+          {children}
+        </svg>
+      );
 
-<main id="content">
-  <section id="about">
-    <div class="container">
-      <div class="eyebrow">About</div>
-      <h1>Viacheslav Munister — Researcher</h1>
-      <p>I work at the intersection of <b>Industrial IoT</b>, <b>Digital Manufacturing</b>, and <b>Control</b> — building models and prototypes that help factories become smarter, safer, and more efficient.</p>
-      <div class="chips">
-        <span class="chip">Edge IIoT</span><span class="chip">Robust MPC</span><span class="chip">Digital Twins</span>
-        <span class="chip">Vision-based QC</span><span class="chip">C/C++</span><span class="chip">Swift</span><span class="chip">PlantUML</span>
-      </div>
-    </div>
-  </section>
+      const Menu = (props) => (
+        <IconWrapper {...props}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></IconWrapper>
+      );
+      const X = (props) => (
+        <IconWrapper {...props}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></IconWrapper>
+      );
+      const ArrowUpRight = (props) => (
+        <IconWrapper {...props}><path d="M7 7h10v10"/><path d="M7 17 17 7"/></IconWrapper>
+      );
+      const Mail = (props) => (
+        <IconWrapper {...props}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></IconWrapper>
+      );
+      const Github = (props) => (
+        <IconWrapper {...props}><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></IconWrapper>
+      );
+      const BookOpen = (props) => (
+        <IconWrapper {...props}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></IconWrapper>
+      );
+      const Layers = (props) => (
+        <IconWrapper {...props}><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></IconWrapper>
+      );
 
-  <section id="highlights">
-    <div class="container">
-      <div class="eyebrow">Highlights</div>
-      <h2>Impact metrics</h2>
-      <div class="metrics">
-        <div><div>Publications</div><div class="num">45</div></div>
-        <div><div>Citations</div><div class="num">523</div></div>
-        <div><div>H-index</div><div class="num">11</div></div>
-      </div>
-      <p class="muted">as of <time datetime="2025-10-03">2025-10-03</time></p>
-    </div>
-  </section>
 
-  <section id="works">
-    <div class="container">
-      <div class="eyebrow">Selected Papers</div>
+      // --- DATA CONSTANTS ---
 
-      <div class="filterbar" role="toolbar" aria-label="Filter, search, and sort papers">
-        <div class="filterchips">
-          <span class="muted" aria-hidden="true">Filter:</span>
-          <button class="chipbtn" data-chip="control" aria-pressed="false">control</button>
-          <button class="chipbtn" data-chip="iiot" aria-pressed="false">iiot</button>
-          <button class="chipbtn" data-chip="ml" aria-pressed="false">ml</button>
-          <button class="chipbtn" data-chip="measurement" aria-pressed="false">measurement</button>
-          <button class="chipbtn" data-chip="education" aria-pressed="false">education</button>
-          <button class="chipbtn" data-chip="" aria-pressed="false" aria-label="Clear filters" title="Clear filters">clear</button>
-        </div>
-        <div class="controls">
-          <label class="control" aria-label="Search">
-            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.5 21.5 20zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"/></svg>
-            <input id="q" type="search" placeholder="Search papers..." autocomplete="off">
-          </label>
-          <label class="control" aria-label="Sort">
-            <select id="sort">
-              <option value="new">Newest</option>
-              <option value="old">Oldest</option>
-              <option value="az">A–Z</option>
-              <option value="za">Z–A</option>
-            </select>
-          </label>
-        </div>
-        <span id="sr-status" class="muted" style="position:absolute; left:-9999px" role="status" aria-live="polite"></span>
-      </div>
+      const METRICS = [
+        { label: "Publications", value: "45" },
+        { label: "Citations", value: "523" },
+        { label: "H-index", value: "11" },
+      ];
 
-      <div class="grid3" id="workgrid">
+      const CORE_TAGS = ["All", "Control", "IIoT", "ML", "Measurement", "Education"];
 
-        <article class="card work" data-tags="hardware,perceptron,quantum,hashing,iiot" data-year="2024" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
-          <h3 class="w-title" itemprop="name">Principles of organizing a hardware of information collection system perceptron for a quantum hashing problem</h3>
-          <div class="w-meta">AIP Conference Proceedings 2969(1):050018 • 2024 • conference paper</div>
-          <p class="w-excerpt muted">Hardware-oriented perceptron scheme for fast acquisition in quantum hashing tasks; focuses on throughput and resilience to input noise.</p>
-          <ul class="w-bullets"><li>Perceptron-based front-end for quantum-hash data paths</li><li>Latency/throughput estimates and hardware resource notes</li></ul>
-          <meta itemprop="author" content="Viacheslav Munister">
-          <meta itemprop="datePublished" content="2024">
-          <meta itemprop="isPartOf" content="AIP Conference Proceedings">
-          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Principles+of+organizing+a+hardware+of+information+collection+system+perceptron+for+a+quantum+hashing+problem" itemprop="sameAs">Scholar</a>
-        </article>
+      const PAPERS = [
+        {
+          id: "1",
+          title: "Principles of organizing a hardware of information collection system perceptron for a quantum hashing problem",
+          venue: "AIP Conference Proceedings 2969(1):050018",
+          year: 2024,
+          type: "Conference Paper",
+          excerpt: "Hardware-oriented perceptron scheme for fast acquisition in quantum hashing tasks; focuses on throughput and resilience to input noise.",
+          tags: ["hardware", "iiot", "quantum"],
+          link: "https://scholar.google.com/scholar?q=Principles+of+organizing+a+hardware+of+information+collection+system+perceptron+for+a+quantum+hashing+problem"
+        },
+        {
+          id: "2",
+          title: "Synthesis of the control system for the machinery production using regression analysis in the conditions of Industry 4.0",
+          venue: "AIP Conference Proceedings 3021(1):040003",
+          year: 2024,
+          type: "Conference Paper",
+          excerpt: "Regression-driven control design workflow for machinery lines; emphasizes data sufficiency and model validation.",
+          tags: ["control", "manufacturing", "industry 4.0"],
+          link: "https://scholar.google.com/scholar?q=Synthesis+of+the+control+system+for+the+machinery+production+using+regression+analysis+in+the+conditions+of+Industry+4.0"
+        },
+        {
+          id: "3",
+          title: "Comparative analysis of heuristic algorithms of minimization of functions of several variables using modern medical computer technologies",
+          venue: "AIP Conference Proceedings 2812(1):020006",
+          year: 2023,
+          type: "Conference Paper",
+          excerpt: "Benchmarks of heuristic minimization algorithms on multi-variable functions with a medical-computing toolchain.",
+          tags: ["algorithms", "optimization", "medical-computing"],
+          link: "https://scholar.google.com/scholar?q=Comparative+analysis+of+heuristic+algorithms+of+minimization+of+functions+of+several+variables+using+modern+medical+computer+technologies"
+        },
+        {
+          id: "4",
+          title: "Use of the adaptive neuro-fuzzy system on the example of adjusting the parameters of a neural network in an actuator",
+          venue: "AIP Conference Proceedings 2402(1):070003",
+          year: 2021,
+          type: "Conference Paper",
+          excerpt: "ANFIS-based scheme for tuning NN parameters inside an actuator loop; shows improved stability vs. manual tuning.",
+          tags: ["control", "anfis", "neural-network"],
+          link: "https://scholar.google.com/scholar?q=Use+of+the+adaptive+neuro-fuzzy+system+on+the+example+of+adjusting+the+parameters+of+a+neural+network+in+an+actuator"
+        },
+        {
+          id: "5",
+          title: "Introduction of fog computations to measuring system collection and accounting of data of distributed Internet of Things",
+          venue: "Journal of Physics: Conference Series 2096(1):012155",
+          year: 2021,
+          type: "Conference Paper",
+          excerpt: "Fog-computing layer for metering systems in distributed IoT: data reduction near the edge and accounting consistency.",
+          tags: ["iiot", "fog", "edge", "measurement"],
+          link: "https://scholar.google.com/scholar?q=Introduction+of+fog+computations+to+measuring+system+collection+and+accounting+of+data+of+distributed+Internet+of+Things"
+        },
+        {
+          id: "6",
+          title: "Application of machine learning for optimization of operational processes in industrial drum units",
+          venue: "AIP Conference Proceedings 2467(1):030001",
+          year: 2022,
+          type: "Conference Paper",
+          excerpt: "ML pipeline for drum-unit operation optimization with predictive maintenance and process KPI uplift.",
+          tags: ["ml", "predictive-maintenance", "manufacturing"],
+          link: "https://scholar.google.com/scholar?q=Application+of+machine+learning+for+optimization+of+operational+processes+in+industrial+drum+units"
+        },
+        {
+          id: "7",
+          title: "Features of the implementation of artificial intelligence and digital technologies in industrial production",
+          venue: "Journal of Physics: Conference Series 1889(2):022012",
+          year: 2021,
+          type: "Conference Paper",
+          excerpt: "Survey of AI/digital adoption patterns in industrial production with a focus on automation trends and readiness.",
+          tags: ["ai", "automation", "industry 4.0"],
+          link: "https://scholar.google.com/scholar?q=Features+of+the+implementation+of+artificial+intelligence+and+digital+technologies+in+industrial+production%3A+promising+directions+and+modern+trends+in+automation"
+        }
+      ];
 
-        <article class="card work" data-tags="control,regression,industry4.0,manufacturing" data-year="2024" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
-          <h3 class="w-title" itemprop="name">Synthesis of the control system for the machinery production using regression analysis in the conditions of Industry 4.0</h3>
-          <div class="w-meta">AIP Conference Proceedings 3021(1):040003 • 2024 • conference paper</div>
-          <p class="w-excerpt muted">Regression-driven control design workflow for machinery lines; emphasizes data sufficiency and model validation.</p>
-          <ul class="w-bullets"><li>Regression models for setpoint/actuation planning</li><li>Validation under production disturbances</li></ul>
-          <meta itemprop="author" content="Viacheslav Munister">
-          <meta itemprop="datePublished" content="2024">
-          <meta itemprop="isPartOf" content="AIP Conference Proceedings">
-          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Synthesis+of+the+control+system+for+the+machinery+production+using+regression+analysis+in+the+conditions+of+Industry+4.0" itemprop="sameAs">Scholar</a>
-        </article>
+      const SKILLS = [
+        {
+          category: "Programming",
+          items: ["Python", "C/C++", "TypeScript", "SQL (PostgreSQL)", "Bash", "NumPy/Pandas", "PlantUML"]
+        },
+        {
+          category: "Control & Analytics",
+          items: ["State‑space models", "Robust MPC", "Kalman/observers", "Time‑series (ARIMA)", "Edge inference"]
+        },
+        {
+          category: "Industrial / IIoT",
+          items: ["Digital Twins (ISO 23247)", "OPC UA / MQTT", "SCADA basics", "PLC integration", "Sensor fusion"]
+        },
+        {
+          category: "DevOps & Tools",
+          items: ["Docker / Compose", "n8n automations", "GitHub Actions", "Redis", "FastAPI"]
+        }
+      ];
 
-        <article class="card work" data-tags="algorithms,optimization,medical-computing" data-year="2023" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
-          <h3 class="w-title" itemprop="name">Comparative analysis of heuristic algorithms of minimization of functions of several variables using modern medical computer technologies</h3>
-          <div class="w-meta">AIP Conference Proceedings 2812(1):020006 • 2023 • conference paper</div>
-          <p class="w-excerpt muted">Benchmarks of heuristic minimization algorithms on multi-variable functions with a medical-computing toolchain.</p>
-          <ul class="w-bullets"><li>Heuristic solvers vs. baselines on test manifolds</li><li>Runtime and stability under measurement noise</li></ul>
-          <meta itemprop="author" content="Viacheslav Munister">
-          <meta itemprop="datePublished" content="2023">
-          <meta itemprop="isPartOf" content="AIP Conference Proceedings">
-          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Comparative+analysis+of+heuristic+algorithms+of+minimization+of+functions+of+several+variables+using+modern+medical+computer+technologies" itemprop="sameAs">Scholar</a>
-        </article>
+      const EXPERIENCE = [
+        {
+          role: "Product Architect @ TeachED",
+          description: "EdTech platform architecture and development",
+          details: [
+            "Led the technical architecture for educational product scaling.",
+            "Oversaw integration of learning management modules and user analytics systems."
+          ]
+        },
+        {
+          role: "Epri Material",
+          link: "https://www.linkedin.com/feed/update/urn:li:activity:7414424422138380288/",
+          description: "Advanced material processing prototype (LinkedIn Update)",
+          details: [
+             "Research and prototyping for specialized material applications.",
+             "Click the link to view the visual update and project status."
+          ]
+        },
+        {
+          role: "Intelligent Financial Risk Assessment",
+          description: "Based on Fuzzy Logic and Boolean Minimization",
+          details: [
+            "Developed a robust risk assessment system utilizing fuzzy logic principles.",
+            "Implemented boolean minimization algorithms to optimize decision-making logic."
+          ]
+        },
+        {
+          role: "Art Flaneur",
+          description: "Game Mechanics Development",
+          details: [
+            "Designed and implemented core gameplay mechanics for interactive digital art.",
+            "Collaborated on technical realization of creative concepts."
+          ]
+        },
+        {
+          role: "Industrial Analytics & Control — Research/Prototype",
+          description: "Edge temperature control; predictive maintenance; data collection stack",
+          details: [
+            "Designed and prototyped robust MPC loops for thermal processes with edge inference.",
+            "Set up IIoT telemetry (OPC UA/MQTT), buffering, and on‑device feature extraction."
+          ]
+        },
+        {
+          role: "Digital Manufacturing Platform (\"CNCera\")",
+          description: "Local CNC/CAM workflow; n8n, PostgreSQL, Redis, Docker",
+          details: [
+            "Built data‑driven job management with JSON pipelines and automated report exports.",
+            "Integrated CAM toolpath metadata for analytics and quality feedback loops."
+          ]
+        }
+      ];
 
-        <article class="card work" data-tags="anfis,actuator,neural-network,control" data-year="2021" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
-          <h3 class="w-title" itemprop="name">Use of the adaptive neuro-fuzzy system on the example of adjusting the parameters of a neural network in an actuator</h3>
-          <div class="w-meta">AIP Conference Proceedings 2402(1):070003 • 2021 • conference paper</div>
-          <p class="w-excerpt muted">ANFIS-based scheme for tuning NN parameters inside an actuator loop; shows improved stability vs. manual tuning.</p>
-          <ul class="w-bullets"><li>Adaptive neuro-fuzzy tuning of embedded NN</li><li>Stability margins and convergence behavior</li></ul>
-          <meta itemprop="author" content="Viacheslav Munister">
-          <meta itemprop="datePublished" content="2021">
-          <meta itemprop="isPartOf" content="AIP Conference Proceedings">
-          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Use+of+the+adaptive+neuro-fuzzy+system+on+the+example+of+adjusting+the+parameters+of+a+neural+network+in+an+actuator" itemprop="sameAs">Scholar</a>
-        </article>
+      // --- COMPONENTS ---
 
-        <article class="card work" data-tags="fog,edge,iiot,measurement" data-year="2021" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
-          <h3 class="w-title" itemprop="name">Introduction of fog computations to measuring system collection and accounting of data of distributed Internet of Things</h3>
-          <div class="w-meta">Journal of Physics: Conference Series 2096(1):012155 • 2021 • conference paper</div>
-          <p class="w-excerpt muted">Fog-computing layer for metering systems in distributed IoT: data reduction near the edge and accounting consistency.</p>
-          <ul class="w-bullets"><li>Edge/fog aggregation patterns for sensors</li><li>Consistency model for metering streams</li></ul>
-          <meta itemprop="author" content="Viacheslav Munister">
-          <meta itemprop="datePublished" content="2021">
-          <meta itemprop="isPartOf" content="Journal of Physics: Conference Series">
-          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Introduction+of+fog+computations+to+measuring+system+collection+and+accounting+of+data+of+distributed+Internet+of+Things" itemprop="sameAs">Scholar</a>
-        </article>
+      const Navigation = () => {
+        const [isScrolled, setIsScrolled] = useState(false);
+        const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-        <article class="card work" data-tags="ml,predictive-maintenance,manufacturing" data-year="2022" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
-          <h3 class="w-title" itemprop="name">Application of machine learning for optimization of operational processes in industrial drum units</h3>
-          <div class="w-meta">AIP Conference Proceedings 2467(1):030001 • 2022 • conference paper</div>
-          <p class="w-excerpt muted">ML pipeline for drum-unit operation optimization with predictive maintenance and process KPI uplift.</p>
-          <ul class="w-bullets"><li>Feature engineering from vibration/thermal logs</li><li>Throughput and downtime improvements</li></ul>
-          <meta itemprop="author" content="Viacheslav Munister">
-          <meta itemprop="datePublished" content="2022">
-          <meta itemprop="isPartOf" content="AIP Conference Proceedings">
-          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Application+of+machine+learning+for+optimization+of+operational+processes+in+industrial+drum+units" itemprop="sameAs">Scholar</a>
-        </article>
+        useEffect(() => {
+          const handleScroll = () => {
+            setIsScrolled(window.scrollY > 50);
+          };
+          window.addEventListener('scroll', handleScroll);
+          return () => window.removeEventListener('scroll', handleScroll);
+        }, []);
 
-        <article class="card work" data-tags="ai,automation,industry4.0" data-year="2021" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
-          <h3 class="w-title" itemprop="name">Features of the implementation of artificial intelligence and digital technologies in industrial production: promising directions and modern trends in automation</h3>
-          <div class="w-meta">Journal of Physics: Conference Series 1889(2):022012 • 2021 • conference paper</div>
-          <p class="w-excerpt muted">Survey of AI/digital adoption patterns in industrial production with a focus on automation trends and readiness.</p>
-          <ul class="w-bullets"><li>Readiness factors and barriers to adoption</li><li>Roadmap for pilot-to-scale transitions</li></ul>
-          <meta itemprop="author" content="Viacheslav Munister">
-          <meta itemprop="datePublished" content="2021">
-          <meta itemprop="isPartOf" content="Journal of Physics: Conference Series">
-          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Features+of+the+implementation+of+artificial+intelligence+and+digital+technologies+in+industrial+production%3A+promising+directions+and+modern+trends+in+automation" itemprop="sameAs">Scholar</a>
-        </article>
+        const links = [
+          { label: 'Selected Papers', href: '#papers' },
+          { label: 'Experience', href: '#experience' },
+          { label: 'Contact', href: '#contact' },
+        ];
 
-        <article class="card work" data-tags="environment,measurement,ml" data-year="2021" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
-          <h3 class="w-title" itemprop="name">Features of the synthesis of information and measurement systems using machine learning for conducting of environmental monitoring</h3>
-          <div class="w-meta">Journal of Physics: Conference Series 1889(3):032008 • 2021 • conference paper</div>
-          <p class="w-excerpt muted">Design considerations for ML-driven information/measurement systems applied to environmental monitoring tasks.</p>
-          <ul class="w-bullets"><li>Sensor fusion schemes for environmental metrics</li><li>Model validation under field conditions</li></ul>
-          <meta itemprop="author" content="Viacheslav Munister">
-          <meta itemprop="datePublished" content="2021">
-          <meta itemprop="isPartOf" content="Journal of Physics: Conference Series">
-          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Features+of+the+synthesis+of+information+and+measurement+systems+using+machine+learning+for+conducting+of+environmental+monitoring" itemprop="sameAs">Scholar</a>
-        </article>
+        const handleScrollTo = (e, href) => {
+          e.preventDefault();
+          setMobileMenuOpen(false);
+          const targetId = href.replace('#', '');
+          const element = document.getElementById(targetId);
+          if (element) {
+            element.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+          }
+        };
 
-        <article class="card work" data-tags="medicine,diagnostics,measurement" data-year="2021" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
-          <h3 class="w-title" itemprop="name">Analysis of modern computer diagnostic and measurement methods in medicine</h3>
-          <div class="w-meta">Journal of Physics: Conference Series 1889(5):052005 • 2021 • conference paper</div>
-          <p class="w-excerpt muted">Overview of diagnostic and measurement methodologies in computational medicine; accuracy and workflow aspects.</p>
-          <ul class="w-bullets"><li>Modalities: imaging, biosignals, hybrid approaches</li><li>Accuracy vs. cost and integration challenges</li></ul>
-          <meta itemprop="author" content="Viacheslav Munister">
-          <meta itemprop="datePublished" content="2021">
-          <meta itemprop="isPartOf" content="Journal of Physics: Conference Series">
-          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Analysis+of+modern+computer+diagnostic+and+measurement+methods+in+medicine" itemprop="sameAs">Scholar</a>
-        </article>
+        return (
+          <nav 
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
+              isScrolled 
+                ? 'bg-neutral-950/80 backdrop-blur-md border-neutral-800 py-4' 
+                : 'bg-transparent border-transparent py-6'
+            }`}
+          >
+            <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
+              <a 
+                href="#" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="text-lg font-bold tracking-tight text-white z-50 cursor-pointer"
+              >
+                V. Munister
+              </a>
 
-        <article class="card work" data-tags="education,ai,metrology" data-year="2021" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
-          <h3 class="w-title" itemprop="name">Application of artificial intelligence and digital technologies in the organization of the educational process of specialists in the field of physics, engineering and metrology</h3>
-          <div class="w-meta">Journal of Physics: Conference Series 1889(2):022015 • 2021 • conference paper</div>
-          <p class="w-excerpt muted">Guidelines for embedding AI/digital tools into training pipelines for physics/engineering/metrology specialists.</p>
-          <ul class="w-bullets"><li>Curriculum modules and lab patterns</li><li>Assessment and tooling alignment</li></ul>
-          <meta itemprop="author" content="Viacheslav Munister">
-          <meta itemprop="datePublished" content="2021">
-          <meta itemprop="isPartOf" content="Journal of Physics: Conference Series">
-          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Application+of+artificial+intelligence+and+digital+technologies+in+the+organization+of+the+educational+process+of+specialists+in+the+field+of+physics%2C+engineering+and+metrology" itemprop="sameAs">Scholar</a>
-        </article>
+              {/* Desktop Links */}
+              <div className="hidden md:flex items-center gap-8">
+                {links.map((link) => (
+                  <a 
+                    key={link.label}
+                    href={link.href}
+                    onClick={(e) => handleScrollTo(e, link.href)}
+                    className="text-sm font-medium text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+                <a 
+                  href="mailto:munister@outlook.com"
+                  className="text-sm px-4 py-2 bg-white text-black font-semibold rounded-full hover:bg-neutral-200 transition-colors flex items-center gap-2"
+                >
+                  Get in touch
+                </a>
+              </div>
 
-        <article class="card work" data-tags="greenhouse,neuro-fuzzy,iot,control" data-year="2022" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
-          <h3 class="w-title" itemprop="name">An example of intelligent greenhousing synthesis based on modern digital systems, neuro-fuzzy technologies and IoT</h3>
-          <div class="w-meta">IOP Conf. Ser.: Earth and Environmental Science 981(3):032001 • 2022 • conference paper</div>
-          <p class="w-excerpt muted">Conceptual greenhousing control using neuro-fuzzy components and IoT telemetry to stabilize microclimate.</p>
-          <ul class="w-bullets"><li>Rule bases and membership functions</li><li>Energy–yield trade-off sketches</li></ul>
-          <meta itemprop="author" content="Viacheslav Munister">
-          <meta itemprop="datePublished" content="2022">
-          <meta itemprop="isPartOf" content="IOP Conference Series: Earth and Environmental Science">
-          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=An+example+of+intelligent+greenhousing+synthesis+based+on+modern+digital+systems%2C+neuro-fuzzy+technologies+and+IoT" itemprop="sameAs">Scholar</a>
-        </article>
+              {/* Mobile Toggle */}
+              <button 
+                className="md:hidden z-50 text-white"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
 
-        <article class="card work" data-tags="metrology,iiot,governance" data-year="2021" tabindex="0" itemscope itemtype="https://schema.org/ScholarlyArticle">
-          <h3 class="w-title" itemprop="name">Metrological support integration in conditions of digital transformation</h3>
-          <div class="w-meta">Journal of Physics: Conference Series 1889(3):032012 • 2021 • conference paper</div>
-          <p class="w-excerpt muted">Integration path for metrological support during digital transformation: traceability, calibration, and data governance.</p>
-          <ul class="w-bullets"><li>Traceability chains for IIoT measurements</li><li>Calibration policies and auditability</li></ul>
-          <meta itemprop="author" content="Viacheslav Munister">
-          <meta itemprop="datePublished" content="2021">
-          <meta itemprop="isPartOf" content="Journal of Physics: Conference Series">
-          <a class="w-links" target="_blank" rel="noopener" href="https://scholar.google.com/scholar?q=Metrological+support+integration+in+conditions+of+digital+transformation" itemprop="sameAs">Scholar</a>
-        </article>
+              {/* Mobile Menu */}
+              {mobileMenuOpen && (
+                <div className="fixed inset-0 bg-neutral-950 flex flex-col items-center justify-center gap-8 z-40">
+                   {links.map((link) => (
+                  <a 
+                    key={link.label}
+                    href={link.href}
+                    onClick={(e) => handleScrollTo(e, link.href)}
+                    className="text-2xl font-light text-white cursor-pointer"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+                </div>
+              )}
+            </div>
+          </nav>
+        );
+      };
 
-      </div>
-    </div>
-  </section>
+      const Hero = () => {
+        return (
+          <section className="pt-40 pb-20 md:pt-60 md:pb-32 px-6 md:px-12 container mx-auto">
+            <div className="max-w-5xl">
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="text-neutral-400 text-lg md:text-xl mb-6 tracking-wide uppercase font-medium"
+              >
+                Viacheslav Munister
+              </motion.p>
+              
+              <motion.h1 
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="text-5xl md:text-8xl font-semibold text-white tracking-tighter leading-[1.1] mb-12"
+              >
+                Researcher in <span className="text-neutral-500">Industrial IoT</span>, Digital Manufacturing & <span className="text-neutral-500">Control Systems</span>.
+              </motion.h1>
 
-  <section id="collab">
-    <div class="container">
-      <div class="card">
-        <h2>Open to collaborations</h2>
-        <p class="muted">Edge IIoT · Robust MPC · Digital Twins · Vision-based QC</p>
-        <p>
-          <a class="chip" href="mailto:munister@outlook.com">Email me</a>
-          <a class="chip" href="https://munister-v.github.io/cv.html">See my CV</a>
-        </p>
-      </div>
-    </div>
-  </section>
+              <motion.p 
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-xl md:text-2xl text-neutral-400 max-w-2xl leading-relaxed mb-16"
+              >
+                Building models and prototypes that help factories become smarter, safer, and more efficient. Focused on Robust MPC, Edge IIoT, and Vision-based QC.
+              </motion.p>
+            </div>
 
-  <section id="contact">
-    <div class="container">
-      <div class="eyebrow">Contact</div>
-      <p>Email: <a href="mailto:munister@outlook.com">munister@outlook.com</a> ·
-         <a href="https://github.com/munister-v" target="_blank" rel="noopener">GitHub</a> ·
-         <a href="https://scholar.google.com/citations?user=kdqMqoQAAAAJ" target="_blank" rel="noopener">Scholar</a> ·
-         <a href="https://www.researchgate.net/scientific-contributions/V-D-Munister-2194878329" target="_blank" rel="noopener">ResearchGate</a>
-      </p>
-    </div>
-  </section>
-</main>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-neutral-800 pt-12"
+            >
+              {METRICS.map((metric) => (
+                <div key={metric.label}>
+                  <div className="text-4xl md:text-5xl font-bold text-white mb-2">{metric.value}</div>
+                  <div className="text-sm text-neutral-500 uppercase tracking-widest">{metric.label}</div>
+                </div>
+              ))}
+              <div className="hidden md:block">
+                 <div className="text-sm text-neutral-500 uppercase tracking-widest mb-2">Current Status</div>
+                 <div className="text-neutral-300 font-medium">Open to Collaboration</div>
+              </div>
+            </motion.div>
+          </section>
+        );
+      };
 
-<footer>
-  <div class="container">
-    <small class="muted">© 2025 Viacheslav Munister</small>
-  </div>
-</footer>
+      const Papers = () => {
+        const [filter, setFilter] = useState("All");
 
-<script>
-/* Mobile nav toggle + active link highlight */
-(function(){
-  const btn = document.querySelector('.nav-toggle');
-  const nav = document.getElementById('primary-nav');
-  const links = nav.querySelectorAll('a');
+        const filteredPapers = useMemo(() => {
+          if (filter === "All") return PAPERS;
+          return PAPERS.filter(p => p.tags.some(t => t.toLowerCase().includes(filter.toLowerCase())));
+        }, [filter]);
 
-  function setOpen(open){
-    nav.classList.toggle('open', open);
-    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  }
-  btn.addEventListener('click', ()=> setOpen(!nav.classList.contains('open')));
-  links.forEach(a=>a.addEventListener('click', ()=> setOpen(false)));
+        return (
+          <section id="papers" className="py-24 px-6 md:px-12 container mx-auto border-t border-neutral-800 scroll-mt-20">
+            <div className="flex flex-col md:flex-row md:items-baseline justify-between mb-16 gap-8">
+              <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight">Selected Papers</h2>
+              
+              <div className="flex flex-wrap gap-2">
+                {CORE_TAGS.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => setFilter(tag)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                      filter === tag 
+                        ? 'bg-white text-black' 
+                        : 'bg-neutral-900 text-neutral-400 hover:bg-neutral-800 hover:text-white border border-neutral-800'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-  const sections = [...document.querySelectorAll('main section[id]')];
-  const byId = Object.fromEntries([...links].map(a=>[a.getAttribute('href').slice(1), a]));
-  const obs = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        const id = e.target.id;
-        links.forEach(a=>a.classList.toggle('active', a===byId[id]));
-      }
-    });
-  }, { rootMargin:'-40% 0px -55% 0px', threshold:0 });
-  sections.forEach(s=>obs.observe(s));
-})();
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <AnimatePresence mode='popLayout'>
+                {filteredPapers.map((paper) => (
+                  <motion.a
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.3 }}
+                    key={paper.id}
+                    href={paper.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block p-8 bg-neutral-900/50 border border-neutral-800 rounded-2xl hover:bg-neutral-900 hover:border-neutral-700 transition-all duration-300 h-full flex flex-col"
+                  >
+                    <div className="flex justify-between items-start mb-6">
+                      <span className="text-xs font-mono text-neutral-500 uppercase border border-neutral-800 px-2 py-1 rounded">
+                        {paper.year}
+                      </span>
+                      <ArrowUpRight className="text-neutral-600 group-hover:text-white transition-colors" size={20} />
+                    </div>
+                    
+                    <h3 className="text-xl font-medium text-white mb-4 leading-snug group-hover:text-neutral-200">
+                      {paper.title}
+                    </h3>
+                    
+                    <p className="text-neutral-400 text-sm leading-relaxed mb-6 flex-grow">
+                      {paper.excerpt}
+                    </p>
 
-/* Multi-tag filter (AND), search, sort, and URL sync */
-(function(){
-  const btns=[...document.querySelectorAll('.chipbtn')];
-  const grid=document.getElementById('workgrid');
-  const cards=[...grid.querySelectorAll('article.work')];
-  const qInput=document.getElementById('q');
-  const sortSel=document.getElementById('sort');
-  const sr=document.getElementById('sr-status');
-  const url=new URL(location.href);
-  const state={ tags:new Set(), q:'', sort:'new' };
+                    <div className="pt-6 border-t border-neutral-800/50 mt-auto">
+                       <div className="text-xs text-neutral-500 font-mono truncate">
+                          {paper.venue}
+                       </div>
+                       <div className="flex flex-wrap gap-2 mt-3">
+                         {paper.tags.slice(0, 3).map(t => (
+                           <span key={t} className="text-xs text-neutral-400">#{t}</span>
+                         ))}
+                       </div>
+                    </div>
+                  </motion.a>
+                ))}
+              </AnimatePresence>
+            </div>
+          </section>
+        );
+      };
 
-  /* helpers */
-  const norm = s => (s||'').toLowerCase();
-  function parseURL(){
-    const tStr=url.searchParams.get('tags')||'';
-    const q=url.searchParams.get('q')||'';
-    const sort=url.searchParams.get('sort')||'new';
-    if(tStr) tStr.split(',').map(norm).filter(Boolean).forEach(t=>state.tags.add(t));
-    state.q=q; state.sort=sort;
-    qInput.value=q;
-    sortSel.value=sort;
-    btns.forEach(b=>{
-      const t=norm(b.dataset.chip||'');
-      b.setAttribute('aria-pressed', state.tags.has(t) ? 'true' : 'false');
-    });
-  }
-  function syncURL(){
-    const t=[...state.tags].join(',');
-    if(t) url.searchParams.set('tags',t); else url.searchParams.delete('tags');
-    if(state.q) url.searchParams.set('q',state.q); else url.searchParams.delete('q');
-    url.searchParams.set('sort', state.sort);
-    history.replaceState(null,'',url);
-  }
-  function matchCard(card){
-    /* tags AND */
-    const tags=(card.dataset.tags||'').split(',').map(s=>norm(s)).filter(Boolean);
-    for(const t of state.tags){ if(!tags.includes(t)) return false; }
-    /* query */
-    if(state.q){
-      const txt=[
-        card.querySelector('.w-title')?.textContent||'',
-        card.querySelector('.w-meta')?.textContent||'',
-        card.querySelector('.w-excerpt')?.textContent||''
-      ].join(' ').toLowerCase();
-      if(!txt.includes(state.q.toLowerCase())) return false;
-    }
-    return true;
-  }
-  function apply(){
-    let shown=0;
-    cards.forEach(c=>{
-      const ok = matchCard(c);
-      c.hidden = !ok;
-      c.classList.toggle('deemph', !ok);
-      if(ok) shown++;
-    });
-    /* sort visible cards and re-append */
-    const visible = cards.filter(c=>!c.hidden);
-    const keyTitle = c => (c.querySelector('.w-title')?.textContent||'').toLowerCase();
-    const keyYear = c => parseInt(c.dataset.year||'0',10);
-    visible.sort((a,b)=>{
-      if(state.sort==='new') return keyYear(b)-keyYear(a);
-      if(state.sort==='old') return keyYear(a)-keyYear(b);
-      if(state.sort==='az') return keyTitle(a).localeCompare(keyTitle(b));
-      if(state.sort==='za') return keyTitle(b).localeCompare(keyTitle(a));
-      return 0;
-    });
-    visible.forEach(c=>grid.appendChild(c));
-    /* a11y announcement (offscreen) */
-    if(sr){ sr.textContent = 'Updated. Showing ' + shown + ' items.'; }
-    syncURL();
-  }
+      const Experience = () => {
+        return (
+          <section id="experience" className="py-24 px-6 md:px-12 container mx-auto border-t border-neutral-800 scroll-mt-20">
+            
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+              {/* Left Column: Skills */}
+              <div className="lg:col-span-5">
+                 <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight mb-12">
+                  Technical Arsenal
+                 </h2>
+                 <div className="space-y-10">
+                    {SKILLS.map((group) => (
+                      <div key={group.category}>
+                        <h4 className="text-sm font-bold text-neutral-500 uppercase tracking-widest mb-4">
+                          {group.category}
+                        </h4>
+                        <div className="flex flex-wrap gap-3">
+                          {group.items.map(skill => (
+                            <span 
+                              key={skill} 
+                              className="px-3 py-1.5 bg-neutral-900 border border-neutral-800 text-neutral-300 text-sm rounded-md"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                 </div>
+              </div>
 
-  /* init from URL */
-  parseURL();
-  apply();
+              {/* Right Column: Experience */}
+              <div className="lg:col-span-7">
+                <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight mb-12">
+                  Key Experience
+                 </h2>
+                 <div className="space-y-8">
+                   {EXPERIENCE.map((job, idx) => (
+                     <div key={idx} className="group relative pl-8 border-l border-neutral-800">
+                       <div className="absolute -left-[5px] top-2 w-2.5 h-2.5 rounded-full bg-neutral-800 group-hover:bg-white transition-colors"></div>
+                       <h3 className="text-xl font-medium text-white mb-2 flex items-center gap-3">
+                          {job.role}
+                          {job.link && (
+                            <a href={job.link} target="_blank" rel="noopener noreferrer" className="text-neutral-500 hover:text-white transition-colors">
+                              <ArrowUpRight size={20} />
+                            </a>
+                          )}
+                       </h3>
+                       <p className="text-neutral-500 mb-4 font-light">{job.description}</p>
+                       <ul className="space-y-2">
+                         {job.details.map((detail, dIdx) => (
+                           <li key={dIdx} className="text-neutral-400 text-sm leading-relaxed flex items-start">
+                             <span className="mr-3 mt-1.5 w-1 h-1 bg-neutral-600 rounded-full shrink-0"></span>
+                             {detail}
+                           </li>
+                         ))}
+                       </ul>
+                     </div>
+                   ))}
+                 </div>
+                 
+                 <div className="mt-12 p-6 bg-neutral-900/30 border border-neutral-800 rounded-xl">
+                    <p className="text-neutral-400 text-sm">
+                      <span className="text-white font-medium">Note:</span> More projects & publications are listed in the papers section above. 
+                      This summary focuses on recent prototype and platform development work.
+                    </p>
+                 </div>
+              </div>
+            </div>
 
-  /* chip clicks (multi-select AND), clear resets */
-  btns.forEach(b=>b.addEventListener('click',()=>{
-    const chip=norm(b.dataset.chip||'');
-    if(chip===''){ state.tags.clear(); btns.forEach(x=>x.setAttribute('aria-pressed','false')); apply(); return; }
-    const on = b.getAttribute('aria-pressed')==='true';
-    if(on){ state.tags.delete(chip); b.setAttribute('aria-pressed','false'); }
-    else{ state.tags.add(chip); b.setAttribute('aria-pressed','true'); }
-    apply();
-  }));
+          </section>
+        );
+      };
 
-  /* search with debounce */
-  let t;
-  qInput.addEventListener('input', ()=>{
-    clearTimeout(t);
-    t=setTimeout(()=>{ state.q=qInput.value.trim(); apply(); }, 150);
-  });
+      const Footer = () => {
+        const SocialLink = ({ href, icon, label }) => (
+          <a 
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-12 h-12 flex items-center justify-center rounded-full bg-neutral-900 border border-neutral-800 text-neutral-400 hover:bg-white hover:text-black transition-all duration-300"
+            title={label}
+          >
+            {React.cloneElement(icon, { size: 20 })}
+          </a>
+        );
 
-  /* sort */
-  sortSel.addEventListener('change', ()=>{ state.sort=sortSel.value; apply(); });
-})();
-</script>
+        return (
+          <footer id="contact" className="py-24 px-6 md:px-12 container mx-auto border-t border-neutral-800 scroll-mt-20">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
+              <div className="max-w-xl">
+                <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter mb-8">
+                  Let's collaborate on the future of IIoT.
+                </h2>
+                <a 
+                  href="mailto:munister@outlook.com"
+                  className="inline-flex items-center gap-3 text-2xl md:text-3xl text-neutral-400 hover:text-white transition-colors border-b border-neutral-700 hover:border-white pb-1"
+                >
+                  <Mail size={32} />
+                  <span>munister@outlook.com</span>
+                </a>
+              </div>
 
+              <div className="flex flex-col items-start md:items-end gap-6">
+                <div className="flex gap-4">
+                   <SocialLink href="https://github.com/munister-v" icon={<Github />} label="GitHub" />
+                   <SocialLink href="https://scholar.google.com/citations?user=kdqMqoQAAAAJ" icon={<BookOpen />} label="Scholar" />
+                   <SocialLink href="https://www.researchgate.net/scientific-contributions/V-D-Munister-2194878329" icon={<Layers />} label="ResearchGate" />
+                </div>
+                <p className="text-neutral-600 text-sm">
+                  © {new Date().getFullYear()} Viacheslav Munister. All rights reserved.
+                </p>
+              </div>
+            </div>
+          </footer>
+        );
+      };
+
+      const App = () => {
+        return (
+          <div className="min-h-screen bg-neutral-950 font-sans selection:bg-white selection:text-black">
+            <Navigation />
+            <main>
+              <Hero />
+              <Papers />
+              <Experience />
+            </main>
+            <Footer />
+          </div>
+        );
+      };
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  <script type="module" src="/index.tsx"></script>
 </body>
 </html>
