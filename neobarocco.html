@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>neoBARO | UA — Українське Необароко</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F6D400;
+            color: #000000;
+            overflow-x: hidden;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #F6D400; }
+        ::-webkit-scrollbar-thumb { background: #000; }
+        ::-webkit-scrollbar-thumb:hover { background: #333; }
+
+        /* Animation Utilities */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hover-card {
+            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+        }
+        .hover-card:hover {
+            transform: scale(1.02);
+        }
+
+        /* Loader */
+        .loader {
+            border: 2px solid #F6D400;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* PDF Styles */
+        body.pdf-exporting .no-print { display: none !important; }
+        body.pdf-exporting { overflow: visible !important; height: auto !important; }
+    </style>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="selection:bg-black selection:text-[#F6D400]">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 mix-blend-multiply px-6 py-4 flex justify-between items-center bg-[#F6D400]/90 backdrop-blur-sm border-b border-black/10 transition-all duration-300" id="navbar">
+        <div class="font-bold text-xl tracking-tighter border-2 border-black px-2 py-1 uppercase">
+            neoBARO | UA
+        </div>
+        
+        <!-- Desktop Menu -->
+        <div class="hidden lg:flex gap-5 text-sm font-medium">
+            <a href="#hero" class="hover:underline underline-offset-4 decoration-2">Вступ</a>
+            <a href="#social-code" class="hover:underline underline-offset-4 decoration-2">Культура як код</a>
+            <a href="#neobaroque" class="hover:underline underline-offset-4 decoration-2">Необароко</a>
+            <a href="#narbut" class="hover:underline underline-offset-4 decoration-2">Нарбут</a>
+            <a href="#dna" class="hover:underline underline-offset-4 decoration-2">ДНК</a>
+            <a href="#stats" class="hover:underline underline-offset-4 decoration-2">Факти</a>
+            <a href="#examples" class="hover:underline underline-offset-4 decoration-2">Приклади</a>
+            <a href="#global-effect" class="hover:underline underline-offset-4 decoration-2">Ефект</a>
+            <a href="#modernity" class="hover:underline underline-offset-4 decoration-2">Сучасність</a>
+            <a href="#conclusions" class="hover:underline underline-offset-4 decoration-2">Висновки</a>
+            <a href="#sources" class="hover:underline underline-offset-4 decoration-2">Джерела</a>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button class="lg:hidden" id="menuToggle">
+            <i data-lucide="menu"></i>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenu" class="fixed inset-0 bg-[#F6D400] z-40 transform translate-y-[-100%] transition-transform duration-300 flex flex-col p-8 pt-24 gap-4 lg:hidden overflow-y-auto">
+        <a href="#hero" class="text-xl font-bold border-b border-black/10 pb-2 mobile-link">Вступ</a>
+        <a href="#social-code" class="text-xl font-bold border-b border-black/10 pb-2 mobile-link">Культура як код</a>
+        <a href="#neobaroque" class="text-xl font-bold border-b border-black/10 pb-2 mobile-link">Необароко</a>
+        <a href="#narbut" class="text-xl font-bold border-b border-black/10 pb-2 mobile-link">Нарбут</a>
+        <a href="#dna" class="text-xl font-bold border-b border-black/10 pb-2 mobile-link">Графічна ДНК</a>
+        <a href="#stats" class="text-xl font-bold border-b border-black/10 pb-2 mobile-link">Факти</a>
+        <a href="#examples" class="text-xl font-bold border-b border-black/10 pb-2 mobile-link">Приклади</a>
+        <a href="#global-effect" class="text-xl font-bold border-b border-black/10 pb-2 mobile-link">Соціокультурний Ефект</a>
+        <a href="#modernity" class="text-xl font-bold border-b border-black/10 pb-2 mobile-link">Сучасність</a>
+        <a href="#conclusions" class="text-xl font-bold border-b border-black/10 pb-2 mobile-link">Висновки</a>
+        <a href="#sources" class="text-xl font-bold border-b border-black/10 pb-2 mobile-link">Джерела</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="min-h-screen flex flex-col justify-center px-6 md:px-20 pt-20 relative border-b border-black">
+        <div class="max-w-5xl z-10 reveal">
+            <div class="mb-4 inline-block border-2 border-black px-3 py-1 font-bold text-sm tracking-widest uppercase">
+                МУНIСТЕР В'ЯЧЕСЛАВ
+            </div>
+            <h1 class="text-5xl md:text-7xl lg:text-9xl font-black uppercase leading-[0.9] tracking-tighter mb-8">
+                Українська<br/>Культура як<br/>Феномен
+            </h1>
+            <div class="flex flex-col md:flex-row md:items-start justify-between gap-8 border-t border-black pt-8">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold mb-2">Необароко як мова самоідентифікації</h2>
+                    <p class="text-lg opacity-80">Кейс: Георгій Нарбут</p>
+                </div>
+                <p class="max-w-xs text-sm md:text-base font-medium leading-relaxed">
+                    Культура — це система смислів і символів, що формує спільноту та довіру. Мистецтво тут не дзеркало, а інструмент конструювання реальності.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Decor -->
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none hidden lg:block">
+            <i data-lucide="book-open" size="400" stroke-width="0.5" class="w-[600px] h-[600px]"></i>
+        </div>
+        <div class="absolute bottom-10 right-10 animate-bounce hidden md:block z-10">
+            <i data-lucide="arrow-right" class="rotate-90" size="32"></i>
+        </div>
+    </section>
+
+    <!-- Social Code -->
+    <section id="social-code" class="py-24 px-6 md:px-20 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto z-10 relative">
+            <h2 class="text-4xl font-bold mb-16 uppercase border-b border-black pb-4 inline-block reveal">Чому стиль = соціальний код?</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <!-- Card 1 -->
+                <div class="group relative h-80 border-t-4 border-black pt-6 cursor-default bg-[#F6D400] hover:-translate-y-2 transition-transform duration-300 reveal">
+                    <div class="text-6xl font-black opacity-10 mb-4 absolute top-4 right-0">1</div>
+                    <h3 class="text-3xl font-bold mb-4">Впізнаваність</h3>
+                    <p class="text-xl font-medium mb-4 leading-tight">Стиль працює як маркер «свій-чужий».</p>
+                    <div class="text-sm border-t border-black pt-4 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        Людина миттєво зчитує, чи належить об'єкт до її культурного простору, навіть не читаючи текст. Це працює на рівні підсвідомості.
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="group relative h-80 border-t-4 border-black pt-6 cursor-default bg-[#F6D400] hover:-translate-y-2 transition-transform duration-300 reveal">
+                    <div class="text-6xl font-black opacity-10 mb-4 absolute top-4 right-0">2</div>
+                    <h3 class="text-3xl font-bold mb-4">Тяглість</h3>
+                    <p class="text-xl font-medium mb-4 leading-tight">Поєднання минулого з майбутнім.</p>
+                    <div class="text-sm border-t border-black pt-4 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        Використання історичних форм (бароко) легітимізує нові інституції як спадкоємців давньої традиції, а не як "новоділ".
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="group relative h-80 border-t-4 border-black pt-6 cursor-default bg-[#F6D400] hover:-translate-y-2 transition-transform duration-300 reveal">
+                    <div class="text-6xl font-black opacity-10 mb-4 absolute top-4 right-0">3</div>
+                    <h3 class="text-3xl font-bold mb-4">Легітимація</h3>
+                    <p class="text-xl font-medium mb-4 leading-tight">Довіра через форму.</p>
+                    <div class="text-sm border-t border-black pt-4 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        Офіційний документ виглядає «справжнім» завдяки правильній візуальній мові: рамкам, шрифтам, гербам. Це "одяг" влади.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="h-[1px] bg-black my-12 opacity-30 reveal"></div>
+    </section>
+
+    <!-- Neobaroque Definition -->
+    <section id="neobaroque" class="py-24 px-6 md:px-20 bg-black text-[#F6D400]">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-16 items-center">
+            <div class="md:w-1/2 reveal">
+                <h2 class="text-5xl md:text-7xl font-black uppercase leading-none mb-8">Що таке<br/>Необароко?</h2>
+                <p class="text-xl leading-relaxed opacity-90 mb-6">
+                    Це не сліпа копія старого, а модерна стратегія початку XX століття. Це спосіб перенести принципи XVII століття — <span class="font-bold text-white">урочистість, контраст, театральність</span> — у нові медіа та соціальні контексти.
+                </p>
+                <p class="text-lg opacity-70">
+                    Необароко стало відповіддю на потребу молодої української держави знайти своє візуальне обличчя, відмінне від імперського.
+                </p>
+            </div>
+            <div class="md:w-1/2 grid grid-cols-2 gap-4 reveal">
+                <div class="aspect-square flex flex-col justify-center items-center text-center p-4 border-2 border-[#F6D400] hover:bg-[#F6D400] hover:text-black transition-colors duration-300 cursor-pointer">
+                    <span class="font-bold text-lg">Орнамент</span>
+                    <span class="text-xs mt-2 opacity-80">Смислова рамка</span>
+                </div>
+                <div class="aspect-square flex flex-col justify-center items-center text-center p-4 border-b-4 border-[#F6D400] hover:bg-[#F6D400] hover:text-black transition-colors duration-300 cursor-pointer">
+                    <span class="font-bold text-lg">Типографіка</span>
+                    <span class="text-xs mt-2 opacity-80">Знак тяглості</span>
+                </div>
+                <div class="aspect-square flex flex-col justify-center items-center text-center p-4 rounded-full border-2 border-[#F6D400] hover:bg-[#F6D400] hover:text-black transition-colors duration-300 cursor-pointer">
+                    <span class="font-bold text-lg">Емблема</span>
+                    <span class="text-xs mt-2 opacity-80">Символ влади</span>
+                </div>
+                <div class="aspect-square flex flex-col justify-center items-center text-center p-4 border-2 border-dashed border-[#F6D400] hover:bg-[#F6D400] hover:text-black transition-colors duration-300 cursor-pointer">
+                    <span class="font-bold text-lg">Композиція</span>
+                    <span class="text-xs mt-2 opacity-80">Ефект піднесення</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Narbut Section -->
+    <section id="narbut" class="py-24 px-6 md:px-20 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row gap-12 items-start">
+                <div class="md:w-1/2 reveal">
+                    <span class="text-sm font-bold tracking-widest uppercase mb-4 block bg-black text-[#F6D400] inline-block px-2">Кейс-стаді</span>
+                    <h2 class="text-5xl md:text-6xl font-black mb-8 leading-tight">
+                        Георгій Нарбут:<br/>Візуальна мова державності
+                    </h2>
+                    <p class="text-lg md:text-xl leading-relaxed mb-6 font-medium">
+                        Творчість Нарбута — це межа між мистецтвом та державною інфраструктурою. 
+                    </p>
+                    <p class="text-base mb-6 opacity-80 leading-relaxed">
+                        Він створив дизайн грошей, марок, бланків, перетворивши "сухі" документи на носіїв національної ідеї. Його "Українська абетка" стала маніфестом стилю, де кожна літера була архітектурною спорудою.
+                    </p>
+                    
+                    <button onclick="openModal()" class="group mt-8 flex items-center gap-3 px-6 py-3 border-2 border-black hover:bg-black hover:text-[#F6D400] transition-colors">
+                        <i data-lucide="maximize-2" size="20"></i>
+                        <span class="font-bold uppercase tracking-wider">Розібрати механіку стилю</span>
+                    </button>
+                </div>
+                
+                <div class="md:w-1/2 flex flex-col gap-4 reveal">
+                    <div class="relative border-4 border-black p-8 bg-white transform rotate-2 hover:rotate-0 transition-transform duration-500 flex justify-center items-center aspect-video">
+                        <div class="text-center">
+                            <i data-lucide="image" size="64" class="mx-auto mb-2 opacity-20"></i>
+                            <h3 class="font-serif text-3xl font-bold">АБЕТКА</h3>
+                            <p class="text-sm uppercase tracking-widest mt-2">1917</p>
+                        </div>
+                    </div>
+                    <div class="w-full p-4 border-2 border-black bg-black text-[#F6D400] text-center text-sm font-bold">
+                        "Мистецтво — це сувора система"
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="h-[1px] bg-black my-12 opacity-30 reveal"></div>
+    </section>
+
+    <!-- NEW SECTION 1: Graphic DNA -->
+    <section id="dna" class="py-24 px-6 md:px-20 bg-black text-[#F6D400] border-t border-[#F6D400]/20">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-16 items-center">
+            <div class="md:w-1/3 text-center md:text-left reveal">
+                <i data-lucide="crown" size="120" stroke-width="0.5" class="mb-6 mx-auto md:mx-0"></i>
+                <h2 class="text-4xl md:text-5xl font-black uppercase leading-none mb-6">Графічна<br/>ДНК Нації</h2>
+                <div class="w-24 h-2 bg-[#F6D400] mb-6 mx-auto md:mx-0"></div>
+            </div>
+            <div class="md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-8 reveal">
+                <div class="border border-[#F6D400]/30 p-6 hover:border-[#F6D400] transition-colors">
+                    <div class="flex items-center gap-4 mb-4">
+                        <i data-lucide="pen-tool" class="text-[#F6D400]"></i>
+                        <h3 class="text-xl font-bold uppercase">Конструювання Знаку</h3>
+                    </div>
+                    <p class="opacity-80 leading-relaxed">
+                        Тризуб у виконанні Нарбута — це не архаїчний символ, а модерна геометрична конструкція. Він взяв знак князя Володимира і надав йому форми, що відповідає європейським канонам геральдики XX століття.
+                    </p>
+                </div>
+                <div class="border border-[#F6D400]/30 p-6 hover:border-[#F6D400] transition-colors">
+                    <div class="flex items-center gap-4 mb-4">
+                        <i data-lucide="type" class="text-[#F6D400]"></i>
+                        <h3 class="text-xl font-bold uppercase">Шрифт як Зброя</h3>
+                    </div>
+                    <p class="opacity-80 leading-relaxed">
+                        Створена Нарбутом абетка базується на скорописі козацьких канцелярій. Це був політичний жест: ми маємо власну графічну традицію, відмінну від російської гражданки.
+                    </p>
+                </div>
+                <div class="border border-[#F6D400]/30 p-6 hover:border-[#F6D400] transition-colors col-span-1 md:col-span-2">
+                     <div class="flex items-center gap-4 mb-4">
+                        <i data-lucide="scale" class="text-[#F6D400]"></i>
+                        <h3 class="text-xl font-bold uppercase">Золотий Перетин</h3>
+                    </div>
+                    <p class="opacity-80 leading-relaxed">
+                        Усі державні папери версталися за строгими пропорціями. Це створювало відчуття стабільності та непорушності держави, навіть коли фронт проходив за 50 км від Києва.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <div id="narbutModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-md opacity-0 transition-opacity duration-300">
+        <div class="bg-white text-black w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative border-4 border-black p-8 md:p-12 transform scale-95 transition-transform duration-300" id="modalContent">
+            <button onclick="closeModal()" class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full">
+                <i data-lucide="x" size="24"></i>
+            </button>
+            
+            <h2 class="text-3xl font-bold mb-8 uppercase border-b-2 border-black pb-4">Анатомія Стилю Нарбута</h2>
+            
+            <div class="flex gap-4 mb-8 overflow-x-auto pb-2" id="modalTabs">
+                <button onclick="switchTab('frame')" class="tab-btn px-4 py-2 font-bold uppercase text-sm border-2 border-black bg-black text-white" data-tab="frame">Рамка</button>
+                <button onclick="switchTab('emblem')" class="tab-btn px-4 py-2 font-bold uppercase text-sm border-2 border-black hover:bg-gray-100" data-tab="emblem">Емблема</button>
+                <button onclick="switchTab('type')" class="tab-btn px-4 py-2 font-bold uppercase text-sm border-2 border-black hover:bg-gray-100" data-tab="type">Шрифт</button>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 items-center" id="tabContent">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <section id="stats" class="py-24 px-6 md:px-20">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 reveal">
+            <div class="flex flex-col justify-end border-l-2 border-black pl-6 py-4 hover:bg-black/5 transition-colors">
+                <div class="text-6xl md:text-8xl font-black mb-2">4</div>
+                <div class="text-lg font-bold uppercase leading-none mb-2">Механіки стилю</div>
+                <div class="text-xs opacity-70">Орнамент, шрифт, емблема, композиція</div>
+            </div>
+            <div class="flex flex-col justify-end border-l-2 border-black pl-6 py-4 hover:bg-black/5 transition-colors">
+                <div class="text-6xl md:text-8xl font-black mb-2">3</div>
+                <div class="text-lg font-bold uppercase leading-none mb-2">Поля застосування</div>
+                <div class="text-xs opacity-70">Книги, державні знаки, інституції</div>
+            </div>
+            <div class="flex flex-col justify-end border-l-2 border-black pl-6 py-4 hover:bg-black/5 transition-colors">
+                <div class="text-6xl md:text-8xl font-black mb-2">1</div>
+                <div class="text-lg font-bold uppercase leading-none mb-2">Код довіри</div>
+                <div class="text-xs opacity-70">Стиль як гарант легітимності</div>
+            </div>
+            <div class="flex flex-col justify-end border-l-2 border-black pl-6 py-4 hover:bg-black/5 transition-colors">
+                <div class="text-6xl md:text-8xl font-black mb-2">100%</div>
+                <div class="text-lg font-bold uppercase leading-none mb-2">Впізнаваність</div>
+                <div class="text-xs opacity-70">Візуальна мова, що об’єднує</div>
+            </div>
+        </div>
+        <div class="h-[1px] bg-black my-12 opacity-30 reveal"></div>
+    </section>
+
+    <!-- Examples -->
+    <section id="examples" class="py-24 px-6 md:px-20 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl font-bold mb-12 uppercase reveal">Приклади носіїв</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="examplesGrid">
+                
+                <!-- Card 1: Money -->
+                <div class="group relative bg-[#F6D400] min-h-[450px] flex flex-col justify-between border-4 border-black p-6 hover:bg-black transition-colors duration-500 reveal">
+                    <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+                    <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+                    <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+                    <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="font-black text-2xl leading-none uppercase break-words max-w-[80%] text-black group-hover:text-[#F6D400] transition-colors duration-500">
+                            Банкнота 100 Карб.
+                        </h3>
+                        <div class="text-black group-hover:text-[#F6D400] transition-colors duration-500">
+                            <i data-lucide="banknote" size="48" stroke-width="1.5"></i>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto relative">
+                        <div class="w-12 h-1 bg-black mb-4 group-hover:bg-[#F6D400] transition-colors duration-500"></div>
+                        <p class="text-sm font-medium leading-relaxed opacity-100 text-black group-hover:text-white transition-colors duration-500 mb-6">
+                            Найперший знак суверенітету. Нарбут використав пишний бароковий орнамент — «нарбутівський візерунок» — не як прикрасу, а як захисну сітку. Поєднання селянських мотивів з аристократичною графікою легітимізувало нову владу як народну, але історично вкорінену.
+                        </p>
+                        <a href="https://uk.wikipedia.org/wiki/%D0%9A%D0%B0%D1%80%D0%B1%D0%BE%D0%B2%D0%B0%D0%BD%D0%B5%D1%86%D1%8C_%D0%A3%D0%9D%D0%A0" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black group-hover:text-[#F6D400] hover:underline">
+                            Дивитися джерело
+                            <i data-lucide="external-link" size="12"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card 2: Stamp -->
+                <div class="group relative bg-[#F6D400] min-h-[450px] flex flex-col justify-between border-4 border-black p-6 hover:bg-black transition-colors duration-500 reveal">
+                    <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+                    <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+                    <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+                    <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="font-black text-2xl leading-none uppercase break-words max-w-[80%] text-black group-hover:text-[#F6D400] transition-colors duration-500">
+                            Поштова марка
+                        </h3>
+                        <div class="text-black group-hover:text-[#F6D400] transition-colors duration-500">
+                            <i data-lucide="stamp" size="48" stroke-width="1.5"></i>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto relative">
+                        <div class="w-12 h-1 bg-black mb-4 group-hover:bg-[#F6D400] transition-colors duration-500"></div>
+                        <p class="text-sm font-medium leading-relaxed opacity-100 text-black group-hover:text-white transition-colors duration-500 mb-6">
+                            Наймасовіший агент дипломатії. У форматі 2x3 см Нарбут зміг втілити монументальність. Лаконічний тризуб у геометричному обрамленні став першим візуальним контактом іноземців з УНР. Це приклад "великого стилю" у малій графічній формі.
+                        </p>
+                        <a href="https://uk.wikipedia.org/wiki/%D0%9F%D0%BE%D1%88%D1%82%D0%BE%D0%B2%D1%96_%D0%BC%D0%B0%D1%80%D0%BA%D0%B8_%D1%82%D0%B0_%D1%96%D1%81%D1%82%D0%BE%D1%80%D1%96%D1%8F_%D0%BF%D0%BE%D1%88%D1%82%D0%B8_%D0%A3%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D0%B8" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black group-hover:text-[#F6D400] hover:underline">
+                            Дивитися джерело
+                            <i data-lucide="external-link" size="12"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card 3: Book -->
+                <div class="group relative bg-[#F6D400] min-h-[450px] flex flex-col justify-between border-4 border-black p-6 hover:bg-black transition-colors duration-500 reveal">
+                    <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+                    <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+                    <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+                    <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="font-black text-2xl leading-none uppercase break-words max-w-[80%] text-black group-hover:text-[#F6D400] transition-colors duration-500">
+                            Абетка (Титул)
+                        </h3>
+                        <div class="text-black group-hover:text-[#F6D400] transition-colors duration-500">
+                            <i data-lucide="book-open" size="48" stroke-width="1.5"></i>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto relative">
+                        <div class="w-12 h-1 bg-black mb-4 group-hover:bg-[#F6D400] transition-colors duration-500"></div>
+                        <p class="text-sm font-medium leading-relaxed opacity-100 text-black group-hover:text-white transition-colors duration-500 mb-6">
+                            Маніфест українського необароко. Кожна літера — це архітектурна споруда. Тут переплелися козацька шабля, барокові янголи та руїни храмів. Це не просто книга для дітей, а енциклопедія національної естетики, що стверджувала самодостатність культури.
+                        </p>
+                        <a href="https://uk.wikipedia.org/wiki/%D0%A3%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D1%81%D1%8C%D0%BA%D0%B0_%D0%B0%D0%B1%D0%B5%D1%82%D0%BA%D0%B0_(1917)" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black group-hover:text-[#F6D400] hover:underline">
+                            Дивитися джерело
+                            <i data-lucide="external-link" size="12"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card 4: Seal -->
+                <div class="group relative bg-[#F6D400] min-h-[450px] flex flex-col justify-between border-4 border-black p-6 hover:bg-black transition-colors duration-500 reveal">
+                    <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+                    <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+                    <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+                    <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-black group-hover:border-[#F6D400] transition-colors duration-500"></div>
+
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="font-black text-2xl leading-none uppercase break-words max-w-[80%] text-black group-hover:text-[#F6D400] transition-colors duration-500">
+                            Печатка та Герб
+                        </h3>
+                        <div class="text-black group-hover:text-[#F6D400] transition-colors duration-500">
+                            <i data-lucide="shield-check" size="48" stroke-width="1.5"></i>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto relative">
+                        <div class="w-12 h-1 bg-black mb-4 group-hover:bg-[#F6D400] transition-colors duration-500"></div>
+                        <p class="text-sm font-medium leading-relaxed opacity-100 text-black group-hover:text-white transition-colors duration-500 mb-6">
+                            Юридичний код держави. Нарбут відмовився від шаблонної геральдики на користь історичної реконструкції знаку Війська Запорозького (Козак з мушкетом). Шестикутна форма печатки та специфічний шрифт перетворювали будь-який папір на документ найвищої ваги.
+                        </p>
+                        <a href="https://uk.wikipedia.org/wiki/%D0%93%D0%B5%D1%80%D0%B1_%D0%A3%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D0%B8" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black group-hover:text-[#F6D400] hover:underline">
+                            Дивитися джерело
+                            <i data-lucide="external-link" size="12"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION 3: Socio-Cultural Effect -->
+    <section id="global-effect" class="py-24 px-6 md:px-20 bg-[#F6D400] relative border-t border-black">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row gap-12 mb-16 reveal">
+                <div class="md:w-1/2">
+                    <div class="inline-block border-2 border-black px-3 py-1 font-bold text-sm tracking-widest uppercase mb-6 bg-black text-[#F6D400]">
+                        Соціокультурний Вимір
+                    </div>
+                    <h2 class="text-4xl md:text-6xl font-black uppercase leading-[0.9]">
+                        Самопрезентація<br/>як Політичний<br/>Акт
+                    </h2>
+                </div>
+                <div class="md:w-1/2 flex items-end">
+                    <p class="text-xl font-medium leading-relaxed border-l-4 border-black pl-6">
+                        Візуальна культура — це не просто "гарна картинка". Це спосіб заявити про своє існування на ментальній карті світу. Як це працює?
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-0 border-2 border-black reveal">
+                
+                <!-- Block 1 -->
+                <div class="p-8 border-b-2 md:border-b-0 md:border-r-2 border-black hover:bg-black hover:text-[#F6D400] transition-colors duration-300 group">
+                    <div class="mb-6 opacity-50 group-hover:opacity-100 transition-opacity">
+                        <i data-lucide="globe" size="48"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold uppercase mb-4">Суб'єктність</h3>
+                    <p class="opacity-80 leading-relaxed text-sm">
+                        Перехід від ролі «етнографічного додатку» імперії до повноправного політичного гравця. Власний стиль — це доказ того, що нація здатна продукувати модерні смисли, а не лише зберігати фольклор.
+                    </p>
+                </div>
+
+                <!-- Block 2 -->
+                <div class="p-8 border-b-2 md:border-b-0 md:border-r-2 border-black hover:bg-black hover:text-[#F6D400] transition-colors duration-300 group">
+                    <div class="mb-6 opacity-50 group-hover:opacity-100 transition-opacity">
+                        <i data-lucide="shield" size="48"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold uppercase mb-4">Візуальний Кордон</h3>
+                    <p class="opacity-80 leading-relaxed text-sm">
+                        Естетика створює захисний бар'єр. Власні шрифти та символи чітко маркують простір: «тут інша культура, тут не діють правила метрополії». Це форма ненасильницького опору асиміляції.
+                    </p>
+                </div>
+
+                <!-- Block 3 -->
+                <div class="p-8 hover:bg-black hover:text-[#F6D400] transition-colors duration-300 group">
+                    <div class="mb-6 opacity-50 group-hover:opacity-100 transition-opacity">
+                        <i data-lucide="handshake" size="48"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold uppercase mb-4">М'яка Сила</h3>
+                    <p class="opacity-80 leading-relaxed text-sm">
+                        Дизайн будує емпатію. Світ краще розуміє і підтримує тих, хто говорить з ним мовою високої культури. "Брендинг" нації конвертується у політичну підтримку та інвестиції.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION 2: Modern Context -->
+    <section id="modernity" class="py-24 px-6 md:px-20 bg-white relative">
+        <div class="max-w-6xl mx-auto reveal">
+            <h2 class="text-4xl md:text-5xl font-black uppercase leading-none mb-12 text-center md:text-left">
+                Відлуння в<br/><span class="bg-[#F6D400] px-2">Сучасності</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-8 border-b-4 border-black hover:border-[#F6D400] transition-colors">
+                    <div class="text-5xl mb-4 font-serif italic">Аа</div>
+                    <h3 class="text-xl font-bold mb-3 uppercase">Нова Типографія</h3>
+                    <p class="text-sm opacity-70">
+                        Сучасні українські шрифти (Kyiv Type, Volja) активно переосмислюють спадщину Нарбута, інтегруючи барокову асиметрію в цифровий дизайн.
+                    </p>
+                </div>
+                <div class="bg-gray-50 p-8 border-b-4 border-black hover:border-[#F6D400] transition-colors">
+                     <i data-lucide="monitor" size="48" class="mb-4"></i>
+                    <h3 class="text-xl font-bold mb-3 uppercase">Digital Брендинг</h3>
+                    <p class="text-sm opacity-70">
+                        Візуальний стиль держави в "Дії" або бренд "Ukraine Now" базується на тій же ідеї: мінімалізм як форма чесної комунікації влади з громадянином.
+                    </p>
+                </div>
+                <div class="bg-gray-50 p-8 border-b-4 border-black hover:border-[#F6D400] transition-colors">
+                     <i data-lucide="zap" size="48" class="mb-4"></i>
+                    <h3 class="text-xl font-bold mb-3 uppercase">Естетика Опору</h3>
+                    <p class="text-sm opacity-70">
+                        В часи війни мистецтво знову стає зброєю. Плакати та меми використовують коди необароко для маркування свого культурного простору.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusions -->
+    <section id="conclusions" class="py-24 px-6 md:px-20 bg-[#F6D400]">
+        <div class="max-w-4xl mx-auto border-4 border-black p-8 md:p-16 relative reveal">
+            <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#F6D400] px-4">
+                <h2 class="text-3xl font-black uppercase tracking-widest">Висновки</h2>
+            </div>
+            
+            <div class="text-lg md:text-xl leading-relaxed space-y-6">
+                <p>
+                    <strong class="bg-black text-[#F6D400] px-1">Українське необароко</strong> — це більше, ніж стиль. Це інструмент модернізації традиції, що переносить барокову мову у сучасні форми публічної комунікації.
+                </p>
+                
+                <div id="expandedConclusion" class="hidden space-y-6 transition-all duration-500 overflow-hidden opacity-0">
+                    <p>
+                        На прикладі графіки Георгія Нарбута ми бачимо, як орнамент, шрифт та композиція стають <strong class="border-b-2 border-black">соціальним інструментом</strong>. Вони легітимізують інституції, формують колективну пам'ять та створюють "мову довіри", зрозумілу без слів.
+                    </p>
+                    <p>
+                        Мистецтво тут працює як частина соціокультурних процесів: воно робить "українське" видимим, валідним та авторитетним у публічному просторі. Це код, який ми зчитуємо досі, дивлячись на сучасну гривню чи державну символіку.
+                    </p>
+                </div>
+            </div>
+
+            <button onclick="toggleConclusion()" class="mt-8 flex items-center gap-2 font-bold hover:opacity-70 transition-opacity">
+                <span id="conclusionBtnText">Читати повністю</span>
+                <i data-lucide="chevron-down" id="conclusionIcon" class="transition-transform duration-300"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer / Sources -->
+    <footer id="sources" class="bg-black text-[#F6D400] py-16 px-6 md:px-20">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex justify-between items-end mb-12 border-b border-[#F6D400]/30 pb-4">
+                <h2 class="text-3xl font-bold uppercase">Бібліографія</h2>
+                <button onclick="copyBibliography()" class="flex items-center gap-2 text-sm border border-[#F6D400] px-3 py-1 hover:bg-[#F6D400] hover:text-black transition-colors" id="copyBtn">
+                    <i data-lucide="copy" size="16"></i>
+                    <span>Скопіювати список</span>
+                </button>
+            </div>
+
+            <div class="grid gap-4 mb-12" id="bibliographyList">
+                <div class="group border-l border-[#F6D400]/30 pl-4 py-2 hover:border-[#F6D400] transition-colors">
+                    <p class="font-bold">Гірц К.</p>
+                    <p class="text-sm opacity-70 group-hover:opacity-100"><span class="italic">Інтерпретація культур.</span> — К.: Основи, 2001.</p>
+                </div>
+                <div class="group border-l border-[#F6D400]/30 pl-4 py-2 hover:border-[#F6D400] transition-colors">
+                    <p class="font-bold">Лотман Ю. М.</p>
+                    <p class="text-sm opacity-70 group-hover:opacity-100"><span class="italic">Семіосфера.</span> — СПб.: Искусство-СПб, 2000.</p>
+                </div>
+                <div class="group border-l border-[#F6D400]/30 pl-4 py-2 hover:border-[#F6D400] transition-colors">
+                    <p class="font-bold">Бурдьє П.</p>
+                    <p class="text-sm opacity-70 group-hover:opacity-100"><span class="italic">Соціологія соціального простору.</span> — К.: Основи, 2002.</p>
+                </div>
+                <div class="group border-l border-[#F6D400]/30 pl-4 py-2 hover:border-[#F6D400] transition-colors">
+                    <p class="font-bold">Барт Р.</p>
+                    <p class="text-sm opacity-70 group-hover:opacity-100"><span class="italic">Міфології.</span> — К.: Основи, 1998.</p>
+                </div>
+                <div class="group border-l border-[#F6D400]/30 pl-4 py-2 hover:border-[#F6D400] transition-colors">
+                    <p class="font-bold">Наливайко Д. С.</p>
+                    <p class="text-sm opacity-70 group-hover:opacity-100"><span class="italic">Українське бароко: історія, поетика, семіотика.</span> — К.: Либідь, 2001.</p>
+                </div>
+                <div class="group border-l border-[#F6D400]/30 pl-4 py-2 hover:border-[#F6D400] transition-colors">
+                    <p class="font-bold">Сулима М. М.</p>
+                    <p class="text-sm opacity-70 group-hover:opacity-100"><span class="italic">Українське бароко: тексти і контексти.</span> — К.: Критика, 2010.</p>
+                </div>
+                <div class="group border-l border-[#F6D400]/30 pl-4 py-2 hover:border-[#F6D400] transition-colors">
+                    <p class="font-bold">Жайворонок В. В.</p>
+                    <p class="text-sm opacity-70 group-hover:opacity-100"><span class="italic">Знаки української етнокультури.</span> — К.: Довіра, 2006.</p>
+                </div>
+                <div class="group border-l border-[#F6D400]/30 pl-4 py-2 hover:border-[#F6D400] transition-colors">
+                    <p class="font-bold">Ковалинський В. В.</p>
+                    <p class="text-sm opacity-70 group-hover:opacity-100"><span class="italic">Георгій Нарбут: життя і творчість.</span> — К.: Мистецтво, 2009.</p>
+                </div>
+                <div class="group border-l border-[#F6D400]/30 pl-4 py-2 hover:border-[#F6D400] transition-colors">
+                    <p class="font-bold">Овсійчук В.</p>
+                    <p class="text-sm opacity-70 group-hover:opacity-100"><span class="italic">Українське мистецтво: навч. посіб.</span> — К.: Знання, 2008.</p>
+                </div>
+                <div class="group border-l border-[#F6D400]/30 pl-4 py-2 hover:border-[#F6D400] transition-colors">
+                    <p class="font-bold">Яковенко Н.</p>
+                    <p class="text-sm opacity-70 group-hover:opacity-100"><span class="italic">Нарис історії України з найдавніших часів до кінця XVIII ст.</span> — К.: Критика, 2006.</p>
+                </div>
+                <div class="group border-l border-[#F6D400]/30 pl-4 py-2 hover:border-[#F6D400] transition-colors">
+                    <p class="font-bold">Гундорова Т.</p>
+                    <p class="text-sm opacity-70 group-hover:opacity-100"><span class="italic">Постчорнобильська бібліотека: український літературний постмодерн.</span> — К.: Критика, 2005.</p>
+                </div>
+                <div class="group border-l border-[#F6D400]/30 pl-4 py-2 hover:border-[#F6D400] transition-colors">
+                    <p class="font-bold">Павлишин М.</p>
+                    <p class="text-sm opacity-70 group-hover:opacity-100"><span class="italic">Сучасність і традиція в українській культурі: вибрані студії.</span> — К.: Основи, 2007.</p>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-[#F6D400]/20 flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="flex flex-col gap-1">
+                    <div class="font-bold text-xl tracking-tighter border border-[#F6D400] px-2 py-1 w-max">
+                        neoBARO | UA
+                    </div>
+                    <span class="text-xs opacity-50">Інтерактивна презентація</span>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto no-print">
+                    <button class="flex-1 bg-[#F6D400] text-black font-bold px-6 py-3 hover:bg-white transition-colors text-center">
+                        Завантажити тези (DOCX)
+                    </button>
+                    <button onclick="handleDownloadPDF()" id="pdfBtn" class="flex-1 flex items-center justify-center gap-2 bg-transparent border-2 border-[#F6D400] text-[#F6D400] font-bold px-6 py-3 hover:bg-[#F6D400] hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="download" size="20"></i>
+                        <span>Завантажити PDF</span>
+                    </button>
+                </div>
+                <div class="text-xs opacity-50 text-right">
+                    <p>© 2026 Муністер В.Д.</p>
+                    <p>Група КБ-25-1</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        const REFERENCES = [
+            { id: 1, author: 'Гірц К.', title: 'Інтерпретація культур', publication: 'К.: Основи', year: '2001' },
+            { id: 2, author: 'Лотман Ю. М.', title: 'Семіосфера', publication: 'СПб.: Искусство-СПб', year: '2000' },
+            { id: 3, author: 'Бурдьє П.', title: 'Соціологія соціального простору', publication: 'К.: Основи', year: '2002' },
+            { id: 4, author: 'Барт Р.', title: 'Міфології', publication: 'К.: Основи', year: '1998' },
+            { id: 5, author: 'Наливайко Д. С.', title: 'Українське бароко: історія, поетика, семіотика', publication: 'К.: Либідь', year: '2001' },
+            { id: 6, author: 'Сулима М. М.', title: 'Українське бароко: тексти і контексти', publication: 'К.: Критика', year: '2010' },
+            { id: 7, author: 'Жайворонок В. В.', title: 'Знаки української етнокультури', publication: 'К.: Довіра', year: '2006' },
+            { id: 8, author: 'Ковалинський В. В.', title: 'Георгій Нарбут: життя і творчість', publication: 'К.: Мистецтво', year: '2009' },
+            { id: 9, author: 'Овсійчук В.', title: 'Українське мистецтво: навч. посіб.', publication: 'К.: Знання', year: '2008' },
+            { id: 10, author: 'Яковенко Н.', title: 'Нарис історії України з найдавніших часів до кінця XVIII ст.', publication: 'К.: Критика', year: '2006' },
+            { id: 11, author: 'Гундорова Т.', title: 'Постчорнобильська бібліотека: український літературний постмодерн', publication: 'К.: Критика', year: '2005' },
+            { id: 12, author: 'Павлишин М.', title: 'Сучасність і традиція в українській культурі: вибрані студії', publication: 'К.: Основи', year: '2007' },
+        ];
+
+        const TAB_CONTENT = {
+            frame: {
+                title: "Рамка як архітектура",
+                text: "У графіці Нарбута рамка — це не просто декор. Вона дисциплінує простір аркуша, створює ієрархію та надає тексту статусу офіційного документу. Вона працює як фасад будівлі, що захищає зміст від хаосу зовнішнього світу.",
+                visual: '<div class="absolute inset-0 p-8 border-[16px] border-black m-4 flex items-center justify-center"><div class="text-center font-serif text-xl border-t-2 border-b-2 border-black py-4">Текст як<br/>святиня</div></div>'
+            },
+            emblem: {
+                title: "Емблематика та Гербовість",
+                text: "Концентрація смислу у знаках. Щит, стрічка, козак з мушкетом — це «мова коротких кодів». Це не для приватного перегляду, а для публічної легітимації новоствореної держави УНР.",
+                visual: '<div class="rounded-full border-4 border-black p-12 flex items-center justify-center bg-gray-100 w-3/4 h-3/4"><i data-lucide="shield-check" size="120"></i></div>'
+            },
+            type: {
+                title: "Історизована типографіка",
+                text: "Літера стає образом. Нарбут не вигадував шрифт з нуля, а відродив шрифти київських стародруків XVII–XVIII ст., створюючи ефект тяглості. Цей шрифт став маркером української ідентичності.",
+                visual: '<div class="font-serif text-9xl italic">АБВ</div>'
+            }
+        };
+
+        function switchTab(tabKey) {
+            const data = TAB_CONTENT[tabKey];
+            
+            // Visual Updates
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if(btn.dataset.tab === tabKey) {
+                    btn.classList.add('bg-black', 'text-white');
+                    btn.classList.remove('hover:bg-gray-100');
+                } else {
+                    btn.classList.remove('bg-black', 'text-white');
+                    btn.classList.add('hover:bg-gray-100');
+                }
+            });
+
+            const content = document.getElementById('tabContent');
+            content.innerHTML = `
+                <div class="aspect-square flex items-center justify-center relative overflow-hidden border-4 border-black">
+                    ${data.visual}
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">${data.title}</h3>
+                    <p class="text-lg leading-relaxed text-gray-800">${data.text}</p>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // --- INTERACTIVITY ---
+
+        function openModal() {
+            const modal = document.getElementById('narbutModal');
+            modal.classList.remove('hidden', 'pointer-events-none');
+            // Small delay for animation
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                document.getElementById('modalContent').classList.remove('scale-95');
+                document.getElementById('modalContent').classList.add('scale-100');
+            }, 10);
+            switchTab('frame'); // Default tab
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('narbutModal');
+            modal.classList.add('opacity-0');
+            document.getElementById('modalContent').classList.remove('scale-100');
+            document.getElementById('modalContent').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden', 'pointer-events-none');
+            }, 300);
+        }
+
+        function toggleConclusion() {
+            const content = document.getElementById('expandedConclusion');
+            const btnText = document.getElementById('conclusionBtnText');
+            const icon = document.getElementById('conclusionIcon');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('opacity-0');
+                    content.style.height = 'auto'; // approximate
+                }, 10);
+                btnText.textContent = 'Згорнути';
+                icon.classList.add('rotate-180');
+            } else {
+                content.classList.add('opacity-0');
+                setTimeout(() => {
+                    content.classList.add('hidden');
+                }, 500);
+                btnText.textContent = 'Читати повністю';
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        function copyBibliography() {
+            const text = REFERENCES.map(r => `${r.author} ${r.title}. — ${r.publication}, ${r.year}.`).join('\n');
+            navigator.clipboard.writeText(text);
+            const btn = document.getElementById('copyBtn');
+            btn.innerHTML = '<i data-lucide="check" size="16"></i><span>Скопійовано</span>';
+            lucide.createIcons();
+            setTimeout(() => {
+                btn.innerHTML = '<i data-lucide="copy" size="16"></i><span>Скопіювати список</span>';
+                lucide.createIcons();
+            }, 2000);
+        }
+
+        // --- SCROLL ANIMATION ---
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        // --- PDF GENERATION ---
+        async function handleDownloadPDF() {
+            const btn = document.getElementById('pdfBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="loader"></div><span>Створення PDF...</span>';
+            btn.disabled = true;
+            document.body.classList.add('pdf-exporting');
+
+            try {
+                // Wait for styles to settle
+                await new Promise(r => setTimeout(r, 500));
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const sectionIds = ['hero', 'social-code', 'neobaroque', 'narbut', 'dna', 'stats', 'examples', 'global-effect', 'modernity', 'conclusions', 'sources'];
+
+                for (let i = 0; i < sectionIds.length; i++) {
+                    const sectionId = sectionIds[i];
+                    const element = document.getElementById(sectionId);
+                    
+                    if (element) {
+                        if (i > 0) pdf.addPage();
+                        
+                        let bg = '#F6D400';
+                        if (['neobaroque', 'sources', 'dna'].includes(sectionId)) bg = '#000000';
+                        if (sectionId === 'examples' || sectionId === 'modernity') bg = '#ffffff';
+
+                        const canvas = await html2canvas(element, {
+                            scale: 2,
+                            useCORS: true,
+                            backgroundColor: bg,
+                            windowWidth: 1200,
+                            onclone: (doc) => {
+                                const el = doc.getElementById(sectionId);
+                                el.style.padding = '40px';
+                                el.style.width = '1200px';
+                                el.style.height = '1697px'; // A4 Ratio
+                                el.style.display = 'flex';
+                                el.style.flexDirection = 'column';
+                                el.style.justifyContent = 'center';
+                                // Fix reveal classes in PDF
+                                const reveals = el.querySelectorAll('.reveal');
+                                reveals.forEach(r => {
+                                    r.style.opacity = '1'; 
+                                    r.style.transform = 'none';
+                                });
+                            }
+                        });
+
+                        const imgData = canvas.toDataURL('image/png');
+                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    }
+                }
+                pdf.save('neobaro-presentation.pdf');
+            } catch (err) {
+                console.error(err);
+                alert('Error generating PDF');
+            } finally {
+                document.body.classList.remove('pdf-exporting');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            // Mobile Menu
+            document.getElementById('menuToggle').addEventListener('click', () => {
+                const menu = document.getElementById('mobileMenu');
+                const isClosed = menu.classList.contains('translate-y-[-100%]');
+                if (isClosed) {
+                    menu.classList.remove('translate-y-[-100%]');
+                } else {
+                    menu.classList.add('translate-y-[-100%]');
+                }
+            });
+
+            // Close mobile menu on click
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    document.getElementById('mobileMenu').classList.add('translate-y-[-100%]');
+                });
+            });
+
+            // Initialize Observers
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        });
+
+    </script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
