@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pismo-Apel. Izložba o okupaciji i sjećanju.">
+    <meta name="color-scheme" content="dark light">
+    <title>Pismo-Apel</title>
+    <style>
+        :root {
+            /* Palette - High Contrast */
+            --bg-color: #0b0b0b;
+            --paper-color: #111111; 
+            
+            --text-primary: #ffffff; /* Pure white */
+            --text-secondary: #aaaaaa; /* Lighter gray for better contrast with pure white */
+            --text-highlight: #ff3333; /* Slightly brighter red for legibility */
+            
+            --border-color: rgba(255, 255, 255, 0.2);
+            
+            /* Typography */
+            --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: "Didot", "Bodoni MT", "Playfair Display", "Times New Roman", serif;
+            
+            /* Dimensions - Refined for Readability */
+            --max-width: 740px; /* Reduced for optimal character count per line */
+            --font-base: 21px; /* Increased base size */
+            --line-height: 1.75; /* Increased leading for elegance */
+            --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Reset & Base */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: var(--line-height);
+            font-size: var(--font-base);
+            font-weight: 300; /* Lighter base weight */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Reading Mode State */
+        body.reading-mode {
+            --font-base: 25px;
+            --line-height: 1.9;
+            --max-width: 900px;
+        }
+
+        /* POSTER CONTAINER */
+        .poster-frame {
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--paper-color);
+            padding: 90px 70px; /* Increased whitespace */
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            border: 1px solid var(--border-color);
+            transition: max-width var(--transition), padding var(--transition);
+        }
+
+        /* Architectural Line */
+        .poster-frame::before {
+            content: '';
+            position: absolute;
+            left: 35px;
+            top: 35px;
+            bottom: 35px;
+            width: 1px;
+            background: linear-gradient(to bottom, var(--border-color), transparent);
+            opacity: 0.6;
+        }
+
+        /* Top Bar */
+        .poster-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 25px;
+            margin-bottom: 70px;
+            font-size: 0.7rem;
+            letter-spacing: 0.25em; /* Wider tracking */
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Header Area */
+        header {
+            margin-bottom: 4rem;
+        }
+
+        /* Tags */
+        .tags {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 2.5rem;
+            justify-content: flex-end; 
+        }
+
+        .tag-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-family: var(--font-sans);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            padding: 6px 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 400;
+        }
+
+        .tag-btn:hover, .tag-btn.active {
+            color: var(--bg-color);
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Main Title */
+        h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(3.5rem, 9vw, 6rem);
+            font-weight: 300; /* Elegant light weight */
+            line-height: 0.95;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            letter-spacing: -0.05em; /* Tight display tracking */
+        }
+        
+        h1 span.italic {
+            font-family: var(--font-serif);
+            font-style: italic;
+            display: block; 
+            color: var(--text-secondary);
+            margin-left: 0.15em;
+            font-size: 0.4em; /* Smaller relative size */
+            line-height: 1.2;
+            margin-top: 15px;
+            letter-spacing: 0.02em;
+            font-weight: 300;
+        }
+
+        /* Content Area */
+        .content {
+            position: relative;
+        }
+
+        .content p {
+            margin-bottom: 2.2em; /* More space between paragraphs */
+            color: var(--text-primary); 
+            transition: none;
+            position: relative;
+            text-align: justify;
+            opacity: 1; 
+            text-shadow: 0 0 1px rgba(0,0,0,0.5);
+            font-weight: 300; /* Lighter body text */
+        }
+
+        /* Drop Cap */
+        .content p.first-paragraph::first-letter {
+            float: left;
+            font-family: var(--font-serif);
+            font-size: 4.8em;
+            line-height: 0.7;
+            padding-right: 0.25em;
+            padding-top: 0.1em;
+            color: var(--text-primary);
+            font-style: italic;
+        }
+
+        /* Highlight Style */
+        .highlight-red {
+            color: var(--text-highlight);
+            display: inline-block;
+            font-weight: 400; /* Normal weight for emphasis against light body */
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 8rem;
+            padding-top: 2.5rem;
+            border-top: 1px solid var(--text-primary); /* Thinner line */
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .signature {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 2.2rem;
+            font-weight: 300;
+        }
+
+        .footer-date {
+            font-family: var(--font-sans);
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 50;
+        }
+
+        .ctrl-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(8px);
+        }
+
+        .ctrl-btn:hover {
+            background: var(--text-primary);
+            color: var(--bg-color);
+            transform: scale(1.05);
+        }
+        
+        .ctrl-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+        /* Background Watermark */
+        .watermark {
+            position: fixed;
+            bottom: -5vh;
+            left: -5vw;
+            font-family: var(--font-serif);
+            font-size: 50vw;
+            color: rgba(255, 255, 255, 0.02);
+            z-index: -1;
+            pointer-events: none;
+            line-height: 0;
+            font-style: italic;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100%);
+            background: var(--text-primary);
+            color: var(--bg-color);
+            padding: 12px 24px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* PRINT STYLES */
+        @media print {
+            :root {
+                --bg-color: #ffffff;
+                --text-primary: #000000;
+                --text-secondary: #000000;
+                --border-color: #000000;
+                --font-base: 13pt; /* Adjusted for print */
+                --line-height: 1.6;
+                --text-highlight: #b00000; 
+            }
+
+            @page {
+                size: A4;
+                margin: 2cm;
+            }
+
+            body {
+                background: white;
+                color: black;
+                display: block;
+                padding: 0;
+                margin: 0;
+            }
+
+            .poster-frame {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .poster-frame::before { display: none; }
+            h1 { color: #000 !important; font-weight: 400 !important; }
+            p { color: #000 !important; opacity: 1 !important; text-align: justify; font-weight: 400 !important; }
+            .highlight-red { color: var(--text-highlight) !important; font-weight: 600 !important; }
+            .footer { border-top: 1px solid #000; }
+            .controls, .watermark, .tags, .toast { display: none !important; }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            :root {
+                --font-base: 18px;
+                --line-height: 1.6;
+            }
+            .poster-frame { padding: 40px 24px; }
+            h1 { font-size: 3.5rem; }
+            h1 span.italic { margin-top: 10px; }
+            .controls { bottom: 20px; right: 20px; flex-direction: row; }
+        }
+    </style>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+
+    <div class="watermark">V</div>
+
+    <div class="toast" id="toast">COPIED</div>
+
+    <!-- The "Poster" Frame -->
+    <main class="poster-frame">
+        
+        <nav class="poster-meta">
+            <span id="meta-location">BOSNA I HERCEGOVINA</span>
+            <span id="meta-date">FEBRUAR 2026</span>
+        </nav>
+
+        <article>
+            <header>
+                <div class="tags" aria-label="Language selection">
+                    <button class="tag-btn" data-lang="ua">UA</button>
+                    <button class="tag-btn active" data-lang="bs">BS</button>
+                    <button class="tag-btn" data-lang="en">EN</button>
+                </div>
+
+                <h1 id="page-title">
+                    Pismo<span class="italic">Apel</span>
+                </h1>
+            </header>
+
+            <div class="content" id="letter-content">
+                <!-- Content injected via JS -->
+            </div>
+
+            <footer class="footer">
+                <span class="signature" id="footer-name">Vjačeslav</span>
+                <span class="footer-date" id="footer-date-display">2026</span>
+            </footer>
+        </article>
+    </main>
+
+    <!-- Floating UI Controls -->
+    <div class="controls">
+        <button class="ctrl-btn" id="btn-read" aria-label="Mode">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        </button>
+        <button class="ctrl-btn" id="btn-copy" aria-label="Copy">
+            <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        </button>
+    </div>
+
+    <script>
+        const translations = {
+            ua: {
+                titleMain: "Лист",
+                titleSub: "Звернення",
+                location: "БОСНІЯ І ГЕРЦЕГОВИНА",
+                date: "ЛЮТИЙ 2026",
+                footerName: "В'ячеслав",
+                footerDate: "2026",
+                toast: "ТЕКСТ СКОПІЙОВАНО",
+                ariaRead: "Режим читання",
+                ariaCopy: "Копіювати",
+                paragraphs: [
+                    "Шановні пані та панове! Мене звати В'ячеслав, я народився в Донецьку в 1999 році і прожив під <span class='highlight-red'>окупацією</span> одинадцять років, від 2014-го до серпня 2025-го, і якщо це назвати фактом біографії, то він звучить майже сухо, хоча насправді йдеться про повільний процес, у якому людині день за днем стискають світ, доки вона починає жити не тим, що хоче, а тим, що їй дозволено.",
+                    "Я пишу вам у <span class='highlight-red'>Боснії і Герцеговині</span> з відчуттям внутрішнього впізнання, тому що у країні, яка пам’ятає, як облога змінює подих міста, як зникають сусіди й обриваються біографії, а мости між людьми руйнуються не лише вибухами, а недовірою і страхом, не потрібно довго пояснювати, як швидко “нормальне” стає <span class='highlight-red'>небезпечним</span> і як раптово життя вчиться існувати на мінімумі.",
+                    "<span class='highlight-red'>Окупація</span> починається тоді, коли підмінюють мову так, щоб підмінити реальність, і коли <span class='highlight-red'>війна</span> називається “подіями”, <span class='highlight-red'>насильство</span> називається “порядком”, репресія називається “профілактикою”, викрадення називається “зникненням”, катування називається “розмовою”, а <span class='highlight-red'>смерть</span> називається “інцидентом”, людина поступово втрачає точку опори, бо вона змушена читати не лише сказане, а й те, що заборонено вимовляти, і саме в цій зоні невимовного осідає <span class='highlight-red'>страх</span>, який робить <span class='highlight-red'>мовчання</span> умовою виживання.",
+                    "Потім урізають простір через документ і невизначеність, коли паспорт перестає бути ключем, який відкриває дорогу, і перетворюється на гачок, за який тебе можна тримати, а ідентичність стає предметом чужої нескінченної “перевірки”, так що <span class='highlight-red'>свобода</span> руху зникає не як поняття, а як щоденна можливість, і я майже дев’ять років фактично не мав змоги вільно виїхати за межі міста, бо <span class='highlight-red'>кордон</span> проходив не на карті, а в моєму <span class='highlight-red'>мовчанні</span>, у звичці не виділятися, у постійній готовності пояснювати сам факт своєї присутності. Коли це стається, місто стискається до системи “можна” і “не можна”, у якій ти перестаєш гуляти й починаєш виживати маршрутом, що його пам’ятає тіло, тому що ти запам’ятовуєш “правильні” вулиці і викреслюєш “неправильні”, ти відучуєшся від місць, де колись був твій Донецьк, і ти повертаєшся раніше не тому, що пізно, а тому, що ввечері контроль відчувається гостріше, тоді як репресивний тиск, який не завжди стискає відкрито, але майже завжди тримає, домагається головного, щоб людина сама обрізала собі мову, маршрут і життя, а потім назвала це обережністю.",
+                    "Саме тому я звертаюся до вас не для того, щоб попросити співчуття або “пояснити контекст”, а для того, щоб запросити до присутності, у якій важить не швидкий погляд і не короткий висновок, а уважне співсвідчення, тому що ця виставка є не про війну як новину, а про <span class='highlight-red'>окупацію</span> як технологію підміни сенсів і стискання простору, яка робить <span class='highlight-red'>насильство</span> буденністю, а людину привчає до самозаборони; і саме тому роботи тут не ілюструють, а фіксують, утримуючи <span class='highlight-red'>правду</span> в такій формі, яку складніше переписати після, тож я прошу вас увійти в цей простір повільно й уважно, залишаючи кожній історії її час і її тишу, аби вона була не просто побачена, а <span class='highlight-red'>почута</span>."
+                ]
+            },
+            bs: {
+                titleMain: "Pismo",
+                titleSub: "Apel",
+                location: "BOSNA I HERCEGOVINA",
+                date: "FEBRUAR 2026",
+                footerName: "Vjačeslav",
+                footerDate: "2026",
+                toast: "TEKST KOPIRAN",
+                ariaRead: "Uključi način čitanja",
+                ariaCopy: "Kopiraj",
+                paragraphs: [
+                    "Poštovane dame i gospodo! Zovem se Vjačeslav, rođen sam u Donjecku 1999. godine i živio sam pod <span class='highlight-red'>okupacijom</span> jedanaest godina, od 2014. do avgusta 2025. godine, i ako se to nazove biografskom činjenicom, zvuči gotovo suho, iako je zapravo riječ o sporom procesu u kojem se čovjeku svijet iz dana u dan sažima, sve dok ne počne živjeti ne onim što želi, već onim što mu je dozvoljeno.",
+                    "Pišem vam u <span class='highlight-red'>Bosni i Hercegovini</span> s osjećajem unutrašnjeg prepoznavanja, jer u zemlji koja pamti kako opsada mijenja dah grada, kako nestaju komšije i prekidaju se biografije, a mostovi među ljudima se ruše ne samo eksplozijama već i nepovjerenjem i strahom, nije potrebno dugo objašnjavati kako brzo “normalno” postaje <span class='highlight-red'>opasno</span> i kako iznenada život uči da postoji na minimumu.",
+                    "<span class='highlight-red'>Okupacija</span> počinje onda kada se jezik zamijeni kako bi se zamijenila stvarnost, i kada se <span class='highlight-red'>rat</span> naziva “događajima”, <span class='highlight-red'>nasilje</span> se naziva “redom”, represija se naziva “prevencijom”, otmica se naziva “nestankom”, mučenje se naziva “razgovorom”, a <span class='highlight-red'>smrt</span> se naziva “incidentom”, čovjek postepeno gubi oslonac jer je prisiljen čitati ne samo ono što je rečeno, već i ono što je zabranjeno izgovoriti, i upravo se u toj zoni neizrecivog taloži <span class='highlight-red'>strah</span> koji <span class='highlight-red'>šutnju</span> čini uslovom preživljavanja.",
+                    "Zatim se prostor sužava kroz dokumente i neizvjesnost, kada pasoš prestaje biti ključ koji otvara put i pretvara se u kuku kojom vas mogu držati, a identitet postaje predmet tuđe beskrajne “provjere”, tako da <span class='highlight-red'>sloboda</span> kretanja nestaje ne kao pojam, već kao svakodnevna mogućnost, i ja gotovo devet godina praktično nisam imao priliku slobodno izaći izvan granica grada, jer <span class='highlight-red'>granica</span> nije prolazila na karti, već u mojoj <span class='highlight-red'>šutnji</span>, u navici da se ne ističem, u stalnoj spremnosti da objašnjavam samu činjenicu svog prisustva. Kada se to dogodi, grad se sažima u sistem “može” i “ne može”, u kojem prestajete šetati i počinjete preživljavati rutom koju tijelo pamti, jer pamtite “ispravne” ulice i križate “pogrešne”, odvikavate se od mjesta gdje je nekada bio vaš Donjeck, i vraćate se ranije ne zato što je kasno, već zato što se navečer kontrola osjeća oštrije, dok represivni pritisak, koji ne stišće uvijek otvoreno, ali gotovo uvijek drži, postiže glavno: da čovjek sam sebi odsiječe jezik, rutu i život, a zatim to nazove oprezom.",
+                    "Upravo zato vam se ne obraćam da bih tražio saosjećanje ili “objasnio kontekst”, već da bih vas pozvao na prisustvo u kojem nije važan brz pogled ni kratak zaključak, već pažljivo svjedočenje, jer ova izložba nije o ratu kao vijesti, već o okupaciji kao tehnologiji zamjene značenja i sažimanja prostora, koja <span class='highlight-red'>nasilje</span> čini svakodnevicom, a čovjeka navikava na samo-zabranu; i upravo zato radovi ovdje ne ilustruju, već bilježe, zadržavajući <span class='highlight-red'>istinu</span> u obliku koji je teže naknadno prepisati, stoga vas molim da u ovaj prostor uđete polako i pažljivo, ostavljajući svakoj priči njeno vrijeme i njenu tišinu, kako bi ona bila ne samo viđena, već i <span class='highlight-red'>saslušana</span>."
+                ]
+            },
+            en: {
+                titleMain: "Letter of",
+                titleSub: "Appeal",
+                location: "BOSNIA AND HERZEGOVINA",
+                date: "FEBRUARY 2026",
+                footerName: "Viacheslav",
+                footerDate: "2026",
+                toast: "TEXT COPIED",
+                ariaRead: "Read Mode",
+                ariaCopy: "Copy text",
+                paragraphs: [
+                    "Ladies and Gentlemen! My name is Viacheslav, I was born in Donetsk in 1999 and lived under <span class='highlight-red'>occupation</span> for eleven years, from 2014 to August 2025, and if this is called a biographical fact, it sounds almost dry, although in reality, it is about a slow process in which a person's world is compressed day by day until they begin to live not by what they want, but by what is allowed.",
+                    "I am writing to you in <span class='highlight-red'>Bosnia and Herzegovina</span> with a sense of internal recognition, because in a country that remembers how a siege changes the breath of a city, how neighbors disappear and biographies are cut short, and bridges between people are destroyed not only by explosions but by mistrust and fear, one does not need to explain for long how quickly “normal” becomes <span class='highlight-red'>dangerous</span> and how suddenly life learns to exist at a minimum.",
+                    "<span class='highlight-red'>Occupation</span> begins when language is substituted to substitute reality, and when <span class='highlight-red'>war</span> is called “events”, <span class='highlight-red'>violence</span> is called “order”, repression is called “prevention”, abduction is called “disappearance”, torture is called “conversation”, and <span class='highlight-red'>death</span> is called “incident”, a person gradually loses their foothold because they are forced to read not only what is said but also what is forbidden to be spoken, and it is in this zone of the unspeakable that <span class='highlight-red'>fear</span> settles, making <span class='highlight-red'>silence</span> a condition of survival.",
+                    "Then space is curtailed through documents and uncertainty, when a passport ceases to be a key that opens a road and turns into a hook by which you can be held, and identity becomes the subject of someone else's endless “verification”, so that <span class='highlight-red'>freedom</span> of movement disappears not as a concept but as a daily possibility, and for almost nine years I effectively had no opportunity to freely leave the city limits, because the <span class='highlight-red'>border</span> ran not on a map but in my <span class='highlight-red'>silence</span>, in the habit of not standing out, in the constant readiness to explain the very fact of my presence. When this happens, the city shrinks to a system of “allowed” and “not allowed”, in which you stop walking and start surviving along a route that the body remembers, because you memorize the “correct” streets and cross out the “incorrect” ones, you unlearn places where your Donetsk used to be, and you return earlier not because it is late, but because in the evening control is felt more acutely, while repressive pressure, which does not always compress openly but almost always holds, achieves the main thing: that a person cuts off their own language, route, and life, and then calls it caution.",
+                    "That is why I address you not to ask for sympathy or “explain the context”, but to invite you to a presence in which what matters is not a quick glance or a short conclusion, but attentive witnessing, because this exhibition is not about war as news, but about <span class='highlight-red'>occupation</span> as a technology of substituting meanings and compressing space, which makes <span class='highlight-red'>violence</span> mundane and accustoms a person to self-prohibition; and that is why the works here do not illustrate but record, holding the <span class='highlight-red'>truth</span> in a form that is harder to rewrite later, so I ask you to enter this space slowly and attentively, leaving each story its time and its silence, so that it is not just seen, but <span class='highlight-red'>heard</span>."
+                ]
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnCopy = document.getElementById('btn-copy');
+            const btnRead = document.getElementById('btn-read');
+            const toast = document.getElementById('toast');
+            const content = document.getElementById('letter-content');
+            const langBtns = document.querySelectorAll('.tag-btn');
+            
+            // Elements to translate
+            const elTitle = document.getElementById('page-title');
+            const elLocation = document.getElementById('meta-location');
+            const elDate = document.getElementById('meta-date');
+            const elFooterName = document.getElementById('footer-name');
+            const elFooterDate = document.getElementById('footer-date-display');
+
+            let currentLang = 'bs';
+
+            // Initialize content
+            renderContent(currentLang);
+
+            // Language Switcher
+            langBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const lang = btn.getAttribute('data-lang');
+                    if (lang !== currentLang) {
+                        currentLang = lang;
+                        updateLanguage(lang);
+                    }
+                });
+            });
+
+            function updateLanguage(lang) {
+                // Update Buttons State
+                langBtns.forEach(b => {
+                    if (b.getAttribute('data-lang') === lang) b.classList.add('active');
+                    else b.classList.remove('active');
+                });
+
+                // Update DOM elements
+                document.documentElement.lang = lang;
+                const t = translations[lang];
+
+                // Static elements with simple fade effect
+                elTitle.innerHTML = `${t.titleMain}<span class="italic">${t.titleSub}</span>`;
+                elLocation.textContent = t.location;
+                elDate.textContent = t.date;
+                elFooterName.textContent = t.footerName;
+                elFooterDate.textContent = t.footerDate;
+                
+                // Aria labels
+                btnRead.setAttribute('aria-label', t.ariaRead);
+                btnCopy.setAttribute('aria-label', t.ariaCopy);
+                
+                // Toast text
+                toast.textContent = t.toast;
+
+                renderContent(lang);
+            }
+
+            function renderContent(lang) {
+                const paragraphs = translations[lang].paragraphs;
+                // Fade out slightly
+                content.style.opacity = '0';
+                
+                setTimeout(() => {
+                    // Generate HTML with specific class for first paragraph
+                    content.innerHTML = paragraphs.map((p, index) => {
+                        const className = index === 0 ? 'first-paragraph' : '';
+                        return `<p class="${className}">${p}</p>`;
+                    }).join('');
+                    content.style.opacity = '1';
+                }, 200);
+            }
+            
+            // Reading Mode Toggle
+            btnRead.addEventListener('click', () => {
+                document.body.classList.toggle('reading-mode');
+                const isActive = document.body.classList.contains('reading-mode');
+                btnRead.setAttribute('aria-pressed', isActive);
+            });
+
+            // Copy Functionality
+            btnCopy.addEventListener('click', async () => {
+                try {
+                    let textToCopy = "";
+                    const paragraphs = content.querySelectorAll('p');
+                    paragraphs.forEach(p => {
+                        textToCopy += p.innerText + "\n\n";
+                    });
+
+                    await navigator.clipboard.writeText(textToCopy.trim());
+                    showToast();
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                }
+            });
+
+            function showToast() {
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2500);
+            }
+        });
+    </script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
