@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Класифікація та форми податкових пільг</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:16px;scroll-behavior:smooth}
+    body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#050505;color:#fff;-webkit-font-smoothing:antialiased;min-height:100vh;position:relative;overflow-x:hidden}
+    body::selection{background:rgba(245,158,11,.3)}
+    .bg-grid{position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(to right,rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px}
+    .blur-1{position:fixed;top:-10%;right:-10%;width:50%;height:50%;background:rgba(245,158,11,.05);filter:blur(120px);border-radius:50%;pointer-events:none}
+    .blur-2{position:fixed;bottom:-10%;left:-10%;width:50%;height:50%;background:rgba(245,158,11,.05);filter:blur(120px);border-radius:50%;pointer-events:none}
+    main{max-width:72rem;margin:0 auto;padding:6rem 1.5rem;position:relative;z-index:10}
+    header{margin-bottom:8rem;text-align:center}
+    @media(min-width:768px){header{text-align:left}}
+    .badge{display:inline-flex;align-items:center;gap:.5rem;padding:.25rem .75rem;border-radius:9999px;border:1px solid rgba(245,158,11,.2);background:rgba(245,158,11,.05);margin-bottom:2rem}
+    .dot{width:6px;height:6px;border-radius:50%;background:#f59e0b;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+    .badge span{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.2em;color:rgba(245,158,11,.8)}
+    h1{font-family:Georgia,'Times New Roman',serif;font-weight:300;letter-spacing:-.025em;margin-bottom:2rem;line-height:1.1;font-size:clamp(2.5rem,8vw,5rem)}
+    h1 span{font-style:italic;color:rgba(245,158,11,.9)}
+    .subtitle{font-size:1.125rem;color:rgba(255,255,255,.4);font-weight:300;letter-spacing:.025em;max-width:42rem}
+    @media(min-width:768px){.subtitle{font-size:1.25rem}}
+    .subtitle strong{color:rgba(255,255,255,.8);font-weight:500}
+    section{margin-bottom:10rem}
+    .section-label{display:flex;align-items:center;gap:1rem;margin-bottom:2rem}
+    .section-label span{font-size:10px;font-family:ui-monospace,monospace;letter-spacing:.2em;color:rgba(245,158,11,.6)}
+    .section-label div{height:1px;flex:1;background:rgba(255,255,255,.1)}
+    h2{font-family:Georgia,'Times New Roman',serif;font-size:1.875rem;margin-bottom:2rem;line-height:1.2;color:#fff}
+    @media(min-width:768px){h2{font-size:2.25rem}}
+    .grid-5{display:grid;gap:3rem;align-items:start}
+    @media(min-width:1024px){.grid-5{grid-template-columns:2fr 3fr}}
+    .card-legal{padding:1.5rem;border-radius:12px;border:1px solid rgba(245,158,11,.1);background:rgba(245,158,11,.02);position:relative;overflow:hidden}
+    .card-legal::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:rgba(245,158,11,.4)}
+    .card-legal a{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.1em;color:rgba(245,158,11,.6);text-decoration:none}
+    .card-legal a:hover{color:#f59e0b}
+    .card-legal p{color:rgba(255,255,255,.7);font-style:italic;font-size:.875rem;line-height:1.6}
+    .flow-box{position:relative;padding:2rem;border-radius:1.5rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.02);overflow:hidden}
+    .flow-box::before{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(212,175,55,.15) 0%,transparent 70%);opacity:.3}
+    .flow-inner{position:relative;z-index:1}
+    .flow-title{text-align:center;margin-bottom:2.5rem;font-size:10px;font-family:ui-monospace,monospace;color:rgba(245,158,11,.4);text-transform:uppercase;letter-spacing:.3em}
+    .flow-row{display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:1rem}
+    @media(min-width:768px){.flow-row{flex-direction:row}}
+    .flow-item{display:flex;flex-direction:column;align-items:center;gap:.5rem}
+    .flow-box-sm{width:96px;height:96px;border-radius:1rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:12px;font-family:ui-monospace,monospace;color:rgba(255,255,255,.4);text-align:center;padding:.5rem}
+    .flow-center{width:128px;height:128px;border-radius:50%;border:2px solid rgba(245,158,11,.4);background:rgba(245,158,11,.05);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1rem}
+    .flow-center svg{margin-bottom:.5rem;color:#f59e0b}
+    .flow-center span{font-size:10px;font-weight:700;color:#f59e0b;text-transform:uppercase}
+    .flow-result{width:96px;height:96px;border-radius:1rem;border:1px solid rgba(245,158,11,.2);background:rgba(245,158,11,.05);display:flex;align-items:center;justify-content:center;font-size:12px;font-family:ui-monospace,monospace;color:rgba(245,158,11,.8);text-align:center;padding:.5rem}
+    .flow-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;text-align:center;margin-top:3rem}
+    .flow-steps div{font-size:9px;font-family:ui-monospace,monospace;color:rgba(255,255,255,.2);text-transform:uppercase}
+    .grid-4{display:grid;gap:1.5rem}
+    @media(min-width:768px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:1024px){.grid-4{grid-template-columns:repeat(4,1fr)}}
+    .card{position:relative;padding:2rem;border-radius:1rem;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.02);transition:all .5s;overflow:hidden;display:flex;flex-direction:column;min-height:100%}
+    .card:hover{background:rgba(255,255,255,.04)}
+    .card-icon{width:48px;height:48px;border-radius:50%;border:1px solid rgba(245,158,11,.2);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem}
+    .card-icon svg{width:20px;height:20px;color:rgba(245,158,11,.7)}
+    .card h3{font-family:Georgia,'Times New Roman',serif;font-size:1.25rem;margin-bottom:.75rem;color:rgba(255,255,255,.9)}
+    .card p{font-size:.875rem;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:1rem}
+    .card-example{border-top:1px solid rgba(255,255,255,.05);margin-top:1rem;padding-top:1rem}
+    .card-example div{font-size:10px;font-family:ui-monospace,monospace;color:rgba(245,158,11,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+    .card-example p{font-size:12px;color:rgba(255,255,255,.3);font-style:italic;line-height:1.6;margin:0}
+    .grid-12{display:grid;gap:3rem;align-items:center}
+    @media(min-width:1024px){.grid-12{grid-template-columns:1fr 2fr}}
+    .form-card{padding:2rem;border-radius:1rem;border:1px solid rgba(255,255,255,.1);background:#080808;transition:all .3s;position:relative}
+    .form-card:hover{border-color:rgba(245,158,11,.3)}
+    .form-card .num{position:absolute;top:1rem;right:1.5rem;font-family:ui-monospace,monospace;font-size:2.25rem;color:rgba(245,158,11,.2)}
+    .form-card h4{font-family:Georgia,'Times New Roman',serif;font-size:1.125rem;margin-bottom:.25rem;padding-right:2.5rem;color:#fff}
+    .form-card .sub{font-size:9px;font-family:ui-monospace,monospace;letter-spacing:.1em;color:rgba(245,158,11,.6);text-transform:uppercase;margin-bottom:1rem}
+    .form-card p{font-size:12px;color:rgba(255,255,255,.4);line-height:1.6;margin-bottom:1rem}
+    .form-card .case{display:flex;align-items:center;gap:.5rem;font-size:10px;color:rgba(255,255,255,.2);font-style:italic}
+    .form-card .case span{width:4px;height:4px;border-radius:50%;background:rgba(245,158,11,.4)}
+    .form-grid{display:grid;gap:1rem}
+    @media(min-width:640px){.form-grid{grid-template-columns:repeat(2,1fr)}}
+    .lifecycle{background:rgba(255,255,255,.01);border:1px solid rgba(255,255,255,.05);border-radius:1.5rem;padding:3rem}
+    .lifecycle h2{text-align:center;margin-bottom:3rem}
+    .lifecycle-row{display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;gap:2rem;position:relative}
+    @media(min-width:768px){.lifecycle-row{flex-direction:row}}
+    .lifecycle-item{flex:1;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center}
+    .lifecycle-num{width:48px;height:48px;border-radius:50%;background:#050505;border:1px solid rgba(245,158,11,.3);display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:.875rem;color:#f59e0b;margin-bottom:1.5rem}
+    .lifecycle-item h4{font-family:Georgia,'Times New Roman',serif;font-size:.875rem;margin-bottom:.5rem;color:rgba(255,255,255,.8)}
+    .lifecycle-item p{font-size:11px;color:rgba(255,255,255,.3);line-height:1.6;max-width:160px}
+    .legal-grid{display:grid;gap:2rem}
+    @media(min-width:768px){.legal-grid{grid-template-columns:2fr 1fr}}
+    .legal-grid h4{color:rgba(245,158,11,.8);font-family:Georgia,'Times New Roman',serif;font-size:1.125rem;margin-bottom:1rem}
+    .legal-grid p{font-size:.875rem;color:rgba(255,255,255,.5);line-height:1.6}
+    .legal-grid a{color:rgba(245,158,11,.6);text-decoration:none}
+    .legal-grid a:hover{color:#f59e0b}
+    .legal-box{padding:2rem;border-radius:1rem;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.01)}
+    .legal-side{background:rgba(245,158,11,.03);border:1px solid rgba(245,158,11,.1);border-radius:1.5rem;padding:2rem;display:flex;flex-direction:column;justify-content:space-between}
+    .legal-side .icon-wrap{width:40px;height:40px;border-radius:50%;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem}
+    .legal-side h3{font-family:Georgia,'Times New Roman',serif;font-size:1.25rem;margin-bottom:1rem;color:#fff}
+    .legal-side p{font-size:12px;color:rgba(255,255,255,.4);line-height:1.6;margin-bottom:1.5rem}
+    .legal-side .tag{font-size:10px;font-family:ui-monospace,monospace;color:rgba(245,158,11,.4);text-transform:uppercase;letter-spacing:.1em}
+    table{width:100%;border-collapse:collapse;border:1px solid rgba(255,255,255,.05);text-align:left;font-size:.875rem}
+    th,td{padding:1rem;border:1px solid rgba(255,255,255,.05)}
+    thead tr{background:rgba(255,255,255,.03)}
+    th{font-family:Georgia,'Times New Roman',serif;color:rgba(245,158,11,.8)}
+    td{color:rgba(255,255,255,.5)}
+    tr:hover{background:rgba(255,255,255,.01)}
+    td:first-child{font-weight:500;color:rgba(255,255,255,.7)}
+    .case-card{padding:2.5rem;border-radius:2.5rem;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.02);margin-bottom:2rem}
+    .case-card h3{font-family:Georgia,'Times New Roman',serif;font-size:1.5rem;margin-bottom:1.5rem;color:#fff}
+    .case-card p{margin-bottom:1rem;font-size:.875rem;color:rgba(255,255,255,.6);line-height:1.6}
+    .case-card .highlight{font-weight:700;color:#f59e0b}
+    .case-box{padding:1rem;background:rgba(245,158,11,.05);border-radius:12px;border:1px solid rgba(245,158,11,.1);font-size:12px;font-style:italic}
+    .case-box span{display:block;font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;color:rgba(245,158,11,.6);letter-spacing:.05em;margin-bottom:.25rem}
+    .case-box a{color:inherit;text-decoration:none}
+    .case-box a:hover{color:#f59e0b}
+    .algo-grid{display:grid;gap:2rem}
+    @media(min-width:768px){.algo-grid{grid-template-columns:repeat(3,1fr)}}
+    .algo-card{background:#050505;padding:1.5rem;border-radius:1rem;border:1px solid rgba(255,255,255,.1);text-align:center}
+    .algo-card .num{width:32px;height:32px;border-radius:50%;background:#f59e0b;color:#000;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:12px;margin:0 auto 1rem}
+    .algo-card h4{font-size:.875rem;font-weight:700;margin-bottom:.5rem;color:#fff}
+    .algo-card p{font-size:11px;color:rgba(255,255,255,.5);line-height:1.6}
+    .decision-box{padding:1.5rem;border-radius:12px;border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.05);color:#fff;font-size:.875rem;font-weight:500;text-align:center;min-width:240px}
+    .decision-final{padding:2rem 2.5rem;border-radius:1rem;border:2px solid #f59e0b;background:rgba(245,158,11,.1);color:#fff;font-family:Georgia,'Times New Roman',serif;font-size:1rem;text-align:center;box-shadow:0 0 30px rgba(245,158,11,.1)}
+    .decision-final span{display:block;font-size:10px;font-family:ui-monospace,monospace;color:#f59e0b;text-transform:uppercase;letter-spacing:.2em;margin-top:.5rem}
+    .risk-card{padding:2.5rem;border-radius:1.5rem;border:1px solid rgba(239,68,68,.1);background:rgba(239,68,68,.01)}
+    .risk-card ul{list-style:none}
+    .risk-card li{display:flex;gap:.75rem;margin-bottom:1rem;font-size:.875rem;color:rgba(255,255,255,.4)}
+    .risk-card li::before{content:'•';color:rgba(239,68,68,.5)}
+    .resp-card{padding:2.5rem;border-radius:1.5rem;border:1px solid rgba(245,158,11,.1);background:rgba(245,158,11,.01)}
+    .diia-box{padding:3rem;border-radius:3rem;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.01);overflow:hidden}
+    .diia-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.25rem .75rem;border-radius:9999px;border:1px solid rgba(59,130,246,.2);background:rgba(59,130,246,.05);margin-bottom:1.5rem}
+    .diia-badge svg{color:#60a5fa}
+    .diia-badge span{font-size:9px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.1em;color:#60a5fa}
+    .diia-box h2{font-size:2.25rem;margin-bottom:1.5rem}
+    .diia-box h2 span{color:#60a5fa;font-style:italic}
+    .diia-row{display:flex;justify-content:space-between;align-items:center;padding:1rem;border-radius:12px;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.02);margin-bottom:1rem}
+    .diia-row span:last-child{font-family:ui-monospace,monospace;font-size:12px;color:#60a5fa}
+    .intl-grid{display:grid;gap:2rem}
+    @media(min-width:768px){.intl-grid{grid-template-columns:repeat(3,1fr)}}
+    .intl-card{padding:2rem;border-radius:1.5rem;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.01);display:flex;flex-direction:column;align-items:center;text-align:center}
+    .intl-card svg{width:40px;height:40px;color:rgba(245,158,11,.4);margin-bottom:1.5rem}
+    .intl-card h4{font-family:Georgia,'Times New Roman',serif;font-size:1.125rem;margin-bottom:1rem;color:#fff}
+    .intl-card p{font-size:12px;color:rgba(255,255,255,.4);line-height:1.6}
+    footer{padding-top:5rem;padding-bottom:8rem;border-top:1px solid rgba(255,255,255,.05);text-align:center}
+    footer svg{color:#f59e0b;opacity:.5;margin-bottom:2rem}
+    footer h2{font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.875rem,4vw,3rem);font-style:italic;margin-bottom:2rem;max-width:56rem;margin-left:auto;margin-right:auto;line-height:1.3}
+    footer .divider{height:3rem;width:1px;background:rgba(245,158,11,.3);margin:0 auto 1rem}
+    footer .credit{font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.4em;color:rgba(255,255,255,.3);text-transform:uppercase}
+    a{color:inherit}
+    svg{flex-shrink:0}
+    .bg-gold-glow{background:radial-gradient(circle at center,rgba(212,175,55,.15) 0%,transparent 70%)}
+  </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden overflow-y-auto selection:bg-amber-500/30">
+  <div class="fixed inset-0 bg-grid pointer-events-none"></div>
+  <div class="fixed top-[-10%] right-[-10%] w-[50%] h-[50%] bg-amber-500/5 blur-[120px] rounded-full pointer-events-none"></div>
+  <div class="fixed bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-amber-500/5 blur-[120px] rounded-full pointer-events-none"></div>
+
+  <main class="max-w-6xl mx-auto px-6 py-24 relative z-10">
+    
+    <!-- Header -->
+    <header class="mb-32 text-center md:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/20 bg-amber-500/5 mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+        <span class="text-[10px] font-mono uppercase tracking-[0.2em] text-amber-500/80">Legal Tech Board</span>
+      </div>
+      <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif font-light tracking-tight mb-8 leading-[1.1] text-white">
+        Класифікація та форми <br>
+        <span class="italic text-amber-500/90">податкових пільг</span>
+      </h1>
+      <p class="text-lg md:text-xl text-white/40 font-light tracking-wide max-w-2xl">
+        Доповідь підготував <span class="text-white/80 font-medium tracking-wider">Вячеслав МУНІСТЕР (КБ-25-1)</span>
+      </p>
+    </header>
+
+    <!-- 01 CONCEPT & LOGIC -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">01 // CONCEPT & LOGIC</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="grid lg:grid-cols-5 gap-12 items-start">
+        <div class="lg:col-span-2">
+          <h2 class="text-3xl md:text-4xl font-serif mb-8 leading-snug text-white">
+            Логіка функціонування <br>податкової пільги
+          </h2>
+          <div class="space-y-6">
+            <div class="p-6 rounded-xl border border-amber-500/10 bg-amber-500/[0.02] relative overflow-hidden group">
+              <div class="absolute top-0 left-0 w-1 h-full bg-amber-500/40"></div>
+              <div class="text-[10px] font-mono text-amber-500/60 uppercase tracking-widest mb-3">
+                <a href="https://zakon.rada.gov.ua/laws/show/2755-17#n241" target="_blank" rel="noopener noreferrer" class="hover:text-amber-500 underline">ст. 30.1 ПКУ</a>
+              </div>
+              <p class="text-white/70 leading-relaxed italic text-sm">
+                "Податкова пільга - передбачене податковим та митним законодавством звільнення платника податків від обов'язку щодо нарахування та сплати податку та збору..."
+              </p>
+            </div>
+            <p class="text-base text-white/50 leading-relaxed">
+              Пільга інтегрується в структуру податку як елемент, що коригує кінцеве податкове зобов'язання на користь платника.
+            </p>
+          </div>
+        </div>
+        <div class="lg:col-span-3 relative p-8 rounded-3xl border border-white/10 bg-white/[0.02] overflow-hidden">
+          <div class="absolute inset-0 bg-gold-glow opacity-30 pointer-events-none"></div>
+          <div class="relative z-10">
+            <div class="text-center mb-10">
+              <span class="text-[10px] font-mono text-amber-500/40 uppercase tracking-[0.3em]">Tax Benefit Flowchart</span>
+            </div>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 relative">
+              <div class="flex flex-col items-center gap-2">
+                <div class="w-24 h-24 rounded-2xl border border-white/10 bg-white/5 flex items-center justify-center text-xs font-mono text-white/40 text-center p-2">Об'єкт оподаткування</div>
+                <svg class="rotate-90 md:rotate-0 text-amber-500/40 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </div>
+              <div class="w-32 h-32 rounded-full border-2 border-amber-500/40 bg-amber-500/5 flex flex-col items-center justify-center text-center p-4">
+                <svg class="w-6 h-6 text-amber-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                <span class="text-[10px] font-bold text-amber-500 uppercase tracking-tighter">Податкова Пільга</span>
+              </div>
+              <div class="flex flex-col items-center gap-2">
+                <svg class="rotate-90 md:rotate-0 text-amber-500/40 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                <div class="w-24 h-24 rounded-2xl border border-amber-500/20 bg-amber-500/5 flex items-center justify-center text-xs font-mono text-amber-500/80 text-center p-2">Зменшене зобов'язання</div>
+              </div>
+            </div>
+            <div class="mt-12 grid grid-cols-3 gap-4 text-center">
+              <div class="text-[9px] font-mono text-white/20 uppercase">01. Виникнення підстав</div>
+              <div class="text-[9px] font-mono text-white/20 uppercase">02. Застосування форми</div>
+              <div class="text-[9px] font-mono text-white/20 uppercase">03. Фіскальний результат</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 CLASSIFICATION -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">02 // CLASSIFICATION MATRIX</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h2 class="text-3xl font-serif mb-4 text-white">Класифікаційна матриця</h2>
+          <p class="text-white/40 max-w-xl italic">Системний підхід до структурування пільг за ст. 30.2 ПКУ.</p>
+        </div>
+        <div class="flex gap-2">
+          <div class="w-2 h-2 rounded-full bg-amber-500"></div>
+          <div class="w-2 h-2 rounded-full bg-amber-500/40"></div>
+          <div class="w-2 h-2 rounded-full bg-amber-500/20"></div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="group relative p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 overflow-hidden flex flex-col h-full">
+          <div class="relative z-10 flex-1">
+            <div class="w-12 h-12 rounded-full border border-amber-500/20 flex items-center justify-center mb-6">
+              <svg class="w-5 h-5 text-amber-500/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </div>
+            <h3 class="text-xl font-serif mb-3 text-white/90">За категорією платників</h3>
+            <p class="text-sm text-white/50 leading-relaxed mb-4">Особливості, що характеризують певну групу суб'єктів права.</p>
+            <div class="mt-4 pt-4 border-t border-white/5">
+              <div class="text-[10px] font-mono text-amber-500/40 uppercase tracking-widest mb-2">Case / Example</div>
+              <p class="text-xs text-white/30 italic leading-relaxed">Пільги для учасників бойових дій (ст. 165.1.54 ПКУ) або осіб з інвалідністю.</p>
+            </div>
+          </div>
+        </div>
+        <div class="group relative p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 overflow-hidden flex flex-col h-full">
+          <div class="relative z-10 flex-1">
+            <div class="w-12 h-12 rounded-full border border-amber-500/20 flex items-center justify-center mb-6">
+              <svg class="w-5 h-5 text-amber-500/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="text-xl font-serif mb-3 text-white/90">За видом діяльності</h3>
+            <p class="text-sm text-white/50 leading-relaxed mb-4">Стимулювання стратегічно важливих напрямків економіки.</p>
+            <div class="mt-4 pt-4 border-t border-white/5">
+              <div class="text-[10px] font-mono text-amber-500/40 uppercase tracking-widest mb-2">Case / Example</div>
+              <p class="text-xs text-white/30 italic leading-relaxed">Звільнення від ПДВ операцій з постачання товарів для потреб оборони.</p>
+            </div>
+          </div>
+        </div>
+        <div class="group relative p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 overflow-hidden flex flex-col h-full">
+          <div class="relative z-10 flex-1">
+            <div class="w-12 h-12 rounded-full border border-amber-500/20 flex items-center justify-center mb-6">
+              <svg class="w-5 h-5 text-amber-500/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h3 class="text-xl font-serif mb-3 text-white/90">За об'єктом оподаткування</h3>
+            <p class="text-sm text-white/50 leading-relaxed mb-4">Звільнення конкретних активів або операцій.</p>
+            <div class="mt-4 pt-4 border-t border-white/5">
+              <div class="text-[10px] font-mono text-amber-500/40 uppercase tracking-widest mb-2">Case / Example</div>
+              <p class="text-xs text-white/30 italic leading-relaxed">Пільги на ввезення електромобілів (звільнення від ПДВ та акцизу).</p>
+            </div>
+          </div>
+        </div>
+        <div class="group relative p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 overflow-hidden flex flex-col h-full">
+          <div class="relative z-10 flex-1">
+            <div class="w-12 h-12 rounded-full border border-amber-500/20 flex items-center justify-center mb-6">
+              <svg class="w-5 h-5 text-amber-500/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+            </div>
+            <h3 class="text-xl font-serif mb-3 text-white/90">За суспільним значенням</h3>
+            <p class="text-sm text-white/50 leading-relaxed mb-4">Підтримка витрат, що приносять користь суспільству.</p>
+            <div class="mt-4 pt-4 border-t border-white/5">
+              <div class="text-[10px] font-mono text-amber-500/40 uppercase tracking-widest mb-2">Case / Example</div>
+              <p class="text-xs text-white/30 italic leading-relaxed">Податкова знижка на навчання або благодійні внески (ст. 166 ПКУ).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 FORMS ARCHITECTURE -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">03 // FORMS ARCHITECTURE</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="grid lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-4 space-y-8">
+          <h2 class="text-4xl font-serif leading-tight text-white">Архітектура <br>форм пільг</h2>
+          <p class="text-white/40 text-sm leading-relaxed">
+            Чотири фундаментальні вектори реалізації пільг, закріплені в <a href="https://zakon.rada.gov.ua/laws/show/2755-17#n249" target="_blank" rel="noopener noreferrer" class="text-amber-500/60 font-mono hover:text-amber-500 underline">п. 30.9 ст. 30 ПКУ</a>.
+          </p>
+          <div class="p-4 rounded-xl border border-white/5 bg-white/[0.02] flex items-center gap-4">
+            <div class="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
+              <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+            </div>
+            <div class="text-[10px] font-mono text-white/30 uppercase tracking-widest leading-tight">Юридична імперативність</div>
+          </div>
+        </div>
+        <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="p-8 rounded-2xl border border-white/10 bg-[#080808] hover:border-amber-500/30 transition-all group relative z-10">
+            <div class="text-amber-500/20 font-mono text-4xl absolute top-4 right-6">01</div>
+            <h4 class="text-lg font-serif mb-1 pr-10 text-white">Податкове вирахування</h4>
+            <div class="text-[9px] font-mono tracking-widest text-amber-500/60 uppercase mb-4">Tax Deduction</div>
+            <p class="text-white/40 text-xs leading-relaxed mb-4">Зменшення бази оподаткування до нарахування податку.</p>
+            <div class="flex items-center gap-2 text-[10px] text-white/20 italic">
+              <span class="w-1 h-1 rounded-full bg-amber-500/40"></span>
+              Податкова знижка (ПДФО) на іпотеку.
+            </div>
+          </div>
+          <div class="p-8 rounded-2xl border border-white/10 bg-[#080808] hover:border-amber-500/30 transition-all group relative z-10">
+            <div class="text-amber-500/20 font-mono text-4xl absolute top-4 right-6">02</div>
+            <h4 class="text-lg font-serif mb-1 pr-10 text-white">Зменшення зобов'язання</h4>
+            <div class="text-[9px] font-mono tracking-widest text-amber-500/60 uppercase mb-4">Tax Credit</div>
+            <p class="text-white/40 text-xs leading-relaxed mb-4">Зменшення вже обчисленого податку до сплати.</p>
+            <div class="flex items-center gap-2 text-[10px] text-white/20 italic">
+              <span class="w-1 h-1 rounded-full bg-amber-500/40"></span>
+              Залік податку, сплаченого за кордоном.
+            </div>
+          </div>
+          <div class="p-8 rounded-2xl border border-white/10 bg-[#080808] hover:border-amber-500/30 transition-all group relative z-10">
+            <div class="text-amber-500/20 font-mono text-4xl absolute top-4 right-6">03</div>
+            <h4 class="text-lg font-serif mb-1 pr-10 text-white">Знижена ставка податку</h4>
+            <div class="text-[9px] font-mono tracking-widest text-amber-500/60 uppercase mb-4">Reduced Rate</div>
+            <p class="text-white/40 text-xs leading-relaxed mb-4">Ставка нижча за стандартну для конкретного податку.</p>
+            <div class="flex items-center gap-2 text-[10px] text-white/20 italic">
+              <span class="w-1 h-1 rounded-full bg-amber-500/40"></span>
+              ПДВ 7% на медичні вироби.
+            </div>
+          </div>
+          <div class="p-8 rounded-2xl border border-white/10 bg-[#080808] hover:border-amber-500/30 transition-all group relative z-10">
+            <div class="text-amber-500/20 font-mono text-4xl absolute top-4 right-6">04</div>
+            <h4 class="text-lg font-serif mb-1 pr-10 text-white">Звільнення від сплати</h4>
+            <div class="text-[9px] font-mono tracking-widest text-amber-500/60 uppercase mb-4">Tax Exemption</div>
+            <p class="text-white/40 text-xs leading-relaxed mb-4">Повний вихід з-під дії податкового обов'язку.</p>
+            <div class="flex items-center gap-2 text-[10px] text-white/20 italic">
+              <span class="w-1 h-1 rounded-full bg-amber-500/40"></span>
+              Звільнення від земельного податку шкіл.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 LIFECYCLE -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">04 // LIFECYCLE</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="bg-white/[0.01] border border-white/5 rounded-3xl p-12">
+        <h2 class="text-3xl font-serif mb-12 text-center text-white">Життєвий цикл податкової пільги</h2>
+        <div class="flex flex-col md:flex-row items-stretch justify-between gap-8 relative">
+          <div class="absolute top-1/2 left-0 w-full h-[1px] bg-white/5 hidden md:block -translate-y-1/2"></div>
+          <div class="flex-1 relative z-10 flex flex-col items-center text-center">
+            <div class="w-12 h-12 rounded-full bg-[#050505] border border-amber-500/30 flex items-center justify-center text-amber-500 font-mono text-sm mb-6">01</div>
+            <h4 class="text-sm font-serif mb-2 text-white/80">Виникнення підстав</h4>
+            <p class="text-[11px] text-white/30 leading-relaxed max-w-[160px]">Поява умов, визначених ПКУ для застосування пільги.</p>
+          </div>
+          <div class="flex-1 relative z-10 flex flex-col items-center text-center">
+            <div class="w-12 h-12 rounded-full bg-[#050505] border border-amber-500/30 flex items-center justify-center text-amber-500 font-mono text-sm mb-6">02</div>
+            <h4 class="text-sm font-serif mb-2 text-white/80">Реалізація права</h4>
+            <p class="text-[11px] text-white/30 leading-relaxed max-w-[160px]">Вибір платником форми пільги та її відображення в обліку.</p>
+          </div>
+          <div class="flex-1 relative z-10 flex flex-col items-center text-center">
+            <div class="w-12 h-12 rounded-full bg-[#050505] border border-amber-500/30 flex items-center justify-center text-amber-500 font-mono text-sm mb-6">03</div>
+            <h4 class="text-sm font-serif mb-2 text-white/80">Контроль</h4>
+            <p class="text-[11px] text-white/30 leading-relaxed max-w-[160px]">Перевірка ДПС правильності використання пільги (п. 30.6).</p>
+          </div>
+          <div class="flex-1 relative z-10 flex flex-col items-center text-center">
+            <div class="w-12 h-12 rounded-full bg-[#050505] border border-amber-500/30 flex items-center justify-center text-amber-500 font-mono text-sm mb-6">04</div>
+            <h4 class="text-sm font-serif mb-2 text-white/80">Результат</h4>
+            <p class="text-[11px] text-white/30 leading-relaxed max-w-[160px]">Економічний ефект для платника та стимул для держави.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 LEGAL CONTEXT -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">05 // LEGAL CONTEXT</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="md:col-span-2 space-y-8">
+          <h2 class="text-3xl font-serif text-white">Важливі правові нюанси</h2>
+          <div class="grid sm:grid-cols-2 gap-8">
+            <div class="space-y-4">
+              <h4 class="text-amber-500/80 font-serif text-lg">Обов'язковість обліку</h4>
+              <p class="text-sm text-white/50 leading-relaxed">
+                Згідно з <a href="https://zakon.rada.gov.ua/laws/show/2755-17#n246" target="_blank" rel="noopener noreferrer" class="text-amber-500/60 hover:text-amber-500 underline">п. 30.6 ПКУ</a>, суми податкової пільги обліковуються платником податків.
+              </p>
+            </div>
+            <div class="space-y-4">
+              <h4 class="text-amber-500/80 font-serif text-lg">Відмова від пільги</h4>
+              <p class="text-sm text-white/50 leading-relaxed">
+                Платник має право відмовитися від використання пільги (<a href="https://zakon.rada.gov.ua/laws/show/2755-17#n244" target="_blank" rel="noopener noreferrer" class="text-amber-500/60 hover:text-amber-500 underline">п. 30.4</a>).
+              </p>
+            </div>
+          </div>
+          <div class="p-8 rounded-2xl border border-white/5 bg-white/[0.01] relative overflow-hidden">
+            <h4 class="text-xl font-serif mb-4 relative z-10 text-white">Встановлення пільг</h4>
+            <p class="text-sm text-white/40 leading-relaxed relative z-10">
+              Податкові пільги встановлюються виключно Податковим кодексом України.
+            </p>
+          </div>
+        </div>
+        <div class="bg-amber-500/[0.03] border border-amber-500/10 rounded-3xl p-8 flex flex-col justify-between">
+          <div class="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
+            <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h3 class="text-xl font-serif mb-4 text-white">Принцип цільового використання</h3>
+          <p class="text-xs text-white/40 leading-relaxed mb-6">
+            Деякі пільги надаються за умови спрямування вивільнених коштів на розвиток виробництва.
+          </p>
+          <div class="text-[10px] font-mono text-amber-500/40 uppercase tracking-widest">Compliance // Art. 30.8</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 IMPACT -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">06 // IMPACT</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-12">
+        <div class="p-10 rounded-3xl border border-white/5 bg-white/[0.01] flex flex-col justify-between shadow-sm">
+          <div>
+            <svg class="w-8 h-8 text-amber-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+            <h3 class="text-2xl font-serif mb-4 text-white">Значення для держави</h3>
+            <p class="text-white/50 leading-relaxed">
+              Інструмент фіскальної політики для стимулювання економічного зростання.
+            </p>
+          </div>
+          <div class="mt-12 pt-8 border-t border-white/5 text-[10px] font-mono tracking-widest text-white/20 uppercase">Fiscal Strategy // State Level</div>
+        </div>
+        <div class="p-10 rounded-3xl border border-white/5 bg-white/[0.01] flex flex-col justify-between shadow-sm">
+          <div>
+            <svg class="w-8 h-8 text-amber-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            <h3 class="text-2xl font-serif mb-4 text-white">Значення для платника</h3>
+            <p class="text-white/50 leading-relaxed">
+              Можливість зменшення податкового навантаження для розвитку бізнесу.
+            </p>
+          </div>
+          <div class="mt-12 pt-8 border-t border-white/5 text-[10px] font-mono tracking-widest text-white/20 uppercase">Economic Support // Taxpayer Level</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 CASE STUDIES -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">07 // CASE STUDIES & JUDICIAL PRACTICE</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] shadow-sm relative overflow-hidden">
+          <h3 class="text-2xl font-serif mb-6 text-white">Кейс: Пільги для IT-сектору</h3>
+          <div class="space-y-4 text-sm text-white/60 leading-relaxed">
+            <p><span class="font-bold text-amber-500">Обставини:</span> Компанія-розробник ПЗ застосовувала звільнення від ПДВ.</p>
+            <p><span class="font-bold text-amber-500">Правова позиція:</span> ПКУ чітко визначає перелік операцій, що підпадають під пільгу.</p>
+            <div class="p-4 bg-amber-500/5 rounded-xl border border-amber-500/10 text-xs italic">
+              <span class="font-mono text-[10px] block mb-1 uppercase text-amber-500/60 tracking-wider">Судова практика</span>
+              <a href="https://reyestr.court.gov.ua/" target="_blank" rel="noopener noreferrer" class="hover:text-amber-500 underline">Постанова ВС у справі №826/12108/18</a>
+            </div>
+          </div>
+        </div>
+        <div class="p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] shadow-sm relative overflow-hidden">
+          <h3 class="text-2xl font-serif mb-6 text-white">Кейс: Соціальні пільги (ПДФО)</h3>
+          <div class="space-y-4 text-sm text-white/60 leading-relaxed">
+            <p><span class="font-bold text-amber-500">Обставини:</span> Податкова знижка за навчання дитини (ст. 166.3.3 ПКУ).</p>
+            <p><span class="font-bold text-amber-500">Правова позиція:</span> ПКУ вимагає документального підтвердження витрат.</p>
+            <div class="p-4 bg-amber-500/5 rounded-xl border border-amber-500/10 text-xs italic">
+              <span class="font-mono text-[10px] block mb-1 uppercase text-amber-500/60 tracking-wider">Судова практика</span>
+              <a href="https://reyestr.court.gov.ua/" target="_blank" rel="noopener noreferrer" class="hover:text-amber-500 underline">Рішення у справі №440/2345/20</a>
+            </div>
+          </div>
+        </div>
+        <div class="p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] shadow-sm relative overflow-hidden">
+          <h3 class="text-2xl font-serif mb-6 text-white">Кейс: Пільги для неприбуткових орг.</h3>
+          <div class="space-y-4 text-sm text-white/60 leading-relaxed">
+            <p><span class="font-bold text-amber-500">Обставини:</span> Релігійна організація оскаржувала нарахування земельного податку.</p>
+            <p><span class="font-bold text-amber-500">Правова позиція:</span> Пільга застосовується лише до земель для статутної діяльності.</p>
+            <div class="p-4 bg-amber-500/5 rounded-xl border border-amber-500/10 text-xs italic">
+              <span class="font-mono text-[10px] block mb-1 uppercase text-amber-500/60 tracking-wider">Судова практика</span>
+              <a href="https://reyestr.court.gov.ua/" target="_blank" rel="noopener noreferrer" class="hover:text-amber-500 underline">Постанова ВС у справі №815/2618/17</a>
+            </div>
+          </div>
+        </div>
+        <div class="p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] shadow-sm relative overflow-hidden">
+          <h3 class="text-2xl font-serif mb-6 text-white">Кейс: Енергоефективність</h3>
+          <div class="space-y-4 text-sm text-white/60 leading-relaxed">
+            <p><span class="font-bold text-amber-500">Обставини:</span> Імпорт обладнання для сонячних електростанцій.</p>
+            <p><span class="font-bold text-amber-500">Правова позиція:</span> Пріоритет функціонального призначення обладнання.</p>
+            <div class="p-4 bg-amber-500/5 rounded-xl border border-amber-500/10 text-xs italic">
+              <span class="font-mono text-[10px] block mb-1 uppercase text-amber-500/60 tracking-wider">Судова практика</span>
+              <a href="https://reyestr.court.gov.ua/" target="_blank" rel="noopener noreferrer" class="hover:text-amber-500 underline">Рішення у справі №640/18231/19</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-12 rounded-[3rem] border border-white/5 bg-white/[0.01] mt-12">
+        <h3 class="text-2xl font-serif text-white text-center mb-12">Алгоритм перевірки правомірності пільги</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="bg-[#050505] p-6 rounded-2xl border border-white/10 shadow-sm text-center">
+            <div class="w-8 h-8 rounded-full bg-amber-500 text-black flex items-center justify-center font-mono text-xs mx-auto mb-4">1</div>
+            <h4 class="text-sm font-bold mb-2 text-white">Формальна відповідність</h4>
+            <p class="text-[11px] text-white/50 leading-relaxed">Чи передбачена пільга в ПКУ?</p>
+          </div>
+          <div class="bg-[#050505] p-6 rounded-2xl border border-white/10 shadow-sm text-center">
+            <div class="w-8 h-8 rounded-full bg-amber-500 text-black flex items-center justify-center font-mono text-xs mx-auto mb-4">2</div>
+            <h4 class="text-sm font-bold mb-2 text-white">Суб'єктна відповідність</h4>
+            <p class="text-[11px] text-white/50 leading-relaxed">Чи належить платник до категорії осіб?</p>
+          </div>
+          <div class="bg-[#050505] p-6 rounded-2xl border border-white/10 shadow-sm text-center">
+            <div class="w-8 h-8 rounded-full bg-amber-500 text-black flex items-center justify-center font-mono text-xs mx-auto mb-4">3</div>
+            <h4 class="text-sm font-bold mb-2 text-white">Доказова база</h4>
+            <p class="text-[11px] text-white/50 leading-relaxed">Чи наявні всі первинні документи?</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 COMPARATIVE ANALYSIS -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">08 // COMPARATIVE ANALYSIS</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-white/5 text-left text-sm">
+          <thead>
+            <tr class="bg-white/[0.03]">
+              <th class="p-4 border border-white/5 font-serif text-amber-500/80">Критерій порівняння</th>
+              <th class="p-4 border border-white/5 font-serif text-white/90">Податкова пільга (ст. 30 ПКУ)</th>
+              <th class="p-4 border border-white/5 font-serif text-white/90">Податковий стимул</th>
+            </tr>
+          </thead>
+          <tbody class="text-white/50">
+            <tr class="hover:bg-white/[0.01]"><td class="p-4 border border-white/5 font-medium text-white/70">Мета впровадження</td><td class="p-4 border border-white/5">Зменшення податкового навантаження.</td><td class="p-4 border border-white/5">Заохочення до певної поведінки.</td></tr>
+            <tr class="hover:bg-white/[0.01]"><td class="p-4 border border-white/5 font-medium text-white/70">Правова природа</td><td class="p-4 border border-white/5">Елемент структури податку.</td><td class="p-4 border border-white/5">Тимчасовий інструмент політики.</td></tr>
+            <tr class="hover:bg-white/[0.01]"><td class="p-4 border border-white/5 font-medium text-white/70">Обов'язковість</td><td class="p-4 border border-white/5">Обов'язковий облік (п. 30.6).</td><td class="p-4 border border-white/5">Добровільне приєднання.</td></tr>
+            <tr class="hover:bg-white/[0.01]"><td class="p-4 border border-white/5 font-medium text-white/70">Приклад</td><td class="p-4 border border-white/5">Звільнення від ПДВ освітніх послуг.</td><td class="p-4 border border-white/5">Інвестиційна няня.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 09 DECISION LOGIC -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">09 // DECISION LOGIC</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="relative p-12 rounded-[3rem] border border-white/5 bg-white/[0.01] overflow-hidden">
+        <h2 class="text-3xl font-serif text-white text-center mb-16">Алгоритм прийняття рішення про пільгу</h2>
+        <div class="max-w-4xl mx-auto space-y-8">
+          <div class="flex flex-col items-center">
+            <div class="px-6 py-4 rounded-xl border border-amber-500/30 bg-amber-500/5 text-white text-sm font-medium text-center min-w-[240px]">Чи передбачена операція/суб'єкт у ПКУ?</div>
+            <div class="h-8 w-[1px] bg-white/10"></div>
+            <div class="flex gap-16">
+              <div class="flex flex-col items-center"><div class="text-[10px] font-mono text-amber-500/60 mb-2">ТАК</div></div>
+              <div class="flex flex-col items-center"><div class="text-[10px] font-mono text-white/20 mb-2">НІ</div><div class="px-4 py-2 rounded-lg border border-white/10 bg-white/5 text-white/30 text-[10px]">Загальний порядок</div></div>
+            </div>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="px-6 py-4 rounded-xl border border-amber-500/30 bg-amber-500/5 text-white text-sm font-medium text-center min-w-[240px]">Чи дотримано умови ст. 30 ПКУ?</div>
+            <div class="h-8 w-[1px] bg-white/10"></div>
+            <div class="flex gap-16">
+              <div class="flex flex-col items-center"><div class="text-[10px] font-mono text-amber-500/60 mb-2">ТАК</div></div>
+              <div class="flex flex-col items-center"><div class="text-[10px] font-mono text-white/20 mb-2">НІ</div><div class="px-4 py-2 rounded-lg border border-white/10 bg-white/5 text-white/30 text-[10px]">Ризик донарахування</div></div>
+            </div>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="px-8 py-6 rounded-2xl border-2 border-amber-500 bg-amber-500/10 text-white text-base font-serif text-center shadow-[0_0_30px_rgba(245,158,11,0.1)]">
+              ЗАСТОСУВАННЯ ПІЛЬГИ<br>
+              <span class="text-[10px] font-mono text-amber-500 uppercase tracking-[0.2em] mt-2 block">Legal Benefit Secured</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 ACCOUNTING -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">10 // ACCOUNTING & REPORTING</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="grid lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 p-10 rounded-3xl border border-white/5 bg-white/[0.01] relative overflow-hidden">
+          <h3 class="text-2xl font-serif mb-6 text-white">Облік та звітність пільг</h3>
+          <div class="space-y-6 text-sm text-white/50 leading-relaxed">
+            <p>Суми податкових пільг обліковуються платником податків окремо.</p>
+            <div class="grid sm:grid-cols-2 gap-6">
+              <div class="p-4 rounded-xl border border-white/5 bg-white/5">
+                <div class="text-amber-500/60 font-mono text-[10px] uppercase mb-2">Звітність</div>
+                <p class="text-xs">Відображення коду пільги у податковій декларації.</p>
+              </div>
+              <div class="p-4 rounded-xl border border-white/5 bg-white/5">
+                <div class="text-amber-500/60 font-mono text-[10px] uppercase mb-2">Періодичність</div>
+                <p class="text-xs">Звітність подається разом із декларацією.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-8 rounded-3xl border border-amber-500/10 bg-amber-500/[0.02] flex flex-col justify-between">
+          <h4 class="text-lg font-serif mb-4 text-white">Довідник пільг</h4>
+          <p class="text-xs text-white/40 leading-relaxed mb-6">ДПС щоквартально оновлює Довідники податкових пільг. Кожна пільга має унікальний 8-значний код.</p>
+          <a href="https://tax.gov.ua/dovidniki--reestri--perelik/dovidniki-/54005.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-amber-500/60 hover:text-amber-500 transition-colors text-[10px] font-mono uppercase tracking-widest">
+            Переглянути реєстр <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 RISKS -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">11 // RISKS & RESPONSIBILITY</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="p-10 rounded-3xl border border-red-500/10 bg-red-500/[0.01] relative">
+          <div class="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-6">
+            <svg class="w-6 h-6 text-red-500/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
+          <h3 class="text-2xl font-serif mb-4 text-white">Фіскальні ризики</h3>
+          <ul class="space-y-4 text-sm text-white/40">
+            <li class="flex gap-3"><span class="text-red-500/50">•</span><span>Нецільове використання коштів.</span></li>
+            <li class="flex gap-3"><span class="text-red-500/50">•</span><span>Відсутність документального підтвердження.</span></li>
+            <li class="flex gap-3"><span class="text-red-500/50">•</span><span>Помилки у кодуванні пільг у звітності.</span></li>
+          </ul>
+        </div>
+        <div class="p-10 rounded-3xl border border-amber-500/10 bg-amber-500/[0.01] relative">
+          <div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
+            <svg class="w-6 h-6 text-amber-500/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+          </div>
+          <h3 class="text-2xl font-serif mb-4 text-white">Відповідальність</h3>
+          <p class="text-sm text-white/40 leading-relaxed mb-6">
+            Використання пільги без належних підстав тягне донарахування податку, штрафні санкції (25-50%) та пеню.
+          </p>
+          <div class="p-4 rounded-xl border border-white/5 bg-white/5 text-[10px] font-mono text-amber-500/60 uppercase tracking-widest">Art. 123.1 // Tax Code</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 DIIA.CITY -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">12 // DIIA.CITY SPECIAL REGIME</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="p-12 rounded-[3rem] border border-white/5 bg-white/[0.01] relative overflow-hidden">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-500/20 bg-blue-500/5 mb-6">
+              <svg class="w-3 h-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+              <span class="text-[9px] font-mono uppercase tracking-widest text-blue-400">Innovation Hub</span>
+            </div>
+            <h2 class="text-4xl font-serif mb-6 text-white">Дія.City як комплексна <br><span class="text-blue-400 italic">податкова пільга</span></h2>
+            <p class="text-white/40 text-sm leading-relaxed mb-8">
+              Унікальний правовий та податковий простір для IT-компаній.
+            </p>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+                <span class="text-xs text-white/60">Податок на прибуток</span>
+                <span class="text-xs font-mono text-blue-400">9% (ПнВК) або 18%</span>
+              </div>
+              <div class="flex justify-between items-center p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+                <span class="text-xs text-white/60">ПДФО для працівників</span>
+                <span class="text-xs font-mono text-blue-400">5% (замість 18%)</span>
+              </div>
+              <div class="flex justify-between items-center p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+                <span class="text-xs text-white/60">ЄСВ</span>
+                <span class="text-xs font-mono text-blue-400">22% від мінімальної з/п</span>
+              </div>
+            </div>
+          </div>
+          <div class="aspect-square rounded-full border border-blue-500/10 flex items-center justify-center p-12">
+            <span class="text-4xl font-serif italic text-blue-400">IT</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 INTERNATIONAL -->
+    <section class="mb-40">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-amber-500/60">13 // INTERNATIONAL CONTEXT</span>
+        <div class="h-[1px] flex-1 bg-white/10"></div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="p-8 rounded-3xl border border-white/5 bg-white/[0.01] flex flex-col items-center text-center">
+          <svg class="w-10 h-10 text-amber-500/40 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0h.5a2.5 2.5 0 002.5-2.5v-1.61M12 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <h4 class="text-lg font-serif mb-4 text-white">BEPS & OECD</h4>
+          <p class="text-xs text-white/40 leading-relaxed">Міжнародні стандарти протидії розмиванню бази оподаткування.</p>
+        </div>
+        <div class="p-8 rounded-3xl border border-white/5 bg-white/[0.01] flex flex-col items-center text-center">
+          <svg class="w-10 h-10 text-amber-500/40 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <h4 class="text-lg font-serif mb-4 text-white">EU Directives</h4>
+          <p class="text-xs text-white/40 leading-relaxed">Гармонізація податкового законодавства з правом ЄС.</p>
+        </div>
+        <div class="p-8 rounded-3xl border border-white/5 bg-white/[0.01] flex flex-col items-center text-center">
+          <svg class="w-10 h-10 text-amber-500/40 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <h4 class="text-lg font-serif mb-4 text-white">Tax Treaties</h4>
+          <p class="text-xs text-white/40 leading-relaxed">Конвенції про уникнення подвійного оподаткування.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="pt-20 pb-32 border-t border-white/5 text-center">
+      <div class="text-amber-500 mb-8 flex justify-center">
+        <svg class="w-12 h-12 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </div>
+      <h2 class="text-3xl md:text-5xl font-serif italic mb-8 max-w-4xl mx-auto leading-tight text-white">
+        Податкові пільги — це інструмент правового регулювання, економічного стимулювання та балансу між інтересами держави і платника.
+      </h2>
+      <div class="flex flex-col items-center gap-4">
+        <div class="h-12 w-[1px] bg-amber-500/30"></div>
+        <p class="font-mono text-[10px] tracking-[0.4em] text-white/30 uppercase">Munister // Legal Design 2026</p>
+      </div>
+    </footer>
+
+  </main>
+</body>
+</html>
