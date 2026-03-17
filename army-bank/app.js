@@ -1,4 +1,4 @@
-// Digital Army Bank landing interactions
+// Лендінг Цифрового Армійського Банку: взаємодії
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 const $ = (sel) => document.querySelector(sel);
 
@@ -24,10 +24,22 @@ $$('a[href^="#"]').forEach((a) => {
   });
 });
 
-// Auth form: redirect to /bank (Render app via redirect)
-$('#authForm')?.addEventListener('submit', (e) => {
-  e.preventDefault();
-  // GitHub Pages can't proxy API; /bank redirects to Render app where login happens.
-  window.location.href = '/bank/';
-});
+// Підсвітка активної секції при скролі (коли є nav)
+const sectionIds = ['#top', '#benefits', '#modules', '#security', '#architecture', '#faq'];
+const sections = sectionIds
+  .map((id) => document.querySelector(id))
+  .filter(Boolean);
+
+if ('IntersectionObserver' in window && sections.length) {
+  const io = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter((e) => e.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (!visible?.target?.id) return;
+    history.replaceState(null, '', `#${visible.target.id}`);
+    setActiveNav();
+  }, { rootMargin: '-25% 0px -65% 0px', threshold: [0.05, 0.2, 0.35] });
+
+  sections.forEach((s) => io.observe(s));
+}
 
