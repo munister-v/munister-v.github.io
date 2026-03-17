@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Digital Army Bank — munister.com.ua</title>
+    <meta name="description" content="Digital Army Bank — специализированный банкинг для военных: переводы, выплаты, донаты, накопления, аудит. Демонстрационный проект." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="/army-bank/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <div class="brand">
+          <div class="brand-badge">AB</div>
+          <div>
+            <div>Digital Army Bank</div>
+            <div style="color: var(--muted); font-size: 12px; font-weight: 600;">munister.com.ua · WeeGo-style</div>
+          </div>
+        </div>
+        <nav class="nav" aria-label="Навигация">
+          <a href="#top">Главная</a>
+          <a href="#modules">Модули</a>
+          <a href="#features">Функции</a>
+          <a href="#architecture">Архитектура</a>
+          <a href="#access">Доступ</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+        <div class="btns">
+          <a class="btn" href="/bank/" rel="noopener">Открыть банк</a>
+          <a class="btn primary" href="#access">Войти</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="container">
+          <div class="kicker">MVP для військових / demo</div>
+          <h1>Не “большой банк”. Специализированный банкинг для защитников.</h1>
+          <p class="lead">
+            Это полноценный демо‑банк: регистрация, счета, баланс, пополнения, переводы, история,
+            донаты, накопления, боевые выплаты, роли администратора/оператора и аудит действий.
+          </p>
+          <div class="hero-grid">
+            <div class="panel pad">
+              <div class="btns" style="justify-content:flex-start; flex-wrap: wrap;">
+                <a class="btn primary" href="/bank/">Открыть интерфейс банка</a>
+                <a class="btn" href="https://army-bank.onrender.com" target="_blank" rel="noopener">Render</a>
+                <a class="btn" href="https://github.com/munister-v/army-bank" target="_blank" rel="noopener">GitHub</a>
+              </div>
+              <div style="height: 14px;"></div>
+              <div class="panel mock">
+                <div class="mock-top">
+                  <div class="pill"><span class="dot"></span> Secure session</div>
+                  <div class="pill">UA1234…3456</div>
+                </div>
+                <div class="balance">
+                  <div class="meta">Баланс</div>
+                  <div class="amt">₴12,450.00</div>
+                  <div class="meta">active · основной счет</div>
+                </div>
+                <div class="tiles">
+                  <div class="tile"><strong>Бойовые</strong><span>₴8,000</span></div>
+                  <div class="tile"><strong>Родине</strong><span>₴2,000</span></div>
+                  <div class="tile"><strong>Донат</strong><span>₴500</span></div>
+                </div>
+                <div class="ops">
+                  <div class="op">
+                    <div class="left"><div class="t">Боевые выплаты</div><div class="d">Сегодня 09:00</div></div>
+                    <div class="chg in">+₴8,000</div>
+                  </div>
+                  <div class="op">
+                    <div class="left"><div class="t">Перевод родине</div><div class="d">Вчера 18:32</div></div>
+                    <div class="chg out">-₴2,000</div>
+                  </div>
+                  <div class="op">
+                    <div class="left"><div class="t">Донат подразделению</div><div class="d">Вчера 14:15</div></div>
+                    <div class="chg out">-₴500</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <aside class="panel auth" id="access">
+              <div class="kicker" style="margin-bottom: 6px;">Авторизация</div>
+              <div style="font-weight: 900; font-size: 18px; letter-spacing: -0.02em;">Войти в Army Bank</div>
+              <div class="hint">
+                Так как сайт на GitHub Pages (статический), авторизация выполняется в приложении банка.
+                Нажмите “Войти” — откроется <strong>/bank/</strong>.
+              </div>
+              <form id="authForm">
+                <div class="row">
+                  <label>Телефон / email
+                    <input name="identity" placeholder="+380 XX XXX XX XX" autocomplete="username" />
+                  </label>
+                  <label>Пароль
+                    <input name="password" placeholder="••••••••" type="password" autocomplete="current-password" />
+                  </label>
+                </div>
+                <div style="display:flex; gap: 10px; flex-wrap: wrap; margin-top: 8px;">
+                  <button class="btn primary" type="submit">Войти</button>
+                  <a class="btn" href="/bank/" rel="noopener">Регистрация</a>
+                </div>
+              </form>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="modules">
+        <div class="container">
+          <div class="kicker">02 // Модули</div>
+          <h2>Функциональные блоки</h2>
+          <p class="desc">Каждый модуль — отдельная ответственность. Это облегчает расширение до production‑подобного проекта.</p>
+          <div class="grid3">
+            <div class="card"><h3>Счета</h3><p>Создание, баланс, пополнение, статус. 1:1 с пользователем.</p><div class="tags"><span class="tag">accounts</span><span class="tag">balance</span><span class="tag">topup</span></div></div>
+            <div class="card"><h3>Переводы</h3><p>Быстрые переводы родине и между счетами + история операций.</p><div class="tags"><span class="tag">transfer</span><span class="tag">templates</span><span class="tag">audit</span></div></div>
+            <div class="card"><h3>Донаты</h3><p>Один клик на подразделение/фонд с контролем баланса и логированием.</p><div class="tags"><span class="tag">donations</span><span class="tag">outgoing</span></div></div>
+            <div class="card"><h3>Накопления</h3><p>Цели, дедлайн, взносы, прогресс. Подходит под “сбор на экип”.</p><div class="tags"><span class="tag">savings</span><span class="tag">goals</span></div></div>
+            <div class="card"><h3>Боевые выплаты</h3><p>Демо‑начисления пользователю и режим оператора для начислений.</p><div class="tags"><span class="tag">payouts</span><span class="tag">operator</span></div></div>
+            <div class="card"><h3>Админ и аудит</h3><p>Роли, просмотр пользователей, аудит‑лог действий и детализация по счету.</p><div class="tags"><span class="tag">admin</span><span class="tag">roles</span><span class="tag">logs</span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <div class="container">
+          <div class="kicker">01 // Суть</div>
+          <h2>Ключевые возможности</h2>
+          <p class="desc">Минимум кликов — максимум ясности: баланс, быстрые действия, фильтры истории, понятные статусы.</p>
+          <div class="grid3">
+            <div class="card"><h3>REST API</h3><p>Flask API с сессиями, токеном, валидацией и слоями repository/service.</p></div>
+            <div class="card"><h3>Платежные шаблоны</h3><p>Сохраняйте получателя и описание, ускоряйте повторные переводы.</p></div>
+            <div class="card"><h3>Фильтры истории</h3><p>Дата / тип / направление (in/out). Быстро находите нужные операции.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="container">
+          <div class="kicker">03 // Архитектура</div>
+          <h2>Слои и расширяемость</h2>
+          <p class="desc">Сервисный слой отделен от доступа к данным. База: PostgreSQL или SQLite (для демо).</p>
+          <div class="panel pad">
+            <pre style="margin:0; color: var(--muted); font-size: 13px; line-height: 1.6; overflow:auto;">Presentation (HTML/JS)
+  ↓
+API (Flask маршруты)
+  ↓
+Services (бизнес-логика)
+  ↓
+Repositories (SQL)
+  ↓
+DB (PostgreSQL / SQLite)</pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="faq">
+        <div class="container">
+          <div class="kicker">FAQ</div>
+          <h2>Частые вопросы</h2>
+          <div class="faq">
+            <details open>
+              <summary>Почему авторизация на этом лендинге не “внутри страницы”?</summary>
+              <p>Сайт размещен на GitHub Pages (статический хостинг). API и база работают в приложении банка на Render. Поэтому кнопка “Войти” ведет на <strong>/bank/</strong> (и дальше — в банк).</p>
+            </details>
+            <details>
+              <summary>Где админ‑панель?</summary>
+              <p>Внутри приложения: откройте <a href=\"/bank/\" rel=\"noopener\">/bank/</a> → затем <code>/admin</code> (доступ по роли admin).</p>
+            </details>
+            <details>
+              <summary>Можно ли сделать так, чтобы банк открывался прямо под доменом без редиректа?</summary>
+              <p>Да, но нужен прокси (Cloudflare Workers/Pages Functions, Netlify/Vercel rewrites или VPS с Nginx). GitHub Pages сам по себе проксировать не умеет.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container" style="display:flex; justify-content:space-between; gap: 14px; flex-wrap: wrap;">
+        <div>© 2026 · <a href="https://munister.com.ua/" rel="noopener">munister.com.ua</a></div>
+        <div style="display:flex; gap: 12px; flex-wrap: wrap;">
+          <a href="/bank/" rel="noopener">Открыть банк</a>
+          <a href="https://weego-web.github.io/army.html" target="_blank" rel="noopener">Дизайн-референс</a>
+          <a href="mailto:munister@outlook.com?subject=%5BArmy%20Bank%5D%20%D0%97%D0%B0%D0%BF%D0%B8%D1%82">Контакт</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="/army-bank/app.js"></script>
+  </body>
+</html>
+
