@@ -99,10 +99,16 @@
           countObserver.unobserve(el);
         }
       });
-    }, { threshold: 0.4 });
+    }, { threshold: 0, rootMargin: '0px 0px -20px 0px' });
 
     countEls.forEach(function (el) {
       countObserver.observe(el);
+    });
+  } else {
+    // Fallback: just show the numbers immediately
+    countEls.forEach(function (el) {
+      var target = parseInt(el.getAttribute('data-count'), 10);
+      if (!isNaN(target)) el.textContent = target;
     });
   }
 
