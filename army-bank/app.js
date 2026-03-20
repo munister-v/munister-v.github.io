@@ -156,33 +156,9 @@
   }
 
   /* ════════════════════════════════════════════
-     BENTO CARDS — SUBTLE ENTRANCE ANIMATION
+     COUNT-UP: animate big numbers when visible
+     (already handled above — no entrance hide)
   ════════════════════════════════════════════ */
-  if ('IntersectionObserver' in window) {
-    var revealEls = document.querySelectorAll('.bento-card, .step-item, .faq-item');
-
-    // Set initial hidden state only after observer is ready
-    revealEls.forEach(function (el, i) {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(16px)';
-      el.style.transition = 'opacity 0.45s ease, transform 0.45s ease, border-color 0.25s';
-      el.style.transitionDelay = (i % 4) * 50 + 'ms';
-    });
-
-    var revealObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
-
-    revealEls.forEach(function (el) {
-      revealObserver.observe(el);
-    });
-  }
 
   console.log('ArmyBank v1.5.0 — portfolio project by Viacheslav Munister');
 })();
