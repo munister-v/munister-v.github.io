@@ -159,34 +159,27 @@
      BENTO CARDS — SUBTLE ENTRANCE ANIMATION
   ════════════════════════════════════════════ */
   if ('IntersectionObserver' in window) {
-    var animateStyle = document.createElement('style');
-    animateStyle.textContent = [
-      '.bento-card, .step-item, .faq-item {',
-      '  opacity: 0;',
-      '  transform: translateY(18px);',
-      '  transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.25s;',
-      '}',
-      '.bento-card.visible, .step-item.visible, .faq-item.visible {',
-      '  opacity: 1;',
-      '  transform: translateY(0);',
-      '}'
-    ].join('\n');
-    document.head.appendChild(animateStyle);
-
     var revealEls = document.querySelectorAll('.bento-card, .step-item, .faq-item');
+
+    // Set initial hidden state only after observer is ready
+    revealEls.forEach(function (el, i) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(16px)';
+      el.style.transition = 'opacity 0.45s ease, transform 0.45s ease, border-color 0.25s';
+      el.style.transitionDelay = (i % 4) * 50 + 'ms';
+    });
 
     var revealObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
           revealObserver.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
 
-    revealEls.forEach(function (el, i) {
-      // Stagger delay via inline style
-      el.style.transitionDelay = (i % 6) * 60 + 'ms';
+    revealEls.forEach(function (el) {
       revealObserver.observe(el);
     });
   }
