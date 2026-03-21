@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Податкова консультація | ТОВ «TechSoft Україна» | 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════════════
+   DIIA-STYLE DESIGN SYSTEM
+   ═══════════════════════════════════════ */
+:root {
+  --blue:       #1A5276;   /* Diia primary */
+  --blue-dark:  #0D2E4A;
+  --blue-mid:   #1F618D;
+  --blue-light: #2E86C1;
+  --yellow:     #FFD600;   /* Ukraine accent */
+  --yellow-dim: #F5C518;
+  --white:      #FFFFFF;
+  --bg:         #F5F7FA;
+  --bg-card:    #FFFFFF;
+  --gray-50:    #F8F9FB;
+  --gray-100:   #EEF0F4;
+  --gray-200:   #D8DCE5;
+  --gray-400:   #8F97A8;
+  --gray-600:   #4D5566;
+  --gray-800:   #1C2333;
+  --red:        #C0392B;
+  --red-light:  #FADBD8;
+  --orange:     #D35400;
+  --orange-light: #FDEBD0;
+  --green:      #1A7A4A;
+  --green-light: #D5F0E3;
+  --teal:       #117A8B;
+  --teal-light: #D1ECF1;
+  --border:     #D8DCE5;
+  --font:       'Inter', system-ui, sans-serif;
+  --radius:     6px;
+}
+
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--gray-800);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: var(--blue-dark);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  gap: 0.125rem;
+  border-bottom: 3px solid var(--yellow);
+  overflow-x: auto;
+}
+nav::-webkit-scrollbar { display: none; }
+.nav-brand {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  margin-right: 1.5rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.nav-brand::before {
+  content: '';
+  display: inline-block;
+  width: 18px; height: 18px;
+  background: var(--yellow);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+nav a {
+  color: rgba(255,255,255,.6);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  transition: color .15s, background .15s;
+}
+nav a:hover { color: var(--white); background: rgba(255,255,255,.08); }
+
+/* ── COVER PAGE ── */
+.cover {
+  background: var(--blue-dark);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  position: relative;
+}
+.cover-top {
+  background: var(--yellow);
+  height: 6px;
+}
+.cover-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 5rem 4rem 3rem;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+.cover-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.cover-meta-item { }
+.cover-meta-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.35);
+  margin-bottom: 4px;
+}
+.cover-meta-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,.85);
+}
+.cover-badge {
+  background: var(--yellow);
+  color: var(--blue-dark);
+  font-size: 11px;
+  font-weight: 800;
+  padding: .35rem 1rem;
+  border-radius: 3px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.cover-title {
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  margin-bottom: 1rem;
+}
+.cover-title span {
+  color: var(--yellow);
+  display: block;
+}
+.cover-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,.5);
+  font-weight: 400;
+  max-width: 580px;
+  margin-bottom: 3rem;
+  line-height: 1.7;
+}
+.cover-bullets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+  margin-bottom: 3rem;
+}
+.cover-bullet {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-left: 3px solid var(--yellow);
+  border-radius: var(--radius);
+  padding: .9rem 1.1rem;
+}
+.cover-bullet-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 4px;
+}
+.cover-bullet p {
+  font-size: 12.5px;
+  color: rgba(255,255,255,.65);
+  line-height: 1.5;
+}
+.cover-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,.08);
+  margin-top: auto;
+}
+.cover-footer-txt {
+  font-size: 11px;
+  color: rgba(255,255,255,.25);
+}
+.btn-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  background: var(--yellow);
+  color: var(--blue-dark);
+  font-size: 13px;
+  font-weight: 700;
+  padding: .6rem 1.4rem;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity .15s;
+}
+.btn-pdf:hover { opacity: .88; }
+
+/* ── PAGE LAYOUT ── */
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  scroll-margin-top: 48px;
+}
+
+/* ── DIVIDERS ── */
+.divider {
+  background: var(--blue-dark);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+.divider::before {
+  content: '';
+  display: inline-block;
+  width: 4px; height: 18px;
+  background: var(--yellow);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.divider span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.55);
+}
+
+/* ── SECTION HEADER ── */
+.sec-tag {
+  display: inline-block;
+  background: var(--blue-dark);
+  color: var(--yellow);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: .25rem .7rem;
+  border-radius: 3px;
+  margin-bottom: .75rem;
+}
+.sec-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--blue-dark);
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  margin-bottom: .35rem;
+}
+.sec-desc {
+  font-size: 13.5px;
+  color: var(--gray-600);
+  margin-bottom: 1.75rem;
+  max-width: 640px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+@media (max-width: 700px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+/* ── STAT BLOCKS ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.stat-item {
+  background: var(--bg-card);
+  padding: 1.25rem 1rem;
+  text-align: center;
+}
+.stat-val {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--blue-dark);
+  letter-spacing: -.03em;
+  line-height: 1;
+  margin-bottom: .3rem;
+}
+.stat-val.yellow { color: var(--yellow-dim); }
+.stat-unit {
+  font-size: 12px;
+  color: var(--gray-400);
+  line-height: 1.4;
+}
+
+/* ── REGIME SPLIT ── */
+.regime-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.regime-block {
+  padding: 1.5rem;
+}
+.regime-block.b1 {
+  background: var(--blue-dark);
+  color: var(--white);
+}
+.regime-block.b2 {
+  background: var(--blue-mid);
+  color: var(--white);
+}
+.regime-block .r-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: .5rem;
+}
+.regime-block .r-period {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: .75rem;
+}
+.regime-block ul { list-style: none; }
+.regime-block li {
+  font-size: 12.5px;
+  color: rgba(255,255,255,.7);
+  padding: .3rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding-left: .9rem;
+  position: relative;
+}
+.regime-block li:last-child { border-bottom: none; }
+.regime-block li::before { content: '—'; position: absolute; left: 0; color: var(--yellow); font-size: 10px; top: .35rem; }
+
+/* ── TABLES ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+thead tr {
+  background: var(--blue-dark);
+  color: var(--white);
+}
+th {
+  padding: .65rem .9rem;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+td {
+  padding: .65rem .9rem;
+  border-bottom: 1px solid var(--gray-100);
+  vertical-align: top;
+  line-height: 1.5;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--gray-50); }
+.tbl-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+.amt {
+  font-weight: 700;
+  color: var(--blue-dark);
+  white-space: nowrap;
+}
+.total-row td {
+  background: var(--gray-50) !important;
+  font-weight: 700;
+  color: var(--blue-dark);
+}
+
+/* ── TAGS ── */
+.tag {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: .15rem .5rem;
+  border-radius: 3px;
+  margin: .1rem .1rem .1rem 0;
+}
+.tag-b { background: #DBEAFE; color: #1E40AF; }
+.tag-r { background: var(--red-light); color: var(--red); }
+.tag-o { background: var(--orange-light); color: var(--orange); }
+.tag-g { background: var(--green-light); color: var(--green); }
+.tag-p { background: #EDE9FE; color: #6D28D9; }
+
+/* ── RISK ITEMS ── */
+.risk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.risk-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  border-left: 4px solid;
+}
+.risk-item.r-crit { border-color: var(--red); }
+.risk-item.r-high { border-color: var(--orange); }
+.risk-item.r-med  { border-color: #D4AC0D; }
+.risk-item.r-low  { border-color: var(--green); }
+.risk-lbl {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: .35rem;
+}
+.risk-item.r-crit .risk-lbl { color: var(--red); }
+.risk-item.r-high .risk-lbl { color: var(--orange); }
+.risk-item.r-med  .risk-lbl { color: #B7950B; }
+.risk-item.r-low  .risk-lbl { color: var(--green); }
+.risk-item h4 { font-size: 13px; font-weight: 700; color: var(--blue-dark); margin-bottom: .25rem; }
+.risk-item p { font-size: 12px; color: var(--gray-600); line-height: 1.5; }
+
+/* ── CHART WRAP ── */
+.chart-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+.chart-box h3 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  margin-bottom: 1rem;
+}
+
+/* ── TIMELINE ── */
+.tl-wrap {
+  position: relative;
+  padding: .5rem 0;
+}
+.tl-wrap::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: var(--border);
+  transform: translateX(-50%);
+}
+.tl-item {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: calc(50% + 1.5rem);
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+.tl-item:nth-child(even) {
+  justify-content: flex-start;
+  padding-right: 0;
+  padding-left: calc(50% + 1.5rem);
+}
+.tl-dot {
+  position: absolute;
+  left: 50%;
+  top: .85rem;
+  width: 10px; height: 10px;
+  background: var(--yellow);
+  border: 2px solid var(--blue-dark);
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+.tl-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: .75rem 1rem;
+  max-width: 280px;
+  min-width: 150px;
+}
+.tl-date {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--blue-mid);
+  margin-bottom: .2rem;
+}
+.tl-card p { font-size: 12.5px; color: var(--gray-600); }
+@media (max-width: 640px) {
+  .tl-wrap::before { left: 12px; }
+  .tl-item, .tl-item:nth-child(even) {
+    justify-content: flex-start;
+    padding-left: 2.5rem;
+    padding-right: 0;
+  }
+  .tl-dot { left: 12px; }
+}
+
+/* ── PROFILE ── */
+.author-block {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: var(--blue-dark);
+  border-radius: var(--radius);
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.author-avatar {
+  width: 56px; height: 56px;
+  background: var(--yellow);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--blue-dark);
+  flex-shrink: 0;
+}
+.author-info { flex: 1; min-width: 160px; }
+.author-role {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.35);
+  margin-bottom: .3rem;
+}
+.author-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -.02em;
+  margin-bottom: .25rem;
+}
+.author-desc { font-size: 12.5px; color: rgba(255,255,255,.5); }
+.author-pill {
+  background: rgba(255,214,0,.12);
+  border: 1px solid rgba(255,214,0,.2);
+  border-radius: var(--radius);
+  padding: .75rem 1.25rem;
+  text-align: center;
+}
+.author-pill-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+  margin-bottom: .3rem;
+}
+.author-pill-val {
+  font-size: 12px;
+  color: var(--yellow);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.profile-col {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  border-top: 3px solid var(--blue-dark);
+}
+.profile-col.c2 { border-top-color: var(--blue-mid); }
+.profile-col.c3 { border-top-color: var(--blue-light); }
+.profile-col h3 {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  margin-bottom: .5rem;
+}
+.profile-col .col-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--blue-dark);
+  margin-bottom: .85rem;
+}
+.profile-col ul { list-style: none; }
+.profile-col li {
+  font-size: 12.5px;
+  color: var(--gray-600);
+  padding: .3rem 0 .3rem .9rem;
+  border-bottom: 1px solid var(--gray-100);
+  position: relative;
+}
+.profile-col li:last-child { border-bottom: none; }
+.profile-col li::before { content: '—'; position: absolute; left: 0; color: var(--blue-mid); font-size: 11px; }
+.profile-note {
+  margin-top: .85rem;
+  background: var(--gray-50);
+  border-radius: 4px;
+  padding: .6rem .8rem;
+  font-size: 12px;
+  color: var(--gray-600);
+}
+.profile-note-blue {
+  margin-top: .85rem;
+  background: #EBF5FB;
+  border-radius: 4px;
+  padding: .6rem .8rem;
+  font-size: 12px;
+  color: var(--blue-dark);
+  font-weight: 600;
+}
+
+/* ── VAT CARDS ── */
+.vat-card {
+  border-radius: var(--radius);
+  padding: 1.1rem;
+  border-left: 3px solid;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.vat-card.v-out { border-left-color: var(--red); }
+.vat-card.v-in  { border-left-color: var(--green); }
+.vat-card.v-zero{ border-left-color: var(--blue-light); }
+.vat-lbl {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: .4rem;
+}
+.vat-card.v-out .vat-lbl { color: var(--red); }
+.vat-card.v-in  .vat-lbl { color: var(--green); }
+.vat-card.v-zero .vat-lbl { color: var(--blue-mid); }
+.vat-amt { font-size: 1.4rem; font-weight: 800; color: var(--blue-dark); letter-spacing: -.02em; }
+.vat-card p { font-size: 12px; color: var(--gray-600); margin-top: .3rem; line-height: 1.5; }
+
+/* ── EXEC SUMMARY ── */
+.exec-wrap {
+  background: var(--blue-dark);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.exec-top {
+  background: var(--yellow);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+.exec-top h2 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--blue-dark);
+  letter-spacing: -.02em;
+}
+.exec-top span {
+  font-size: 12px;
+  color: rgba(0,0,0,.5);
+  font-weight: 500;
+}
+.exec-body { padding: 2rem; }
+.exec-points {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(255,255,255,.08);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.exec-pt {
+  background: rgba(255,255,255,.04);
+  padding: 1.25rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.exec-n {
+  width: 28px; height: 28px;
+  background: var(--yellow);
+  color: var(--blue-dark);
+  font-size: 13px;
+  font-weight: 800;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.exec-pt p { font-size: 13px; color: rgba(255,255,255,.75); line-height: 1.55; padding-top: .2rem; }
+.exec-nums {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,.08);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+.exec-num-item {
+  background: rgba(255,255,255,.04);
+  padding: 1rem;
+  text-align: center;
+}
+.exec-num-item .val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--yellow);
+  letter-spacing: -.02em;
+  line-height: 1;
+  margin-bottom: .3rem;
+}
+.exec-num-item .lbl {
+  font-size: 10.5px;
+  color: rgba(255,255,255,.4);
+  line-height: 1.4;
+}
+.thanks-block {
+  border-top: 1px solid rgba(255,255,255,.1);
+  padding-top: 2rem;
+  text-align: center;
+}
+.thanks-block h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--yellow);
+  letter-spacing: -.03em;
+  margin-bottom: .5rem;
+}
+.thanks-block p { font-size: 13px; color: rgba(255,255,255,.4); }
+.thanks-block .btn-pdf { margin-top: 1.5rem; }
+
+/* ── RECO CARDS ── */
+.reco-num {
+  width: 36px; height: 36px;
+  background: var(--blue-dark);
+  color: var(--yellow);
+  font-size: 1rem;
+  font-weight: 800;
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: .85rem;
+}
+.reco-card h3 { font-size: 13px; font-weight: 700; color: var(--blue-dark); margin-bottom: .75rem; }
+.reco-card ul { list-style: none; }
+.reco-card li {
+  font-size: 12px;
+  color: var(--gray-600);
+  padding: .3rem 0 .3rem 1rem;
+  border-bottom: 1px solid var(--gray-100);
+  position: relative;
+}
+.reco-card li:last-child { border-bottom: none; }
+.reco-card li::before { content: '✓'; color: var(--green); position: absolute; left: 0; font-size: 11px; top: .35rem; }
+
+/* ── SOURCES ── */
+.sources {
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-top: 1.5rem;
+}
+.sources h4 {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  margin-bottom: .5rem;
+}
+.sources a {
+  display: block;
+  font-size: 12px;
+  color: var(--blue-mid);
+  text-decoration: none;
+  margin-bottom: .2rem;
+}
+.sources a:hover { text-decoration: underline; }
+
+/* ── INFO BOX ── */
+.info-box {
+  border-radius: var(--radius);
+  padding: .85rem 1rem;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-top: 1rem;
+  display: flex;
+  gap: .75rem;
+  align-items: flex-start;
+}
+.info-box.warn { background: var(--orange-light); color: var(--orange); border-left: 3px solid var(--orange); }
+.info-box.info { background: #EBF5FB; color: var(--blue-dark); border-left: 3px solid var(--blue-mid); }
+.info-box.danger { background: var(--red-light); color: var(--red); border-left: 3px solid var(--red); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--blue-dark);
+  border-top: 3px solid var(--yellow);
+  padding: 1.25rem 2rem;
+  text-align: center;
+  font-size: 11.5px;
+  color: rgba(255,255,255,.3);
+}
+footer span { color: var(--yellow); }
+
+/* ══════════════════════════
+   PRINT / PDF
+══════════════════════════ */
+@media print {
+  @page { size: A4; margin: 0; }
+
+  html, body { background: #fff; }
+  nav, .btn-pdf { display: none !important; }
+
+  /* Cover — full A4 */
+  .cover {
+    min-height: 100vh;
+    page-break-after: always;
+    break-after: page;
+    background: var(--blue-dark) !important;
+  }
+  .cover-top { background: var(--yellow) !important; }
+  .cover-badge { background: var(--yellow) !important; color: var(--blue-dark) !important; }
+
+  /* Profile — own page */
+  #profile {
+    page-break-before: always;
+    break-before: page;
+    page-break-after: always;
+    break-after: page;
+    background: #fff;
+    padding: 2.5rem 3rem;
+  }
+
+  .page { max-width: 100%; padding: 2rem 3rem; }
+
+  .divider {
+    page-break-before: always;
+    break-before: page;
+    background: var(--blue-dark) !important;
+  }
+  .divider span { color: rgba(255,255,255,.55) !important; }
+  .divider::before { background: var(--yellow) !important; }
+
+  /* Force colors */
+  .cover, .cover-inner, .cover-meta, .cover-footer { color: inherit; }
+  thead tr { background: var(--blue-dark) !important; color: #fff !important; }
+  .regime-block.b1 { background: var(--blue-dark) !important; }
+  .regime-block.b2 { background: var(--blue-mid) !important; }
+  .stat-val { color: var(--blue-dark) !important; }
+  .author-block { background: var(--blue-dark) !important; }
+  .exec-wrap { background: var(--blue-dark) !important; }
+  .exec-top { background: var(--yellow) !important; }
+  .thanks-block h2 { color: var(--yellow) !important; }
+  .exec-num-item .val { color: var(--yellow) !important; }
+  .reco-num { background: var(--blue-dark) !important; color: var(--yellow) !important; }
+  .sec-tag { background: var(--blue-dark) !important; color: var(--yellow) !important; }
+
+  .card, .chart-box, .tbl-wrap, .risk-item, .vat-card, .reco-card { break-inside: avoid; }
+  .grid-2 { grid-template-columns: 1fr 1fr !important; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr !important; }
+  .grid-4 { grid-template-columns: repeat(4, 1fr) !important; }
+  .exec-points { grid-template-columns: 1fr 1fr !important; }
+  .exec-nums { grid-template-columns: repeat(5, 1fr) !important; }
+  .cover-bullets { grid-template-columns: 1fr 1fr !important; }
+
+  footer { background: var(--blue-dark) !important; border-top: 3px solid var(--yellow) !important; break-before: avoid; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">TechSoft Україна · 2026</div>
+  <a href="#cover">Головна</a>
+  <a href="#profile">Підхід</a>
+  <a href="#timeline">Таймлайн</a>
+  <a href="#operations">Операції</a>
+  <a href="#cit">Прибуток</a>
+  <a href="#diya">Дія Сіті</a>
+  <a href="#wht">WHT</a>
+  <a href="#vat">ПДВ</a>
+  <a href="#payroll">ПДФО/ЄСВ</a>
+  <a href="#tpu">ТЦУ</a>
+  <a href="#risks">Ризики</a>
+  <a href="#reco">Рекомендації</a>
+  <a href="#summary">Висновок</a>
+</nav>
+
+<div class="cover" id="cover">
+  <div class="cover-top"></div>
+  <div class="cover-inner">
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Конкурс</div>
+        <div class="cover-meta-val">Податкова Олімпіада 2026</div>
+      </div>
+      <div class="cover-badge">Кейс № 2</div>
+      <div class="cover-meta-item" style="text-align:right">
+        <div class="cover-meta-label">Учасник</div>
+        <div class="cover-meta-val">Вячеслав М.</div>
+      </div>
+    </div>
+
+    <div class="cover-title">
+      Податкова консультація для
+      <span>ТОВ «TechSoft Україна»</span>
+    </div>
+    <div class="cover-sub">
+      Структурована відповідь щодо податку на прибуток, Дія Сіті, ПДВ, WHT, ПДФО/ВЗ/ЄСВ і ТЦУ.<br>
+      Аналіз ризиків · Рекомендації · Підготовка до перевірки 2025 року.
+    </div>
+
+    <div class="cover-bullets">
+      <div class="cover-bullet">
+        <div class="cover-bullet-label">Спецрежим Дія Сіті</div>
+        <p>Ймовірно стартує з 01.10.2024, а не з 01.07.2024 — за п. 137.10.3 ПКУ</p>
+      </div>
+      <div class="cover-bullet">
+        <div class="cover-bullet-label">Найбільші ризики</div>
+        <p>ТЦУ, роялті TechSoft Inc., кваліфікація послуг UK-нерезидента, дивіденди</p>
+      </div>
+      <div class="cover-bullet">
+        <div class="cover-bullet-label">ПДВ-профіль</div>
+        <p>Переважно керований: IT-експорт поза об'єктом, імпорт формує податковий кредит</p>
+      </div>
+      <div class="cover-bullet">
+        <div class="cover-bullet-label">Зарплатні податки</div>
+        <p>Потребують чіткого розмежування місяця набуття статусу та наступних місяців</p>
+      </div>
+    </div>
+
+    <div class="cover-footer">
+      <div class="cover-footer-txt">Норма ПКУ → кваліфікація операції → розрахунок → ризик → рекомендація</div>
+      <button class="btn-pdf" onclick="window.print()">↓ Зберегти як PDF</button>
+    </div>
+  </div>
+</div>
+
+<section id="profile" style="background:#fff; padding:3rem 2rem;">
+<div style="max-width:960px; margin:0 auto;">
+  <div class="sec-tag">01 · Підхід</div>
+  <h2 class="sec-title">Самопрезентація</h2>
+  
+
+  <div class="author-block">
+    <div class="author-avatar">В</div>
+    <div class="author-info">
+      <div class="author-role">Учасник · Кейс 2 · Податкова Олімпіада 2026</div>
+      <div class="author-name">Вячеслав М.</div>
+      <div class="author-desc">Орієнтація на податковий аудит і доказову базу · системне читання ПКУ та міжнародних договорів</div>
+    </div>
+    <div class="author-pill">
+      <div class="author-pill-lbl">Підхід</div>
+      <div class="author-pill-val">Норма → Кваліфікація<br>→ Розрахунок → Ризик</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="profile-col">
+      <h3>Сильні сторони</h3>
+      <div class="col-title">Кандидат</div>
+      <ul>
+        <li>Системне читання ПКУ та міжнародних договорів</li>
+        <li>Вміння розділяти «чіткі» наслідки і спірні зони</li>
+        <li>Орієнтація на податковий аудит і доказову базу</li>
+      </ul>
+      <div class="profile-note">Що вважаю цінністю: не просто назвати ставку, а показати — де виникає обов'язок, коли саме, які документи потрібні.</div>
+    </div>
+    <div class="profile-col c2">
+      <h3>Як я вирішую кейси</h3>
+      <div class="col-title">Методологія</div>
+      <ul>
+        <li>Формую таймлайн подій</li>
+        <li>Розділяю загальну систему і спецрежим</li>
+        <li>Рахую лише суми, які можна обґрунтувати</li>
+        <li>Окремо виділяю питання, де потрібне припущення або індивідуальна консультація</li>
+      </ul>
+    </div>
+    <div class="profile-col c3">
+      <h3>Формат відповіді</h3>
+      <div class="col-title">Структура</div>
+      <ul>
+        <li>Окремий блок по кожному податку</li>
+        <li>Розрахунки з чітко позначеними припущеннями</li>
+        <li>Ризик-матриця по всіх транзакціях</li>
+        <li>Набір дій до планової перевірки 2025 року</li>
+      </ul>
+      <div class="profile-note-blue">Підготовлено у форматі, придатному для PDF та подачі на конкурс</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="divider"><span>Таймлайн подій та вихідні припущення</span></div>
+
+<div class="page" id="timeline">
+  <div class="sec-tag">02 · Хронологія</div>
+  <h2 class="sec-title">Таймлайн подій</h2>
+  <p class="sec-desc">Щоб суми були відтворюваними, частину показників нормалізовано. Припущення сформульовані відкрито.</p>
+
+  <div class="tl-wrap">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-date">Березень 2024</div><p>Створення компанії ТОВ «TechSoft Україна»</p></div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-date">01 Квітня 2024</div><p>Безпроцентна позика від TechSoft Inc. — <strong>$2 млн</strong></p></div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-date">Травень 2024</div><p>Введення серверного обладнання в експлуатацію</p></div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-date">Квітень — Серпень 2024</div><p>Консалтинг від DevConsult UK LLP</p></div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-date">01 Липня 2024</div><p>Набуття статусу резидента <strong>Дія Сіті</strong></p></div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-date">01 Жовтня 2024</div><p>Ймовірний старт спецрежиму CIT (п. 137.10.3 ПКУ)</p></div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-date">Листопад 2024</div><p>ФОП-аудит — <strong>600 тис. грн</strong></p></div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-date">31 Грудня 2024</div><p>Дивіденди засновникам — <strong>20 млн грн</strong></p></div></div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-400);margin-bottom:.75rem;">Ключові припущення</div>
+    <div class="grid-2" style="gap:.75rem;">
+      <div style="font-size:12.5px;color:var(--gray-600);padding-left:.9rem;border-left:2px solid var(--yellow);">Доходи, ФОП, операційні витрати — рівномірний розподіл у межах березень–грудень 2024</div>
+      <div style="font-size:12.5px;color:var(--gray-600);padding-left:.9rem;border-left:2px solid var(--blue-mid);">Амортизація серверного обладнання починається з червня 2024 року</div>
+      <div style="font-size:12.5px;color:var(--gray-600);padding-left:.9rem;border-left:2px solid var(--yellow);">Весь ФОП стосується спеціалістів резидента Дія Сіті (припущення кейсу)</div>
+      <div style="font-size:12.5px;color:var(--gray-600);padding-left:.9rem;border-left:2px solid var(--blue-mid);">Консервативний підхід: спірна кваліфікація виноситься у ризики, не маскується точною цифрою</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"><span>Карта операцій та детальний аналіз</span></div>
+
+<div class="page" id="operations">
+  <div class="sec-tag">03 · Транзакції</div>
+  <h2 class="sec-title">Карта операцій та податків</h2>
+  
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Операція</th><th>Сума</th><th>Податки / питання</th></tr></thead>
+      <tbody>
+        <tr><td>Позика від TechSoft Inc.</td><td class="amt">$2,0 млн</td><td><span class="tag tag-b">Податок на прибуток</span><span class="tag tag-o">ТЦУ</span><span class="tag tag-p">Валютні різниці</span></td></tr>
+        <tr><td>Серверне обладнання від TechSoft Inc.</td><td class="amt">$0,5 млн</td><td><span class="tag tag-b">Імпортний ПДВ</span><span class="tag tag-b">Амортизація</span><span class="tag tag-o">ТЦУ</span></td></tr>
+        <tr><td>Tech consulting від DevConsult LLP</td><td class="amt">$0,15 млн</td><td><span class="tag tag-b">ПДВ за імпортом послуг</span><span class="tag tag-r">WHT-ризик</span><span class="tag tag-o">Документування</span></td></tr>
+        <tr><td>IT-послуги США / Німеччина</td><td class="amt">$4,5 млн</td><td><span class="tag tag-g">Дохід</span><span class="tag tag-g">ПДВ поза об'єктом</span><span class="tag tag-o">ТЦУ по пов'язаних</span></td></tr>
+        <tr><td>Українські замовники</td><td class="amt">50 млн грн з ПДВ</td><td><span class="tag tag-b">Вихідний ПДВ</span><span class="tag tag-g">Дохід</span></td></tr>
+        <tr><td>Роялті TechSoft Inc.</td><td class="amt">$0,4 млн</td><td><span class="tag tag-r">WHT</span><span class="tag tag-o">CIT / Дія Сіті</span><span class="tag tag-r">ТЦУ</span></td></tr>
+        <tr><td>ФОП + єдиноподатник</td><td class="amt">0,6 млн грн</td><td><span class="tag tag-p">9% у Дія Сіті лише при перевищенні 20% порога</span></td></tr>
+        <tr><td>Дивіденди засновникам</td><td class="amt">20 млн грн</td><td><span class="tag tag-o">CIT 9% / перевищення</span><span class="tag tag-r">WHT США</span><span class="tag tag-b">ПДФО/ВЗ фізособі</span></td></tr>
+        <tr><td>Передача ЗСУ + БПЛА</td><td class="amt">1,5 + 0,8 млн грн</td><td><span class="tag tag-g">Воєнні пільги ПДВ</span><span class="tag tag-g">Пільга з прибутку</span><span class="tag tag-o">Документи передачі</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="divider"><span>Податок на прибуток</span></div>
+
+<div class="page" id="cit">
+  <div class="sec-tag">04 · CIT</div>
+  <h2 class="sec-title">Податок на прибуток</h2>
+  <p class="sec-desc">У 2024 році — змішаний режим: загальна система + спецрежим Дія Сіті</p>
+
+  <div class="regime-grid">
+    <div class="regime-block b1">
+      <div class="r-label">Загальна система · п. 137 ПКУ</div>
+      <div class="r-period">Березень — Вересень 2024</div>
+      <ul>
+        <li>Рядки 02–05 декларації — лише за цей період</li>
+        <li>Податкові різниці за резервами / амортизацією — тільки за 7 місяців</li>
+        <li>Фінансовий результат — об'єкт оподаткування 18%</li>
+        <li>Після завершення — бажано додаток з поясненням розбіжностей</li>
+      </ul>
+    </div>
+    <div class="regime-block b2">
+      <div class="r-label">Спецрежим Дія Сіті · п. 137.10.3 ПКУ</div>
+      <div class="r-period">Жовтень — Грудень 2024</div>
+      <ul>
+        <li>Перший звітний період — з 1-го числа місяця після кварталу набуття статусу</li>
+        <li>Додаток ДІЯ окремо за жовтень–грудень</li>
+        <li>Дивіденди, роялті, ФОП — через правила Дія Сіті</li>
+        <li>Ставка 9% лише на визначені об'єкти спецрежиму</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-item"><div class="stat-val">159,89</div><div class="stat-unit">млн грн<br>дохід (70% річного)</div></div>
+    <div class="stat-item"><div class="stat-val">74,16</div><div class="stat-unit">млн грн<br>орієнт. об'єкт оподаткування</div></div>
+    <div class="stat-item"><div class="stat-val">18%</div><div class="stat-unit">ставка CIT<br>на загальній системі</div></div>
+    <div class="stat-item"><div class="stat-val">13,35</div><div class="stat-unit">млн грн<br>орієнт. CIT до сплати</div></div>
+  </div>
+
+  <div class="grid-2" style="gap:1rem; margin-bottom:1.25rem;">
+    <div class="chart-box">
+      <h3>Структура витрат (бер–вер 2024)</h3>
+      <canvas id="expChart" style="max-height:260px;"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Формування об'єкту оподаткування</h3>
+      <canvas id="citChart" style="max-height:260px;"></canvas>
+    </div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Показник</th><th>Сума</th><th>Коментар</th></tr></thead>
+      <tbody>
+        <tr><td>Дохід (70% річного)</td><td class="amt">159,89 млн грн</td><td>Припущення рівномірного нарахування</td></tr>
+        <tr><td>ФОП (70%)</td><td class="amt">56,00 млн грн</td><td>Заробітна плата / гіг-винагорода</td></tr>
+        <tr><td>Операційні витрати (70%)</td><td class="amt">10,50 млн грн</td><td>Включно з резервом відпусток</td></tr>
+        <tr><td>Амортизація сервера</td><td class="amt">1,38 млн грн</td><td>Червень–вересень 2024</td></tr>
+        <tr><td>Консалтинг UK LLP</td><td class="amt">6,23 млн грн</td><td>Квітень–серпень 2024</td></tr>
+        <tr><td>Роялті (70%)</td><td class="amt">11,62 млн грн</td><td>За припущенням рівномірно</td></tr>
+        <tr class="total-row"><td>Орієнт. фінрезультат / об'єкт</td><td class="amt" style="color:var(--green)">74,16 млн грн</td><td>До окремих спірних коригувань</td></tr>
+        <tr class="total-row"><td>Орієнт. CIT 18%</td><td class="amt" style="color:var(--red)">≈ 13,35 млн грн</td><td>≈ 13 349 400 грн</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box warn">⚠ <span><strong>Сіра зона:</strong> облік довгострокової безпроцентної позики від пов'язаної особи. Якщо компанія застосовує дисконтування — це вплине на фінрезультат. Ефект показано як окремий ризик через відсутність даних про первісний курс і модель обліку.</span></div>
+</div>
+
+<div class="divider"><span>Дія Сіті — спецрежим жовтень–грудень</span></div>
+
+<div class="page" id="diya">
+  <div class="sec-tag">05 · Дія Сіті</div>
+  <h2 class="sec-title">Дія Сіті: операції після 01.10.2024</h2>
+  
+
+  <div class="grid-2" style="gap:1rem;">
+    <div class="card">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem;">Ризик: відсутній</div>
+      <div style="font-size:14px;font-weight:700;color:var(--blue-dark);margin-bottom:.6rem;">Дивіденди — 20 млн грн</div>
+      <p style="font-size:12.5px;color:var(--gray-600);line-height:1.6;">Оподаткуванню 9% підлягає лише перевищення над об'єктом загальної системи. Об'єкт за бер–вер ≈ 74,16 млн грн → виплата 20 млн грн <strong>не створює</strong> додаткового 9% CIT.</p>
+    </div>
+    <div class="card">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem;">Ризик: відсутній</div>
+      <div style="font-size:14px;font-weight:700;color:var(--blue-dark);margin-bottom:.6rem;">ФОП на ЄП — 600 тис. грн</div>
+      <p style="font-size:12.5px;color:var(--gray-600);line-height:1.6;">Поріг 20% витрат поточного року ≈ 24,25 млн грн. Сума 600 тис. грн суттєво нижча — 9% <strong>найімовірніше не виникає</strong>.</p>
+    </div>
+    <div class="card">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:.5rem;">Ризик: у документах</div>
+      <div style="font-size:14px;font-weight:700;color:var(--blue-dark);margin-bottom:.6rem;">Передача ЗСУ + БПЛА</div>
+      <p style="font-size:12.5px;color:var(--gray-600);line-height:1.6;">За умови прямої передачі та належних актів — воєнні пільги. Ризик <strong>не в ставці</strong>, а в пакеті підтвердних документів (акт + лист отримувача).</p>
+    </div>
+    <div class="card" style="border:1px solid var(--red); border-left:3px solid var(--red);">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:.5rem;">Ризик: найвищий</div>
+      <div style="font-size:14px;font-weight:700;color:var(--blue-dark);margin-bottom:.6rem;">Роялті після 01.10.2024</div>
+      <p style="font-size:12.5px;color:var(--gray-600);line-height:1.6;">Роялті на користь неплатника особливих умов → можливий 9% CIT. Ризики: перевищення ліміту, небенефіціарність, не оподатковується у своїй юрисдикції. <strong>Необхідний окремий IPC / memo.</strong></p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"><span>Міжнародне оподаткування (WHT)</span></div>
+
+<div class="page" id="wht">
+  <div class="sec-tag">06 · WHT</div>
+  <h2 class="sec-title">Податок на доходи нерезидентів</h2>
+  <p class="sec-desc">Де є реальний обов'язок утримати податок при виплаті нерезиденту</p>
+
+  <div class="tbl-wrap" style="margin-bottom:1.25rem;">
+    <table>
+      <thead><tr><th>Виплата</th><th>База</th><th>Базове правило</th><th>Оцінка WHT</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Роялті TechSoft Inc. (США)</strong></td>
+          <td>16,60 млн грн</td>
+          <td>15% за ПКУ; за Конвенцією США — до 10%</td>
+          <td style="color:var(--orange);font-weight:700;">≈ 1,66 млн грн<br><span style="font-size:11px;font-weight:400;color:var(--gray-600)">за наявності довідки резидентства та бенефіціарності</span></td>
+        </tr>
+        <tr>
+          <td><strong>Дивіденди TechSoft Inc. (60%)</strong></td>
+          <td>12,00 млн грн</td>
+          <td>15% за ПКУ; за Конвенцією США — 5%</td>
+          <td style="color:var(--orange);font-weight:700;">≈ 0,60 млн грн<br><span style="font-size:11px;font-weight:400;color:var(--gray-600)">за кваліфікаційних умов</span></td>
+        </tr>
+        <tr>
+          <td><strong>Консалтинг DevConsult LLP (ВБ)</strong></td>
+          <td>6,23 млн грн</td>
+          <td>Для «чистого» консалтингу WHT відсутній; ризик перекваліфікації</td>
+          <td>Базово: <strong style="color:var(--green)">0</strong><br><span style="font-size:11px;color:var(--red)">Резерв: до 0,93 млн грн</span></td>
+        </tr>
+        <tr><td>Повернення тіла позики</td><td>83,00 млн грн</td><td>Не є доходом нерезидента</td><td style="font-weight:700;color:var(--green);">0</td></tr>
+        <tr><td>Купівля обладнання</td><td>20,75 млн грн</td><td>Оплата товару — не WHT-дохід</td><td style="font-weight:700;color:var(--green);">0</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2" style="gap:1rem;">
+    <div class="chart-box">
+      <h3>База виплат vs WHT</h3>
+      <canvas id="whtChart" style="max-height:220px;"></canvas>
+    </div>
+    <div class="card">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-400);margin-bottom:.75rem;">Документи до перевірки</div>
+      <ul style="list-style:none;">
+        <li style="font-size:12.5px;color:var(--gray-600);padding:.3rem 0 .3rem 1rem;border-bottom:1px solid var(--gray-100);position:relative;"><span style="position:absolute;left:0;color:var(--green);font-size:11px;">✓</span>Довідки про резидентство США та ВБ</li>
+        <li style="font-size:12.5px;color:var(--gray-600);padding:.3rem 0 .3rem 1rem;border-bottom:1px solid var(--gray-100);position:relative;"><span style="position:absolute;left:0;color:var(--green);font-size:11px;">✓</span>Підтвердження beneficial owner для роялті</li>
+        <li style="font-size:12.5px;color:var(--gray-600);padding:.3rem 0 .3rem 1rem;border-bottom:1px solid var(--gray-100);position:relative;"><span style="position:absolute;left:0;color:var(--green);font-size:11px;">✓</span>Текст ліцензійного договору</li>
+        <li style="font-size:12.5px;color:var(--gray-600);padding:.3rem 0 .3rem 1rem;position:relative;"><span style="position:absolute;left:0;color:var(--yellow-dim);font-size:11px;">!</span>Memo: чому UK-послуги — не інжиніринг / роялті / агентська послуга</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="divider"><span>ПДВ</span></div>
+
+<div class="page" id="vat">
+  <div class="sec-tag">07 · ПДВ</div>
+  <h2 class="sec-title">ПДВ</h2>
+  <p class="sec-desc">Профіль ПДВ є доволі керованим, але потребує правильних первинних документів</p>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.25rem;">
+    <div class="vat-card v-out"><div class="vat-lbl">Вихідний ПДВ (Україна)</div><div class="vat-amt">8,33 млн грн</div><p>50 млн грн з ПДВ → чиста база ≈ 41,67 млн грн, ПДВ = 8,33 млн грн</p></div>
+    <div class="vat-card v-in"><div class="vat-lbl">ПК: Імпорт обладнання</div><div class="vat-amt">4,15 млн грн</div><p>$500K × 41,5 × 20% — податковий кредит при належному ввезенні</p></div>
+    <div class="vat-card v-in"><div class="vat-lbl">ПК: Імпорт послуг UK LLP</div><div class="vat-amt">1,245 млн грн</div><p>Reverse charge. $150K × 41,5 × 20% — одночасно ПЗ і ПК</p></div>
+    <div class="vat-card v-zero"><div class="vat-lbl">IT-послуги нерезидентам</div><div class="vat-amt">0 грн</div><p>США та Німеччина — поза об'єктом (ст. 186.3 ПКУ)</p></div>
+    <div class="vat-card v-zero"><div class="vat-lbl">Роялті</div><div class="vat-amt">0 грн</div><p>Справжні роялті — не об'єкт ПДВ (ризик при прихованому постачанні ПЗ)</p></div>
+    <div class="vat-card v-zero"><div class="vat-lbl">Передача ЗСУ</div><div class="vat-amt">0 грн</div><p>Воєнний стан: пряма цільова передача — не постачання. п. 198.5 не застосовується</p></div>
+  </div>
+
+  <div class="chart-box" style="margin-bottom:1rem;">
+    <h3>Чистий ефект ПДВ</h3>
+    <canvas id="vatChart" style="max-height:140px;"></canvas>
+  </div>
+
+  <div class="info-box info">ℹ <span><strong>Підсумок:</strong> мінімальний чистий ефект лише за відомими сумами: 8,33 − 4,15 − 1,245 = <strong>≈ 2,94 млн грн до сплати</strong>. Фактичний ПДВ може бути меншим через інший вхідний кредит (оренда, інші витрати).</span></div>
+</div>
+
+<div class="divider"><span>ПДФО / Військовий збір / ЄСВ</span></div>
+
+<div class="page" id="payroll">
+  <div class="sec-tag">08 · Зарплатні податки</div>
+  <h2 class="sec-title">ПДФО, військовий збір та ЄСВ</h2>
+  <p class="sec-desc">Найважливіше — правильно відпрацювати місяць набуття статусу Дія Сіті</p>
+
+  <div class="tbl-wrap" style="margin-bottom:1.25rem;">
+    <table>
+      <thead><tr><th>Блок</th><th>Логіка</th><th>Орієнтовно</th></tr></thead>
+      <tbody>
+        <tr><td>ПДФО березень–липень</td><td>18% з ФОП 5 місяців до / у місяці набуття статусу</td><td><strong>7,20 млн грн</strong></td></tr>
+        <tr><td>ПДФО серпень–грудень</td><td>5% для спеціалістів резидента Дія Сіті</td><td><strong>2,00 млн грн</strong></td></tr>
+        <tr class="total-row"><td>Разом ПДФО</td><td>За припущенням про весь ФОП спеціалістів</td><td><strong>9,20 млн грн</strong></td></tr>
+        <tr><td>Військовий збір</td><td>Базово 1,5% для розрахунку 2024</td><td><strong>1,20 млн грн</strong></td></tr>
+        <tr><td>ЄСВ березень–липень</td><td>22% з повної суми ФОП</td><td><strong>8,80 млн грн</strong></td></tr>
+        <tr><td>ЄСВ серпень–грудень</td><td>22% від мінзарплати 8 000 грн × 120 осіб</td><td><strong>1,06 млн грн</strong></td></tr>
+        <tr class="total-row"><td>Разом ЄСВ</td><td>Орієнтир</td><td><strong>9,86 млн грн</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2" style="gap:1rem;">
+    <div class="chart-box">
+      <h3>Порівняння ставок та сум ПДФО / ЄСВ</h3>
+      <canvas id="payrollChart" style="max-height:220px;"></canvas>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:var(--blue-dark);margin-bottom:.75rem;">Дивіденди фізособі-учаснику (25%)</div>
+      <p style="font-size:12.5px;color:var(--gray-600);margin-bottom:.75rem;">Нараховано <strong>5,0 млн грн</strong>. Базово ПДФО 5%. Звільнення за п.п. 170.5.5 ПКУ не спрацьовує автоматично у 2024 — два календарні роки відлічуються з 1 січня року переходу на спецрежим.</p>
+      <div class="info-box warn" style="margin-top:0;">⚠ <div style="font-size:12px;">
+        <div style="margin-bottom:.3rem;">Якщо в окремому місяці не виконані критерії — ПДФО 18% за власний рахунок</div>
+        <div style="margin-bottom:.3rem;">У місяці набуття статусу ЄСВ — на загальних підставах</div>
+        <div>Для серп–груд: підтвердження статусу спеціалістів, гіг-контракти, розрахунок мінвнеску</div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"><span>Трансфертне ціноутворення (ТЦУ)</span></div>
+
+<div class="page" id="tpu">
+  <div class="sec-tag">09 · ТЦУ</div>
+  <h2 class="sec-title">Трансфертне ціноутворення</h2>
+  <p class="sec-desc">Один з найсильніших напрямів ризику під час перевірки</p>
+
+  <div class="info-box danger" style="margin-bottom:1.25rem;">⚡ <span>Дохід компанії за 2024 рік <strong>перевищує 150 млн грн</strong> (орієнтовно 228,42 млн грн). Операції з кожним пов'язаним нерезидентом перевищують 10 млн грн → контрольовані операції.</span></div>
+
+  <div class="tbl-wrap" style="margin-bottom:1.25rem;">
+    <table>
+      <thead><tr><th>Контрагент / операція</th><th>Сума</th><th>TP-ризик</th></tr></thead>
+      <tbody>
+        <tr><td>TechSoft Inc. — продаж IT-послуг</td><td class="amt">124,50 млн грн</td><td><span class="tag tag-r">Рентабельність / ціна</span></td></tr>
+        <tr><td>TechSoft GmbH — продаж IT-послуг</td><td class="amt">62,25 млн грн</td><td><span class="tag tag-r">Рентабельність / ціна</span></td></tr>
+        <tr><td>TechSoft Inc. — серверне обладнання</td><td class="amt">20,75 млн грн</td><td><span class="tag tag-o">Ціна товару</span></td></tr>
+        <tr><td>TechSoft Inc. — роялті</td><td class="amt">16,60 млн грн</td><td><span class="tag tag-r">Ставка / бенефіціарність</span></td></tr>
+        <tr><td>TechSoft Inc. — безпроцентна позика</td><td class="amt">83,00 млн грн</td><td><span class="tag tag-r">Arm's length / дисконтування</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2" style="gap:1rem;">
+    <div class="chart-box">
+      <h3>Обсяги контрольованих операцій, млн грн</h3>
+      <canvas id="tpChart" style="max-height:220px;"></canvas>
+    </div>
+    <div class="card">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-400);margin-bottom:.75rem;">TP-файл: що потрібно</div>
+      <ul style="list-style:none;">
+        <li style="font-size:12.5px;color:var(--gray-600);padding:.3rem 0 .3rem .9rem;border-bottom:1px solid var(--gray-100);position:relative;"><span style="position:absolute;left:0;color:var(--blue-mid);">—</span>Функціональний аналіз як розробника ПЗ</li>
+        <li style="font-size:12.5px;color:var(--gray-600);padding:.3rem 0 .3rem .9rem;border-bottom:1px solid var(--gray-100);position:relative;"><span style="position:absolute;left:0;color:var(--blue-mid);">—</span>Фінансові показники за сегментами USA / Germany / UA</li>
+        <li style="font-size:12.5px;color:var(--gray-600);padding:.3rem 0 .3rem .9rem;border-bottom:1px solid var(--gray-100);position:relative;"><span style="position:absolute;left:0;color:var(--blue-mid);">—</span>Опис причин безпроцентного фінансування</li>
+        <li style="font-size:12.5px;color:var(--gray-600);padding:.3rem 0 .3rem .9rem;border-bottom:1px solid var(--gray-100);position:relative;"><span style="position:absolute;left:0;color:var(--blue-mid);">—</span>Бенчмарк для роялті та обґрунтування ліцензійної моделі</li>
+        <li style="font-size:12.5px;color:var(--gray-600);padding:.3rem 0 .3rem .9rem;position:relative;"><span style="position:absolute;left:0;color:var(--red);font-weight:700;">!</span><strong>Без TP-мемо ця зона — найвразливіша</strong></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="divider"><span>Матриця ризиків</span></div>
+
+<div class="page" id="risks">
+  <div class="sec-tag">10 · Ризики</div>
+  <h2 class="sec-title">Матриця ризиків</h2>
+  
+  <div class="risk-grid">
+    <div class="risk-item r-crit"><div class="risk-lbl">Критичний</div><h4>ТЦУ по пов'язаних нерезидентах</h4><p>Без TP-файлу — найвразливіша зона. База контрольованих операцій: 307,1 млн грн.</p></div>
+    <div class="risk-item r-crit"><div class="risk-lbl">Критичний</div><h4>Роялті TechSoft Inc.</h4><p>WHT до 1,66 млн грн + можливий 9% CIT у спецрежимі. Потрібен beneficial owner statement.</p></div>
+    <div class="risk-item r-high"><div class="risk-lbl">Високий</div><h4>Кваліфікація послуг UK LLP</h4><p>Ризик перекваліфікації у роялті / інжиніринг. Резервний WHT до 0,93 млн грн.</p></div>
+    <div class="risk-item r-high"><div class="risk-lbl">Високий</div><h4>Дата старту спецрежиму</h4><p>01.10.2024, а не 01.07.2024. Потрібен окремий memo з обґрунтуванням.</p></div>
+    <div class="risk-item r-high"><div class="risk-lbl">Високий</div><h4>Безпроцентна позика $2 млн</h4><p>Дисконтування зобов'язання може вплинути на фінрезультат. Arm's length для ТЦУ.</p></div>
+    <div class="risk-item r-med"><div class="risk-lbl">Середній</div><h4>Зарплатні пільги Дія Сіті</h4><p>Місяць набуття — ЄСВ на загальних підставах. Ризик донарахувань 18% ПДФО.</p></div>
+    <div class="risk-item r-med"><div class="risk-lbl">Середній</div><h4>Документи передачі ЗСУ</h4><p>Не ставка, а документи! Акти прямої цільової передачі + лист отримувача.</p></div>
+    <div class="risk-item r-low"><div class="risk-lbl">Низький</div><h4>ПДВ-профіль</h4><p>Керований. Мінімальний чистий ефект ≈ 2,94 млн грн. Первинні документи потрібні.</p></div>
+  </div>
+</div>
+
+<div class="divider"><span>Рекомендації</span></div>
+
+<div class="page" id="reco">
+  <div class="sec-tag">11 · Рекомендації</div>
+  <h2 class="sec-title">Рекомендації</h2>
+  <p class="sec-desc">Що варто зробити до приходу планової перевірки</p>
+  <div class="grid-3" style="gap:1rem;">
+    <div class="card reco-card">
+      <div class="reco-num">1</div>
+      <h3>Формалізувати позицію по Дія Сіті</h3>
+      <ul>
+        <li>Підготувати окремий memo щодо дати старту спецрежиму 01.10.2024</li>
+        <li>Додати пояснення до річної декларації</li>
+        <li>Перевірити внутрішні реєстри щодо критеріїв по кожному місяцю</li>
+      </ul>
+    </div>
+    <div class="card reco-card">
+      <div class="reco-num">2</div>
+      <h3>Закрити міжнародний блок</h3>
+      <ul>
+        <li>Довідки про резидентство нерезидентів (США, ВБ)</li>
+        <li>Beneficial owner statement для роялті</li>
+        <li>Аналіз: чому послуги UK LLP — не інжиніринг</li>
+        <li>Підтвердження ділової мети і ринковості позики, сервера, роялті</li>
+      </ul>
+    </div>
+    <div class="card reco-card">
+      <div class="reco-num">3</div>
+      <h3>Підготувати аудит-файл</h3>
+      <ul>
+        <li>Пакет договорів, інвойсів, актів, SWIFT / банківських виписок</li>
+        <li>Митні документи на сервер та імпортний ПДВ</li>
+        <li>Гіг-контракти, кадрові накази, payroll bridge</li>
+        <li>Акти та листи отримувача щодо передачі ЗСУ / БПЛА</li>
+        <li>Реєстр контрольованих операцій для ТЦУ</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="divider"><span>Підсумок</span></div>
+
+<div class="page" id="summary">
+  <div class="sec-tag">12 · Висновок</div>
+  <h2 class="sec-title">Підсумкова відповідь клієнту</h2>
+  
+
+  <div class="exec-wrap">
+    <div class="exec-top">
+      <h2>ТОВ «TechSoft Україна»</h2>
+      <span>Висновки · Податкова Олімпіада 2026 · Кейс 2</span>
+    </div>
+    <div class="exec-body">
+      <div class="exec-points" style="margin-bottom:1px;">
+        <div class="exec-pt"><div class="exec-n">1</div><p>Компанія у 2024 році має <strong style="color:#fbbf24;">змішаний режим</strong>: березень–вересень — загальна система; жовтень–грудень — спецрежим Дія Сіті.</p></div>
+        <div class="exec-pt"><div class="exec-n">2</div><p>Орієнтовний об'єкт на загальній системі — <strong style="color:#fbbf24;">≈ 74,16 млн грн</strong>, CIT 18% — <strong style="color:#fbbf24;">≈ 13,35 млн грн</strong>.</p></div>
+        <div class="exec-pt"><div class="exec-n">3</div><p>Найбільші ризики: <strong style="color:#fca5a5;">роялті TechSoft Inc.</strong>, WHT / beneficial owner, ТЦУ по пов'язаних, зарплатні пільги Дія Сіті, документи ЗСУ.</p></div>
+        <div class="exec-pt"><div class="exec-n">4</div><p>Перед перевіркою — <strong style="color:#fbbf24;">treaty relief-пакет</strong>, TP-файл, пояснення до декларації та memo по «сірих» питаннях.</p></div>
+      </div>
+
+      <div class="exec-nums" style="margin-top:1px;">
+        <div class="exec-num-item"><div class="val">13,35</div><div class="lbl">млн грн<br>CIT 18%</div></div>
+        <div class="exec-num-item"><div class="val">2,26</div><div class="lbl">млн грн<br>WHT роялті + дивіденди</div></div>
+        <div class="exec-num-item"><div class="val">9,20</div><div class="lbl">млн грн<br>ПДФО</div></div>
+        <div class="exec-num-item"><div class="val">9,86</div><div class="lbl">млн грн<br>ЄСВ</div></div>
+        <div class="exec-num-item"><div class="val">2,94</div><div class="lbl">млн грн<br>ПДВ (мін. ефект)</div></div>
+      </div>
+
+      <div class="thanks-block">
+        <h2>Дякую за увагу</h2>
+        <p>Податкова Олімпіада 2026 · Кейс 2 · TechSoft Україна · Підготовлено Вячеславом М.</p>
+        <button class="btn-pdf" onclick="window.print()">↓ Зберегти як PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sources">
+    <h4>Джерела</h4>
+    <a href="https://zakon.rada.gov.ua/go/2755-17" target="_blank">Податковий кодекс України</a>
+    <a href="https://zakon.rada.gov.ua/go/1667-20" target="_blank">Закон «Про стимулювання розвитку цифрової економіки в Україні»</a>
+    <a href="https://tax.gov.ua/nove-pro-podatki--novini-/658071.html" target="_blank">ДПС: Питання-відповіді щодо оподаткування резидентів Дія Сіті</a>
+    <a href="https://zakon.rada.gov.ua/go/840_576" target="_blank">Конвенція Україна — США (WHT)</a>
+    <a href="https://zakon.rada.gov.ua/go/442_002" target="_blank">Конвенція Україна — Велика Британія (WHT)</a>
+    <a href="https://zir.tax.gov.ua/main/bz/view/?id=41239&src=ques" target="_blank">ЗІР ДПС: дивіденди у рік переходу на спецрежим</a>
+    <a href="https://zakon.rada.gov.ua/go/1045-2017-%D0%BF" target="_blank">Перелік держав/територій для ТЦУ</a>
+  </div>
+</div>
+
+<footer>
+  <span>TechSoft Україна</span> · Податкова Олімпіада 2026 · Кейс 2 · Підготовлено Вячеславом М. · Усі суми орієнтовні та базуються на зазначених припущеннях
+</footer>
+
+<script>
+const NAVY = '#0D2E4A', BLUE = '#1A5276', BLUE2 = '#1F618D', BLUE3 = '#2E86C1';
+const YELLOW = '#FFD600', YELLOW2 = '#F5C518';
+const GREEN = '#1A7A4A', RED = '#C0392B', ORANGE = '#D35400';
+const GRAY = '#8F97A8';
+const FONT = { family: 'Inter, system-ui, sans-serif', size: 11 };
+const defaults = {
+  responsive: true,
+  plugins: { legend: { labels: { font: FONT, padding: 10 } } },
+  scales: {
+    x: { ticks: { font: FONT }, grid: { color: '#EEF0F4' } },
+    y: { ticks: { font: FONT }, grid: { color: '#EEF0F4' } }
+  }
+};
+
+// 1. Expenses donut
+new Chart(document.getElementById('expChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['ФОП', 'Роялті', 'Консалтинг UK', 'Операційні витрати', 'Амортизація'],
+    datasets: [{ data: [56, 11.62, 6.23, 10.5, 1.38],
+      backgroundColor: [NAVY, BLUE, BLUE2, BLUE3, YELLOW2],
+      borderWidth: 2, borderColor: '#fff' }]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'right', labels: { font: FONT, padding: 8 } } } }
+});
+
+// 2. CIT waterfall
+new Chart(document.getElementById('citChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Дохід', 'ФОП', 'Роялті', 'Консалтинг', 'Витрати', 'Амортизація', "Об'єкт", 'CIT 18%'],
+    datasets: [{ data: [159.89, -56, -11.62, -6.23, -10.5, -1.38, 74.16, 13.35],
+      backgroundColor: [GREEN, RED, RED, RED, RED, RED, BLUE, YELLOW2],
+      borderRadius: 4 }]
+  },
+  options: { ...defaults, plugins: { legend: { display: false } } }
+});
+
+// 3. WHT
+new Chart(document.getElementById('whtChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Роялті США', 'Дивіденди США', 'Консалтинг ВБ', 'Позика', 'Обладнання'],
+    datasets: [
+      { label: 'База виплати', data: [16.60, 12.00, 6.23, 83.00, 20.75],
+        backgroundColor: BLUE + '33', borderColor: BLUE, borderWidth: 1.5, borderRadius: 3 },
+      { label: 'WHT (оцінка)', data: [1.66, 0.60, 0.93, 0, 0],
+        backgroundColor: YELLOW2, borderColor: YELLOW, borderWidth: 1.5, borderRadius: 3 }
+    ]
+  },
+  options: { ...defaults, plugins: { legend: { labels: { font: FONT } } } }
+});
+
+// 4. VAT horizontal
+new Chart(document.getElementById('vatChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Вихідний ПДВ', 'ПК: обладнання', 'ПК: послуги UK', 'Чистий ПДВ'],
+    datasets: [{ data: [8.33, -4.15, -1.245, 2.935],
+      backgroundColor: [RED, GREEN, GREEN, BLUE],
+      borderRadius: 4 }]
+  },
+  options: { indexAxis: 'y', ...defaults, plugins: { legend: { display: false } } }
+});
+
+// 5. Payroll
+new Chart(document.getElementById('payrollChart'), {
+  type: 'bar',
+  data: {
+    labels: ['ПДФО\nбер–лип', 'ПДФО\nсерп–груд', 'ВЗ', 'ЄСВ\nбер–лип', 'ЄСВ\nсерп–груд'],
+    datasets: [{ data: [7.20, 2.00, 1.20, 8.80, 1.06],
+      backgroundColor: [NAVY, BLUE2, YELLOW2, BLUE, BLUE3],
+      borderRadius: 4 }]
+  },
+  options: { ...defaults, plugins: { legend: { display: false } } }
+});
+
+// 6. TP
+new Chart(document.getElementById('tpChart'), {
+  type: 'bar',
+  data: {
+    labels: ['IT USA', 'Позика', 'IT GmbH', 'Сервер', 'Роялті'],
+    datasets: [{ data: [124.5, 83, 62.25, 20.75, 16.6],
+      backgroundColor: [RED, ORANGE, ORANGE, '#D4AC0D', RED],
+      borderRadius: 4 }]
+  },
+  options: { indexAxis: 'y', ...defaults, plugins: { legend: { display: false } } }
+});
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a =>
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+  })
+);
+</script>
+</body>
+</html>
