@@ -250,5 +250,26 @@
         </div>
       </div>
     </section>
+
+    <script>
+      // Move Army Bank MVP section to right after the Methodology section in the React app
+      function injectArmyBank() {
+        const methodology = document.getElementById('methodology');
+        const mvp = document.getElementById('army-bank-mvp');
+        if (methodology && mvp) {
+          methodology.after(mvp);
+          return true;
+        }
+        return false;
+      }
+
+      // Try immediately, then observe DOM for React to finish rendering
+      if (!injectArmyBank()) {
+        const observer = new MutationObserver(() => {
+          if (injectArmyBank()) observer.disconnect();
+        });
+        observer.observe(document.getElementById('root'), { childList: true, subtree: true });
+      }
+    </script>
   </body>
 </html>
