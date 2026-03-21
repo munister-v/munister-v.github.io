@@ -166,5 +166,35 @@
      (already handled above — no entrance hide)
   ════════════════════════════════════════════ */
 
-  console.log('ArmyBank v1.5.0 — portfolio project by Viacheslav Munister');
+  /* ════════ HAMBURGER MENU ════════ */
+  var burger = document.querySelector('.nav-burger');
+  var mobileNav = document.querySelector('.nav-mobile');
+  if (burger && navbar) {
+    burger.addEventListener('click', function () {
+      var isOpen = navbar.classList.toggle('nav-open');
+      burger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    // Close on link click
+    if (mobileNav) {
+      mobileNav.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+          navbar.classList.remove('nav-open');
+          burger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    }
+  }
+
+  /* ════════ RENDER WARM-UP PING ════════ */
+  // Silently wake up the Render backend when the landing page loads.
+  // By the time the visitor clicks "Open platform" (~20-40s later), server is ready.
+  setTimeout(function () {
+    fetch('https://army-bank.onrender.com/api/health', {
+      method: 'GET',
+      mode: 'no-cors',
+      cache: 'no-store'
+    }).catch(function () { /* silent — cold start in progress */ });
+  }, 800); // slight delay so it doesn't compete with page render
+
+  console.log('ArmyBank v1.6.0 — portfolio project by Viacheslav Munister');
 })();
