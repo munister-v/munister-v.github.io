@@ -3,15 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
   <title>ArmyBank — Банківська платформа</title>
-  <meta name="description" content="ArmyBank — повноцінна банківська платформа: Flask REST API, PostgreSQL, JWT Auth, Android Kotlin, PWA з Push-сповіщеннями.">
+  <meta name="description" content="Army Bank — програмний комплекс: Flask REST API, PostgreSQL, PWA, ролі soldier/operator/admin/platform_admin, Army Admin, технічна документація.">
   <meta name="theme-color" content="#050505">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://army-bank.onrender.com">
   <link rel="dns-prefetch" href="https://army-bank.onrender.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=16.0">
+  <link rel="stylesheet" href="styles.css?v=22">
 </head>
 <body>
 
@@ -28,6 +30,7 @@
     <ul class="nav-links">
       <li><a href="#features">Можливості</a></li>
       <li><a href="#architecture">Архітектура</a></li>
+      <li><a href="#system">Система</a></li>
       <li><a href="#api">API</a></li>
       <li><a href="#stack">Стек</a></li>
       <li><a href="https://github.com/munister-v" target="_blank" rel="noopener">GitHub</a></li>
@@ -40,6 +43,7 @@
   <div class="nav-mobile" id="mobile-menu" role="menu">
     <a href="#features" role="menuitem">Можливості</a>
     <a href="#architecture" role="menuitem">Архітектура</a>
+    <a href="#system" role="menuitem">Система</a>
     <a href="#api" role="menuitem">API</a>
     <a href="#stack" role="menuitem">Стек</a>
     <a href="https://github.com/munister-v" target="_blank" role="menuitem">GitHub</a>
@@ -54,7 +58,7 @@
     <div class="hero-content">
       <p class="hero-tag"><span class="tag-dot" aria-hidden="true"></span>Full-stack banking platform</p>
       <h1>Фінансова платформа, побудована <em>з нуля</em></h1>
-      <p class="hero-desc">REST API, три клієнти, push-сповіщення в реальному часі. Від авторизації до переказу — кожен рядок написаний вручну.</p>
+      <p class="hero-desc">Програмний комплекс для цифрового банкінгу: Flask backend із 40+ REST-ендпоінтами, PostgreSQL, PWA для військовослужбовця, окремі контури оператора та адміністратора, Army Admin SPA, Web Push і повна технічна документація продукту.</p>
       <div class="hero-actions">
         <a href="https://army-bank.onrender.com" target="_blank" class="btn-dark">Спробувати live demo</a>
         <a href="#architecture" class="btn-ghost">Як це працює</a>
@@ -130,13 +134,15 @@
 <!-- TRUST BAR -->
 <div class="trust-bar">
   <div class="container trust-inner">
-    <div class="trust-item"><strong>23</strong> REST endpoints</div>
-    <div class="trust-item"><strong>3</strong> клієнти</div>
-    <div class="trust-item"><strong>JWT</strong> авторизація</div>
+    <div class="trust-item"><strong>40+</strong> REST endpoints</div>
+    <div class="trust-item"><strong>4</strong> ролі користувачів</div>
+    <div class="trust-item"><strong>Bearer</strong> авторизація</div>
     <div class="trust-item"><strong>VAPID</strong> Push</div>
-    <div class="trust-item"><strong>0 ₴</strong> комісій</div>
+    <div class="trust-item"><strong>SW</strong> offline PWA</div>
   </div>
 </div>
+
+<p class="sync-hint"><strong>munister.com.ua</strong> часто показує <em>старі файли</em>, якщо після <code>git pull</code> їх не скопійовано на сервер. Актуальна збірка з репозиторію: <a href="https://army-bank.onrender.com/army-bank/" target="_blank" rel="noopener">army-bank.onrender.com/army-bank/</a> — або жорстке оновлення сторінки (Ctrl+Shift+R).</p>
 
 <!-- FEATURES -->
 <section id="features">
@@ -166,7 +172,7 @@
             <code>/api/transactions/transfer</code>
           </div>
           <pre class="fc-code">{
-  "to_email": "oleg@army-bank.ua",
+  "recipient_account_number": "AB-100002",
   "amount": 3500.00,
   "description": "Допомога підрозділу"
 }</pre>
@@ -191,13 +197,13 @@
       <div class="feature-text">
         <p class="feat-label">Безпека</p>
         <h2>Кожен запит захищений</h2>
-        <p class="feat-desc">JWT Bearer токени з терміном дії, bcrypt хешування з cost factor 12, PostgreSQL constraints на рівні БД, HTTPS на всіх ендпоінтах.</p>
+        <p class="feat-desc">Bearer токени зі збереженням у PostgreSQL і авто-ротацією, bcrypt (cost=12), HTTPS скрізь, ролева модель доступу на чотири рівні.</p>
         <ul class="feat-list">
-          <li>JWT Bearer авторизація на кожному запиті</li>
+          <li>Bearer-токен у DB зі строком дії та авто-ротацією через <code>X-Refresh-Token</code></li>
           <li>bcrypt (cost=12) для хешування паролів</li>
           <li>PostgreSQL CHECK та FOREIGN KEY constraints</li>
           <li>HTTPS скрізь — Render забезпечує TLS</li>
-          <li>Ролі: client та admin з різними правами</li>
+          <li>Ролі: <code>soldier</code> · <code>operator</code> · <code>admin</code> · <code>platform_admin</code></li>
         </ul>
       </div>
       <div class="feature-visual">
@@ -207,7 +213,7 @@
               <div class="af-num">1</div>
               <div class="af-content">
                 <code class="af-method">POST /api/auth/login</code>
-                <span class="af-detail">email + password</span>
+                <span class="af-detail">identity (телефон або email) + пароль</span>
               </div>
             </div>
             <div class="af-arrow">
@@ -216,7 +222,7 @@
             <div class="af-step">
               <div class="af-num">2</div>
               <div class="af-content">
-                <code class="af-method">bcrypt.verify()</code>
+                <code class="af-method">bcrypt.checkpw()</code>
                 <span class="af-detail">password_hash порівняння</span>
               </div>
             </div>
@@ -226,8 +232,8 @@
             <div class="af-step">
               <div class="af-num">3</div>
               <div class="af-content">
-                <code class="af-method">jwt.encode()</code>
-                <span class="af-detail">user_id + exp → token</span>
+                <code class="af-method">secrets.token_urlsafe(32)</code>
+                <span class="af-detail">токен → збережено у PostgreSQL</span>
               </div>
             </div>
             <div class="af-arrow">
@@ -237,7 +243,7 @@
               <div class="af-num">4</div>
               <div class="af-content">
                 <code class="af-method">Authorization: Bearer &lt;token&gt;</code>
-                <span class="af-detail">на кожен наступний запит</span>
+                <span class="af-detail">авто-ротація через X-Refresh-Token</span>
               </div>
             </div>
           </div>
@@ -309,7 +315,7 @@
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
           </div>
           <h3>REST Client</h3>
-          <p>curl, Postman, будь-який HTTP-клієнт. Повна документація всіх 23 ендпоінтів.</p>
+          <p>curl, Postman, будь-який HTTP-клієнт. Повна документація всіх 40+ ендпоінтів.</p>
         </div>
       </div>
     </div>
@@ -341,13 +347,13 @@
       </div>
       <div class="arch-connector">
         <div class="ac-line"></div>
-        <span class="ac-label">HTTPS · Bearer JWT</span>
+        <span class="ac-label">HTTPS · Bearer (сесія в БД)</span>
         <div class="ac-line"></div>
       </div>
       <div class="arch-layer-row">
         <div class="al-box al-server">
           <span class="al-label">Flask REST API</span>
-          <span class="al-sub">Python 3.11 · army-bank.onrender.com</span>
+          <span class="al-sub">Python · Gunicorn · army-bank.onrender.com</span>
         </div>
       </div>
       <div class="arch-connector">
@@ -356,18 +362,184 @@
       <div class="arch-layer-row arch-services">
         <div class="al-box al-service">
           <span class="al-label">Auth</span>
-          <span class="al-sub">PyJWT · bcrypt</span>
+          <span class="al-sub">secrets · bcrypt · X-Refresh-Token</span>
         </div>
         <div class="al-box al-service">
           <span class="al-label">PostgreSQL</span>
-          <span class="al-sub">Render · psycopg2</span>
+          <span class="al-sub">Render · psycopg2 · 10+ таблиць</span>
         </div>
         <div class="al-box al-service">
           <span class="al-label">Web Push</span>
           <span class="al-sub">VAPID · pywebpush</span>
         </div>
+        <div class="al-box al-service">
+          <span class="al-label">Ролі</span>
+          <span class="al-sub">soldier · operator · admin · platform_admin</span>
+        </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- DEEP: система з технічної документації v1.5 -->
+<section class="section-deep alt" id="system">
+  <div class="container">
+    <p class="feat-label">Документація</p>
+    <h2>Склад програмного комплексу</h2>
+    <p class="deep-lead">Army Bank — це не лише «API + мобільний вигляд», а <strong>чотири зчеплені контури</strong>: бойовий банк для користувача, службові ролі в тому ж домені, окрема адмін-панель і маркетинговий вхід. Нижче — стислий зміст внутрішньої архітектурно-технічної документації (версія&nbsp;1.5, 2026).</p>
+    <div class="deep-card-grid cols-4">
+      <div class="deep-card">
+        <h3>Backend + API</h3>
+        <p>Python, Flask, модульні <code>blueprint</code>: <code>auth</code>, облік і транзакції, <code>feature</code> (донати, цілі, контакти, шаблони), <code>admin</code>, <code>operator</code>, <code>platform</code>, <code>push</code>. Єдиний JSON API з уніфікованими помилками та аудитом значущих дій.</p>
+        <ul>
+          <li>PostgreSQL у проді; SQLite — для локального/демо режиму</li>
+          <li><code>schema.sql</code> / <code>schema_pg.sql</code>, ініціалізація при старті</li>
+          <li>Пул з’єднань, gzip (Flask-Compress), batch <code>GET /api/dashboard</code></li>
+        </ul>
+      </div>
+      <div class="deep-card">
+        <h3>PWA клієнт</h3>
+        <p><code>index.html</code> + vanilla JS: кабінет, операції, виплати, донати, накопичення, родина, аналітика, профіль. <code>manifest.json</code> (<code>standalone</code>, <code>uk</code>), Service Worker, Web Push, <code>BroadcastChannel</code> для синхрону вкладок.</p>
+        <ul>
+          <li>Окремі оболонки <code>admin.html</code>, <code>operator.html</code>, <code>platform.html</code> під ролі</li>
+          <li>Один бекенд — усі клієнти ділять ту саму БД</li>
+        </ul>
+      </div>
+      <div class="deep-card">
+        <h3>Army Admin</h3>
+        <p>Окремий SPA (репозиторій / статичний хост): вхід адміністратора, дашборд, користувачі з модалкою (інфо, дії, транзакції), виплати, аудит-логи. Працює через ті самі Bearer-сесії та <code>/api/admin/*</code>.</p>
+      </div>
+      <div class="deep-card">
+        <h3>Публічний лендінг</h3>
+        <p>Сторінка, на якій ви зараз: презентація продукту, стек, API-таблиці, посилання на live demo та GitHub. Точка маркетингового входу до бойового <code>army-bank.onrender.com</code>.</p>
+      </div>
+    </div>
+    <div class="deep-note"><strong>Інтеграційна модель:</strong> користувач переходить з лендінгу в PWA → авторизація → запити до Flask → репозиторії та PostgreSQL. Оператор і адміністратор заходять у свої інтерфейси, але дані й журнали спільні; критичні події фіксуються в транзакціях та <code>audit_logs</code>.</div>
+  </div>
+</section>
+
+<section class="section-deep" id="modules">
+  <div class="container">
+    <p class="feat-label">Функціонал</p>
+    <h2>Що вже реалізовано в продукті</h2>
+    <p class="deep-lead">Перелік узгоджений із сценаріями з технічної документації та поточною кодовою базою: від реєстрації до платформеного адміністрування.</p>
+    <div class="deep-split">
+      <div>
+        <div class="deep-card" style="margin-bottom:20px">
+          <h3>Користувач (soldier)</h3>
+          <ul class="deep-list-check">
+            <li>Реєстрація з валідацією ПІБ, телефону, email, пароля; автоматичне створення основного рахунку (номер на кшталт <code>AB-100000 + id</code>)</li>
+            <li>Вхід за <code>identity</code> (телефон або email) + пароль; сесійний Bearer-токен у PostgreSQL, TTL і оновлення сесії</li>
+            <li>Баланс, історія з фільтрами, поповнення, переказ за номером рахунку, експорт CSV</li>
+            <li>Бойові виплати (перегляд; демо/операторське нарахування)</li>
+            <li>Донати, цілі накопичення з внесками, довірені сімейні контакти</li>
+            <li>Шаблони платежів, сповіщення, аналітика, бюджетні ліміти в UI</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="deep-card" style="margin-bottom:20px">
+          <h3>Службові ролі</h3>
+          <ul class="deep-list-check">
+            <li><strong>operator</strong> — нарахування виплат підрозділу, вузький контур <code>/api/operator/*</code></li>
+            <li><strong>admin</strong> — користувачі, ролі, системні транзакції, аудит, push-розсилка</li>
+            <li><strong>platform_admin</strong> — платформені операції, демо-дані, bootstrap-ендпоінт для першого підняття ролі</li>
+          </ul>
+        </div>
+        <div class="deep-card">
+          <h3>Безпека та спостережуваність</h3>
+          <ul class="deep-list-check">
+            <li><code>X-Content-Type-Options: nosniff</code>, CORS лише для дозволених origin</li>
+            <li>bcrypt для паролів; перевірка токена на кожному захищеному запиті</li>
+            <li>Журнал <code>audit_logs</code> для адміністративних дій</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-deep alt" id="backend-detail">
+  <div class="container">
+    <p class="feat-label">Сервер</p>
+    <h2>Шар даних і конфігурація</h2>
+    <p class="deep-lead"><code>database.py</code> абстрагує PostgreSQL і SQLite через єдиний контекст з’єднання; репозиторії інкапсулюють SQL, сервіси — правила та транзакції, <code>utils</code> — валідація, токени, форматування.</p>
+    <div class="deep-card-grid">
+      <div class="deep-card">
+        <h3>Ключові таблиці</h3>
+        <p><code>users</code> (роль, ПІБ, телефон, email, статус), <code>accounts</code> (баланс, валюта, статус), <code>sessions</code>, <code>transactions</code>, <code>payouts</code>, <code>donations</code>, <code>savings_goals</code>, <code>family_contacts</code>, <code>payment_templates</code>, <code>audit_logs</code>, push-підписки та ін. Модель: <strong>один користувач — один основний рахунок</strong>, рух кошів узгоджується з журналом транзакцій.</p>
+      </div>
+      <div class="deep-card">
+        <h3>Оточення (.env)</h3>
+        <p><code>DATABASE_URL</code> для PostgreSQL або шлях до SQLite; <code>TOKEN_TTL_HOURS</code> (типово 720); <code>BASE_PATH</code> для розгортання під префіксом (наприклад <code>/bank</code>); <code>ADMIN_*</code> для seed <code>platform_admin</code>; прапорець <code>DEBUG</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-deep" id="lifecycle">
+  <div class="container">
+    <p class="feat-label">Процеси</p>
+    <h2>Життєвий цикл переказу</h2>
+    <p class="deep-lead">Спрощена послідовність того, що відбувається на сервері після <code>POST /api/transactions/transfer</code> (ізольована транзакція БД, перевірки цілісності).</p>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <div class="flow-body">
+          <h4>Авторизація</h4>
+          <p>Flask отримує <code>Authorization: Bearer …</code>, знаходить активну сесію в <code>sessions</code>, завантажує користувача та його основний рахунок.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <div class="flow-body">
+          <h4>Валідація</h4>
+          <p>Перевірка суми, існування рахунку отримувача, заборона переказу «собі», достатність коштів на відправнику.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <div class="flow-body">
+          <h4>Оновлення балансів</h4>
+          <p>У межах однієї DB-транзакції знімається сума з відправника, зараховується отримувачу; створюються симетричні записи в <code>transactions</code> (напрямки <code>in</code> / <code>out</code>).</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">04</div>
+        <div class="flow-body">
+          <h4>Відповідь і клієнт</h4>
+          <p>API повертає JSON з новими балансами; PWA оновлює стан, за потреби шле подію в <code>BroadcastChannel</code>, Web Push — отримувачу та відправнику.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-deep alt" id="deploy">
+  <div class="container">
+    <p class="feat-label">DevOps</p>
+    <h2>Розгортання</h2>
+    <p class="deep-lead">У репозиторії описані сценарії для Render: безкоштовний web-сервіс і опційно PostgreSQL через Blueprint (<code>render.yaml</code>). Збірка: <code>pip install -r requirements.txt</code>; старт: <code>gunicorn -c deploy/gunicorn.conf.py backend.app:app</code>.</p>
+    <div class="deep-card-grid">
+      <div class="deep-card">
+        <h3>Рекомендовано для продакшну</h3>
+        <p>Постійна БД через <code>DATABASE_URL</code> (PostgreSQL на Render або власний інстанс). TLS забезпечує хостинг; для домену за nginx — проксування на Gunicorn з передачею <code>X-Forwarded-*</code>.</p>
+      </div>
+      <div class="deep-card">
+        <h3>Локально та демо</h3>
+        <p>SQLite у файлі (шлях у конфігу) для швидкого старту. Free tier Render «засинає» — перший запит після паузи може тривати десятки секунд; PWA може робити ранній ping <code>/health</code> при наявній сесії.</p>
+      </div>
+    </div>
+    <div class="deep-note"><strong>Точки входу:</strong> бойовий банк — <code>army-bank.onrender.com</code>; адміністративний UI — окремий хост (наприклад <code>munister.com.ua/army-admin/</code>); цей лендінг — маркетинговий шлях <code>/army-bank/</code>.</div>
+  </div>
+</section>
+
+<section class="section-deep" id="docs-pdf">
+  <div class="container">
+    <p class="feat-label">PDF</p>
+    <h2>Технічна документація продукту</h2>
+    <p class="deep-lead">Повний внутрішній документ <strong>«Архітектурно-технічна документація програмного комплексу Army Bank»</strong> (версія&nbsp;1.5, підготовка 22.03.2026) містить 35+ сторінок: детальний розбір API, матрицю ролей, модель даних, карту маршрутів, тестування, обмеження та дорожню карту розвитку. Використовується для презентацій стейкхолдерам і як база для експлуатаційної документації.</p>
+    <p class="deep-lead" style="margin-top:-24px">Короткі витримки з того документа інтегровані безпосередньо на цій сторінці в блоках «Склад комплексу», «Що реалізовано», «Шар даних», «Життєвий цикл переказу» та «Розгортання». Повний PDF зберігається в матеріалах проєкту / за запитом автора.</p>
   </div>
 </section>
 
@@ -376,7 +548,7 @@
   <div class="container">
     <div class="feat-center-header">
       <p class="feat-label">REST API</p>
-      <h2>23 ендпоінти</h2>
+      <h2>40+ ендпоінтів</h2>
       <p class="feat-desc">Базовий URL: <code>https://army-bank.onrender.com/api</code></p>
     </div>
 
@@ -389,22 +561,21 @@
         </div>
         <table class="api-table">
           <tr><td><span class="m-post">POST</span></td><td><code>/register</code></td><td>Реєстрація нового юзера</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/login</code></td><td>Авторизація → JWT токен</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/logout</code></td><td>Інвалідація токена</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/refresh</code></td><td>Оновлення токена</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/login</code></td><td>Авторизація → Bearer токен</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/logout</code></td><td>Інвалідація токена у БД</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/me</code></td><td>Профіль + роль поточного юзера</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/change-password</code></td><td>Зміна пароля (bcrypt)</td></tr>
         </table>
       </div>
 
       <div class="api-group">
         <div class="ag-header">
-          <span class="ag-badge">USER</span>
-          <code>/api/user</code>
+          <span class="ag-badge">ACCOUNTS</span>
+          <code>/api</code>
         </div>
         <table class="api-table">
-          <tr><td><span class="m-get">GET</span></td><td><code>/profile</code></td><td>Профіль поточного юзера</td></tr>
-          <tr><td><span class="m-put">PUT</span></td><td><code>/profile</code></td><td>Оновлення імені, email</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/balance</code></td><td>Поточний баланс</td></tr>
-          <tr><td><span class="m-put">PUT</span></td><td><code>/password</code></td><td>Зміна пароля</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/accounts/main</code></td><td>Основний рахунок + баланс</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/dashboard</code></td><td>Batch: user, account, tx, виплати, донати, цілі, контакти, шаблони</td></tr>
         </table>
       </div>
 
@@ -414,11 +585,32 @@
           <code>/api/transactions</code>
         </div>
         <table class="api-table">
-          <tr><td><span class="m-get">GET</span></td><td><code>/</code></td><td>Список транзакцій з фільтрацією</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/:id</code></td><td>Деталі транзакції</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/transfer</code></td><td>Переказ між рахунками</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/deposit</code></td><td>Поповнення рахунку</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/topup</code></td><td>Поповнення рахунку</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/history</code></td><td>Список транзакцій з фільтрацією</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/transfer</code></td><td>Переказ за номером рахунку (SERIALIZABLE)</td></tr>
           <tr><td><span class="m-get">GET</span></td><td><code>/export</code></td><td>Експорт виписки CSV</td></tr>
+        </table>
+      </div>
+
+      <div class="api-group">
+        <div class="ag-header">
+          <span class="ag-badge">FEATURES</span>
+          <code>/api</code>
+        </div>
+        <table class="api-table">
+          <tr><td><span class="m-get">GET</span></td><td><code>/payouts</code></td><td>Виплати користувача</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/donations</code></td><td>Донати</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/donations</code></td><td>Новий донат</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/savings-goals</code></td><td>Цілі накопичення</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/savings-goals</code></td><td>Нова ціль</td></tr>
+          <tr><td><span class="m-del">DELETE</span></td><td><code>/savings-goals/:id</code></td><td>Видалити ціль</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/family-contacts</code></td><td>Контакти</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/family-contacts</code></td><td>Новий контакт</td></tr>
+          <tr><td><span class="m-del">DELETE</span></td><td><code>/family-contacts/:id</code></td><td>Видалити контакт</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/payment-templates</code></td><td>Шаблони платежів</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/notifications</code></td><td>Сповіщення</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/notifications/unread-count</code></td><td>Кількість непрочитаних</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/analytics</code></td><td>Аналітика витрат / доходів</td></tr>
         </table>
       </div>
 
@@ -442,9 +634,21 @@
         <table class="api-table">
           <tr><td><span class="m-get">GET</span></td><td><code>/users</code></td><td>Список всіх юзерів</td></tr>
           <tr><td><span class="m-get">GET</span></td><td><code>/users/:id</code></td><td>Деталі юзера + транзакції</td></tr>
-          <tr><td><span class="m-put">PUT</span></td><td><code>/users/:id/balance</code></td><td>Коригування балансу</td></tr>
+          <tr><td><span class="m-put">PUT</span></td><td><code>/users/:id</code></td><td>Коригування балансу / ролі</td></tr>
           <tr><td><span class="m-get">GET</span></td><td><code>/stats</code></td><td>Статистика платформи</td></tr>
           <tr><td><span class="m-post">POST</span></td><td><code>/push/broadcast</code></td><td>Push-розсилка всім</td></tr>
+        </table>
+      </div>
+
+      <div class="api-group">
+        <div class="ag-header">
+          <span class="ag-badge ag-admin">OPERATOR</span>
+          <code>/api/operator</code>
+        </div>
+        <table class="api-table">
+          <tr><td><span class="m-get">GET</span></td><td><code>/users</code></td><td>Юзери оператора</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/payouts</code></td><td>Нарахування виплати</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/stats</code></td><td>Статистика зони оператора</td></tr>
         </table>
       </div>
 
@@ -458,28 +662,54 @@
     <div class="feat-center-header">
       <p class="feat-label">База даних</p>
       <h2>PostgreSQL схема</h2>
-      <p class="feat-desc">Три таблиці з FK-зв'язками. SERIALIZABLE ізоляція для балансових операцій.</p>
+      <p class="feat-desc">10+ таблиць з FK. Баланс на <code>accounts</code>, рух кошів у <code>transactions</code>. Ізольовані транзакції для переказів і поповнень.</p>
     </div>
     <div class="db-grid">
       <div class="db-table">
         <div class="dbt-header">users</div>
         <div class="dbt-col"><span class="dbt-badge pk">PK</span><code>id</code><span>SERIAL</span></div>
-        <div class="dbt-col"><span class="dbt-badge uq">UQ</span><code>email</code><span>VARCHAR(255)</span></div>
-        <div class="dbt-col"><span class="dbt-badge"></span><code>password_hash</code><span>VARCHAR(255)</span></div>
-        <div class="dbt-col"><span class="dbt-badge"></span><code>full_name</code><span>VARCHAR(255)</span></div>
-        <div class="dbt-col"><span class="dbt-badge"></span><code>balance</code><span>NUMERIC(12,2)</span></div>
-        <div class="dbt-col"><span class="dbt-badge"></span><code>role</code><span>VARCHAR(20)</span></div>
+        <div class="dbt-col"><span class="dbt-badge uq">UQ</span><code>phone</code><span>TEXT</span></div>
+        <div class="dbt-col"><span class="dbt-badge uq">UQ</span><code>email</code><span>TEXT</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>password_hash</code><span>TEXT</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>full_name</code><span>TEXT</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>role</code><span>soldier…</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>military_status</code><span>TEXT</span></div>
+      </div>
+      <div class="db-table">
+        <div class="dbt-header">accounts</div>
+        <div class="dbt-col"><span class="dbt-badge pk">PK</span><code>id</code><span>SERIAL</span></div>
+        <div class="dbt-col"><span class="dbt-badge fk">FK</span><code>user_id</code><span>→ users</span></div>
+        <div class="dbt-col"><span class="dbt-badge uq">UQ</span><code>account_number</code><span>TEXT</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>balance</code><span>REAL</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>currency</code><span>UAH</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>status</code><span>TEXT</span></div>
+      </div>
+      <div class="db-table">
+        <div class="dbt-header">sessions</div>
+        <div class="dbt-col"><span class="dbt-badge pk">PK</span><code>id</code><span>SERIAL</span></div>
+        <div class="dbt-col"><span class="dbt-badge fk">FK</span><code>user_id</code><span>INT → users.id</span></div>
+        <div class="dbt-col"><span class="dbt-badge uq">UQ</span><code>token</code><span>VARCHAR(64)</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>expires_at</code><span>TIMESTAMP</span></div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>created_at</code><span>TIMESTAMP</span></div>
       </div>
       <div class="db-table">
         <div class="dbt-header">transactions</div>
         <div class="dbt-col"><span class="dbt-badge pk">PK</span><code>id</code><span>SERIAL</span></div>
-        <div class="dbt-col"><span class="dbt-badge fk">FK</span><code>from_user_id</code><span>INT → users.id</span></div>
-        <div class="dbt-col"><span class="dbt-badge fk">FK</span><code>to_user_id</code><span>INT → users.id</span></div>
-        <div class="dbt-col"><span class="dbt-badge"></span><code>amount</code><span>NUMERIC(12,2)</span></div>
-        <div class="dbt-col"><span class="dbt-badge"></span><code>type</code><span>VARCHAR(20)</span></div>
+        <div class="dbt-col"><span class="dbt-badge fk">FK</span><code>account_id</code><span>→ accounts</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>tx_type</code><span>transfer…</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>direction</code><span>in / out</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>amount</code><span>REAL</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>related_account</code><span>TEXT</span></div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>description</code><span>TEXT</span></div>
-        <div class="dbt-col"><span class="dbt-badge"></span><code>created_at</code><span>TIMESTAMP</span></div>
+      </div>
+      <div class="db-table">
+        <div class="dbt-header">savings_goals</div>
+        <div class="dbt-col"><span class="dbt-badge pk">PK</span><code>id</code><span>SERIAL</span></div>
+        <div class="dbt-col"><span class="dbt-badge fk">FK</span><code>user_id</code><span>INT → users.id</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>title</code><span>VARCHAR(255)</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>target_amount</code><span>NUMERIC(12,2)</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>current_amount</code><span>NUMERIC(12,2)</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>deadline</code><span>DATE</span></div>
       </div>
       <div class="db-table">
         <div class="dbt-header">push_subscriptions</div>
@@ -488,7 +718,14 @@
         <div class="dbt-col"><span class="dbt-badge"></span><code>endpoint</code><span>TEXT</span></div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>p256dh_key</code><span>TEXT</span></div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>auth_key</code><span>TEXT</span></div>
-        <div class="dbt-col"><span class="dbt-badge"></span><code>created_at</code><span>TIMESTAMP</span></div>
+      </div>
+      <div class="db-table">
+        <div class="dbt-header">+ ще 5 таблиць</div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>payouts</code><span>виплати</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>donations</code><span>донати</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>family_contacts</code><span>контакти</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>payment_templates</code><span>шаблони</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>notifications</code><span>сповіщення</span></div>
       </div>
     </div>
   </div>
@@ -505,22 +742,22 @@
       <div class="stack-col">
         <h3>Backend</h3>
         <div class="stack-item"><code>Python 3.11</code><span>основна мова</span></div>
-        <div class="stack-item"><code>Flask</code><span>мікрофреймворк, blueprints</span></div>
-        <div class="stack-item"><code>PostgreSQL</code><span>реляційна СУБД</span></div>
+        <div class="stack-item"><code>Flask</code><span>blueprints: auth, account, feature, admin, operator, platform, push</span></div>
+        <div class="stack-item"><code>PostgreSQL</code><span>реляційна СУБД, SERIALIZABLE TX</span></div>
         <div class="stack-item"><code>psycopg2</code><span>драйвер PostgreSQL</span></div>
-        <div class="stack-item"><code>PyJWT</code><span>JWT токени</span></div>
-        <div class="stack-item"><code>bcrypt</code><span>хешування паролів</span></div>
+        <div class="stack-item"><code>secrets</code><span>token_urlsafe(32), зберігання у DB</span></div>
+        <div class="stack-item"><code>bcrypt</code><span>хешування паролів, cost=12</span></div>
         <div class="stack-item"><code>pywebpush</code><span>VAPID Push</span></div>
-        <div class="stack-item"><code>Render</code><span>хостинг</span></div>
+        <div class="stack-item"><code>Render</code><span>хостинг Flask + PostgreSQL</span></div>
       </div>
       <div class="stack-col">
         <h3>Frontend / PWA</h3>
         <div class="stack-item"><code>HTML5 / CSS3</code><span>семантична розмітка</span></div>
-        <div class="stack-item"><code>Vanilla JS</code><span>без фреймворків</span></div>
-        <div class="stack-item"><code>Service Worker</code><span>offline кешування</span></div>
-        <div class="stack-item"><code>Web Push API</code><span>push-сповіщення</span></div>
-        <div class="stack-item"><code>Web App Manifest</code><span>installable PWA</span></div>
-        <div class="stack-item"><code>GitHub Pages</code><span>хостинг лендінгу</span></div>
+        <div class="stack-item"><code>Vanilla JS</code><span>без фреймворків, ES2022</span></div>
+        <div class="stack-item"><code>Service Worker</code><span>stale-while-revalidate, offline shell</span></div>
+        <div class="stack-item"><code>Web Push API</code><span>VAPID push-сповіщення</span></div>
+        <div class="stack-item"><code>BroadcastChannel</code><span>синхронізація між вкладками</span></div>
+        <div class="stack-item"><code>Web App Manifest</code><span>installable PWA, PWA install banner</span></div>
       </div>
       <div class="stack-col">
         <h3>Android</h3>
@@ -564,49 +801,151 @@
           <span class="dc-dot"></span><span class="dc-dot"></span><span class="dc-dot"></span>
           <span class="dc-title">Terminal</span>
         </div>
-        <pre class="dc-pre"><span class="c-comment"># 1. Логін</span>
+        <pre class="dc-pre"><span class="c-comment"># 1. Логін → Bearer токен</span>
 curl -X POST army-bank.onrender.com/api/auth/login \
   -H <span class="c-str">"Content-Type: application/json"</span> \
-  -d <span class="c-str">'{"email":"demo@army-bank.ua","password":"demo123"}'</span>
+  -d <span class="c-str">'{"identity":"demo@army-bank.ua","password":"demo123"}'</span>
 
-<span class="c-comment"># → {"token": "eyJhbGci..."}</span>
+<span class="c-comment"># → {"token": "…", "user": {…}}</span>
 
-<span class="c-comment"># 2. Баланс</span>
-curl army-bank.onrender.com/api/user/balance \
+<span class="c-comment"># 2. Профіль + баланс</span>
+curl army-bank.onrender.com/api/auth/me \
+  -H <span class="c-str">"Authorization: Bearer TOKEN"</span>
+
+curl army-bank.onrender.com/api/accounts/main \
   -H <span class="c-str">"Authorization: Bearer TOKEN"</span>
 
 <span class="c-comment"># 3. Переказ</span>
 curl -X POST army-bank.onrender.com/api/transactions/transfer \
   -H <span class="c-str">"Authorization: Bearer TOKEN"</span> \
   -H <span class="c-str">"Content-Type: application/json"</span> \
-  -d <span class="c-str">'{"to_email":"oleg@test.ua","amount":500}'</span></pre>
+  -d <span class="c-str">'{"recipient_account_number":"AB-100002","amount":500,"description":"Тест"}'</span></pre>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FAQ -->
-<section class="section-faq" id="faq">
-  <div class="container container-narrow">
-    <div class="feat-center-header">
-      <h2>Часті питання</h2>
-    </div>
+<section class="section-faq" id="faq" aria-labelledby="faq-heading">
+  <div class="container">
+    <h2 id="faq-heading">Часті питання</h2>
     <div class="faq-list">
       <div class="faq-item">
-        <button class="faq-trigger"><span>Як підключити Android SDK?</span><span class="faq-icon"></span></button>
-        <div class="faq-body"><p>Додай Retrofit2 та OkHttp3 у build.gradle, створи ApiService інтерфейс з анотаціями @GET/@POST, налаштуй AuthInterceptor для Bearer токена. Базовий URL: <code>https://army-bank.onrender.com/api/</code>.</p></div>
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q1" aria-controls="faq-a1">
+          <span>Як підключити Android SDK?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a1" role="region" aria-labelledby="faq-q1">
+          <p>Додай Retrofit2 та OkHttp3 у <code>build.gradle</code>, створи <code>ApiService</code> з анотаціями <code>@GET</code>/<code>@POST</code>, налаштуй <code>AuthInterceptor</code> для Bearer токена. Базовий URL: <code>https://army-bank.onrender.com/api/</code>.</p>
+        </div>
       </div>
       <div class="faq-item">
-        <button class="faq-trigger"><span>Як влаштовані Web Push?</span><span class="faq-icon"></span></button>
-        <div class="faq-body"><p>PWA отримує VAPID ключ через GET /api/push/vapid-public-key, підписується через PushManager.subscribe(), відправляє PushSubscription на POST /api/push/subscribe. Після транзакції — автоматичний push через pywebpush.</p></div>
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q2" aria-controls="faq-a2">
+          <span>Як влаштовані Web Push?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a2" role="region" aria-labelledby="faq-q2">
+          <p>PWA отримує VAPID ключ через <code>GET /api/push/vapid-public-key</code>, підписується через <code>PushManager.subscribe()</code>, відправляє PushSubscription на <code>POST /api/push/subscribe</code>. Після транзакції — автоматичний push через pywebpush.</p>
+        </div>
       </div>
       <div class="faq-item">
-        <button class="faq-trigger"><span>Як захищені операції з балансом?</span><span class="faq-icon"></span></button>
-        <div class="faq-body"><p>Кожна балансова операція — PostgreSQL-транзакція з SERIALIZABLE ізоляцією. Race condition виключений. Перед переказом: перевірка балансу, існування одержувача, валідності токена.</p></div>
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q3" aria-controls="faq-a3">
+          <span>Як захищені операції з балансом?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a3" role="region" aria-labelledby="faq-q3">
+          <p>Кожна балансова операція — PostgreSQL-транзакція з SERIALIZABLE ізоляцією. Race condition виключений. Перед переказом: перевірка балансу, існування одержувача, валідності токена.</p>
+        </div>
       </div>
       <div class="faq-item">
-        <button class="faq-trigger"><span>Хто розробив?</span><span class="faq-icon"></span></button>
-        <div class="faq-body"><p>Viacheslav Munister — full-stack розробник. Backend: Python/Flask, БД: PostgreSQL, фронт: PWA, мобільний: Kotlin. <a href="https://github.com/munister-v" target="_blank">GitHub</a> · <a href="https://t.me/munister_v" target="_blank">Telegram</a> · <a href="mailto:munister.v@gmail.com">munister.v@gmail.com</a></p></div>
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q4" aria-controls="faq-a4">
+          <span>Як влаштована авторизація? Це JWT?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a4" role="region" aria-labelledby="faq-q4">
+          <p>Ні. Замість JWT використовується Bearer-токен, згенерований через <code>secrets.token_urlsafe(32)</code> і збережений у таблиці <code>sessions</code> PostgreSQL разом з терміном дії. При кожному запиті сервер валідує токен в БД. Якщо до закінчення сесії залишається менше 7 днів — автоматично видається новий токен через заголовок <code>X-Refresh-Token</code>, клієнт оновлює його без перезаходу.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q5" aria-controls="faq-a5">
+          <span>Чому перший запуск займає ~30 секунд?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a5" role="region" aria-labelledby="faq-q5">
+          <p>Render free tier "засинає" після 15 хвилин неактивності. При першому зверненні сервер "прокидається" — це займає 30–60 сек. Щоб мінімізувати цей ефект, PWA автоматично надсилає ping-запит на <code>/health</code> одразу при відкритті сторінки, якщо є збережена сесія, — ще до того, як користувач виконає першу дію.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q6" aria-controls="faq-a6">
+          <span>Що таке ролі і чим вони відрізняються?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a6" role="region" aria-labelledby="faq-q6">
+          <p>Платформа має чотири рівні доступу: <strong>soldier</strong> — звичайний клієнт, бачить свій рахунок і транзакції; <strong>operator</strong> — нараховує виплати своїм підрозділам; <strong>admin</strong> — керує всіма юзерами, може коригувати баланс і робити push-розсилку; <strong>platform_admin</strong> — повний доступ до всіх адмін-панелей і статистики платформи.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q7" aria-controls="faq-a7">
+          <span>Як PWA працює офлайн?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a7" role="region" aria-labelledby="faq-q7">
+          <p>Service Worker використовує стратегію stale-while-revalidate для CSS/JS (миттєве завантаження з кешу + фонове оновлення), cache-first для шрифтів і network-first для HTML-навігації. При відсутності мережі застосунок відкривається з кешу — видно останній стан балансу та транзакцій. Версія кешу змінюється при деплої, щоб клієнти підтягували свіжі файли.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q8" aria-controls="faq-a8">
+          <span>Як оптимізовано час завантаження PWA?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a8" role="region" aria-labelledby="faq-q8">
+          <p>Декілька рівнів оптимізації: CSS завантажується асинхронно (non-blocking), критичні стилі вбудовані inline; шрифти — обмежений набір ваг; Flask-Compress стискає відповіді gzip; пул з'єднань PostgreSQL зменшує накладні витрати на кожен запит; замість кількох паралельних викликів при відкритті кабінету — один batch-ендпоінт <code>GET /api/dashboard</code>.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q9" aria-controls="faq-a9">
+          <span>Чи можна встановити PWA на телефон?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a9" role="region" aria-labelledby="faq-q9">
+          <p>Так. На Android — через банер "Додати на головний екран" або меню браузера. На iOS — Safari → "Поділитися" → "На екран «Додому»". Після встановлення застосунок запускається як нативний: без адресного рядка, із splash-screen і підтримкою push-сповіщень. Web App Manifest налаштований з іконками 72–512px та <code>display: standalone</code>.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q10" aria-controls="faq-a10">
+          <span>Як синхронізуються кілька відкритих вкладок?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a10" role="region" aria-labelledby="faq-q10">
+          <p>Через Web <code>BroadcastChannel</code>. Коли одна вкладка виконує операцію (переказ, донат, видалення), вона публікує подію <code>DATA_UPDATED</code> — всі інші вкладки автоматично викликають <code>refreshAllData()</code> і відображають актуальні дані без перезавантаження сторінки.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q11" aria-controls="faq-a11">
+          <span>Як експортувати виписку в CSV?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a11" role="region" aria-labelledby="faq-q11">
+          <p>Після входу викличте <code>GET /api/transactions/export</code> з заголовком <code>Authorization: Bearer …</code>. Параметри <code>from</code> та <code>to</code> (дати) за потреби обмежують період. У відповіді — CSV з BOM для коректного відкриття в Excel.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q12" aria-controls="faq-a12">
+          <span>Які обмеження на суми операцій?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a12" role="region" aria-labelledby="faq-q12">
+          <p>Сума має бути додатною й не перевищувати верхню межу, яку перевіряє бекенд (порядку 99&nbsp;999&nbsp;999,99&nbsp;₴ на одну операцію). У PWA можна додатково задати <strong>місячні бюджетні ліміти</strong> за типами витрат — вони допомагають контролювати витрати без зміни правил на сервері.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-trigger" aria-expanded="false" id="faq-q13" aria-controls="faq-a13">
+          <span>Який базовий URL API для власного клієнта?</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-body" id="faq-a13" role="region" aria-labelledby="faq-q13">
+          <p>Для продакшн-деплою на Render: <code>https://army-bank.onrender.com/api/</code>. Спочатку <code>POST /api/auth/login</code> (тіло з телефоном/email і паролем), далі всі захищені маршрути — з <code>Authorization: Bearer &lt;token&gt;</code>. Якщо застосунок працює під префіксом шляху, додайте його перед <code>/api</code>.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -627,12 +966,12 @@ curl -X POST army-bank.onrender.com/api/transactions/transfer \
         </div>
         <span>Army<strong>Bank</strong></span>
       </a>
-      <p class="footer-sub">Flask + PostgreSQL + JWT + PWA + Kotlin</p>
+      <p class="footer-sub">Flask · PostgreSQL · Bearer Auth · PWA · Kotlin</p>
     </div>
     <div class="footer-links">
       <a href="https://github.com/munister-v" target="_blank">GitHub</a>
-      <a href="https://t.me/munister_v" target="_blank">Telegram</a>
-      <a href="mailto:munister.v@gmail.com">Email</a>
+      <a href="https://t.me/vyanetto1" target="_blank" rel="noopener">Telegram</a>
+      <a href="mailto:munister@outlook.com">Email</a>
     </div>
   </div>
   <div class="footer-bottom container">
@@ -640,6 +979,6 @@ curl -X POST army-bank.onrender.com/api/transactions/transfer \
   </div>
 </footer>
 
-<script src="app.js?v=6.1" defer></script>
+<script src="app.js?v=22" defer></script>
 </body>
 </html>
