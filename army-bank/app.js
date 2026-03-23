@@ -6,6 +6,15 @@
 (function () {
   'use strict';
 
+  /* На Render / localhost — «Відкрити додаток» веде на цей же хост /app */
+  if (/onrender\.com$/i.test(location.hostname) || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    document.querySelectorAll('a[href="https://army-bank.onrender.com"]').forEach(function (a) {
+      a.setAttribute('href', '/app');
+      a.removeAttribute('target');
+      a.removeAttribute('rel');
+    });
+  }
+
   /* ════════════════════════════════════════════
      SMOOTH SCROLL
   ════════════════════════════════════════════ */
@@ -36,30 +45,6 @@
 
   window.addEventListener('scroll', updateNav, { passive: true });
   updateNav();
-
-  /* ════════════════════════════════════════════
-     FAQ ACCORDION
-  ════════════════════════════════════════════ */
-  var faqItems = document.querySelectorAll('.faq-item');
-
-  faqItems.forEach(function (item) {
-    var trigger = item.querySelector('.faq-trigger');
-    if (!trigger) return;
-
-    trigger.addEventListener('click', function () {
-      var isOpen = item.classList.contains('open');
-
-      // Close all
-      faqItems.forEach(function (other) {
-        other.classList.remove('open');
-      });
-
-      // Open clicked if it was closed
-      if (!isOpen) {
-        item.classList.add('open');
-      }
-    });
-  });
 
   /* ════════════════════════════════════════════
      COUNT-UP ANIMATION (IntersectionObserver)
@@ -195,6 +180,24 @@
       cache: 'no-store'
     }).catch(function () { /* silent — cold start in progress */ });
   }, 800); // slight delay so it doesn't compete with page render
+
+  /* ════════ FAQ ACCORDION ════════ */
+  document.querySelectorAll('.faq-trigger').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var item = btn.closest('.faq-item');
+      if (!item) return;
+      var open = !item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(function (other) {
+        if (other !== item) {
+          other.classList.remove('open');
+          var b = other.querySelector('.faq-trigger');
+          if (b) b.setAttribute('aria-expanded', 'false');
+        }
+      });
+      item.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
 
   console.log('ArmyBank v1.6.0 — portfolio project by Viacheslav Munister');
 })();

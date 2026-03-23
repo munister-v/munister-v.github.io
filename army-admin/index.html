@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArmyBank — Адмін</title>
+  <meta name="theme-color" content="#050505" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="css/styles.css?v=4" />
+</head>
+<body>
+
+<!-- ═══════════════════════════ AUTH SCREEN ═══════════════════════════ -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo" style="color:#d4c4b5">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <path d="M20 4L36 12V28L20 36L4 28V12L20 4Z" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M20 10L30 15V25L20 30L10 25V15L20 10Z" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M16 20h8M20 16v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1 class="auth-title">Army<strong>Bank</strong> Admin</h1>
+    <p class="auth-sub">Панель управління</p>
+    <form id="loginForm" class="auth-form" autocomplete="off">
+      <div class="field-group">
+        <label>Телефон або Email</label>
+        <input type="text" id="loginIdentity" placeholder="+380..." autocomplete="username" required />
+      </div>
+      <div class="field-group">
+        <label>Пароль</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required />
+      </div>
+      <div id="loginError" class="form-error hidden"></div>
+      <button type="submit" class="btn-primary" id="loginBtn">Увійти</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ADMIN APP ═══════════════════════════ -->
+<div id="adminApp" class="admin-app hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo" style="color:#d4c4b5">
+      <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <path d="M20 4L36 12V28L20 36L4 28V12L20 4Z" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M20 10L30 15V25L20 30L10 25V15L20 10Z" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M16 20h8M20 16v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="sidebar-brand">Army<strong>Bank</strong> · Адмін</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+        Дешборд
+      </a>
+      <a href="#" class="nav-item" data-page="users">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zm8 0a3 3 0 11-6 0 3 3 0 016 0zM9.293 14.707A3.5 3.5 0 007 11.5H3a3.5 3.5 0 00-3.5 3.5V17h6v-1.293zM19.5 15A3.5 3.5 0 0017 11.5h-4a3.5 3.5 0 00-3.5 3.5V17H20v-2z"/></svg>
+        Користувачі
+      </a>
+      <a href="#" class="nav-item" data-page="transactions">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+        Транзакції
+      </a>
+      <a href="#" class="nav-item" data-page="payouts">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>
+        Виплати
+      </a>
+      <a href="#" class="nav-item" data-page="audit">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+        Аудит
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip" id="sidebarUser">
+        <div class="user-avatar" id="sidebarAvatar">A</div>
+        <div class="user-info">
+          <span class="user-name" id="sidebarName">Admin</span>
+          <span class="user-role" id="sidebarRole">admin</span>
+        </div>
+      </div>
+      <button class="btn-logout" id="logoutBtn" title="Вийти">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h7a1 1 0 000-2H4V5h6a1 1 0 000-2H3zm11.293 4.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L15.586 11H9a1 1 0 010-2h6.586l-1.293-1.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MOBILE TOPBAR -->
+  <header class="topbar" id="topbar">
+    <button class="menu-toggle" id="menuToggle">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+    </button>
+    <span class="topbar-title" id="topbarTitle">Дешборд</span>
+    <div style="width:36px"></div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ── DASHBOARD PAGE ── -->
+    <section id="page-dashboard" class="page active">
+      <div class="page-header">
+        <h2>Дешборд</h2>
+        <button class="btn-refresh" id="refreshStats">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+          Оновити
+        </button>
+      </div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card loading"><div class="stat-shimmer"></div></div>
+        <div class="stat-card loading"><div class="stat-shimmer"></div></div>
+        <div class="stat-card loading"><div class="stat-shimmer"></div></div>
+        <div class="stat-card loading"><div class="stat-shimmer"></div></div>
+        <div class="stat-card loading"><div class="stat-shimmer"></div></div>
+      </div>
+      <div class="section-title">Розподіл за ролями</div>
+      <div class="roles-grid" id="rolesGrid"></div>
+      <div class="section-title">Останні транзакції</div>
+      <div class="table-wrap">
+        <table class="data-table" id="recentTxTable">
+          <thead><tr>
+            <th>Дата</th><th>Рахунок</th><th>Тип</th><th>Напрямок</th><th>Сума</th><th>Опис</th>
+          </tr></thead>
+          <tbody id="recentTxBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── USERS PAGE ── -->
+    <section id="page-users" class="page">
+      <div class="page-header">
+        <h2>Користувачі</h2>
+      </div>
+      <div class="filters-bar">
+        <input type="text" id="userSearch" placeholder="Пошук за ім'ям, телефоном, email…" class="filter-input" />
+        <select id="userRoleFilter" class="filter-select">
+          <option value="">Всі ролі</option>
+          <option value="soldier">Солдат</option>
+          <option value="operator">Оператор</option>
+          <option value="admin">Адмін</option>
+          <option value="platform_admin">Platform Admin</option>
+        </select>
+        <button class="btn-secondary" id="searchUsersBtn">Знайти</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="usersTable">
+          <thead><tr>
+            <th>ID</th><th>ПІБ</th><th>Телефон</th><th>Email</th><th>Роль</th><th>Статус</th><th>Зареєстровано</th><th>Дії</th>
+          </tr></thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </div>
+      <div id="usersEmpty" class="empty-state hidden">Користувачів не знайдено.</div>
+    </section>
+
+    <!-- ── USER DETAIL MODAL ── -->
+    <div id="userModal" class="modal-overlay hidden">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-header-left">
+            <div class="modal-avatar" id="modalAvatar">A</div>
+            <div>
+              <h3 id="modalUserName">Користувач</h3>
+              <span id="modalUserRoleBadge"></span>
+            </div>
+          </div>
+          <button class="modal-close" id="modalClose">✕</button>
+        </div>
+        <!-- TABS -->
+        <div class="modal-tabs">
+          <button class="modal-tab active" data-tab="info">Інфо</button>
+          <button class="modal-tab" data-tab="actions">Дії</button>
+          <button class="modal-tab" data-tab="txs">Транзакції</button>
+        </div>
+        <!-- TAB: INFO -->
+        <div class="modal-tab-content active" id="tab-info">
+          <div class="modal-section">
+            <div class="modal-row"><span>ID</span><span id="mUserId">—</span></div>
+            <div class="modal-row"><span>Email</span><span id="mUserEmail">—</span></div>
+            <div class="modal-row"><span>Телефон</span><span id="mUserPhone">—</span></div>
+            <div class="modal-row"><span>Роль</span><span id="mUserRole">—</span></div>
+            <div class="modal-row"><span>Статус</span><span id="mUserStatus">—</span></div>
+            <div class="modal-row"><span>Зареєстровано</span><span id="mUserCreated">—</span></div>
+          </div>
+          <div class="modal-section" id="mAccountSection">
+            <div class="section-title" style="margin:0 0 12px">Рахунок</div>
+            <div class="modal-row"><span>Номер</span><code id="mAccNumber" style="font-size:.82rem">—</code></div>
+            <div class="modal-row"><span>Баланс</span><b id="mAccBalance" style="color:var(--gold)">—</b></div>
+          </div>
+        </div>
+        <!-- TAB: ACTIONS -->
+        <div class="modal-tab-content hidden" id="tab-actions">
+          <div class="modal-section">
+            <div class="section-title" style="margin:0 0 12px">Змінити роль</div>
+            <div class="inline-form">
+              <select id="mRoleSelect" class="filter-select">
+                <option value="soldier">Солдат</option>
+                <option value="operator">Оператор</option>
+                <option value="admin">Адмін</option>
+                <option value="platform_admin">Platform Admin</option>
+              </select>
+              <button class="btn-primary" id="saveRoleBtn">Зберегти</button>
+            </div>
+            <div id="roleChangeMsg" class="form-msg hidden"></div>
+          </div>
+          <div class="modal-section">
+            <div class="section-title" style="margin:0 0 12px">Нарахувати виплату</div>
+            <div class="inline-form">
+              <input type="number" id="mPayoutAmount" class="filter-input" placeholder="Сума, грн" min="1" />
+              <input type="text" id="mPayoutTitle" class="filter-input" placeholder="Призначення" />
+              <button class="btn-primary" id="mPayoutBtn">Нарахувати</button>
+            </div>
+            <div id="payoutMsg" class="form-msg hidden"></div>
+          </div>
+        </div>
+        <!-- TAB: TRANSACTIONS -->
+        <div class="modal-tab-content hidden" id="tab-txs">
+          <div class="modal-section" style="padding-bottom:0">
+            <div id="mTxLoading" style="padding:24px;text-align:center;color:var(--text-muted);font-size:.85rem">Завантаження…</div>
+            <div class="table-wrap" id="mTxWrap" style="display:none;border:none;border-radius:0">
+              <table class="data-table" id="mTxTable">
+                <thead><tr>
+                  <th>Дата</th><th>Тип</th><th>Dir</th><th>Сума</th><th>Опис</th>
+                </tr></thead>
+                <tbody id="mTxBody"></tbody>
+              </table>
+            </div>
+            <div id="mTxEmpty" style="display:none;padding:24px;text-align:center;color:var(--text-muted);font-size:.85rem">Транзакцій немає.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TRANSACTIONS PAGE ── -->
+    <section id="page-transactions" class="page">
+      <div class="page-header">
+        <h2>Транзакції</h2>
+        <span class="count-badge" id="txCount">—</span>
+      </div>
+      <div class="filters-bar wrap">
+        <select id="txTypeFilter" class="filter-select">
+          <option value="">Всі типи</option>
+          <option value="payout">Виплата</option>
+          <option value="donation">Донат</option>
+          <option value="transfer">Переказ</option>
+          <option value="deposit">Депозит</option>
+          <option value="withdrawal">Зняття</option>
+        </select>
+        <select id="txDirFilter" class="filter-select">
+          <option value="">Всі напрямки</option>
+          <option value="in">Зарахування</option>
+          <option value="out">Списання</option>
+        </select>
+        <input type="date" id="txFromDate" class="filter-input" title="Від дати" />
+        <input type="date" id="txToDate" class="filter-input" title="До дати" />
+        <button class="btn-secondary" id="filterTxBtn">Фільтрувати</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="txTable">
+          <thead><tr>
+            <th>Дата</th><th>Користувач</th><th>Рахунок</th><th>Тип</th><th>Напрямок</th><th>Сума</th><th>Опис</th>
+          </tr></thead>
+          <tbody id="txBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination-bar" id="txPagination"></div>
+    </section>
+
+    <!-- ── PAYOUTS PAGE ── -->
+    <section id="page-payouts" class="page">
+      <div class="page-header">
+        <h2>Нарахувати виплату</h2>
+      </div>
+      <div class="form-card">
+        <div class="field-group">
+          <label>Користувач (пошук за ім'ям / телефоном)</label>
+          <div class="user-search-wrap">
+            <input type="text" id="payoutUserSearch" class="filter-input" placeholder="Почніть вводити…" autocomplete="off" />
+            <div id="payoutUserDropdown" class="user-dropdown hidden"></div>
+          </div>
+          <div id="selectedUserChip" class="selected-user hidden">
+            <span id="selectedUserName">—</span>
+            <button id="clearSelectedUser">✕</button>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Сума (грн)</label>
+            <input type="number" id="payoutAmount" class="filter-input" placeholder="0.00" min="0.01" step="0.01" />
+          </div>
+          <div class="field-group">
+            <label>Тип виплати</label>
+            <select id="payoutType" class="filter-select">
+              <option value="combat">Бойова виплата</option>
+              <option value="salary">Грошове забезпечення</option>
+              <option value="bonus">Бонус</option>
+              <option value="other">Інше</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Призначення</label>
+          <input type="text" id="payoutTitle" class="filter-input" placeholder="Бойова виплата" />
+        </div>
+        <div id="payoutFormMsg" class="form-msg hidden"></div>
+        <button class="btn-primary gold" id="submitPayoutBtn" disabled>Нарахувати</button>
+      </div>
+    </section>
+
+    <!-- ── AUDIT PAGE ── -->
+    <section id="page-audit" class="page">
+      <div class="page-header">
+        <h2>Журнал аудиту</h2>
+        <button class="btn-refresh" id="refreshAudit">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+          Оновити
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="auditTable">
+          <thead><tr>
+            <th>Дата</th><th>User ID</th><th>Подія</th><th>Деталі</th>
+          </tr></thead>
+          <tbody id="auditBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="js/api.js?v=4"></script>
+<script src="js/app.js?v=4"></script>
+</body>
+</html>
