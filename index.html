@@ -73,7 +73,7 @@
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
       }
 
-      /* ── Army Bank MVP section (injected after React app) ── */
+      /* ── ARM Bank MVP section (injected after React app) ── */
       #army-bank-mvp {
         border-top: 1px solid #262626;
         padding: 100px 0;
@@ -132,26 +132,60 @@
       .ab-stat-n { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; color: #d4c4b5; }
       .ab-stat-l { font-family: 'JetBrains Mono', monospace; font-size: 8px; text-transform: uppercase; letter-spacing: .12em; color: #525252; margin-top: 4px; }
       /* mockup */
-      .ab-screen { background: #0a0a0a; border: 1px solid #262626; border-radius: 8px; overflow: hidden; font-family: 'JetBrains Mono', monospace; }
-      .ab-screen-hdr { background: #111; border-bottom: 1px solid #262626; padding: 12px 20px; display: flex; align-items: center; gap: 8px; }
-      .ab-dots { display: flex; gap: 6px; }
-      .ab-dot { width: 10px; height: 10px; border-radius: 50%; background: #2a2a2a; }
-      .ab-url { flex: 1; text-align: center; font-size: 9px; letter-spacing: .08em; color: #525252; }
-      .ab-body { padding: 24px; }
-      .ab-logo { font-size: 13px; letter-spacing: .08em; color: #fff; margin-bottom: 20px; }
-      .ab-logo em { color: #d4c4b5; font-style: normal; }
-      .ab-bal-label { font-size: 8px; text-transform: uppercase; letter-spacing: .12em; color: #525252; margin-bottom: 4px; }
-      .ab-balance { font-size: 28px; color: #fff; letter-spacing: -.02em; margin-bottom: 20px; }
-      .ab-balance small { font-size: 14px; color: #525252; }
-      .ab-actions { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 20px; }
-      .ab-action { background: #1a1a1a; border: 1px solid #262626; padding: 10px 6px; text-align: center; font-size: 7px; text-transform: uppercase; letter-spacing: .08em; color: #737373; }
-      .ab-action-ic { font-size: 14px; margin-bottom: 4px; }
-      .ab-tx { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
-      .ab-tx-info { font-size: 9px; color: #a3a3a3; }
-      .ab-tx-info small { display: block; font-size: 8px; color: #404040; margin-top: 2px; }
-      .ab-tx-amt { font-size: 11px; }
-      .ab-tx-amt.plus { color: #4ade80; }
-      .ab-tx-amt.minus { color: #737373; }
+      /* ── ab-screen: реальний дизайн ARM Bank app ── */
+      .ab-screen {
+        border-radius: 16px; overflow: hidden;
+        font-family: 'Inter', system-ui, sans-serif;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      }
+      /* Browser bar */
+      .ab-screen-hdr {
+        background: #1e2b20; border-bottom: 1px solid rgba(255,255,255,0.08);
+        padding: 8px 14px; display: flex; align-items: center; gap: 8px;
+      }
+      .ab-dots { display: flex; gap: 5px; }
+      .ab-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.15); }
+      .ab-url { flex: 1; text-align: center; font-size: 9px; letter-spacing: .06em; color: rgba(255,255,255,0.35); }
+      /* Green header — matches real app */
+      .ab-body {
+        background: linear-gradient(180deg, #2f4a37 0%, #46664a 55%, #7a9c7e 100%);
+        padding: 16px 18px 14px; position: relative;
+      }
+      .ab-body::after {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(110% 100% at 0% -10%, rgba(255,255,255,0.14) 0%, transparent 65%);
+        pointer-events: none;
+      }
+      .ab-body-inner { position: relative; z-index: 1; }
+      .ab-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+      .ab-avatar { width: 26px; height: 26px; border-radius: 8px; background: rgba(255,255,255,0.22); border: 1px solid rgba(255,255,255,0.35); color: #fff; font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+      .ab-greeting { font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; margin-bottom: 4px; }
+      .ab-logo { display: none; }
+      .ab-bal-label { font-size: 8px; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,0.6); margin-bottom: 2px; }
+      .ab-balance { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -.03em; line-height: 1; margin-bottom: 6px; }
+      .ab-balance small { font-size: 12px; font-weight: 400; color: rgba(255,255,255,0.55); }
+      .ab-account-pill { display: inline-block; background: rgba(255,255,255,0.17); border: 1px solid rgba(255,255,255,0.28); color: rgba(255,255,255,0.85); border-radius: 999px; font-size: 8px; padding: 2px 8px; margin-bottom: 12px; }
+      .ab-actions { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 0; }
+      .ab-action { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.22); border-radius: 10px; padding: 8px 4px 6px; text-align: center; font-size: 7px; color: rgba(255,255,255,0.8); letter-spacing: .04em; }
+      .ab-action-ic { font-size: 13px; margin-bottom: 4px; line-height: 1; }
+      /* Light sage body */
+      .ab-txlist { background: #e7ebe2; padding: 10px 18px 0; }
+      .ab-txlist-label { font-size: 7.5px; text-transform: uppercase; letter-spacing: .1em; color: #7f8b80; font-weight: 600; padding: 4px 0 8px; }
+      .ab-tx { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid rgba(20,34,21,0.1); }
+      .ab-tx:last-child { border-bottom: none; }
+      .ab-tx-ic { width: 24px; height: 24px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px; }
+      .ab-tx-ic.in  { background: rgba(31,160,85,0.13); }
+      .ab-tx-ic.out { background: rgba(242,84,97,0.12); }
+      .ab-tx-info { flex: 1; min-width: 0; }
+      .ab-tx-info b { display: block; font-size: 10px; color: #141a15; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .ab-tx-info small { display: block; font-size: 8px; color: #7f8b80; margin-top: 1px; }
+      .ab-tx-amt { font-size: 10px; font-weight: 700; white-space: nowrap; }
+      .ab-tx-amt.plus  { color: #1a8a50; }
+      .ab-tx-amt.minus { color: #d94555; }
+      /* Bottom nav */
+      .ab-nav { background: #f7f9f4; border-top: 1px solid rgba(20,34,21,0.1); display: flex; padding: 6px 0 8px; }
+      .ab-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 7px; color: #a2ada2; }
+      .ab-nav-item.active { color: #3a5a40; font-weight: 700; }
     </style>
 
     <link rel="stylesheet" href="/index.css">
@@ -172,25 +206,25 @@
     <div class="bg-noise"></div>
     <div id="root"></div>
 
-    <!-- Army Bank MVP — injected after React app -->
+    <!-- ARM Bank MVP — injected after React app -->
     <section id="army-bank-mvp">
       <div class="ab-wrap">
         <div class="ab-label">§ MVP Achievement</div>
         <div class="ab-grid">
 
           <div>
-            <div class="ab-badge">Army Bank — MVP</div>
+            <div class="ab-badge">ARM Bank — MVP</div>
             <h2 class="ab-title">
-              Digital Banking<br>for <em>Ukrainian</em><br>Defenders
+              Digital Banking<br>Platform <em>Built</em><br>from Scratch
             </h2>
             <p class="ab-desc">
-              Designed and built a full-stack banking MVP tailored for Ukrainian military personnel.
-              The system covers the complete financial lifecycle: account management, combat pay accruals,
-              unit donations, savings goals, and family transfers — with a transparent audit log for operators.
+              Designed and built a full-stack banking MVP from zero. The system covers the complete
+              financial lifecycle: account management, payouts, savings goals, transfers, and donations —
+              with a transparent audit log for operators.
             </p>
             <p class="ab-desc">
-              Architected the backend in Flask + SQLite, designed the UX for extreme clarity under stress,
-              and built a desktop admin panel for operator-side accruals. Deployed and live.
+              Architected the backend in Flask + PostgreSQL, designed the UX for clarity and speed,
+              and built a separate admin SPA for operator-side management. Deployed and live.
             </p>
             <div class="ab-stack">
               <span class="ab-tag">Flask / Python</span>
@@ -213,36 +247,59 @@
 
           <div>
             <div class="ab-screen">
+              <!-- Browser bar -->
               <div class="ab-screen-hdr">
                 <div class="ab-dots">
                   <div class="ab-dot"></div>
                   <div class="ab-dot"></div>
                   <div class="ab-dot"></div>
                 </div>
-                <div class="ab-url">army-bank.onrender.com</div>
+                <div class="ab-url">arm-bank.onrender.com</div>
               </div>
+              <!-- Green header -->
               <div class="ab-body">
-                <div class="ab-logo">Army<em>Bank</em></div>
-                <div class="ab-bal-label">Загальний баланс</div>
-                <div class="ab-balance">₴ 18 540<small>.00</small></div>
-                <div class="ab-actions">
-                  <div class="ab-action"><div class="ab-action-ic">↑</div>Переказ</div>
-                  <div class="ab-action"><div class="ab-action-ic">♡</div>Донат</div>
-                  <div class="ab-action"><div class="ab-action-ic">◎</div>Нарах.</div>
-                  <div class="ab-action"><div class="ab-action-ic">≡</div>Ще</div>
+                <div class="ab-body-inner">
+                  <div class="ab-top-row">
+                    <div class="ab-avatar">ОК</div>
+                    <span style="font-size:13px">🔔</span>
+                  </div>
+                  <div class="ab-greeting">Привіт, Олег 👋</div>
+                  <div class="ab-bal-label">Баланс рахунку</div>
+                  <div class="ab-balance">₴ 18 540<small>.00</small></div>
+                  <div class="ab-account-pill">AB-100042</div>
+                  <div class="ab-actions">
+                    <div class="ab-action"><div class="ab-action-ic">→</div>Переказ</div>
+                    <div class="ab-action"><div class="ab-action-ic">+</div>Поповнити</div>
+                    <div class="ab-action"><div class="ab-action-ic">≡</div>Виписка</div>
+                    <div class="ab-action"><div class="ab-action-ic">•••</div>Ще</div>
+                  </div>
                 </div>
+              </div>
+              <!-- Light body -->
+              <div class="ab-txlist">
+                <div class="ab-txlist-label">Останні операції</div>
                 <div class="ab-tx">
-                  <div class="ab-tx-info">🎖 Бойова виплата<small>сьогодні, 09:00</small></div>
+                  <div class="ab-tx-ic in">💰</div>
+                  <div class="ab-tx-info"><b>Нарахування зарплати</b><small>сьогодні, 09:00</small></div>
                   <div class="ab-tx-amt plus">+₴6 800</div>
                 </div>
                 <div class="ab-tx">
-                  <div class="ab-tx-info">🤝 Донат на підрозділ<small>вчора, 18:30</small></div>
-                  <div class="ab-tx-amt minus">−₴500</div>
+                  <div class="ab-tx-ic out">💸</div>
+                  <div class="ab-tx-info"><b>Переказ — Марія С.</b><small>вчора, 18:30</small></div>
+                  <div class="ab-tx-amt minus">−₴1 200</div>
                 </div>
                 <div class="ab-tx">
-                  <div class="ab-tx-info">👨‍👩‍👦 Родина — Оксана<small>вчора, 15:10</small></div>
-                  <div class="ab-tx-amt minus">−₴2 000</div>
+                  <div class="ab-tx-ic in">💳</div>
+                  <div class="ab-tx-info"><b>Поповнення</b><small>вчора, 15:10</small></div>
+                  <div class="ab-tx-amt plus">+₴5 000</div>
                 </div>
+              </div>
+              <!-- Bottom nav -->
+              <div class="ab-nav">
+                <div class="ab-nav-item active">🏠<span>Головна</span></div>
+                <div class="ab-nav-item">💸<span>Переказ</span></div>
+                <div class="ab-nav-item">📊<span>Аналітика</span></div>
+                <div class="ab-nav-item">👤<span>Профіль</span></div>
               </div>
             </div>
           </div>
@@ -252,8 +309,8 @@
     </section>
 
     <script>
-      // Move Army Bank MVP section to right after the Methodology section in the React app
-      function injectArmyBank() {
+      // Move ARM Bank MVP section to right after the Methodology section in the React app
+      function injectARMBank() {
         const methodology = document.getElementById('methodology');
         const mvp = document.getElementById('army-bank-mvp');
         if (methodology && mvp) {
@@ -264,9 +321,9 @@
       }
 
       // Try immediately, then observe DOM for React to finish rendering
-      if (!injectArmyBank()) {
+      if (!injectARMBank()) {
         const observer = new MutationObserver(() => {
-          if (injectArmyBank()) observer.disconnect();
+          if (injectARMBank()) observer.disconnect();
         });
         observer.observe(document.getElementById('root'), { childList: true, subtree: true });
       }
