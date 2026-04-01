@@ -273,49 +273,100 @@ strong { font-weight: 600; }
   border-radius: 0 0 20px 20px;
   margin: 0 auto; position: relative; z-index: 2;
 }
+/* ── Phone screen: real app theme ── */
 .phone-screen {
-  background: #080a14; border: 1px solid rgba(255,255,255,0.06);
+  background: #e7ebe2;
   border-radius: 28px;
-  padding: 8px 18px 20px; min-height: 480px;
-  position: relative; z-index: 1; font-family: var(--ff-mono);
+  overflow: hidden;
+  min-height: 500px;
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  font-family: 'Inter', system-ui, sans-serif;
 }
-.screen-header { padding: 16px 0 12px; }
-.screen-greeting { font-size: 10px; color: var(--text-3); margin-bottom: 2px; letter-spacing: 0.08em; text-transform: uppercase; }
-.screen-balance-label { font-size: 9px; color: #404040; margin-bottom: 4px; letter-spacing: 0.1em; text-transform: uppercase; }
-.screen-balance {
-  font-family: var(--ff-serif); font-size: 36px; font-weight: 300;
-  color: #fff; letter-spacing: -0.02em;
+
+/* Green gradient header — matches real app .app-header */
+.ps-hdr {
+  background:
+    radial-gradient(120% 120% at 0% -30%, rgba(255,255,255,0.15) 0%, transparent 72%),
+    linear-gradient(180deg, #2f4a37 0%, #46664a 52%, #7a9c7e 100%);
+  padding: 10px 14px 16px;
+  flex-shrink: 0;
 }
-.screen-balance span { font-family: var(--ff-mono); font-size: 16px; color: var(--text-3); font-weight: 400; }
-.screen-actions { display: flex; gap: 14px; padding: 14px 0; }
-.screen-action { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.sa-circle {
-  width: 40px; height: 40px; background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px;
+.ps-hdr-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.ps-avatar {
+  width: 28px; height: 28px; border-radius: 9px;
+  background: rgba(255,255,255,0.22); border: 1px solid rgba(255,255,255,0.36);
+  color: #fff; font-size: 9px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; letter-spacing: 0.04em;
+}
+.ps-hdr-right { position: relative; display: flex; align-items: center; }
+.ps-notif-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #ef5d67;
+  position: absolute; top: -2px; right: -2px; z-index: 1;
+  border: 1.5px solid #3a5a40;
+}
+.ps-greeting { font-size: 11px; color: rgba(255,255,255,0.88); font-weight: 600; margin-bottom: 6px; }
+.ps-bal-label { font-size: 8px; color: rgba(255,255,255,0.65); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+.ps-balance {
+  font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1;
+  margin-bottom: 6px;
+}
+.ps-balance span { font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.6); }
+.ps-account-pill {
+  display: inline-block; background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.88);
+  border-radius: 999px; font-size: 8px; padding: 2px 8px;
+  letter-spacing: 0.06em; margin-bottom: 12px;
+}
+.ps-actions { display: flex; gap: 8px; }
+.ps-act { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.ps-act-ic {
+  width: 34px; height: 34px; border-radius: 12px;
+  background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.24);
+  color: #fff;
   display: flex; align-items: center; justify-content: center;
-  color: var(--sand); transition: all 0.2s;
 }
-.screen-action span { font-size: 9px; color: var(--text-3); letter-spacing: 0.06em; text-transform: uppercase; }
-.screen-divider { height: 1px; background: var(--border); margin: 4px 0; }
-.screen-tx-label { font-size: 8px; color: var(--text-3); padding: 10px 0 6px; letter-spacing: 0.12em; text-transform: uppercase; }
-.screen-tx {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 0; border-bottom: 1px solid var(--border-2);
+.ps-act span { font-size: 7.5px; color: rgba(255,255,255,0.75); text-align: center; white-space: nowrap; }
+
+/* Light sage body */
+.ps-body { flex: 1; padding: 10px 14px 4px; overflow: hidden; }
+.ps-section-lbl {
+  font-size: 8px; color: #7f8b80; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 4px 0 8px; font-weight: 600;
 }
-.screen-tx:last-child { border-bottom: none; }
-.stx-icon {
-  width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+.ps-tx {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 0; border-bottom: 1px solid rgba(20,34,21,0.1);
 }
-.stx-in  { color: var(--green); }
-.stx-out { color: var(--red); }
-.stx-info { flex: 1; min-width: 0; }
-.stx-name { display: block; font-size: 11px; color: var(--text); font-weight: 500; letter-spacing: 0.02em; }
-.stx-date { display: block; font-size: 9px; color: var(--text-3); margin-top: 2px; }
-.stx-amount { font-size: 11px; white-space: nowrap; }
-.stx-pos { color: var(--green); }
-.stx-neg { color: var(--red); }
+.ps-tx:last-child { border-bottom: none; }
+.ps-tx-ic {
+  width: 26px; height: 26px; border-radius: 9px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.ps-tx-in  { background: rgba(31,160,85,0.13); color: #1a8a50; }
+.ps-tx-out { background: rgba(242,84,97,0.12);  color: #d94555; }
+.ps-tx-info { flex: 1; min-width: 0; }
+.ps-tx-name { display: block; font-size: 10px; color: #141a15; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ps-tx-date { display: block; font-size: 8px; color: #7f8b80; margin-top: 1px; }
+.ps-tx-amt { font-size: 10px; font-weight: 700; white-space: nowrap; }
+.ps-pos { color: #1a8a50; }
+.ps-neg { color: #d94555; }
+
+/* Bottom nav */
+.ps-nav {
+  display: flex; background: #f7f9f4;
+  border-top: 1px solid rgba(20,34,21,0.1);
+  padding: 6px 0 8px;
+}
+.ps-nav-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  color: #a2ada2;
+}
+.ps-nav-item span { font-size: 7px; letter-spacing: 0.03em; }
+.ps-nav-active { color: #3a5a40 !important; }
 
 /* ─── TRUST BAR ─── */
 .trust-bar {
