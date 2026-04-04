@@ -181,6 +181,90 @@
     }).catch(function () { /* silent — cold start in progress */ });
   }, 800); // slight delay so it doesn't compete with page render
 
+
+
+  /* ════════ LIVE API STATUS (landing) ════════ */
+  function setLiveText(id, value, good) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = value;
+    el.classList.remove('ok', 'bad', 'muted');
+    if (good === true) el.classList.add('ok');
+    else if (good === false) el.classList.add('bad');
+    else el.classList.add('muted');
+  }
+
+  function markLiveUpdated() {
+    var el = document.getElementById('ls-updated');
+    if (!el) return;
+    el.textContent = new Date().toLocaleString('uk-UA');
+  }
+
+  function loadLiveStatus() {
+    if (!document.getElementById('ls-version')) return;
+
+    var base = 'https://army-bank.onrender.com';
+
+    Promise.allSettled([
+      fetch(base + '/api/version', { cache: 'no-store' }).then(function (r) { return r.json(); }),
+      fetch(base + '/health', { cache: 'no-store' }),
+      fetch(base + '/api/openapi.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+    ]).then(function (results) {
+      var versionRes = results[0];
+      var healthRes = results[1];
+      var openapiRes = results[2];
+
+      if (versionRes.status === 'fulfilled') {
+        var v = versionRes.value || {};
+        setLiveText('ls-version', v.api_version || v.version || 'ok', true);
+      } else {
+        setLiveText('ls-version', 'н/д', null);
+      }
+
+      if (healthRes.status === 'fulfilled') {
+        var isUp = !!(healthRes.value && healthRes.value.ok);
+        setLiveText('ls-health', isUp ? 'UP (200)' : 'DOWN', isUp);
+      } else {
+        setLiveText('ls-health', 'н/д', null);
+      }
+
+      if (openapiRes.status === 'fulfilled') {
+        var spec = openapiRes.value || {};
+        var paths = spec.paths || {};
+        var pathCount = Object.keys(paths).length;
+        var methodCount = 0;
+
+        Object.keys(paths).forEach(function (p) {
+          var methods = paths[p] || {};
+          Object.keys(methods).forEach(function (m) {
+            if (['get', 'post', 'put', 'patch', 'delete'].indexOf(String(m).toLowerCase()) >= 0) {
+              methodCount += 1;
+            }
+          });
+        });
+
+        setLiveText('ls-paths', String(pathCount), true);
+        setLiveText('ls-methods', String(methodCount), true);
+
+        var trust = document.getElementById('trust-api-count');
+        if (trust) trust.textContent = String(methodCount);
+      } else {
+        setLiveText('ls-paths', 'н/д', null);
+        setLiveText('ls-methods', 'н/д', null);
+      }
+
+      markLiveUpdated();
+    }).catch(function () {
+      setLiveText('ls-version', 'н/д', null);
+      setLiveText('ls-health', 'н/д', null);
+      setLiveText('ls-paths', 'н/д', null);
+      setLiveText('ls-methods', 'н/д', null);
+      markLiveUpdated();
+    });
+  }
+
+  loadLiveStatus();
+
   /* ════════ FAQ ACCORDION ════════ */
   document.querySelectorAll('.faq-trigger').forEach(function (btn) {
     btn.addEventListener('click', function () {
