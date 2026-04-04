@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://army-bank.onrender.com">
   <link rel="dns-prefetch" href="https://army-bank.onrender.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=25">
+  <link rel="stylesheet" href="styles.css?v=26">
 </head>
 <body>
 
@@ -58,7 +58,7 @@
     <div class="hero-content">
       <p class="hero-tag"><span class="tag-dot" aria-hidden="true"></span>Full-stack banking platform</p>
       <h1>Фінансова платформа, побудована <em>з нуля</em></h1>
-      <p class="hero-desc">Програмний комплекс для цифрового банкінгу: Flask backend із 40+ REST-ендпоінтами, PostgreSQL, PWA для клієнта, окремі контури оператора та адміністратора, ARM Admin SPA, Web Push і повна технічна документація продукту.</p>
+      <p class="hero-desc">Програмний комплекс для цифрового банкінгу: Flask backend із 50+ REST-ендпоінтами, PostgreSQL, PWA з офлайн-підтримкою та PIN-захистом, Web Push, аналітичний дашборд, документообіг із ECDSA-підписом, окремі контури оператора та адміністратора, ARM Admin SPA та повна технічна документація.</p>
       <div class="hero-actions">
         <a href="https://army-bank.onrender.com/dashboard" target="_blank" class="btn-dark">Спробувати live demo</a>
         <a href="#architecture" class="btn-ghost">Як це працює</a>
@@ -200,11 +200,12 @@
 <!-- TRUST BAR -->
 <div class="trust-bar">
   <div class="container trust-inner">
-    <div class="trust-item"><strong>40+</strong> REST endpoints</div>
+    <div class="trust-item"><strong>50+</strong> REST endpoints</div>
     <div class="trust-item"><strong>4</strong> ролі користувачів</div>
-    <div class="trust-item"><strong>Bearer</strong> авторизація</div>
+    <div class="trust-item"><strong>PIN</strong> + Bearer Auth</div>
     <div class="trust-item"><strong>VAPID</strong> Push</div>
     <div class="trust-item"><strong>SW</strong> offline PWA</div>
+    <div class="trust-item"><strong>ECDSA</strong> документообіг</div>
   </div>
 </div>
 
@@ -381,7 +382,7 @@
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
           </div>
           <h3>REST Client</h3>
-          <p>curl, Postman, будь-який HTTP-клієнт. Повна документація всіх 40+ ендпоінтів.</p>
+          <p>curl, Postman, будь-який HTTP-клієнт. Повна документація всіх 50+ ендпоінтів.</p>
         </div>
       </div>
     </div>
@@ -447,7 +448,7 @@
   </div>
 </section>
 
-<!-- DEEP: система з технічної документації v1.5 -->
+<!-- DEEP: система з технічної документації v2.0 -->
 <section class="section-deep alt" id="system">
   <div class="container">
     <p class="feat-label">Документація</p>
@@ -487,11 +488,11 @@
       </div>
       <div class="deep-card">
         <h3>Публічний лендінг</h3>
-        <p>Сторінка, на якій ви зараз: презентація продукту, архітектурна схема, стек, таблиці 40+ API-ендпоінтів, life-cycle переказу, DevOps-нотатки, посилання на live demo та GitHub.</p>
+        <p>Сторінка, на якій ви зараз: презентація продукту, архітектурна схема, стек, таблиці 50+ API-ендпоінтів, life-cycle переказу, DevOps-нотатки, посилання на live demo та GitHub.</p>
         <ul>
           <li>Мокап реального UI додатку з зеленим градієнтним хедером, балансом, транзакціями та нижньою навігацією</li>
           <li>Push-демо з реальними сповіщеннями ARMBank</li>
-          <li>Витримки з внутрішньої архітектурної документації v1.5</li>
+          <li>Витримки з внутрішньої архітектурної документації v2.0</li>
         </ul>
       </div>
     </div>
@@ -509,12 +510,15 @@
         <div class="deep-card" style="margin-bottom:20px">
           <h3>Користувач (soldier)</h3>
           <ul class="deep-list-check">
-            <li>Реєстрація з валідацією ПІБ, телефону, email, пароля; автоматичне створення основного рахунку (номер на кшталт <code>AB-100000 + id</code>)</li>
-            <li>Вхід за <code>identity</code> (телефон або email) + пароль; сесійний Bearer-токен у PostgreSQL, TTL і оновлення сесії</li>
-            <li>Баланс, історія з фільтрами, поповнення, переказ за номером рахунку, експорт CSV</li>
-            <li>Виплати (перегляд; демо/операторське нарахування)</li>
-            <li>Пожертви, цілі накопичення з внесками, довірені сімейні контакти</li>
-            <li>Шаблони платежів, сповіщення, аналітика, бюджетні ліміти в UI</li>
+            <li>Реєстрація з валідацією ПІБ, телефону, email, пароля; автоматичне створення основного рахунку (<code>AB-100000 + id</code>)</li>
+            <li>Вхід за <code>identity</code> (телефон або email) + пароль; сесійний Bearer-токен у PostgreSQL, TTL і авто-ротація через <code>X-Refresh-Token</code></li>
+            <li>PIN-код для швидкого входу, блокування при бездіяльності, таймаут сесії</li>
+            <li>Баланс, історія з фільтрами, поповнення, переказ за номером рахунку або карткою, експорт CSV/PDF</li>
+            <li>Виплати (перегляд; демо/операторське нарахування з ідемпотентністю)</li>
+            <li>Пожертви, цілі накопичення з конфетті при досягненні, довірені сімейні контакти</li>
+            <li>Шаблони платежів, push-сповіщення, конвертер валют (НБУ), бюджетні ліміти</li>
+            <li>Аналітичний дашборд: витрати за типами, heatmap операцій, спарклайн балансу, прогноз</li>
+            <li>Віртуальна картка з 3D-фліпом, керування (freeze / заміна номера)</li>
           </ul>
         </div>
       </div>
@@ -522,17 +526,27 @@
         <div class="deep-card" style="margin-bottom:20px">
           <h3>Службові ролі</h3>
           <ul class="deep-list-check">
-            <li><strong>operator</strong> — нарахування виплат клієнтам, вузький контур <code>/api/operator/*</code></li>
-            <li><strong>admin</strong> — користувачі, ролі, системні транзакції, аудит, push-розсилка</li>
-            <li><strong>platform_admin</strong> — платформені операції, демо-дані, bootstrap-ендпоінт для першого підняття ролі</li>
+            <li><strong>operator</strong> — нарахування виплат клієнтам з ідемпотентністю, вузький контур <code>/api/operator/*</code></li>
+            <li><strong>admin</strong> — користувачі, ролі, корекція балансу, аудит, push-розсилка, KPI-дашборд, документообіг</li>
+            <li><strong>platform_admin</strong> — платформені операції, демо-дані, bootstrap-ендпоінт</li>
+          </ul>
+        </div>
+        <div class="deep-card" style="margin-bottom:20px">
+          <h3>Документообіг (ARM Admin)</h3>
+          <ul class="deep-list-check">
+            <li>Шаблони документів, вибір одержувачів (всі / частина клієнтів), реєстр</li>
+            <li>ECDSA-підпис (Web Crypto API) — генерація ключа в браузері, верифікація</li>
+            <li>Окремий SPA з покроковим workflow (1→2→3→4)</li>
           </ul>
         </div>
         <div class="deep-card">
           <h3>Безпека та спостережуваність</h3>
           <ul class="deep-list-check">
+            <li>Ідемпотентні фінансові операції (заголовок + body fallback)</li>
             <li><code>X-Content-Type-Options: nosniff</code>, CORS лише для дозволених origin</li>
-            <li>bcrypt для паролів; перевірка токена на кожному захищеному запиті</li>
+            <li>bcrypt (cost=12) для паролів; перевірка токена на кожному захищеному запиті</li>
             <li>Журнал <code>audit_logs</code> для адміністративних дій</li>
+            <li>PIN-overlay з z-index ієрархією, auto-lock при бездіяльності</li>
           </ul>
         </div>
       </div>
@@ -619,7 +633,7 @@
   <div class="container">
     <p class="feat-label">PDF</p>
     <h2>Технічна документація продукту</h2>
-    <p class="deep-lead">Повний внутрішній документ <strong>«Архітектурно-технічна документація програмного комплексу ARM Bank»</strong> (версія&nbsp;1.5, підготовка 22.03.2026) містить 35+ сторінок: детальний розбір API, матрицю ролей, модель даних, карту маршрутів, тестування, обмеження та дорожню карту розвитку. Використовується для презентацій стейкхолдерам і як база для експлуатаційної документації.</p>
+    <p class="deep-lead">Повний внутрішній документ <strong>«Архітектурно-технічна документація програмного комплексу ARM Bank»</strong> (версія&nbsp;2.0, підготовка 04.04.2026) містить 35+ сторінок: детальний розбір API, матрицю ролей, модель даних, карту маршрутів, тестування, обмеження та дорожню карту розвитку. Використовується для презентацій стейкхолдерам і як база для експлуатаційної документації.</p>
     <p class="deep-lead" style="margin-top:-24px">Короткі витримки з того документа інтегровані безпосередньо на цій сторінці в блоках «Склад комплексу», «Що реалізовано», «Шар даних», «Життєвий цикл переказу» та «Розгортання». Повний PDF зберігається в матеріалах проєкту / за запитом автора.</p>
   </div>
 </section>
@@ -629,7 +643,7 @@
   <div class="container">
     <div class="feat-center-header">
       <p class="feat-label">REST API</p>
-      <h2>40+ ендпоінтів</h2>
+      <h2>50+ ендпоінтів</h2>
       <p class="feat-desc">Базовий URL: <code>https://army-bank.onrender.com/api</code></p>
     </div>
 
@@ -669,6 +683,7 @@
           <tr><td><span class="m-post">POST</span></td><td><code>/topup</code></td><td>Поповнення рахунку</td></tr>
           <tr><td><span class="m-get">GET</span></td><td><code>/history</code></td><td>Список транзакцій з фільтрацією</td></tr>
           <tr><td><span class="m-post">POST</span></td><td><code>/transfer</code></td><td>Переказ за номером рахунку (SERIALIZABLE)</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/transfer-by-card</code></td><td>Переказ за номером картки</td></tr>
           <tr><td><span class="m-get">GET</span></td><td><code>/export</code></td><td>Експорт виписки CSV</td></tr>
         </table>
       </div>
@@ -692,6 +707,9 @@
           <tr><td><span class="m-get">GET</span></td><td><code>/notifications</code></td><td>Сповіщення</td></tr>
           <tr><td><span class="m-get">GET</span></td><td><code>/notifications/unread-count</code></td><td>Кількість непрочитаних</td></tr>
           <tr><td><span class="m-get">GET</span></td><td><code>/analytics</code></td><td>Аналітика витрат / доходів</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/analytics/balance-history</code></td><td>Історія балансу (спарклайн)</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/cards/virtual</code></td><td>Віртуальна картка</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/cards/virtual/freeze</code></td><td>Заморозити / розморозити картку</td></tr>
         </table>
       </div>
 
@@ -716,8 +734,12 @@
           <tr><td><span class="m-get">GET</span></td><td><code>/users</code></td><td>Список всіх юзерів</td></tr>
           <tr><td><span class="m-get">GET</span></td><td><code>/users/:id</code></td><td>Деталі юзера + транзакції</td></tr>
           <tr><td><span class="m-put">PUT</span></td><td><code>/users/:id</code></td><td>Коригування балансу / ролі</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/stats</code></td><td>Статистика платформи</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/stats</code></td><td>Статистика платформи + KPI</td></tr>
           <tr><td><span class="m-post">POST</span></td><td><code>/push/broadcast</code></td><td>Push-розсилка всім</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/doc-templates</code></td><td>Шаблони документів</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/doc-templates</code></td><td>Створити шаблон</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/doc-templates/:id/send</code></td><td>Надіслати документ клієнтам</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/doc-assignments</code></td><td>Реєстр документів</td></tr>
         </table>
       </div>
 
@@ -743,7 +765,7 @@
     <div class="feat-center-header">
       <p class="feat-label">База даних</p>
       <h2>PostgreSQL схема</h2>
-      <p class="feat-desc">10+ таблиць з FK. Баланс на <code>accounts</code>, рух кошів у <code>transactions</code>. Ізольовані транзакції для переказів і поповнень.</p>
+      <p class="feat-desc">12+ таблиць з FK. Баланс на <code>accounts</code>, рух кошів у <code>transactions</code>, документообіг у <code>document_templates</code> + <code>user_documents</code>. Ізольовані транзакції для переказів і поповнень.</p>
     </div>
     <div class="db-grid">
       <div class="db-table">
@@ -801,12 +823,14 @@
         <div class="dbt-col"><span class="dbt-badge"></span><code>auth_key</code><span>TEXT</span></div>
       </div>
       <div class="db-table">
-        <div class="dbt-header">+ ще 5 таблиць</div>
+        <div class="dbt-header">+ ще 7 таблиць</div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>payouts</code><span>виплати</span></div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>donations</code><span>донати</span></div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>family_contacts</code><span>контакти</span></div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>payment_templates</code><span>шаблони</span></div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>notifications</code><span>сповіщення</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>document_templates</code><span>документообіг</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>user_documents</code><span>призначення</span></div>
       </div>
     </div>
   </div>
@@ -823,7 +847,7 @@
       <div class="stack-col">
         <h3>Backend</h3>
         <div class="stack-item"><code>Python 3.11</code><span>основна мова</span></div>
-        <div class="stack-item"><code>Flask</code><span>blueprints: auth, account, feature, admin, operator, platform, push</span></div>
+        <div class="stack-item"><code>Flask</code><span>blueprints: auth, account, feature, admin, operator, platform, push, document</span></div>
         <div class="stack-item"><code>PostgreSQL</code><span>реляційна СУБД, SERIALIZABLE TX</span></div>
         <div class="stack-item"><code>psycopg2</code><span>драйвер PostgreSQL</span></div>
         <div class="stack-item"><code>secrets</code><span>token_urlsafe(32), зберігання у DB</span></div>
@@ -839,6 +863,8 @@
         <div class="stack-item"><code>Web Push API</code><span>VAPID push-сповіщення</span></div>
         <div class="stack-item"><code>BroadcastChannel</code><span>синхронізація між вкладками</span></div>
         <div class="stack-item"><code>Web App Manifest</code><span>installable PWA, PWA install banner</span></div>
+        <div class="stack-item"><code>Web Crypto API</code><span>ECDSA підпис документів (ARM Admin)</span></div>
+        <div class="stack-item"><code>CSS Variables</code><span>тематизація light/dark через --mono-* токени</span></div>
       </div>
       <div class="stack-col">
         <h3>Android</h3>
@@ -1060,6 +1086,6 @@ curl -X POST army-bank.onrender.com/api/transactions/transfer \
   </div>
 </footer>
 
-<script src="app.js?v=23" defer></script>
+<script src="app.js?v=24" defer></script>
 </body>
 </html>
