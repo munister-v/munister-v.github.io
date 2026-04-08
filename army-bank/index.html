@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://army-bank.onrender.com">
   <link rel="dns-prefetch" href="https://army-bank.onrender.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=22">
+  <link rel="stylesheet" href="styles.css?v=23">
 </head>
 <body>
 
@@ -58,7 +58,7 @@
     <div class="hero-content">
       <p class="hero-tag"><span class="tag-dot" aria-hidden="true"></span>Full-stack banking platform</p>
       <h1>Фінансова платформа, побудована <em>з нуля</em></h1>
-      <p class="hero-desc">Програмний комплекс для цифрового банкінгу: Flask backend із 40+ REST-ендпоінтами, PostgreSQL, PWA для військовослужбовця, окремі контури оператора та адміністратора, Army Admin SPA, Web Push і повна технічна документація продукту.</p>
+      <p class="hero-desc">Програмний комплекс для цифрового банкінгу: Flask backend (станом на 08.04.2026 — 143 маршрути під <code>/api</code>), PostgreSQL, PWA-клієнт, службові ролі operator/admin/platform_admin, вбудований messenger-контур, Web Push, OpenAPI + Postman та технічна документація в live-режимі.</p>
       <div class="hero-actions">
         <a href="https://army-bank.onrender.com" target="_blank" class="btn-dark">Спробувати live demo</a>
         <a href="#architecture" class="btn-ghost">Як це працює</a>
@@ -134,15 +134,16 @@
 <!-- TRUST BAR -->
 <div class="trust-bar">
   <div class="container trust-inner">
-    <div class="trust-item"><strong>40+</strong> REST endpoints</div>
+    <div class="trust-item"><strong>143</strong> API endpoints</div>
+    <div class="trust-item"><strong>27+</strong> DB таблиць</div>
     <div class="trust-item"><strong>4</strong> ролі користувачів</div>
-    <div class="trust-item"><strong>Bearer</strong> авторизація</div>
-    <div class="trust-item"><strong>VAPID</strong> Push</div>
-    <div class="trust-item"><strong>SW</strong> offline PWA</div>
+    <div class="trust-item"><strong>Bearer</strong> + Idempotency</div>
+    <div class="trust-item"><strong>VAPID</strong> Push + SW</div>
+    <div class="trust-item"><strong>OpenAPI</strong> + Postman</div>
   </div>
 </div>
 
-<p class="sync-hint"><strong>munister.com.ua</strong> часто показує <em>старі файли</em>, якщо після <code>git pull</code> їх не скопійовано на сервер. Актуальна збірка з репозиторію: <a href="https://army-bank.onrender.com/army-bank/" target="_blank" rel="noopener">army-bank.onrender.com/army-bank/</a> — або жорстке оновлення сторінки (Ctrl+Shift+R).</p>
+<p class="sync-hint"><strong>Актуалізація 08.04.2026:</strong> API-карта та системні блоки нижче синхронізовані з поточною кодовою базою (<code>backend.app url_map</code>, <code>/api/docs</code>, <code>/api/openapi.json</code>). Якщо бачите старий варіант сторінки, зробіть hard refresh (Ctrl+Shift+R).</p>
 
 <!-- FEATURES -->
 <section id="features">
@@ -292,8 +293,8 @@
     <div class="container">
       <div class="feat-center-header">
         <p class="feat-label">Мультиплатформенність</p>
-        <h2>Один API — три клієнти</h2>
-        <p class="feat-desc">Єдиний REST API обслуговує PWA, Android-додаток та будь-який HTTP-клієнт.</p>
+        <h2>Один API — декілька контурів</h2>
+        <p class="feat-desc">Єдиний REST API обслуговує мобільний PWA-банк, службові кабінети, вбудований web-месенджер і зовнішні HTTP-клієнти.</p>
       </div>
       <div class="platform-grid">
         <div class="platform-card">
@@ -315,7 +316,7 @@
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
           </div>
           <h3>REST Client</h3>
-          <p>curl, Postman, будь-який HTTP-клієнт. Повна документація всіх 40+ ендпоінтів.</p>
+          <p>curl, Postman, CI, інтеграційні сервіси. Жива схема <code>/api/openapi.json</code> + docs <code>/api/docs</code> і статусна сторінка <code>/api-status</code>.</p>
         </div>
       </div>
     </div>
@@ -366,11 +367,11 @@
         </div>
         <div class="al-box al-service">
           <span class="al-label">PostgreSQL</span>
-          <span class="al-sub">Render · psycopg2 · 10+ таблиць</span>
+          <span class="al-sub">Render · psycopg2 · 27+ таблиць</span>
         </div>
         <div class="al-box al-service">
-          <span class="al-label">Web Push</span>
-          <span class="al-sub">VAPID · pywebpush</span>
+          <span class="al-label">Push + Messenger</span>
+          <span class="al-sub">VAPID · pywebpush · Fernet at-rest</span>
         </div>
         <div class="al-box al-service">
           <span class="al-label">Ролі</span>
@@ -386,28 +387,28 @@
   <div class="container">
     <p class="feat-label">Документація</p>
     <h2>Склад програмного комплексу</h2>
-    <p class="deep-lead">Army Bank — це не лише «API + мобільний вигляд», а <strong>чотири зчеплені контури</strong>: бойовий банк для користувача, службові ролі в тому ж домені, окрема адмін-панель і маркетинговий вхід. Нижче — стислий зміст внутрішньої архітектурно-технічної документації (версія&nbsp;1.5, 2026).</p>
+    <p class="deep-lead">Army Bank — це не лише «API + мобільний вигляд», а <strong>декілька зчеплених контурів</strong>: бойовий банк для користувача, службові ролі в тому ж домені, платіжний processing-контур з комплаєнсом, вбудований messenger та маркетинговий вхід. Нижче — стислий зміст системи, актуалізований станом на <strong>08.04.2026</strong>.</p>
     <div class="deep-card-grid cols-4">
       <div class="deep-card">
         <h3>Backend + API</h3>
-        <p>Python, Flask, модульні <code>blueprint</code>: <code>auth</code>, облік і транзакції, <code>feature</code> (донати, цілі, контакти, шаблони), <code>admin</code>, <code>operator</code>, <code>platform</code>, <code>push</code>. Єдиний JSON API з уніфікованими помилками та аудитом значущих дій.</p>
+        <p>Python + Flask, модульні <code>blueprint</code>: <code>auth</code>, account/transactions, <code>feature</code>, <code>cards</code>, <code>admin</code>, <code>operator</code>, <code>platform</code>, <code>push</code>, <code>payment_audit</code>, <code>admin_cards</code>, <code>admin_compliance</code>, <code>doc</code>, <code>messenger</code>. Єдиний JSON API з уніфікованими помилками, request-id і аудитом значущих дій.</p>
         <ul>
           <li>PostgreSQL у проді; SQLite — для локального/демо режиму</li>
-          <li><code>schema.sql</code> / <code>schema_pg.sql</code>, ініціалізація при старті</li>
-          <li>Пул з’єднань, gzip (Flask-Compress), batch <code>GET /api/dashboard</code></li>
+          <li><code>schema.sql</code> / <code>schema_pg.sql</code> + runtime-міграції в <code>init_db()</code></li>
+          <li>Idempotency-key для monetary мутацій, gzip (Flask-Compress), batch <code>GET /api/dashboard</code></li>
         </ul>
       </div>
       <div class="deep-card">
         <h3>PWA клієнт</h3>
-        <p><code>index.html</code> + vanilla JS: кабінет, операції, виплати, донати, накопичення, родина, аналітика, профіль. <code>manifest.json</code> (<code>standalone</code>, <code>uk</code>), Service Worker, Web Push, <code>BroadcastChannel</code> для синхрону вкладок.</p>
+        <p><code>index.html</code> + vanilla JS: кабінет, операції, картки, виплати, донати, накопичення, родина, аналітика, профіль. <code>manifest.json</code> (<code>standalone</code>, <code>uk</code>), Service Worker, Web Push, <code>BroadcastChannel</code> для синхрону вкладок.</p>
         <ul>
           <li>Окремі оболонки <code>admin.html</code>, <code>operator.html</code>, <code>platform.html</code> під ролі</li>
-          <li>Один бекенд — усі клієнти ділять ту саму БД</li>
+          <li>Додатковий shell <code>/messenger</code> + окремий <code>manifest-messenger.json</code></li>
         </ul>
       </div>
       <div class="deep-card">
         <h3>Army Admin</h3>
-        <p>Окремий SPA (репозиторій / статичний хост): вхід адміністратора, дашборд, користувачі з модалкою (інфо, дії, транзакції), виплати, аудит-логи. Працює через ті самі Bearer-сесії та <code>/api/admin/*</code>.</p>
+        <p>Окремий службовий контур: дашборд, користувачі, ролі, аудит, документи, керування картками, compliance-анкети та processing queue. Працює через ті самі Bearer-сесії та набори <code>/api/admin/*</code>, <code>/api/admin/payments/*</code>, <code>/api/admin/compliance/*</code>.</p>
       </div>
       <div class="deep-card">
         <h3>Публічний лендінг</h3>
@@ -463,11 +464,11 @@
   <div class="container">
     <p class="feat-label">Сервер</p>
     <h2>Шар даних і конфігурація</h2>
-    <p class="deep-lead"><code>database.py</code> абстрагує PostgreSQL і SQLite через єдиний контекст з’єднання; репозиторії інкапсулюють SQL, сервіси — правила та транзакції, <code>utils</code> — валідація, токени, форматування.</p>
+    <p class="deep-lead"><code>database.py</code> абстрагує PostgreSQL і SQLite через єдиний контекст з’єднання; репозиторії інкапсулюють SQL, сервіси — правила та транзакції, <code>utils</code> — валідація, токени, idempotency та request-context.</p>
     <div class="deep-card-grid">
       <div class="deep-card">
         <h3>Ключові таблиці</h3>
-        <p><code>users</code> (роль, ПІБ, телефон, email, статус), <code>accounts</code> (баланс, валюта, статус), <code>sessions</code>, <code>transactions</code>, <code>payouts</code>, <code>donations</code>, <code>savings_goals</code>, <code>family_contacts</code>, <code>payment_templates</code>, <code>audit_logs</code>, push-підписки та ін. Модель: <strong>один користувач — один основний рахунок</strong>, рух кошів узгоджується з журналом транзакцій.</p>
+        <p><code>users</code>, <code>accounts</code>, <code>sessions</code>, <code>transactions</code>, <code>cards</code>, <code>payouts</code>, <code>donations</code>, <code>savings_goals</code>, <code>family_contacts</code>, <code>payment_templates</code>, <code>notifications</code>, <code>payment_orders</code>, <code>risk_events</code>, <code>compliance_profiles</code>, <code>conversations</code>, <code>messages</code> та ін. Загалом 27+ таблиць. Модель: <strong>один користувач — один основний рахунок</strong>, рух коштів узгоджується з журналом транзакцій.</p>
       </div>
       <div class="deep-card">
         <h3>Оточення (.env)</h3>
@@ -538,7 +539,7 @@
   <div class="container">
     <p class="feat-label">PDF</p>
     <h2>Технічна документація продукту</h2>
-    <p class="deep-lead">Повний внутрішній документ <strong>«Архітектурно-технічна документація програмного комплексу Army Bank»</strong> (версія&nbsp;1.5, підготовка 22.03.2026) містить 35+ сторінок: детальний розбір API, матрицю ролей, модель даних, карту маршрутів, тестування, обмеження та дорожню карту розвитку. Використовується для презентацій стейкхолдерам і як база для експлуатаційної документації.</p>
+    <p class="deep-lead">Повний внутрішній документ <strong>«Архітектурно-технічна документація програмного комплексу Army Bank»</strong> оновлюється разом із кодовою базою. Поточна ревізія (актуалізація на 08.04.2026) містить детальний розбір API, матрицю ролей, модель даних, карту маршрутів, тестування, обмеження та дорожню карту розвитку. Використовується для презентацій стейкхолдерам і як база для експлуатаційної документації.</p>
     <p class="deep-lead" style="margin-top:-24px">Короткі витримки з того документа інтегровані безпосередньо на цій сторінці в блоках «Склад комплексу», «Що реалізовано», «Шар даних», «Життєвий цикл переказу» та «Розгортання». Повний PDF зберігається в матеріалах проєкту / за запитом автора.</p>
   </div>
 </section>
@@ -548,107 +549,164 @@
   <div class="container">
     <div class="feat-center-header">
       <p class="feat-label">REST API</p>
-      <h2>40+ ендпоінтів</h2>
-      <p class="feat-desc">Базовий URL: <code>https://army-bank.onrender.com/api</code></p>
+      <h2>143 ендпоінти + системні маршрути</h2>
+      <p class="feat-desc">Базовий URL: <code>https://army-bank.onrender.com/api</code>. Актуально на 08.04.2026.</p>
+      <p class="api-note">Повний каталог: <a href="https://army-bank.onrender.com/api" target="_blank" rel="noopener"><code>/api</code></a> · документація: <a href="https://army-bank.onrender.com/api/docs" target="_blank" rel="noopener"><code>/api/docs</code></a> · OpenAPI: <a href="https://army-bank.onrender.com/api/openapi.json" target="_blank" rel="noopener"><code>/api/openapi.json</code></a> · health/status: <a href="https://army-bank.onrender.com/health" target="_blank" rel="noopener"><code>/health</code></a>, <a href="https://army-bank.onrender.com/api-status" target="_blank" rel="noopener"><code>/api-status</code></a>.</p>
     </div>
 
     <div class="api-groups">
 
       <div class="api-group">
         <div class="ag-header">
-          <span class="ag-badge">AUTH</span>
-          <code>/api/auth</code>
+          <span class="ag-badge">SYSTEM</span>
+          <code>/api, /health, /api-status</code>
         </div>
         <table class="api-table">
-          <tr><td><span class="m-post">POST</span></td><td><code>/register</code></td><td>Реєстрація нового юзера</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/login</code></td><td>Авторизація → Bearer токен</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/logout</code></td><td>Інвалідація токена у БД</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/me</code></td><td>Профіль + роль поточного юзера</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/change-password</code></td><td>Зміна пароля (bcrypt)</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api</code></td><td>Каталог endpoint-груп і службової мета-інформації</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/version</code></td><td>Версія API + git-коміт + runtime</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/docs</code></td><td>HTML документація для інтеграцій</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/openapi.json</code></td><td>OpenAPI 3.0 схема (runtime-augment)</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/postman/collection</code></td><td>Postman collection</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/postman/environment</code></td><td>Postman environment</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/health</code></td><td>Health-check для моніторингу/keepalive</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api-status</code></td><td>Візуальна статус-сторінка API</td></tr>
         </table>
       </div>
 
       <div class="api-group">
         <div class="ag-header">
-          <span class="ag-badge">ACCOUNTS</span>
-          <code>/api</code>
+          <span class="ag-badge">AUTH + SESSIONS</span>
+          <code>/api/auth*</code>
         </div>
         <table class="api-table">
-          <tr><td><span class="m-get">GET</span></td><td><code>/accounts/main</code></td><td>Основний рахунок + баланс</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/dashboard</code></td><td>Batch: user, account, tx, виплати, донати, цілі, контакти, шаблони</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/auth/register</code></td><td>Реєстрація + автостворення основного рахунку</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/auth/login</code></td><td>Логін за identity (email/phone) + password</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/auth/me</code></td><td>Поточний профіль і роль</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/auth/logout</code></td><td>Завершення поточної сесії</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/auth/sessions</code></td><td>Список активних сесій користувача</td></tr>
+          <tr><td><span class="m-del">DELETE</span></td><td><code>/api/auth/sessions/:session_id</code></td><td>Відкликання конкретної сесії</td></tr>
+          <tr><td><span class="m-put">PUT</span></td><td><code>/api/auth/password</code></td><td>Зміна пароля</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/auth/pin/status</code></td><td>Статус PIN</td></tr>
+          <tr><td><span class="m-put">PUT</span></td><td><code>/api/auth/pin</code></td><td>Встановити/оновити PIN</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/auth/pin/verify</code></td><td>Перевірити PIN для критичних дій</td></tr>
+          <tr><td><span class="m-del">DELETE</span></td><td><code>/api/auth/pin</code></td><td>Очистити PIN</td></tr>
         </table>
       </div>
 
       <div class="api-group">
         <div class="ag-header">
-          <span class="ag-badge">TRANSACTIONS</span>
-          <code>/api/transactions</code>
+          <span class="ag-badge">CORE BANKING</span>
+          <code>/api/accounts + /api/transactions*</code>
         </div>
         <table class="api-table">
-          <tr><td><span class="m-post">POST</span></td><td><code>/topup</code></td><td>Поповнення рахунку</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/history</code></td><td>Список транзакцій з фільтрацією</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/transfer</code></td><td>Переказ за номером рахунку (SERIALIZABLE)</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/export</code></td><td>Експорт виписки CSV</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/dashboard</code></td><td>Batch payload для старту PWA (мінімум запитів)</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/accounts/main</code></td><td>Головний рахунок + баланс</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/transactions/topup</code></td><td>Поповнення</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/transactions/transfer</code></td><td>Переказ за номером рахунку</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/transactions/transfer-by-card</code></td><td>Переказ за номером картки</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/transactions/history</code></td><td>Історія з фільтрами</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/transactions/:id</code></td><td>Детальна транзакція</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/transactions/export</code></td><td>CSV виписка</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/transactions/statement/order</code></td><td>Замовити PDF-виписку</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/transactions/statement/orders</code></td><td>Черга PDF-виписок</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/transactions/statement</code></td><td>Отримати PDF-виписку</td></tr>
+          <tr><td><span class="m-put">PATCH</span></td><td><code>/api/transactions/:id/note</code></td><td>Нотатка до транзакції</td></tr>
+          <tr><td><span class="m-put">PATCH</span></td><td><code>/api/transactions/:id/tags</code></td><td>Теги категоризації</td></tr>
         </table>
       </div>
 
       <div class="api-group">
         <div class="ag-header">
-          <span class="ag-badge">FEATURES</span>
-          <code>/api</code>
+          <span class="ag-badge">CARDS</span>
+          <code>/api/cards + /api/admin/cards*</code>
         </div>
         <table class="api-table">
-          <tr><td><span class="m-get">GET</span></td><td><code>/payouts</code></td><td>Виплати користувача</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/donations</code></td><td>Донати</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/donations</code></td><td>Новий донат</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/savings-goals</code></td><td>Цілі накопичення</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/savings-goals</code></td><td>Нова ціль</td></tr>
-          <tr><td><span class="m-del">DELETE</span></td><td><code>/savings-goals/:id</code></td><td>Видалити ціль</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/family-contacts</code></td><td>Контакти</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/family-contacts</code></td><td>Новий контакт</td></tr>
-          <tr><td><span class="m-del">DELETE</span></td><td><code>/family-contacts/:id</code></td><td>Видалити контакт</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/payment-templates</code></td><td>Шаблони платежів</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/notifications</code></td><td>Сповіщення</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/notifications/unread-count</code></td><td>Кількість непрочитаних</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/analytics</code></td><td>Аналітика витрат / доходів</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/cards</code></td><td>Список карток користувача</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/cards</code></td><td>Випуск нової картки</td></tr>
+          <tr><td><span class="m-put">PATCH</span></td><td><code>/api/cards/:card_id/block</code></td><td>Блокування картки</td></tr>
+          <tr><td><span class="m-put">PATCH</span></td><td><code>/api/cards/:card_id/close</code></td><td>Закриття картки</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/cards/:card_id/reveal</code></td><td>Reveal чутливих полів</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/admin/cards</code></td><td>Огляд карток для admin</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/admin/cards/stats</code></td><td>Статистика карткового пулу</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/admin/users/:user_id/cards</code></td><td>Випуск картки від імені admin</td></tr>
         </table>
       </div>
 
       <div class="api-group">
         <div class="ag-header">
-          <span class="ag-badge">PUSH</span>
-          <code>/api/push</code>
+          <span class="ag-badge">FEATURES + ANALYTICS</span>
+          <code>/api/* (домени користувача)</code>
         </div>
         <table class="api-table">
-          <tr><td><span class="m-get">GET</span></td><td><code>/vapid-public-key</code></td><td>VAPID ключ для підписки</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/subscribe</code></td><td>Зберегти PushSubscription</td></tr>
-          <tr><td><span class="m-del">DELETE</span></td><td><code>/unsubscribe</code></td><td>Видалити підписку</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/payouts</code></td><td>Виплати користувача + демо accrual</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/donations</code></td><td>Перелік донатів</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/donations</code></td><td>Створити донат</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/savings-goals</code></td><td>Цілі накопичення</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/savings-goals</code></td><td>Нова ціль + внесок + delete</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/recurring-transactions</code></td><td>Регулярні платежі (CRUD + toggle)</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/debts</code></td><td>Борг/розрахунки (CRUD + settle)</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/family-contacts</code></td><td>Контакти довіри (CRUD)</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/payment-templates</code></td><td>Шаблони платежів (CRUD)</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/notifications</code></td><td>Сповіщення + read/read-all</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/analytics/*</code></td><td>Summary, insights, velocity, top-recipients</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/budget-limits</code></td><td>Ліміти бюджету (GET/POST/DELETE)</td></tr>
         </table>
       </div>
 
       <div class="api-group">
         <div class="ag-header">
-          <span class="ag-badge ag-admin">ADMIN</span>
-          <code>/api/admin</code>
+          <span class="ag-badge">MESSENGER</span>
+          <code>/api/messenger + /messenger</code>
         </div>
         <table class="api-table">
-          <tr><td><span class="m-get">GET</span></td><td><code>/users</code></td><td>Список всіх юзерів</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/users/:id</code></td><td>Деталі юзера + транзакції</td></tr>
-          <tr><td><span class="m-put">PUT</span></td><td><code>/users/:id</code></td><td>Коригування балансу / ролі</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/stats</code></td><td>Статистика платформи</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/push/broadcast</code></td><td>Push-розсилка всім</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/messenger</code></td><td>PWA-shell месенджера</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/messenger/users/search</code></td><td>Пошук співрозмовника</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/messenger/conversations</code></td><td>Список діалогів</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/messenger/conversations</code></td><td>Створити/відкрити діалог</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/messenger/conversations/:id/messages</code></td><td>Пагінація історії</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/messenger/conversations/:id/messages</code></td><td>Надіслати повідомлення</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/messenger/conversations/:id/poll</code></td><td>Polling для realtime-оновлень</td></tr>
+          <tr><td><span class="m-del">DELETE</span></td><td><code>/api/messenger/messages/:msg_id</code></td><td>Soft-delete повідомлення</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/messenger/unread</code></td><td>Лічильник непрочитаних</td></tr>
         </table>
       </div>
 
       <div class="api-group">
         <div class="ag-header">
-          <span class="ag-badge ag-admin">OPERATOR</span>
-          <code>/api/operator</code>
+          <span class="ag-badge ag-admin">ADMIN + PROCESSING + COMPLIANCE</span>
+          <code>/api/admin/*</code>
         </div>
         <table class="api-table">
-          <tr><td><span class="m-get">GET</span></td><td><code>/users</code></td><td>Юзери оператора</td></tr>
-          <tr><td><span class="m-post">POST</span></td><td><code>/payouts</code></td><td>Нарахування виплати</td></tr>
-          <tr><td><span class="m-get">GET</span></td><td><code>/stats</code></td><td>Статистика зони оператора</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/admin/stats</code></td><td>Головна метрика admin-контуру</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/admin/stats/charts</code></td><td>Графіки та агрегації</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/admin/users</code></td><td>Список користувачів + фільтри</td></tr>
+          <tr><td><span class="m-put">PATCH</span></td><td><code>/api/admin/users/:user_id/role</code></td><td>Оновлення ролі</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/admin/users/:user_id/balance-adjust</code></td><td>Ручна корекція балансу</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/admin/transactions</code></td><td>Огляд системних транзакцій</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/admin/audit-logs</code></td><td>Журнал критичних дій</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/admin/payments/orders</code></td><td>Платіжні ордери processing-контуру</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/admin/payments/sla-bulk-action</code></td><td>Batch SLA дії по черзі</td></tr>
+          <tr><td><span class="m-put">PATCH</span></td><td><code>/api/admin/payments/orders/:id/decision</code></td><td>Approve/reject з журналюванням</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/admin/compliance/users</code></td><td>Профілі KYC/AML і ризикові рівні</td></tr>
+          <tr><td><span class="m-put">PATCH</span></td><td><code>/api/admin/compliance/users/:user_id</code></td><td>Оновлення комплаєнс-профілю</td></tr>
+        </table>
+      </div>
+
+      <div class="api-group">
+        <div class="ag-header">
+          <span class="ag-badge">OPERATOR + PLATFORM + PUSH</span>
+          <code>/api/operator* · /api/platform* · /api/push*</code>
+        </div>
+        <table class="api-table">
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/operator/users</code></td><td>Користувачі оператора</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/operator/payouts</code></td><td>Нарахування виплат у контурі operator</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/platform/overview</code></td><td>Огляд платформи для platform_admin</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/platform/users</code></td><td>Платформений список користувачів</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/platform/seed-demo</code></td><td>Сідування демо-даних</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/push/vapid-public-key</code></td><td>Публічний VAPID ключ</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/push/subscribe</code></td><td>Підписка браузера на push</td></tr>
+          <tr><td><span class="m-post">POST</span></td><td><code>/api/push/test</code></td><td>Тестовий push для діагностики</td></tr>
+          <tr><td><span class="m-get">GET</span></td><td><code>/api/push/status</code></td><td>Стан push-інфраструктури</td></tr>
         </table>
       </div>
 
@@ -662,7 +720,7 @@
     <div class="feat-center-header">
       <p class="feat-label">База даних</p>
       <h2>PostgreSQL схема</h2>
-      <p class="feat-desc">10+ таблиць з FK. Баланс на <code>accounts</code>, рух кошів у <code>transactions</code>. Ізольовані транзакції для переказів і поповнень.</p>
+      <p class="feat-desc">27+ таблиць з FK/індексами. Баланс на <code>accounts</code>, рух коштів у <code>transactions</code>, окремі домени для processing/compliance/messenger/idempotency.</p>
     </div>
     <div class="db-grid">
       <div class="db-table">
@@ -720,12 +778,18 @@
         <div class="dbt-col"><span class="dbt-badge"></span><code>auth_key</code><span>TEXT</span></div>
       </div>
       <div class="db-table">
-        <div class="dbt-header">+ ще 5 таблиць</div>
+        <div class="dbt-header">+ ще 14 таблиць</div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>payouts</code><span>виплати</span></div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>donations</code><span>донати</span></div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>family_contacts</code><span>контакти</span></div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>payment_templates</code><span>шаблони</span></div>
         <div class="dbt-col"><span class="dbt-badge"></span><code>notifications</code><span>сповіщення</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>payment_orders</code><span>processing</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>risk_events</code><span>ризикові події</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>compliance_profiles</code><span>KYC/AML</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>conversations</code><span>чати</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>messages</code><span>повідомлення</span></div>
+        <div class="dbt-col"><span class="dbt-badge"></span><code>api_idempotency</code><span>захист дублювань</span></div>
       </div>
     </div>
   </div>
@@ -742,7 +806,7 @@
       <div class="stack-col">
         <h3>Backend</h3>
         <div class="stack-item"><code>Python 3.11</code><span>основна мова</span></div>
-        <div class="stack-item"><code>Flask</code><span>blueprints: auth, account, feature, admin, operator, platform, push</span></div>
+        <div class="stack-item"><code>Flask</code><span>blueprints: auth, account, cards, feature, admin, processing, compliance, messenger, push</span></div>
         <div class="stack-item"><code>PostgreSQL</code><span>реляційна СУБД, SERIALIZABLE TX</span></div>
         <div class="stack-item"><code>psycopg2</code><span>драйвер PostgreSQL</span></div>
         <div class="stack-item"><code>secrets</code><span>token_urlsafe(32), зберігання у DB</span></div>
@@ -1088,6 +1152,6 @@ curl -X POST army-bank.onrender.com/api/transactions/transfer \
   </div>
 </footer>
 
-<script src="app.js?v=22" defer></script>
+<script src="app.js?v=23" defer></script>
 </body>
 </html>
