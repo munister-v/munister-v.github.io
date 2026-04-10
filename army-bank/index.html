@@ -29,8 +29,8 @@
     </a>
     <ul class="nav-links">
       <li><a href="#features">Можливості</a></li>
+      <li><a href="#messenger">Messenger</a></li>
       <li><a href="#architecture">Архітектура</a></li>
-      <li><a href="#messenger">Месенджер</a></li>
       <li><a href="#system">Система</a></li>
       <li><a href="#api">API</a></li>
       <li><a href="#stack">Стек</a></li>
@@ -43,8 +43,8 @@
   </div>
   <div class="nav-mobile" id="mobile-menu" role="menu">
     <a href="#features" role="menuitem">Можливості</a>
+    <a href="#messenger" role="menuitem">Messenger</a>
     <a href="#architecture" role="menuitem">Архітектура</a>
-    <a href="#messenger" role="menuitem">Месенджер</a>
     <a href="#system" role="menuitem">Система</a>
     <a href="#api" role="menuitem">API</a>
     <a href="#stack" role="menuitem">Стек</a>
@@ -324,6 +324,59 @@
     </div>
   </div>
 
+  <div class="feature-section feat-dark" id="messenger">
+    <div class="container">
+      <div class="feat-center-header">
+        <p class="feat-label">Messenger контур</p>
+        <h2>Деталізований банківський месенджер</h2>
+        <p class="feat-desc">Оновлено 10.04.2026. Messenger працює в єдиній auth-моделі з банком: одна сесія, один профіль, банк-інструменти в чаті, голосові дзвінки WebRTC, push-оповіщення, групові чати та асистент для операційних запитів.</p>
+      </div>
+
+      <div class="msgr-grid">
+        <article class="msgr-card">
+          <h3>Що вже реалізовано</h3>
+          <ul class="msgr-list">
+            <li>Особисті та групові діалоги з живим polling-оновленням</li>
+            <li>Текст, фото, голосові повідомлення, soft-delete</li>
+            <li>Голосові дзвінки WebRTC + ICE/TURN + авто-відновлення</li>
+            <li>Push для вхідних, прийнятих, пропущених та завершених дзвінків</li>
+            <li>Діагностика ready-state: Push / Mic / Calls прямо в UI</li>
+            <li>Анти-дублювання polling, timeout/retry, offline/online recovery</li>
+          </ul>
+        </article>
+
+        <article class="msgr-card">
+          <h3>Інтеграція з банком</h3>
+          <ul class="msgr-list">
+            <li>Messenger автоматично перевіряє зв’язок із банківським акаунтом</li>
+            <li>Bank Tools у чаті: баланс, рахунок, PDF/CSV виписка, замовлення statement</li>
+            <li>Army Bank Assistant із quick-actions для типових сценаріїв</li>
+            <li>Єдиний контроль доступу через Bearer-сесію банку</li>
+            <li>Профіль без банківського акаунта отримує явний warning у UI</li>
+          </ul>
+          <div class="msgr-links">
+            <a href="https://army-bank.onrender.com/messenger" target="_blank" rel="noopener">Відкрити messenger</a>
+            <a href="https://army-bank.onrender.com/api/docs" target="_blank" rel="noopener">Переглянути API docs</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="msgr-endpoint-box">
+        <p class="msgr-endpoint-title">Ключові endpoint-и месенджера (ядро)</p>
+        <div class="msgr-endpoint-grid">
+          <div><code>GET /messenger</code><span>PWA-shell месенджера</span></div>
+          <div><code>GET /api/messenger/conversations</code><span>Список діалогів</span></div>
+          <div><code>POST /api/messenger/conversations/:id/messages</code><span>Текст/voice/photo</span></div>
+          <div><code>GET /api/messenger/conversations/:id/poll</code><span>Realtime polling</span></div>
+          <div><code>GET /api/messenger/calls/incoming</code><span>Черга вхідних дзвінків</span></div>
+          <div><code>POST /api/messenger/calls</code><span>Старт WebRTC виклику</span></div>
+          <div><code>PUT /api/messenger/calls/:id/answer</code><span>Прийняття виклику</span></div>
+          <div><code>POST /api/push/subscribe</code><span>Підписка на push</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </section>
 
 <!-- ARCHITECTURE -->
@@ -379,77 +432,6 @@
           <span class="al-label">Ролі</span>
           <span class="al-sub">soldier · operator · admin · platform_admin</span>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- MESSENGER -->
-<section class="section-messenger" id="messenger">
-  <div class="container">
-    <div class="feat-center-header">
-      <p class="feat-label">Bank Messenger</p>
-      <h2>Месенджер як частина банкінгу, а не окремий чат</h2>
-      <p class="feat-desc">Єдиний акаунт Army Bank автоматично працює в месенджері: діалоги, групи, голосові, дзвінки WebRTC, банківський асистент і шар банківських дій прямо в чаті (баланс, виписка, історія).</p>
-    </div>
-
-    <div class="messenger-showcase">
-      <div class="msgs-overview">
-        <h3>Принципи UX та роботи</h3>
-        <ul class="deep-list-check">
-          <li><strong>Single account:</strong> немає розсинхрону «банк окремо / чат окремо»</li>
-          <li><strong>Secure by default:</strong> шифрування повідомлень at-rest + авторизація Bearer</li>
-          <li><strong>Realtime:</strong> poll + unread state + online-індикатори + smart refresh</li>
-          <li><strong>Calls over WebRTC:</strong> ICE/TURN, відновлення з'єднання, адаптивна якість</li>
-          <li><strong>Bank tools in chat:</strong> PDF/CSV виписка, баланс, підказки асистента</li>
-        </ul>
-        <div class="msgs-links">
-          <a href="https://army-bank.onrender.com/messenger" target="_blank" rel="noopener" class="btn-dark">Відкрити месенджер live</a>
-          <a href="https://army-bank.onrender.com/api/docs" target="_blank" rel="noopener" class="btn-ghost">API документація</a>
-        </div>
-        <p class="api-note">Ключові маршрути: <code>/api/messenger/conversations</code>, <code>/api/messenger/conversations/:id/messages</code>, <code>/api/messenger/calls/*</code>, <code>/api/messenger/bank/*</code>.</p>
-      </div>
-
-      <div class="msgs-preview" aria-hidden="true">
-        <div class="mp-header">
-          <span class="mp-dot"></span>
-          <span class="mp-title">Army Bank Assistant</span>
-          <span class="mp-badge">verified</span>
-        </div>
-        <div class="mp-body">
-          <div class="mp-bubble mp-them">Вітаю. Можу показати баланс, останні операції або підготувати виписку PDF/CSV.</div>
-          <div class="mp-bubble mp-me">/баланс</div>
-          <div class="mp-bubble mp-them">Рахунок: AB-100044 · Поточний баланс: ₴8 172 119,00</div>
-          <div class="mp-bubble mp-me">/виписка pdf</div>
-          <div class="mp-chip-row">
-            <span class="mp-chip">Завантажити PDF</span>
-            <span class="mp-chip">Поділитися в чаті</span>
-            <span class="mp-chip">Останні 7 днів</span>
-          </div>
-          <div class="mp-call">
-            <span>Voice Call</span>
-            <span class="mp-quality">якість добра</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="msgs-principles">
-      <div class="msgs-pr-card">
-        <h4>Інтеграція з банком</h4>
-        <p>Вбудовані команди асистента та спеціальні картки-відповіді для банківських задач без переходу в інші екрани.</p>
-      </div>
-      <div class="msgs-pr-card">
-        <h4>Безпечний контур</h4>
-        <p>Профіль користувача, сесія і доступ до фінданих контролюються єдиною role-based моделлю Army Bank.</p>
-      </div>
-      <div class="msgs-pr-card">
-        <h4>Стійкі дзвінки</h4>
-        <p>WebRTC-транспорт із fallback на relay, адаптацією бітрейту і авто-відновленням для складних мереж.</p>
-      </div>
-      <div class="msgs-pr-card">
-        <h4>PWA-поведінка</h4>
-        <p>Швидкий апдейт клієнта, контроль кешу, робота у фоні та коректна поведінка на мобільних пристроях.</p>
       </div>
     </div>
   </div>
@@ -1225,6 +1207,6 @@ curl -X POST army-bank.onrender.com/api/transactions/transfer \
   </div>
 </footer>
 
-<script src="app.js?v=24" defer></script>
+<script src="app.js?v=23" defer></script>
 </body>
 </html>
