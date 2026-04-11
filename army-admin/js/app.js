@@ -776,6 +776,8 @@ async function loadAnalyticsOverview() {
     const d = res.data || {};
     const t = d.totals || {};
     const k = d.kyc || {};
+    const q = d.action_queue || {};
+    const alerts = d.alerts || [];
     document.getElementById('analyticsKpiGrid').innerHTML = `
       <div class="mini-kpi-card"><div class="kpi-label">Користувачі</div><div class="kpi-value">${t.users_total || 0}</div><div class="kpi-sub">+${t.users_new_7d || 0} за 7 днів</div></div>
       <div class="mini-kpi-card"><div class="kpi-label">Активні сесії</div><div class="kpi-value">${t.active_sessions || 0}</div><div class="kpi-sub">online now</div></div>
@@ -784,6 +786,17 @@ async function loadAnalyticsOverview() {
       <div class="mini-kpi-card"><div class="kpi-label">Загальний баланс</div><div class="kpi-value">${fmtMoney(t.total_balance || 0)}</div><div class="kpi-sub">Платформа</div></div>
       <div class="mini-kpi-card"><div class="kpi-label">KYC verified</div><div class="kpi-value">${k.verified_rate || 0}%</div><div class="kpi-sub">${k.verified || 0}/${k.profiled || 0}</div></div>
     `;
+
+    document.getElementById('analyticsActionQueueBody').innerHTML = `
+      <tr><td>KYC in_review</td><td>${q.kyc_in_review || 0}</td></tr>
+      <tr><td>KYC rejected</td><td>${q.kyc_rejected || 0}</td></tr>
+      <tr><td>KYC pending</td><td>${q.kyc_pending || 0}</td></tr>
+      <tr><td>Payment rejected (24h)</td><td>${q.payment_rejected_24h || 0}</td></tr>
+    `;
+
+    document.getElementById('analyticsAlertsBody').innerHTML = alerts.length
+      ? alerts.map((a) => `<tr><td>${escHtml(a.message || a.code || 'alert')}</td><td>${escHtml(a.severity || 'info')}</td></tr>`).join('')
+      : '<tr><td colspan="2" style="text-align:center;color:var(--text-muted)">Алертів немає</td></tr>';
 
     const topTypes = d.top_tx_types || [];
     document.getElementById('analyticsTopTypesBody').innerHTML = topTypes.length
@@ -808,14 +821,20 @@ async function loadMessengerAnalytics() {
     const d = res.data || {};
     const o = d.overview || {};
     const c = d.calls_30d || {};
+    const c24 = d.calls_24h || {};
+    const alerts = d.alerts || [];
     document.getElementById('messengerKpiGrid').innerHTML = `
       <div class="mini-kpi-card"><div class="kpi-label">Діалоги</div><div class="kpi-value">${o.conversations_total || 0}</div><div class="kpi-sub">Груп: ${o.groups_total || 0}</div></div>
       <div class="mini-kpi-card"><div class="kpi-label">Повідомлення</div><div class="kpi-value">${o.messages_total || 0}</div><div class="kpi-sub">24г: ${o.messages_24h || 0}</div></div>
       <div class="mini-kpi-card"><div class="kpi-label">Активні відправники (24г)</div><div class="kpi-value">${o.active_senders_24h || 0}</div><div class="kpi-sub">увачів</div></div>
-      <div class="mini-kpi-card"><div class="kpi-label">Push підписок</div><div class="kpi-value">${o.push_subscriptions_total || 0}</div><div class="kpi-sub">для фон. сповіщень</div></div>
+      <div class="mini-kpi-card"><div class="kpi-label">Push підписок</div><div class="kpi-value">${o.push_subscriptions_total || 0}</div><div class="kpi-sub">Покриття: ${o.push_coverage_active || 0}%</div></div>
       <div class="mini-kpi-card"><div class="kpi-label">Дзвінків (30д)</div><div class="kpi-value">${c.calls_total || 0}</div><div class="kpi-sub">Connected: ${c.connected_calls || 0}</div></div>
-      <div class="mini-kpi-card"><div class="kpi-label">Call connect rate</div><div class="kpi-value">${c.connect_rate || 0}%</div><div class="kpi-sub">AVG: ${c.avg_duration_sec || 0}s</div></div>
+      <div class="mini-kpi-card"><div class="kpi-label">Call connect rate</div><div class="kpi-value">${c.connect_rate || 0}%</div><div class="kpi-sub">24г: ${c24.connected || 0}/${c24.total || 0}, AVG: ${c.avg_duration_sec || 0}s</div></div>
     `;
+
+    document.getElementById('messengerAlertsBody').innerHTML = alerts.length
+      ? alerts.map((a) => `<tr><td>${escHtml(a.message || a.code || 'alert')}</td><td>${escHtml(a.severity || 'info')}</td></tr>`).join('')
+      : '<tr><td colspan="2" style="text-align:center;color:var(--text-muted)">Алертів немає</td></tr>';
 
     const msgTypes = d.message_types_30d || [];
     document.getElementById('messengerMsgTypesBody').innerHTML = msgTypes.length
