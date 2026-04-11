@@ -475,13 +475,20 @@ document.getElementById('kycVerifyBtn').addEventListener('click', async () => {
     });
     const data = res.data || {};
     renderKycChecks(data.checks || []);
-    msgEl.textContent = data.status || (data.verified ? 'KYC пройдена' : 'Потрібна додаткова перевірка');
-    msgEl.className = `form-msg ${data.verified ? 'success' : 'error'}`;
+    const scoreText = Number.isFinite(data.kyc_score) ? ` (score: ${data.kyc_score}/100)` : '';
+    const reasonText = data.decision_reason ? ` ${data.decision_reason}` : '';
+    msgEl.textContent = `${data.status || (data.verified ? 'KYC пройдена' : 'Потрібна додаткова перевірка')}${scoreText}.${reasonText}`;
+    let msgCls = 'warning';
+    if (data.kyc_status === 'verified') msgCls = 'success';
+    if (data.kyc_status === 'rejected') msgCls = 'error';
+    msgEl.className = `form-msg ${msgCls}`;
     document.getElementById('kycCurrentStatus').innerHTML = kycStatusBadge(data.kyc_status || 'in_review');
     if (data.verified) {
       showToast('KYC успішно підтверджено', 'success');
+    } else if (data.kyc_status === 'rejected') {
+      showToast('KYC відхилено', 'error');
     } else {
-      showToast('KYC не пройшла автоматичні перевірки', 'error');
+      showToast('KYC передано на додаткову перевірку', 'success');
     }
     await loadKycUsers();
   } catch (err) {
