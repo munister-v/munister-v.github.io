@@ -89,6 +89,8 @@ function navigate(page) {
     kyc: 'KYC',
     transactions: 'Транзакції',
     payouts: 'Виплати',
+    analytics: 'Аналітика',
+    'messenger-analytics': 'Месенджер',
     audit: 'Аудит',
   };
   document.getElementById('topbarTitle').textContent = titles[page] || page;
@@ -102,6 +104,8 @@ function loadPage(page) {
     case 'users':        loadUsers(); break;
     case 'kyc':          loadKycUsers(); break;
     case 'transactions': loadTransactions(); break;
+    case 'analytics':    loadAnalyticsOverview(); break;
+    case 'messenger-analytics': loadMessengerAnalytics(); break;
     case 'audit':        loadAuditLogs(); break;
   }
 }
@@ -762,6 +766,78 @@ document.getElementById('submitPayoutBtn').addEventListener('click', async () =>
     msgEl.className   = 'form-msg error';
   }
 });
+
+/* ══════════════════════════════════════════════
+   ANALYTICS
+══════════════════════════════════════════════ */
+async function loadAnalyticsOverview() {
+  try {
+    const res = await api.analyticsOverview();
+    const d = res.data || {};
+    const t = d.totals || {};
+    const k = d.kyc || {};
+    document.getElementById('analyticsKpiGrid').innerHTML = `
+      <div class="mini-kpi-card"><div class="kpi-label">Користувачі</div><div class="kpi-value">${t.users_total || 0}</div><div class="kpi-sub">+${t.users_new_7d || 0} за 7 днів</div></div>
+      <div class="mini-kpi-card"><div class="kpi-label">Активні сесії</div><div class="kpi-value">${t.active_sessions || 0}</div><div class="kpi-sub">online now</div></div>
+      <div class="mini-kpi-card"><div class="kpi-label">Оборот 24г</div><div class="kpi-value">${fmtMoney(t.tx_volume_24h || 0)}</div><div class="kpi-sub">${t.tx_24h || 0} транзакцій</div></div>
+      <div class="mini-kpi-card"><div class="kpi-label">Оборот 30д</div><div class="kpi-value">${fmtMoney(t.tx_volume_30d || 0)}</div><div class="kpi-sub">Payout 30д: ${fmtMoney(t.payout_30d || 0)}</div></div>
+      <div class="mini-kpi-card"><div class="kpi-label">Загальний баланс</div><div class="kpi-value">${fmtMoney(t.total_balance || 0)}</div><div class="kpi-sub">Платформа</div></div>
+      <div class="mini-kpi-card"><div class="kpi-label">KYC verified</div><div class="kpi-value">${k.verified_rate || 0}%</div><div class="kpi-sub">${k.verified || 0}/${k.profiled || 0}</div></div>
+    `;
+
+    const topTypes = d.top_tx_types || [];
+    document.getElementById('analyticsTopTypesBody').innerHTML = topTypes.length
+      ? topTypes.map((r) => `<tr><td>${escHtml(r.tx_type || '—')}</td><td>${r.cnt || 0}</td><td>${fmtMoney(r.amount_sum || 0)}</td></tr>`).join('')
+      : '<tr><td colspan="3" style="text-align:center;color:var(--text-muted)">Немає даних</td></tr>';
+
+    const flow = d.daily_flow_30d || [];
+    document.getElementById('analyticsDailyFlowBody').innerHTML = flow.length
+      ? flow.map((r) => {
+        const net = Number(r.total_in || 0) - Number(r.total_out || 0);
+        return `<tr><td>${escHtml(r.d || '—')}</td><td class="amount-in">${fmtMoney(r.total_in || 0)}</td><td class="amount-out">${fmtMoney(r.total_out || 0)}</td><td class="${net >= 0 ? 'amount-in' : 'amount-out'}">${fmtMoney(net)}</td></tr>`;
+      }).join('')
+      : '<tr><td colspan="4" style="text-align:center;color:var(--text-muted)">Немає даних</td></tr>';
+  } catch (err) {
+    showToast('Аналітика: ' + err.message, 'error');
+  }
+}
+
+async function loadMessengerAnalytics() {
+  try {
+    const res = await api.messengerAnalytics();
+    const d = res.data || {};
+    const o = d.overview || {};
+    const c = d.calls_30d || {};
+    document.getElementById('messengerKpiGrid').innerHTML = `
+      <div class="mini-kpi-card"><div class="kpi-label">Діалоги</div><div class="kpi-value">${o.conversations_total || 0}</div><div class="kpi-sub">Груп: ${o.groups_total || 0}</div></div>
+      <div class="mini-kpi-card"><div class="kpi-label">Повідомлення</div><div class="kpi-value">${o.messages_total || 0}</div><div class="kpi-sub">24г: ${o.messages_24h || 0}</div></div>
+      <div class="mini-kpi-card"><div class="kpi-label">Активні відправники (24г)</div><div class="kpi-value">${o.active_senders_24h || 0}</div><div class="kpi-sub">увачів</div></div>
+      <div class="mini-kpi-card"><div class="kpi-label">Push підписок</div><div class="kpi-value">${o.push_subscriptions_total || 0}</div><div class="kpi-sub">для фон. сповіщень</div></div>
+      <div class="mini-kpi-card"><div class="kpi-label">Дзвінків (30д)</div><div class="kpi-value">${c.calls_total || 0}</div><div class="kpi-sub">Connected: ${c.connected_calls || 0}</div></div>
+      <div class="mini-kpi-card"><div class="kpi-label">Call connect rate</div><div class="kpi-value">${c.connect_rate || 0}%</div><div class="kpi-sub">AVG: ${c.avg_duration_sec || 0}s</div></div>
+    `;
+
+    const msgTypes = d.message_types_30d || [];
+    document.getElementById('messengerMsgTypesBody').innerHTML = msgTypes.length
+      ? msgTypes.map((r) => `<tr><td>${escHtml(r.msg_type || 'text')}</td><td>${r.cnt || 0}</td></tr>`).join('')
+      : '<tr><td colspan="2" style="text-align:center;color:var(--text-muted)">Немає даних</td></tr>';
+
+    const topConv = d.top_conversations_7d || [];
+    document.getElementById('messengerTopConversationsBody').innerHTML = topConv.length
+      ? topConv.map((r) => `<tr><td>${escHtml(r.title || ('#' + r.id))}</td><td>${r.is_group ? 'Так' : 'Ні'}</td><td>${r.msg_count || 0}</td></tr>`).join('')
+      : '<tr><td colspan="3" style="text-align:center;color:var(--text-muted)">Немає даних</td></tr>';
+
+    const callsDaily = d.calls_daily_30d || [];
+    document.getElementById('messengerCallsDailyBody').innerHTML = callsDaily.length
+      ? callsDaily.map((r) => `<tr><td>${escHtml(r.d || '—')}</td><td>${r.calls_count || 0}</td></tr>`).join('')
+      : '<tr><td colspan="2" style="text-align:center;color:var(--text-muted)">Немає даних</td></tr>';
+  } catch (err) {
+    showToast('Месенджер аналітика: ' + err.message, 'error');
+  }
+}
+
+document.getElementById('refreshAnalyticsBtn').addEventListener('click', loadAnalyticsOverview);
+document.getElementById('refreshMessengerAnalyticsBtn').addEventListener('click', loadMessengerAnalytics);
 
 /* ══════════════════════════════════════════════
    AUDIT LOG

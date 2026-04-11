@@ -87,6 +87,14 @@ class AdminAPI {
   verifyPassport(id, payload) {
     return this.post(`/api/admin/compliance/users/${id}/verify-passport`, payload);
   }
+
+  analyticsOverview() {
+    return this.get('/api/admin/analytics/overview');
+  }
+
+  messengerAnalytics() {
+    return this.get('/api/admin/analytics/messenger');
+  }
 }
 
 window.api = new AdminAPI();
