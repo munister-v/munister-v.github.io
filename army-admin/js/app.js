@@ -32,6 +32,18 @@ function txTypeBadge(type) {
   return badge(type, map[type] || type);
 }
 
+function kycStatusBadge(status) {
+  const map = {
+    verified: 'KYC пройдена',
+    in_review: 'На перевірці',
+    pending: 'Очікує',
+    rejected: 'Відхилено',
+    not_started: 'Не почато',
+  };
+  const safe = status || 'pending';
+  return badge(`kyc-${safe}`, map[safe] || safe);
+}
+
 function showToast(msg, type = 'success') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -56,6 +68,9 @@ let modalUserId = null;
 let selectedPayoutUser = null;
 let txOffset = 0;
 const TX_LIMIT = 50;
+let selectedKycUserId = null;
+let selectedKycScanData = '';
+let selectedKycScanMeta = null;
 
 /* ══════════════════════════════════════════════
    NAVIGATION
@@ -68,7 +83,14 @@ function navigate(page) {
   if (section) section.classList.add('active');
   const navItem = document.querySelector(`[data-page="${page}"]`);
   if (navItem) navItem.classList.add('active');
-  const titles = { dashboard: 'Дешборд', users: 'Користувачі', transactions: 'Транзакції', payouts: 'Виплати', audit: 'Аудит' };
+  const titles = {
+    dashboard: 'Дешборд',
+    users: 'Користувачі',
+    kyc: 'KYC',
+    transactions: 'Транзакції',
+    payouts: 'Виплати',
+    audit: 'Аудит',
+  };
   document.getElementById('topbarTitle').textContent = titles[page] || page;
   closeSidebar();
   loadPage(page);
@@ -78,6 +100,7 @@ function loadPage(page) {
   switch (page) {
     case 'dashboard':    loadDashboard(); break;
     case 'users':        loadUsers(); break;
+    case 'kyc':          loadKycUsers(); break;
     case 'transactions': loadTransactions(); break;
     case 'audit':        loadAuditLogs(); break;
   }
@@ -258,6 +281,7 @@ async function loadUsers() {
         <td style="font-size:.82rem">${escHtml(u.phone || '—')}</td>
         <td style="color:var(--text-muted);font-size:.82rem">${escHtml(u.email || '—')}</td>
         <td>${roleBadge(u.role)}</td>
+        <td style="font-size:.78rem;color:var(--text-muted)">${escHtml(u.military_status || '—')}</td>
         <td style="color:var(--text-muted);font-size:.78rem">${fmt(u.created_at)}</td>
         <td><button class="btn-table" onclick="openUserModal(${u.id})">Деталі →</button></td>
       </tr>
@@ -272,6 +296,202 @@ const debouncedSearch = debounce(loadUsers, 380);
 document.getElementById('userSearch').addEventListener('input', debouncedSearch);
 document.getElementById('userRoleFilter').addEventListener('change', loadUsers);
 document.getElementById('searchUsersBtn').addEventListener('click', loadUsers);
+
+/* ══════════════════════════════════════════════
+   KYC
+══════════════════════════════════════════════ */
+function resetKycVerifierState() {
+  selectedKycScanData = '';
+  selectedKycScanMeta = null;
+  document.getElementById('kycScanFile').value = '';
+  document.getElementById('kycScanPreview').classList.add('hidden');
+  document.getElementById('kycScanPreview').innerHTML = '';
+  document.getElementById('kycVerifyMsg').className = 'form-msg hidden';
+  document.getElementById('kycVerifyMsg').textContent = '';
+  document.getElementById('kycChecks').classList.add('hidden');
+  document.getElementById('kycChecks').innerHTML = '';
+  document.getElementById('kycManualConfirm').checked = false;
+}
+
+function renderKycChecks(checks = []) {
+  const wrap = document.getElementById('kycChecks');
+  if (!checks.length) {
+    wrap.classList.add('hidden');
+    wrap.innerHTML = '';
+    return;
+  }
+  wrap.innerHTML = checks.map((item) => `
+    <div class="kyc-check-item ${item.passed ? 'ok' : 'fail'}">
+      <span>${item.passed ? '✓' : '✕'} ${escHtml(item.label || item.id || 'Check')}</span>
+      <small>${escHtml(item.detail || '')}</small>
+    </div>
+  `).join('');
+  wrap.classList.remove('hidden');
+}
+
+async function loadKycUsers() {
+  const search = document.getElementById('kycSearch').value.trim();
+  const kycStatus = document.getElementById('kycStatusFilter').value;
+  try {
+    const params = { limit: 120, offset: 0 };
+    if (search) params.search = search;
+    if (kycStatus) params.kyc_status = kycStatus;
+    const res = await api.complianceUsers(params);
+    const rows = res.data || [];
+    const tbody = document.getElementById('kycBody');
+
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted)">Немає записів.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = rows.map((u) => `
+      <tr data-user-id="${u.id}" class="${selectedKycUserId === u.id ? 'is-selected' : ''}">
+        <td style="color:var(--text-muted);font-size:.8rem">${u.id}</td>
+        <td>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <b>${escHtml(u.full_name || '—')}</b>
+            <span style="font-size:.76rem;color:var(--text-muted)">${escHtml(u.email || u.phone || '—')}</span>
+          </div>
+        </td>
+        <td>${kycStatusBadge(u.kyc_status_eff || 'pending')}</td>
+        <td>${u.aml_flag_eff ? badge('out', 'Flag') : badge('in', 'OK')}</td>
+        <td>${escHtml(u.risk_level_eff || 'low')}</td>
+        <td style="font-size:.78rem;color:var(--text-muted)">${fmt(u.updated_at || u.created_at)}</td>
+        <td><button class="btn-table open-kyc-btn" data-user-id="${u.id}">Верифікація</button></td>
+      </tr>
+    `).join('');
+
+    document.querySelectorAll('.open-kyc-btn').forEach((btn) => {
+      btn.addEventListener('click', () => openKycUser(parseInt(btn.dataset.userId, 10)));
+    });
+  } catch (err) {
+    showToast('KYC: ' + err.message, 'error');
+  }
+}
+
+async function openKycUser(userId) {
+  if (!userId) return;
+  selectedKycUserId = userId;
+  resetKycVerifierState();
+  try {
+    const res = await api.complianceUser(userId);
+    const row = res.data || {};
+    const profile = row.compliance || {};
+
+    document.getElementById('kycUserName').textContent = row.full_name || '—';
+    document.getElementById('kycUserEmail').textContent = row.email || '—';
+    document.getElementById('kycUserPhone').textContent = row.phone || '—';
+    document.getElementById('kycCurrentStatus').innerHTML = kycStatusBadge(profile.kyc_status || 'pending');
+    document.getElementById('kycDocumentName').value = row.full_name || '';
+    document.getElementById('kycPassportNumber').value = '';
+
+    document.getElementById('kycPlaceholder').classList.add('hidden');
+    document.getElementById('kycVerifier').classList.remove('hidden');
+
+    document.querySelectorAll('#kycBody tr').forEach((tr) => {
+      tr.classList.toggle('is-selected', parseInt(tr.dataset.userId || '0', 10) === userId);
+    });
+  } catch (err) {
+    showToast('KYC профіль: ' + err.message, 'error');
+  }
+}
+
+function handleKycScanFile(file) {
+  if (!file) return;
+  if (file.size > 8 * 1024 * 1024) {
+    showToast('Файл занадто великий (макс 8MB).', 'error');
+    return;
+  }
+  selectedKycScanMeta = {
+    name: file.name || 'passport_scan',
+    type: file.type || 'application/octet-stream',
+    size: file.size || 0,
+  };
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    selectedKycScanData = String(reader.result || '');
+    const preview = document.getElementById('kycScanPreview');
+    if ((file.type || '').startsWith('image/')) {
+      preview.innerHTML = `<img src="${selectedKycScanData}" alt="scan preview" />`;
+    } else {
+      preview.innerHTML = `<div class="kyc-file-pill">FILE: ${escHtml(file.name)} · ${Math.round(file.size / 1024)} KB</div>`;
+    }
+    preview.classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
+}
+
+document.getElementById('kycScanFile').addEventListener('change', (e) => {
+  const file = e.target.files?.[0];
+  if (file) handleKycScanFile(file);
+});
+
+const debouncedKycSearch = debounce(loadKycUsers, 380);
+document.getElementById('kycSearch').addEventListener('input', debouncedKycSearch);
+document.getElementById('kycStatusFilter').addEventListener('change', loadKycUsers);
+document.getElementById('searchKycBtn').addEventListener('click', loadKycUsers);
+document.getElementById('refreshKycBtn').addEventListener('click', loadKycUsers);
+
+document.getElementById('kycVerifyBtn').addEventListener('click', async () => {
+  if (!selectedKycUserId) {
+    showToast('Оберіть користувача для KYC.', 'error');
+    return;
+  }
+  const passportNumber = document.getElementById('kycPassportNumber').value.trim().toUpperCase();
+  const documentName = document.getElementById('kycDocumentName').value.trim();
+  const manualConfirm = document.getElementById('kycManualConfirm').checked;
+  const msgEl = document.getElementById('kycVerifyMsg');
+  const btn = document.getElementById('kycVerifyBtn');
+
+  if (!selectedKycScanData) {
+    msgEl.textContent = 'Завантажте скан паспорта.';
+    msgEl.className = 'form-msg error';
+    return;
+  }
+  if (!passportNumber) {
+    msgEl.textContent = 'Вкажіть номер паспорта.';
+    msgEl.className = 'form-msg error';
+    return;
+  }
+  if (!documentName) {
+    msgEl.textContent = 'Вкажіть ПІБ із документа.';
+    msgEl.className = 'form-msg error';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Перевірка…';
+  msgEl.className = 'form-msg hidden';
+  try {
+    const res = await api.verifyPassport(selectedKycUserId, {
+      scan_data: selectedKycScanData,
+      scan_mime: selectedKycScanMeta?.type || '',
+      file_name: selectedKycScanMeta?.name || 'passport_scan',
+      passport_number: passportNumber,
+      document_full_name: documentName,
+      manual_confirm: manualConfirm,
+    });
+    const data = res.data || {};
+    renderKycChecks(data.checks || []);
+    msgEl.textContent = data.status || (data.verified ? 'KYC пройдена' : 'Потрібна додаткова перевірка');
+    msgEl.className = `form-msg ${data.verified ? 'success' : 'error'}`;
+    document.getElementById('kycCurrentStatus').innerHTML = kycStatusBadge(data.kyc_status || 'in_review');
+    if (data.verified) {
+      showToast('KYC успішно підтверджено', 'success');
+    } else {
+      showToast('KYC не пройшла автоматичні перевірки', 'error');
+    }
+    await loadKycUsers();
+  } catch (err) {
+    msgEl.textContent = err.message || 'Помилка верифікації.';
+    msgEl.className = 'form-msg error';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Підтвердити KYC';
+  }
+});
 
 /* ── USER MODAL ── */
 function switchModalTab(tab) {
@@ -549,6 +769,7 @@ async function loadAuditLogs() {
       admin_role_change: 'Зміна ролі', donation: 'Донат',
       transfer_out: 'Переказ (вих.)', transfer_in: 'Переказ (вх.)',
       withdrawal: 'Зняття', deposit: 'Депозит',
+      admin_kyc_passport_verify: 'KYC: перевірка паспорта',
     };
     document.getElementById('auditBody').innerHTML = logs.map(l => `
       <tr>
