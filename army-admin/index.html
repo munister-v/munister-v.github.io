@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Адмін — Army Bank</title>
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/admin-armybank-theme.css?v=3">
+  <link rel="stylesheet" href="css/admin-armybank-theme.css?v=4">
   <style>
     .filter-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
     .filter-row input,.filter-row select{font-size:12px;padding:5px 9px;border-radius:6px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:inherit;min-width:110px}
@@ -337,8 +337,10 @@
 
         <!-- Sub-tabs -->
         <div style="display:flex;gap:0;border-bottom:2px solid var(--border-color);margin-bottom:20px">
-          <button class="mkt-subtab active" data-subtab="products" onclick="switchMktSubtab('products')">Товари</button>
-          <button class="mkt-subtab" data-subtab="orders" onclick="switchMktSubtab('orders')">Замовлення</button>
+          <button class="mkt-subtab active" data-subtab="products"  onclick="switchMktSubtab('products')">Товари</button>
+          <button class="mkt-subtab" data-subtab="orders"    onclick="switchMktSubtab('orders')">Замовлення</button>
+          <button class="mkt-subtab" data-subtab="customers" onclick="switchMktSubtab('customers')">Клієнти</button>
+          <button class="mkt-subtab" data-subtab="analytics" onclick="switchMktSubtab('analytics')">Аналітика</button>
         </div>
 
         <!-- Products sub-tab -->
@@ -369,8 +371,8 @@
 
         <!-- Orders sub-tab -->
         <div id="mktOrders" style="display:none">
-          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-            <select id="mktOrderStatus" class="field-input" style="width:200px" onchange="loadAdminOrders()">
+          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+            <select id="mktOrderStatus" class="field-input" style="width:175px" onchange="_mktOrdersPage=1;loadAdminOrders()">
               <option value="">Всі статуси</option>
               <option value="paid">Оплачено</option>
               <option value="awaiting_payment">Очікує оплати</option>
@@ -379,6 +381,12 @@
               <option value="delivered">Доставлено</option>
               <option value="cancelled">Скасовано</option>
             </select>
+            <input id="mktOrderFrom" type="date" class="field-input" style="width:138px" title="Від дати" onchange="_mktOrdersPage=1;loadAdminOrders()">
+            <input id="mktOrderTo"   type="date" class="field-input" style="width:138px" title="До дати"  onchange="_mktOrdersPage=1;loadAdminOrders()">
+            <input id="mktOrderCustSearch" class="field-input" placeholder="Клієнт / телефон…" style="flex:1;min-width:140px" oninput="debounceLoadOrders()">
+            <button class="secondary-btn" onclick="exportMktOrdersCsv()" title="Експорт CSV" style="white-space:nowrap">
+              ↓ CSV
+            </button>
           </div>
           <div class="table-wrap">
             <table class="data-table">
@@ -395,7 +403,62 @@
           </div>
           <div id="mktOrdersPager" style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;align-items:center"></div>
         </div>
+
+        <!-- Customers sub-tab -->
+        <div id="mktCustomers" style="display:none">
+          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+            <input id="mktCustSearch" class="field-input" placeholder="Пошук за ім'ям / телефоном…" style="flex:1;min-width:200px" oninput="debounceLoadCustomers()">
+            <button class="secondary-btn" onclick="loadAdminCustomers()">↻ Оновити</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>Клієнт</th>
+                <th style="width:90px;text-align:center">Замовлень</th>
+                <th style="width:140px">Витрачено</th>
+                <th style="width:150px">Останнє замовлення</th>
+                <th style="width:110px"></th>
+              </tr></thead>
+              <tbody id="mktCustomersBody"><tr><td colspan="5" class="muted" style="text-align:center;padding:20px">Завантаження…</td></tr></tbody>
+            </table>
+          </div>
+          <div id="mktCustomersPager" style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;align-items:center"></div>
+        </div>
+
+        <!-- Analytics sub-tab -->
+        <div id="mktAnalytics" style="display:none">
+          <div id="mktLowStockPanel" style="margin-bottom:18px"></div>
+          <div class="chart-wrap" style="margin-bottom:24px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+              <h3 style="font-size:13px;font-weight:700;margin:0;opacity:.75">Виручка за 30 днів</h3>
+            </div>
+            <div id="mktRevenueChartWrap" style="overflow-x:auto;min-height:160px"></div>
+          </div>
+          <div id="mktTopProducts" style="margin-bottom:24px"></div>
+        </div>
       </section>
+
+      <!-- Customer detail modal -->
+      <div id="customerDetailModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
+        <div style="background:var(--surface);border-radius:12px;padding:28px;width:min(96vw,620px);max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.35)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <h3 id="custModalTitle" style="margin:0;font-size:1.1rem">Клієнт</h3>
+            <button onclick="closeCustomerModal()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text-secondary)">×</button>
+          </div>
+          <div id="custModalBody"></div>
+        </div>
+      </div>
+
+      <!-- Order detail modal -->
+      <div id="orderDetailModal" style="display:none;position:fixed;inset:0;z-index:1001;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
+        <div style="background:var(--surface);border-radius:12px;padding:28px;width:min(96vw,660px);max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.35)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <h3 id="orderDetailTitle" style="margin:0;font-size:1.1rem">Замовлення</h3>
+            <button onclick="closeOrderDetailModal()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text-secondary)">×</button>
+          </div>
+          <div id="orderDetailBody"></div>
+        </div>
+      </div>
 
       <!-- Product modal -->
       <div id="productModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
@@ -554,6 +617,6 @@
   <div id="toast" class="toast hidden"></div>
   <script>window.ARMY_BANK_BASE = 'https://army-bank.onrender.com';</script>
   <script src="js/api.js?v=14"></script>
-  <script src="js/admin.js?v=5"></script>
+  <script src="js/admin.js?v=6"></script>
 </body>
 </html>
