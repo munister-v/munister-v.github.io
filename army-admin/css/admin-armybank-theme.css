@@ -1,0 +1,554 @@
+/* Admin UI — візуал у дусі munister.com.ua/army-bank/ (portfolio landing) */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+body.admin-ab-landing {
+  --ab-sand: #d4c4b5;
+  --ab-sand-dim: rgba(212, 196, 181, 0.45);
+  --ab-sand-bg: rgba(212, 196, 181, 0.08);
+  --ab-sand-border: rgba(212, 196, 181, 0.28);
+  --ab-bg: #050505;
+  --ab-surface: #0d0d0d;
+  --ab-surface2: #111111;
+  --ab-text: #e5e5e5;
+  --ab-text-2: #a3a3a3;
+  --ab-muted: #737373;
+  --ab-border: #262626;
+  --ab-green: #4ade80;
+  --ab-red: #f87171;
+  --ff-admin: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ff-mono: 'JetBrains Mono', 'SF Mono', monospace;
+  --ff-serif: 'Cormorant Garamond', Georgia, serif;
+
+  font-family: var(--ff-admin);
+  background: var(--ab-bg);
+  color: var(--ab-text);
+}
+
+body.admin-ab-landing::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Shell (раніше класи були без глобальних стилів) ── */
+body.admin-ab-landing .page-shell {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+body.admin-ab-landing .sidebar {
+  width: 268px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 20px 24px;
+  background: var(--ab-surface);
+  border-right: 1px solid var(--ab-border);
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+body.admin-ab-landing .sidebar .brand {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ab-text);
+  margin-bottom: 6px;
+}
+
+body.admin-ab-landing .sidebar .brand strong,
+body.admin-ab-landing .sidebar .brand b {
+  color: var(--ab-sand);
+  font-weight: 600;
+}
+
+body.admin-ab-landing .sidebar .muted,
+body.admin-ab-landing .muted {
+  font-size: 12px;
+  color: var(--ab-muted);
+  line-height: 1.45;
+}
+
+body.admin-ab-landing .sidebar .menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 28px;
+  flex: 1;
+}
+
+body.admin-ab-landing .sidebar .sidebar-footer {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--ab-border);
+}
+
+body.admin-ab-landing .content {
+  flex: 1;
+  min-width: 0;
+  padding: 36px 40px 48px;
+  position: relative;
+}
+
+body.admin-ab-landing .content::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(38, 38, 38, 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(38, 38, 38, 0.35) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.admin-ab-landing .content > * {
+  position: relative;
+  z-index: 1;
+}
+
+body.admin-ab-landing .content h1 {
+  font-family: var(--ff-serif);
+  font-size: clamp(1.75rem, 2.5vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  color: var(--ab-text);
+}
+
+body.admin-ab-landing .admin-tab.hidden {
+  display: none !important;
+}
+
+/* ── Картки та таблиця ── */
+body.admin-ab-landing .card {
+  background: var(--ab-surface2) !important;
+  border: 1px solid var(--ab-border) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+body.admin-ab-landing .table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+body.admin-ab-landing .table thead th {
+  text-align: left;
+  padding: 12px 16px;
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ab-muted);
+  border-bottom: 1px solid var(--ab-border);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+body.admin-ab-landing .table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--ab-border);
+  vertical-align: middle;
+  color: var(--ab-text-2);
+}
+
+body.admin-ab-landing .table tbody tr:hover td {
+  background: rgba(212, 196, 181, 0.03);
+}
+
+body.admin-ab-landing .table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+body.admin-ab-landing .role-select,
+body.admin-ab-landing select#roleFilter {
+  font-family: var(--ff-admin);
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--ab-border);
+  background: var(--ab-bg);
+  color: var(--ab-text);
+  min-width: 140px;
+}
+
+body.admin-ab-landing .role-select:focus,
+body.admin-ab-landing select#roleFilter:focus {
+  outline: none;
+  border-color: var(--ab-sand);
+}
+
+body.admin-ab-landing .drawer-body .stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Кнопки (узгоджені з лендінгом) ── */
+body.admin-ab-landing .ghost-btn,
+body.admin-ab-landing .btn-ghost {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  border-radius: 4px;
+  border: 1px solid var(--ab-sand-border);
+  background: transparent;
+  color: var(--ab-sand);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+body.admin-ab-landing .ghost-btn:hover,
+body.admin-ab-landing .btn-ghost:hover {
+  background: var(--ab-sand);
+  color: #0a0a0a;
+  border-color: var(--ab-sand);
+}
+
+body.admin-ab-landing .secondary-btn {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 4px;
+  border: 1px solid var(--ab-border);
+  background: transparent;
+  color: var(--ab-text-2);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+body.admin-ab-landing .secondary-btn:hover {
+  border-color: var(--ab-sand-border);
+  color: var(--ab-sand);
+}
+
+body.admin-ab-landing .small-btn {
+  padding: 7px 12px !important;
+  font-size: 9px !important;
+}
+
+body.admin-ab-landing .btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+body.admin-ab-landing button.small-btn.save-role {
+  font-family: var(--ff-mono);
+  font-size: 9px !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 14px !important;
+  border-radius: 4px;
+  border: 1px solid var(--ab-sand-border);
+  background: var(--ab-sand-bg);
+  color: var(--ab-sand);
+  cursor: pointer;
+}
+
+body.admin-ab-landing button.small-btn.save-role:hover {
+  background: var(--ab-sand);
+  color: #0a0a0a;
+}
+
+/* ── Навігація вкладок ── */
+body.admin-ab-landing .menu-btn {
+  font-family: var(--ff-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ab-muted) !important;
+  border-radius: 4px !important;
+}
+
+body.admin-ab-landing .menu-btn:hover {
+  background: rgba(212, 196, 181, 0.06) !important;
+  color: var(--ab-text) !important;
+}
+
+body.admin-ab-landing .menu-btn.active {
+  background: var(--ab-sand-bg) !important;
+  color: var(--ab-sand) !important;
+  border: 1px solid var(--ab-sand-border) !important;
+}
+
+body.admin-ab-landing a.menu-btn.nav-link {
+  text-decoration: none;
+  justify-content: center;
+}
+
+/* ── Списки аудиту ── */
+body.admin-ab-landing .list .item {
+  background: var(--ab-surface2);
+  border: 1px solid var(--ab-border);
+  border-radius: 6px;
+}
+
+body.admin-ab-landing .list .item-header strong {
+  color: var(--ab-text);
+}
+
+body.admin-ab-landing .subtle {
+  font-size: 12px;
+  color: var(--ab-muted);
+}
+
+/* ── Футер ── */
+body.admin-ab-landing .app-footer {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--ab-border);
+}
+
+body.admin-ab-landing .app-footer a {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ab-muted);
+}
+
+body.admin-ab-landing .app-footer a:hover {
+  color: var(--ab-sand);
+}
+
+/* ── Toast ── */
+body.admin-ab-landing .toast {
+  font-family: var(--ff-admin);
+  background: var(--ab-surface2);
+  border: 1px solid var(--ab-border);
+  color: var(--ab-text);
+  border-radius: 6px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Drawer + backdrop (стан .open) ── */
+body.admin-ab-landing .backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 190;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+body.admin-ab-landing .backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.admin-ab-landing aside#drawer.drawer {
+  z-index: 200 !important;
+  background: var(--ab-surface) !important;
+  border-left: 1px solid var(--ab-border) !important;
+  width: min(420px, 100vw) !important;
+  max-width: 420px !important;
+  transform: translateX(100%) !important;
+  visibility: hidden;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s;
+  animation: none !important;
+}
+
+body.admin-ab-landing aside#drawer.drawer.open {
+  transform: translateX(0) !important;
+  visibility: visible;
+}
+
+body.admin-ab-landing .drawer-header {
+  background: var(--ab-surface) !important;
+  border-bottom-color: var(--ab-border) !important;
+}
+
+body.admin-ab-landing .drawer-footer {
+  padding: 16px 20px 24px;
+  border-top: 1px solid var(--ab-border);
+  background: var(--ab-surface);
+}
+
+body.admin-ab-landing .drawer-body .card {
+  background: var(--ab-bg) !important;
+}
+
+/* ── Лого-марк у сайдбарі ── */
+body.admin-ab-landing .admin-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--ab-border);
+}
+
+body.admin-ab-landing .admin-logo-mark {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ab-sand);
+}
+
+@media (max-width: 767px) {
+  body.admin-ab-landing .page-shell {
+    flex-direction: column;
+  }
+
+  body.admin-ab-landing .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: 0;
+    border-bottom: 1px solid var(--ab-border);
+  }
+
+  body.admin-ab-landing .content {
+    padding: 24px 18px 40px;
+  }
+
+  body.admin-ab-landing .table {
+    font-size: 12px;
+  }
+
+  body.admin-ab-landing .table thead th,
+  body.admin-ab-landing .table tbody td {
+    padding: 10px 12px;
+  }
+}
+
+/* Нижній sheet на вузькому екрані (як у базовому styles.css для .drawer) */
+@media (max-width: 639px) {
+  body.admin-ab-landing aside#drawer.drawer {
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    max-height: 88vh !important;
+    border-radius: 12px 12px 0 0 !important;
+    border-left: 0 !important;
+    border-top: 1px solid var(--ab-border) !important;
+    transform: translateY(110%) !important;
+  }
+
+  body.admin-ab-landing aside#drawer.drawer.open {
+    transform: translateY(0) !important;
+  }
+}
+
+/* ── Security stats row ─────────────────────────────────────────────────── */
+body.admin-ab-landing .stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 4px;
+}
+body.admin-ab-landing .stat-card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+body.admin-ab-landing .stat-val {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: #fff;
+  line-height: 1.1;
+}
+body.admin-ab-landing .stat-lbl {
+  font-size: 11px;
+  color: rgba(255,255,255,.45);
+  margin-top: 4px;
+  font-weight: 500;
+}
+@media (max-width: 768px) {
+  body.admin-ab-landing .stats-row { grid-template-columns: 1fr 1fr; }
+}
+
+/* ─── Marketplace sub-tabs ─── */
+body.admin-ab-landing .mkt-subtab {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,.5);
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+  margin-bottom: -2px;
+}
+body.admin-ab-landing .mkt-subtab:hover { color: rgba(255,255,255,.85); }
+body.admin-ab-landing .mkt-subtab.active {
+  color: #fff;
+  border-bottom-color: var(--accent, #4f8cff);
+}
+
+/* ─── Marketplace stat cards ─── */
+body.admin-ab-landing .mkt-stat-card {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+body.admin-ab-landing .mkt-stat-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+}
+body.admin-ab-landing .mkt-stat-lbl {
+  font-size: 11px;
+  color: rgba(255,255,255,.45);
+  margin-top: 3px;
+}
+body.admin-ab-landing .mkt-stat-card.warn .mkt-stat-val { color: #f59e0b; }
+body.admin-ab-landing .mkt-stat-card.danger .mkt-stat-val { color: #ef4444; }
+body.admin-ab-landing .mkt-stat-card.success .mkt-stat-val { color: #22c55e; }
+
+/* ─── Product modal backdrop ─── */
+#productModal.open, #orderStatusModal.open { display: flex !important; }
+
+/* ─── Status badges in table ─── */
+body.admin-ab-landing .status-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+body.admin-ab-landing .status-pill.paid     { background: rgba(34,197,94,.18); color: #22c55e; }
+body.admin-ab-landing .status-pill.shipped  { background: rgba(59,130,246,.18); color: #60a5fa; }
+body.admin-ab-landing .status-pill.delivered{ background: rgba(16,185,129,.18); color: #34d399; }
+body.admin-ab-landing .status-pill.cancelled{ background: rgba(239,68,68,.18);  color: #f87171; }
+body.admin-ab-landing .status-pill.pending  { background: rgba(245,158,11,.18); color: #fbbf24; }
+body.admin-ab-landing .status-pill.active   { background: rgba(34,197,94,.18); color: #22c55e; }
+body.admin-ab-landing .status-pill.inactive { background: rgba(239,68,68,.18); color: #f87171; }
