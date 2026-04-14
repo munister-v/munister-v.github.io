@@ -1,622 +1,506 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Адмін — Army Bank</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/admin-armybank-theme.css?v=4">
-  <style>
-    .filter-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
-    .filter-row input,.filter-row select{font-size:12px;padding:5px 9px;border-radius:6px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:inherit;min-width:110px}
-    .filter-row input::placeholder{color:rgba(255,255,255,.35)}
-    .overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px}
-    .ov-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px}
-    .ov-card .ov-val{font-size:22px;font-weight:700;margin-top:4px}
-    .ov-card .ov-lbl{font-size:11px;opacity:.55;text-transform:uppercase;letter-spacing:.04em}
-    .chart-wrap{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:18px;margin-bottom:20px}
-    .chart-wrap h3{font-size:13px;font-weight:700;margin:0 0 14px;opacity:.75}
-    svg.bar-chart text{fill:rgba(255,255,255,.55);font-size:9px;font-family:inherit}
-    .type-dist{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-    .type-pill{font-size:11px;padding:3px 10px;border-radius:100px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}
-    .pager{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:13px}
-    .pager button{padding:4px 12px;font-size:12px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:inherit;cursor:pointer}
-    .pager button:disabled{opacity:.3;cursor:default}
-    .drawer-section{margin-top:16px}
-    .drawer-section h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;opacity:.5;margin:0 0 8px}
-    .adjust-row{display:flex;gap:6px;margin-top:6px}
-    .adjust-row input{flex:1;font-size:12px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:inherit}
-    .adjust-row select{font-size:12px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:inherit}
-    .tab-badge{display:inline-block;background:rgba(248,113,113,.8);color:#000;border-radius:100px;padding:0 6px;font-size:10px;font-weight:700;margin-left:5px;vertical-align:middle}
-    @media(max-width:680px){.filter-row{flex-direction:column;align-items:stretch}}
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArmyBank — Адмін</title>
+  <meta name="theme-color" content="#050505" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="css/styles.css?v=7" />
 </head>
-<body class="admin-ab-landing">
-  <div class="page-shell">
-    <aside class="sidebar">
-      <div class="admin-logo-row">
-        <div class="admin-logo-mark" aria-hidden="true">
-          <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
-            <path d="M20 4L36 12V28L20 36L4 28V12L20 4Z" stroke="currentColor" stroke-width="2"/>
-            <path d="M20 10L30 15V25L20 30L10 25V15L20 10Z" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M16 20h8M20 16v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div>
-          <div class="brand">Army<strong>Bank</strong> · Адмін</div>
-          <p class="muted" id="adminUser">Завантаження…</p>
-        </div>
+<body>
+
+<!-- ═══════════════════════════ AUTH SCREEN ═══════════════════════════ -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo" style="color:#d4c4b5">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <path d="M20 4L36 12V28L20 36L4 28V12L20 4Z" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M20 10L30 15V25L20 30L10 25V15L20 10Z" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M16 20h8M20 16v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1 class="auth-title">Army<strong>Bank</strong> Admin</h1>
+    <p class="auth-sub">Панель управління</p>
+    <form id="loginForm" class="auth-form" autocomplete="off">
+      <div class="field-group">
+        <label>Телефон або Email</label>
+        <input type="text" id="loginIdentity" placeholder="+380..." autocomplete="username" required />
       </div>
-      <nav class="menu">
-        <a class="menu-btn nav-link" href="https://army-bank.onrender.com/dashboard">На головну</a>
-        <button type="button" class="menu-btn" data-tab="overview">Огляд</button>
-        <button type="button" class="menu-btn active" data-tab="users">Користувачі</button>
-        <button type="button" class="menu-btn" data-tab="registry">Реєстр транзакцій</button>
-        <button type="button" class="menu-btn" data-tab="security">Безпека</button>
-        <button type="button" class="menu-btn" data-tab="audit">Аудит</button>
-        <button type="button" class="menu-btn" data-tab="docs">Документообіг</button>
-        <button type="button" class="menu-btn" data-tab="marketplace">🛍️ Маркетплейс</button>
-        <a class="menu-btn nav-link" href="/api-status" target="_blank" rel="noopener">API Status Check</a>
-      </nav>
-      <div class="sidebar-footer">
-        <button id="logoutBtn" class="secondary-btn">Вийти</button>
+      <div class="field-group">
+        <label>Пароль</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required />
       </div>
-    </aside>
-
-    <main class="content">
-
-      <!-- ── OVERVIEW ───────────────────────────────────────────────── -->
-      <section id="overviewTab" class="admin-tab hidden">
-        <h1>Огляд платформи</h1>
-
-        <div class="overview-grid" id="overviewStats">
-          <div class="ov-card"><div class="ov-lbl">Користувачів</div><div class="ov-val" id="ovUsers">—</div></div>
-          <div class="ov-card"><div class="ov-lbl">Сума балансів</div><div class="ov-val" id="ovBalance">—</div></div>
-          <div class="ov-card"><div class="ov-lbl">Транзакцій</div><div class="ov-val" id="ovTx">—</div></div>
-          <div class="ov-card"><div class="ov-lbl">Виплат (сума)</div><div class="ov-val" id="ovPayouts">—</div></div>
-          <div class="ov-card"><div class="ov-lbl">Донатів (сума)</div><div class="ov-val" id="ovDonations">—</div></div>
-          <div class="ov-card"><div class="ov-lbl">Нових сьогодні</div><div class="ov-val" id="ovNewToday">—</div></div>
-          <div class="ov-card"><div class="ov-lbl">Активних сьогодні</div><div class="ov-val" id="ovActiveToday">—</div></div>
-          <div class="ov-card"><div class="ov-lbl">Чистий приток (міс.)</div><div class="ov-val" id="ovNetFlow">—</div></div>
-        </div>
-
-        <div class="chart-wrap">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-            <h3 style="margin:0">Транзакції по днях</h3>
-            <select id="chartDays" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:inherit">
-              <option value="7">7 днів</option>
-              <option value="14" selected>14 днів</option>
-              <option value="30">30 днів</option>
-            </select>
-          </div>
-          <div id="barChartWrap" style="overflow-x:auto"></div>
-        </div>
-
-        <div class="chart-wrap">
-          <h3>Нові користувачі по днях</h3>
-          <div id="regChartWrap" style="overflow-x:auto"></div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-          <div class="chart-wrap">
-            <h3>Розподіл за типами</h3>
-            <div id="typeDistWrap"></div>
-          </div>
-          <div class="chart-wrap">
-            <h3>Топ-5 за обсягом</h3>
-            <div id="topUsersWrap"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── USERS ─────────────────────────────────────────────────── -->
-      <section id="usersTab" class="admin-tab">
-        <h1>Користувачі</h1>
-        <div class="filter-row">
-          <input type="search" id="userSearch" placeholder="Пошук за ім'ям / телефоном…">
-          <select id="roleFilter">
-            <option value="">Усі ролі</option>
-            <option value="soldier">Клієнт</option>
-            <option value="operator">Оператор</option>
-            <option value="admin">Адмін</option>
-            <option value="platform_admin">Платформа</option>
-          </select>
-          <button class="ghost-btn" onclick="loadUsers()">↻</button>
-        </div>
-        <div class="card" style="padding:0">
-          <table class="table" aria-label="Таблиця користувачів">
-            <thead><tr><th>ID</th><th>Користувач</th><th>Контакти</th><th>Роль</th><th>Дії</th></tr></thead>
-            <tbody id="usersTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ── REGISTRY ───────────────────────────────────────────────── -->
-      <section id="registryTab" class="admin-tab hidden">
-        <h1>Реєстр транзакцій</h1>
-        <div class="filter-row">
-          <input type="search" id="regSearch" placeholder="Опис / рахунок / ПІБ…">
-          <input type="number" id="regUserId" placeholder="User ID" style="width:90px">
-          <select id="regType">
-            <option value="">Усі типи</option>
-            <option value="transfer">Переказ</option>
-            <option value="topup">Поповнення</option>
-            <option value="payout">Виплата</option>
-            <option value="donation">Донат</option>
-            <option value="savings">Накопичення</option>
-          </select>
-          <select id="regDir">
-            <option value="">Обидва напрямки</option>
-            <option value="in">Надходження</option>
-            <option value="out">Витрати</option>
-          </select>
-          <input type="date" id="regFrom" title="Від дати">
-          <input type="date" id="regTo"   title="До дати">
-          <input type="number" id="regMin" placeholder="Мін ₴" style="width:80px">
-          <input type="number" id="regMax" placeholder="Макс ₴" style="width:80px">
-          <button class="ghost-btn" onclick="loadRegistry(true)">Знайти</button>
-          <button class="ghost-btn" onclick="resetRegistry()">✕</button>
-          <button class="ghost-btn" id="regExportCsvBtn" title="Експорт у CSV" style="margin-left:auto">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>CSV
-          </button>
-        </div>
-        <div style="font-size:12px;opacity:.5;margin-bottom:8px;display:flex;gap:4px;align-items:center;flex-wrap:wrap" id="regTotal"></div>
-        <div class="card" style="padding:0">
-          <table class="table" aria-label="Реєстр транзакцій">
-            <thead><tr><th>ID</th><th>Дата</th><th>Користувач</th><th>Рахунок</th><th>Тип</th><th>Напрямок</th><th>Сума</th><th>Опис</th></tr></thead>
-            <tbody id="regTableBody"><tr><td colspan="8" class="muted" style="text-align:center;padding:24px">Застосуйте фільтр або натисніть ↻</td></tr></tbody>
-          </table>
-        </div>
-        <div class="pager">
-          <button id="regPrev" disabled onclick="registryPage(-1)">← Назад</button>
-          <span id="regPageInfo">—</span>
-          <button id="regNext" disabled onclick="registryPage(1)">Далі →</button>
-        </div>
-      </section>
-
-      <!-- ── SECURITY ──────────────────────────────────────────────── -->
-      <section id="securityTab" class="admin-tab hidden">
-        <h1>Безпека платежів</h1>
-
-        <div class="stats-row" id="fraudStats">
-          <div class="stat-card"><div class="stat-val" id="statBlocked">—</div><div class="stat-lbl">Заблоковано</div></div>
-          <div class="stat-card"><div class="stat-val" id="statCritical">—</div><div class="stat-lbl">Критичних</div></div>
-          <div class="stat-card"><div class="stat-val" id="statHigh">—</div><div class="stat-lbl">Високий ризик</div></div>
-          <div class="stat-card"><div class="stat-val" id="statUnresolved">—</div><div class="stat-lbl">Невирішено</div></div>
-        </div>
-
-        <div style="display:flex;align-items:center;justify-content:space-between;margin:24px 0 10px">
-          <h2 style="font-size:16px;font-weight:700">Платіжні ордери</h2>
-          <div class="filter-row" style="margin:0">
-            <select id="orderRiskFilter" style="font-size:12px">
-              <option value="">Усі рівні</option>
-              <option value="critical">Критичний</option>
-              <option value="high">Високий</option>
-              <option value="medium">Середній</option>
-              <option value="low">Низький</option>
-            </select>
-            <select id="orderStatusFilter" style="font-size:12px">
-              <option value="">Усі статуси</option>
-              <option value="blocked">Заблоковано</option>
-              <option value="completed">Виконано</option>
-              <option value="failed">Помилка</option>
-              <option value="pending">Очікує</option>
-            </select>
-            <input type="date" id="orderFromDate" title="Від дати" style="font-size:12px">
-            <input type="date" id="orderToDate"   title="До дати"  style="font-size:12px">
-            <button class="ghost-btn" onclick="loadOrders()" style="font-size:12px">↻</button>
-          </div>
-        </div>
-        <div class="card" style="padding:0">
-          <table class="table" aria-label="Платіжні ордери">
-            <thead><tr><th>ID</th><th>Відправник</th><th>Отримувач</th><th>Сума</th><th>Ризик</th><th>Статус</th><th>Час</th></tr></thead>
-            <tbody id="ordersTableBody"><tr><td colspan="7" class="muted" style="text-align:center;padding:24px">Завантаження…</td></tr></tbody>
-          </table>
-        </div>
-
-        <div style="display:flex;align-items:center;justify-content:space-between;margin:28px 0 10px">
-          <h2 style="font-size:16px;font-weight:700">Події ризику <span id="unresolvedBadge"></span></h2>
-          <button class="ghost-btn" onclick="loadRiskEvents()" style="font-size:12px">↻</button>
-        </div>
-        <div id="riskEventsList" class="list"></div>
-
-        <div style="margin-top:28px">
-          <h2 style="font-size:16px;font-weight:700;margin-bottom:10px">Цілісність транзакцій</h2>
-          <button id="integrityBtn" class="secondary-btn" onclick="runIntegrityCheck()">Перевірити хеш-ланцюг</button>
-          <pre id="integrityResult" style="margin-top:12px;font-size:12px;display:none"></pre>
-        </div>
-      </section>
-
-      <!-- ── AUDIT ──────────────────────────────────────────────────── -->
-      <section id="auditTab" class="admin-tab hidden">
-        <h1>Аудит-логи</h1>
-
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <h2 style="font-size:15px;font-weight:700;margin:0">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-3px;margin-right:5px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Виписки PDF
-          </h2>
-          <button class="ghost-btn" onclick="loadStatements()" style="font-size:12px">↻ Оновити</button>
-        </div>
-        <div class="card" style="padding:0;margin-bottom:24px">
-          <table class="table" aria-label="Завантажені виписки">
-            <thead><tr><th>Час</th><th>Користувач ID</th><th>Деталі</th></tr></thead>
-            <tbody id="statementsTableBody"><tr><td colspan="3" class="muted" style="text-align:center;padding:20px">Завантаження…</td></tr></tbody>
-          </table>
-        </div>
-
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <h2 style="font-size:15px;font-weight:700;margin:0">Загальні логи</h2>
-          <div class="filter-row" style="margin:0">
-            <select id="auditActionFilter" style="font-size:12px">
-              <option value="">Усі дії</option>
-              <option value="transfer">transfer</option>
-              <option value="payment_blocked">payment_blocked</option>
-              <option value="admin_payout">admin_payout</option>
-              <option value="admin_role_change">admin_role_change</option>
-              <option value="admin_balance_adjust">admin_balance_adjust</option>
-              <option value="payout_received">payout_received</option>
-            </select>
-            <input type="number" id="auditUserIdFilter" placeholder="User ID" style="width:90px;font-size:12px">
-            <button class="ghost-btn" onclick="loadAudit()" style="font-size:12px">↻ Оновити</button>
-          </div>
-        </div>
-        <div id="auditList" class="list"></div>
-      </section>
-
-      <!-- ── DOCS ──────────────────────────────────────────────────────── -->
-      <section id="docsTab" class="admin-tab hidden">
-        <h1>Документообіг</h1>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
-          <div class="card" style="box-shadow:none">
-            <h2 style="font-size:15px;font-weight:700;margin:0 0 14px">Новий шаблон</h2>
-            <div class="stack" style="gap:8px">
-              <input type="text" id="docTitle" placeholder="Назва документа" style="width:100%;font-size:13px;padding:7px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:inherit;box-sizing:border-box">
-              <select id="docCategory" style="width:100%;font-size:13px;padding:7px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:inherit;box-sizing:border-box">
-                <option value="general">Загальний</option>
-                <option value="financial">Фінансовий</option>
-                <option value="contract">Договір</option>
-                <option value="notice">Повідомлення</option>
-              </select>
-              <textarea id="docBody" placeholder="Текст документа…" rows="6" style="width:100%;font-size:13px;padding:7px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:inherit;resize:vertical;box-sizing:border-box;font-family:inherit"></textarea>
-              <button class="small-btn" style="width:100%" onclick="createDocTemplate()">Зберегти шаблон</button>
-            </div>
-          </div>
-          <div class="card" style="box-shadow:none">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-              <h2 style="font-size:15px;font-weight:700;margin:0">Шаблони</h2>
-              <button class="ghost-btn" onclick="loadDocTemplates()" style="font-size:12px">↻</button>
-            </div>
-            <div id="docTemplatesList"><div class="muted" style="font-size:13px;padding:12px 0">Завантаження…</div></div>
-          </div>
-        </div>
-
-        <div id="docSendPanel" class="card" style="box-shadow:none;margin-top:20px;display:none">
-          <h2 style="font-size:15px;font-weight:700;margin:0 0 14px">Надіслати документ</h2>
-          <div style="font-size:13px;opacity:.7;margin-bottom:10px">Шаблон: <strong id="docSendTemplateName">—</strong></div>
-          <input type="text" id="docSendNote" placeholder="Нотатка (необов'язково)…" style="width:100%;font-size:13px;padding:7px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:inherit;box-sizing:border-box;margin-bottom:10px">
-          <div style="margin-bottom:12px">
-            <div class="filter-row" style="margin-bottom:8px">
-              <input type="search" id="docUserSearch" placeholder="Пошук отримувача…" style="flex:1">
-              <button class="ghost-btn" onclick="searchDocUsers()" style="font-size:12px">Знайти</button>
-            </div>
-            <div id="docUserPickList" style="max-height:220px;overflow-y:auto;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px"></div>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button class="small-btn" onclick="sendDocToUsers()">Надіслати вибраним</button>
-            <button class="ghost-btn" onclick="closeDocSend()">Скасувати</button>
-          </div>
-        </div>
-
-        <div style="margin-top:24px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <h2 style="font-size:15px;font-weight:700;margin:0">Надіслані документи</h2>
-            <button class="ghost-btn" onclick="loadDocAssignments()" style="font-size:12px">↻</button>
-          </div>
-          <div class="card" style="padding:0">
-            <table class="table">
-              <thead><tr><th>ID</th><th>Шаблон</th><th>Отримувач</th><th>Нотатка</th><th>Дата</th></tr></thead>
-              <tbody id="docAssignmentsBody"><tr><td colspan="5" class="muted" style="text-align:center;padding:20px">Завантаження…</td></tr></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ═══════════════════════════ MARKETPLACE TAB ══════════════════════════ -->
-      <section id="marketplaceTab" class="admin-tab hidden">
-        <!-- Stats row -->
-        <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-          <h2 class="section-title">Маркетплейс</h2>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="secondary-btn" onclick="loadMarketplaceStats()">↻ Оновити</button>
-            <button class="primary-btn" onclick="openProductModal()">+ Додати товар</button>
-          </div>
-        </div>
-
-        <div id="mktStats" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:24px"></div>
-
-        <!-- Sub-tabs -->
-        <div style="display:flex;gap:0;border-bottom:2px solid var(--border-color);margin-bottom:20px">
-          <button class="mkt-subtab active" data-subtab="products"  onclick="switchMktSubtab('products')">Товари</button>
-          <button class="mkt-subtab" data-subtab="orders"    onclick="switchMktSubtab('orders')">Замовлення</button>
-          <button class="mkt-subtab" data-subtab="customers" onclick="switchMktSubtab('customers')">Клієнти</button>
-          <button class="mkt-subtab" data-subtab="analytics" onclick="switchMktSubtab('analytics')">Аналітика</button>
-        </div>
-
-        <!-- Products sub-tab -->
-        <div id="mktProducts">
-          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-            <input id="mktSearch" class="field-input" placeholder="Пошук товару…" style="flex:1;min-width:180px" oninput="debounceLoadProducts()">
-            <select id="mktActiveFilter" class="field-input" style="width:160px" onchange="loadAdminProducts()">
-              <option value="">Всі</option>
-              <option value="true">Активні</option>
-              <option value="false">Неактивні</option>
-            </select>
-          </div>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead><tr>
-                <th style="width:40px">ID</th>
-                <th>Товар</th>
-                <th style="width:110px">Ціна</th>
-                <th style="width:80px">Залишок</th>
-                <th style="width:80px">Статус</th>
-                <th style="width:130px">Дії</th>
-              </tr></thead>
-              <tbody id="mktProductsBody"><tr><td colspan="6" class="muted" style="text-align:center;padding:20px">Завантаження…</td></tr></tbody>
-            </table>
-          </div>
-          <div id="mktProductsPager" style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;align-items:center"></div>
-        </div>
-
-        <!-- Orders sub-tab -->
-        <div id="mktOrders" style="display:none">
-          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
-            <select id="mktOrderStatus" class="field-input" style="width:175px" onchange="_mktOrdersPage=1;loadAdminOrders()">
-              <option value="">Всі статуси</option>
-              <option value="paid">Оплачено</option>
-              <option value="awaiting_payment">Очікує оплати</option>
-              <option value="processing">В обробці</option>
-              <option value="shipped">Відправлено</option>
-              <option value="delivered">Доставлено</option>
-              <option value="cancelled">Скасовано</option>
-            </select>
-            <input id="mktOrderFrom" type="date" class="field-input" style="width:138px" title="Від дати" onchange="_mktOrdersPage=1;loadAdminOrders()">
-            <input id="mktOrderTo"   type="date" class="field-input" style="width:138px" title="До дати"  onchange="_mktOrdersPage=1;loadAdminOrders()">
-            <input id="mktOrderCustSearch" class="field-input" placeholder="Клієнт / телефон…" style="flex:1;min-width:140px" oninput="debounceLoadOrders()">
-            <button class="secondary-btn" onclick="exportMktOrdersCsv()" title="Експорт CSV" style="white-space:nowrap">
-              ↓ CSV
-            </button>
-          </div>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead><tr>
-                <th style="width:60px">ID</th>
-                <th>Клієнт</th>
-                <th>Адреса</th>
-                <th style="width:110px">Сума</th>
-                <th style="width:110px">Статус</th>
-                <th style="width:130px">Дії</th>
-              </tr></thead>
-              <tbody id="mktOrdersBody"><tr><td colspan="6" class="muted" style="text-align:center;padding:20px">Завантаження…</td></tr></tbody>
-            </table>
-          </div>
-          <div id="mktOrdersPager" style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;align-items:center"></div>
-        </div>
-
-        <!-- Customers sub-tab -->
-        <div id="mktCustomers" style="display:none">
-          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-            <input id="mktCustSearch" class="field-input" placeholder="Пошук за ім'ям / телефоном…" style="flex:1;min-width:200px" oninput="debounceLoadCustomers()">
-            <button class="secondary-btn" onclick="loadAdminCustomers()">↻ Оновити</button>
-          </div>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead><tr>
-                <th>Клієнт</th>
-                <th style="width:90px;text-align:center">Замовлень</th>
-                <th style="width:140px">Витрачено</th>
-                <th style="width:150px">Останнє замовлення</th>
-                <th style="width:110px"></th>
-              </tr></thead>
-              <tbody id="mktCustomersBody"><tr><td colspan="5" class="muted" style="text-align:center;padding:20px">Завантаження…</td></tr></tbody>
-            </table>
-          </div>
-          <div id="mktCustomersPager" style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;align-items:center"></div>
-        </div>
-
-        <!-- Analytics sub-tab -->
-        <div id="mktAnalytics" style="display:none">
-          <div id="mktLowStockPanel" style="margin-bottom:18px"></div>
-          <div class="chart-wrap" style="margin-bottom:24px">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-              <h3 style="font-size:13px;font-weight:700;margin:0;opacity:.75">Виручка за 30 днів</h3>
-            </div>
-            <div id="mktRevenueChartWrap" style="overflow-x:auto;min-height:160px"></div>
-          </div>
-          <div id="mktTopProducts" style="margin-bottom:24px"></div>
-        </div>
-      </section>
-
-      <!-- Customer detail modal -->
-      <div id="customerDetailModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
-        <div style="background:var(--surface);border-radius:12px;padding:28px;width:min(96vw,620px);max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.35)">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-            <h3 id="custModalTitle" style="margin:0;font-size:1.1rem">Клієнт</h3>
-            <button onclick="closeCustomerModal()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text-secondary)">×</button>
-          </div>
-          <div id="custModalBody"></div>
-        </div>
-      </div>
-
-      <!-- Order detail modal -->
-      <div id="orderDetailModal" style="display:none;position:fixed;inset:0;z-index:1001;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
-        <div style="background:var(--surface);border-radius:12px;padding:28px;width:min(96vw,660px);max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.35)">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-            <h3 id="orderDetailTitle" style="margin:0;font-size:1.1rem">Замовлення</h3>
-            <button onclick="closeOrderDetailModal()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text-secondary)">×</button>
-          </div>
-          <div id="orderDetailBody"></div>
-        </div>
-      </div>
-
-      <!-- Product modal -->
-      <div id="productModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
-        <div style="background:var(--surface);border-radius:12px;padding:28px;width:min(96vw,540px);max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.35)">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-            <h3 id="productModalTitle" style="margin:0;font-size:1.1rem">Додати товар</h3>
-            <button onclick="closeProductModal()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text-secondary)">×</button>
-          </div>
-          <form id="productForm" onsubmit="saveProduct(event)">
-            <input type="hidden" id="productId">
-            <div style="display:grid;gap:14px">
-              <div>
-                <label class="field-label">Назва *</label>
-                <input id="pTitle" class="field-input" required placeholder="Назва товару">
-              </div>
-              <div>
-                <label class="field-label">Опис</label>
-                <textarea id="pDescription" class="field-input" rows="3" placeholder="Короткий опис…" style="resize:vertical"></textarea>
-              </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                <div>
-                  <label class="field-label">Ціна (грн) *</label>
-                  <input id="pPrice" class="field-input" type="number" min="0" step="0.01" required placeholder="0.00">
-                </div>
-                <div>
-                  <label class="field-label">Залишок</label>
-                  <input id="pStock" class="field-input" type="number" min="0" step="1" value="0" placeholder="0">
-                </div>
-              </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                <div>
-                  <label class="field-label">Емодзі</label>
-                  <input id="pEmoji" class="field-input" placeholder="🛍️" maxlength="4" style="font-size:1.5rem;text-align:center">
-                </div>
-                <div>
-                  <label class="field-label">Бейдж</label>
-                  <select id="pBadge" class="field-input">
-                    <option value="">Без бейджа</option>
-                    <option>NEW</option><option>HOT</option><option>TOP</option>
-                    <option>SALE</option><option>ARM DEAL</option><option>PRO</option>
-                  </select>
-                </div>
-              </div>
-              <div style="display:flex;align-items:center;gap:10px">
-                <input id="pActive" type="checkbox" checked style="width:18px;height:18px;cursor:pointer">
-                <label for="pActive" class="field-label" style="margin:0;cursor:pointer">Активний (відображається у каталозі)</label>
-              </div>
-              <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
-                <button type="button" class="secondary-btn" onclick="closeProductModal()">Скасувати</button>
-                <button type="submit" class="primary-btn" id="productSaveBtn">Зберегти</button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- Order status modal -->
-      <div id="orderStatusModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
-        <div style="background:var(--surface);border-radius:12px;padding:28px;width:min(96vw,380px);box-shadow:0 8px 40px rgba(0,0,0,.35)">
-          <h3 style="margin:0 0 16px;font-size:1.1rem">Змінити статус замовлення #<span id="osOrderId"></span></h3>
-          <select id="osStatus" class="field-input" style="width:100%;margin-bottom:18px">
-            <option value="paid">Оплачено</option>
-            <option value="processing">В обробці</option>
-            <option value="shipped">Відправлено</option>
-            <option value="delivered">Доставлено</option>
-            <option value="cancelled">Скасовано</option>
-            <option value="awaiting_payment">Очікує оплати</option>
-          </select>
-          <div style="display:flex;gap:10px;justify-content:flex-end">
-            <button class="secondary-btn" onclick="closeOrderStatusModal()">Скасувати</button>
-            <button class="primary-btn" onclick="confirmOrderStatus()">Зберегти</button>
-          </div>
-        </div>
-      </div>
-
-      <footer class="app-footer">
-        <a href="https://munister.com.ua/army-bank" target="_blank" rel="noopener">munister.com.ua</a>
-      </footer>
-    </main>
+      <div id="loginError" class="form-error hidden"></div>
+      <button type="submit" class="btn-primary" id="loginBtn">Увійти</button>
+    </form>
   </div>
+</div>
 
-  <div id="backdrop" class="backdrop"></div>
-  <aside id="drawer" class="drawer" aria-label="User details">
-    <div class="drawer-header">
-      <div>
-        <strong id="drawerTitle">Користувач</strong>
-        <div class="subtle" id="drawerSub">—</div>
-      </div>
-      <button id="drawerClose" class="ghost-btn" type="button">Закрити</button>
+<!-- ═══════════════════════════ ADMIN APP ═══════════════════════════ -->
+<div id="adminApp" class="admin-app hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo" style="color:#d4c4b5">
+      <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <path d="M20 4L36 12V28L20 36L4 28V12L20 4Z" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M20 10L30 15V25L20 30L10 25V15L20 10Z" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M16 20h8M20 16v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="sidebar-brand">Army<strong>Bank</strong> · Адмін</span>
     </div>
-    <div class="drawer-body">
-      <div class="stack">
-        <div class="card" style="box-shadow:none">
-          <div class="subtle">Рахунок</div>
-          <div style="margin-top:8px"><strong id="drawerBalance">—</strong></div>
-          <div class="subtle" id="drawerAccount">—</div>
-        </div>
-
-        <!-- Role change -->
-        <div class="card" style="box-shadow:none">
-          <div class="drawer-section">
-            <h4>Роль</h4>
-            <div class="adjust-row">
-              <select id="drawerRoleSelect">
-                <option value="soldier">Клієнт</option>
-                <option value="operator">Оператор</option>
-                <option value="admin">Адмін</option>
-                <option value="platform_admin">Платформа</option>
-              </select>
-              <button class="small-btn" id="drawerSaveRole">Зберегти</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Payout -->
-        <div class="card" style="box-shadow:none">
-          <div class="drawer-section">
-            <h4>Нарахування виплати</h4>
-            <div class="adjust-row">
-              <input type="number" id="drawerPayoutAmt" placeholder="Сума ₴" min="1">
-              <input type="text"   id="drawerPayoutTitle" placeholder="Назва" style="flex:2">
-            </div>
-            <button class="small-btn" style="margin-top:6px;width:100%" id="drawerSendPayout">Нарахувати</button>
-          </div>
-        </div>
-
-        <!-- Balance adjust -->
-        <div class="card" style="box-shadow:none">
-          <div class="drawer-section">
-            <h4>Коригування балансу</h4>
-            <div class="adjust-row">
-              <input type="number" id="drawerAdjAmt" placeholder="Сума ₴" min="1">
-              <select id="drawerAdjType">
-                <option value="credit">Кредит +</option>
-                <option value="debit">Дебет −</option>
-              </select>
-            </div>
-            <input type="text" id="drawerAdjReason" placeholder="Причина коригування" style="margin-top:6px;width:100%;font-size:12px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:inherit;box-sizing:border-box">
-            <button class="small-btn" style="margin-top:6px;width:100%" id="drawerAdjSubmit">Провести</button>
-          </div>
-        </div>
-
-        <div class="card" style="box-shadow:none">
-          <div class="subtle">Останні транзакції</div>
-          <div id="drawerTx" class="list" style="margin-top:12px"></div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+        Дешборд
+      </a>
+      <a href="#" class="nav-item" data-page="users">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zm8 0a3 3 0 11-6 0 3 3 0 016 0zM9.293 14.707A3.5 3.5 0 007 11.5H3a3.5 3.5 0 00-3.5 3.5V17h6v-1.293zM19.5 15A3.5 3.5 0 0017 11.5h-4a3.5 3.5 0 00-3.5 3.5V17H20v-2z"/></svg>
+        Користувачі
+      </a>
+      <a href="#" class="nav-item" data-page="kyc">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1l7 3v5c0 5.2-3.8 8.7-7 10-3.2-1.3-7-4.8-7-10V4l7-3zm3.2 6.4a1 1 0 00-1.4-1.4L9 8.8 8.2 8a1 1 0 00-1.4 1.4l1.5 1.5a1 1 0 001.4 0l3.5-3.5z" clip-rule="evenodd"/></svg>
+        KYC
+      </a>
+      <a href="#" class="nav-item" data-page="transactions">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+        Транзакції
+      </a>
+      <a href="#" class="nav-item" data-page="payouts">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>
+        Виплати
+      </a>
+      <a href="#" class="nav-item" data-page="analytics">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 3a1 1 0 011 1v12h12a1 1 0 110 2H3a1 1 0 01-1-1V4a1 1 0 011-1zm4 9a1 1 0 011-1h1a1 1 0 011 1v3H7v-3zm4-4a1 1 0 011-1h1a1 1 0 011 1v7h-3V8zm-8 2a1 1 0 011-1h1a1 1 0 011 1v5H3v-5z"/></svg>
+        Аналітика
+      </a>
+      <a href="#" class="nav-item" data-page="messenger-analytics">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 10a7 7 0 1112.14 4.86L18 18l-4.14-3.86A7 7 0 012 10zm4-1a1 1 0 100 2h6a1 1 0 100-2H6zm0-3a1 1 0 100 2h8a1 1 0 100-2H6z"/></svg>
+        Месенджер
+      </a>
+      <a href="#" class="nav-item" data-page="audit">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+        Аудит
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip" id="sidebarUser">
+        <div class="user-avatar" id="sidebarAvatar">A</div>
+        <div class="user-info">
+          <span class="user-name" id="sidebarName">Admin</span>
+          <span class="user-role" id="sidebarRole">admin</span>
         </div>
       </div>
-    </div>
-    <div class="drawer-footer">
-      <div class="btn-row">
-        <a class="menu-btn nav-link" id="drawerOpenBank" href="https://army-bank.onrender.com/dashboard">Відкрити як користувач</a>
-      </div>
+      <button class="btn-logout" id="logoutBtn" title="Вийти">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h7a1 1 0 000-2H4V5h6a1 1 0 000-2H3zm11.293 4.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L15.586 11H9a1 1 0 010-2h6.586l-1.293-1.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </button>
     </div>
   </aside>
 
-  <div id="toast" class="toast hidden"></div>
-  <script>window.ARMY_BANK_BASE = 'https://army-bank.onrender.com';</script>
-  <script src="js/api.js?v=14"></script>
-  <script src="js/admin.js?v=6"></script>
+  <!-- MOBILE TOPBAR -->
+  <header class="topbar" id="topbar">
+    <button class="menu-toggle" id="menuToggle">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+    </button>
+    <span class="topbar-title" id="topbarTitle">Дешборд</span>
+    <div style="width:36px"></div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ── DASHBOARD PAGE ── -->
+    <section id="page-dashboard" class="page active">
+      <div class="page-header">
+        <h2>Дешборд</h2>
+        <button class="btn-refresh" id="refreshStats">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+          Оновити
+        </button>
+      </div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card loading"><div class="stat-shimmer"></div></div>
+        <div class="stat-card loading"><div class="stat-shimmer"></div></div>
+        <div class="stat-card loading"><div class="stat-shimmer"></div></div>
+        <div class="stat-card loading"><div class="stat-shimmer"></div></div>
+        <div class="stat-card loading"><div class="stat-shimmer"></div></div>
+      </div>
+      <div class="section-title">Розподіл за ролями</div>
+      <div class="roles-grid" id="rolesGrid"></div>
+      <div class="section-title">Останні транзакції</div>
+      <div class="table-wrap">
+        <table class="data-table" id="recentTxTable">
+          <thead><tr>
+            <th>Дата</th><th>Рахунок</th><th>Тип</th><th>Напрямок</th><th>Сума</th><th>Опис</th>
+          </tr></thead>
+          <tbody id="recentTxBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── USERS PAGE ── -->
+    <section id="page-users" class="page">
+      <div class="page-header">
+        <h2>Користувачі</h2>
+      </div>
+      <div class="filters-bar">
+        <input type="text" id="userSearch" placeholder="Пошук за ім'ям, телефоном, email…" class="filter-input" />
+        <select id="userRoleFilter" class="filter-select">
+          <option value="">Всі ролі</option>
+          <option value="soldier">Солдат</option>
+          <option value="operator">Оператор</option>
+          <option value="admin">Адмін</option>
+          <option value="platform_admin">Platform Admin</option>
+        </select>
+        <button class="btn-secondary" id="searchUsersBtn">Знайти</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="usersTable">
+          <thead><tr>
+            <th>ID</th><th>ПІБ</th><th>Телефон</th><th>Email</th><th>Роль</th><th>Статус</th><th>Зареєстровано</th><th>Дії</th>
+          </tr></thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </div>
+      <div id="usersEmpty" class="empty-state hidden">Користувачів не знайдено.</div>
+    </section>
+
+    <!-- ── USER DETAIL MODAL ── -->
+    <div id="userModal" class="modal-overlay hidden">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-header-left">
+            <div class="modal-avatar" id="modalAvatar">A</div>
+            <div>
+              <h3 id="modalUserName">Користувач</h3>
+              <span id="modalUserRoleBadge"></span>
+            </div>
+          </div>
+          <button class="modal-close" id="modalClose">✕</button>
+        </div>
+        <!-- TABS -->
+        <div class="modal-tabs">
+          <button class="modal-tab active" data-tab="info">Інфо</button>
+          <button class="modal-tab" data-tab="actions">Дії</button>
+          <button class="modal-tab" data-tab="txs">Транзакції</button>
+        </div>
+        <!-- TAB: INFO -->
+        <div class="modal-tab-content active" id="tab-info">
+          <div class="modal-section">
+            <div class="modal-row"><span>ID</span><span id="mUserId">—</span></div>
+            <div class="modal-row"><span>Email</span><span id="mUserEmail">—</span></div>
+            <div class="modal-row"><span>Телефон</span><span id="mUserPhone">—</span></div>
+            <div class="modal-row"><span>Роль</span><span id="mUserRole">—</span></div>
+            <div class="modal-row"><span>Статус</span><span id="mUserStatus">—</span></div>
+            <div class="modal-row"><span>Зареєстровано</span><span id="mUserCreated">—</span></div>
+          </div>
+          <div class="modal-section" id="mAccountSection">
+            <div class="section-title" style="margin:0 0 12px">Рахунок</div>
+            <div class="modal-row"><span>Номер</span><code id="mAccNumber" style="font-size:.82rem">—</code></div>
+            <div class="modal-row"><span>Баланс</span><b id="mAccBalance" style="color:var(--gold)">—</b></div>
+          </div>
+        </div>
+        <!-- TAB: ACTIONS -->
+        <div class="modal-tab-content hidden" id="tab-actions">
+          <div class="modal-section">
+            <div class="section-title" style="margin:0 0 12px">Змінити роль</div>
+            <div class="inline-form">
+              <select id="mRoleSelect" class="filter-select">
+                <option value="soldier">Солдат</option>
+                <option value="operator">Оператор</option>
+                <option value="admin">Адмін</option>
+                <option value="platform_admin">Platform Admin</option>
+              </select>
+              <button class="btn-primary" id="saveRoleBtn">Зберегти</button>
+            </div>
+            <div id="roleChangeMsg" class="form-msg hidden"></div>
+          </div>
+          <div class="modal-section">
+            <div class="section-title" style="margin:0 0 12px">Нарахувати виплату</div>
+            <div class="inline-form">
+              <input type="number" id="mPayoutAmount" class="filter-input" placeholder="Сума, грн" min="1" />
+              <input type="text" id="mPayoutTitle" class="filter-input" placeholder="Призначення" />
+              <button class="btn-primary" id="mPayoutBtn">Нарахувати</button>
+            </div>
+            <div id="payoutMsg" class="form-msg hidden"></div>
+          </div>
+        </div>
+        <!-- TAB: TRANSACTIONS -->
+        <div class="modal-tab-content hidden" id="tab-txs">
+          <div class="modal-section" style="padding-bottom:0">
+            <div id="mTxLoading" style="padding:24px;text-align:center;color:var(--text-muted);font-size:.85rem">Завантаження…</div>
+            <div class="table-wrap" id="mTxWrap" style="display:none;border:none;border-radius:0">
+              <table class="data-table" id="mTxTable">
+                <thead><tr>
+                  <th>Дата</th><th>Тип</th><th>Dir</th><th>Сума</th><th>Опис</th>
+                </tr></thead>
+                <tbody id="mTxBody"></tbody>
+              </table>
+            </div>
+            <div id="mTxEmpty" style="display:none;padding:24px;text-align:center;color:var(--text-muted);font-size:.85rem">Транзакцій немає.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── KYC PAGE ── -->
+    <section id="page-kyc" class="page">
+      <div class="page-header">
+        <h2>KYC верифікація</h2>
+        <button class="btn-refresh" id="refreshKycBtn">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+          Оновити
+        </button>
+      </div>
+
+      <div class="filters-bar">
+        <input type="text" id="kycSearch" placeholder="Пошук користувача…" class="filter-input" />
+        <select id="kycStatusFilter" class="filter-select">
+          <option value="">Всі KYC статуси</option>
+          <option value="pending">Очікує</option>
+          <option value="in_review">На перевірці</option>
+          <option value="verified">KYC пройдена</option>
+          <option value="rejected">Відхилено</option>
+          <option value="not_started">Не почато</option>
+        </select>
+        <button class="btn-secondary" id="searchKycBtn">Знайти</button>
+      </div>
+
+      <div class="kyc-layout">
+        <div class="table-wrap">
+          <table class="data-table" id="kycTable">
+            <thead><tr>
+              <th>ID</th><th>Користувач</th><th>KYC</th><th>AML</th><th>Ризик</th><th>Оновлено</th><th>Дії</th>
+            </tr></thead>
+            <tbody id="kycBody"></tbody>
+          </table>
+        </div>
+
+        <aside class="kyc-panel" id="kycPanel">
+          <div id="kycPlaceholder" class="empty-state">
+            Оберіть користувача в таблиці, завантажте скан паспорта та підтвердіть верифікацію.
+          </div>
+
+          <div id="kycVerifier" class="hidden">
+            <div class="section-title" style="margin-top:0">Профіль</div>
+            <div class="modal-row"><span>Користувач</span><b id="kycUserName">—</b></div>
+            <div class="modal-row"><span>Email</span><span id="kycUserEmail">—</span></div>
+            <div class="modal-row"><span>Телефон</span><span id="kycUserPhone">—</span></div>
+            <div class="modal-row"><span>Поточний KYC</span><span id="kycCurrentStatus">—</span></div>
+
+            <div class="section-title">Паспортний скан</div>
+            <div class="field-group">
+              <label>Файл скану (JPG/PNG/WEBP/PDF)</label>
+              <input type="file" id="kycScanFile" accept="image/*,application/pdf" class="filter-input" />
+            </div>
+            <div id="kycScanPreview" class="kyc-scan-preview hidden"></div>
+
+            <div class="field-group">
+              <label>Номер паспорта</label>
+              <input type="text" id="kycPassportNumber" class="filter-input" placeholder="AA123456 або 123456789" />
+            </div>
+
+            <div class="field-group">
+              <label>ПІБ із документа</label>
+              <input type="text" id="kycDocumentName" class="filter-input" placeholder="Як у паспорті" />
+            </div>
+
+            <label class="check-row">
+              <input type="checkbox" id="kycManualConfirm" />
+              <span>Я підтверджую, що скан перевірено вручну і дані співпадають.</span>
+            </label>
+
+            <div id="kycVerifyMsg" class="form-msg hidden"></div>
+            <div id="kycChecks" class="kyc-checks hidden"></div>
+
+            <button class="btn-primary" id="kycVerifyBtn">Підтвердити KYC</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── TRANSACTIONS PAGE ── -->
+    <section id="page-transactions" class="page">
+      <div class="page-header">
+        <h2>Транзакції</h2>
+        <span class="count-badge" id="txCount">—</span>
+      </div>
+      <div class="filters-bar wrap">
+        <select id="txTypeFilter" class="filter-select">
+          <option value="">Всі типи</option>
+          <option value="payout">Виплата</option>
+          <option value="donation">Донат</option>
+          <option value="transfer">Переказ</option>
+          <option value="deposit">Депозит</option>
+          <option value="withdrawal">Зняття</option>
+        </select>
+        <select id="txDirFilter" class="filter-select">
+          <option value="">Всі напрямки</option>
+          <option value="in">Зарахування</option>
+          <option value="out">Списання</option>
+        </select>
+        <input type="date" id="txFromDate" class="filter-input" title="Від дати" />
+        <input type="date" id="txToDate" class="filter-input" title="До дати" />
+        <button class="btn-secondary" id="filterTxBtn">Фільтрувати</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="txTable">
+          <thead><tr>
+            <th>Дата</th><th>Користувач</th><th>Рахунок</th><th>Тип</th><th>Напрямок</th><th>Сума</th><th>Опис</th>
+          </tr></thead>
+          <tbody id="txBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination-bar" id="txPagination"></div>
+    </section>
+
+    <!-- ── PAYOUTS PAGE ── -->
+    <section id="page-payouts" class="page">
+      <div class="page-header">
+        <h2>Нарахувати виплату</h2>
+      </div>
+      <div class="form-card">
+        <div class="field-group">
+          <label>Користувач (пошук за ім'ям / телефоном)</label>
+          <div class="user-search-wrap">
+            <input type="text" id="payoutUserSearch" class="filter-input" placeholder="Почніть вводити…" autocomplete="off" />
+            <div id="payoutUserDropdown" class="user-dropdown hidden"></div>
+          </div>
+          <div id="selectedUserChip" class="selected-user hidden">
+            <span id="selectedUserName">—</span>
+            <button id="clearSelectedUser">✕</button>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Сума (грн)</label>
+            <input type="number" id="payoutAmount" class="filter-input" placeholder="0.00" min="0.01" step="0.01" />
+          </div>
+          <div class="field-group">
+            <label>Тип виплати</label>
+            <select id="payoutType" class="filter-select">
+              <option value="combat">Бойова виплата</option>
+              <option value="salary">Грошове забезпечення</option>
+              <option value="bonus">Бонус</option>
+              <option value="other">Інше</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Призначення</label>
+          <input type="text" id="payoutTitle" class="filter-input" placeholder="Бойова виплата" />
+        </div>
+        <div id="payoutFormMsg" class="form-msg hidden"></div>
+        <button class="btn-primary gold" id="submitPayoutBtn" disabled>Нарахувати</button>
+      </div>
+    </section>
+
+    <!-- ── ANALYTICS PAGE ── -->
+    <section id="page-analytics" class="page">
+      <div class="page-header">
+        <h2>Платформна аналітика</h2>
+        <button class="btn-refresh" id="refreshAnalyticsBtn">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+          Оновити
+        </button>
+      </div>
+      <div class="stats-grid" id="analyticsKpiGrid"></div>
+      <div class="analytics-grid">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Action queue</th><th>Кількість</th></tr></thead>
+            <tbody id="analyticsActionQueueBody"></tbody>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Операційні алерти</th><th>Severity</th></tr></thead>
+            <tbody id="analyticsAlertsBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="analytics-grid">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Тип транзакції</th><th>К-сть</th><th>Сума</th></tr></thead>
+            <tbody id="analyticsTopTypesBody"></tbody>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Дата</th><th>Inflow</th><th>Outflow</th><th>Net</th></tr></thead>
+            <tbody id="analyticsDailyFlowBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MESSENGER ANALYTICS PAGE ── -->
+    <section id="page-messenger-analytics" class="page">
+      <div class="page-header">
+        <h2>Месенджер аналітика</h2>
+        <button class="btn-refresh" id="refreshMessengerAnalyticsBtn">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+          Оновити
+        </button>
+      </div>
+      <div class="stats-grid" id="messengerKpiGrid"></div>
+      <div class="table-wrap" style="margin-bottom:16px">
+        <table class="data-table">
+          <thead><tr><th>Алерти месенджера</th><th>Severity</th></tr></thead>
+          <tbody id="messengerAlertsBody"></tbody>
+        </table>
+      </div>
+      <div class="analytics-grid">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Тип повідомлення (30д)</th><th>К-сть</th></tr></thead>
+            <tbody id="messengerMsgTypesBody"></tbody>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Топ діалогів (7д)</th><th>Група</th><th>Повідомлень</th></tr></thead>
+            <tbody id="messengerTopConversationsBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-top:16px">
+        <table class="data-table">
+          <thead><tr><th>Дата</th><th>Дзвінків</th></tr></thead>
+          <tbody id="messengerCallsDailyBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── AUDIT PAGE ── -->
+    <section id="page-audit" class="page">
+      <div class="page-header">
+        <h2>Журнал аудиту</h2>
+        <button class="btn-refresh" id="refreshAudit">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+          Оновити
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="auditTable">
+          <thead><tr>
+            <th>Дата</th><th>User ID</th><th>Подія</th><th>Деталі</th>
+          </tr></thead>
+          <tbody id="auditBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="js/api.js?v=7"></script>
+<script src="js/app.js?v=7"></script>
 </body>
 </html>
