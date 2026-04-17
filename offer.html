@@ -38,6 +38,15 @@ nav{
 .n-r{margin-left:auto;border-left:1px solid var(--b1);height:100%;display:flex;align-items:center}
 .n-r a{padding:0 22px;font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--ac);transition:color .2s}
 .n-r a:hover{color:var(--t1)}
+.mode-switch{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.mode-link{
+  font-size:10px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--t3);border:1px solid var(--b1);padding:5px 10px;transition:all .2s;
+}
+.mode-link:hover{color:var(--t1);border-color:var(--b2)}
+.mode-link.is-active{color:#0a0a0a;background:var(--ac);border-color:var(--ac)}
+.mode-link.is-active:hover{color:#0a0a0a}
+.mode-hide{display:none !important}
 
 /* ══ HERO ══ */
 .hero{
@@ -55,6 +64,15 @@ nav{
     repeating-linear-gradient(0deg,transparent,transparent 79px,var(--b1) 79px,var(--b1) 80px),
     repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(28,28,28,.6) 79px,rgba(28,28,28,.6) 80px);
   opacity:.12;
+}
+.hero-photo{
+  position:absolute;inset:40px 0 0 42%;
+  background:url('/images/cafe-interior-1.jpg') center/cover no-repeat;
+  opacity:.34;filter:saturate(.88) contrast(.92);
+}
+.hero-photo::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,#050505 0%,rgba(5,5,5,.28) 45%,rgba(5,5,5,.75) 100%);
 }
 .hero-kicker{
   position:absolute;top:72px;left:40px;
@@ -80,6 +98,7 @@ nav{
 .hero-lead{font-size:19px;color:#cecece;line-height:1.85;max-width:640px}
 .hero-lead strong{color:var(--t1);font-weight:400}
 .hero-cta-wrap{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.hero-modes{margin-bottom:18px}
 .hero-show{
   position:relative;min-height:360px;border:1px solid var(--b1);overflow:hidden;
   background:#0c0c0c;
@@ -106,6 +125,14 @@ nav{
   position:absolute;left:18px;bottom:16px;right:18px;z-index:2;
   font-size:14px;line-height:1.6;color:#e2ded8;max-width:440px;
 }
+.hero-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:24px;max-width:600px;
+}
+.hero-stat{
+  border:1px solid var(--b1);padding:12px 10px;background:rgba(9,9,9,.74);
+}
+.hero-stat-v{font-family:var(--serif);font-size:24px;line-height:1;color:var(--t1);margin-bottom:5px}
+.hero-stat-l{font-size:10px;letter-spacing:.9px;text-transform:uppercase;color:var(--t3)}
 .btn{
   padding:13px 28px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
   font-family:var(--sans);cursor:pointer;border:none;transition:all .22s;
@@ -496,6 +523,7 @@ footer a:hover{color:var(--t2)}
 
 /* ══ RESPONSIVE ══ */
 @media(max-width:1100px){
+  .hero-photo{inset:40px 0 0 0;opacity:.22}
   .hero-row{grid-template-columns:1fr}
   .hero-show{min-height:320px}
   .plans-grid{grid-template-columns:1fr 1fr}
@@ -525,6 +553,9 @@ footer a:hover{color:var(--t2)}
   .hero-lead{font-size:16px;line-height:1.75}
   .hero-show{min-height:270px}
   .hero-show-note{font-size:13px;line-height:1.55}
+  .hero-stats{grid-template-columns:1fr;max-width:none}
+  .hero-stat-v{font-size:22px}
+  .hero-modes .mode-link{padding:5px 8px;font-size:9px}
   .btn{font-size:11px;padding:12px 18px;letter-spacing:1.2px}
   .plan-media{margin:0 -20px 20px;height:144px}
   .ops-head{padding:48px 20px 24px}
@@ -556,16 +587,23 @@ footer a:hover{color:var(--t2)}
 <nav>
   <a href="/" class="n-logo"><span class="n-dot"></span>V. Munister</a>
   <ul class="n-links">
-    <li><a href="/#methodology">Методологія</a></li>
-    <li><a href="/#cases">Кейси</a></li>
-    <li><a href="/#experience">Досвід</a></li>
+    <li><a href="#plans">Тарифи</a></li>
+    <li><a href="#shop-packs">Магазини</a></li>
+    <li><a href="#constructor">Конструктор</a></li>
     <li><a href="/offer/" class="act">Послуги</a></li>
   </ul>
+  <div class="mode-switch" style="margin-left:auto;padding:0 12px;border-left:1px solid var(--b1);height:100%;display:flex;align-items:center">
+    <a class="mode-link" data-mode-link="all" data-mode-hash="plans" href="?mode=all#plans">All</a>
+    <a class="mode-link" data-mode-link="services" data-mode-hash="plans" href="?mode=services#plans">Service</a>
+    <a class="mode-link" data-mode-link="shop" data-mode-hash="shop-packs" href="?mode=shop#shop-packs">Shop</a>
+    <a class="mode-link" data-mode-link="horeca" data-mode-hash="plans" href="?mode=horeca#plans">HoReCa</a>
+  </div>
   <div class="n-r"><a href="mailto:munister@outlook.com">Написати ↗</a></div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
+  <div class="hero-photo"></div>
   <div class="hero-bg"></div>
   <div class="hero-grid-lines"></div>
   <div class="hero-kicker">
@@ -583,6 +621,12 @@ footer a:hover{color:var(--t2)}
     </h1>
     <div class="hero-row">
       <div class="hero-copy">
+        <div class="mode-switch hero-modes">
+          <a class="mode-link" data-mode-link="all" data-mode-hash="plans" href="?mode=all#plans">Усі режими</a>
+          <a class="mode-link" data-mode-link="services" data-mode-hash="plans" href="?mode=services#plans">Сайти та apps</a>
+          <a class="mode-link" data-mode-link="shop" data-mode-hash="shop-packs" href="?mode=shop#shop-packs">Магазини</a>
+          <a class="mode-link" data-mode-link="horeca" data-mode-hash="plans" href="?mode=horeca#plans">HoReCa</a>
+        </div>
         <p class="hero-lead">
           Платите щомісяця — отримуєте <strong>готовий сайт або додаток,
           хостинг, SSL і технічну підтримку</strong>. Без великих витрат на старті.
@@ -591,6 +635,11 @@ footer a:hover{color:var(--t2)}
         <div class="hero-cta-wrap">
           <a href="#plans" class="btn btn-ac">Переглянути тарифи ↓</a>
           <a href="#constructor" class="btn btn-gh">Конструктор</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="hero-stat-v">24h</div><div class="hero-stat-l">Відповідь на запит</div></div>
+          <div class="hero-stat"><div class="hero-stat-v">3+</div><div class="hero-stat-l">Режими бізнесу</div></div>
+          <div class="hero-stat"><div class="hero-stat-v">1</div><div class="hero-stat-l">Команда під ключ</div></div>
         </div>
       </div>
       <div class="hero-show">
@@ -606,7 +655,7 @@ footer a:hover{color:var(--t2)}
 </section>
 
 <!-- PLANS -->
-<section class="plans" id="plans">
+<section class="plans" id="plans" data-mode-target="all,services,horeca,shop">
   <div class="plans-head">
     <h2 class="plans-h">Базові та<br><em>галузеві тарифи</em></h2>
     <p class="plans-note">
@@ -617,7 +666,7 @@ footer a:hover{color:var(--t2)}
   <div class="plans-grid">
 
     <!-- Старт -->
-    <div class="plan">
+    <div class="plan" data-mode-target="all,services">
       <div class="plan-tier">Старт</div>
       <div class="plan-name">Лендінг</div>
       <div class="plan-tagline">Одна сторінка — чітка пропозиція</div>
@@ -644,7 +693,7 @@ footer a:hover{color:var(--t2)}
     </div>
 
     <!-- Бізнес -->
-    <div class="plan hot">
+    <div class="plan hot" data-mode-target="all,services">
       <div class="plan-badge">Популярне</div>
       <div class="plan-tier">Бізнес</div>
       <div class="plan-name">Сайт + CMS</div>
@@ -672,7 +721,7 @@ footer a:hover{color:var(--t2)}
     </div>
 
     <!-- Про -->
-    <div class="plan">
+    <div class="plan" data-mode-target="all,services">
       <div class="plan-tier">Про</div>
       <div class="plan-name">PWA-додаток</div>
       <div class="plan-tagline">Веб-застосунок на телефоні без App Store</div>
@@ -699,7 +748,7 @@ footer a:hover{color:var(--t2)}
     </div>
 
     <!-- Партнер -->
-    <div class="plan">
+    <div class="plan" data-mode-target="all,services">
       <div class="plan-tier">Партнер</div>
       <div class="plan-name">Платформа</div>
       <div class="plan-tagline">Складна система з реалтаймом і платежами</div>
@@ -725,7 +774,7 @@ footer a:hover{color:var(--t2)}
       </div>
     </div>
 
-    <div class="plan">
+    <div class="plan" data-mode-target="all,horeca">
       <div class="plan-media"><img src="/images/cafe-interior-1.jpg" alt="Кухня ресторану і команда"/></div>
       <div class="plan-tier">HoReCa</div>
       <div class="plan-name">Order Flow</div>
@@ -749,7 +798,7 @@ footer a:hover{color:var(--t2)}
       </div>
     </div>
 
-    <div class="plan">
+    <div class="plan" data-mode-target="all,shop">
       <div class="plan-media"><img src="/images/cafe-interior-3.jpg" alt="Склад та логістика"/></div>
       <div class="plan-tier">Retail Ops</div>
       <div class="plan-name">Замовлення + склад</div>
@@ -785,7 +834,7 @@ footer a:hover{color:var(--t2)}
   </div>
 </section>
 
-<section class="ops">
+<section class="ops" data-mode-target="all,horeca">
   <div class="ops-head">
     <h2 class="ops-h">Системи для бізнесів з<br><em>живою операційкою</em></h2>
     <p class="ops-sub">Ресторан, доставка, склад, сервісні компанії: будуємо інтерфейси, де замовлення, команда і аналітика зібрані в одному місці.</p>
@@ -821,7 +870,7 @@ footer a:hover{color:var(--t2)}
   </div>
 </section>
 
-<section class="shops" id="shop-packs">
+<section class="shops" id="shop-packs" data-mode-target="all,shop">
   <div class="shops-head">
     <h2 class="shops-h">Пакети для<br><em>магазинів</em></h2>
     <p class="shops-sub">Від малого запуску до великого eCommerce: підключаємо каталог, оплату, склад, інтеграції та автоматизацію процесів продажу.</p>
@@ -887,11 +936,17 @@ footer a:hover{color:var(--t2)}
 </section>
 
 <!-- CONSTRUCTOR -->
-<section class="ctor" id="constructor">
+<section class="ctor" id="constructor" data-mode-target="all,services,shop,horeca">
   <div class="ctor-head">
     <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:16px">// Конструктор рішень</div>
     <h2 class="ctor-head-h">Зберіть своє<br><em>рішення</em></h2>
     <p class="ctor-head-sub">Оберіть базу і додайте функції — склад і ціна оновляться одразу.</p>
+    <div class="mode-switch" style="margin-top:14px">
+      <a class="mode-link" data-mode-link="all" data-mode-hash="constructor" href="?mode=all#constructor">All</a>
+      <a class="mode-link" data-mode-link="services" data-mode-hash="constructor" href="?mode=services#constructor">Service</a>
+      <a class="mode-link" data-mode-link="shop" data-mode-hash="constructor" href="?mode=shop#constructor">Shop</a>
+      <a class="mode-link" data-mode-link="horeca" data-mode-hash="constructor" href="?mode=horeca#constructor">HoReCa</a>
+    </div>
   </div>
 
   <div class="ctor-body">
@@ -1090,7 +1145,50 @@ const B={
   platform:{name:'Платформа',p:10000,fe:'React PWA + WS',host:'VPS / AWS · CI/CD',back:true,cms:true,rt:true,dev:'2–4 міс',launch:'5 д.',sup:'Безліміт'},
 };
 const FICONS={push:'🔔',chat:'💬',email:'📧',payments:'💳',subscriptions:'🔄',auth:'🔐',analytics:'📊',map:'🗺️',seo:'🔍',multilang:'🌐',ios:'📱',devops:'🚀'};
-let curB='landing', feats=new Set();
+const MODES=['all','services','shop','horeca'];
+let curB='landing', feats=new Set(), curMode='all';
+
+function normalizeMode(v){return MODES.includes(v)?v:'all';}
+function readStateFromUrl(){
+  const u=new URL(window.location.href);
+  curMode=normalizeMode(u.searchParams.get('mode')||'all');
+  const base=u.searchParams.get('base');
+  if(base && B[base]) curB=base;
+  const fs=(u.searchParams.get('feats')||'').split(',').map(s=>s.trim()).filter(Boolean);
+  feats=new Set(fs.filter(f=>Object.prototype.hasOwnProperty.call(FICONS,f)));
+}
+function syncModeLinks(){
+  document.querySelectorAll('[data-mode-link]').forEach(a=>{
+    const m=normalizeMode(a.dataset.modeLink||'all');
+    const h=a.dataset.modeHash||'';
+    const u=new URL(window.location.href);
+    u.searchParams.set('mode',m);
+    u.searchParams.set('base',curB);
+    if(feats.size) u.searchParams.set('feats',Array.from(feats).sort().join(','));
+    else u.searchParams.delete('feats');
+    u.hash=h ? '#'+h : '';
+    a.href=u.pathname+u.search+u.hash;
+    a.classList.toggle('is-active',m===curMode);
+  });
+}
+function applyMode(mode){
+  curMode=normalizeMode(mode);
+  document.body.dataset.mode=curMode;
+  document.querySelectorAll('[data-mode-target]').forEach(el=>{
+    const tags=(el.dataset.modeTarget||'all').split(',').map(s=>s.trim()).filter(Boolean);
+    const show=curMode==='all' || tags.includes('all') || tags.includes(curMode);
+    el.classList.toggle('mode-hide',!show);
+  });
+  syncModeLinks();
+}
+function syncStateUrl(){
+  const u=new URL(window.location.href);
+  u.searchParams.set('mode',curMode);
+  u.searchParams.set('base',curB);
+  if(feats.size) u.searchParams.set('feats',Array.from(feats).sort().join(','));
+  else u.searchParams.delete('feats');
+  history.replaceState({},'',u.pathname+u.search+u.hash);
+}
 
 function setBase(el){
   document.querySelectorAll('.base-opt').forEach(e=>e.classList.remove('sel'));
@@ -1149,6 +1247,7 @@ function render2(b){
   });
   document.getElementById('sum-lines').innerHTML=lines;
   document.getElementById('sum-total').innerHTML=`${fmt(total)} <span>/міс</span>`;
+  syncStateUrl();
 }
 function openEmail(e){
   e.preventDefault();
@@ -1165,6 +1264,30 @@ function openEmail(e){
   const body=encodeURIComponent(`Привіт!\n\nЗібрав рішення у конструкторі:\nОснова: ${b.name}${flist.length?'\n\nФункції:\n'+flist.join('\n'):''}\n\nОрієнтовна ціна: ${fmt(total)}/міс\n\n---\nРозкажіть про свій проект:`);
   window.location.href=`mailto:munister@outlook.com?subject=${subj}&body=${body}`;
 }
+document.addEventListener('click',(e)=>{
+  const a=e.target.closest('[data-mode-link]');
+  if(!a) return;
+  e.preventDefault();
+  applyMode(a.dataset.modeLink||'all');
+  syncStateUrl();
+  const hash=a.dataset.modeHash;
+  if(hash){
+    const t=document.getElementById(hash);
+    if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+});
+readStateFromUrl();
+applyMode(curMode);
+document.querySelectorAll('.base-opt').forEach(el=>{
+  if(el.dataset.base===curB) el.classList.add('sel');
+  else el.classList.remove('sel');
+});
+document.querySelectorAll('.feat').forEach(el=>{
+  const f=el.dataset.f;
+  const on=feats.has(f);
+  el.classList.toggle('on',on);
+  el.querySelector('.feat-chk').textContent=on?'✓':'';
+});
 render();
 </script>
 </body>
