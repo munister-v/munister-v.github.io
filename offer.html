@@ -72,13 +72,40 @@ nav{
 }
 .hero-h em{font-style:italic;color:var(--ac)}
 .hero-row{
-  display:block;
+  display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);
+  gap:34px;align-items:end;
   padding-top:32px;border-top:1px solid var(--b1);
 }
 .hero-copy{max-width:620px}
 .hero-lead{font-size:19px;color:#cecece;line-height:1.85;max-width:640px}
 .hero-lead strong{color:var(--t1);font-weight:400}
 .hero-cta-wrap{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.hero-show{
+  position:relative;min-height:360px;border:1px solid var(--b1);overflow:hidden;
+  background:#0c0c0c;
+}
+.hero-show img{
+  width:100%;height:100%;display:block;object-fit:cover;filter:saturate(.95) contrast(.94);
+}
+.hero-show::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(5,5,5,.15) 0%,rgba(5,5,5,.72) 100%);
+}
+.hero-show-top{
+  position:absolute;top:14px;left:14px;right:14px;z-index:2;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.hero-show-tag{
+  font-size:10px;letter-spacing:1.2px;text-transform:uppercase;
+  color:#efe6dc;border:1px solid rgba(239,230,220,.4);padding:5px 10px;background:rgba(0,0,0,.28);
+}
+.hero-show-dot{
+  width:7px;height:7px;border-radius:50%;background:#87b58f;box-shadow:0 0 0 6px rgba(135,181,143,.18);
+}
+.hero-show-note{
+  position:absolute;left:18px;bottom:16px;right:18px;z-index:2;
+  font-size:14px;line-height:1.6;color:#e2ded8;max-width:440px;
+}
 .btn{
   padding:13px 28px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
   font-family:var(--sans);cursor:pointer;border:none;transition:all .22s;
@@ -170,6 +197,35 @@ nav{
 .ops-t{font-family:var(--serif);font-size:28px;line-height:1.2;color:var(--t1);margin-bottom:8px}
 .ops-p{font-size:18px;color:var(--t1);margin-bottom:14px}
 .ops-d{font-size:15px;line-height:1.82;color:#c0c0c0}
+
+/* ══ SHOP PACKS ══ */
+.shops{border-bottom:1px solid var(--b1)}
+.shops-head{padding:64px 40px 30px;border-bottom:1px solid var(--b1)}
+.shops-h{font-family:var(--serif);font-size:clamp(34px,4.8vw,56px);font-weight:300;line-height:1.08;color:var(--t1)}
+.shops-h em{font-style:italic;color:var(--ac)}
+.shops-sub{margin-top:12px;max-width:760px;font-size:17px;line-height:1.84;color:#c2c2c2}
+.shops-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.shop{
+  border-right:1px solid var(--b1);padding:36px 30px 34px;
+  display:flex;flex-direction:column;
+}
+.shop:last-child{border-right:none}
+.shop-lvl{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ac);margin-bottom:10px}
+.shop-name{font-family:var(--serif);font-size:30px;line-height:1.12;color:var(--t1);margin-bottom:8px}
+.shop-price{font-size:23px;color:#f1f1f1;margin-bottom:14px}
+.shop-desc{font-size:15px;line-height:1.72;color:#c2c2c2;margin-bottom:16px}
+.shop-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:24px;flex:1}
+.shop-list li{
+  font-size:14px;line-height:1.55;color:#b7b7b7;
+  display:flex;gap:8px;align-items:flex-start;
+}
+.shop-list li::before{content:'•';color:var(--ac);margin-top:1px;flex-shrink:0}
+.shop-btn{
+  display:block;padding:12px;text-align:center;
+  font-size:10px;letter-spacing:1.3px;text-transform:uppercase;
+  border:1px solid var(--b1);color:var(--t2);
+}
+.shop-btn:hover{border-color:var(--ac);color:var(--t1)}
 
 /* ══ CONSTRUCTOR ══ */
 .ctor{background:var(--s1);border-bottom:1px solid var(--b1)}
@@ -440,10 +496,16 @@ footer a:hover{color:var(--t2)}
 
 /* ══ RESPONSIVE ══ */
 @media(max-width:1100px){
+  .hero-row{grid-template-columns:1fr}
+  .hero-show{min-height:320px}
   .plans-grid{grid-template-columns:1fr 1fr}
   .ops-grid{grid-template-columns:1fr}
   .ops-card{border-right:none;border-bottom:1px solid var(--b1)}
   .ops-card:last-child{border-bottom:none}
+  .shops-grid{grid-template-columns:1fr 1fr}
+  .shop{border-bottom:1px solid var(--b1)}
+  .shop:nth-child(2n){border-right:none}
+  .shop:last-child{border-bottom:none}
   .plan{border-bottom:1px solid var(--b1)}
   .ctor-body{grid-template-columns:1fr}
   .ctor-controls{border-right:none;border-bottom:1px solid var(--b1)}
@@ -461,10 +523,15 @@ footer a:hover{color:var(--t2)}
   .hero-h{font-size:clamp(44px,17vw,74px);line-height:.98;margin-bottom:28px}
   .hero-row{gap:22px}
   .hero-lead{font-size:16px;line-height:1.75}
+  .hero-show{min-height:270px}
+  .hero-show-note{font-size:13px;line-height:1.55}
   .btn{font-size:11px;padding:12px 18px;letter-spacing:1.2px}
   .plan-media{margin:0 -20px 20px;height:144px}
   .ops-head{padding:48px 20px 24px}
   .ops-body{padding:20px 20px 0}
+  .shops-head{padding:48px 20px 22px}
+  .shops-grid{grid-template-columns:1fr}
+  .shop{border-right:none;padding:28px 20px}
   .plans-head{padding:48px 20px 32px}
   .plans-grid{grid-template-columns:1fr}
   .plan{border-right:none}
@@ -525,6 +592,14 @@ footer a:hover{color:var(--t2)}
           <a href="#plans" class="btn btn-ac">Переглянути тарифи ↓</a>
           <a href="#constructor" class="btn btn-gh">Конструктор</a>
         </div>
+      </div>
+      <div class="hero-show">
+        <img src="/images/cafe-interior-2.jpg" alt="Інтер'єр закладу з живою атмосферою"/>
+        <div class="hero-show-top">
+          <span class="hero-show-tag">Digital + Ops Ready</span>
+          <span class="hero-show-dot"></span>
+        </div>
+        <p class="hero-show-note">Лендінг, меню, онлайн-замовлення, CRM і аналітика можуть працювати як єдина система в одному проєкті.</p>
       </div>
     </div>
   </div>
@@ -742,6 +817,71 @@ footer a:hover{color:var(--t2)}
         <div class="ops-p">від ₴4 250/міс</div>
         <p class="ops-d">Воронка замовлень, таймлайни задач, статуси виконання, повідомлення клієнтам, гнучкі звіти для власника і менеджера.</p>
       </div>
+    </article>
+  </div>
+</section>
+
+<section class="shops" id="shop-packs">
+  <div class="shops-head">
+    <h2 class="shops-h">Пакети для<br><em>магазинів</em></h2>
+    <p class="shops-sub">Від малого запуску до великого eCommerce: підключаємо каталог, оплату, склад, інтеграції та автоматизацію процесів продажу.</p>
+  </div>
+  <div class="shops-grid">
+    <article class="shop">
+      <div class="shop-lvl">Starter</div>
+      <h3 class="shop-name">Міні-магазин</h3>
+      <div class="shop-price">від ₴1 900/міс</div>
+      <p class="shop-desc">Для старту продажів із невеликим каталогом та базовою аналітикою.</p>
+      <ul class="shop-list">
+        <li>До 60 товарів, категорії, пошук</li>
+        <li>Кошик, checkout, онлайн-оплата</li>
+        <li>Доставка НП/Укрпошта</li>
+        <li>Базова CRM заявок</li>
+        <li>Підтримка 2 год/міс</li>
+      </ul>
+      <a href="mailto:munister@outlook.com?subject=Shop Starter — Міні-магазин" class="shop-btn">Запустити</a>
+    </article>
+    <article class="shop">
+      <div class="shop-lvl">Growth</div>
+      <h3 class="shop-name">Ростовий магазин</h3>
+      <div class="shop-price">від ₴3 500/міс</div>
+      <p class="shop-desc">Для стабільних продажів з маркетингом, акціями і контролем залишків.</p>
+      <ul class="shop-list">
+        <li>До 500 товарів, фільтри, бренди</li>
+        <li>Промокоди, бандли, upsell/cross-sell</li>
+        <li>Склад + резерв під замовлення</li>
+        <li>Email-тригери і abandoned cart</li>
+        <li>Аналітика по товарах і каналах</li>
+      </ul>
+      <a href="mailto:munister@outlook.com?subject=Shop Growth — Ростовий магазин" class="shop-btn">Обрати Growth</a>
+    </article>
+    <article class="shop">
+      <div class="shop-lvl">Pro</div>
+      <h3 class="shop-name">Омніканал магазин</h3>
+      <div class="shop-price">від ₴5 900/міс</div>
+      <p class="shop-desc">Для продажів одночасно через сайт, соцмережі, маркетплейси та офлайн-точки.</p>
+      <ul class="shop-list">
+        <li>До 5 000 SKU, мультисклад</li>
+        <li>Інтеграції Prom/Rozetka/Meta</li>
+        <li>RFM-сегментація клієнтів</li>
+        <li>Ролі команди і SLA обробки</li>
+        <li>BI-дашборд для керівника</li>
+      </ul>
+      <a href="mailto:munister@outlook.com?subject=Shop Pro — Омніканал магазин" class="shop-btn">Перейти на Pro</a>
+    </article>
+    <article class="shop">
+      <div class="shop-lvl">Enterprise</div>
+      <h3 class="shop-name">Retail Platform</h3>
+      <div class="shop-price">від ₴9 500/міс</div>
+      <p class="shop-desc">Для великих каталогів, складної логістики, кастомної автоматизації і ERP-контурів.</p>
+      <ul class="shop-list">
+        <li>10 000+ SKU, масштабована архітектура</li>
+        <li>API-інтеграції з 1С/ERP/WMS</li>
+        <li>Динамічне ціноутворення</li>
+        <li>Автоматизація повернень і рекламацій</li>
+        <li>Пріоритетний SLA + виділена черга</li>
+      </ul>
+      <a href="mailto:munister@outlook.com?subject=Shop Enterprise — Retail Platform" class="shop-btn">Обговорити Enterprise</a>
     </article>
   </div>
 </section>
