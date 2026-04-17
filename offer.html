@@ -1214,8 +1214,10 @@ function syncModeLinks(){
     const m=normalizeMode(a.dataset.modeLink||'all');
     const h=a.dataset.modeHash||'';
     const u=new URL(window.location.href);
-    u.searchParams.set('mode',m);
-    u.searchParams.set('base',curB);
+    if(m==='all') u.searchParams.delete('mode');
+    else u.searchParams.set('mode',m);
+    if(curB==='landing') u.searchParams.delete('base');
+    else u.searchParams.set('base',curB);
     if(feats.size) u.searchParams.set('feats',Array.from(feats).sort().join(','));
     else u.searchParams.delete('feats');
     u.hash=h ? '#'+h : '';
@@ -1228,8 +1230,10 @@ function syncAnchorLinks(){
     const target=(a.dataset.anchorLink||'').trim();
     if(!target) return;
     const u=new URL(window.location.href);
-    u.searchParams.set('mode',curMode);
-    u.searchParams.set('base',curB);
+    if(curMode==='all') u.searchParams.delete('mode');
+    else u.searchParams.set('mode',curMode);
+    if(curB==='landing') u.searchParams.delete('base');
+    else u.searchParams.set('base',curB);
     if(feats.size) u.searchParams.set('feats',Array.from(feats).sort().join(','));
     else u.searchParams.delete('feats');
     u.hash='#'+target;
@@ -1249,8 +1253,10 @@ function applyMode(mode){
 }
 function syncStateUrl(){
   const u=new URL(window.location.href);
-  u.searchParams.set('mode',curMode);
-  u.searchParams.set('base',curB);
+  if(curMode==='all') u.searchParams.delete('mode');
+  else u.searchParams.set('mode',curMode);
+  if(curB==='landing') u.searchParams.delete('base');
+  else u.searchParams.set('base',curB);
   if(feats.size) u.searchParams.set('feats',Array.from(feats).sort().join(','));
   else u.searchParams.delete('feats');
   history.replaceState({},'',u.pathname+u.search+u.hash);
