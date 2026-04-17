@@ -1,99 +1,981 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="https://lucide.dev/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UnderBlack | Digital Roadmap</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
-    
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              serif: ['"Playfair Display"', 'serif'],
-              mono: ['"JetBrains Mono"', 'monospace'],
-            },
-            colors: {
-              ub: {
-                bg: '#080808',
-                grid: '#1a1a1a',
-                text: '#ededed',
-                dim: '#666666',
-                accent: '#ffffff',
-              }
-            },
-            backgroundImage: {
-              'grid-pattern': "linear-gradient(to right, #1a1a1a 1px, transparent 1px), linear-gradient(to bottom, #1a1a1a 1px, transparent 1px)",
-            }
-          }
-        }
-      }
-    </script>
-    <style>
-      html { scroll-behavior: smooth; }
-      body { background-color: #080808; color: #ededed; overflow-x: hidden; }
-      
-      /* Micro Grid Background */
-      .bg-micro-grid {
-        background-size: 40px 40px;
-        background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
-                          linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
-        mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-      }
-
-      /* Noise Texture */
-      .noise-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 9999;
-        opacity: 0.04;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-      }
-
-      /* Custom scrollbar */
-      ::-webkit-scrollbar { width: 4px; }
-      ::-webkit-scrollbar-track { background: #080808; }
-      ::-webkit-scrollbar-thumb { background: #333; }
-      ::-webkit-scrollbar-thumb:hover { background: #555; }
-
-      /* Print Styles */
-      @media print {
-        body { background-color: white !important; color: black !important; }
-        .noise-overlay, .bg-micro-grid { display: none !important; }
-        .no-print { display: none !important; }
-        .border-white\/10, .border-white\/5, .border-ub-grid { border-color: #ddd !important; }
-        .text-white, .text-ub-text { color: black !important; }
-        .text-ub-dim { color: #555 !important; }
-        .bg-ub-bg { background-color: white !important; }
-        .invert-print { filter: invert(1); }
-      }
-    </style>
-
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.574.0"
-  }
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Підписка — Вячеслав Муністер</title>
+<meta name="description" content="Веб-розробка за підпискою. Сайти, PWA, CMS від ₴1 000/міс. Хостинг і підтримка включені."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050505; --s1:#0d0d0d; --s2:#141414;
+  --b1:#1c1c1c; --b2:#2a2a2a; --b3:#383838;
+  --t1:#ebebeb; --t2:#9a9a9a; --t3:#484848;
+  --ac:#d4c4b5; --ac2:#c0ae9e; --acg:rgba(212,196,181,.06);
+  --gr:#6a9f74;
+  --serif:"Cormorant Garamond",serif; --sans:Inter,sans-serif;
 }
-</script>
-  <script type="module" crossorigin src="/assets/offer-TsDnmX5m.js"></script>
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(5,5,5,.94);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;height:40px;
+}
+.n-logo{padding:0 24px;font-size:11px;letter-spacing:1.6px;text-transform:uppercase;border-right:1px solid var(--b1);height:100%;display:flex;align-items:center;gap:8px}
+.n-dot{width:5px;height:5px;background:var(--ac);flex-shrink:0}
+.n-links{display:flex;height:100%;list-style:none}
+.n-links li{border-right:1px solid var(--b1);height:100%;display:flex;align-items:center}
+.n-links a{padding:0 18px;font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--t3);transition:color .2s}
+.n-links a:hover,.n-links a.act{color:var(--t1)}
+.n-r{margin-left:auto;border-left:1px solid var(--b1);height:100%;display:flex;align-items:center}
+.n-r a{padding:0 22px;font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--ac);transition:color .2s}
+.n-r a:hover{color:var(--t1)}
+
+/* ══ HERO ══ */
+.hero{
+  min-height:100svh;padding-top:40px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  border-bottom:1px solid var(--b1);position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 30% 60%,rgba(212,196,181,.04),transparent);
+}
+.hero-grid-lines{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 79px,var(--b1) 79px,var(--b1) 80px),
+    repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(28,28,28,.6) 79px,rgba(28,28,28,.6) 80px);
+  opacity:.12;
+}
+.hero-kicker{
+  position:absolute;top:72px;left:40px;
+  display:flex;gap:6px;flex-wrap:wrap;
+}
+.kicker-tag{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--t3);border:1px solid var(--b1);padding:3px 10px}
+.kicker-tag.ac{color:var(--ac);border-color:rgba(212,196,181,.2)}
+.hero-content{padding:0 40px 64px;position:relative}
+.hero-eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:20px}
+.hero-h{
+  font-family:var(--serif);
+  font-size:clamp(56px,10vw,130px);
+  font-weight:300;line-height:.95;color:var(--t1);
+  margin-bottom:40px;
+}
+.hero-h em{font-style:italic;color:var(--ac)}
+.hero-row{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:40px;
+  padding-top:32px;border-top:1px solid var(--b1);flex-wrap:wrap;
+}
+.hero-lead{font-size:17px;color:var(--t2);line-height:1.8;max-width:520px}
+.hero-lead strong{color:var(--t1);font-weight:400}
+.hero-cta-wrap{display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap}
+.btn{
+  padding:13px 28px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  font-family:var(--sans);cursor:pointer;border:none;transition:all .22s;
+  display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+}
+.btn-ac{background:var(--ac);color:#050505}
+.btn-ac:hover{background:var(--ac2)}
+.btn-gh{background:transparent;color:var(--t2);border:1px solid var(--b1)}
+.btn-gh:hover{color:var(--t1);border-color:var(--b2)}
+
+/* ══ PLANS ══ */
+.plans{border-bottom:1px solid var(--b1)}
+.plans-head{
+  padding:72px 40px 40px;
+  display:grid;grid-template-columns:1fr auto;gap:40px;
+  align-items:end;border-bottom:1px solid var(--b1);
+}
+.plans-h{font-family:var(--serif);font-size:clamp(36px,5vw,62px);font-weight:300;line-height:1.05;color:var(--t1)}
+.plans-h em{font-style:italic;color:var(--ac)}
+.plans-note{font-size:14px;color:var(--t2);line-height:1.8;max-width:380px;text-align:right}
+.plans-note strong{color:var(--t1);font-weight:400}
+
+.plans-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+
+.plan{
+  padding:48px 36px;border-right:1px solid var(--b1);
+  display:flex;flex-direction:column;position:relative;
+  transition:background .3s;
+}
+.plan:last-child{border-right:none}
+.plan:hover{background:rgba(212,196,181,.02)}
+.plan.hot{background:rgba(212,196,181,.03)}
+.plan-badge{
+  position:absolute;top:0;right:0;
+  font-size:9px;letter-spacing:1.2px;text-transform:uppercase;
+  background:var(--ac);color:#050505;padding:4px 12px;
+}
+
+/* price block */
+.plan-tier{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:12px}
+.plan-name{font-family:var(--serif);font-size:28px;font-weight:400;color:var(--t1);margin-bottom:6px;line-height:1.1}
+.plan-tagline{font-size:13px;color:var(--t3);line-height:1.5;margin-bottom:28px;min-height:40px}
+.plan-price-wrap{margin-bottom:6px;display:flex;align-items:baseline;gap:6px}
+.plan-price{font-family:var(--serif);font-size:44px;font-weight:300;color:var(--t1);line-height:1}
+.plan-per{font-size:13px;color:var(--t3)}
+.plan-min{font-size:11px;color:var(--t3);margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid var(--b1)}
+
+/* included list */
+.plan-inc-lbl{font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:var(--t3);margin-bottom:14px}
+.plan-list{list-style:none;display:flex;flex-direction:column;gap:10px;flex:1}
+.plan-list li{font-size:13px;color:var(--t2);display:flex;gap:10px;align-items:flex-start;line-height:1.4}
+.plan-list li.on::before{content:'✓';color:var(--ac);font-size:11px;flex-shrink:0;margin-top:1px}
+.plan-list li.off::before{content:'—';color:var(--t3);font-size:11px;flex-shrink:0;margin-top:1px}
+.plan-list li.off{color:var(--t3)}
+.plan-list li.gr::before{content:'✓';color:var(--gr);font-size:11px;flex-shrink:0;margin-top:1px}
+
+.plan-cta{margin-top:32px}
+.plan-btn{
+  display:block;width:100%;padding:12px;text-align:center;
+  font-size:10px;letter-spacing:1.4px;text-transform:uppercase;
+  border:1px solid var(--b1);color:var(--t2);transition:all .22s;
+}
+.plan-btn:hover{color:var(--t1);border-color:var(--b2)}
+.plan-btn.ac{background:var(--ac);color:#050505;border-color:var(--ac)}
+.plan-btn.ac:hover{background:var(--ac2);border-color:var(--ac2)}
+
+/* plans footer note */
+.plans-foot{
+  padding:24px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+}
+.plans-foot p{font-size:13px;color:var(--t3);line-height:1.7}
+.plans-foot strong{color:var(--t2);font-weight:400}
+
+/* ══ CONSTRUCTOR ══ */
+.ctor{background:var(--s1);border-bottom:1px solid var(--b1)}
+.ctor-head{
+  padding:72px 40px 40px;border-bottom:1px solid var(--b1);
+}
+.ctor-head-h{font-family:var(--serif);font-size:clamp(32px,4.5vw,56px);font-weight:300;line-height:1.05;color:var(--t1);margin-bottom:10px}
+.ctor-head-h em{font-style:italic;color:var(--ac)}
+.ctor-head-sub{font-size:15px;color:var(--t2);line-height:1.7}
+
+.ctor-body{display:grid;grid-template-columns:1fr 420px;min-height:80vh}
+
+/* left: controls */
+.ctor-controls{border-right:1px solid var(--b1)}
+.ctl-block{border-bottom:1px solid var(--b1)}
+.ctl-block-head{
+  padding:20px 36px;background:var(--s2);border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;gap:14px;
+}
+.ctl-num{
+  width:24px;height:24px;border:1px solid var(--b2);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:var(--t3);flex-shrink:0;
+}
+.ctl-num.done{border-color:var(--ac);color:var(--ac)}
+.ctl-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2)}
+.ctl-block-body{padding:24px 36px}
+
+/* base options */
+.base-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.base-opt{
+  padding:20px 18px;border:1px solid var(--b1);cursor:pointer;
+  background:var(--bg);transition:all .22s;position:relative;
+}
+.base-opt:hover{border-color:var(--b2);background:var(--s1)}
+.base-opt.sel{border-color:var(--ac);background:rgba(212,196,181,.04)}
+.base-opt.sel::after{
+  content:'';position:absolute;top:12px;right:12px;
+  width:7px;height:7px;border-radius:50%;background:var(--ac);
+}
+.base-name{font-family:var(--serif);font-size:20px;color:var(--t1);margin-bottom:4px}
+.base-price{font-size:12px;color:var(--ac);margin-bottom:5px}
+.base-desc{font-size:11px;color:var(--t3);line-height:1.5}
+
+/* features */
+.feats{display:flex;flex-direction:column;gap:16px}
+.feat-group-lbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.feat-list{display:flex;flex-direction:column;gap:4px}
+.feat{
+  display:flex;align-items:center;gap:12px;padding:11px 14px;
+  border:1px solid var(--b1);cursor:pointer;transition:all .22s;
+}
+.feat:hover{border-color:var(--b2);background:rgba(255,255,255,.02)}
+.feat.on{border-color:rgba(212,196,181,.28);background:var(--acg)}
+.feat-chk{
+  width:16px;height:16px;border:1px solid var(--b2);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:var(--ac);transition:all .2s;
+}
+.feat.on .feat-chk{border-color:var(--ac)}
+.feat-ico{font-size:15px;flex-shrink:0}
+.feat-info{flex:1}
+.feat-name{font-size:13px;color:var(--t1);margin-bottom:2px}
+.feat-sub{font-size:11px;color:var(--t3);line-height:1.4}
+.feat-cost{font-size:12px;color:var(--ac);white-space:nowrap;flex-shrink:0}
+
+/* ── RIGHT PANEL ── */
+.ctor-panel{
+  position:sticky;top:40px;height:calc(100svh - 40px);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.panel-head{
+  padding:22px 26px 18px;border-bottom:1px solid var(--b1);
+  background:var(--s2);flex-shrink:0;
+}
+.panel-head-lbl{font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+.panel-title{font-family:var(--serif);font-size:22px;color:var(--t1)}
+
+/* architecture vis */
+.arch{flex:1;overflow-y:auto;padding:24px}
+.arch-section-lbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:12px}
+
+/* layer stack */
+.stack{display:flex;flex-direction:column;gap:5px;margin-bottom:22px}
+.layer{
+  display:flex;align-items:center;gap:12px;padding:11px 14px;
+  border:1px solid transparent;border-radius:0;
+  transition:all .4s;opacity:.18;background:transparent;
+}
+.layer.on{opacity:1;border-color:var(--b1)}
+.layer.on.hi{border-color:rgba(212,196,181,.25);background:rgba(212,196,181,.04)}
+.layer.on.gr{border-color:rgba(106,159,116,.25);background:rgba(106,159,116,.05)}
+.layer-ico{font-size:16px;flex-shrink:0;width:24px;text-align:center}
+.layer-info{flex:1;min-width:0}
+.layer-name{font-size:12px;color:var(--t1);margin-bottom:2px}
+.layer-tech{font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.layer-pill{
+  font-size:8px;letter-spacing:.8px;text-transform:uppercase;
+  padding:2px 7px;border:1px solid;flex-shrink:0;
+}
+.layer-pill.ac{color:var(--ac);border-color:rgba(212,196,181,.25)}
+.layer-pill.gr{color:var(--gr);border-color:rgba(106,159,116,.25)}
+
+/* feat badges */
+.feat-badges{display:flex;flex-wrap:wrap;gap:5px;min-height:32px;margin-bottom:22px}
+.fbadge{
+  font-size:10px;color:var(--t1);border:1px solid var(--b2);
+  padding:4px 10px;display:flex;align-items:center;gap:5px;
+  animation:pop .25s ease;
+}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.fbadge-ico{font-size:11px}
+.feat-empty{font-size:12px;color:var(--t3);font-style:italic}
+
+/* timeline bar */
+.timeline{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--b1);margin-bottom:22px}
+.tl-cell{padding:12px 8px;text-align:center;border-right:1px solid var(--b1)}
+.tl-cell:last-child{border-right:none}
+.tl-val{font-family:var(--serif);font-size:18px;color:var(--t1);line-height:1;margin-bottom:4px}
+.tl-lbl{font-size:9px;letter-spacing:.5px;color:var(--t3);text-transform:uppercase}
+
+/* price summary */
+.summary{
+  padding:20px 24px;border-top:1px solid var(--b1);
+  background:var(--s2);flex-shrink:0;
+}
+.sum-lines{display:flex;flex-direction:column;gap:0;margin-bottom:14px}
+.sum-line{
+  display:flex;justify-content:space-between;
+  padding:7px 0;border-bottom:1px solid var(--b1);
+  font-size:12px;
+}
+.sum-line:last-child{border-bottom:none}
+.sum-line-l{color:var(--t3)}
+.sum-line-v{color:var(--t2)}
+.sum-total{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:12px 0 14px;border-top:1px solid var(--b2);
+}
+.sum-total-l{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--t3)}
+.sum-total-v{font-family:var(--serif);font-size:30px;font-weight:300;color:var(--t1)}
+.sum-total-v span{font-size:13px;color:var(--t3)}
+.sum-btn{
+  display:block;width:100%;padding:12px;text-align:center;
+  font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  background:var(--ac);color:#050505;transition:background .22s;
+}
+.sum-btn:hover{background:var(--ac2)}
+.sum-foot{font-size:10px;color:var(--t3);text-align:center;margin-top:9px;line-height:1.5}
+
+/* ══ WORKS (mini) ══ */
+.works{border-bottom:1px solid var(--b1)}
+.works-head{padding:64px 40px 40px;border-bottom:1px solid var(--b1)}
+.works-head-h{font-family:var(--serif);font-size:clamp(32px,4.5vw,52px);font-weight:300;color:var(--t1)}
+.works-head-h em{font-style:italic;color:var(--ac)}
+.works-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.work{
+  padding:36px 36px 40px;border-right:1px solid var(--b1);
+  display:flex;flex-direction:column;gap:0;
+}
+.work:last-child{border-right:none}
+.work-vis{
+  height:120px;background:var(--s1);margin-bottom:24px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+
+/* phone */
+.ph{
+  width:96px;height:162px;background:#080808;
+  border:1.5px solid #252525;border-radius:15px;overflow:hidden;
+  position:relative;box-shadow:0 6px 24px rgba(0,0,0,.5);
+}
+.ph::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:2.5px;background:#141414;border-radius:0 0 3px 3px;z-index:2}
+.ph-s{width:100%;height:100%;overflow:hidden;padding:6px 0 0}
+
+/* arm bank */
+.arm{background:#060a0f}
+.arm-hi{padding:5px 7px 2px;font-size:4.5px;color:#6a9f74}
+.arm-card{background:#0e1620;margin:2px 5px;border-radius:3px;padding:6px 7px;border:1px solid #182030}
+.arm-bl{font-size:3.5px;color:#3a5060;margin-bottom:1px}
+.arm-am{font-size:12px;color:#e5e5e5;font-weight:300;line-height:1}
+.arm-ac{font-size:3.5px;color:#253040;margin-top:2px}
+.arm-txh{font-size:3.5px;color:#2a4050;padding:3px 7px 1px}
+.arm-tx{display:flex;justify-content:space-between;align-items:center;padding:2.5px 7px;border-top:1px solid #0c1018}
+.arm-tn{font-size:4px;color:#b0b0b0}
+.arm-tp{font-size:4.5px;color:#6a9f74}
+.arm-tn2{font-size:4.5px;color:#c06060}
+.arm-nav{position:absolute;bottom:0;left:0;right:0;background:#050910;border-top:1px solid #0e1828;display:flex;justify-content:space-around;padding:3px 0}
+.arm-ni{font-size:3px;color:#304050;text-align:center}
+.arm-ni.on{color:#6a9f74}
+.arm-nd{width:3px;height:3px;background:currentColor;border-radius:50%;margin:0 auto 1px}
+
+/* browser */
+.br{background:#0c0c0c;border:1px solid #1e1e1e;border-radius:6px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.5)}
+.br-bar{background:#111;padding:6px 9px;display:flex;align-items:center;gap:6px;border-bottom:1px solid #161616}
+.br-dots{display:flex;gap:3px}
+.br-dot{width:5px;height:5px;border-radius:50%}
+.br-url{flex:1;background:#080808;border:1px solid #161616;border-radius:2px;padding:2px 6px;font-size:7.5px;color:#3a3a3a}
+
+/* epris */
+.ep-nav{background:#f0ebe4;padding:6px 9px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ddd5c8}
+.ep-logo{font-size:6px;letter-spacing:2px;text-transform:uppercase;color:#1e1610}
+.ep-nl{display:flex;gap:7px}
+.ep-na{font-size:4px;color:#7a6a5a}
+.ep-hero{background:#130e08;padding:16px 9px;text-align:center}
+.ep-iss{font-size:4px;color:#6a5a42;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px}
+.ep-ht{font-size:8.5px;color:#ddd5c8;line-height:1.25;font-style:italic;margin-bottom:2px}
+.ep-sub{font-size:4px;color:#4a3c2a}
+.ep-grid{display:grid;grid-template-columns:1fr 1fr;background:#0e0a06}
+.ep-cell{background:#ece5dc;padding:6px 7px;border-right:1px solid #d8d0c4;border-top:1px solid #d8d0c4}
+.ep-cell:nth-child(even){background:#e5ddd4;border-right:none}
+.ep-cc{font-size:3px;color:#9a8a78;letter-spacing:.6px;text-transform:uppercase;margin-bottom:2px}
+.ep-ch{font-size:5px;color:#1e1610;line-height:1.2}
+
+/* helpus */
+.hu-hero{background:linear-gradient(135deg,#120808,#1e0c0c);padding:12px 9px;text-align:center}
+.hu-b2{font-size:4px;color:#c46a5a;letter-spacing:.8px;border:1px solid rgba(196,106,90,.3);display:inline-block;padding:2px 5px;margin-bottom:4px}
+.hu-ht{font-size:7.5px;color:#e5e5e5;line-height:1.3;margin-bottom:6px}
+.hu-btn{background:#c46a5a;font-size:4px;color:#fff;padding:3px 9px;border-radius:2px;display:inline-block}
+.hu-stats{display:flex;background:#0a0808;border-top:1px solid #161010;border-bottom:1px solid #161010}
+.hu-st{flex:1;padding:5px 4px;text-align:center;border-right:1px solid #161010}
+.hu-st:last-child{border-right:none}
+.hu-sn{font-size:8px;color:#e5e5e5;font-weight:300}
+.hu-sl{font-size:3.5px;color:#3e3838}
+
+/* work info */
+.work-meta{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.work-ref{font-size:9px;letter-spacing:1.3px;text-transform:uppercase;color:var(--t3);border:1px solid var(--b1);padding:2px 6px}
+.work-cat{font-size:9px;color:var(--ac)}
+.work-title{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--t1);margin-bottom:10px;line-height:1.2}
+.work-body{font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:14px;flex:1}
+.work-chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.chip{font-size:9px;color:var(--t3);border:1px solid var(--b1);padding:2px 7px}
+.chip.ac{color:var(--ac);border-color:rgba(212,196,181,.2)}
+.work-link{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);transition:color .2s}
+.work-link:hover{color:var(--ac)}
+
+/* ══ CTA ══ */
+.cta{padding:88px 40px;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.cta-h{font-family:var(--serif);font-size:clamp(36px,5vw,64px);font-weight:300;line-height:1.05;color:var(--t1)}
+.cta-h em{font-style:italic;color:var(--ac)}
+.cta-sub{font-size:16px;color:var(--t2);line-height:1.8;margin-top:16px}
+.cta-links{display:flex;flex-direction:column;gap:8px}
+.cta-lnk{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 20px;border:1px solid var(--b1);background:var(--s1);
+  transition:all .22s;
+}
+.cta-lnk:hover{border-color:var(--b2);background:var(--acg)}
+.cta-lnk-ico{width:32px;height:32px;border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;color:var(--ac);flex-shrink:0}
+.cta-lnk-lbl{font-size:9px;color:var(--ac);letter-spacing:.9px;text-transform:uppercase;margin-bottom:2px}
+.cta-lnk-v{font-size:14px;color:var(--t1)}
+.cta-lnk-arr{color:var(--t3);margin-left:auto}
+
+footer{
+  padding:24px 40px;border-top:1px solid var(--b1);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:10px;color:var(--t3);
+}
+footer a{color:var(--t3);transition:color .2s}
+footer a:hover{color:var(--t2)}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:1100px){
+  .plans-grid{grid-template-columns:1fr 1fr}
+  .plan{border-bottom:1px solid var(--b1)}
+  .ctor-body{grid-template-columns:1fr}
+  .ctor-controls{border-right:none;border-bottom:1px solid var(--b1)}
+  .ctor-panel{position:static;height:auto}
+  .arch{overflow:visible}
+  .works-grid{grid-template-columns:1fr 1fr}
+  .work:last-child{border-right:none;border-top:1px solid var(--b1);grid-column:span 2}
+  .cta{grid-template-columns:1fr;gap:40px;padding:64px 40px}
+  .plans-head{grid-template-columns:1fr}
+  .plans-note{text-align:left}
+}
+@media(max-width:760px){
+  .hero-kicker{top:56px;left:20px}
+  .hero-content{padding:0 20px 48px}
+  .hero-row{gap:24px}
+  .plans-head{padding:48px 20px 32px}
+  .plans-grid{grid-template-columns:1fr}
+  .plan{border-right:none}
+  .ctl-block-head{padding:16px 20px}
+  .ctl-block-body{padding:18px 20px}
+  .base-grid{grid-template-columns:1fr}
+  .works-grid{grid-template-columns:1fr}
+  .work{border-right:none;border-bottom:1px solid var(--b1)}
+  .work:last-child{grid-column:span 1}
+  .cta{padding:48px 20px}
+  footer{flex-direction:column;gap:10px;text-align:center;padding:20px}
+  .plans-foot{padding:20px}
+  .works-head,.ctor-head{padding:48px 20px 32px}
+  .n-links{display:none}
+}
+</style>
 </head>
-  <body>
-    <div class="noise-overlay"></div>
-    <div id="root"></div>
-  </body>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="n-logo"><span class="n-dot"></span>V. Munister</a>
+  <ul class="n-links">
+    <li><a href="/#methodology">Методологія</a></li>
+    <li><a href="/#cases">Кейси</a></li>
+    <li><a href="/#experience">Досвід</a></li>
+    <li><a href="/offer/" class="act">Послуги</a></li>
+  </ul>
+  <div class="n-r"><a href="mailto:munister@outlook.com">Написати ↗</a></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-lines"></div>
+  <div class="hero-kicker">
+    <span class="kicker-tag">[Сайти]</span>
+    <span class="kicker-tag">[PWA]</span>
+    <span class="kicker-tag">[CMS]</span>
+    <span class="kicker-tag ac">[Підписка]</span>
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">// Модель роботи</div>
+    <h1 class="hero-h">
+      Продукт<br>
+      за<br>
+      <em>підпискою</em>
+    </h1>
+    <div class="hero-row">
+      <p class="hero-lead">
+        Платите щомісяця — отримуєте <strong>готовий сайт або додаток,
+        хостинг, SSL і технічну підтримку</strong>. Без великих витрат на старті.
+        Від ₴700/міс.
+      </p>
+      <div class="hero-cta-wrap">
+        <a href="#plans" class="btn btn-ac">Переглянути тарифи ↓</a>
+        <a href="#constructor" class="btn btn-gh">Конструктор</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="plans" id="plans">
+  <div class="plans-head">
+    <h2 class="plans-h">Чотири<br><em>тарифи</em></h2>
+    <p class="plans-note">
+      Мінімум <strong>3 місяці</strong>. Після — можна скасувати або змінити тариф. Код і домен завжди ваші.
+    </p>
+  </div>
+
+  <div class="plans-grid">
+
+    <!-- Старт -->
+    <div class="plan">
+      <div class="plan-tier">Старт</div>
+      <div class="plan-name">Лендінг</div>
+      <div class="plan-tagline">Одна сторінка — чітка пропозиція</div>
+      <div class="plan-price-wrap">
+        <div class="plan-price">₴700</div>
+        <div class="plan-per">/міс</div>
+      </div>
+      <div class="plan-min">Мінімум 3 місяці · старт за 1–2 тижні</div>
+      <div class="plan-inc-lbl">Включає</div>
+      <ul class="plan-list">
+        <li class="on">1 сторінка до 6 секцій</li>
+        <li class="on">Адаптивна верстка</li>
+        <li class="on">Форма зворотного зв'язку</li>
+        <li class="on">SEO-базова оптимізація</li>
+        <li class="on">Хостинг + SSL</li>
+        <li class="on">1 год змін на місяць</li>
+        <li class="off">CMS / адмін-панель</li>
+        <li class="off">Бекенд / база даних</li>
+        <li class="off">PWA / офлайн-режим</li>
+      </ul>
+      <div class="plan-cta">
+        <a href="mailto:munister@outlook.com?subject=Старт — Лендінг ₴700/міс" class="plan-btn">Замовити</a>
+      </div>
+    </div>
+
+    <!-- Бізнес -->
+    <div class="plan hot">
+      <div class="plan-badge">Популярне</div>
+      <div class="plan-tier">Бізнес</div>
+      <div class="plan-name">Сайт + CMS</div>
+      <div class="plan-tagline">Повноцінний сайт, який ви керуєте самі</div>
+      <div class="plan-price-wrap">
+        <div class="plan-price">₴2 500</div>
+        <div class="plan-per">/міс</div>
+      </div>
+      <div class="plan-min">Мінімум 3 місяці · старт за 3–5 тижнів</div>
+      <div class="plan-inc-lbl">Включає</div>
+      <ul class="plan-list">
+        <li class="on">До 10 сторінок</li>
+        <li class="on">CMS — правите контент самі</li>
+        <li class="on">SEO + schema.org + meta</li>
+        <li class="on">Форми і базові інтеграції</li>
+        <li class="on">Хостинг + SSL + деплой</li>
+        <li class="on">3 год змін на місяць</li>
+        <li class="on">Пріоритетна підтримка</li>
+        <li class="off">PWA / офлайн-режим</li>
+        <li class="off">Авторизація / акаунти</li>
+      </ul>
+      <div class="plan-cta">
+        <a href="mailto:munister@outlook.com?subject=Бізнес — Сайт+CMS ₴2500/міс" class="plan-btn ac">Замовити</a>
+      </div>
+    </div>
+
+    <!-- Про -->
+    <div class="plan">
+      <div class="plan-tier">Про</div>
+      <div class="plan-name">PWA-додаток</div>
+      <div class="plan-tagline">Веб-застосунок на телефоні без App Store</div>
+      <div class="plan-price-wrap">
+        <div class="plan-price">₴5 000</div>
+        <div class="plan-per">/міс</div>
+      </div>
+      <div class="plan-min">Мінімум 3 місяці · старт за 6–10 тижнів</div>
+      <div class="plan-inc-lbl">Включає</div>
+      <ul class="plan-list">
+        <li class="on">React PWA + Service Worker</li>
+        <li class="on">Офлайн-режим на телефоні</li>
+        <li class="on">REST API (Flask / Node.js)</li>
+        <li class="on">База даних PostgreSQL</li>
+        <li class="on">Авторизація + профілі</li>
+        <li class="on">Адмін-панель</li>
+        <li class="on">Хостинг + CI/CD</li>
+        <li class="on">6 год змін на місяць</li>
+        <li class="off">Web Push / WebRTC</li>
+      </ul>
+      <div class="plan-cta">
+        <a href="mailto:munister@outlook.com?subject=Про — PWA ₴5000/міс" class="plan-btn">Замовити</a>
+      </div>
+    </div>
+
+    <!-- Партнер -->
+    <div class="plan">
+      <div class="plan-tier">Партнер</div>
+      <div class="plan-name">Платформа</div>
+      <div class="plan-tagline">Складна система з реалтаймом і платежами</div>
+      <div class="plan-price-wrap">
+        <div class="plan-price">₴10 000</div>
+        <div class="plan-per">/міс</div>
+      </div>
+      <div class="plan-min">Мінімум 3 місяці · старт за 2–4 місяці</div>
+      <div class="plan-inc-lbl">Включає все з Про +</div>
+      <ul class="plan-list">
+        <li class="gr">Web Push сповіщення</li>
+        <li class="gr">WebRTC відео/аудіо дзвінки</li>
+        <li class="gr">Платіжна інтеграція</li>
+        <li class="gr">Ролева система доступу</li>
+        <li class="gr">Real-time (WebSockets)</li>
+        <li class="gr">Необмежені зміни</li>
+        <li class="gr">Технічний супровід</li>
+        <li class="gr">Пріоритет у черзі</li>
+        <li class="gr">R&D і прототипування</li>
+      </ul>
+      <div class="plan-cta">
+        <a href="mailto:munister@outlook.com?subject=Партнер — Платформа ₴10000/міс" class="plan-btn">Обговорити</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="plans-foot">
+    <p>
+      <strong>Підписка включає</strong> розробку, хостинг, SSL і підтримку — один платіж на місяць.
+      Після завершення контракту <strong>код, домен і хостинг залишаються вашими</strong>.
+      Потрібні додаткові функції? Зберіть у конструкторі ↓
+    </p>
+    <a href="#constructor" class="btn btn-gh" style="flex-shrink:0">Конструктор ↓</a>
+  </div>
+</section>
+
+<!-- CONSTRUCTOR -->
+<section class="ctor" id="constructor">
+  <div class="ctor-head">
+    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:16px">// Конструктор рішень</div>
+    <h2 class="ctor-head-h">Зберіть своє<br><em>рішення</em></h2>
+    <p class="ctor-head-sub">Оберіть базу і додайте функції — склад і ціна оновляться одразу.</p>
+  </div>
+
+  <div class="ctor-body">
+    <!-- CONTROLS -->
+    <div class="ctor-controls">
+
+      <div class="ctl-block">
+        <div class="ctl-block-head">
+          <div class="ctl-num done" id="n1">1</div>
+          <div class="ctl-lbl">Оберіть основу</div>
+        </div>
+        <div class="ctl-block-body">
+          <div class="base-grid">
+            <div class="base-opt sel" data-base="landing" onclick="setBase(this)">
+              <div class="base-name">Лендінг</div>
+              <div class="base-price">₴700/міс</div>
+              <div class="base-desc">Одна сторінка — представити продукт</div>
+            </div>
+            <div class="base-opt" data-base="site" onclick="setBase(this)">
+              <div class="base-name">Сайт + CMS</div>
+              <div class="base-price">₴2 500/міс</div>
+              <div class="base-desc">Сайт з управлінням контентом</div>
+            </div>
+            <div class="base-opt" data-base="pwa" onclick="setBase(this)">
+              <div class="base-name">PWA-додаток</div>
+              <div class="base-price">₴5 000/міс</div>
+              <div class="base-desc">Веб-застосунок на телефоні</div>
+            </div>
+            <div class="base-opt" data-base="platform" onclick="setBase(this)">
+              <div class="base-name">Платформа</div>
+              <div class="base-price">₴10 000/міс</div>
+              <div class="base-desc">Система з реалтаймом і платежами</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ctl-block">
+        <div class="ctl-block-head">
+          <div class="ctl-num" id="n2">2</div>
+          <div class="ctl-lbl">Додайте функції</div>
+        </div>
+        <div class="ctl-block-body">
+          <div class="feats">
+
+            <div>
+              <div class="feat-group-lbl">Комунікація</div>
+              <div class="feat-list">
+                <div class="feat" data-f="push" data-p="400" data-n="Web Push сповіщення" onclick="toggleF(this)"><div class="feat-chk"></div><div class="feat-ico">🔔</div><div class="feat-info"><div class="feat-name">Web Push сповіщення</div><div class="feat-sub">Пуш на телефон без SDK — VAPID</div></div><div class="feat-cost">+₴400</div></div>
+                <div class="feat" data-f="chat" data-p="1200" data-n="Чат / месенджер" onclick="toggleF(this)"><div class="feat-chk"></div><div class="feat-ico">💬</div><div class="feat-info"><div class="feat-name">Чат / месенджер</div><div class="feat-sub">Real-time через WebSockets або WebRTC</div></div><div class="feat-cost">+₴1 200</div></div>
+                <div class="feat" data-f="email" data-p="300" data-n="Email-розсилки" onclick="toggleF(this)"><div class="feat-chk"></div><div class="feat-ico">📧</div><div class="feat-info"><div class="feat-name">Email-розсилки</div><div class="feat-sub">Mailchimp / SendGrid інтеграція</div></div><div class="feat-cost">+₴300</div></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="feat-group-lbl">Монетизація</div>
+              <div class="feat-list">
+                <div class="feat" data-f="payments" data-p="900" data-n="Платіжна система" onclick="toggleF(this)"><div class="feat-chk"></div><div class="feat-ico">💳</div><div class="feat-info"><div class="feat-name">Платіжна система</div><div class="feat-sub">Stripe, LiqPay, Monobank — разові або підписка</div></div><div class="feat-cost">+₴900</div></div>
+                <div class="feat" data-f="subscriptions" data-p="600" data-n="SaaS / тарифи" onclick="toggleF(this)"><div class="feat-chk"></div><div class="feat-ico">🔄</div><div class="feat-info"><div class="feat-name">SaaS / тарифи</div><div class="feat-sub">Тарифні плани, рекурентні платежі</div></div><div class="feat-cost">+₴600</div></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="feat-group-lbl">Акаунти і дані</div>
+              <div class="feat-list">
+                <div class="feat" data-f="auth" data-p="700" data-n="Авторизація і ролі" onclick="toggleF(this)"><div class="feat-chk"></div><div class="feat-ico">🔐</div><div class="feat-info"><div class="feat-name">Авторизація і ролі</div><div class="feat-sub">JWT, OAuth (Google, Apple). Ролева модель.</div></div><div class="feat-cost">+₴700</div></div>
+                <div class="feat" data-f="analytics" data-p="800" data-n="Аналітика і дашборд" onclick="toggleF(this)"><div class="feat-chk"></div><div class="feat-ico">📊</div><div class="feat-info"><div class="feat-name">Аналітика і дашборд</div><div class="feat-sub">Real-time графіки, статистика, звіти</div></div><div class="feat-cost">+₴800</div></div>
+                <div class="feat" data-f="map" data-p="600" data-n="Карта і геолокація" onclick="toggleF(this)"><div class="feat-chk"></div><div class="feat-ico">🗺️</div><div class="feat-info"><div class="feat-name">Карта і геолокація</div><div class="feat-sub">Google Maps / Leaflet. Маршрути, геофільтр.</div></div><div class="feat-cost">+₴600</div></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="feat-group-lbl">SEO і доступність</div>
+              <div class="feat-list">
+                <div class="feat" data-f="seo" data-p="600" data-n="SEO Pro" onclick="toggleF(this)"><div class="feat-chk"></div><div class="feat-ico">🔍</div><div class="feat-info"><div class="feat-name">SEO Pro</div><div class="feat-sub">Семантичне ядро, Schema.org, технічний аудит</div></div><div class="feat-cost">+₴600</div></div>
+                <div class="feat" data-f="multilang" data-p="500" data-n="Мультимовність" onclick="toggleF(this)"><div class="feat-chk"></div><div class="feat-ico">🌐</div><div class="feat-info"><div class="feat-name">Мультимовність</div><div class="feat-sub">UA / EN та інші. SEO для кожної мови.</div></div><div class="feat-cost">+₴500</div></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="feat-group-lbl">Розширення</div>
+              <div class="feat-list">
+                <div class="feat" data-f="ios" data-p="4000" data-n="iOS-додаток (Swift)" onclick="toggleF(this)"><div class="feat-chk"></div><div class="feat-ico">📱</div><div class="feat-info"><div class="feat-name">iOS-додаток (Swift)</div><div class="feat-sub">Нативний iOS-клієнт до вашого API</div></div><div class="feat-cost">+₴4 000</div></div>
+                <div class="feat" data-f="devops" data-p="500" data-n="DevOps / CI/CD" onclick="toggleF(this)"><div class="feat-chk"></div><div class="feat-ico">🚀</div><div class="feat-info"><div class="feat-name">DevOps / CI/CD</div><div class="feat-sub">Docker, автодеплой, моніторинг, бекапи</div></div><div class="feat-cost">+₴500</div></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div><!-- /controls -->
+
+    <!-- PANEL -->
+    <div class="ctor-panel">
+      <div class="panel-head">
+        <div class="panel-head-lbl">// Ваше рішення</div>
+        <div class="panel-title" id="p-title">Лендінг</div>
+      </div>
+
+      <div class="arch">
+        <div class="arch-section-lbl">Архітектура</div>
+        <div class="stack">
+          <div class="layer on hi" id="l-fe">
+            <div class="layer-ico">🖥️</div>
+            <div class="layer-info"><div class="layer-name">Frontend</div><div class="layer-tech" id="l-fe-tech">HTML / CSS / JS</div></div>
+            <div class="layer-pill ac">Core</div>
+          </div>
+          <div class="layer" id="l-cms">
+            <div class="layer-ico">📝</div>
+            <div class="layer-info"><div class="layer-name">CMS / Admin</div><div class="layer-tech">React Admin · Strapi</div></div>
+          </div>
+          <div class="layer" id="l-back">
+            <div class="layer-ico">⚙️</div>
+            <div class="layer-info"><div class="layer-name">Backend API</div><div class="layer-tech" id="l-back-tech">Flask / Node.js · REST</div></div>
+          </div>
+          <div class="layer" id="l-db">
+            <div class="layer-ico">🗄️</div>
+            <div class="layer-info"><div class="layer-name">База даних</div><div class="layer-tech">PostgreSQL + Redis</div></div>
+          </div>
+          <div class="layer" id="l-rt">
+            <div class="layer-ico">⚡</div>
+            <div class="layer-info"><div class="layer-name">Real-time</div><div class="layer-tech" id="l-rt-tech">WebSockets / WebRTC</div></div>
+          </div>
+          <div class="layer" id="l-ios">
+            <div class="layer-ico">📱</div>
+            <div class="layer-info"><div class="layer-name">iOS App</div><div class="layer-tech">Swift / SwiftUI</div></div>
+            <div class="layer-pill gr">+Swift</div>
+          </div>
+          <div class="layer on" id="l-host">
+            <div class="layer-ico">☁️</div>
+            <div class="layer-info"><div class="layer-name">Хостинг + SSL</div><div class="layer-tech" id="l-host-tech">Netlify / Vercel</div></div>
+          </div>
+        </div>
+
+        <div class="arch-section-lbl">Обрані функції</div>
+        <div class="feat-badges" id="fbadges">
+          <span class="feat-empty">Виберіть функції ліворуч</span>
+        </div>
+
+        <div class="arch-section-lbl">Терміни</div>
+        <div class="timeline">
+          <div class="tl-cell"><div class="tl-val" id="t-dev">1–2 т.</div><div class="tl-lbl">Розробка</div></div>
+          <div class="tl-cell"><div class="tl-val" id="t-launch">1 д.</div><div class="tl-lbl">Запуск</div></div>
+          <div class="tl-cell"><div class="tl-val" id="t-sup" style="color:var(--ac)">1 год</div><div class="tl-lbl">Підтримка/міс</div></div>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="sum-lines" id="sum-lines">
+          <div class="sum-line"><span class="sum-line-l">Лендінг</span><span class="sum-line-v">₴1 000/міс</span></div>
+        </div>
+        <div class="sum-total">
+          <div class="sum-total-l">Разом / місяць</div>
+          <div class="sum-total-v" id="sum-total">₴1 000 <span>/міс</span></div>
+        </div>
+        <a href="#" class="sum-btn" onclick="openEmail(event)">Написати з деталями ↗</a>
+        <div class="sum-foot">Орієнтовна ціна · фінальний розрахунок після брифінгу</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKS -->
+<section class="works" id="cases">
+  <div class="works-head">
+    <h2 class="works-head-h">Реалізовані<br><em>проекти</em></h2>
+  </div>
+  <div class="works-grid">
+
+    <div class="work">
+      <div class="work-vis" style="background:#060a0e">
+        <div class="ph">
+          <div class="ph-s arm">
+            <div class="arm-hi">Привіт, Олег 👋</div>
+            <div class="arm-card">
+              <div class="arm-bl">БАЛАНС</div>
+              <div class="arm-am">₴ 18 540</div>
+              <div class="arm-ac">●●●● 4221</div>
+            </div>
+            <div class="arm-txh">ОПЕРАЦІЇ</div>
+            <div class="arm-tx"><div class="arm-tn">Зарплата</div><div class="arm-tp">+₴6 800</div></div>
+            <div class="arm-tx"><div class="arm-tn">Марія С.</div><div class="arm-tn2">−₴1 200</div></div>
+            <div class="arm-tx"><div class="arm-tn">Поповнення</div><div class="arm-tp">+₴5 000</div></div>
+            <div class="arm-nav">
+              <div class="arm-ni on"><div class="arm-nd"></div>Головна</div>
+              <div class="arm-ni"><div class="arm-nd"></div>Переказ</div>
+              <div class="arm-ni"><div class="arm-nd"></div>Чат</div>
+              <div class="arm-ni"><div class="arm-nd"></div>Профіль</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="work-meta"><span class="work-ref">FT-02</span><span class="work-cat">FinTech · PWA</span><span style="font-size:11px;color:var(--t3)">2025</span></div>
+      <div class="work-title">ARM Bank — Banking PWA</div>
+      <p class="work-body">Банківський PWA зі вбудованим месенджером. Офлайн-режим, Web Push, WebRTC. Flask + PostgreSQL, 60+ API-endpoints, адмін-панель.</p>
+      <div class="work-chips"><span class="chip ac">PWA</span><span class="chip ac">WebRTC</span><span class="chip">Flask</span><span class="chip">PostgreSQL</span></div>
+      <a href="https://army-bank.onrender.com/dashboard" class="work-link" target="_blank">Відкрити додаток ↗</a>
+    </div>
+
+    <div class="work">
+      <div class="work-vis" style="background:#080606">
+        <div class="br" style="width:190px">
+          <div class="br-bar"><div class="br-dots"><div class="br-dot" style="background:#c46a5a"></div><div class="br-dot" style="background:#8a7a3a"></div><div class="br-dot" style="background:#3a7a3a"></div></div><div class="br-url">helpushelpua.com</div></div>
+          <div class="hu-hero"><div class="hu-b2">Humanitarian</div><div class="hu-ht">Допоможи нам допомогти Україні</div><div class="hu-btn">Підтримати ↗</div></div>
+          <div class="hu-stats"><div class="hu-st"><div class="hu-sn">₴2.4M</div><div class="hu-sl">залучено</div></div><div class="hu-st"><div class="hu-sn">840+</div><div class="hu-sl">донорів</div></div><div class="hu-st"><div class="hu-sn">100%</div><div class="hu-sl">прозорість</div></div></div>
+        </div>
+      </div>
+      <div class="work-meta"><span class="work-ref">107</span><span class="work-cat">NGO · React</span><span style="font-size:11px;color:var(--t3)">2026</span></div>
+      <div class="work-title">Help Us Help UA</div>
+      <p class="work-body">Повний редизайн і розробка гуманітарної платформи. UX-аудит, платіжна інтеграція, оптимізація конверсії донацій.</p>
+      <div class="work-chips"><span class="chip">React</span><span class="chip">UX Audit</span><span class="chip">Payments</span></div>
+      <a href="https://helpushelpua.com/" class="work-link" target="_blank">helpushelpua.com ↗</a>
+    </div>
+
+    <div class="work">
+      <div class="work-vis" style="background:#070506">
+        <div class="br" style="width:190px">
+          <div class="br-bar"><div class="br-dots"><div class="br-dot" style="background:#333"></div><div class="br-dot" style="background:#333"></div><div class="br-dot" style="background:#333"></div></div><div class="br-url">eprisj.github.io</div></div>
+          <div class="ep-nav"><div class="ep-logo">EPRIS</div><div class="ep-nl"><span class="ep-na">Архіт.</span><span class="ep-na">Дизайн</span></div></div>
+          <div class="ep-hero"><div class="ep-iss">Випуск №04 · Кіпр</div><div class="ep-ht">Архітектура як спосіб мислення</div><div class="ep-sub">Epris Materie Journal</div></div>
+          <div class="ep-grid"><div class="ep-cell"><div class="ep-cc">Урбанізм</div><div class="ep-ch">Середземноморський контекст</div></div><div class="ep-cell"><div class="ep-cc">Матеріали</div><div class="ep-ch">Локальний камінь</div></div></div>
+        </div>
+      </div>
+      <div class="work-meta"><span class="work-ref">100</span><span class="work-cat">Cyprus · Web</span><span style="font-size:11px;color:var(--t3)">2024</span></div>
+      <div class="work-title">Epris Materie</div>
+      <p class="work-body">Цифрова присутність архітектурного журналу на Кіпрі. Мінімалістська UX, контент-моделювання, SEO-інжиніринг.</p>
+      <div class="work-chips"><span class="chip">React</span><span class="chip">CMS</span><span class="chip">SEO</span></div>
+      <a href="https://eprisj.github.io/" class="work-link" target="_blank">eprisj.github.io ↗</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="border-bottom:none">
+  <div class="cta">
+    <div>
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:20px">// Старт</div>
+      <h2 class="cta-h">Є задача —<br><em>обговоримо</em></h2>
+      <p class="cta-sub">Перша консультація безкоштовно.<br>Відповідь протягом 24 годин.</p>
+    </div>
+    <div class="cta-links">
+      <a href="mailto:munister@outlook.com" class="cta-lnk">
+        <div class="cta-lnk-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div><div class="cta-lnk-lbl">Email</div><div class="cta-lnk-v">munister@outlook.com</div></div>
+        <div class="cta-lnk-arr">↗</div>
+      </a>
+      <a href="https://munister.com.ua/" class="cta-lnk">
+        <div class="cta-lnk-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <div><div class="cta-lnk-lbl">Портфоліо</div><div class="cta-lnk-v">munister.com.ua</div></div>
+        <div class="cta-lnk-arr">↗</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Viacheslav Munister</span>
+  <span><a href="/">← Головна</a> &nbsp;·&nbsp; <a href="#plans">Тарифи</a> &nbsp;·&nbsp; <a href="#constructor">Конструктор</a> &nbsp;·&nbsp; <a href="mailto:munister@outlook.com">Контакт</a></span>
+</footer>
+
+<script>
+const B={
+  landing: {name:'Лендінг',p:700,fe:'HTML / CSS / JS',host:'Netlify / Vercel',back:false,cms:false,rt:false,dev:'1–2 т.',launch:'1 д.',sup:'1 год'},
+  site:    {name:'Сайт + CMS',p:2500,fe:'React / Next.js',host:'Vercel + Strapi',back:false,cms:true,rt:false,dev:'3–5 т.',launch:'2 д.',sup:'3 год'},
+  pwa:     {name:'PWA-додаток',p:5000,fe:'React PWA + SW',host:'Render / VPS · CI/CD',back:true,cms:true,rt:false,dev:'6–10 т.',launch:'3 д.',sup:'6 год'},
+  platform:{name:'Платформа',p:10000,fe:'React PWA + WS',host:'VPS / AWS · CI/CD',back:true,cms:true,rt:true,dev:'2–4 міс',launch:'5 д.',sup:'Безліміт'},
+};
+const FICONS={push:'🔔',chat:'💬',email:'📧',payments:'💳',subscriptions:'🔄',auth:'🔐',analytics:'📊',map:'🗺️',seo:'🔍',multilang:'🌐',ios:'📱',devops:'🚀'};
+let curB='landing', feats=new Set();
+
+function setBase(el){
+  document.querySelectorAll('.base-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  curB=el.dataset.base;
+  render();
+}
+function toggleF(el){
+  const f=el.dataset.f;
+  if(feats.has(f)){feats.delete(f);el.classList.remove('on');el.querySelector('.feat-chk').textContent='';}
+  else{feats.add(f);el.classList.add('on');el.querySelector('.feat-chk').textContent='✓';}
+  render();
+}
+function setLayer(id,on,cls=''){
+  const el=document.getElementById(id);
+  el.classList.toggle('on',on);
+  if(cls){el.classList.toggle(cls,on);}
+}
+function fmt(n){return '₴'+n.toLocaleString('uk-UA');}
+
+function render(){
+  const b=B[curB];
+  document.getElementById('p-title').textContent=b.name;
+  document.getElementById('l-fe-tech').textContent=b.fe;
+  document.getElementById('l-host-tech').textContent=b.host;
+  setLayer('l-cms',b.cms,'hi');
+  setLayer('l-back',b.back,'gr');
+  setLayer('l-db',b.back,'gr');
+  setLayer('l-rt',b.rt||feats.has('chat'),'gr');
+  setLayer('l-ios',feats.has('ios'),'gr');
+  // timeline
+  document.getElementById('t-dev').textContent=b.dev;
+  document.getElementById('t-launch').textContent=b.launch;
+  document.getElementById('t-sup').textContent=b.sup;
+  // badge area
+  const ba=document.getElementById('fbadges');
+  ba.innerHTML='';
+  if(!feats.size){ba.innerHTML='<span class="feat-empty">Виберіть функції ліворуч</span>';return render2(b);}
+  feats.forEach(f=>{
+    const el=document.querySelector(`[data-f="${f}"]`);
+    if(!el)return;
+    const d=document.createElement('div');
+    d.className='fbadge';
+    d.innerHTML=`<span class="fbadge-ico">${FICONS[f]||'·'}</span>${el.dataset.n}`;
+    ba.appendChild(d);
+  });
+  render2(b);
+}
+function render2(b){
+  let total=b.p, lines=`<div class="sum-line"><span class="sum-line-l">${b.name}</span><span class="sum-line-v">${fmt(b.p)}/міс</span></div>`;
+  feats.forEach(f=>{
+    const el=document.querySelector(`[data-f="${f}"]`);
+    if(!el)return;
+    const p=parseInt(el.dataset.p);total+=p;
+    lines+=`<div class="sum-line"><span class="sum-line-l">${el.dataset.n}</span><span class="sum-line-v">+${fmt(p)}/міс</span></div>`;
+  });
+  document.getElementById('sum-lines').innerHTML=lines;
+  document.getElementById('sum-total').innerHTML=`${fmt(total)} <span>/міс</span>`;
+}
+function openEmail(e){
+  e.preventDefault();
+  const b=B[curB];
+  let total=b.p;
+  let flist=[];
+  feats.forEach(f=>{
+    const el=document.querySelector(`[data-f="${f}"]`);
+    if(!el)return;
+    total+=parseInt(el.dataset.p);
+    flist.push('— '+el.dataset.n);
+  });
+  const subj=encodeURIComponent(`${b.name} — ${fmt(total)}/міс`);
+  const body=encodeURIComponent(`Привіт!\n\nЗібрав рішення у конструкторі:\nОснова: ${b.name}${flist.length?'\n\nФункції:\n'+flist.join('\n'):''}\n\nОрієнтовна ціна: ${fmt(total)}/міс\n\n---\nРозкажіть про свій проект:`);
+  window.location.href=`mailto:munister@outlook.com?subject=${subj}&body=${body}`;
+}
+render();
+</script>
+</body>
 </html>
