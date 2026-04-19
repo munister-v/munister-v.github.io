@@ -1308,6 +1308,270 @@
     }
 
     /* ═══════════════════════════════════════
+       EXTRA — ATLANTE INTERATTIVO
+    ═══════════════════════════════════════ */
+    #atlante {
+      background: var(--milk);
+      padding: 104px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .atl-head { margin-bottom: 34px; }
+    .atl-kicker {
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      display: block;
+      margin-bottom: 10px;
+    }
+    .atl-title {
+      font-family: var(--serif);
+      font-size: clamp(44px, 8vw, 86px);
+      line-height: 0.92;
+      font-weight: 300;
+      color: var(--graphite);
+    }
+
+    .atl-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 360px) 1fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .atl-nav {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.45);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .atlas-city-btn {
+      text-align: left;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.4);
+      padding: 11px 12px;
+      transition: border-color .2s var(--ease), background .2s var(--ease), transform .2s var(--ease);
+    }
+    .atlas-city-btn strong {
+      display: block;
+      font-family: var(--serif);
+      font-size: 21px;
+      font-weight: 300;
+      color: var(--graphite);
+      line-height: 1.05;
+    }
+    .atlas-city-btn span {
+      font-family: var(--sans);
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      display: block;
+      margin-top: 4px;
+    }
+    .atlas-city-btn:hover { transform: translateX(2px); border-color: var(--stone-dark); }
+    .atlas-city-btn.active {
+      border-color: var(--terracotta);
+      background: rgba(168,84,56,0.08);
+    }
+
+    .atl-preview {
+      min-height: clamp(360px, 48vw, 620px);
+      border: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+      background: var(--stone-pale);
+      isolation: isolate;
+    }
+    .atl-preview::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--atl-img) center/cover no-repeat;
+      transform: scale(1.01);
+      transition: transform 0.6s var(--ease);
+    }
+    .atl-preview::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(20,18,16,0.78), rgba(20,18,16,0.08) 58%, rgba(20,18,16,0.2)),
+        radial-gradient(circle at 85% 20%, rgba(255,255,255,0.2), transparent 40%);
+    }
+    .atl-preview:hover::before { transform: scale(1.04); }
+
+    .atl-copy {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 18px;
+      z-index: 2;
+    }
+    .atl-place {
+      font-family: var(--sans);
+      font-size: 8px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(249,245,238,0.65);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .atl-copy h3 {
+      font-family: var(--serif);
+      font-size: clamp(28px, 4.6vw, 58px);
+      color: rgba(249,245,238,0.96);
+      font-weight: 300;
+      line-height: 0.95;
+      margin-bottom: 10px;
+    }
+    .atl-copy p {
+      font-family: var(--serif);
+      font-size: clamp(15px, 1.6vw, 20px);
+      line-height: 1.55;
+      color: rgba(249,245,238,0.86);
+      max-width: 780px;
+    }
+
+    /* ═══════════════════════════════════════
+       EXTRA — LABORATORIO INTERATTIVO
+    ═══════════════════════════════════════ */
+    #laboratorio {
+      background: var(--warm-white);
+      padding: 96px 0 116px;
+    }
+
+    .lab-head { margin-bottom: 26px; }
+    .lab-kicker {
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .lab-title {
+      font-family: var(--serif);
+      font-size: clamp(42px, 7vw, 84px);
+      font-weight: 300;
+      line-height: 0.92;
+      color: var(--graphite);
+    }
+
+    .lab-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .lab-filter-btn, .lab-route-btn {
+      border: 1px solid var(--line-dark);
+      background: rgba(255,255,255,0.7);
+      color: var(--graphite-mid);
+      font-family: var(--sans);
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      transition: color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+    }
+    .lab-filter-btn:hover, .lab-route-btn:hover { border-color: var(--terracotta); color: var(--graphite); }
+    .lab-filter-btn.active {
+      background: rgba(168,84,56,0.12);
+      color: var(--graphite);
+      border-color: var(--terracotta);
+    }
+
+    .lab-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+    .lab-card {
+      position: relative;
+      min-height: clamp(220px, 30vw, 360px);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--stone-pale);
+      transition: opacity .24s var(--ease), transform .24s var(--ease);
+    }
+    .lab-card.is-hidden {
+      opacity: 0.12;
+      transform: scale(0.985);
+      pointer-events: none;
+    }
+    .lab-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--lab-img) center/cover no-repeat;
+      filter: saturate(0.84) contrast(0.95);
+      transition: transform .45s var(--ease), filter .45s var(--ease);
+    }
+    .lab-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(16,14,12,0.76), rgba(16,14,12,0.06) 62%);
+    }
+    .lab-card:hover::before {
+      transform: scale(1.03);
+      filter: saturate(0.94) contrast(1);
+    }
+    .lab-card-copy {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 12px;
+      z-index: 2;
+    }
+    .lab-card-copy span {
+      font-family: var(--sans);
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(249,245,238,0.63);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .lab-card-copy strong {
+      font-family: var(--serif);
+      font-size: clamp(23px, 3vw, 36px);
+      font-weight: 300;
+      line-height: 0.95;
+      color: rgba(249,245,238,0.95);
+      display: block;
+    }
+
+    .lab-route-out {
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      min-height: 34px;
+      font-family: var(--serif);
+      font-size: clamp(16px, 1.5vw, 21px);
+      color: var(--graphite-mid);
+      font-style: italic;
+    }
+
+    @media (max-width: 980px) {
+      .atl-grid { grid-template-columns: 1fr; }
+      .lab-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 680px) {
+      #atlante, #laboratorio { padding: 74px 0; }
+      .lab-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ═══════════════════════════════════════
        FOOTER
     ═══════════════════════════════════════ */
     .footer {
@@ -4987,6 +5251,114 @@
     </div>
   </section>
 
+  <div class="chapter-divider"></div>
+  <section id="atlante">
+    <div class="wrap">
+      <header class="atl-head fu">
+        <span class="atl-kicker it">13 — Atlante interattivo</span>
+        <span class="atl-kicker ua">13 — Інтерактивний атлас</span>
+        <h2 class="atl-title it">Atlante<br>Vivo</h2>
+        <h2 class="atl-title ua">Живий<br>Атлас</h2>
+      </header>
+
+      <div class="atl-grid fu">
+        <div class="atl-nav" id="atlas-nav">
+          <button class="atlas-city-btn active" type="button" data-key="roma">
+            <strong class="it">Roma</strong><strong class="ua">Рим</strong>
+            <span class="it">Foro · Arco · Stratificazione</span><span class="ua">Форум · Арка · Шаровість</span>
+          </button>
+          <button class="atlas-city-btn" type="button" data-key="bologna">
+            <strong class="it">Bologna</strong><strong class="ua">Болонья</strong>
+            <span class="it">Portici · Ombra urbana</span><span class="ua">Портики · Міська тінь</span>
+          </button>
+          <button class="atlas-city-btn" type="button" data-key="venezia">
+            <strong class="it">Venezia</strong><strong class="ua">Венеція</strong>
+            <span class="it">Acqua · Pietra · Facciata</span><span class="ua">Вода · Камінь · Фасад</span>
+          </button>
+          <button class="atlas-city-btn" type="button" data-key="puglia">
+            <strong class="it">Puglia</strong><strong class="ua">Апулія</strong>
+            <span class="it">Trulli · Calce · Terra</span><span class="ua">Трулі · Вапно · Земля</span>
+          </button>
+        </div>
+
+        <article class="atl-preview" id="atl-preview">
+          <div class="atl-copy">
+            <span class="atl-place" id="atl-place"></span>
+            <h3 id="atl-title">Roma</h3>
+            <p class="it" id="atl-text-it"></p>
+            <p class="ua" id="atl-text-ua"></p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="laboratorio">
+    <div class="wrap">
+      <header class="lab-head fu">
+        <span class="lab-kicker it">14 — Laboratorio interattivo</span>
+        <span class="lab-kicker ua">14 — Інтерактивна лабораторія</span>
+        <h2 class="lab-title it">Materia<br>& Percorso</h2>
+        <h2 class="lab-title ua">Матерія<br>та Маршрут</h2>
+      </header>
+
+      <div class="lab-toolbar fu" id="lab-toolbar">
+        <button type="button" class="lab-filter-btn active" data-filter="all">All</button>
+        <button type="button" class="lab-filter-btn" data-filter="pietra">Pietra</button>
+        <button type="button" class="lab-filter-btn" data-filter="acqua">Acqua</button>
+        <button type="button" class="lab-filter-btn" data-filter="terra">Terra</button>
+        <button type="button" class="lab-route-btn" id="lab-route-btn">
+          <span class="it">Genera percorso</span>
+          <span class="ua">Згенерувати маршрут</span>
+        </button>
+      </div>
+
+      <div class="lab-grid fu" id="lab-grid">
+        <article class="lab-card" data-tag="pietra" style="--lab-img:url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Rome_%28IT%29%2C_Kolosseum_--_2013_--_3379-86.jpg/1280px-Rome_%28IT%29%2C_Kolosseum_--_2013_--_3379-86.jpg')">
+          <div class="lab-card-copy">
+            <span class="it">Pietra</span><span class="ua">Камінь</span>
+            <strong class="it">Colosseo</strong><strong class="ua">Колізей</strong>
+          </div>
+        </article>
+        <article class="lab-card" data-tag="acqua" style="--lab-img:url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Venezia_-_Canal_Grande.JPG/1280px-Venezia_-_Canal_Grande.JPG')">
+          <div class="lab-card-copy">
+            <span class="it">Acqua</span><span class="ua">Вода</span>
+            <strong class="it">Canal Grande</strong><strong class="ua">Гранд-канал</strong>
+          </div>
+        </article>
+        <article class="lab-card" data-tag="terra" style="--lab-img:url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Trulli%2C_Alberobello.jpg/1280px-Trulli%2C_Alberobello.jpg')">
+          <div class="lab-card-copy">
+            <span class="it">Terra</span><span class="ua">Земля</span>
+            <strong class="it">Trulli</strong><strong class="ua">Трулі</strong>
+          </div>
+        </article>
+        <article class="lab-card" data-tag="pietra" style="--lab-img:url('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Arcades_of_Bologna._Italy.jpg/1280px-Arcades_of_Bologna._Italy.jpg')">
+          <div class="lab-card-copy">
+            <span class="it">Pietra</span><span class="ua">Камінь</span>
+            <strong class="it">Portici di Bologna</strong><strong class="ua">Портики Болоньї</strong>
+          </div>
+        </article>
+        <article class="lab-card" data-tag="acqua" style="--lab-img:url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Lago_di_Como_panorama.jpg/1280px-Lago_di_Como_panorama.jpg')">
+          <div class="lab-card-copy">
+            <span class="it">Acqua</span><span class="ua">Вода</span>
+            <strong class="it">Lago di Como</strong><strong class="ua">Озеро Комо</strong>
+          </div>
+        </article>
+        <article class="lab-card" data-tag="terra" style="--lab-img:url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Villa_Rotonda_front.jpg/1280px-Villa_Rotonda_front.jpg')">
+          <div class="lab-card-copy">
+            <span class="it">Terra</span><span class="ua">Земля</span>
+            <strong class="it">Villa Rotonda</strong><strong class="ua">Вілла Ротонда</strong>
+          </div>
+        </article>
+      </div>
+
+      <p class="lab-route-out fu" id="lab-route-out">
+        <span class="it">Scegli un filtro e genera un percorso tematico.</span>
+        <span class="ua">Обери фільтр і згенеруй тематичний маршрут.</span>
+      </p>
+    </div>
+  </section>
+
   <!-- ════════════════════════
        13 — MANIFESTO
   ════════════════════════ -->
@@ -5074,6 +5446,8 @@
           <li><a href="#marnero"><span class="it">Mar Nero</span><span class="ua">Чорне море</span></a></li>
           <li><a href="#armir"><span class="it">ARMIR</span><span class="ua">АРМІР</span></a></li>
           <li><a href="#soglia"><span class="it">Soglia</span><span class="ua">Поріг</span></a></li>
+          <li><a href="#atlante"><span class="it">Atlante</span><span class="ua">Атлас</span></a></li>
+          <li><a href="#laboratorio"><span class="it">Laboratorio</span><span class="ua">Лабораторія</span></a></li>
           <li><a href="#manifesto"><span class="it">Manifesto</span><span class="ua">Маніфест</span></a></li>
         </ul>
       </div>
@@ -5275,7 +5649,7 @@
         if (!el) return '';
         if (el.tagName === 'IMG') return el.currentSrc || el.src || '';
         const styles = getComputedStyle(el);
-        const cssVars = ['--ritmo-img', '--thread-img', '--mc-img', '--armir-img', '--fact-img', '--res-img', '--man-img', '--soglia-img'];
+        const cssVars = ['--ritmo-img', '--thread-img', '--mc-img', '--armir-img', '--fact-img', '--res-img', '--man-img', '--soglia-img', '--atl-img', '--lab-img'];
         for (const name of cssVars) {
           const src = extractUrl(styles.getPropertyValue(name));
           if (src) return src;
@@ -5497,6 +5871,114 @@
       goTo(0);
     })();
 
+    // ── ATLANTE VIVO — city switcher ─────
+    (function () {
+      const nav = document.getElementById('atlas-nav');
+      const preview = document.getElementById('atl-preview');
+      const place = document.getElementById('atl-place');
+      const title = document.getElementById('atl-title');
+      const textIt = document.getElementById('atl-text-it');
+      const textUa = document.getElementById('atl-text-ua');
+      if (!nav || !preview || !place || !title || !textIt || !textUa) return;
+
+      const atlas = {
+        roma: {
+          place: 'Roma · Foro Romano',
+          title: 'Roma',
+          it: 'Strati di tempo nello stesso quadro: arco, colonna, rovina e luce obliqua. Il centro non e\' monumento: e\' grammatica.',
+          ua: 'Шари часу в одному кадрі: арка, колона, руїна і косе світло. Центр тут не монумент, а граматика.',
+          img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Rome_%28IT%29%2C_Kolosseum_--_2013_--_3379-86.jpg/1280px-Rome_%28IT%29%2C_Kolosseum_--_2013_--_3379-86.jpg'
+        },
+        bologna: {
+          place: 'Bologna · Portici',
+          title: 'Bologna',
+          it: 'Il portico e\' infrastruttura poetica: protegge, guida, misura il passo. Architettura ripetuta come respiro urbano.',
+          ua: 'Портик тут поетична інфраструктура: захищає, веде, міряє крок. Архітектура, що повторюється як міське дихання.',
+          img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Arcades_of_Bologna._Italy.jpg/1280px-Arcades_of_Bologna._Italy.jpg'
+        },
+        venezia: {
+          place: 'Venezia · Bacino',
+          title: 'Venezia',
+          it: 'In laguna la facciata dialoga con l\'acqua: la pietra non domina, galleggia nello sguardo.',
+          ua: 'У лагуні фасад говорить з водою: камінь не домінує, а ніби пливе в погляді.',
+          img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Venezia_-_Canal_Grande.JPG/1280px-Venezia_-_Canal_Grande.JPG'
+        },
+        puglia: {
+          place: 'Puglia · Valle d\'Itria',
+          title: 'Puglia',
+          it: 'Trulli e luce asciutta: materia povera, intelligenza costruttiva altissima. Geometria vernacolare come codice.',
+          ua: 'Трулі і сухе світло: скромна матерія, але дуже високий будівельний інтелект. Вернакулярна геометрія як код.',
+          img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Trulli%2C_Alberobello.jpg/1280px-Trulli%2C_Alberobello.jpg'
+        }
+      };
+
+      function activate(key) {
+        const item = atlas[key];
+        if (!item) return;
+        preview.style.setProperty('--atl-img', 'url("' + item.img + '")');
+        place.textContent = item.place;
+        title.textContent = item.title;
+        textIt.textContent = item.it;
+        textUa.textContent = item.ua;
+        nav.querySelectorAll('.atlas-city-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.key === key));
+      }
+
+      nav.addEventListener('click', function(e) {
+        const btn = e.target.closest('.atlas-city-btn');
+        if (!btn) return;
+        activate(btn.dataset.key);
+      });
+
+      activate('roma');
+    })();
+
+    // ── LABORATORIO — filters + route ────
+    (function () {
+      const toolbar = document.getElementById('lab-toolbar');
+      const grid = document.getElementById('lab-grid');
+      const out = document.getElementById('lab-route-out');
+      const routeBtn = document.getElementById('lab-route-btn');
+      if (!toolbar || !grid || !out || !routeBtn) return;
+
+      const cards = Array.from(grid.querySelectorAll('.lab-card'));
+      let active = 'all';
+
+      function visibleCards() {
+        return cards.filter(card => active === 'all' || card.dataset.tag === active);
+      }
+
+      function applyFilter(filter) {
+        active = filter;
+        cards.forEach(card => {
+          const show = filter === 'all' || card.dataset.tag === filter;
+          card.classList.toggle('is-hidden', !show);
+        });
+        toolbar.querySelectorAll('.lab-filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === filter));
+      }
+
+      function generateRoute() {
+        const vis = visibleCards();
+        if (!vis.length) return;
+        const shuffled = vis.slice().sort(() => Math.random() - 0.5).slice(0, Math.min(3, vis.length));
+        const isUa = document.body.classList.contains('lang-ua');
+        const names = shuffled.map(card => {
+          const label = card.querySelector('.lab-card-copy strong.' + (isUa ? 'ua' : 'it'));
+          return label ? label.textContent.trim() : '';
+        }).filter(Boolean);
+        out.textContent = isUa
+          ? 'Маршрут: ' + names.join(' -> ') + '.'
+          : 'Percorso: ' + names.join(' -> ') + '.';
+      }
+
+      toolbar.addEventListener('click', function(e) {
+        const filterBtn = e.target.closest('.lab-filter-btn');
+        if (filterBtn) applyFilter(filterBtn.dataset.filter);
+      });
+      routeBtn.addEventListener('click', generateRoute);
+
+      applyFilter('all');
+    })();
+
     // -- DANTE GUIDE ASSISTANT v2 ---------
     (function () {
       const shell         = document.getElementById('guide-assistant');
@@ -5524,7 +6006,7 @@
       let isTyping = false;
 
       const sectionOrder = ['home','codice','architettura','materiali','ritmo','dettagli',
-        'immagini','tracce','marnero','armir','soglia','parallelo','cronologia','manifesto'];
+        'immagini','tracce','marnero','armir','soglia','parallelo','cronologia','atlante','laboratorio','manifesto'];
 
       const portraitSources = [
         'https://commons.wikimedia.org/wiki/Special:FilePath/Portrait%20de%20Dante.jpg?width=360',
@@ -5549,7 +6031,8 @@
             {label:'\u2191 Prev',      cmd:'prev'},
             {label:'\u25ce Dove sono', cmd:'where'},
             {label:'\u2b21 Parallelo', section:'parallelo'},
-            {label:'\u221e Cronologia',section:'cronologia'}
+            {label:'\u221e Cronologia',section:'cronologia'},
+            {label:'\u25a3 Atlante',   section:'atlante'}
           ],
           notFound: 'Non ho trovato quella via. Prova: pietra, arco, luce, Genova, Donbas, parallelo, tour.',
           sections: 'Sezioni disponibili:',
@@ -5566,7 +6049,7 @@
             home:'Home', codice:'Codice', architettura:'Architettura', materiali:'Materiali',
             ritmo:'Ritmo Urbano', dettagli:'Dettagli', immagini:'Immagini', tracce:'Tracce',
             marnero:'Mar Nero', armir:'Armir', soglia:'Soglia', parallelo:'Il Parallelo',
-            cronologia:'Cronologia', manifesto:'Manifesto'
+            cronologia:'Cronologia', atlante:'Atlante Vivo', laboratorio:'Laboratorio', manifesto:'Manifesto'
           },
           sectionPoetry: {
             codice:       '"Luce intellettual, piena d\'amore." Ogni pietra italiana ha una grammatica.',
@@ -5581,6 +6064,8 @@
             soglia:       '"Io sono la soglia." Due mondi, una memoria, un codice condiviso.',
             parallelo:    'Italia a sinistra, Ucraina a destra. Trascina il confine -- scopri le risonanze.',
             cronologia:   'Otto secoli di presenza italiana -- da Caffa al Don. Una storia che pochi conoscono.',
+            atlante:      'Atlante vivo: cambia citta\', cambia luce, ma la grammatica resta riconoscibile.',
+            laboratorio:  'Laboratorio: filtra materia e genera percorsi come un montaggio visivo.',
             manifesto:    '"E quindi uscimmo a riveder le stelle." Il manifesto chiude il cerchio.'
           }
         },
@@ -5600,7 +6085,8 @@
             {label:'\u2191 Nazad',     cmd:'prev'},
             {label:'\u25ce De ya',     cmd:'where'},
             {label:'\u2b21 Parallel',  section:'parallelo'},
-            {label:'\u221e Khronol',   section:'cronologia'}
+            {label:'\u221e Khronol',   section:'cronologia'},
+            {label:'\u25a3 Atlas',     section:'atlante'}
           ],
           notFound: 'Ne znayshov takoho shlyakhu. Sprobuiy: kamin, arka, svitlo, Genu, Donbas, paralel, tur.',
           sections: 'Dostupni rozdily:',
@@ -5617,7 +6103,7 @@
             home:'Holovn', codice:'Kod', architettura:'Arkhitektura', materiali:'Materialy',
             ritmo:'Miskyi Rytm', dettagli:'Detali', immagini:'Obrazy', tracce:'Slidy',
             marnero:'Chorne more', armir:'ARMIR', soglia:'Porih', parallelo:'Paralel',
-            cronologia:'Khronologiya', manifesto:'Manifest'
+            cronologia:'Khronologiya', atlante:'Atlas', laboratorio:'Laboratoriya', manifesto:'Manifest'
           },
           sectionPoetry: {
             codice:       '"Svitlo rozumu, povne lyubovi." Kozhen italiyskyi kamin maye gramatyku.',
@@ -5632,6 +6118,8 @@
             soglia:       '"Ya -- porih." Dva svity, odna pamyat, spilnyy kod.',
             parallelo:    'Italiya livorus, Ukrayina pravoruch. Tayahny mezhu -- vidkryvay rezonanse.',
             cronologia:   'Visim stolit italyskoi prysutnosti -- vid Kaffly do Donu. Malo khto znaye.',
+            atlante:      'Zhivyy atlas: zminyuy mista, svitlo i tochky pohlyadu v odyn klik.',
+            laboratorio:  'Laboratoriya: filtruy material i skladai tematychni marshruty.',
             manifesto:    '"I vyshly my znov zori oglydat." Manifest zamykaye kolo.'
           }
         }
@@ -5802,6 +6290,8 @@
         ['soglia',       ['soglia','threshold','confine']],
         ['parallelo',    ['parallelo','parallel','confronto','slider','drag']],
         ['cronologia',   ['cronologia','crono','timeline','storia']],
+        ['atlante',      ['atlante','atlas','map','mappa','city','citta']],
+        ['laboratorio',  ['laboratorio','lab','material mix','route','percorso']],
         ['manifesto',    ['manifesto','manifest']]
       ];
 
