@@ -159,6 +159,7 @@
       letter-spacing: 0.06em;
       color: var(--graphite);
       flex-shrink: 0;
+      margin-right: clamp(18px, 2.5vw, 36px);
     }
 
     .nav-logo em {
@@ -171,9 +172,12 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 36px;
-      margin-left: auto;
+      justify-content: flex-end;
+      gap: clamp(14px, 1.8vw, 36px);
+      margin-left: 20px;
       margin-right: 100px;
+      min-width: 0;
+      flex: 1;
       list-style: none;
     }
 
@@ -191,6 +195,16 @@
 
     .nav.solid .nav-links a { color: var(--graphite); }
     .nav.solid .nav-links a:hover { color: var(--terracotta); }
+
+    @media (max-width: 1480px) {
+      .nav-links { margin-right: 92px; }
+      .nav-links a { letter-spacing: 0.18em; }
+    }
+
+    @media (max-width: 1320px) {
+      .nav-links { gap: 14px; margin-right: 84px; }
+      .nav-links a { font-size: 8px; letter-spacing: 0.14em; }
+    }
 
     @media (max-width: 1100px) { .nav-links { display: none; } }
     @media (max-width: 900px)  {
@@ -2489,7 +2503,7 @@
     .imm-s2 {
       background-image:
         linear-gradient(to top, rgba(42,35,29,0.2), rgba(249,245,238,0.03)),
-        url("https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Approaching_Venice_on_return_to_port_%287187780641%29.jpg/1280px-Approaching_Venice_on_return_to_port_%287187780641%29.jpg");
+        url("https://commons.wikimedia.org/wiki/Special:FilePath/Approaching%20Venice%20on%20return%20to%20port%20%287187780641%29.jpg?width=1280");
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;
@@ -2499,7 +2513,7 @@
     .imm-f1 {
       background-image:
         linear-gradient(to top, rgba(42,35,29,0.24), rgba(249,245,238,0.02)),
-        url("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Naples_cityscape.jpg/1280px-Naples_cityscape.jpg");
+        url("https://commons.wikimedia.org/wiki/Special:FilePath/Naples%20cityscape.jpg?width=1280");
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;
@@ -2509,7 +2523,7 @@
     .imm-f2 {
       background-image:
         linear-gradient(to top, rgba(42,35,29,0.23), rgba(249,245,238,0.04)),
-        url("https://commons.wikimedia.org/wiki/Special:FilePath/Alberobello%20Trulli.jpg?width=1280");
+        url("https://commons.wikimedia.org/wiki/Special:FilePath/Alberobello_Trulli_ampia.jpg?width=1280");
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;
@@ -2528,7 +2542,7 @@
     .imm-f3 {
       background-image:
         linear-gradient(to top, rgba(42,35,29,0.22), rgba(249,245,238,0.03)),
-        url("https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Syracuse_Ortigia.jpg/1280px-Syracuse_Ortigia.jpg");
+        url("https://commons.wikimedia.org/wiki/Special:FilePath/Syracuse%20Ortigia.jpg?width=1280");
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;
@@ -3129,24 +3143,43 @@
       overflow: hidden;
       cursor: col-resize;
       user-select: none;
+      background: #0f0f0f;
+    }
+
+    .par-stage::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.06), rgba(0,0,0,0.52));
+      pointer-events: none;
+      z-index: 1;
     }
 
     .par-panel {
       position: absolute;
-      inset: 0;
+      top: 0;
+      bottom: 0;
       background-size: cover;
       background-position: center;
+      background-repeat: no-repeat;
+      will-change: left, width;
     }
 
     .par-left {
-      right: 50%;
+      left: 0;
+      right: auto;
+      width: 50%;
       background-color: #4A3C2C;
+      z-index: 3;
     }
 
     .par-right {
       left: 50%;
+      right: auto;
+      width: 50%;
       background-color: #1E2428;
       filter: grayscale(0.28) sepia(0.12);
+      z-index: 2;
     }
 
     .par-label {
@@ -4821,7 +4854,7 @@
         <!-- Card 1 -->
         <div class="crono-card">
           <div class="crono-card-img">
-            <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Genova_panorama.jpg?width=1280" alt="Genova medievale">
+            <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Genova_Lanterna.jpg?width=1280" alt="Genova medievale">
             <div class="crono-card-img-overlay"></div>
             <span class="crono-card-year">1261</span>
             <span class="crono-card-geo it">Genova · Trattato di Ninfeo</span>
@@ -4859,7 +4892,7 @@
         <!-- Card 3 -->
         <div class="crono-card">
           <div class="crono-card-img">
-            <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Genoese_Fortress_Feodosia.jpg?width=1280" alt="Caffa genovese">
+            <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Sudak_Genoese_Fortress.jpg/1280px-Sudak_Genoese_Fortress.jpg" alt="Caffa genovese">
             <div class="crono-card-img-overlay"></div>
             <span class="crono-card-year">1380</span>
             <span class="crono-card-geo it">Caffa · Feodosia</span>
@@ -4916,7 +4949,7 @@
         <!-- Card 6 -->
         <div class="crono-card">
           <div class="crono-card-img">
-            <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Naples_cityscape.jpg/1280px-Naples_cityscape.jpg" alt="Napoli oggi">
+            <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Naples%20cityscape.jpg?width=1280" alt="Napoli oggi">
             <div class="crono-card-img-overlay"></div>
             <span class="crono-card-year">Oggi</span>
             <span class="crono-card-geo it">Italia · Ucraina · Memoria</span>
@@ -5325,7 +5358,7 @@
           right: { url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Sudak%20Genoese%20Fortress.jpg?width=1280', city: 'Судак', desc: { it: 'La fortezza genovese di Sudak — pietra italiana su suolo ucraino. Le stesse proporzioni, un altro cielo.', ua: 'Генуезька фортеця Судака — італійський камінь на українській землі. Ті самі пропорції, інше небо.' } }
         },
         {
-          left:  { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Naples_cityscape.jpg/1280px-Naples_cityscape.jpg', city: 'Napoli', desc: { it: 'Napoli vista dal mare — porto, collina, città. Il Mediterraneo come orizzonte fondamentale.', ua: 'Неаполь з моря — порт, пагорб, місто. Середземне море як фундаментальний горизонт.' } },
+          left:  { url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Naples%20cityscape.jpg?width=1280', city: 'Napoli', desc: { it: 'Napoli vista dal mare — porto, collina, città. Il Mediterraneo come orizzonte fondamentale.', ua: 'Неаполь з моря — порт, пагорб, місто. Середземне море як фундаментальний горизонт.' } },
           right: { url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Odessa%20port%201931.jpg?width=1280', city: 'Одеса', desc: { it: 'Il porto di Odessa — architettura portuale progettata con modelli italiani. Due mari interni, una logica comune.', ua: 'Одеський порт — портова архітектура, спроектована за італійськими зразками. Два внутрішніх моря, одна логіка.' } }
         }
       ];
@@ -5360,9 +5393,15 @@
 
       function setPos(pct) {
         pos = Math.max(5, Math.min(95, pct));
-        leftEl.style.clipPath  = 'inset(0 ' + (100 - pos) + '% 0 0)';
-        rightEl.style.clipPath = 'inset(0 0 0 ' + pos + '%)';
-        handle.style.left = pos + '%';
+        const leftW = pos;
+        const rightW = 100 - pos;
+        leftEl.style.left = '0%';
+        leftEl.style.width = leftW + '%';
+        leftEl.style.clipPath = 'none';
+        rightEl.style.left = leftW + '%';
+        rightEl.style.width = rightW + '%';
+        rightEl.style.clipPath = 'none';
+        handle.style.left = leftW + '%';
       }
 
       function getPct(clientX) {
