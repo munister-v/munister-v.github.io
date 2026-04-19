@@ -80,8 +80,8 @@
     /* ═══════════════════════════════════════
        LANGUAGE SYSTEM
     ═══════════════════════════════════════ */
-    .lang-it .ua { display: none; }
-    .lang-ua .it { display: none; }
+    body:not(.lang-ua) .ua { display: none; }
+    body.lang-ua .it { display: none; }
 
     /* ═══════════════════════════════════════
        LAYOUT
@@ -140,9 +140,12 @@
       display: flex;
       align-items: center;
       padding: 0 60px;
+      background: rgba(249, 245, 238, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(204, 196, 184, 0.55);
       transition: background var(--t) var(--ease),
                   border-color var(--t) var(--ease);
-      border-bottom: 1px solid transparent;
     }
 
     .nav.solid {
@@ -307,50 +310,66 @@
     .hero-title {
       position: absolute;
       bottom: 0;
-      left: 0; right: 0;
+      left: 60px;
+      right: auto;
       z-index: 2;
-      padding: 0 60px 64px;
+      width: min(760px, 64vw);
+      padding: 20px 30px 58px;
+      border-radius: 12px;
+      background: linear-gradient(
+        180deg,
+        rgba(249,245,238,0.03) 0%,
+        rgba(249,245,238,0.28) 54%,
+        rgba(249,245,238,0.55) 100%
+      );
+      backdrop-filter: blur(1px);
+      -webkit-backdrop-filter: blur(1px);
     }
 
     .hero-eyebrow {
       font-family: var(--sans);
-      font-size: 9px;
+      font-size: 9.5px;
       font-weight: 300;
-      letter-spacing: 0.32em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--text-mid);
-      margin-bottom: 18px;
+      color: rgba(48,43,38,0.84);
+      margin-bottom: 14px;
+      text-shadow: 0 1px 8px rgba(249,245,238,0.44);
     }
 
     .ht-italia {
       font-family: var(--serif);
-      font-size: clamp(72px, 14vw, 180px);
+      font-size: clamp(60px, 9.6vw, 124px);
       font-weight: 300;
-      letter-spacing: -0.025em;
-      line-height: 0.88;
+      letter-spacing: -0.018em;
+      line-height: 0.92;
       color: var(--graphite);
       display: block;
+      text-shadow: 0 2px 10px rgba(249,245,238,0.36);
     }
 
     .ht-through {
       font-family: var(--serif);
-      font-size: clamp(15px, 2.2vw, 26px);
+      font-size: clamp(13px, 1.2vw, 18px);
       font-weight: 300;
       font-style: italic;
-      color: var(--text-mid);
-      letter-spacing: 0.04em;
+      color: rgba(74,67,61,0.72);
+      letter-spacing: 0.012em;
       display: block;
-      margin: 10px 0 4px;
+      margin: 5px 0 6px;
+      max-width: 24ch;
+      text-shadow: 0 1px 8px rgba(249,245,238,0.42);
     }
 
     .ht-munister {
       font-family: var(--serif);
-      font-size: clamp(32px, 5.5vw, 72px);
+      font-size: clamp(30px, 3.8vw, 52px);
       font-weight: 300;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.12em;
       color: var(--graphite);
       text-transform: uppercase;
       display: block;
+      text-shadow: 0 2px 10px rgba(249,245,238,0.34);
     }
 
     /* Side meta */
@@ -360,6 +379,7 @@
       bottom: 80px;
       z-index: 2;
       text-align: right;
+      display: none;
     }
 
     .hero-side p {
@@ -399,7 +419,16 @@
     }
 
     @media (max-width: 900px) {
-      .hero-title { padding: 0 24px 48px; }
+      .hero-title {
+        left: 0;
+        right: 0;
+        width: auto;
+        border-radius: 0;
+        padding: 0 24px 48px;
+        background: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
       .hero-top   { padding: 20px 24px 0; }
       .hero-side  { display: none; }
     }
@@ -3235,7 +3264,7 @@
       position: fixed;
       right: 24px; bottom: 24px;
       z-index: 1200;
-      width: min(410px, calc(100vw - 20px));
+      width: min(430px, calc(100vw - 20px));
       pointer-events: none;
       display: flex;
       flex-direction: column;
@@ -3257,10 +3286,24 @@
       transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
       animation: guidePulse 3.8s ease-in-out infinite;
     }
+    .guide-toggle::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 999px;
+      border: 1px solid rgba(168,84,56,0.28);
+      opacity: 0.52;
+      animation: guideHalo 2.8s ease-in-out infinite;
+      pointer-events: none;
+    }
     .guide-toggle:hover {
       transform: translateY(-3px) scale(1.05);
       box-shadow: 0 18px 40px rgba(18,15,12,0.32), 0 0 0 6px rgba(168,84,56,0.1);
       animation: none;
+    }
+    .guide-toggle:hover::before {
+      animation: none;
+      opacity: 0.72;
     }
     .guide-toggle img {
       width: 52px; height: 52px;
@@ -3294,6 +3337,7 @@
 
     /* ── Panel ── */
     .guide-panel {
+      position: relative;
       width: 100%;
       background: rgba(251,246,239,0.99);
       border: 1px solid rgba(158,140,118,0.26);
@@ -3311,9 +3355,22 @@
       pointer-events: none;
       transition: opacity 0.32s var(--ease), transform 0.32s var(--ease);
     }
+    .guide-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 88% 10%, rgba(168,84,56,0.07), transparent 38%),
+        radial-gradient(circle at 15% 85%, rgba(107,107,58,0.06), transparent 36%);
+      mix-blend-mode: multiply;
+      opacity: 0.65;
+      z-index: 0;
+    }
     .guide-assistant.open .guide-panel {
       opacity: 1; transform: translateY(0) scale(1); pointer-events: auto;
     }
+    .guide-panel > * { position: relative; z-index: 1; }
 
     /* ── Dark header ── */
     .guide-head {
@@ -3321,6 +3378,9 @@
       padding: 12px 14px;
       background: linear-gradient(135deg, #262422 0%, #3A3630 100%);
       border-bottom: 1px solid rgba(196,180,154,0.14);
+      position: sticky;
+      top: 0;
+      z-index: 3;
     }
     .guide-head img {
       width: 36px; height: 36px; border-radius: 999px;
@@ -3402,10 +3462,11 @@
 
     /* ── Chat log ── */
     .guide-log {
-      max-height: 230px; overflow-y: auto;
+      max-height: 248px; overflow-y: auto;
       padding: 12px 14px 6px;
       display: flex; flex-direction: column; gap: 8px;
       scrollbar-width: thin; scrollbar-color: rgba(158,140,118,0.28) transparent;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.16), rgba(246,238,227,0.3));
     }
     .guide-log::-webkit-scrollbar { width: 4px; }
     .guide-log::-webkit-scrollbar-thumb { background: rgba(158,140,118,0.28); border-radius: 4px; }
@@ -3418,12 +3479,17 @@
       border-left: 2px solid rgba(168,84,56,0.38);
       background: rgba(236,227,214,0.3);
       animation: msgIn 0.3s var(--ease);
+      max-width: 94%;
+      border-radius: 2px 12px 12px 12px;
+      white-space: pre-line;
     }
     .guide-msg.user {
-      border-left-color: rgba(38,36,34,0.18);
-      background: rgba(210,191,166,0.25);
+      border-left: none;
+      border-right: 2px solid rgba(38,36,34,0.18);
+      background: rgba(210,191,166,0.32);
       color: rgba(38,36,34,0.78);
-      margin-left: 22px;
+      margin-left: auto;
+      border-radius: 12px 2px 12px 12px;
     }
     .guide-msg.system-note {
       border-left-color: rgba(107,107,58,0.45);
@@ -3477,6 +3543,34 @@
       color: rgba(249,245,238,0.92); transform: translateY(-1px);
     }
 
+    /* ── Inline actions under bot answer ── */
+    .guide-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: -2px 0 4px;
+      max-width: 96%;
+    }
+    .guide-action {
+      border: 1px solid rgba(142,117,89,0.34);
+      background: rgba(249,245,238,0.94);
+      color: rgba(54,44,34,0.8);
+      font-family: var(--sans);
+      font-size: 7.5px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 6px 9px;
+      border-radius: 999px;
+      transition: transform 0.15s, background 0.2s, color 0.2s, border-color 0.2s;
+      cursor: pointer;
+    }
+    .guide-action:hover {
+      transform: translateY(-1px);
+      background: rgba(56,44,34,0.95);
+      border-color: rgba(56,44,34,0.95);
+      color: rgba(249,245,238,0.94);
+    }
+
     /* ── Form ── */
     .guide-form {
       display: grid; grid-template-columns: 1fr auto;
@@ -3516,6 +3610,11 @@
       .guide-log { max-height: min(30vh, 210px); }
       .guide-hero { grid-template-columns: 66px 1fr; }
       .guide-figure { width: 66px; height: 88px; }
+    }
+
+    @keyframes guideHalo {
+      0%, 100% { transform: scale(0.96); opacity: 0.26; }
+      50% { transform: scale(1.08); opacity: 0.55; }
     }
 
     /* ═══════════════════════════════════════
@@ -4112,6 +4211,164 @@
       font-size: 26px;
       cursor: pointer;
       border-radius: 8px;
+    }
+
+    /* ═══════════════════════════════════════
+       DESKTOP PASS — HERO + TRACKS
+    ═══════════════════════════════════════ */
+    @media (min-width: 1101px) {
+      .nav {
+        height: 72px;
+        padding: 0 54px;
+        background: rgba(249,245,238,0.8);
+        border-bottom-color: rgba(192,176,160,0.62);
+      }
+
+      .nav-links {
+        gap: clamp(12px, 1.1vw, 24px);
+        margin-right: 96px;
+      }
+
+      .nav-links a {
+        font-size: 9.8px;
+        letter-spacing: 0.15em;
+        color: rgba(38,36,34,0.88);
+      }
+
+      .lang-switch {
+        top: 25px;
+        right: 54px;
+      }
+
+      #home {
+        min-height: 760px;
+      }
+
+      .hero-bg img {
+        object-position: center 47%;
+        filter:
+          grayscale(16%)
+          contrast(1.08)
+          brightness(0.95);
+      }
+
+      .hero-top {
+        padding: 104px 60px 0;
+      }
+
+      .hero-edition {
+        font-size: 9.5px;
+        letter-spacing: 0.26em;
+        color: rgba(52,46,40,0.54);
+      }
+
+      .hero-title {
+        left: 60px;
+        bottom: 34px;
+        width: min(560px, 44vw);
+        padding: 18px 22px 24px;
+        border: 1px solid rgba(196,180,154,0.34);
+        background: linear-gradient(
+          180deg,
+          rgba(249,245,238,0.10) 0%,
+          rgba(249,245,238,0.40) 56%,
+          rgba(249,245,238,0.66) 100%
+        );
+        box-shadow: 0 14px 34px rgba(28,24,20,0.14);
+      }
+
+      .hero-eyebrow {
+        margin-bottom: 10px;
+        font-size: 9px;
+        letter-spacing: 0.19em;
+      }
+
+      .ht-italia {
+        font-size: clamp(56px, 6.2vw, 96px);
+        line-height: 0.9;
+      }
+
+      .ht-through {
+        margin: 5px 0 5px;
+        font-size: clamp(11px, 0.92vw, 14px);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-style: normal;
+        color: rgba(66,58,51,0.76);
+      }
+
+      .ht-munister {
+        font-size: clamp(26px, 2.5vw, 40px);
+        letter-spacing: 0.1em;
+      }
+
+      .par-stage {
+        height: clamp(500px, 50vw, 760px);
+      }
+
+      .par-switch-btn {
+        padding: 16px 22px;
+      }
+
+      .par-cap p {
+        color: rgba(196,180,154,0.56);
+      }
+
+      .tracce-intro {
+        gap: 72px;
+        align-items: start;
+      }
+
+      .tracce-threads {
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .thread-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        min-height: 640px;
+        padding: 34px 28px 30px;
+        padding-top: 242px;
+        border: 1px solid var(--line);
+        border-top: 2px solid transparent;
+      }
+
+      .thread-card::before {
+        height: 198px;
+      }
+
+      .crono-intro {
+        padding: 112px 0 72px;
+      }
+
+      .crono-tape-wrap {
+        padding: 0 clamp(32px, 4vw, 70px);
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: clamp(32px, 4vw, 70px);
+      }
+
+      .crono-tape {
+        gap: 16px;
+        padding: 20px 0;
+      }
+
+      .crono-card {
+        width: min(460px, calc((100vw - 220px) / 2));
+        border: 1px solid var(--line);
+        background: var(--warm-white);
+        grid-template-rows: 286px 1fr;
+        scroll-snap-align: center;
+      }
+
+      .crono-card-year {
+        font-size: clamp(40px, 4.2vw, 56px);
+      }
+
+      .crono-card-body {
+        padding: 26px 24px 30px;
+      }
     }
 
   </style>
@@ -5429,7 +5686,7 @@
         <!-- Card 6 -->
         <div class="crono-card">
           <div class="crono-card-img">
-            <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Naples%20cityscape.jpg?width=1280" alt="Napoli oggi">
+            <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Via%20San%20Gregorio%20Armeno.jpg?width=1280" alt="Napoli oggi">
             <div class="crono-card-img-overlay"></div>
             <span class="crono-card-year">Oggi</span>
             <span class="crono-card-geo it">Italia · Ucraina · Memoria</span>
@@ -6005,7 +6262,7 @@
           right: { url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Sudak%20Genoese%20Fortress.jpg?width=1280', city: 'Судак', desc: { it: 'La fortezza genovese di Sudak — pietra italiana su suolo ucraino. Le stesse proporzioni, un altro cielo.', ua: 'Генуезька фортеця Судака — італійський камінь на українській землі. Ті самі пропорції, інше небо.' } }
         },
         {
-          left:  { url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Naples%20cityscape.jpg?width=1280', city: 'Napoli', desc: { it: 'Napoli vista dal mare — porto, collina, città. Il Mediterraneo come orizzonte fondamentale.', ua: 'Неаполь з моря — порт, пагорб, місто. Середземне море як фундаментальний горизонт.' } },
+          left:  { url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Via%20San%20Gregorio%20Armeno.jpg?width=1280', city: 'Napoli', desc: { it: 'Napoli vista dal mare — porto, collina, città. Il Mediterraneo come orizzonte fondamentale.', ua: 'Неаполь з моря — порт, пагорб, місто. Середземне море як фундаментальний горизонт.' } },
           right: { url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Odessa%20port%201931.jpg?width=1280', city: 'Одеса', desc: { it: 'Il porto di Odessa — architettura portuale progettata con modelli italiani. Due mari interni, una logica comune.', ua: 'Одеський порт — портова архітектура, спроектована за італійськими зразками. Два внутрішніх моря, одна логіка.' } }
         }
       ];
@@ -6245,31 +6502,32 @@
       applyFilter('all');
     })();
 
-    // -- DANTE GUIDE ASSISTANT v2 ---------
+    // -- DANTE GUIDE ASSISTANT v3 ---------
     (function () {
-      const shell         = document.getElementById('guide-assistant');
-      const toggle        = document.getElementById('guide-toggle');
-      const closeBtn      = document.getElementById('guide-close');
-      const panel         = document.getElementById('guide-panel');
-      const log           = document.getElementById('guide-log');
-      const quick         = document.getElementById('guide-quick');
-      const form          = document.getElementById('guide-form');
-      const input         = document.getElementById('guide-input');
-      const statusText    = document.getElementById('guide-status-text');
-      const badge         = document.getElementById('guide-badge');
-      const progressFill  = document.getElementById('guide-progress-fill');
-      const voiceBtn      = document.getElementById('guide-voice-btn');
+      const shell          = document.getElementById('guide-assistant');
+      const toggle         = document.getElementById('guide-toggle');
+      const closeBtn       = document.getElementById('guide-close');
+      const panel          = document.getElementById('guide-panel');
+      const log            = document.getElementById('guide-log');
+      const quick          = document.getElementById('guide-quick');
+      const form           = document.getElementById('guide-form');
+      const input          = document.getElementById('guide-input');
+      const statusText     = document.getElementById('guide-status-text');
+      const badge          = document.getElementById('guide-badge');
+      const progressFill   = document.getElementById('guide-progress-fill');
+      const voiceBtn       = document.getElementById('guide-voice-btn');
       const togglePortrait = document.getElementById('guide-toggle-portrait');
-      const headPortrait  = document.getElementById('guide-head-portrait');
-      const heroPortrait  = document.getElementById('guide-hero-portrait');
+      const headPortrait   = document.getElementById('guide-head-portrait');
+      const heroPortrait   = document.getElementById('guide-hero-portrait');
       const toggleFallback = document.getElementById('guide-toggle-fallback');
-      if (!shell || !toggle || !panel) return;
+      if (!shell || !toggle || !panel || !log) return;
 
       let autoTourTimer = null;
-      let voiceOn  = false;
-      let unread   = 0;
+      let voiceOn = false;
+      let unread = 0;
       let seenSections = {};
       let isTyping = false;
+      let lastTopic = 'home';
 
       const sectionOrder = ['home','codice','architettura','materiali','ritmo','dettagli',
         'immagini','tracce','marnero','armir','soglia','parallelo','cronologia','atlante','laboratorio','contributo','manifesto'];
@@ -6282,35 +6540,52 @@
 
       const dict = {
         it: {
-          placeholder: 'Chiedi a Dante... sezione, tour, arco, luce...',
+          placeholder: 'Chiedi a Dante... navigazione, immagini, storia, sezioni...',
           status: 'Sezione attuale',
           hello: [
-            'Sono Dante. Ho percorso luoghi oscuri e luminosi -- ora conosco ogni angolo di questo portale.',
-            'Nel mezzo del cammino di questo portale, son qui ad accompagnarti. Dimmi dove vuoi andare.',
-            'Come scrisse Virgilio: "Io era tra color che son sospesi" -- ma qui non c\'e\' sospensione, solo luce e pietra.'
+            'Sono Dante. Posso guidarti, spiegare le sezioni e rispondere alle domande pratiche sul portale.',
+            'Benvenuto. Io non faccio solo tour: posso anche spiegarti come usare immagini, filtri e confronti.',
+            'Parliamo con precisione: chiedimi una sezione, una funzione o il senso del progetto.'
           ],
           chips: [
-            {label:'\u25b8 Inizio',    section:'home'},
-            {label:'\u2318 Tour',      cmd:'tour'},
-            {label:'\u2318 Auto+',     cmd:'tour+'},
-            {label:'\u2193 Next',      cmd:'next'},
-            {label:'\u2191 Prev',      cmd:'prev'},
-            {label:'\u25ce Dove sono', cmd:'where'},
-            {label:'\u2b21 Parallelo', section:'parallelo'},
-            {label:'\u221e Cronologia',section:'cronologia'},
-            {label:'\u25a3 Atlante',   section:'atlante'}
+            { label: 'Help', cmd: 'help' },
+            { label: '▷ Inizio', section: 'home' },
+            { label: '⌘ Tour', cmd: 'tour' },
+            { label: '◉ Dove sono', cmd: 'where' },
+            { label: '◫ Parallelo', section: 'parallelo' },
+            { label: '∞ Cronologia', section: 'cronologia' },
+            { label: '▣ Atlante', section: 'atlante' },
+            { label: '✦ Contributo', section: 'contributo' }
           ],
-          notFound: 'Non ho trovato quella via. Prova: pietra, arco, luce, Genova, Donbas, parallelo, tour.',
+          notFound: 'Posso aiutarti meglio se citi una sezione o una funzione. Esempi: "apri Atlante", "come zoomare foto", "spiega ARMIR".',
+          help: 'Posso fare 4 cose utili:\n1) navigazione rapida tra sezioni\n2) spiegazione del contenuto\n3) aiuto su funzioni (zoom foto, lingua, confronto)\n4) mini-tour guidati.',
+          who: 'Sono Dante, guida curatoriale del portale. Ti aiuto a leggere il progetto come un atlante narrativo: forma, materia, memoria.',
+          howUse: 'Uso rapido:\n• scrivi una sezione (es. "Cronologia")\n• chiedi "spiega questa sezione"\n• chiedi "come zoomare le foto"\n• usa "tour", "next", "prev".',
+          zoomHelp: 'Per ingrandire una foto: clicca sull\'immagine con indicatore "+" o area fotografica. Si apre il lightbox; ESC o "×" per chiudere.',
+          langHelp: 'Lingua: usa il toggle IT/UA in alto. L\'assistente adatta risposte e suggerimenti alla lingua corrente.',
+          sourceHelp: 'Le immagini del progetto arrivano da fonti aperte (Wikimedia Commons e archivi compatibili). Se vuoi, ti porto nelle sezioni con più riferimenti visuali.',
+          contributoHelp: 'Nel blocco "Contributo" trovi il ruolo autoriale di Munister e i link al progetto live.',
+          sectionExplainPrefix: 'Chiave del blocco',
           sections: 'Sezioni disponibili:',
           where: 'Siamo in',
-          random: 'Ti conduco in una sezione inaspettata:',
-          searchNone: 'Nessun risultato. Prova: travertino, arco, Mar Nero, Genova, luce.',
-          searchOne: 'Trovato in', searchMany: 'Trovato in piu\' sezioni:',
+          random: 'Ti conduco in una sezione inattesa:',
+          searchNone: 'Nessun risultato netto. Prova parole più specifiche: travertino, Genova, Don, portico, manifesto.',
+          searchOne: 'Trovato in',
+          searchMany: 'Trovato in più sezioni:',
           stop: 'Tour fermato. "E quindi uscimmo a riveder le stelle."',
-          tour: '"Vieni, ti mostro il sentiero." Codice -> Architettura -> Materiali -> Parallelo -> Manifesto.',
-          tourAuto: 'Auto-tour attivo. Ogni 7 secondi cambio sezione. Scrivi stop per fermarmi.',
-          next: 'Avanziamo:', prev: 'Torniamo:',
+          tour: 'Tour curatoriale avviato: Codice -> Architettura -> Materiali -> Parallelo -> Manifesto.',
+          tourAuto: 'Auto-tour attivo. Cambio sezione ogni 7 secondi. Scrivi stop per fermarlo.',
+          next: 'Avanziamo:',
+          prev: 'Torniamo:',
           route: 'Ti conduco a',
+          suggest: 'Posso portarti subito in',
+          voiceOn: 'Voce attivata.',
+          voiceOff: 'Voce disattivata.',
+          actionOpen: 'Apri',
+          actionMore: 'Spiega',
+          actionTour: 'Tour',
+          actionWhere: 'Dove sono',
+          actionHelp: 'Help',
           sectionNames: {
             home:'Home', codice:'Codice', architettura:'Architettura', materiali:'Materiali',
             ritmo:'Ritmo Urbano', dettagli:'Dettagli', immagini:'Immagini', tracce:'Tracce',
@@ -6319,87 +6594,182 @@
           },
           sectionPoetry: {
             codice:       '"Luce intellettual, piena d\'amore." Ogni pietra italiana ha una grammatica.',
-            architettura: '"La bella figura." Proporzione, luce, ombra -- l\'Italia costruisce con la ragione.',
+            architettura: '"La bella figura." Proporzione, luce, ombra: l\'Italia costruisce con misura.',
             materiali:    'Travertino. Terracotta. Pietra serena. Materia che parla prima delle parole.',
-            ritmo:        'Il ritmo della citta\' italiana e\' jazz antico. Ogni piazza -- una pausa che respira.',
-            dettagli:     '"Il dettaglio e\' dove abita Dio" -- o almeno, dove abita l\'Italia.',
-            immagini:     'L\'archivio visivo si apre. "Poi che la vista non si sazia mai..."',
-            tracce:       '"Guarda e passa." -- ma qui ci si ferma: segni italiani in terra ucraina.',
-            marnero:      'Il Mar Nero -- il Ponto Eussino dei Romani. Genova lo attraverso\' come una freccia.',
-            armir:        '"Amor, ch\'a nullo amato amar perdona." 100.000 soldati italiani. Dimenticati.',
-            soglia:       '"Io sono la soglia." Due mondi, una memoria, un codice condiviso.',
-            parallelo:    'Italia a sinistra, Ucraina a destra. Trascina il confine -- scopri le risonanze.',
-            cronologia:   'Otto secoli di presenza italiana -- da Caffa al Don. Una storia che pochi conoscono.',
-            atlante:      'Atlante vivo: cambia citta\', cambia luce, ma la grammatica resta riconoscibile.',
-            laboratorio:  'Laboratorio: filtra materia e genera percorsi come un montaggio visivo.',
-            contributo:   'Qui trovi il contributo autoriale di Munister e i link ufficiali del progetto.',
-            manifesto:    '"E quindi uscimmo a riveder le stelle." Il manifesto chiude il cerchio.'
+            ritmo:        'Il ritmo della città italiana vive per sequenze: piazza, soglia, ombra, passaggio.',
+            dettagli:     'Nel dettaglio si vede il metodo: ferramenta, cornice, fuga, intonaco.',
+            immagini:     'L\'archivio visivo intreccia luoghi, materia e luce in forma editoriale.',
+            tracce:       'Qui il progetto segue tracce italiane in geografie ucraine e del Mar Nero.',
+            marnero:      'Il Mar Nero diventa mappa culturale: rotte, colonie, lessico architettonico.',
+            armir:        'ARMIR apre la memoria dura: presenza italiana sul Don e la sua eredità.',
+            soglia:       'Soglia mette in dialogo Mediterraneo e steppa in una sola grammatica visiva.',
+            parallelo:    'Parallelo confronta Italia e Ucraina in una scena interattiva trascinabile.',
+            cronologia:   'Cronologia ordina 8 secoli di contatti in una tape narrativa.',
+            atlante:      'Atlante Vivo: città, immagine, testo e senso in un unico switch.',
+            laboratorio:  'Laboratorio permette filtri e percorsi visuali personalizzati.',
+            contributo:   'Contributo sintetizza il lavoro autoriale di Munister e i link ufficiali.',
+            manifesto:    'Manifesto chiude la traiettoria con la posizione curatoriale del progetto.'
+          },
+          sectionExplain: {
+            codice: 'È la base concettuale: palette, proporzioni e lessico estetico che guidano tutto il sito.',
+            architettura: 'Mostra la grammatica spaziale italiana: scala, luce e materia con esempi reali.',
+            materiali: 'Sezione tattile: travertino, terracotta, pietra serena e altri materiali strutturali.',
+            ritmo: 'Parla di sequenze urbane: come il corpo attraversa città, portici, piazze e pause.',
+            dettagli: 'Macro e micro-elementi: giunti, texture, ferri, superfici, finiture.',
+            immagini: 'Visual essay con immagini curate e composizioni narrative.',
+            tracce: 'Contesto storico-culturale delle presenze italiane in territori oggi ucraini.',
+            marnero: 'Atlante storico del Mar Nero con riferimenti a colonie e infrastrutture.',
+            armir: 'Memoria storica della campagna sul Don e del suo impatto umano e culturale.',
+            soglia: 'Cerniera visiva tra due mondi geografici: Mediterraneo e spazio est-europeo.',
+            parallelo: 'Comparatore interattivo: trascini la linea e leggi corrispondenze tra paesaggi.',
+            cronologia: 'Linea temporale a carte con episodi chiave e immagini contestuali.',
+            atlante: 'Navigazione per città con cambio contenuto dinamico e testo bilingue.',
+            laboratorio: 'Filtro tematico e generatore di percorsi per consultazione rapida.',
+            contributo: 'Dichiara metodo, ruolo autoriale e connessione con munister.com.ua.',
+            manifesto: 'Testo finale che esplicita la tesi culturale ed estetica del progetto.'
           }
         },
         ua: {
-          placeholder: 'Zapytay Dante... rozdil, tur, arka, svitlo...',
-          status: 'Potochnyi rozdil',
+          placeholder: 'Запитай Данте... розділ, функція, фото, навігація...',
+          status: 'Поточний розділ',
           hello: [
-            'Ya Dante. Ya proishov temni y svitli mistsya -- teper znayu kozhen kut tsogo portalu.',
-            'Poseredyni mandrivky tsym portalom -- ya tut, shchob suprovodzhuvatyl tebe. Skazhy, kudy ity.',
-            'Yak napysav Vergiliy -- ya sered tykh, khto zavis. Ale tut nema pidvishenosti: lyshe svitlo y kamin.'
+            'Я Данте. Можу провести тур, пояснити розділи та відповісти на практичні питання по сайту.',
+            'Я не лише навігатор: підкажу як працює zoom фото, перемикання мов і інтерактивні блоки.',
+            'Питай конкретно: розділ, функцію або сенс матеріалу — дам точну відповідь.'
           ],
           chips: [
-            {label:'\u25b8 Pochatok',  section:'home'},
-            {label:'\u2318 Tur',       cmd:'tour'},
-            {label:'\u2318 Avto+',     cmd:'tour+'},
-            {label:'\u2193 Dali',      cmd:'next'},
-            {label:'\u2191 Nazad',     cmd:'prev'},
-            {label:'\u25ce De ya',     cmd:'where'},
-            {label:'\u2b21 Parallel',  section:'parallelo'},
-            {label:'\u221e Khronol',   section:'cronologia'},
-            {label:'\u25a3 Atlas',     section:'atlante'}
+            { label: 'Help', cmd: 'help' },
+            { label: '▷ Початок', section: 'home' },
+            { label: '⌘ Тур', cmd: 'tour' },
+            { label: '◉ Де я', cmd: 'where' },
+            { label: '◫ Паралель', section: 'parallelo' },
+            { label: '∞ Хронол', section: 'cronologia' },
+            { label: '▣ Атлас', section: 'atlante' },
+            { label: '✦ Вклад', section: 'contributo' }
           ],
-          notFound: 'Ne znayshov takoho shlyakhu. Sprobuiy: kamin, arka, svitlo, Genu, Donbas, paralel, tur.',
-          sections: 'Dostupni rozdily:',
-          where: 'My u rozdili',
-          random: 'Vedu tebe u nespodivanyy rozdil:',
-          searchNone: 'Nichogo ne znayshov. Sprobuiy: travertin, arka, Chorne more, Genuya, svitlo.',
-          searchOne: 'Znayshov u rozdili', searchMany: 'Znayshov u rozdilyakh:',
-          stop: 'Tur zupyneno. "I vyshly my znov zori oglydat."',
-          tour: '"Khody, pokazhu shlyakh." Kod -> Arkhitektura -> Materialy -> Paralel -> Manifest.',
-          tourAuto: 'Avto-tur aktyvnyi. Kozhnykh 7 sekund -- nastupnyi rozdil. Napyshi stop shchob zupynyty.',
-          next: 'Rukhaemos dali:', prev: 'Povertaemos:',
-          route: 'Vedu do',
+          notFound: 'Щоб відповісти точніше, назви розділ або функцію. Приклад: "відкрий Атлас", "як збільшити фото", "що таке ARMIR".',
+          help: 'Можу зробити 4 корисні речі:\n1) швидка навігація розділами\n2) пояснення змісту\n3) допомога по функціях (zoom, мова, порівняння)\n4) короткі тури.',
+          who: 'Я Данте, кураторський асистент порталу. Допомагаю читати сайт як візуальний атлас: форма, матерія, памʼять.',
+          howUse: 'Швидкий сценарій:\n• напиши назву розділу (напр. "Хронологія")\n• запитай "поясни цей розділ"\n• запитай "як збільшити фото"\n• команди: "tour", "next", "prev".',
+          zoomHelp: 'Щоб збільшити фото: натисни на зображення з позначкою "+" або на фото-блок. Відкриється lightbox; ESC або "×" — закрити.',
+          langHelp: 'Мова перемикається у верхньому хедері (IT/UA). Асистент автоматично відповідає поточною мовою.',
+          sourceHelp: 'Більшість зображень з відкритих джерел (Wikimedia Commons та сумісні архіви). Можу відкрити найнасиченіші візуальні розділи.',
+          contributoHelp: 'У розділі "Вклад" описано авторську роль Munister і розміщено офіційні посилання проєкту.',
+          sectionExplainPrefix: 'Суть блоку',
+          sections: 'Доступні розділи:',
+          where: 'Зараз ти у розділі',
+          random: 'Веду в неочікуваний розділ:',
+          searchNone: 'Точного збігу не бачу. Спробуй конкретніше: travertino, Genova, Don, portico, manifesto.',
+          searchOne: 'Знайдено у розділі',
+          searchMany: 'Знайдено у кількох розділах:',
+          stop: 'Тур зупинено. "І вийшли ми знов зорі оглядати."',
+          tour: 'Кураторський тур запущено: Код -> Архітектура -> Матеріали -> Паралель -> Маніфест.',
+          tourAuto: 'Авто-тур активний. Кожні 7 секунд перемикаю розділ. Напиши stop для зупинки.',
+          next: 'Рухаємось далі:',
+          prev: 'Повертаємось:',
+          route: 'Веду до',
+          suggest: 'Можу одразу відкрити',
+          voiceOn: 'Голос увімкнено.',
+          voiceOff: 'Голос вимкнено.',
+          actionOpen: 'Відкрити',
+          actionMore: 'Пояснити',
+          actionTour: 'Тур',
+          actionWhere: 'Де я',
+          actionHelp: 'Help',
           sectionNames: {
-            home:'Holovn', codice:'Kod', architettura:'Arkhitektura', materiali:'Materialy',
-            ritmo:'Miskyi Rytm', dettagli:'Detali', immagini:'Obrazy', tracce:'Slidy',
-            marnero:'Chorne more', armir:'ARMIR', soglia:'Porih', parallelo:'Paralel',
-            cronologia:'Khronologiya', atlante:'Atlas', laboratorio:'Laboratoriya', contributo:'Vklad', manifesto:'Manifest'
+            home:'Головна', codice:'Код', architettura:'Архітектура', materiali:'Матеріали',
+            ritmo:'Міський ритм', dettagli:'Деталі', immagini:'Образи', tracce:'Сліди',
+            marnero:'Чорне море', armir:'ARMIR', soglia:'Поріг', parallelo:'Паралель',
+            cronologia:'Хронологія', atlante:'Атлас', laboratorio:'Лабораторія', contributo:'Вклад', manifesto:'Маніфест'
           },
           sectionPoetry: {
-            codice:       '"Svitlo rozumu, povne lyubovi." Kozhen italiyskyi kamin maye gramatyku.',
-            architettura: '"Prekrasna figura." Proportsiya, svitlo, tin -- Italiya buduye z rozumom.',
-            materiali:    'Travertin. Terakota. Petra-serena. Materiya, shcho hovoryt ranishe za slova.',
-            ritmo:        'Rytm italyiskoho mista -- starodavnii jazz. Kozha ploshcha -- pauza, shcho dykhaie.',
-            dettagli:     '"Detal -- tse mistse, de zhyve Boh" -- abo prynaymin, de zhyve Italiya.',
-            immagini:     'Vidkryvaetsia vizualnyy arkhiv. "Todi poglyad ne nasychuietsia nikoly..."',
-            tracce:       '"Dyvys i ydy dali." -- ale tut zupynyayutsya: italyski znaky na Skhodi.',
-            marnero:      'Chorne more -- Pont Evksynskyi rymlyan. Genuya proyshla kriz nyoho yak strilya.',
-            armir:        '"Lyubov, shcho lyublenogo lyubyty zmushuie." 100 000 italyskykh soldativ. Zabutykh.',
-            soglia:       '"Ya -- porih." Dva svity, odna pamyat, spilnyy kod.',
-            parallelo:    'Italiya livorus, Ukrayina pravoruch. Tayahny mezhu -- vidkryvay rezonanse.',
-            cronologia:   'Visim stolit italyskoi prysutnosti -- vid Kaffly do Donu. Malo khto znaye.',
-            atlante:      'Zhivyy atlas: zminyuy mista, svitlo i tochky pohlyadu v odyn klik.',
-            laboratorio:  'Laboratoriya: filtruy material i skladai tematychni marshruty.',
-            contributo:   'Tut opys avtorskoho vkladu Munister i ofitsiyni posylannya proyektu.',
-            manifesto:    '"I vyshly my znov zori oglydat." Manifest zamykaye kolo.'
+            codice: 'Кожен італійський камінь має власну граматику пропорцій.',
+            architettura: 'Пропорція, світло, тінь — головні інструменти італійського простору.',
+            materiali: 'Travertino, terracotta, pietra serena — матерія як мова.',
+            ritmo: 'Місто читається ритмом: площа, аркада, пауза, прохід.',
+            dettagli: 'Деталі показують метод: шви, фактури, фурнітура, край матеріалу.',
+            immagini: 'Візуальний есе-блок із кураторською композицією.',
+            tracce: 'Італійські сліди в українських і чорноморських географіях.',
+            marnero: 'Чорне море як історико-культурна карта маршрутів і фортець.',
+            armir: 'Розділ про памʼять ARMIR і драматичний історичний пласт.',
+            soglia: 'Поріг між Середземноморʼям і степом у спільному візуальному коді.',
+            parallelo: 'Інтерактивне порівняння Італії й України у форматі drag-сцени.',
+            cronologia: 'Стрічка часу про 8 століть контактів.',
+            atlante: 'Живий атлас: місто, кадр, сенс.',
+            laboratorio: 'Фільтри та генерація маршрутів для швидкого перегляду.',
+            contributo: 'Авторський вклад і офіційні посилання Munister.',
+            manifesto: 'Фінальна теза проєкту і його ціннісна рамка.'
+          },
+          sectionExplain: {
+            codice: 'Тут закладено естетичний код: палітра, пропорції, базовий словник проєкту.',
+            architettura: 'Пояснює просторову логіку: масштаб, світло, матеріал і композиція.',
+            materiali: 'Матеріали подані як конструктивна й культурна основа форми.',
+            ritmo: 'Про міську динаміку та те, як читається шлях у просторі.',
+            dettagli: 'Мікрорівень архітектури: фактура, вузли, декоративні елементи.',
+            immagini: 'Кураторська серія зображень із акцентом на настрій і структуру.',
+            tracce: 'Історичні та культурні сліди італійської присутності в регіоні.',
+            marnero: 'Чорноморський контекст: колонії, маршрути, культурні перетини.',
+            armir: 'Історична памʼять про ARMIR і її відлуння в сучасному читанні.',
+            soglia: 'Перехідний блок між двома культурно-географічними матрицями.',
+            parallelo: 'Слайдер-порівняння, де ліворуч/праворуч читаються резонанси.',
+            cronologia: 'Послідовна хронологія подій із візуальними якорями.',
+            atlante: 'Інтерактивний перемикач міст із динамічним описом.',
+            laboratorio: 'Експериментальний блок для фільтрації й збірки маршрутів.',
+            contributo: 'Описує внесок автора і звʼязок з munister.com.ua.',
+            manifesto: 'Підсумовує сенс і позицію проєкту.'
           }
         }
       };
 
-      const L            = () => dict[isUA() ? 'ua' : 'it'];
-      const isUA         = () => document.body.classList.contains('lang-ua');
+      const isUA = () => document.body.classList.contains('lang-ua');
+      const L = () => dict[isUA() ? 'ua' : 'it'];
       const sectionLabel = id => (L().sectionNames[id] || id);
+      const normalize = txt => (txt || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      const hasAny = (txt, arr) => arr.some(k => txt.indexOf(k) !== -1);
+      const response = (text, actions, section) => ({ text: text, actions: actions || [], section: section || null });
+
+      const sectionMap = [
+        ['home', ['home','inizio','start','головна','начало']],
+        ['codice', ['codice','code','kod','код','естетичний код']],
+        ['architettura', ['architettura','architecture','архітектура','архитектура','простір']],
+        ['materiali', ['materiali','material','матеріали','материалы','travertino','terracotta','pietra']],
+        ['ritmo', ['ritmo','urbano','ритм','міський ритм','miskyi rytm']],
+        ['dettagli', ['dettagli','detail','деталі','детали','фактура']],
+        ['immagini', ['immagini','image','foto','образи','изображ','картин','photo']],
+        ['tracce', ['tracce','trace','сліди','следы','presenza']],
+        ['marnero', ['mar nero','black sea','чорне море','черное море','genova','genovese']],
+        ['armir', ['armir','don','1942','1943','армир','дон']],
+        ['soglia', ['soglia','threshold','поріг','порог','межа']],
+        ['parallelo', ['parallelo','parallel','паралель','параллель','slider','drag','слайдер']],
+        ['cronologia', ['cronologia','timeline','хронологія','хронология','історія','история']],
+        ['atlante', ['atlante','atlas','атлас','карта','map','city','місто','город']],
+        ['laboratorio', ['laboratorio','lab','лабораторія','лаборатория','route','маршрут']],
+        ['contributo', ['contributo','contribution','вклад','внесок','munister.com.ua','munister']],
+        ['manifesto', ['manifesto','маніфест','манифест']]
+      ];
+
+      function defaultActions() {
+        return [
+          { label: L().actionWhere, cmd: 'where' },
+          { label: L().actionTour, cmd: 'tour' },
+          { label: L().actionHelp, cmd: 'help' }
+        ];
+      }
+
+      function topicActions(section) {
+        return [
+          { label: L().actionOpen + ' ' + sectionLabel(section), section: section },
+          { label: L().actionWhere, cmd: 'where' },
+          { label: L().actionTour, cmd: 'tour' }
+        ];
+      }
 
       // Typewriter
       function typewrite(el, text, speed) {
-        speed = speed || 15;
+        speed = speed || 14;
         return new Promise(resolve => {
           el.textContent = '';
           const cursor = document.createElement('span');
@@ -6410,7 +6780,7 @@
             if (i < text.length) {
               cursor.before(document.createTextNode(text[i++]));
               log.scrollTop = log.scrollHeight;
-              const delay = speed + (/[.,!?]/.test(text[i - 2]) ? 90 : 0);
+              const delay = speed + (/[.,!?]/.test(text[i - 2]) ? 82 : 0);
               setTimeout(tick, delay);
             } else {
               cursor.remove();
@@ -6422,19 +6792,23 @@
 
       // Voice
       function speak(text) {
-        if (!voiceOn || !window.speechSynthesis) return;
+        if (!voiceOn || !window.speechSynthesis || !text) return;
         speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text.replace(/["""]/g, ''));
+        const u = new SpeechSynthesisUtterance(String(text).replace(/[""]/g, ''));
         u.lang = isUA() ? 'uk-UA' : 'it-IT';
-        u.rate = 0.88; u.pitch = 0.95;
+        u.rate = 0.9;
+        u.pitch = 0.95;
         speechSynthesis.speak(u);
       }
 
       // Badge
       function incUnread() {
         if (shell.classList.contains('open')) return;
-        unread++;
-        if (badge) { badge.textContent = unread > 9 ? '9+' : String(unread); badge.style.display = 'flex'; }
+        unread += 1;
+        if (badge) {
+          badge.textContent = unread > 9 ? '9+' : String(unread);
+          badge.style.display = 'flex';
+        }
       }
       function clearUnread() {
         unread = 0;
@@ -6471,17 +6845,51 @@
         return el;
       }
 
-      async function botSay(text, speed) {
+      function renderActions(actions) {
+        if (!actions || !actions.length) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'guide-actions';
+        actions.slice(0, 4).forEach(action => {
+          if (!action || !action.label) return;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'guide-action';
+          btn.textContent = action.label;
+          btn.addEventListener('click', function() {
+            if (action.section) {
+              goToSection(action.section);
+              botSay(response(L().route + ' "' + sectionLabel(action.section) + '".', topicActions(action.section), action.section));
+              return;
+            }
+            if (action.cmd) botSay(answer(action.cmd));
+          });
+          wrap.appendChild(btn);
+        });
+        if (wrap.childElementCount) {
+          log.appendChild(wrap);
+          log.scrollTop = log.scrollHeight;
+        }
+      }
+
+      async function botSay(payload, speed) {
         if (isTyping) return;
+        const data = typeof payload === 'string'
+          ? response(payload, defaultActions())
+          : response(payload && payload.text ? payload.text : L().notFound, payload && payload.actions, payload && payload.section);
+        if (!data.text) return;
+
         isTyping = true;
         const dots = addDots();
-        await new Promise(r => setTimeout(r, 400 + Math.min(text.length * 3, 700)));
+        await new Promise(r => setTimeout(r, 380 + Math.min(data.text.length * 3, 760)));
         if (dots.parentNode) dots.parentNode.removeChild(dots);
+
         const el = document.createElement('div');
         el.className = 'guide-msg';
         log.appendChild(el);
-        await typewrite(el, text, speed || 14);
-        speak(text);
+        await typewrite(el, data.text, speed || 13);
+        if (data.section) lastTopic = data.section;
+        renderActions(data.actions && data.actions.length ? data.actions : defaultActions());
+        speak(data.text);
         incUnread();
         isTyping = false;
       }
@@ -6493,11 +6901,13 @@
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         el.classList.add('guide-focus');
         setTimeout(() => el.classList.remove('guide-focus'), 1500);
+        lastTopic = id;
         updateStatus();
       }
 
       function getCurrentSection() {
-        let best = 'home', bestDist = Infinity;
+        let best = 'home';
+        let bestDist = Infinity;
         sectionOrder.forEach(id => {
           const el = document.getElementById(id);
           if (!el) return;
@@ -6516,115 +6926,229 @@
       }
 
       function updateStatus() {
-        if (statusText) statusText.textContent = L().status + ': ' + sectionLabel(getCurrentSection());
+        const cur = getCurrentSection();
+        lastTopic = cur;
+        if (statusText) statusText.textContent = L().status + ': ' + sectionLabel(cur);
         updateProgress();
       }
 
       // Auto-tour
       function stopAutoTour(silent) {
-        if (autoTourTimer) { clearInterval(autoTourTimer); autoTourTimer = null; }
-        if (!silent) botSay(L().stop);
+        if (autoTourTimer) {
+          clearInterval(autoTourTimer);
+          autoTourTimer = null;
+        }
+        if (!silent) botSay(response(L().stop, defaultActions()));
       }
       function startAutoTour() {
         stopAutoTour(true);
-        autoTourTimer = setInterval(() => {
+        autoTourTimer = setInterval(function() {
           const id = moveRelative(1);
-          botSay(L().next + ' "' + sectionLabel(id) + '".');
+          botSay(response(L().next + ' "' + sectionLabel(id) + '".', topicActions(id), id));
         }, 7000);
       }
 
       // Search
       function searchSections(term) {
-        const q = (term || '').toLowerCase();
+        const q = normalize(term);
         if (!q) return [];
-        return sectionOrder.filter(id => {
+        return sectionOrder.filter(function(id) {
           const el = document.getElementById(id);
-          return el && el.textContent.toLowerCase().indexOf(q) !== -1;
+          return el && normalize(el.textContent).indexOf(q) !== -1;
         });
       }
 
-      // Section map
-      const sectionMap = [
-        ['home',         ['home','inizio','start']],
-        ['codice',       ['codice','code','kod']],
-        ['architettura', ['architettura','architett','architecture','arkhitektur']],
-        ['materiali',    ['materiali','material','pietra','travertino','terracotta']],
-        ['ritmo',        ['ritmo','urbano','piazza']],
-        ['dettagli',     ['dettagli','detail','particolare']],
-        ['immagini',     ['immagini','image','foto']],
-        ['tracce',       ['tracce','trace','presenza']],
-        ['marnero',      ['mar nero','black sea','ponto','genov']],
-        ['armir',        ['armir','don','guerra','war','1942','1943']],
-        ['soglia',       ['soglia','threshold','confine']],
-        ['parallelo',    ['parallelo','parallel','confronto','slider','drag']],
-        ['cronologia',   ['cronologia','crono','timeline','storia']],
-        ['atlante',      ['atlante','atlas','map','mappa','city','citta']],
-        ['laboratorio',  ['laboratorio','lab','material mix','route','percorso']],
-        ['contributo',   ['contributo','author','autore','munister','vklad','author contribution']],
-        ['manifesto',    ['manifesto','manifest']]
-      ];
-
       function findSection(q) {
-        const low = (q || '').toLowerCase();
+        const low = normalize(q);
         for (const [id, keys] of sectionMap) {
-          if (keys.some(k => low.indexOf(k) !== -1)) return id;
+          if (keys.some(k => low.indexOf(normalize(k)) !== -1)) return id;
         }
         return null;
+      }
+
+      function suggestSections(q) {
+        const low = normalize(q);
+        const ranked = sectionMap.map(function(pair) {
+          const id = pair[0];
+          const keys = pair[1];
+          let score = 0;
+          keys.forEach(function(k) {
+            const kk = normalize(k);
+            if (kk && low.indexOf(kk) !== -1) score += kk.length > 5 ? 2 : 1;
+          });
+          return { id: id, score: score };
+        }).filter(function(r) { return r.score > 0; });
+        ranked.sort(function(a,b) { return b.score - a.score; });
+        return ranked.map(function(r) { return r.id; }).slice(0, 3);
+      }
+
+      function sectionAnswer(sec) {
+        const Ld = L();
+        const text = Ld.sectionExplainPrefix + ' "' + sectionLabel(sec) + '":\n' +
+          (Ld.sectionPoetry[sec] || '') + '\n' +
+          (Ld.sectionExplain[sec] || '');
+        return response(text, topicActions(sec), sec);
+      }
+
+      function voiceToggleReply() {
+        voiceOn = !voiceOn;
+        if (voiceBtn) voiceBtn.classList.toggle('on', voiceOn);
+        return response(voiceOn ? L().voiceOn : L().voiceOff, defaultActions());
       }
 
       // Answer engine
       function answer(raw) {
         const text = (raw || '').trim();
-        const low  = text.toLowerCase();
-        const Ld   = L();
-        if (!text) return Ld.notFound;
+        const low = normalize(text);
+        const Ld = L();
+        if (!text) return response(Ld.notFound, defaultActions());
 
-        if (/dove sono|where am|de ya|de my/i.test(low))
-          return Ld.where + ' "' + sectionLabel(getCurrentSection()) + '".';
+        const isQuestion = /[?]/.test(text) || hasAny(low, ['what','cosa','chi','come','як','що','кто','как','чем','why','perche']);
+        const wantsNavigation = hasAny(low, ['vai','apri','open','go to','перейди','відкрий','открой','jump']);
+        const asksExplain = hasAny(low, ['spiega','explain','dettaglio','dettagli','розкажи','поясни','подроб','что такое','che cos']);
 
-        if (/sezioni|sections|rozdily/i.test(low))
-          return Ld.sections + ' ' + sectionOrder.slice(1).map(sectionLabel).join(' - ');
+        if (hasAny(low, ['help','aiuto','допом','помощ','что уме','що вмієш'])) {
+          return response(Ld.help, [
+            { label: Ld.actionWhere, cmd: 'where' },
+            { label: Ld.actionTour, cmd: 'tour' },
+            { label: Ld.actionOpen + ' ' + sectionLabel('atlante'), section: 'atlante' }
+          ]);
+        }
 
-        if (/random|sorpresa/i.test(low)) {
+        if (hasAny(low, ['chi sei','who are','хто ти','кто ты','dante'])) {
+          return response(Ld.who, [
+            { label: Ld.actionHelp, cmd: 'help' },
+            { label: Ld.actionOpen + ' ' + sectionLabel('manifesto'), section: 'manifesto' }
+          ]);
+        }
+
+        if (hasAny(low, ['how use','come usare','як корист','как польз','користуватись','пользоваться'])) {
+          return response(Ld.howUse, [
+            { label: Ld.actionTour, cmd: 'tour' },
+            { label: Ld.actionOpen + ' ' + sectionLabel('laboratorio'), section: 'laboratorio' }
+          ]);
+        }
+
+        if (hasAny(low, ['zoom','ingrand','збільш','увелич','open photo','відкрити фото','открыть фото'])) {
+          return response(Ld.zoomHelp, [
+            { label: Ld.actionOpen + ' ' + sectionLabel('immagini'), section: 'immagini' },
+            { label: Ld.actionOpen + ' ' + sectionLabel('dettagli'), section: 'dettagli' }
+          ]);
+        }
+
+        if (hasAny(low, ['lingua','language','мова','язык','switch language'])) {
+          return response(Ld.langHelp, [
+            { label: 'IT', cmd: 'set it' },
+            { label: 'UA', cmd: 'set ua' }
+          ]);
+        }
+
+        if (hasAny(low, ['source','sources','licenza','license','джерел','лиценз','ліценз','wikimedia'])) {
+          return response(Ld.sourceHelp, [
+            { label: Ld.actionOpen + ' ' + sectionLabel('immagini'), section: 'immagini' },
+            { label: Ld.actionOpen + ' ' + sectionLabel('architettura'), section: 'architettura' }
+          ]);
+        }
+
+        if (hasAny(low, ['contributo','contribution','вклад','внесок','munister.com.ua'])) {
+          return response(Ld.contributoHelp, [
+            { label: Ld.actionOpen + ' ' + sectionLabel('contributo'), section: 'contributo' },
+            { label: Ld.actionOpen + ' ' + sectionLabel('manifesto'), section: 'manifesto' }
+          ]);
+        }
+
+        if (/\b(set\s*ua|lang\s*ua|switch\s*ua)\b/i.test(low)) {
+          setLang('ua');
+          return response(Ld.langHelp, defaultActions());
+        }
+        if (/\b(set\s*it|lang\s*it|switch\s*it)\b/i.test(low)) {
+          setLang('it');
+          return response(Ld.langHelp, defaultActions());
+        }
+
+        if (hasAny(low, ['dove sono','where am','де я','где я'])) {
+          const cur = getCurrentSection();
+          return response(Ld.where + ' "' + sectionLabel(cur) + '".', topicActions(cur), cur);
+        }
+
+        if (hasAny(low, ['sezioni','sections','розділи','разделы'])) {
+          return response(Ld.sections + ' ' + sectionOrder.slice(1).map(sectionLabel).join(' · '), defaultActions());
+        }
+
+        if (hasAny(low, ['random','sorpresa','випадков','случайн'])) {
           const pool = sectionOrder.slice(1);
           const pick = pool[Math.floor(Math.random() * pool.length)];
           goToSection(pick);
-          return Ld.random + ' "' + sectionLabel(pick) + '".';
+          return response(Ld.random + ' "' + sectionLabel(pick) + '".', topicActions(pick), pick);
         }
 
-        if (/^(search|find|cerca)\s+/i.test(low)) {
-          const term  = text.replace(/^(search|find|cerca)\s+/i, '').trim();
+        if (/^(search|find|cerca|шукати|найди|найти)\s+/i.test(low)) {
+          const term = text.replace(/^(search|find|cerca|шукати|найди|найти)\s+/i, '').trim();
           const found = searchSections(term);
-          if (!found.length) return Ld.searchNone;
+          if (!found.length) return response(Ld.searchNone, defaultActions());
           goToSection(found[0]);
-          return found.length === 1
-            ? Ld.searchOne + ' "' + sectionLabel(found[0]) + '".'
-            : Ld.searchMany + ' ' + found.slice(0, 5).map(sectionLabel).join(' - ') + '.';
+          return response(
+            found.length === 1
+              ? Ld.searchOne + ' "' + sectionLabel(found[0]) + '".'
+              : Ld.searchMany + ' ' + found.slice(0, 5).map(sectionLabel).join(' · ') + '.',
+            topicActions(found[0]),
+            found[0]
+          );
         }
 
-        if (/\bstop\b|ferma/i.test(low)) { stopAutoTour(true); return Ld.stop; }
-
-        if (/tour/i.test(low) && /\+|auto/i.test(low)) { startAutoTour(); return Ld.tourAuto; }
-        if (/\btour\b/i.test(low)) { goToSection('codice'); return Ld.tour; }
-
-        if (/next|avanti/i.test(low))      { return Ld.next + ' "' + sectionLabel(moveRelative(1))  + '".'; }
-        if (/\bprev\b|indietro/i.test(low)) { return Ld.prev + ' "' + sectionLabel(moveRelative(-1)) + '".'; }
-
-        if (/voce|voice|sound/i.test(low)) {
-          voiceOn = !voiceOn;
-          if (voiceBtn) voiceBtn.classList.toggle('on', voiceOn);
-          return voiceOn ? (isUA() ? 'Holos uvimkneno.' : 'Voce attivata.') : (isUA() ? 'Holos vymkneno.' : 'Voce disattivata.');
+        if (hasAny(low, ['stop','ferma','зупини','стоп'])) {
+          stopAutoTour(true);
+          return response(Ld.stop, defaultActions());
         }
 
-        if (/cosa|what|che cosa|dimmi|tell me/i.test(low)) {
-          const cur = getCurrentSection();
-          return Ld.sectionPoetry[cur] || Ld.notFound;
+        if (hasAny(low, ['tour+','auto tour','авто тур'])) {
+          startAutoTour();
+          return response(Ld.tourAuto, defaultActions());
+        }
+        if (hasAny(low, ['tour','тур'])) {
+          goToSection('codice');
+          return response(Ld.tour, topicActions('codice'), 'codice');
+        }
+
+        if (hasAny(low, ['next','avanti','далі','дальше','вперед'])) {
+          const id = moveRelative(1);
+          return response(Ld.next + ' "' + sectionLabel(id) + '".', topicActions(id), id);
+        }
+        if (hasAny(low, ['prev','indietro','назад','поперед'])) {
+          const id = moveRelative(-1);
+          return response(Ld.prev + ' "' + sectionLabel(id) + '".', topicActions(id), id);
+        }
+
+        if (hasAny(low, ['voce','voice','sound','голос'])) return voiceToggleReply();
+
+        if (hasAny(low, ['spiega questa sezione','цей розділ','этот раздел','dettagli qui','more here','подробней'])) {
+          const sec = lastTopic || getCurrentSection();
+          return sectionAnswer(sec);
         }
 
         const sec = findSection(text);
-        if (sec) { goToSection(sec); return Ld.route + ' "' + sectionLabel(sec) + '".'; }
+        if (sec && (wantsNavigation || !isQuestion)) {
+          goToSection(sec);
+          return response(Ld.route + ' "' + sectionLabel(sec) + '".', topicActions(sec), sec);
+        }
+        if (sec && asksExplain) return sectionAnswer(sec);
 
-        return Ld.notFound;
+        if (hasAny(low, ['cosa','what','che cosa','dimmi','tell me','що','что'])) {
+          const cur = getCurrentSection();
+          return sectionAnswer(cur);
+        }
+
+        const guess = suggestSections(text);
+        if (guess.length) {
+          const g1 = guess[0];
+          const g2 = guess[1];
+          const hint = Ld.suggest + ' "' + sectionLabel(g1) + '"' + (g2 ? ' / "' + sectionLabel(g2) + '"' : '') + '.';
+          return response(hint, guess.slice(0, 2).map(function(id) {
+            return { label: Ld.actionOpen + ' ' + sectionLabel(id), section: id };
+          }), g1);
+        }
+
+        return response(Ld.notFound, defaultActions());
       }
 
       // Panel open/close
@@ -6633,18 +7157,28 @@
         panel.setAttribute('aria-hidden', open ? 'false' : 'true');
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
         if (!open) stopAutoTour(true);
-        if (open) { clearUnread(); updateStatus(); setTimeout(() => input && input.focus(), 60); }
+        if (open) {
+          clearUnread();
+          updateStatus();
+          setTimeout(function() { if (input) input.focus(); }, 60);
+        }
       }
 
       // Quick chips
       function renderQuick() {
         if (!quick) return;
         quick.innerHTML = '';
-        L().chips.forEach(chip => {
+        L().chips.forEach(function(chip) {
           const btn = document.createElement('button');
-          btn.type = 'button'; btn.className = 'guide-chip'; btn.textContent = chip.label;
-          btn.addEventListener('click', () => {
-            if (chip.section) { goToSection(chip.section); botSay(L().route + ' "' + sectionLabel(chip.section) + '".'); return; }
+          btn.type = 'button';
+          btn.className = 'guide-chip';
+          btn.textContent = chip.label;
+          btn.addEventListener('click', function() {
+            if (chip.section) {
+              goToSection(chip.section);
+              botSay(response(L().route + ' "' + sectionLabel(chip.section) + '".', topicActions(chip.section), chip.section));
+              return;
+            }
             if (chip.cmd) botSay(answer(chip.cmd));
           });
           quick.appendChild(btn);
@@ -6652,65 +7186,77 @@
       }
 
       // Scroll -> section poetry
-      const sectionObs = new IntersectionObserver(entries => {
-        entries.forEach(e => {
+      const sectionObs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
           if (!e.isIntersecting) return;
           const id = e.target.id;
           if (seenSections[id] || id === 'home') return;
           seenSections[id] = true;
           const poetry = L().sectionPoetry[id];
           if (!poetry) return;
-          setTimeout(() => {
+          setTimeout(function() {
             const note = document.createElement('div');
             note.className = 'guide-msg system-note';
-            note.textContent = sectionLabel(id).toUpperCase() + ' -- ' + poetry;
+            note.textContent = sectionLabel(id).toUpperCase() + ' — ' + poetry;
             log.appendChild(note);
             log.scrollTop = log.scrollHeight;
+            lastTopic = id;
             incUnread();
             updateStatus();
-          }, 1400);
+          }, 1300);
         });
       }, { threshold: 0.25 });
-      sectionOrder.forEach(id => { const el = document.getElementById(id); if (el) sectionObs.observe(el); });
+      sectionOrder.forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) sectionObs.observe(el);
+      });
 
       // Portraits
       function handlePortraitError() {
-        [togglePortrait, headPortrait, heroPortrait].forEach(el => { if (el) el.style.display = 'none'; });
+        [togglePortrait, headPortrait, heroPortrait].forEach(function(el) {
+          if (el) el.style.display = 'none';
+        });
         if (toggleFallback) toggleFallback.style.display = 'flex';
       }
+
       function ensurePortrait() {
         const targets = [togglePortrait, headPortrait, heroPortrait].filter(Boolean);
         let done = false;
         (function tryAt(i) {
           if (i >= portraitSources.length) { handlePortraitError(); return; }
           const img = new Image();
-          img.onload = () => { if (done) return; done = true; targets.forEach(t => { t.src = portraitSources[i]; }); };
-          img.onerror = () => tryAt(i + 1);
+          img.onload = function() {
+            if (done) return;
+            done = true;
+            targets.forEach(function(t) { t.src = portraitSources[i]; });
+          };
+          img.onerror = function() { tryAt(i + 1); };
           img.src = portraitSources[i];
         })(0);
       }
-      [togglePortrait, headPortrait, heroPortrait].forEach(el => { if (el) el.addEventListener('error', handlePortraitError); });
+      [togglePortrait, headPortrait, heroPortrait].forEach(function(el) {
+        if (el) el.addEventListener('error', handlePortraitError);
+      });
 
       // Lang update
       function updateLangUi() {
         if (input) input.placeholder = L().placeholder;
-        renderQuick(); updateStatus();
+        renderQuick();
+        updateStatus();
         seenSections = {};
       }
       window.updateGuideLang = updateLangUi;
 
       // Voice button
       if (voiceBtn) {
-        voiceBtn.addEventListener('click', () => {
-          voiceOn = !voiceOn;
-          voiceBtn.classList.toggle('on', voiceOn);
-          botSay(voiceOn ? (isUA() ? 'Holos uvimkneno.' : 'Voce attivata.') : (isUA() ? 'Holos vymkneno.' : 'Voce disattivata.'));
+        voiceBtn.addEventListener('click', function() {
+          botSay(voiceToggleReply());
         });
       }
 
       // Form
       if (form) {
-        form.addEventListener('submit', e => {
+        form.addEventListener('submit', function(e) {
           e.preventDefault();
           const text = (input ? input.value : '').trim();
           if (!text || isTyping) return;
@@ -6721,18 +7267,21 @@
       }
 
       // Toggle / close
-      toggle.addEventListener('click', () => openPanel(!shell.classList.contains('open')));
-      if (closeBtn) closeBtn.addEventListener('click', () => openPanel(false));
-      document.addEventListener('click', e => {
+      toggle.addEventListener('click', function() { openPanel(!shell.classList.contains('open')); });
+      if (closeBtn) closeBtn.addEventListener('click', function() { openPanel(false); });
+      document.addEventListener('click', function(e) {
         if (!shell.classList.contains('open')) return;
         if (shell.contains(e.target)) return;
         openPanel(false);
       });
-      document.addEventListener('keydown', e => {
+      document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && shell.classList.contains('open')) openPanel(false);
       });
 
-      window.addEventListener('scroll', () => { updateProgress(); updateStatus(); }, { passive: true });
+      window.addEventListener('scroll', function() {
+        updateProgress();
+        updateStatus();
+      }, { passive: true });
 
       // Init
       ensurePortrait();
@@ -6741,7 +7290,9 @@
       updateProgress();
       const hour = new Date().getHours();
       const helloIdx = hour < 12 ? 0 : hour < 18 ? 1 : 2;
-      setTimeout(() => botSay(L().hello[helloIdx], 12), 1000);
+      setTimeout(function() {
+        botSay(response(L().hello[helloIdx], defaultActions()));
+      }, 900);
     })();
 
 
