@@ -183,9 +183,9 @@
 
     .nav-links a {
       font-family: var(--sans);
-      font-size: 9px;
+      font-size: 9.2px;
       font-weight: 500;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--graphite);
       transition: color var(--t) var(--ease);
@@ -203,7 +203,7 @@
 
     @media (max-width: 1320px) {
       .nav-links { gap: 14px; margin-right: 84px; }
-      .nav-links a { font-size: 8px; letter-spacing: 0.14em; }
+      .nav-links a { font-size: 8.5px; letter-spacing: 0.12em; }
     }
 
     @media (max-width: 1100px) { .nav-links { display: none; } }
@@ -1195,7 +1195,7 @@
        07 — MANIFESTO
     ═══════════════════════════════════════ */
     #manifesto {
-      padding: 160px 0;
+      padding: 92px 0 120px;
     }
 
     .manifesto-wrap {
@@ -1220,7 +1220,7 @@
       font-weight: 300;
       color: var(--graphite);
       line-height: 1.08;
-      margin-bottom: 64px;
+      margin-bottom: 48px;
     }
 
     .man-body {
@@ -1233,7 +1233,7 @@
       display: grid;
       grid-template-columns: 1.45fr 1fr 1fr;
       gap: 2px;
-      margin: -28px 0 56px;
+      margin: -8px 0 44px;
     }
 
     .manifesto-image {
@@ -1754,7 +1754,7 @@
       font-weight: 300;
       font-style: italic;
       color: rgba(168,84,56,0.55);
-      margin-bottom: 64px;
+      margin-bottom: 48px;
       display: block;
     }
 
@@ -1935,7 +1935,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 3px;
       margin-top: 64px;
-      margin-bottom: 64px;
+      margin-bottom: 48px;
     }
 
     .soglia-panel {
@@ -3363,11 +3363,16 @@
     .crono-tape-wrap {
       position: relative;
       width: 100%;
-      overflow: hidden;
+      overflow-x: auto;
+      overflow-y: hidden;
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
       margin-bottom: 0;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
+    .crono-tape-wrap::-webkit-scrollbar { display: none; }
+    #cronologia .crono-tape-wrap.fu { opacity: 1; transform: none; }
 
     .crono-tape {
       display: flex;
@@ -3476,7 +3481,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 28px 0 80px;
+      padding: 22px 0 42px;
       border-top: 1px solid var(--line);
     }
 
@@ -5432,11 +5437,12 @@
     // ── CRONOLOGIA — horizontal tape ──────
     (function () {
       const tape  = document.getElementById('crono-tape');
+      const wrap  = document.querySelector('.crono-tape-wrap');
       const prev  = document.getElementById('crono-prev');
       const next  = document.getElementById('crono-next');
       const prog  = document.getElementById('crono-progress');
       const count = document.getElementById('crono-count');
-      if (!tape || !prev || !next) return;
+      if (!tape || !wrap || !prev || !next) return;
 
       const cards = tape.querySelectorAll('.crono-card');
       const total = cards.length;
@@ -5458,7 +5464,8 @@
       function goTo(idx) {
         cur = Math.max(0, Math.min(total - 1, idx));
         var card = cards[cur];
-        tape.scrollTo({ left: card.offsetLeft - (tape.clientWidth / 2 - card.offsetWidth / 2), behavior: 'smooth' });
+        var target = card.offsetLeft - (wrap.clientWidth / 2 - card.offsetWidth / 2);
+        wrap.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
         prev.disabled = cur === 0;
         next.disabled = cur === total - 1;
         dots.forEach(function(d, i) { d.classList.toggle('active', i === cur); });
@@ -5470,8 +5477,8 @@
 
       // Touch swipe
       var tx0 = 0;
-      tape.addEventListener('touchstart', function(e) { tx0 = e.touches[0].clientX; }, { passive: true });
-      tape.addEventListener('touchend',   function(e) {
+      wrap.addEventListener('touchstart', function(e) { tx0 = e.touches[0].clientX; }, { passive: true });
+      wrap.addEventListener('touchend',   function(e) {
         var dx = e.changedTouches[0].clientX - tx0;
         if (Math.abs(dx) > 40) goTo(dx < 0 ? cur + 1 : cur - 1);
       }, { passive: true });
