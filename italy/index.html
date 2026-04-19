@@ -3460,6 +3460,90 @@
       animation: guidePulse 2.4s ease-in-out infinite;
     }
 
+    .guide-modebar {
+      padding: 8px 14px 9px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid rgba(158,140,118,0.12);
+      background: linear-gradient(to right, rgba(249,245,238,0.82), rgba(244,236,224,0.38));
+    }
+    .guide-mode {
+      border: 1px solid rgba(142,117,89,0.3);
+      background: rgba(249,245,238,0.85);
+      color: rgba(54,44,34,0.74);
+      font-family: var(--sans);
+      font-size: 7px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 6px 9px;
+      border-radius: 999px;
+      transition: background .2s, border-color .2s, color .2s, transform .2s;
+      cursor: pointer;
+    }
+    .guide-mode:hover {
+      transform: translateY(-1px);
+      border-color: rgba(168,84,56,0.46);
+      color: rgba(38,32,26,0.9);
+    }
+    .guide-mode.is-active {
+      background: rgba(168,84,56,0.16);
+      border-color: rgba(168,84,56,0.54);
+      color: rgba(60,40,24,0.96);
+    }
+    .guide-kbd-hint {
+      margin-left: auto;
+      font-family: var(--sans);
+      font-size: 7px;
+      letter-spacing: 0.16em;
+      color: rgba(104,86,70,0.64);
+      text-transform: uppercase;
+    }
+
+    .guide-radar {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      padding: 10px 14px 6px;
+      border-bottom: 1px solid rgba(158,140,118,0.1);
+      background: rgba(249,245,238,0.28);
+    }
+    .guide-radar-item {
+      border: 1px solid rgba(158,140,118,0.26);
+      background: rgba(249,245,238,0.92);
+      padding: 7px 8px;
+      text-align: left;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform .15s, border-color .2s, background .2s;
+    }
+    .guide-radar-item:hover {
+      transform: translateY(-1px);
+      border-color: rgba(168,84,56,0.48);
+      background: rgba(249,245,238,0.98);
+    }
+    .guide-radar-item strong {
+      display: block;
+      font-family: var(--serif);
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(44,36,29,0.88);
+      line-height: 1.08;
+    }
+    .guide-radar-item span {
+      display: block;
+      margin-top: 2px;
+      font-family: var(--sans);
+      font-size: 7px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(102,84,66,0.58);
+    }
+    .guide-radar-item.is-current {
+      border-color: rgba(168,84,56,0.5);
+      background: linear-gradient(165deg, rgba(168,84,56,0.14), rgba(249,245,238,0.95));
+    }
+
     /* ── Chat log ── */
     .guide-log {
       max-height: 248px; overflow-y: auto;
@@ -3468,6 +3552,9 @@
       scrollbar-width: thin; scrollbar-color: rgba(158,140,118,0.28) transparent;
       background: linear-gradient(to bottom, rgba(255,255,255,0.16), rgba(246,238,227,0.3));
     }
+    .guide-assistant[data-mode="nav"] .guide-log { max-height: 180px; }
+    .guide-assistant[data-mode="insight"] .guide-log { max-height: 210px; }
+    .guide-assistant[data-mode="insight"] .guide-radar-item strong { color: rgba(56,40,28,0.96); }
     .guide-log::-webkit-scrollbar { width: 4px; }
     .guide-log::-webkit-scrollbar-thumb { background: rgba(158,140,118,0.28); border-radius: 4px; }
 
@@ -6028,6 +6115,15 @@
         <span id="guide-status-text"></span>
       </div>
 
+      <div class="guide-modebar" id="guide-modebar" role="tablist" aria-label="Guide modes">
+        <button type="button" class="guide-mode is-active" data-mode-btn="chat">Chat</button>
+        <button type="button" class="guide-mode" data-mode-btn="nav">Navigator</button>
+        <button type="button" class="guide-mode" data-mode-btn="insight">Insight</button>
+        <span class="guide-kbd-hint">⌘/Ctrl + K</span>
+      </div>
+
+      <div class="guide-radar" id="guide-radar" aria-live="polite"></div>
+
       <!-- Chat log -->
       <div class="guide-log" id="guide-log" role="log" aria-live="polite"></div>
 
@@ -6509,6 +6605,8 @@
       const closeBtn       = document.getElementById('guide-close');
       const panel          = document.getElementById('guide-panel');
       const log            = document.getElementById('guide-log');
+      const modeBar        = document.getElementById('guide-modebar');
+      const radar          = document.getElementById('guide-radar');
       const quick          = document.getElementById('guide-quick');
       const form           = document.getElementById('guide-form');
       const input          = document.getElementById('guide-input');
@@ -6528,6 +6626,7 @@
       let seenSections = {};
       let isTyping = false;
       let lastTopic = 'home';
+      let assistantMode = 'chat';
 
       const sectionOrder = ['home','codice','architettura','materiali','ritmo','dettagli',
         'immagini','tracce','marnero','armir','soglia','parallelo','cronologia','atlante','laboratorio','contributo','manifesto'];
@@ -6586,6 +6685,11 @@
           actionTour: 'Tour',
           actionWhere: 'Dove sono',
           actionHelp: 'Help',
+          modeChat: 'Modalità Chat: risposte curate e pratiche.',
+          modeNav: 'Modalità Navigator: radar attivo, ti porto rapidamente tra i blocchi.',
+          modeInsight: 'Modalità Insight: lettura critica dei contenuti sezione per sezione.',
+          wow: 'Upgrade WAU attivo: radar sezioni, modalità intelligenti, scorciatoia ⌘/Ctrl+K e azioni rapide contestuali.',
+          shortcutHint: 'Suggerimento: premi ⌘/Ctrl+K per aprire Dante in ogni momento.',
           sectionNames: {
             home:'Home', codice:'Codice', architettura:'Architettura', materiali:'Materiali',
             ritmo:'Ritmo Urbano', dettagli:'Dettagli', immagini:'Immagini', tracce:'Tracce',
@@ -6676,6 +6780,11 @@
           actionTour: 'Тур',
           actionWhere: 'Де я',
           actionHelp: 'Help',
+          modeChat: 'Режим Chat: практичні кураторські відповіді.',
+          modeNav: 'Режим Navigator: активний радар розділів для швидкого переходу.',
+          modeInsight: 'Режим Insight: пояснення сенсу блоку з контекстом.',
+          wow: 'WAU-апгрейд активовано: радар розділів, розумні режими, гаряча клавіша ⌘/Ctrl+K та контекстні дії.',
+          shortcutHint: 'Порада: натисни ⌘/Ctrl+K, щоб миттєво відкрити Данте.',
           sectionNames: {
             home:'Головна', codice:'Код', architettura:'Архітектура', materiali:'Матеріали',
             ritmo:'Міський ритм', dettagli:'Деталі', immagini:'Образи', tracce:'Сліди',
@@ -6765,6 +6874,50 @@
           { label: L().actionWhere, cmd: 'where' },
           { label: L().actionTour, cmd: 'tour' }
         ];
+      }
+
+      function setMode(nextMode, silent) {
+        const allowed = ['chat', 'nav', 'insight'];
+        assistantMode = allowed.indexOf(nextMode) !== -1 ? nextMode : 'chat';
+        shell.setAttribute('data-mode', assistantMode);
+        if (modeBar) {
+          modeBar.querySelectorAll('[data-mode-btn]').forEach(function(btn) {
+            btn.classList.toggle('is-active', btn.getAttribute('data-mode-btn') === assistantMode);
+          });
+        }
+        renderRadar();
+        if (silent) return;
+        if (assistantMode === 'chat') botSay(response(L().modeChat, defaultActions()));
+        if (assistantMode === 'nav') botSay(response(L().modeNav, topicActions(getCurrentSection()), getCurrentSection()));
+        if (assistantMode === 'insight') botSay(sectionAnswer(getCurrentSection()));
+      }
+
+      function renderRadar() {
+        if (!radar) return;
+        const cur = getCurrentSection();
+        const idx = sectionOrder.indexOf(cur);
+        const picks = [];
+        const deltas = [0, 1, 2, -1];
+        deltas.forEach(function(d) {
+          const ni = Math.max(0, Math.min(sectionOrder.length - 1, idx + d));
+          const id = sectionOrder[ni];
+          if (picks.indexOf(id) === -1) picks.push(id);
+        });
+        radar.innerHTML = '';
+        picks.forEach(function(id, i) {
+          if (id === 'home' && picks.length > 3 && i > 0) return;
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'guide-radar-item' + (id === cur ? ' is-current' : '');
+          const radarMeta = id === cur ? (isUA() ? 'поточний' : 'corrente') : (isUA() ? 'перехід' : 'jump');
+          b.innerHTML = '<strong>' + sectionLabel(id) + '</strong><span>' + radarMeta + '</span>';
+          b.addEventListener('click', function() {
+            goToSection(id);
+            if (assistantMode === 'insight') botSay(sectionAnswer(id));
+            else botSay(response(L().route + ' "' + sectionLabel(id) + '".', topicActions(id), id));
+          });
+          radar.appendChild(b);
+        });
       }
 
       // Typewriter
@@ -6930,6 +7083,7 @@
         lastTopic = cur;
         if (statusText) statusText.textContent = L().status + ': ' + sectionLabel(cur);
         updateProgress();
+        renderRadar();
       }
 
       // Auto-tour
@@ -7002,6 +7156,32 @@
         const low = normalize(text);
         const Ld = L();
         if (!text) return response(Ld.notFound, defaultActions());
+
+        if (hasAny(low, ['wow','вау','круче','upgrade','апгрейд'])) {
+          return response(Ld.wow, [
+            { label: 'Chat', cmd: 'mode chat' },
+            { label: 'Navigator', cmd: 'mode nav' },
+            { label: 'Insight', cmd: 'mode insight' }
+          ]);
+        }
+
+        if (hasAny(low, ['shortcut','hotkey','keyboard','клавиш','клавіша','кнопк'])) {
+          return response(Ld.shortcutHint, defaultActions());
+        }
+
+        if (hasAny(low, ['mode chat','режим chat','чат режим'])) {
+          setMode('chat', true);
+          return response(Ld.modeChat, defaultActions());
+        }
+        if (hasAny(low, ['mode nav','navigator mode','режим nav','режим навигации','навігац'])) {
+          setMode('nav', true);
+          const curNav = getCurrentSection();
+          return response(Ld.modeNav, topicActions(curNav), curNav);
+        }
+        if (hasAny(low, ['mode insight','insight mode','режим insight','режим анал','аналіз'])) {
+          setMode('insight', true);
+          return sectionAnswer(getCurrentSection());
+        }
 
         const isQuestion = /[?]/.test(text) || hasAny(low, ['what','cosa','chi','come','як','що','кто','как','чем','why','perche']);
         const wantsNavigation = hasAny(low, ['vai','apri','open','go to','перейди','відкрий','открой','jump']);
@@ -7247,6 +7427,15 @@
       }
       window.updateGuideLang = updateLangUi;
 
+      if (modeBar) {
+        modeBar.addEventListener('click', function(e) {
+          const btn = e.target.closest('[data-mode-btn]');
+          if (!btn) return;
+          const mode = btn.getAttribute('data-mode-btn') || 'chat';
+          setMode(mode, false);
+        });
+      }
+
       // Voice button
       if (voiceBtn) {
         voiceBtn.addEventListener('click', function() {
@@ -7275,6 +7464,13 @@
         openPanel(false);
       });
       document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+          e.preventDefault();
+          const open = !shell.classList.contains('open');
+          openPanel(open);
+          if (open && input) setTimeout(function(){ input.focus(); }, 40);
+          return;
+        }
         if (e.key === 'Escape' && shell.classList.contains('open')) openPanel(false);
       });
 
@@ -7286,6 +7482,7 @@
       // Init
       ensurePortrait();
       renderQuick();
+      setMode('chat', true);
       updateStatus();
       updateProgress();
       const hour = new Date().getHours();
@@ -7293,6 +7490,13 @@
       setTimeout(function() {
         botSay(response(L().hello[helloIdx], defaultActions()));
       }, 900);
+      setTimeout(function() {
+        botSay(response(L().shortcutHint, [
+          { label: 'Chat', cmd: 'mode chat' },
+          { label: 'Navigator', cmd: 'mode nav' },
+          { label: 'Insight', cmd: 'mode insight' }
+        ]));
+      }, 2400);
     })();
 
 
