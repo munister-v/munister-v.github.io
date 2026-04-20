@@ -247,6 +247,8 @@
       transform-origin: center center;
       will-change: transform;
       transition: transform 0.1s linear;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
     }
 
     /* Grain overlay — makes upscaled photo feel like film */
@@ -419,6 +421,11 @@
     }
 
     @media (max-width: 900px) {
+      .hero-bg img {
+        transform: scale(1.02) !important;
+        transition: none;
+        will-change: auto;
+      }
       .hero-title {
         left: 0;
         right: 0;
@@ -431,6 +438,14 @@
       }
       .hero-top   { padding: 20px 24px 0; }
       .hero-side  { display: none; }
+    }
+
+    /* Mobile performance: render offscreen sections lazily */
+    @media (max-width: 900px) {
+      section:not(#home) {
+        content-visibility: auto;
+        contain-intrinsic-size: 900px;
+      }
     }
 
     /* ═══════════════════════════════════════
@@ -3694,7 +3709,7 @@
     @media (max-width: 640px) {
       .guide-assistant {
         right: 8px;
-        bottom: calc(8px + env(safe-area-inset-bottom));
+        bottom: calc(2px + env(safe-area-inset-bottom));
         width: calc(100vw - 16px);
       }
       .guide-toggle {
@@ -3805,7 +3820,7 @@
     @media (max-width: 420px) {
       .guide-assistant {
         right: 6px;
-        bottom: calc(6px + env(safe-area-inset-bottom));
+        bottom: calc(0px + env(safe-area-inset-bottom));
         width: calc(100vw - 12px);
       }
       .guide-panel {
@@ -4598,13 +4613,13 @@
   </style>
 </head>
 
-<body class="lang-it">
+<body class="lang-ua">
 
   <!-- Language Switcher -->
   <div class="lang-switch">
-    <button id="btn-it" class="active" onclick="setLang('it')">IT</button>
+    <button id="btn-it" onclick="setLang('it')">IT</button>
     <span class="sep">/</span>
-    <button id="btn-ua" onclick="setLang('ua')">UA</button>
+    <button id="btn-ua" class="active" onclick="setLang('ua')">UA</button>
   </div>
 
   <!-- Navigation -->
@@ -4688,8 +4703,8 @@
     </svg>
 
     <div class="hero-title">
-      <p class="hero-eyebrow it">Un portale visivo sull'estetica italiana</p>
-      <p class="hero-eyebrow ua">Авторський портал про візуальну естетику Італії</p>
+      <p class="hero-eyebrow it">Atlante narrativo · architettura, materia, luce</p>
+      <p class="hero-eyebrow ua">Наративний атлас · архітектура, матерія, світло</p>
       <span class="ht-italia">ITALIA</span>
       <span class="ht-through it">attraverso gli occhi di</span>
       <span class="ht-through ua">очима</span>
@@ -6301,9 +6316,9 @@
 
     (function() {
       try {
-        const saved = localStorage.getItem('munister-lang') || 'it';
+        const saved = localStorage.getItem('munister-lang') || 'ua';
         setLang(saved);
-      } catch(e) { setLang('it'); }
+      } catch(e) { setLang('ua'); }
     })();
 
     // ── Nav scroll ───────────────────────
@@ -6313,14 +6328,35 @@
     }
     window.addEventListener('scroll', onScroll, { passive: true });
 
-    // ── Hero parallax ────────────────────
+    // ── Hero parallax (desktop only, stable on mobile) ──
     const heroEyes = document.getElementById('hero-eyes');
-    window.addEventListener('scroll', function() {
-      const y = window.scrollY;
-      if (y < window.innerHeight && heroEyes) {
-        heroEyes.style.transform = 'translateY(' + (y * 0.18) + 'px) scale(1.04)';
-      }
-    }, { passive: true });
+    const canUseHeroParallax =
+      !!heroEyes &&
+      window.matchMedia('(min-width: 901px)').matches &&
+      window.matchMedia('(pointer: fine)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (heroEyes) {
+      let rafHero = 0;
+      const updateHeroParallax = function() {
+        rafHero = 0;
+        const y = window.scrollY;
+        if (!canUseHeroParallax) {
+          heroEyes.style.transform = 'scale(1.02)';
+          return;
+        }
+        if (y < window.innerHeight) {
+          heroEyes.style.transform = 'translate3d(0,' + (y * 0.12) + 'px,0) scale(1.04)';
+        }
+      };
+
+      window.addEventListener('scroll', function() {
+        if (rafHero) return;
+        rafHero = window.requestAnimationFrame(updateHeroParallax);
+      }, { passive: true });
+
+      updateHeroParallax();
+    }
 
     // ── Fade-up observer with stagger ────
     const io = new IntersectionObserver(function(entries) {
@@ -6335,16 +6371,27 @@
     document.querySelectorAll('.fu').forEach(function(el) { io.observe(el); });
 
     // ── Reveal all visible on load (handles hash-nav & fast scroll) ──
+    let revealQueue = Array.from(document.querySelectorAll('.fu:not(.vis)'));
     function revealVisible() {
-      document.querySelectorAll('.fu:not(.vis)').forEach(function(el) {
-        var r = el.getBoundingClientRect();
+      if (!revealQueue.length) return;
+      for (let i = revealQueue.length - 1; i >= 0; i--) {
+        const el = revealQueue[i];
+        const r = el.getBoundingClientRect();
         if (r.top < window.innerHeight && r.bottom > 0) {
           el.classList.add('vis');
+          revealQueue.splice(i, 1);
         }
-      });
+      }
     }
     revealVisible();
-    window.addEventListener('scroll', revealVisible, { passive: true });
+    let revealRaf = 0;
+    window.addEventListener('scroll', function() {
+      if (revealRaf) return;
+      revealRaf = window.requestAnimationFrame(function() {
+        revealRaf = 0;
+        revealVisible();
+      });
+    }, { passive: true });
 
     // ── Stagger child elements ────────────
     document.querySelectorAll('.tracce-threads, .marnero-colonies-list, .armir-facts, .soglia-resonances, .ritmo-grid').forEach(function(parent) {
@@ -6371,9 +6418,14 @@
     const progressBar = document.createElement('div');
     progressBar.style.cssText = 'position:fixed;top:0;left:0;height:1px;background:var(--terracotta);z-index:999;transition:width 0.1s linear;pointer-events:none;opacity:0.6;';
     document.body.appendChild(progressBar);
+    let barRaf = 0;
     window.addEventListener('scroll', function() {
-      const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-      progressBar.style.width = (pct * 100) + '%';
+      if (barRaf) return;
+      barRaf = window.requestAnimationFrame(function() {
+        barRaf = 0;
+        const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+        progressBar.style.width = (pct * 100) + '%';
+      });
     }, { passive: true });
 
     // ── Photo zoom lightbox ──────────────
@@ -6764,6 +6816,7 @@
       let isTyping = false;
       let lastTopic = 'home';
       let assistantMode = 'chat';
+      let lastStatusSection = '';
 
       const sectionOrder = ['home','codice','architettura','materiali','ritmo','dettagli',
         'immagini','tracce','marnero','armir','soglia','parallelo','cronologia','atlante','laboratorio','contributo','manifesto'];
@@ -7218,9 +7271,12 @@
       function updateStatus() {
         const cur = getCurrentSection();
         lastTopic = cur;
-        if (statusText) statusText.textContent = L().status + ': ' + sectionLabel(cur);
+        if (cur !== lastStatusSection) {
+          lastStatusSection = cur;
+          if (statusText) statusText.textContent = L().status + ': ' + sectionLabel(cur);
+          renderRadar();
+        }
         updateProgress();
-        renderRadar();
       }
 
       // Auto-tour
@@ -7611,9 +7667,13 @@
         if (e.key === 'Escape' && shell.classList.contains('open')) openPanel(false);
       });
 
+      let guideScrollRaf = 0;
       window.addEventListener('scroll', function() {
-        updateProgress();
-        updateStatus();
+        if (guideScrollRaf) return;
+        guideScrollRaf = window.requestAnimationFrame(function() {
+          guideScrollRaf = 0;
+          updateStatus();
+        });
       }, { passive: true });
 
       // Init
