@@ -62,6 +62,8 @@
       font-size: 16px;
       scroll-behavior: smooth;
       -webkit-font-smoothing: antialiased;
+      overflow-x: clip;
+      max-width: 100%;
     }
 
     body {
@@ -71,6 +73,12 @@
       font-weight: 300;
       line-height: 1.65;
       overflow-x: hidden;
+      overscroll-behavior-x: none;
+      max-width: 100%;
+    }
+
+    section {
+      scroll-margin-top: 78px;
     }
 
     img { max-width: 100%; display: block; }
@@ -421,8 +429,25 @@
     }
 
     @media (max-width: 900px) {
+      .wrap { padding: 0 16px; }
+      .nav { padding: 0 16px; }
+      .lang-switch { right: 16px; top: 14px; }
+      html {
+        scroll-behavior: auto;
+      }
+      body {
+        overscroll-behavior-y: contain;
+      }
+      section {
+        scroll-margin-top: 62px;
+      }
+      #home {
+        height: min(100svh, 880px);
+        min-height: 520px;
+      }
       .hero-bg img {
-        transform: scale(1.02) !important;
+        transform: none !important;
+        object-position: 52% 38%;
         transition: none;
         will-change: auto;
       }
@@ -438,6 +463,33 @@
       }
       .hero-top   { padding: 20px 24px 0; }
       .hero-side  { display: none; }
+      .fu {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+
+    @media (max-width: 900px) and (orientation: landscape) {
+      .hero-bg img { object-position: 50% 46%; }
+    }
+
+    @media (max-width: 640px) {
+      #home {
+        height: min(92svh, 760px);
+        min-height: 460px;
+      }
+      .hero-bg img { object-position: 52% 35%; }
+      .photo-lightbox {
+        padding: 12px;
+      }
+      .photo-lightbox-img {
+        max-height: min(72svh, 640px);
+      }
+      .photo-lightbox-caption {
+        font-size: 8px;
+        letter-spacing: 0.12em;
+      }
     }
 
     /* Mobile performance: render offscreen sections lazily */
@@ -4414,6 +4466,8 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.24s var(--ease);
+      overscroll-behavior: contain;
+      touch-action: pan-y;
     }
 
     .photo-lightbox.open {
@@ -4434,6 +4488,7 @@
       object-fit: contain;
       background: rgba(249,245,238,0.04);
       box-shadow: 0 30px 90px rgba(0,0,0,0.42);
+      touch-action: manipulation;
     }
 
     .photo-lightbox-caption {
