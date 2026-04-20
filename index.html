@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050505" />
     <title>Viacheslav Munister — Systems Analyst & Researcher</title>
     <meta name="description" content="Systems Analyst & Researcher with hands-on development experience. FinTech architecture, data science, UX research, and R&D — from trading systems to adaptive learning platforms." />
 
@@ -12,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <script>
       tailwind.config = {
         theme: {
@@ -64,13 +65,23 @@
       ::-webkit-scrollbar-track { background: #0a0a0a; }
       ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
       ::-webkit-scrollbar-thumb:hover { background: #555; }
-      body { background-color: #050505; color: #e5e5e5; overflow-x: hidden; }
+      html, body { max-width: 100%; overflow-x: hidden; }
+      body { background-color: #050505; color: #e5e5e5; }
       .font-editorial { font-family: 'Cormorant Garamond', serif; }
       .bg-noise {
         position: fixed; top: 0; left: 0;
-        width: 100vw; height: 100vh;
+        width: 100%; height: 100%;
         pointer-events: none; z-index: 50; opacity: 0.05;
+        contain: paint;
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html.scroll-smooth { scroll-behavior: auto; }
+        *, *::before, *::after {
+          animation: none !important;
+          transition: none !important;
+        }
       }
 
       /* ── Process & Workflow quality pass ── */
@@ -373,6 +384,7 @@
       }
     </style>
 
+    <link rel="preload" href="/index.css" as="style">
     <link rel="stylesheet" href="/index.css">
     <script type="importmap">
 {
@@ -385,6 +397,7 @@
   }
 }
 </script>
+    <link rel="modulepreload" href="/assets/index-DtrRR11n.js">
     <script type="module" crossorigin src="/assets/index-DtrRR11n.js"></script>
   </head>
   <body>
@@ -725,18 +738,44 @@
         return false;
       }
 
-      // Try immediately, then observe DOM for React to finish rendering
-      if (!injectARMBank()) {
-        const observer = new MutationObserver(() => {
-          if (injectARMBank()) observer.disconnect();
-        });
-        observer.observe(document.getElementById('root'), { childList: true, subtree: true });
+      function bindLangSwitcherSync() {
+        const nav = document.querySelector('nav');
+        if (!nav || nav.dataset.abLangBound === '1') return false;
+        nav.dataset.abLangBound = '1';
+        nav.addEventListener('click', (event) => {
+          const btn = event.target.closest('button');
+          if (!btn) return;
+          const value = (btn.textContent || '').trim().toUpperCase();
+          if (value === 'EN' || value === 'UA') {
+            setTimeout(scheduleABLocaleSync, 0);
+          }
+        }, { passive: true });
+        return true;
       }
 
-      const langObserver = new MutationObserver(() => scheduleABLocaleSync());
-      langObserver.observe(document.body, { childList: true, subtree: true });
-      document.addEventListener('click', () => setTimeout(scheduleABLocaleSync, 0));
-      window.addEventListener('load', scheduleABLocaleSync);
+      // Try immediately, then observe only #root until React mounts nav/sections
+      let mountedObserver = null;
+      function tryMountIntegrations() {
+        const injected = injectARMBank();
+        const langBound = bindLangSwitcherSync();
+        if (injected && langBound && mountedObserver) {
+          mountedObserver.disconnect();
+          mountedObserver = null;
+        }
+      }
+
+      tryMountIntegrations();
+      const root = document.getElementById('root');
+      if (root && (!document.getElementById('methodology') || !document.querySelector('nav[data-ab-lang-bound="1"]'))) {
+        mountedObserver = new MutationObserver(() => tryMountIntegrations());
+        mountedObserver.observe(root, { childList: true, subtree: true });
+      }
+
+      window.addEventListener('load', scheduleABLocaleSync, { passive: true });
+      window.addEventListener('pageshow', scheduleABLocaleSync, { passive: true });
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') scheduleABLocaleSync();
+      });
     </script>
   </body>
 </html>
