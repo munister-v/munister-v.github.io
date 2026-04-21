@@ -543,6 +543,285 @@
     }
 
     /* ═══════════════════════════════════════
+       00 — ROMA INTERATTIVA
+    ═══════════════════════════════════════ */
+    #roma-atlante {
+      padding: 96px 0 108px;
+      background:
+        radial-gradient(circle at 20% 16%, rgba(201,176,141,0.16), transparent 42%),
+        radial-gradient(circle at 86% 84%, rgba(168,84,56,0.10), transparent 44%),
+        linear-gradient(to bottom, #f7f1e7, #f4ede2);
+      border-top: 1px solid rgba(196,180,154,0.42);
+      border-bottom: 1px solid rgba(196,180,154,0.42);
+    }
+
+    .roma-head {
+      margin-bottom: 34px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+      align-items: end;
+    }
+
+    .roma-head .sec-h2 {
+      font-size: clamp(44px, 6.2vw, 88px);
+      line-height: 0.9;
+    }
+
+    .roma-lead {
+      font-family: var(--serif);
+      font-size: clamp(16px, 1.5vw, 19px);
+      line-height: 1.7;
+      color: rgba(56,46,38,0.78);
+      max-width: 44ch;
+      justify-self: end;
+      text-align: left;
+    }
+
+    .roma-stage {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .roma-map-wrap {
+      position: relative;
+      border: 1px solid rgba(158,140,118,0.36);
+      background: linear-gradient(145deg, rgba(249,245,238,0.98), rgba(238,228,211,0.9));
+      min-height: 580px;
+      overflow: hidden;
+    }
+
+    .roma-map-grid {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(120,104,86,0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(120,104,86,0.08) 1px, transparent 1px);
+      background-size: 44px 44px;
+      opacity: 0.48;
+    }
+
+    .roma-map {
+      width: 100%;
+      height: 100%;
+      min-height: 580px;
+      display: block;
+    }
+
+    .roma-outline {
+      fill: rgba(188,164,136,0.14);
+      stroke: rgba(86,72,58,0.52);
+      stroke-width: 2;
+      stroke-linejoin: round;
+    }
+
+    .roma-river {
+      fill: none;
+      stroke: rgba(93,114,127,0.58);
+      stroke-width: 8;
+      stroke-linecap: round;
+      filter: drop-shadow(0 2px 2px rgba(34,38,42,0.1));
+    }
+
+    .roma-road {
+      fill: none;
+      stroke: rgba(110,94,77,0.32);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+    }
+
+    .roma-route {
+      fill: none;
+      stroke: rgba(168,84,56,0.95);
+      stroke-width: 3.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 10 8;
+      animation: romaRouteFlow 2.8s linear infinite;
+    }
+
+    @keyframes romaRouteFlow {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: -72; }
+    }
+
+    .roma-point {
+      cursor: pointer;
+    }
+
+    .roma-point circle {
+      fill: rgba(38,36,34,0.92);
+      stroke: rgba(249,245,238,0.96);
+      stroke-width: 2.4;
+      transition: transform 0.25s var(--ease), fill 0.25s var(--ease);
+      transform-origin: center;
+    }
+
+    .roma-point text {
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      fill: rgba(56,46,38,0.7);
+      pointer-events: none;
+    }
+
+    .roma-point.is-active circle {
+      fill: var(--terracotta);
+      transform: scale(1.12);
+    }
+
+    .roma-point.is-active text {
+      fill: rgba(56,46,38,0.95);
+    }
+
+    .roma-panel {
+      border: 1px solid rgba(158,140,118,0.36);
+      background: linear-gradient(to bottom, rgba(249,245,238,0.98), rgba(244,236,223,0.93));
+      padding: 26px 22px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .roma-era-tabs,
+    .roma-hero-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .roma-era-btn,
+    .roma-hero-btn {
+      border: 1px solid rgba(120,104,86,0.3);
+      background: rgba(255,255,255,0.58);
+      color: rgba(56,46,38,0.72);
+      font-family: var(--sans);
+      font-size: 8.2px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 7px 10px;
+      transition: all 0.25s var(--ease);
+    }
+
+    .roma-era-btn.is-active,
+    .roma-hero-btn.is-active {
+      border-color: rgba(168,84,56,0.84);
+      background: rgba(168,84,56,0.12);
+      color: rgba(56,46,38,0.94);
+    }
+
+    .roma-card {
+      border-top: 1px solid rgba(158,140,118,0.3);
+      padding-top: 14px;
+    }
+
+    .roma-card h4 {
+      font-family: var(--serif);
+      font-size: clamp(25px, 3vw, 33px);
+      font-weight: 300;
+      line-height: 1.03;
+      color: rgba(34,30,26,0.94);
+      margin-bottom: 10px;
+    }
+
+    .roma-meta {
+      font-family: var(--sans);
+      font-size: 8px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(120,104,86,0.72);
+      margin-bottom: 12px;
+    }
+
+    .roma-card p {
+      font-family: var(--serif);
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.72;
+      color: rgba(56,46,38,0.82);
+    }
+
+    .roma-facts {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .roma-fact {
+      border: 1px solid rgba(158,140,118,0.28);
+      padding: 10px 10px 9px;
+      background: rgba(255,255,255,0.5);
+    }
+
+    .roma-fact b {
+      display: block;
+      font-family: var(--serif);
+      font-size: 23px;
+      font-weight: 300;
+      color: rgba(38,36,34,0.92);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .roma-fact span {
+      font-family: var(--sans);
+      font-size: 7.4px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(120,104,86,0.72);
+      line-height: 1.5;
+      display: block;
+    }
+
+    @media (max-width: 980px) {
+      .roma-head {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .roma-lead {
+        justify-self: start;
+      }
+      .roma-stage {
+        grid-template-columns: 1fr;
+      }
+      .roma-map-wrap,
+      .roma-map {
+        min-height: 460px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      #roma-atlante {
+        padding: 74px 0 82px;
+      }
+      .roma-map-wrap,
+      .roma-map {
+        min-height: 390px;
+      }
+      .roma-panel {
+        padding: 16px 14px 14px;
+        gap: 12px;
+      }
+      .roma-era-btn,
+      .roma-hero-btn {
+        font-size: 7.4px;
+        letter-spacing: 0.13em;
+        padding: 6px 8px;
+      }
+      .roma-card p {
+        font-size: 14px;
+      }
+      .roma-point text {
+        font-size: 8px;
+      }
+    }
+
+    /* ═══════════════════════════════════════
        SECTION SHARED STYLES
     ═══════════════════════════════════════ */
     .section {
@@ -4819,6 +5098,10 @@
   <nav class="nav" id="main-nav">
     <a href="#home" class="nav-logo">Italia <em>× Munister</em></a>
     <ul class="nav-links">
+      <li><a href="#roma-atlante">
+        <span class="it">Roma</span>
+        <span class="ua">Рим</span>
+      </a></li>
       <li><a href="#codice">
         <span class="it">Codice</span>
         <span class="ua">Код</span>
@@ -4935,6 +5218,123 @@
       </div>
     </div>
   </div>
+
+  <!-- ════════════════════════
+       00 — ROMA INTERATTIVA
+  ════════════════════════ -->
+  <section id="roma-atlante">
+    <div class="wrap">
+      <header class="roma-head fu">
+        <div>
+          <span class="sec-num">00</span>
+          <h2 class="sec-h2 it">Roma<br>Interattiva</h2>
+          <h2 class="sec-h2 ua">Інтерактивний<br>Рим</h2>
+          <div class="sec-rule"></div>
+          <span class="sec-sub it">Mappa viva · eroi · percorsi storici</span>
+          <span class="sec-sub ua">Жива мапа · герої · історичні маршрути</span>
+        </div>
+        <p class="roma-lead it">Una mappa dinamica in stile Nolli: scegli epoca e protagonista, osserva la traiettoria urbana tra Foro, Vaticano, Trastevere e Cinecitta.</p>
+        <p class="roma-lead ua">Динамічна мапа у стилі Ноллі: обирай епоху та героя і дивись траєкторію міста між Форумом, Ватиканом, Трастевере та Cinecitta.</p>
+      </header>
+
+      <div class="roma-stage fu" id="roma-stage">
+        <div class="roma-map-wrap">
+          <div class="roma-map-grid"></div>
+          <svg class="roma-map" viewBox="0 0 980 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mappa interattiva di Roma">
+            <path class="roma-outline" d="M128,438 L165,320 L258,208 L405,150 L525,162 L666,232 L781,338 L834,442 L778,524 L632,566 L446,564 L286,548 L168,508 Z"/>
+            <path class="roma-river" d="M120,172 C180,210 210,260 242,318 C272,370 324,415 375,424 C432,435 488,418 532,388 C574,360 588,313 618,277 C652,236 708,218 770,226"/>
+            <path class="roma-road" d="M184,456 C272,420 336,396 406,356 C484,312 556,258 708,230"/>
+            <path class="roma-road" d="M266,544 C334,472 402,426 476,404 C580,370 688,342 816,358"/>
+            <path class="roma-road" d="M268,202 C326,234 382,260 452,258 C538,256 606,232 674,204"/>
+            <path id="roma-route" class="roma-route" d="M326,334 L406,356 L526,310 L622,278"/>
+
+            <g class="roma-point is-active" data-point="cesare-foro" tabindex="0">
+              <circle cx="326" cy="334" r="9"></circle>
+              <text x="344" y="330">FORO</text>
+            </g>
+            <g class="roma-point" data-point="cesare-colosseo" tabindex="0">
+              <circle cx="406" cy="356" r="9"></circle>
+              <text x="424" y="352">COLOSSEO</text>
+            </g>
+            <g class="roma-point" data-point="cesare-pantheon" tabindex="0">
+              <circle cx="526" cy="310" r="9"></circle>
+              <text x="544" y="305">PANTHEON</text>
+            </g>
+            <g class="roma-point" data-point="michelangelo-vaticano" tabindex="0">
+              <circle cx="622" cy="278" r="9"></circle>
+              <text x="640" y="274">VATICANO</text>
+            </g>
+            <g class="roma-point" data-point="michelangelo-campidoglio" tabindex="0">
+              <circle cx="454" cy="332" r="9"></circle>
+              <text x="472" y="327">CAMPIDOGLIO</text>
+            </g>
+            <g class="roma-point" data-point="michelangelo-popolo" tabindex="0">
+              <circle cx="566" cy="268" r="9"></circle>
+              <text x="584" y="264">POPOLO</text>
+            </g>
+            <g class="roma-point" data-point="bernini-navona" tabindex="0">
+              <circle cx="512" cy="300" r="9"></circle>
+              <text x="530" y="296">NAVONA</text>
+            </g>
+            <g class="roma-point" data-point="bernini-sanpietro" tabindex="0">
+              <circle cx="606" cy="292" r="9"></circle>
+              <text x="624" y="288">SAN PIETRO</text>
+            </g>
+            <g class="roma-point" data-point="bernini-santangelo" tabindex="0">
+              <circle cx="570" cy="316" r="9"></circle>
+              <text x="588" y="312">SANT'ANGELO</text>
+            </g>
+            <g class="roma-point" data-point="fellini-veneto" tabindex="0">
+              <circle cx="560" cy="248" r="9"></circle>
+              <text x="578" y="243">VIA VENETO</text>
+            </g>
+            <g class="roma-point" data-point="fellini-trevi" tabindex="0">
+              <circle cx="504" cy="286" r="9"></circle>
+              <text x="522" y="282">TREVI</text>
+            </g>
+            <g class="roma-point" data-point="fellini-cinecitta" tabindex="0">
+              <circle cx="242" cy="462" r="9"></circle>
+              <text x="260" y="458">CINECITTA</text>
+            </g>
+          </svg>
+        </div>
+
+        <aside class="roma-panel" id="roma-panel">
+          <div class="roma-era-tabs" id="roma-era-tabs">
+            <button class="roma-era-btn is-active" data-era="antica" type="button">Antica</button>
+            <button class="roma-era-btn" data-era="rinascimento" type="button">Rinascimento</button>
+            <button class="roma-era-btn" data-era="barocco" type="button">Barocco</button>
+            <button class="roma-era-btn" data-era="cinema" type="button">Cinema</button>
+          </div>
+          <div class="roma-hero-tabs" id="roma-hero-tabs">
+            <button class="roma-hero-btn is-active" data-hero="cesare" type="button">Cesare</button>
+            <button class="roma-hero-btn" data-hero="michelangelo" type="button">Michelangelo</button>
+            <button class="roma-hero-btn" data-hero="bernini" type="button">Bernini</button>
+            <button class="roma-hero-btn" data-hero="fellini" type="button">Fellini</button>
+          </div>
+          <div class="roma-card">
+            <div class="roma-meta" id="roma-meta">Roma · Foro · Colosseo · Pantheon</div>
+            <h4 class="it" id="roma-title-it">Cesare<br>e la matrice imperiale</h4>
+            <h4 class="ua" id="roma-title-ua">Цезар<br>і імперська матриця</h4>
+            <p class="it" id="roma-text-it">Dalla regia del Foro al Colosseo come macchina civica: Roma antica stabilisce una sintassi urbana che ancora ordina l'Occidente.</p>
+            <p class="ua" id="roma-text-ua">Від режисури Форуму до Колізею як громадянської машини: античний Рим створює міський синтаксис, який досі формує Захід.</p>
+          </div>
+          <div class="roma-facts">
+            <div class="roma-fact">
+              <b id="roma-fact-1v">3.2 km</b>
+              <span class="it" id="roma-fact-1t-it">Percorso principale</span>
+              <span class="ua" id="roma-fact-1t-ua">Основний маршрут</span>
+            </div>
+            <div class="roma-fact">
+              <b id="roma-fact-2v">4</b>
+              <span class="it" id="roma-fact-2t-it">Nodi monumentali</span>
+              <span class="ua" id="roma-fact-2t-ua">Монументальні вузли</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
 
   <!-- ════════════════════════
        01 — CODICE D'ITALIA
@@ -6390,6 +6790,7 @@
           <em class="footer-logo-sub ua">Авторський портал про естетику Італії</em>
         </div>
         <ul class="footer-nav">
+          <li><a href="#roma-atlante"><span class="it">Roma Interattiva</span><span class="ua">Інтерактивний Рим</span></a></li>
           <li><a href="#codice"><span class="it">Codice d'Italia</span><span class="ua">Код Італії</span></a></li>
           <li><a href="#architettura"><span class="it">Architettura</span><span class="ua">Архітектура</span></a></li>
           <li><a href="#materiali"><span class="it">Materiali</span><span class="ua">Матеріали</span></a></li>
@@ -6505,6 +6906,7 @@
       document.getElementById('btn-ua').classList.toggle('active', lang === 'ua');
       try { localStorage.setItem('munister-lang', lang); } catch(e) {}
       if (typeof window.updateGuideLang === 'function') window.updateGuideLang();
+      if (typeof window.updateRomaLang === 'function') window.updateRomaLang();
     }
 
     (function() {
@@ -6753,6 +7155,162 @@
         const target = event && event.target;
         if (target && target.tagName === 'IMG') handleImageError(target);
       }, true);
+    })();
+
+    // ── ROMA INTERATTIVA — map + heroes + eras ──────────────
+    (function () {
+      const stage = document.getElementById('roma-stage');
+      const route = document.getElementById('roma-route');
+      const eraTabs = document.getElementById('roma-era-tabs');
+      const heroTabs = document.getElementById('roma-hero-tabs');
+      const meta = document.getElementById('roma-meta');
+      const titleIt = document.getElementById('roma-title-it');
+      const titleUa = document.getElementById('roma-title-ua');
+      const textIt = document.getElementById('roma-text-it');
+      const textUa = document.getElementById('roma-text-ua');
+      const fact1v = document.getElementById('roma-fact-1v');
+      const fact2v = document.getElementById('roma-fact-2v');
+      if (!stage || !route || !eraTabs || !heroTabs) return;
+
+      const heroByEra = {
+        antica: 'cesare',
+        rinascimento: 'michelangelo',
+        barocco: 'bernini',
+        cinema: 'fellini'
+      };
+
+      const heroes = {
+        cesare: {
+          era: 'antica',
+          route: 'M326,334 L406,356 L526,310 L622,278',
+          points: ['cesare-foro', 'cesare-colosseo', 'cesare-pantheon', 'michelangelo-vaticano'],
+          meta: 'Roma · Foro · Colosseo · Pantheon',
+          it: {
+            title: 'Cesare<br>e la matrice imperiale',
+            text: 'Dalla regia del Foro al Colosseo come macchina civica: Roma antica stabilisce una sintassi urbana che ancora ordina l\'Occidente.',
+            f1: '3.2 km',
+            f2: '4'
+          },
+          ua: {
+            title: 'Цезар<br>і імперська матриця',
+            text: 'Від режисури Форуму до Колізею як громадянської машини: античний Рим створює міський синтаксис, який досі формує Захід.',
+            f1: '3.2 км',
+            f2: '4'
+          }
+        },
+        michelangelo: {
+          era: 'rinascimento',
+          route: 'M622,278 L454,332 L566,268 L512,300',
+          points: ['michelangelo-vaticano', 'michelangelo-campidoglio', 'michelangelo-popolo', 'bernini-navona'],
+          meta: 'Roma · Vaticano · Campidoglio · Popolo',
+          it: {
+            title: 'Michelangelo<br>e la città plastica',
+            text: 'Tra Campidoglio e San Pietro, Roma diventa corpo scultoreo: assi prospettici, piazze come palcoscenico e gerarchie della luce.',
+            f1: '2.4 km',
+            f2: '3'
+          },
+          ua: {
+            title: 'Мікеланджело<br>і пластичне місто',
+            text: 'Між Капітолієм і Святим Петром Рим стає скульптурним тілом: перспективні осі, площі як сцена і світлові ієрархії.',
+            f1: '2.4 км',
+            f2: '3'
+          }
+        },
+        bernini: {
+          era: 'barocco',
+          route: 'M512,300 L570,316 L606,292 L566,268',
+          points: ['bernini-navona', 'bernini-santangelo', 'bernini-sanpietro', 'michelangelo-popolo'],
+          meta: 'Roma · Navona · Sant\'Angelo · San Pietro',
+          it: {
+            title: 'Bernini<br>e il teatro barocco',
+            text: 'Piazza Navona, il colonnato di San Pietro e il ponte scenografico: il Barocco trasforma Roma in una coreografia continua.',
+            f1: '1.9 km',
+            f2: '3'
+          },
+          ua: {
+            title: 'Берніні<br>і бароковий театр',
+            text: 'Площа Навона, колонада Святого Петра й сценографічний міст: бароко перетворює Рим на безперервну хореографію.',
+            f1: '1.9 км',
+            f2: '3'
+          }
+        },
+        fellini: {
+          era: 'cinema',
+          route: 'M560,248 L504,286 L406,356 L242,462',
+          points: ['fellini-veneto', 'fellini-trevi', 'cesare-colosseo', 'fellini-cinecitta'],
+          meta: 'Roma · Via Veneto · Trevi · Cinecitta',
+          it: {
+            title: 'Fellini<br>e la Roma cinematica',
+            text: 'Dalla dolce vita di Via Veneto agli studi di Cinecitta: Roma diventa set permanente in cui memoria e finzione coincidono.',
+            f1: '8.7 km',
+            f2: '4'
+          },
+          ua: {
+            title: 'Фелліні<br>і кінематичний Рим',
+            text: 'Від dolce vita на Via Veneto до студій Cinecitta: Рим стає постійним майданчиком, де пам\'ять і вигадка збігаються.',
+            f1: '8.7 км',
+            f2: '4'
+          }
+        }
+      };
+
+      let activeHero = 'cesare';
+
+      function renderHero(heroKey) {
+        const hero = heroes[heroKey];
+        if (!hero) return;
+        activeHero = heroKey;
+        route.setAttribute('d', hero.route);
+        meta.textContent = hero.meta;
+        titleIt.innerHTML = hero.it.title;
+        titleUa.innerHTML = hero.ua.title;
+        textIt.textContent = hero.it.text;
+        textUa.textContent = hero.ua.text;
+        fact1v.textContent = document.body.classList.contains('lang-ua') ? hero.ua.f1 : hero.it.f1;
+        fact2v.textContent = hero.it.f2;
+
+        eraTabs.querySelectorAll('.roma-era-btn').forEach(btn => {
+          btn.classList.toggle('is-active', btn.dataset.era === hero.era);
+        });
+        heroTabs.querySelectorAll('.roma-hero-btn').forEach(btn => {
+          btn.classList.toggle('is-active', btn.dataset.hero === heroKey);
+        });
+        stage.querySelectorAll('.roma-point').forEach(point => {
+          point.classList.toggle('is-active', hero.points.includes(point.dataset.point));
+        });
+      }
+
+      heroTabs.addEventListener('click', function (event) {
+        const btn = event.target.closest('.roma-hero-btn');
+        if (!btn) return;
+        renderHero(btn.dataset.hero);
+      });
+
+      eraTabs.addEventListener('click', function (event) {
+        const btn = event.target.closest('.roma-era-btn');
+        if (!btn) return;
+        const hero = heroByEra[btn.dataset.era];
+        if (hero) renderHero(hero);
+      });
+
+      stage.querySelectorAll('.roma-point').forEach(point => {
+        const key = point.dataset.point.split('-')[0];
+        point.addEventListener('click', function () {
+          if (heroes[key]) renderHero(key);
+        });
+        point.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            if (heroes[key]) renderHero(key);
+          }
+        });
+      });
+
+      window.updateRomaLang = function () {
+        renderHero(activeHero);
+      };
+
+      renderHero('cesare');
     })();
 
     // ── IL PARALLELO — drag comparator ───
@@ -7038,7 +7596,7 @@
       let assistantMode = 'chat';
       let lastStatusSection = '';
 
-      const sectionOrder = ['home','codice','architettura','materiali','ritmo','dettagli',
+      const sectionOrder = ['home','roma-atlante','codice','architettura','materiali','ritmo','dettagli',
         'immagini','tracce','marnero','armir','soglia','parallelo','cronologia','atlante','laboratorio','contributo','manifesto'];
 
       const portraitSources = [
@@ -7101,12 +7659,13 @@
           wow: 'Upgrade WAU attivo: radar sezioni, modalità intelligenti, scorciatoia ⌘/Ctrl+K e azioni rapide contestuali.',
           shortcutHint: 'Suggerimento: premi ⌘/Ctrl+K per aprire Dante in ogni momento.',
           sectionNames: {
-            home:'Home', codice:'Codice', architettura:'Architettura', materiali:'Materiali',
+            home:'Home', 'roma-atlante':'Roma Interattiva', codice:'Codice', architettura:'Architettura', materiali:'Materiali',
             ritmo:'Ritmo Urbano', dettagli:'Dettagli', immagini:'Immagini', tracce:'Tracce',
             marnero:'Mar Nero', armir:'Armir', soglia:'Soglia', parallelo:'Il Parallelo',
             cronologia:'Cronologia', atlante:'Atlante Vivo', laboratorio:'Laboratorio', contributo:'Contributo', manifesto:'Manifesto'
           },
           sectionPoetry: {
+            'roma-atlante':'Roma come sistema vivo: mappa, eroi e traiettorie urbane in tempo reale.',
             codice:       '"Luce intellettual, piena d\'amore." Ogni pietra italiana ha una grammatica.',
             architettura: '"La bella figura." Proporzione, luce, ombra: l\'Italia costruisce con misura.',
             materiali:    'Travertino. Terracotta. Pietra serena. Materia che parla prima delle parole.',
@@ -7125,6 +7684,7 @@
             manifesto:    'Manifesto chiude la traiettoria con la posizione curatoriale del progetto.'
           },
           sectionExplain: {
+            'roma-atlante': 'Mappa interattiva di Roma: scegli epoca e protagonista, segui il percorso monumentale sulla pianta.',
             codice: 'È la base concettuale: palette, proporzioni e lessico estetico che guidano tutto il sito.',
             architettura: 'Mostra la grammatica spaziale italiana: scala, luce e materia con esempi reali.',
             materiali: 'Sezione tattile: travertino, terracotta, pietra serena e altri materiali strutturali.',
@@ -7196,12 +7756,13 @@
           wow: 'WAU-апгрейд активовано: радар розділів, розумні режими, гаряча клавіша ⌘/Ctrl+K та контекстні дії.',
           shortcutHint: 'Порада: натисни ⌘/Ctrl+K, щоб миттєво відкрити Данте.',
           sectionNames: {
-            home:'Головна', codice:'Код', architettura:'Архітектура', materiali:'Матеріали',
+            home:'Головна', 'roma-atlante':'Інтерактивний Рим', codice:'Код', architettura:'Архітектура', materiali:'Матеріали',
             ritmo:'Міський ритм', dettagli:'Деталі', immagini:'Образи', tracce:'Сліди',
             marnero:'Чорне море', armir:'ARMIR', soglia:'Поріг', parallelo:'Паралель',
             cronologia:'Хронологія', atlante:'Атлас', laboratorio:'Лабораторія', contributo:'Вклад', manifesto:'Маніфест'
           },
           sectionPoetry: {
+            'roma-atlante': 'Рим як жива система: мапа, герої та маршрути в реальному ритмі.',
             codice: 'Кожен італійський камінь має власну граматику пропорцій.',
             architettura: 'Пропорція, світло, тінь — головні інструменти італійського простору.',
             materiali: 'Travertino, terracotta, pietra serena — матерія як мова.',
@@ -7220,6 +7781,7 @@
             manifesto: 'Фінальна теза проєкту і його ціннісна рамка.'
           },
           sectionExplain: {
+            'roma-atlante': 'Інтерактивна мапа Рима: обирай епоху й героя та відстежуй маршрут між ключовими вузлами.',
             codice: 'Тут закладено естетичний код: палітра, пропорції, базовий словник проєкту.',
             architettura: 'Пояснює просторову логіку: масштаб, світло, матеріал і композиція.',
             materiali: 'Матеріали подані як конструктивна й культурна основа форми.',
