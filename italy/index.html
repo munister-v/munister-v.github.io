@@ -593,6 +593,16 @@
       overflow: hidden;
     }
 
+    .roma-map-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 6;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.02), rgba(255,255,255,0.06));
+      transition: background 0.35s var(--ease);
+    }
+
     .roma-map-grid {
       position: absolute;
       inset: 0;
@@ -687,6 +697,36 @@
       animation: romaRouteFlow 2.8s linear infinite;
     }
 
+    #roma-stage[data-time="day"] .roma-map-wrap::after {
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,0.08), rgba(255,255,255,0.12)),
+        radial-gradient(circle at 78% 18%, rgba(255,233,176,0.14), transparent 38%);
+    }
+
+    #roma-stage[data-time="evening"] .roma-map-wrap::after {
+      background:
+        linear-gradient(to bottom, rgba(188,110,68,0.14), rgba(52,34,22,0.24)),
+        radial-gradient(circle at 76% 16%, rgba(255,176,120,0.2), transparent 34%);
+    }
+
+    #roma-stage[data-time="night"] .roma-map-wrap::after {
+      background:
+        linear-gradient(to bottom, rgba(24,34,54,0.26), rgba(10,14,24,0.5)),
+        radial-gradient(circle at 80% 18%, rgba(152,188,255,0.2), transparent 36%);
+    }
+
+    #roma-stage[data-time="evening"] .roma-map {
+      filter: saturate(1.1) sepia(0.18) contrast(1.04);
+    }
+
+    #roma-stage[data-time="night"] .roma-map {
+      filter: saturate(0.9) brightness(0.82) contrast(1.08);
+    }
+
+    #roma-stage[data-time="day"] .roma-route { stroke: rgba(168,84,56,0.95); }
+    #roma-stage[data-time="evening"] .roma-route { stroke: rgba(196,98,58,0.96); }
+    #roma-stage[data-time="night"] .roma-route { stroke: rgba(124,176,255,0.96); }
+
     @keyframes romaRouteFlow {
       from { stroke-dashoffset: 0; }
       to { stroke-dashoffset: -72; }
@@ -731,6 +771,7 @@
       gap: 18px;
     }
 
+    .roma-time-tabs,
     .roma-layer-tabs,
     .roma-era-tabs,
     .roma-hero-tabs {
@@ -739,6 +780,7 @@
       gap: 7px;
     }
 
+    .roma-time-btn,
     .roma-layer-btn,
     .roma-era-btn,
     .roma-hero-btn {
@@ -753,12 +795,19 @@
       transition: all 0.25s var(--ease);
     }
 
+    .roma-time-btn.is-active,
     .roma-layer-btn.is-active,
     .roma-era-btn.is-active,
     .roma-hero-btn.is-active {
       border-color: rgba(168,84,56,0.84);
       background: rgba(168,84,56,0.12);
       color: rgba(56,46,38,0.94);
+    }
+
+    .roma-time-btn[data-time="night"].is-active {
+      border-color: rgba(118,168,245,0.86);
+      background: rgba(60,90,148,0.18);
+      color: rgba(35,48,76,0.96);
     }
 
     .roma-card {
@@ -797,6 +846,62 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
+    }
+
+    .roma-frames {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .roma-frame {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      border: 1px solid rgba(158,140,118,0.3);
+      background: linear-gradient(145deg, rgba(120,104,86,0.2), rgba(56,46,38,0.22));
+    }
+
+    .roma-frame-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to bottom, rgba(28,24,20,0.04), rgba(28,24,20,0.56)),
+        var(--rf-img);
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.5s var(--ease), filter 0.35s var(--ease);
+      transform: scale(1.01);
+    }
+
+    .roma-frame:hover .roma-frame-bg {
+      transform: scale(1.06);
+    }
+
+    .roma-frame-cap {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 8px;
+      z-index: 2;
+      font-family: var(--sans);
+      font-size: 7px;
+      letter-spacing: 0.17em;
+      text-transform: uppercase;
+      color: rgba(244,236,223,0.86);
+      line-height: 1.55;
+      text-shadow: 0 2px 10px rgba(6,6,6,0.56);
+    }
+
+    #roma-stage[data-time="day"] .roma-frame-bg {
+      filter: saturate(1.04) contrast(1.01);
+    }
+    #roma-stage[data-time="evening"] .roma-frame-bg {
+      filter: saturate(1.1) sepia(0.26) brightness(0.94);
+    }
+    #roma-stage[data-time="night"] .roma-frame-bg {
+      filter: saturate(0.9) brightness(0.72) hue-rotate(7deg) contrast(1.08);
     }
 
     .roma-fact {
@@ -854,6 +959,7 @@
         padding: 16px 14px 14px;
         gap: 12px;
       }
+      .roma-time-btn,
       .roma-layer-btn,
       .roma-era-btn,
       .roma-hero-btn {
@@ -861,11 +967,21 @@
         letter-spacing: 0.13em;
         padding: 6px 8px;
       }
+      .roma-frames {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
       .roma-card p {
         font-size: 14px;
       }
       .roma-point text {
         font-size: 8px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .roma-frames {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -5370,6 +5486,11 @@
         </div>
 
         <aside class="roma-panel" id="roma-panel">
+          <div class="roma-time-tabs" id="roma-time-tabs">
+            <button class="roma-time-btn is-active" data-time="day" type="button">Day</button>
+            <button class="roma-time-btn" data-time="evening" type="button">Evening</button>
+            <button class="roma-time-btn" data-time="night" type="button">Night</button>
+          </div>
           <div class="roma-layer-tabs" id="roma-layer-tabs">
             <button class="roma-layer-btn is-active" data-layer="antica" type="button">
               <span class="it">Layer Antica</span><span class="ua">Античний шар</span>
@@ -5410,6 +5531,51 @@
             </div>
           </div>
         </aside>
+      </div>
+
+      <div class="roma-frames fu">
+        <article class="roma-frame">
+          <div class="roma-frame-bg" style="--rf-img:url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Rome_%28IT%29%2C_Kolosseum_--_2013_--_3379-86.jpg/1280px-Rome_%28IT%29%2C_Kolosseum_--_2013_--_3379-86.jpg')"></div>
+          <div class="roma-frame-cap">
+            <span class="it">Colosseo · luce urbana</span>
+            <span class="ua">Колізей · міське світло</span>
+          </div>
+        </article>
+        <article class="roma-frame">
+          <div class="roma-frame-bg" style="--rf-img:url('https://commons.wikimedia.org/wiki/Special:FilePath/Portico%20di%20Ottavia%20Rome.jpg?width=1200')"></div>
+          <div class="roma-frame-cap">
+            <span class="it">Portico d'Ottavia · sequenza</span>
+            <span class="ua">Портик Октавії · послідовність</span>
+          </div>
+        </article>
+        <article class="roma-frame">
+          <div class="roma-frame-bg" style="--rf-img:url('https://commons.wikimedia.org/wiki/Special:FilePath/Architectural%20elements%20in%20Rome%202013%20002.jpg?width=1280')"></div>
+          <div class="roma-frame-cap">
+            <span class="it">Roma minuta · dettaglio vivo</span>
+            <span class="ua">Дрібний Рим · жива деталь</span>
+          </div>
+        </article>
+        <article class="roma-frame">
+          <div class="roma-frame-bg" style="--rf-img:url('https://commons.wikimedia.org/wiki/Special:FilePath/Rome-Forum%20romanum.jpg?width=1400')"></div>
+          <div class="roma-frame-cap">
+            <span class="it">Foro Romano · stratigrafia</span>
+            <span class="ua">Римський форум · стратиграфія</span>
+          </div>
+        </article>
+        <article class="roma-frame">
+          <div class="roma-frame-bg" style="--rf-img:url('https://commons.wikimedia.org/wiki/Special:FilePath/Colosseum%20and%20Arch%20of%20Constantine.jpg?width=1200')"></div>
+          <div class="roma-frame-cap">
+            <span class="it">Arco e asse monumentale</span>
+            <span class="ua">Арка і монументальна вісь</span>
+          </div>
+        </article>
+        <article class="roma-frame">
+          <div class="roma-frame-bg" style="--rf-img:url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Forum_Romanum_Rom.jpg/1280px-Forum_Romanum_Rom.jpg')"></div>
+          <div class="roma-frame-cap">
+            <span class="it">Forum al crepuscolo</span>
+            <span class="ua">Форум у сутінках</span>
+          </div>
+        </article>
       </div>
     </div>
   </section>
@@ -7239,6 +7405,7 @@
     (function () {
       const stage = document.getElementById('roma-stage');
       const route = document.getElementById('roma-route');
+      const timeTabs = document.getElementById('roma-time-tabs');
       const layerTabs = document.getElementById('roma-layer-tabs');
       const eraTabs = document.getElementById('roma-era-tabs');
       const heroTabs = document.getElementById('roma-hero-tabs');
@@ -7249,7 +7416,7 @@
       const textUa = document.getElementById('roma-text-ua');
       const fact1v = document.getElementById('roma-fact-1v');
       const fact2v = document.getElementById('roma-fact-2v');
-      if (!stage || !route || !layerTabs || !eraTabs || !heroTabs) return;
+      if (!stage || !route || !timeTabs || !layerTabs || !eraTabs || !heroTabs) return;
 
       const heroByEra = {
         antica: 'cesare',
@@ -7338,7 +7505,17 @@
       };
 
       let activeHero = 'cesare';
+      let activeTime = 'day';
       let activeLayer = 'antica';
+
+      function setTime(timeKey) {
+        if (!timeKey) return;
+        activeTime = timeKey;
+        stage.dataset.time = timeKey;
+        timeTabs.querySelectorAll('.roma-time-btn').forEach(btn => {
+          btn.classList.toggle('is-active', btn.dataset.time === timeKey);
+        });
+      }
 
       function setLayer(layerKey) {
         if (!layerKey) return;
@@ -7374,6 +7551,12 @@
         });
       }
 
+      timeTabs.addEventListener('click', function (event) {
+        const btn = event.target.closest('.roma-time-btn');
+        if (!btn) return;
+        setTime(btn.dataset.time);
+      });
+
       layerTabs.addEventListener('click', function (event) {
         const btn = event.target.closest('.roma-layer-btn');
         if (!btn) return;
@@ -7407,9 +7590,11 @@
       });
 
       window.updateRomaLang = function () {
+        setTime(activeTime);
         renderHero(activeHero);
       };
 
+      setTime('day');
       setLayer('antica');
       renderHero('cesare');
     })();
