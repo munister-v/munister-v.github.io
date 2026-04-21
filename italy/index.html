@@ -588,10 +588,29 @@
     .roma-map-wrap {
       position: relative;
       border: 1px solid rgba(158,140,118,0.36);
-      background: linear-gradient(145deg, rgba(249,245,238,0.98), rgba(238,228,211,0.9));
+      background:
+        linear-gradient(145deg, rgba(249,245,238,0.86), rgba(238,228,211,0.76)),
+        url("https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Rome_%28IT%29%2C_Kolosseum_--_2013_--_3379-86.jpg/1280px-Rome_%28IT%29%2C_Kolosseum_--_2013_--_3379-86.jpg") center/cover no-repeat;
       min-height: 580px;
       overflow: hidden;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.28), 0 18px 50px rgba(86,72,58,0.14);
+    }
+
+    .roma-map-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.22;
+      background-image:
+        linear-gradient(45deg, rgba(120,104,86,0.18) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(120,104,86,0.18) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(120,104,86,0.18) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(120,104,86,0.18) 75%);
+      background-size: 34px 34px;
+      background-position: 0 0, 0 17px, 17px -17px, -17px 0;
+      mix-blend-mode: multiply;
     }
 
     .roma-map-wrap::after {
@@ -613,6 +632,7 @@
         linear-gradient(to bottom, rgba(120,104,86,0.08) 1px, transparent 1px);
       background-size: 44px 44px;
       opacity: 0.48;
+      z-index: 2;
     }
 
     .roma-map {
@@ -624,6 +644,8 @@
       transform-origin: 50% 50%;
       transition-property: filter, transform;
       transition-duration: 0.35s, 0.28s;
+      position: relative;
+      z-index: 4;
     }
 
     .roma-map-wrap.is-tilt .roma-map {
@@ -641,6 +663,7 @@
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
       min-width: 180px;
+      z-index: 9;
     }
 
     .roma-hud-kicker {
@@ -1069,6 +1092,92 @@
       gap: 10px;
     }
 
+    .roma-concept {
+      margin-top: 14px;
+      padding: 16px;
+      border: 1px solid rgba(158,140,118,0.28);
+      background: linear-gradient(to bottom, rgba(249,245,238,0.82), rgba(241,232,217,0.74));
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .roma-concept-board {
+      position: relative;
+      min-height: 250px;
+      border: 1px solid rgba(120,104,86,0.24);
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.48), transparent 44%),
+        var(--mosaic-bg);
+      --mosaic-bg:
+        linear-gradient(45deg, #d8c5a8 25%, #c2ad8c 25%, #c2ad8c 50%, #d8c5a8 50%, #d8c5a8 75%, #b59b78 75%, #b59b78 100%);
+      background-size: 44px 44px;
+      transition: background-image 0.35s var(--ease), filter 0.35s var(--ease);
+    }
+
+    .roma-concept-board.mode-opus {
+      --mosaic-bg:
+        linear-gradient(45deg, #e4d5bc 25%, #ccb08f 25%, #ccb08f 50%, #e4d5bc 50%, #e4d5bc 75%, #b9956f 75%, #b9956f 100%);
+    }
+
+    .roma-concept-board.mode-cosmati {
+      --mosaic-bg:
+        radial-gradient(circle at 18% 22%, #d5bea0 0 16%, transparent 17%),
+        radial-gradient(circle at 76% 58%, #be8d62 0 14%, transparent 15%),
+        radial-gradient(circle at 52% 78%, #9d6f4d 0 12%, transparent 13%),
+        linear-gradient(45deg, #f1e5d1 25%, #ddc8a9 25%, #ddc8a9 50%, #f1e5d1 50%, #f1e5d1 75%, #ceb08b 75%, #ceb08b 100%);
+      background-size: 120px 120px, 110px 110px, 100px 100px, 46px 46px;
+    }
+
+    .roma-concept-board.mode-notte {
+      --mosaic-bg:
+        linear-gradient(45deg, #59687f 25%, #3f4e66 25%, #3f4e66 50%, #59687f 50%, #59687f 75%, #2f3c52 75%, #2f3c52 100%);
+      filter: saturate(0.95);
+    }
+
+    .roma-concept-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+
+    .roma-concept-btn {
+      border: 1px solid rgba(120,104,86,0.32);
+      background: rgba(255,255,255,0.56);
+      color: rgba(56,46,38,0.78);
+      font-family: var(--sans);
+      font-size: 7.4px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 7px 9px;
+      transition: all 0.22s var(--ease);
+    }
+
+    .roma-concept-btn.is-active {
+      border-color: rgba(168,84,56,0.78);
+      background: rgba(168,84,56,0.12);
+      color: rgba(56,46,38,0.94);
+    }
+
+    .roma-concept-copy h4 {
+      font-family: var(--serif);
+      font-size: clamp(24px, 2.8vw, 32px);
+      font-weight: 300;
+      line-height: 1.05;
+      color: rgba(38,36,34,0.92);
+      margin-bottom: 8px;
+    }
+
+    .roma-concept-copy p {
+      font-family: var(--serif);
+      font-size: 15px;
+      line-height: 1.72;
+      color: rgba(56,46,38,0.8);
+    }
+
     .roma-frame {
       position: relative;
       aspect-ratio: 4 / 3;
@@ -1209,6 +1318,10 @@
       .roma-panel {
         padding: 16px 14px 14px;
         gap: 12px;
+      }
+      .roma-concept {
+        grid-template-columns: 1fr;
+        padding: 12px;
       }
       .roma-cinema-label {
         font-size: 6.6px;
@@ -5847,12 +5960,27 @@
           </div>
         </article>
         <article class="roma-frame">
-          <div class="roma-frame-bg" style="--rf-img:url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Forum_Romanum_Rom.jpg/1280px-Forum_Romanum_Rom.jpg')"></div>
+          <div class="roma-frame-bg" style="--rf-img:url('https://commons.wikimedia.org/wiki/Special:FilePath/Portico%20di%20Ottavia%20Rome.jpg?width=1200')"></div>
           <div class="roma-frame-cap">
-            <span class="it">Forum al crepuscolo</span>
-            <span class="ua">Форум у сутінках</span>
+            <span class="it">Portico notturno · ombra viva</span>
+            <span class="ua">Нічний портик · жива тінь</span>
           </div>
         </article>
+      </div>
+
+      <div class="roma-concept fu" id="roma-concept">
+        <div class="roma-concept-board mode-opus" id="roma-concept-board"></div>
+        <div class="roma-concept-copy">
+          <div class="roma-concept-buttons" id="roma-concept-buttons">
+            <button class="roma-concept-btn is-active" data-mode="opus" type="button">Opus Latericium</button>
+            <button class="roma-concept-btn" data-mode="cosmati" type="button">Cosmati</button>
+            <button class="roma-concept-btn" data-mode="notte" type="button">Notte Urbana</button>
+          </div>
+          <h4 class="it" id="roma-concept-title-it">Mosaico come algoritmo urbano</h4>
+          <h4 class="ua" id="roma-concept-title-ua">Мозаїка як міський алгоритм</h4>
+          <p class="it" id="roma-concept-text-it">Roma non è solo pianta e monumento. È tassellazione: pietra, mattone, luce, pausa. Ogni pattern modifica il ritmo della lettura urbana.</p>
+          <p class="ua" id="roma-concept-text-ua">Рим — це не тільки план і монументи. Це теселяція: камінь, цегла, світло, пауза. Кожен візерунок змінює ритм читання міста.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -7704,6 +7832,12 @@
       const focusDot = document.getElementById('roma-focus-dot');
       const cinemaToggle = document.getElementById('roma-cinema-toggle');
       const cinemaFill = document.getElementById('roma-cinema-fill');
+      const conceptBoard = document.getElementById('roma-concept-board');
+      const conceptButtons = document.getElementById('roma-concept-buttons');
+      const conceptTitleIt = document.getElementById('roma-concept-title-it');
+      const conceptTitleUa = document.getElementById('roma-concept-title-ua');
+      const conceptTextIt = document.getElementById('roma-concept-text-it');
+      const conceptTextUa = document.getElementById('roma-concept-text-ua');
       const frames = Array.from(document.querySelectorAll('#roma-atlante .roma-frame'));
       if (!stage || !route || !mapSvg || !timeTabs || !layerTabs || !eraTabs || !heroTabs) return;
 
@@ -7816,6 +7950,27 @@
         'roma-caracalla': { it: 'Caracalla', ua: 'Каракалли', meta: 'Bath complex · imperial mass' }
       };
 
+      const conceptModes = {
+        opus: {
+          titleIt: 'Mosaico come algoritmo urbano',
+          titleUa: 'Мозаїка як міський алгоритм',
+          textIt: 'Roma non è solo pianta e monumento. È tassellazione: pietra, mattone, luce, pausa. Ogni pattern modifica il ritmo della lettura urbana.',
+          textUa: 'Рим — це не тільки план і монументи. Це теселяція: камінь, цегла, світло, пауза. Кожен візерунок змінює ритм читання міста.'
+        },
+        cosmati: {
+          titleIt: 'Cosmati: geometria e sacralità',
+          titleUa: 'Косматі: геометрія і сакральність',
+          textIt: 'Cerchi, triangoli e porfido: la città medioevale compone un linguaggio ornamentale che guida l\'occhio come una mappa simbolica.',
+          textUa: 'Кола, трикутники й порфір: середньовічне місто створює орнаментальну мову, що веде погляд як символічна мапа.'
+        },
+        notte: {
+          titleIt: 'Notte urbana: pietra e riflesso',
+          titleUa: 'Нічне місто: камінь і відблиск',
+          textIt: 'Al buio Roma diventa più astratta: i volumi emergono, i margini spariscono, il percorso si legge attraverso bagliori e ombre.',
+          textUa: 'Уночі Рим стає абстрактнішим: об’єми проступають, межі зникають, маршрут читається через відблиски і тіні.'
+        }
+      };
+
       let activeHero = 'cesare';
       let activeTime = 'day';
       let activeLayer = 'antica';
@@ -7829,6 +7984,7 @@
       let cinematicProgress = 0;
       let cinematicRaf = 0;
       let cinematicLastTs = 0;
+      let activeConceptMode = 'opus';
 
       const baseVB = { x: 0, y: 0, w: 980, h: 620 };
       let currentVB = { ...baseVB };
@@ -7911,6 +8067,25 @@
           renderHero(next);
         }
         cinematicRaf = requestAnimationFrame(stepCinematic);
+      }
+
+      function setConceptMode(modeKey) {
+        const mode = conceptModes[modeKey];
+        if (!mode) return;
+        activeConceptMode = modeKey;
+        if (conceptBoard) {
+          conceptBoard.classList.remove('mode-opus', 'mode-cosmati', 'mode-notte');
+          conceptBoard.classList.add('mode-' + modeKey);
+        }
+        if (conceptButtons) {
+          conceptButtons.querySelectorAll('.roma-concept-btn').forEach(function (btn) {
+            btn.classList.toggle('is-active', btn.dataset.mode === modeKey);
+          });
+        }
+        if (conceptTitleIt) conceptTitleIt.textContent = mode.titleIt;
+        if (conceptTitleUa) conceptTitleUa.textContent = mode.titleUa;
+        if (conceptTextIt) conceptTextIt.textContent = mode.textIt;
+        if (conceptTextUa) conceptTextUa.textContent = mode.textUa;
       }
 
       function setTime(timeKey) {
@@ -8061,6 +8236,14 @@
         });
       }
 
+      if (conceptButtons) {
+        conceptButtons.addEventListener('click', function (event) {
+          const btn = event.target.closest('.roma-concept-btn');
+          if (!btn) return;
+          setConceptMode(btn.dataset.mode);
+        });
+      }
+
       if (window.matchMedia('(pointer: fine)').matches) {
         const wrap = stage.querySelector('.roma-map-wrap');
         if (wrap) {
@@ -8098,6 +8281,7 @@
         setTime(activeTime);
         updateHud(activePoint);
         renderHero(activeHero);
+        setConceptMode(activeConceptMode);
       };
 
       setTime('day');
@@ -8107,6 +8291,7 @@
       setViewBox({ ...baseVB });
       renderHero('cesare');
       updateHud('cesare-foro');
+      setConceptMode('opus');
       updateCinemaUi();
       cinematicRaf = requestAnimationFrame(stepCinematic);
     })();
