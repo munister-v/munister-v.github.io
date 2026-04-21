@@ -621,6 +621,13 @@
       min-height: 580px;
       display: block;
       transition: filter 0.35s var(--ease);
+      transform-origin: 50% 50%;
+      transition-property: filter, transform;
+      transition-duration: 0.35s, 0.28s;
+    }
+
+    .roma-map-wrap.is-tilt .roma-map {
+      will-change: transform;
     }
 
     .roma-map-hud {
@@ -802,6 +809,23 @@
       animation: romaRouteFlow 2.8s linear infinite;
     }
 
+    .roma-route-glow {
+      fill: none;
+      stroke: rgba(244,210,170,0.88);
+      stroke-width: 7.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.26;
+      filter: blur(1.2px);
+      stroke-dasharray: 2 14;
+      animation: romaRouteGlow 3.8s linear infinite;
+    }
+
+    @keyframes romaRouteGlow {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: -84; }
+    }
+
     #roma-stage[data-time="day"] .roma-map-wrap::after {
       background:
         linear-gradient(to bottom, rgba(255,255,255,0.08), rgba(255,255,255,0.12)),
@@ -831,6 +855,9 @@
     #roma-stage[data-time="day"] .roma-route { stroke: rgba(168,84,56,0.95); }
     #roma-stage[data-time="evening"] .roma-route { stroke: rgba(196,98,58,0.96); }
     #roma-stage[data-time="night"] .roma-route { stroke: rgba(124,176,255,0.96); }
+    #roma-stage[data-time="day"] .roma-route-glow { stroke: rgba(250,220,184,0.9); opacity: 0.28; }
+    #roma-stage[data-time="evening"] .roma-route-glow { stroke: rgba(255,196,140,0.92); opacity: 0.34; }
+    #roma-stage[data-time="night"] .roma-route-glow { stroke: rgba(150,198,255,0.9); opacity: 0.36; }
 
     @keyframes romaRouteFlow {
       from { stroke-dashoffset: 0; }
@@ -866,6 +893,27 @@
 
     .roma-point.is-active text {
       fill: rgba(56,46,38,0.95);
+    }
+
+    .roma-focus-ring {
+      fill: none;
+      stroke: rgba(255,248,236,0.92);
+      stroke-width: 2;
+      opacity: 0.85;
+      pointer-events: none;
+      animation: romaFocusRing 1.9s ease-in-out infinite;
+    }
+
+    .roma-focus-dot {
+      fill: rgba(255,248,236,0.98);
+      pointer-events: none;
+      filter: drop-shadow(0 0 6px rgba(255,248,236,0.72));
+    }
+
+    @keyframes romaFocusRing {
+      0% { r: 10; opacity: 0.84; }
+      50% { r: 20; opacity: 0.34; }
+      100% { r: 10; opacity: 0.84; }
     }
 
     @keyframes romaPointPulse {
@@ -920,6 +968,60 @@
       border-color: rgba(118,168,245,0.86);
       background: rgba(60,90,148,0.18);
       color: rgba(35,48,76,0.96);
+    }
+
+    .roma-cinema-bar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid rgba(120,104,86,0.24);
+      background: rgba(255,255,255,0.48);
+      padding: 8px 10px;
+    }
+
+    .roma-cinema-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid rgba(120,104,86,0.34);
+      background: rgba(249,245,238,0.86);
+      color: rgba(56,46,38,0.92);
+      font-size: 13px;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      transition: all 0.22s var(--ease);
+    }
+
+    .roma-cinema-btn:hover {
+      border-color: rgba(168,84,56,0.66);
+      color: rgba(168,84,56,0.96);
+    }
+
+    .roma-cinema-track {
+      height: 4px;
+      background: rgba(120,104,86,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .roma-cinema-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0%;
+      background: linear-gradient(to right, rgba(168,84,56,0.86), rgba(220,155,104,0.86));
+      transition: width 0.18s linear;
+    }
+
+    .roma-cinema-label {
+      font-family: var(--sans);
+      font-size: 7px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(86,72,58,0.68);
+      white-space: nowrap;
     }
 
     .roma-card {
@@ -1107,6 +1209,9 @@
       .roma-panel {
         padding: 16px 14px 14px;
         gap: 12px;
+      }
+      .roma-cinema-label {
+        font-size: 6.6px;
       }
       .roma-time-btn,
       .roma-layer-btn,
@@ -5576,7 +5681,10 @@
             <path class="roma-layer roma-layer-antica roma-road-antica" d="M284,252 C336,272 394,286 454,284 C516,282 572,258 640,224"/>
             <path class="roma-layer roma-layer-moderna roma-road-moderna" d="M188,476 C282,440 370,398 452,356 C550,308 632,278 778,280"/>
             <path class="roma-layer roma-layer-moderna roma-road-moderna" d="M302,542 C386,470 468,430 548,404 C660,368 742,344 840,352"/>
+            <path id="roma-route-glow" class="roma-route-glow" d="M326,334 L406,356 L526,310 L622,278"/>
             <path id="roma-route" class="roma-route" d="M326,334 L406,356 L526,310 L622,278"/>
+            <circle id="roma-focus-ring" class="roma-focus-ring" cx="326" cy="334" r="12"/>
+            <circle id="roma-focus-dot" class="roma-focus-dot" cx="326" cy="334" r="3.6"/>
 
             <g class="roma-point is-active" data-point="cesare-foro" tabindex="0">
               <circle cx="326" cy="334" r="9"></circle>
@@ -5670,6 +5778,15 @@
             <button class="roma-hero-btn" data-hero="michelangelo" type="button">Michelangelo</button>
             <button class="roma-hero-btn" data-hero="bernini" type="button">Bernini</button>
             <button class="roma-hero-btn" data-hero="fellini" type="button">Fellini</button>
+          </div>
+          <div class="roma-cinema-bar">
+            <button class="roma-cinema-btn" id="roma-cinema-toggle" type="button" aria-label="Toggle cinematic tour">▶</button>
+            <div class="roma-cinema-track">
+              <div class="roma-cinema-fill" id="roma-cinema-fill"></div>
+            </div>
+            <span class="roma-cinema-label" id="roma-cinema-label">
+              <span class="it">Cinematic Tour</span><span class="ua">Кіно-тур</span>
+            </span>
           </div>
           <div class="roma-card">
             <div class="roma-meta" id="roma-meta">Roma · Foro · Colosseo · Pantheon</div>
@@ -7565,6 +7682,7 @@
     (function () {
       const stage = document.getElementById('roma-stage');
       const route = document.getElementById('roma-route');
+      const routeGlow = document.getElementById('roma-route-glow');
       const mapSvg = stage ? stage.querySelector('.roma-map') : null;
       const timeTabs = document.getElementById('roma-time-tabs');
       const layerTabs = document.getElementById('roma-layer-tabs');
@@ -7582,6 +7700,10 @@
       const zoomInBtn = document.getElementById('roma-zoom-in');
       const zoomOutBtn = document.getElementById('roma-zoom-out');
       const zoomResetBtn = document.getElementById('roma-zoom-reset');
+      const focusRing = document.getElementById('roma-focus-ring');
+      const focusDot = document.getElementById('roma-focus-dot');
+      const cinemaToggle = document.getElementById('roma-cinema-toggle');
+      const cinemaFill = document.getElementById('roma-cinema-fill');
       const frames = Array.from(document.querySelectorAll('#roma-atlante .roma-frame'));
       if (!stage || !route || !mapSvg || !timeTabs || !layerTabs || !eraTabs || !heroTabs) return;
 
@@ -7703,9 +7825,15 @@
       let framePaused = false;
       let manualZoom = 1;
       let viewAnim = 0;
+      let cinematicOn = true;
+      let cinematicProgress = 0;
+      let cinematicRaf = 0;
+      let cinematicLastTs = 0;
 
       const baseVB = { x: 0, y: 0, w: 980, h: 620 };
       let currentVB = { ...baseVB };
+      const heroSequence = ['cesare', 'michelangelo', 'bernini', 'fellini'];
+      const cinematicStepMs = 5600;
 
       function clamp(value, min, max) {
         return Math.max(min, Math.min(max, value));
@@ -7751,6 +7879,38 @@
         const isUa = document.body.classList.contains('lang-ua');
         if (hudTitle) hudTitle.textContent = isUa ? item.ua : item.it;
         if (hudMeta) hudMeta.textContent = item.meta;
+        const pointNode = stage.querySelector('.roma-point[data-point="' + activePoint + '"] circle');
+        if (pointNode && focusRing && focusDot) {
+          const cx = pointNode.getAttribute('cx');
+          const cy = pointNode.getAttribute('cy');
+          focusRing.setAttribute('cx', cx);
+          focusRing.setAttribute('cy', cy);
+          focusDot.setAttribute('cx', cx);
+          focusDot.setAttribute('cy', cy);
+        }
+      }
+
+      function updateCinemaUi() {
+        if (cinemaToggle) cinemaToggle.textContent = cinematicOn ? '⏸' : '▶';
+      }
+
+      function stepCinematic(timestamp) {
+        if (!cinematicOn) {
+          cinematicRaf = requestAnimationFrame(stepCinematic);
+          return;
+        }
+        if (!cinematicLastTs) cinematicLastTs = timestamp;
+        const dt = timestamp - cinematicLastTs;
+        cinematicLastTs = timestamp;
+        cinematicProgress += dt / cinematicStepMs;
+        if (cinemaFill) cinemaFill.style.width = Math.min(cinematicProgress, 1) * 100 + '%';
+        if (cinematicProgress >= 1) {
+          cinematicProgress = 0;
+          const idx = heroSequence.indexOf(activeHero);
+          const next = heroSequence[(idx + 1) % heroSequence.length];
+          renderHero(next);
+        }
+        cinematicRaf = requestAnimationFrame(stepCinematic);
       }
 
       function setTime(timeKey) {
@@ -7778,6 +7938,7 @@
         setLayer(hero.layer || activeLayer);
         animateViewTo(targetViewFor(heroKey), 520);
         route.setAttribute('d', hero.route);
+        if (routeGlow) routeGlow.setAttribute('d', hero.route);
         meta.textContent = hero.meta;
         titleIt.innerHTML = hero.it.title;
         titleUa.innerHTML = hero.ua.title;
@@ -7853,6 +8014,8 @@
         point.addEventListener('click', function () {
           if (heroes[key]) renderHero(key);
           updateHud(point.dataset.point);
+          cinematicProgress = 0;
+          if (cinemaFill) cinemaFill.style.width = '0%';
         });
         point.addEventListener('mouseenter', function () {
           updateHud(point.dataset.point);
@@ -7862,6 +8025,8 @@
             event.preventDefault();
             if (heroes[key]) renderHero(key);
             updateHud(point.dataset.point);
+            cinematicProgress = 0;
+            if (cinemaFill) cinemaFill.style.width = '0%';
           }
         });
       });
@@ -7870,19 +8035,48 @@
         zoomInBtn.addEventListener('click', function () {
           manualZoom = clamp(manualZoom * 1.12, 1, 1.75);
           animateViewTo(targetViewFor(activeHero), 320);
+          cinematicProgress = 0;
         });
       }
       if (zoomOutBtn) {
         zoomOutBtn.addEventListener('click', function () {
           manualZoom = clamp(manualZoom / 1.12, 1, 1.75);
           animateViewTo(targetViewFor(activeHero), 320);
+          cinematicProgress = 0;
         });
       }
       if (zoomResetBtn) {
         zoomResetBtn.addEventListener('click', function () {
           manualZoom = 1;
           animateViewTo(targetViewFor(activeHero), 380);
+          cinematicProgress = 0;
         });
+      }
+
+      if (cinemaToggle) {
+        cinemaToggle.addEventListener('click', function () {
+          cinematicOn = !cinematicOn;
+          cinematicLastTs = 0;
+          updateCinemaUi();
+        });
+      }
+
+      if (window.matchMedia('(pointer: fine)').matches) {
+        const wrap = stage.querySelector('.roma-map-wrap');
+        if (wrap) {
+          wrap.classList.add('is-tilt');
+          wrap.addEventListener('mousemove', function (event) {
+            const r = wrap.getBoundingClientRect();
+            const px = (event.clientX - r.left) / r.width - 0.5;
+            const py = (event.clientY - r.top) / r.height - 0.5;
+            const rx = clamp(-py * 4.4, -4.4, 4.4);
+            const ry = clamp(px * 5.4, -5.4, 5.4);
+            mapSvg.style.transform = 'perspective(980px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+          });
+          wrap.addEventListener('mouseleave', function () {
+            mapSvg.style.transform = '';
+          });
+        }
       }
 
       frames.forEach(function (frame, i) {
@@ -7913,6 +8107,8 @@
       setViewBox({ ...baseVB });
       renderHero('cesare');
       updateHud('cesare-foro');
+      updateCinemaUi();
+      cinematicRaf = requestAnimationFrame(stepCinematic);
     })();
 
     // ── IL PARALLELO — drag comparator ───
