@@ -879,6 +879,15 @@
       transform: scale(1.06);
     }
 
+    .roma-frame.is-active {
+      border-color: rgba(168,84,56,0.66);
+      box-shadow: 0 10px 26px rgba(76,56,42,0.2);
+    }
+
+    .roma-frame.is-active .roma-frame-bg {
+      transform: scale(1.08);
+    }
+
     .roma-frame-cap {
       position: absolute;
       left: 10px;
@@ -902,6 +911,11 @@
     }
     #roma-stage[data-time="night"] .roma-frame-bg {
       filter: saturate(0.9) brightness(0.72) hue-rotate(7deg) contrast(1.08);
+    }
+
+    #roma-stage[data-time="night"] .roma-frame.is-active {
+      border-color: rgba(124,176,255,0.66);
+      box-shadow: 0 10px 26px rgba(34,48,70,0.28);
     }
 
     .roma-fact {
@@ -7416,6 +7430,7 @@
       const textUa = document.getElementById('roma-text-ua');
       const fact1v = document.getElementById('roma-fact-1v');
       const fact2v = document.getElementById('roma-fact-2v');
+      const frames = Array.from(document.querySelectorAll('#roma-atlante .roma-frame'));
       if (!stage || !route || !timeTabs || !layerTabs || !eraTabs || !heroTabs) return;
 
       const heroByEra = {
@@ -7507,6 +7522,9 @@
       let activeHero = 'cesare';
       let activeTime = 'day';
       let activeLayer = 'antica';
+      let frameIndex = 0;
+      let frameTimer = null;
+      let framePaused = false;
 
       function setTime(timeKey) {
         if (!timeKey) return;
@@ -7551,6 +7569,31 @@
         });
       }
 
+      function setFrameActive(index) {
+        if (!frames.length) return;
+        frameIndex = (index + frames.length) % frames.length;
+        frames.forEach(function (frame, i) {
+          frame.classList.toggle('is-active', i === frameIndex);
+        });
+      }
+
+      function stopFrameCycle() {
+        if (frameTimer) {
+          clearInterval(frameTimer);
+          frameTimer = null;
+        }
+      }
+
+      function startFrameCycle() {
+        if (!frames.length) return;
+        stopFrameCycle();
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        frameTimer = setInterval(function () {
+          if (framePaused) return;
+          setFrameActive(frameIndex + 1);
+        }, 3200);
+      }
+
       timeTabs.addEventListener('click', function (event) {
         const btn = event.target.closest('.roma-time-btn');
         if (!btn) return;
@@ -7589,6 +7632,21 @@
         });
       });
 
+      frames.forEach(function (frame, i) {
+        frame.addEventListener('mouseenter', function () {
+          framePaused = true;
+          setFrameActive(i);
+        });
+        frame.addEventListener('mouseleave', function () {
+          framePaused = false;
+        });
+        frame.addEventListener('touchstart', function () {
+          framePaused = true;
+          setFrameActive(i);
+          window.setTimeout(function () { framePaused = false; }, 2600);
+        }, { passive: true });
+      });
+
       window.updateRomaLang = function () {
         setTime(activeTime);
         renderHero(activeHero);
@@ -7596,6 +7654,8 @@
 
       setTime('day');
       setLayer('antica');
+      setFrameActive(0);
+      startFrameCycle();
       renderHero('cesare');
     })();
 
