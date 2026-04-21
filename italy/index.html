@@ -1117,6 +1117,39 @@
       transition: background-image 0.35s var(--ease), filter 0.35s var(--ease);
     }
 
+    .roma-concept-board::before,
+    .roma-concept-board::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      transition: opacity 0.45s var(--ease);
+    }
+
+    .roma-concept-board::before {
+      background:
+        radial-gradient(circle at 22% 30%, rgba(223,184,146,0.5) 0 11%, transparent 12%),
+        radial-gradient(circle at 72% 62%, rgba(188,126,83,0.45) 0 10%, transparent 11%),
+        linear-gradient(45deg, rgba(225,203,174,0.52) 25%, transparent 25%, transparent 50%, rgba(225,203,174,0.52) 50%, rgba(225,203,174,0.52) 75%, transparent 75%, transparent 100%);
+      background-size: 110px 110px, 120px 120px, 40px 40px;
+      opacity: 0;
+    }
+
+    .roma-concept-board::after {
+      background:
+        linear-gradient(45deg, rgba(87,104,132,0.42) 25%, transparent 25%, transparent 50%, rgba(87,104,132,0.42) 50%, rgba(87,104,132,0.42) 75%, transparent 75%, transparent 100%),
+        radial-gradient(circle at 30% 22%, rgba(170,196,234,0.32), transparent 42%);
+      background-size: 34px 34px, 140px 140px;
+      opacity: 0;
+    }
+
+    .roma-concept-board[data-era="antica"]::before { opacity: 0; }
+    .roma-concept-board[data-era="antica"]::after { opacity: 0; }
+    .roma-concept-board[data-era="rinascimento"]::before { opacity: 0.72; }
+    .roma-concept-board[data-era="rinascimento"]::after { opacity: 0.08; }
+    .roma-concept-board[data-era="moderno"]::before { opacity: 0.26; }
+    .roma-concept-board[data-era="moderno"]::after { opacity: 0.82; }
+
     .roma-concept-board.mode-opus {
       --mosaic-bg:
         linear-gradient(45deg, #e4d5bc 25%, #ccb08f 25%, #ccb08f 50%, #e4d5bc 50%, #e4d5bc 75%, #b9956f 75%, #b9956f 100%);
@@ -1176,6 +1209,45 @@
       font-size: 15px;
       line-height: 1.72;
       color: rgba(56,46,38,0.8);
+    }
+
+    .roma-era-axis {
+      margin: 2px 0 10px;
+      padding: 8px 10px 10px;
+      border: 1px solid rgba(120,104,86,0.22);
+      background: rgba(255,255,255,0.42);
+    }
+
+    .roma-era-scale {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .roma-era-label {
+      font-family: var(--sans);
+      font-size: 7px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(86,72,58,0.68);
+    }
+
+    .roma-era-label.r { text-align: right; }
+
+    .roma-era-current {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 300;
+      color: rgba(38,36,34,0.9);
+      line-height: 1;
+    }
+
+    .roma-era-range {
+      width: 100%;
+      margin-top: 8px;
+      accent-color: #a85438;
+      cursor: pointer;
     }
 
     .roma-frame {
@@ -5969,12 +6041,23 @@
       </div>
 
       <div class="roma-concept fu" id="roma-concept">
-        <div class="roma-concept-board mode-opus" id="roma-concept-board"></div>
+        <div class="roma-concept-board mode-opus" id="roma-concept-board" data-era="antica"></div>
         <div class="roma-concept-copy">
           <div class="roma-concept-buttons" id="roma-concept-buttons">
             <button class="roma-concept-btn is-active" data-mode="opus" type="button">Opus Latericium</button>
             <button class="roma-concept-btn" data-mode="cosmati" type="button">Cosmati</button>
             <button class="roma-concept-btn" data-mode="notte" type="button">Notte Urbana</button>
+          </div>
+          <div class="roma-era-axis">
+            <div class="roma-era-scale">
+              <span class="roma-era-label l">ANTICA</span>
+              <span class="roma-era-current">
+                <span class="it" id="roma-era-current-it">Antica</span>
+                <span class="ua" id="roma-era-current-ua">Античність</span>
+              </span>
+              <span class="roma-era-label r">MODERNO</span>
+            </div>
+            <input class="roma-era-range" id="roma-era-range" type="range" min="0" max="2" step="1" value="0" aria-label="Roma concept timeline">
           </div>
           <h4 class="it" id="roma-concept-title-it">Mosaico come algoritmo urbano</h4>
           <h4 class="ua" id="roma-concept-title-ua">Мозаїка як міський алгоритм</h4>
@@ -7838,6 +7921,9 @@
       const conceptTitleUa = document.getElementById('roma-concept-title-ua');
       const conceptTextIt = document.getElementById('roma-concept-text-it');
       const conceptTextUa = document.getElementById('roma-concept-text-ua');
+      const conceptEraRange = document.getElementById('roma-era-range');
+      const eraCurrentIt = document.getElementById('roma-era-current-it');
+      const eraCurrentUa = document.getElementById('roma-era-current-ua');
       const frames = Array.from(document.querySelectorAll('#roma-atlante .roma-frame'));
       if (!stage || !route || !mapSvg || !timeTabs || !layerTabs || !eraTabs || !heroTabs) return;
 
@@ -7971,6 +8057,30 @@
         }
       };
 
+      const conceptEras = [
+        {
+          key: 'antica',
+          it: 'Antica',
+          ua: 'Античність',
+          suffixIt: 'Base romana: modulo, mattone, asse civile.',
+          suffixUa: 'Римська база: модуль, цегла, громадянська вісь.'
+        },
+        {
+          key: 'rinascimento',
+          it: 'Rinascimento',
+          ua: 'Ренесанс',
+          suffixIt: 'Ricompone la città con proporzione e ordine.',
+          suffixUa: 'Переосмислює місто через пропорцію і порядок.'
+        },
+        {
+          key: 'moderno',
+          it: 'Moderno',
+          ua: 'Модерн',
+          suffixIt: 'Sovrappone rete, velocità e luce artificiale.',
+          suffixUa: 'Накладає мережу, швидкість і штучне світло.'
+        }
+      ];
+
       let activeHero = 'cesare';
       let activeTime = 'day';
       let activeLayer = 'antica';
@@ -7985,6 +8095,7 @@
       let cinematicRaf = 0;
       let cinematicLastTs = 0;
       let activeConceptMode = 'opus';
+      let activeConceptEra = 0;
 
       const baseVB = { x: 0, y: 0, w: 980, h: 620 };
       let currentVB = { ...baseVB };
@@ -8084,8 +8195,20 @@
         }
         if (conceptTitleIt) conceptTitleIt.textContent = mode.titleIt;
         if (conceptTitleUa) conceptTitleUa.textContent = mode.titleUa;
-        if (conceptTextIt) conceptTextIt.textContent = mode.textIt;
-        if (conceptTextUa) conceptTextUa.textContent = mode.textUa;
+        const era = conceptEras[activeConceptEra] || conceptEras[0];
+        if (conceptTextIt) conceptTextIt.textContent = mode.textIt + ' ' + era.suffixIt;
+        if (conceptTextUa) conceptTextUa.textContent = mode.textUa + ' ' + era.suffixUa;
+      }
+
+      function setConceptEra(index) {
+        const idx = clamp(index, 0, conceptEras.length - 1);
+        activeConceptEra = idx;
+        const era = conceptEras[idx];
+        if (conceptBoard) conceptBoard.dataset.era = era.key;
+        if (eraCurrentIt) eraCurrentIt.textContent = era.it;
+        if (eraCurrentUa) eraCurrentUa.textContent = era.ua;
+        if (conceptEraRange) conceptEraRange.value = String(idx);
+        setConceptMode(activeConceptMode);
       }
 
       function setTime(timeKey) {
@@ -8244,6 +8367,13 @@
         });
       }
 
+      if (conceptEraRange) {
+        conceptEraRange.addEventListener('input', function () {
+          const value = parseInt(conceptEraRange.value, 10);
+          setConceptEra(Number.isNaN(value) ? 0 : value);
+        });
+      }
+
       if (window.matchMedia('(pointer: fine)').matches) {
         const wrap = stage.querySelector('.roma-map-wrap');
         if (wrap) {
@@ -8282,6 +8412,7 @@
         updateHud(activePoint);
         renderHero(activeHero);
         setConceptMode(activeConceptMode);
+        setConceptEra(activeConceptEra);
       };
 
       setTime('day');
@@ -8292,6 +8423,7 @@
       renderHero('cesare');
       updateHud('cesare-foro');
       setConceptMode('opus');
+      setConceptEra(0);
       updateCinemaUi();
       cinematicRaf = requestAnimationFrame(stepCinematic);
     })();
