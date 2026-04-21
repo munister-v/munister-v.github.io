@@ -596,6 +596,19 @@
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.28), 0 18px 50px rgba(86,72,58,0.14);
     }
 
+    .roma-map-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      opacity: 0.22;
+      filter: saturate(0.86) contrast(1.02) brightness(0.9);
+      transition: opacity 0.35s var(--ease), filter 0.35s var(--ease);
+      pointer-events: none;
+    }
+
     .roma-map-wrap::before {
       content: '';
       position: absolute;
@@ -854,17 +867,29 @@
         linear-gradient(to bottom, rgba(255,255,255,0.08), rgba(255,255,255,0.12)),
         radial-gradient(circle at 78% 18%, rgba(255,233,176,0.14), transparent 38%);
     }
+    #roma-stage[data-time="day"] .roma-map-video {
+      opacity: 0.18;
+      filter: saturate(0.9) brightness(0.96) contrast(1.02);
+    }
 
     #roma-stage[data-time="evening"] .roma-map-wrap::after {
       background:
         linear-gradient(to bottom, rgba(188,110,68,0.14), rgba(52,34,22,0.24)),
         radial-gradient(circle at 76% 16%, rgba(255,176,120,0.2), transparent 34%);
     }
+    #roma-stage[data-time="evening"] .roma-map-video {
+      opacity: 0.28;
+      filter: saturate(1.04) sepia(0.24) brightness(0.86) contrast(1.06);
+    }
 
     #roma-stage[data-time="night"] .roma-map-wrap::after {
       background:
         linear-gradient(to bottom, rgba(24,34,54,0.26), rgba(10,14,24,0.5)),
         radial-gradient(circle at 80% 18%, rgba(152,188,255,0.2), transparent 36%);
+    }
+    #roma-stage[data-time="night"] .roma-map-video {
+      opacity: 0.34;
+      filter: saturate(0.82) brightness(0.62) hue-rotate(10deg) contrast(1.08);
     }
 
     #roma-stage[data-time="evening"] .roma-map {
@@ -5842,6 +5867,9 @@
 
       <div class="roma-stage fu" id="roma-stage">
         <div class="roma-map-wrap">
+          <video class="roma-map-video" id="roma-map-video" muted loop playsinline autoplay preload="none" poster="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Rome_%28IT%29%2C_Kolosseum_--_2013_--_3379-86.jpg/1280px-Rome_%28IT%29%2C_Kolosseum_--_2013_--_3379-86.jpg">
+            <source src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Colosseum%2C_Rome_113323.webm" type="video/webm">
+          </video>
           <div class="roma-map-grid"></div>
           <div class="roma-map-hud">
             <div class="roma-hud-kicker">Roma Atlas</div>
@@ -7895,6 +7923,7 @@
       const route = document.getElementById('roma-route');
       const routeGlow = document.getElementById('roma-route-glow');
       const mapSvg = stage ? stage.querySelector('.roma-map') : null;
+      const mapVideo = document.getElementById('roma-map-video');
       const timeTabs = document.getElementById('roma-time-tabs');
       const layerTabs = document.getElementById('roma-layer-tabs');
       const eraTabs = document.getElementById('roma-era-tabs');
@@ -8175,6 +8204,7 @@
           cinematicProgress = 0;
           const idx = heroSequence.indexOf(activeHero);
           const next = heroSequence[(idx + 1) % heroSequence.length];
+          setConceptEra((activeConceptEra + 1) % conceptEras.length);
           renderHero(next);
         }
         cinematicRaf = requestAnimationFrame(stepCinematic);
@@ -8357,6 +8387,25 @@
           cinematicLastTs = 0;
           updateCinemaUi();
         });
+      }
+
+      if (mapVideo) {
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const onScreen = function () {
+          const r = stage.getBoundingClientRect();
+          return r.bottom > 0 && r.top < window.innerHeight;
+        };
+        const syncVideo = function () {
+          if (prefersReduced || !onScreen()) {
+            try { mapVideo.pause(); } catch (_) {}
+            return;
+          }
+          const p = mapVideo.play();
+          if (p && typeof p.catch === 'function') p.catch(function () {});
+        };
+        window.addEventListener('scroll', syncVideo, { passive: true });
+        window.addEventListener('visibilitychange', syncVideo);
+        syncVideo();
       }
 
       if (conceptButtons) {
