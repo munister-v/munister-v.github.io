@@ -591,6 +591,7 @@
       background: linear-gradient(145deg, rgba(249,245,238,0.98), rgba(238,228,211,0.9));
       min-height: 580px;
       overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.28), 0 18px 50px rgba(86,72,58,0.14);
     }
 
     .roma-map-wrap::after {
@@ -619,6 +620,110 @@
       height: 100%;
       min-height: 580px;
       display: block;
+      transition: filter 0.35s var(--ease);
+    }
+
+    .roma-map-hud {
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      z-index: 9;
+      padding: 10px 12px 9px;
+      border: 1px solid rgba(120,104,86,0.3);
+      background: rgba(249,245,238,0.78);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      min-width: 180px;
+    }
+
+    .roma-hud-kicker {
+      font-family: var(--sans);
+      font-size: 7px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(120,104,86,0.7);
+      margin-bottom: 5px;
+    }
+
+    .roma-hud-title {
+      font-family: var(--serif);
+      font-size: 21px;
+      line-height: 1;
+      color: rgba(38,36,34,0.9);
+      margin-bottom: 4px;
+    }
+
+    .roma-hud-meta {
+      font-family: var(--sans);
+      font-size: 7px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(86,72,58,0.68);
+    }
+
+    .roma-map-tools {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      z-index: 9;
+      display: grid;
+      gap: 6px;
+    }
+
+    .roma-map-btn {
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(120,104,86,0.35);
+      background: rgba(249,245,238,0.82);
+      color: rgba(56,46,38,0.9);
+      font-family: var(--sans);
+      font-size: 16px;
+      display: grid;
+      place-items: center;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: all 0.2s var(--ease);
+    }
+
+    .roma-map-btn:hover {
+      border-color: rgba(168,84,56,0.62);
+      color: rgba(168,84,56,0.95);
+      transform: translateY(-1px);
+    }
+
+    .roma-compass {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      z-index: 9;
+      width: 72px;
+      height: 72px;
+      border: 1px solid rgba(120,104,86,0.28);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,245,238,0.76), rgba(234,224,210,0.5));
+      display: grid;
+      place-items: center;
+      color: rgba(86,72,58,0.74);
+      font-family: var(--sans);
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .roma-compass::before {
+      content: '';
+      position: absolute;
+      width: 1px;
+      height: 52px;
+      background: linear-gradient(to bottom, rgba(120,104,86,0.2), rgba(120,104,86,0.74), rgba(120,104,86,0.2));
+    }
+
+    .roma-compass::after {
+      content: '';
+      position: absolute;
+      height: 1px;
+      width: 52px;
+      background: linear-gradient(to right, rgba(120,104,86,0.2), rgba(120,104,86,0.74), rgba(120,104,86,0.2));
     }
 
     .roma-layer {
@@ -756,10 +861,17 @@
     .roma-point.is-active circle {
       fill: var(--terracotta);
       transform: scale(1.12);
+      animation: romaPointPulse 1.8s ease-in-out infinite;
     }
 
     .roma-point.is-active text {
       fill: rgba(56,46,38,0.95);
+    }
+
+    @keyframes romaPointPulse {
+      0% { transform: scale(1.04); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1.04); }
     }
 
     .roma-panel {
@@ -968,6 +1080,29 @@
       .roma-map-wrap,
       .roma-map {
         min-height: 390px;
+      }
+      .roma-map-hud {
+        left: 10px;
+        top: 10px;
+        padding: 8px 9px 8px;
+        min-width: 138px;
+      }
+      .roma-hud-title {
+        font-size: 16px;
+      }
+      .roma-map-tools {
+        right: 10px;
+        top: 10px;
+      }
+      .roma-map-btn {
+        width: 30px;
+        height: 30px;
+      }
+      .roma-compass {
+        width: 56px;
+        height: 56px;
+        right: 10px;
+        bottom: 10px;
       }
       .roma-panel {
         padding: 16px 14px 14px;
@@ -5418,6 +5553,17 @@
       <div class="roma-stage fu" id="roma-stage">
         <div class="roma-map-wrap">
           <div class="roma-map-grid"></div>
+          <div class="roma-map-hud">
+            <div class="roma-hud-kicker">Roma Atlas</div>
+            <div class="roma-hud-title" id="roma-hud-title">FORO</div>
+            <div class="roma-hud-meta" id="roma-hud-meta">Latium · Nolli field</div>
+          </div>
+          <div class="roma-map-tools">
+            <button class="roma-map-btn" id="roma-zoom-in" type="button" aria-label="Zoom in">+</button>
+            <button class="roma-map-btn" id="roma-zoom-out" type="button" aria-label="Zoom out">−</button>
+            <button class="roma-map-btn" id="roma-zoom-reset" type="button" aria-label="Reset view">•</button>
+          </div>
+          <div class="roma-compass">N</div>
           <svg class="roma-map" viewBox="0 0 980 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mappa interattiva di Roma">
             <path class="roma-outline" d="M128,438 L165,320 L258,208 L405,150 L525,162 L666,232 L781,338 L834,442 L778,524 L632,566 L446,564 L286,548 L168,508 Z"/>
             <path class="roma-layer roma-layer-antica roma-outline-antica" d="M154,422 L188,316 L266,230 L404,176 L520,182 L646,244 L752,336 L796,430 L748,504 L618,540 L446,536 L302,520 L198,486 Z"/>
@@ -7419,6 +7565,7 @@
     (function () {
       const stage = document.getElementById('roma-stage');
       const route = document.getElementById('roma-route');
+      const mapSvg = stage ? stage.querySelector('.roma-map') : null;
       const timeTabs = document.getElementById('roma-time-tabs');
       const layerTabs = document.getElementById('roma-layer-tabs');
       const eraTabs = document.getElementById('roma-era-tabs');
@@ -7430,8 +7577,13 @@
       const textUa = document.getElementById('roma-text-ua');
       const fact1v = document.getElementById('roma-fact-1v');
       const fact2v = document.getElementById('roma-fact-2v');
+      const hudTitle = document.getElementById('roma-hud-title');
+      const hudMeta = document.getElementById('roma-hud-meta');
+      const zoomInBtn = document.getElementById('roma-zoom-in');
+      const zoomOutBtn = document.getElementById('roma-zoom-out');
+      const zoomResetBtn = document.getElementById('roma-zoom-reset');
       const frames = Array.from(document.querySelectorAll('#roma-atlante .roma-frame'));
-      if (!stage || !route || !timeTabs || !layerTabs || !eraTabs || !heroTabs) return;
+      if (!stage || !route || !mapSvg || !timeTabs || !layerTabs || !eraTabs || !heroTabs) return;
 
       const heroByEra = {
         antica: 'cesare',
@@ -7458,7 +7610,8 @@
             text: 'Від режисури Форуму до Колізею як громадянської машини: античний Рим створює міський синтаксис, який досі формує Захід.',
             f1: '4.1 км',
             f2: '6'
-          }
+          },
+          focus: { x: 430, y: 340, z: 1.22 }
         },
         michelangelo: {
           era: 'rinascimento',
@@ -7477,7 +7630,8 @@
             text: 'Між Капітолієм і Святим Петром Рим стає скульптурним тілом: перспективні осі, площі як сцена і світлові ієрархії.',
             f1: '2.8 км',
             f2: '5'
-          }
+          },
+          focus: { x: 550, y: 292, z: 1.35 }
         },
         bernini: {
           era: 'barocco',
@@ -7496,7 +7650,8 @@
             text: 'Площа Навона, колонада Святого Петра й сценографічний міст: бароко перетворює Рим на безперервну хореографію.',
             f1: '2.6 км',
             f2: '5'
-          }
+          },
+          focus: { x: 555, y: 316, z: 1.38 }
         },
         fellini: {
           era: 'cinema',
@@ -7515,16 +7670,88 @@
             text: 'Від dolce vita на Via Veneto до студій Cinecitta: Рим стає постійним майданчиком, де пам\'ять і вигадка збігаються.',
             f1: '9.4 км',
             f2: '6'
-          }
+          },
+          focus: { x: 460, y: 355, z: 1.18 }
         }
+      };
+
+      const pointsMeta = {
+        'cesare-foro': { it: 'Foro', ua: 'Форум', meta: 'Civic nucleus · stratified core' },
+        'cesare-colosseo': { it: 'Colosseo', ua: 'Колізей', meta: 'Arena machine · imperial axis' },
+        'cesare-pantheon': { it: 'Pantheon', ua: 'Пантеон', meta: 'Domed geometry · stone light' },
+        'michelangelo-vaticano': { it: 'Vaticano', ua: 'Ватикан', meta: 'Sacral pole · monumental field' },
+        'michelangelo-campidoglio': { it: 'Campidoglio', ua: 'Капітолій', meta: 'Renaissance ordering node' },
+        'michelangelo-popolo': { it: 'Popolo', ua: 'Пополо', meta: 'Gate plaza · urban perspective' },
+        'bernini-navona': { it: 'Navona', ua: 'Навона', meta: 'Baroque scene · civic theatre' },
+        'bernini-sanpietro': { it: 'San Pietro', ua: 'Св. Петро', meta: 'Colonnade embrace · axis of faith' },
+        'bernini-santangelo': { it: 'Sant\'Angelo', ua: 'Сант-Анджело', meta: 'Bridge gateway · river threshold' },
+        'fellini-veneto': { it: 'Via Veneto', ua: 'Віа Венето', meta: 'Cinema memory · social boulevard' },
+        'fellini-trevi': { it: 'Trevi', ua: 'Треві', meta: 'Water spectacle · urban myth' },
+        'fellini-cinecitta': { it: 'Cinecitta', ua: 'Чінечітта', meta: 'Studio district · image factory' },
+        'roma-trastevere': { it: 'Trastevere', ua: 'Трастевере', meta: 'Dense fabric · vernacular rhythm' },
+        'roma-termini': { it: 'Termini', ua: 'Терміні', meta: 'Transit hinge · modern pulse' },
+        'roma-appia': { it: 'Appia', ua: 'Аппієва', meta: 'Ancient route · southern gate' },
+        'roma-caracalla': { it: 'Caracalla', ua: 'Каракалли', meta: 'Bath complex · imperial mass' }
       };
 
       let activeHero = 'cesare';
       let activeTime = 'day';
       let activeLayer = 'antica';
+      let activePoint = 'cesare-foro';
       let frameIndex = 0;
       let frameTimer = null;
       let framePaused = false;
+      let manualZoom = 1;
+      let viewAnim = 0;
+
+      const baseVB = { x: 0, y: 0, w: 980, h: 620 };
+      let currentVB = { ...baseVB };
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function setViewBox(vb) {
+        currentVB = vb;
+        mapSvg.setAttribute('viewBox', [vb.x.toFixed(2), vb.y.toFixed(2), vb.w.toFixed(2), vb.h.toFixed(2)].join(' '));
+      }
+
+      function targetViewFor(heroKey) {
+        const hero = heroes[heroKey];
+        if (!hero || !hero.focus) return { ...baseVB };
+        const z = (hero.focus.z || 1) * manualZoom;
+        const w = baseVB.w / z;
+        const h = baseVB.h / z;
+        const x = clamp(hero.focus.x - w / 2, baseVB.x, baseVB.w - w);
+        const y = clamp(hero.focus.y - h / 2, baseVB.y, baseVB.h - h);
+        return { x, y, w, h };
+      }
+
+      function animateViewTo(target, duration) {
+        const from = { ...currentVB };
+        const start = performance.now();
+        cancelAnimationFrame(viewAnim);
+        function step(now) {
+          const t = clamp((now - start) / duration, 0, 1);
+          const e = 1 - Math.pow(1 - t, 3);
+          setViewBox({
+            x: from.x + (target.x - from.x) * e,
+            y: from.y + (target.y - from.y) * e,
+            w: from.w + (target.w - from.w) * e,
+            h: from.h + (target.h - from.h) * e
+          });
+          if (t < 1) viewAnim = requestAnimationFrame(step);
+        }
+        viewAnim = requestAnimationFrame(step);
+      }
+
+      function updateHud(pointKey) {
+        activePoint = pointKey || activePoint;
+        const item = pointsMeta[activePoint] || pointsMeta['cesare-foro'];
+        const isUa = document.body.classList.contains('lang-ua');
+        if (hudTitle) hudTitle.textContent = isUa ? item.ua : item.it;
+        if (hudMeta) hudMeta.textContent = item.meta;
+      }
 
       function setTime(timeKey) {
         if (!timeKey) return;
@@ -7549,6 +7776,7 @@
         if (!hero) return;
         activeHero = heroKey;
         setLayer(hero.layer || activeLayer);
+        animateViewTo(targetViewFor(heroKey), 520);
         route.setAttribute('d', hero.route);
         meta.textContent = hero.meta;
         titleIt.innerHTML = hero.it.title;
@@ -7567,6 +7795,7 @@
         stage.querySelectorAll('.roma-point').forEach(point => {
           point.classList.toggle('is-active', hero.points.includes(point.dataset.point));
         });
+        if (hero.points && hero.points.length) updateHud(hero.points[0]);
       }
 
       function setFrameActive(index) {
@@ -7623,14 +7852,38 @@
         const key = point.dataset.point.split('-')[0];
         point.addEventListener('click', function () {
           if (heroes[key]) renderHero(key);
+          updateHud(point.dataset.point);
+        });
+        point.addEventListener('mouseenter', function () {
+          updateHud(point.dataset.point);
         });
         point.addEventListener('keydown', function (event) {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             if (heroes[key]) renderHero(key);
+            updateHud(point.dataset.point);
           }
         });
       });
+
+      if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', function () {
+          manualZoom = clamp(manualZoom * 1.12, 1, 1.75);
+          animateViewTo(targetViewFor(activeHero), 320);
+        });
+      }
+      if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', function () {
+          manualZoom = clamp(manualZoom / 1.12, 1, 1.75);
+          animateViewTo(targetViewFor(activeHero), 320);
+        });
+      }
+      if (zoomResetBtn) {
+        zoomResetBtn.addEventListener('click', function () {
+          manualZoom = 1;
+          animateViewTo(targetViewFor(activeHero), 380);
+        });
+      }
 
       frames.forEach(function (frame, i) {
         frame.addEventListener('mouseenter', function () {
@@ -7649,6 +7902,7 @@
 
       window.updateRomaLang = function () {
         setTime(activeTime);
+        updateHud(activePoint);
         renderHero(activeHero);
       };
 
@@ -7656,7 +7910,9 @@
       setLayer('antica');
       setFrameActive(0);
       startFrameCycle();
+      setViewBox({ ...baseVB });
       renderHero('cesare');
+      updateHud('cesare-foro');
     })();
 
     // ── IL PARALLELO — drag comparator ───
