@@ -611,10 +611,39 @@
       display: block;
     }
 
+    .roma-layer {
+      pointer-events: none;
+      transition: opacity 0.38s var(--ease);
+    }
+
+    .roma-layer-antica,
+    .roma-layer-moderna {
+      opacity: 0.18;
+    }
+
+    #roma-stage[data-map-layer="antica"] .roma-layer-antica { opacity: 1; }
+    #roma-stage[data-map-layer="antica"] .roma-layer-moderna { opacity: 0.12; }
+    #roma-stage[data-map-layer="moderna"] .roma-layer-antica { opacity: 0.1; }
+    #roma-stage[data-map-layer="moderna"] .roma-layer-moderna { opacity: 1; }
+
     .roma-outline {
       fill: rgba(188,164,136,0.14);
       stroke: rgba(86,72,58,0.52);
       stroke-width: 2;
+      stroke-linejoin: round;
+    }
+
+    .roma-outline-antica {
+      fill: rgba(184,152,116,0.18);
+      stroke: rgba(92,74,56,0.62);
+      stroke-width: 2.4;
+      stroke-linejoin: round;
+    }
+
+    .roma-outline-moderna {
+      fill: rgba(115,127,136,0.08);
+      stroke: rgba(72,86,96,0.45);
+      stroke-width: 1.9;
       stroke-linejoin: round;
     }
 
@@ -630,6 +659,21 @@
       fill: none;
       stroke: rgba(110,94,77,0.32);
       stroke-width: 2.5;
+      stroke-linecap: round;
+    }
+
+    .roma-road-antica {
+      fill: none;
+      stroke: rgba(130,104,76,0.52);
+      stroke-width: 2.8;
+      stroke-linecap: round;
+      stroke-dasharray: 2 9;
+    }
+
+    .roma-road-moderna {
+      fill: none;
+      stroke: rgba(76,94,108,0.44);
+      stroke-width: 2.2;
       stroke-linecap: round;
     }
 
@@ -687,6 +731,7 @@
       gap: 18px;
     }
 
+    .roma-layer-tabs,
     .roma-era-tabs,
     .roma-hero-tabs {
       display: flex;
@@ -694,6 +739,7 @@
       gap: 7px;
     }
 
+    .roma-layer-btn,
     .roma-era-btn,
     .roma-hero-btn {
       border: 1px solid rgba(120,104,86,0.3);
@@ -707,6 +753,7 @@
       transition: all 0.25s var(--ease);
     }
 
+    .roma-layer-btn.is-active,
     .roma-era-btn.is-active,
     .roma-hero-btn.is-active {
       border-color: rgba(168,84,56,0.84);
@@ -807,6 +854,7 @@
         padding: 16px 14px 14px;
         gap: 12px;
       }
+      .roma-layer-btn,
       .roma-era-btn,
       .roma-hero-btn {
         font-size: 7.4px;
@@ -5242,10 +5290,16 @@
           <div class="roma-map-grid"></div>
           <svg class="roma-map" viewBox="0 0 980 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mappa interattiva di Roma">
             <path class="roma-outline" d="M128,438 L165,320 L258,208 L405,150 L525,162 L666,232 L781,338 L834,442 L778,524 L632,566 L446,564 L286,548 L168,508 Z"/>
+            <path class="roma-layer roma-layer-antica roma-outline-antica" d="M154,422 L188,316 L266,230 L404,176 L520,182 L646,244 L752,336 L796,430 L748,504 L618,540 L446,536 L302,520 L198,486 Z"/>
+            <path class="roma-layer roma-layer-moderna roma-outline-moderna" d="M110,458 L156,326 L244,198 L392,134 L544,144 L692,220 L818,338 L862,456 L788,548 L640,584 L436,584 L256,560 L140,514 Z"/>
             <path class="roma-river" d="M120,172 C180,210 210,260 242,318 C272,370 324,415 375,424 C432,435 488,418 532,388 C574,360 588,313 618,277 C652,236 708,218 770,226"/>
             <path class="roma-road" d="M184,456 C272,420 336,396 406,356 C484,312 556,258 708,230"/>
             <path class="roma-road" d="M266,544 C334,472 402,426 476,404 C580,370 688,342 816,358"/>
             <path class="roma-road" d="M268,202 C326,234 382,260 452,258 C538,256 606,232 674,204"/>
+            <path class="roma-layer roma-layer-antica roma-road-antica" d="M242,432 C304,404 356,368 414,322 C458,288 518,248 598,232"/>
+            <path class="roma-layer roma-layer-antica roma-road-antica" d="M284,252 C336,272 394,286 454,284 C516,282 572,258 640,224"/>
+            <path class="roma-layer roma-layer-moderna roma-road-moderna" d="M188,476 C282,440 370,398 452,356 C550,308 632,278 778,280"/>
+            <path class="roma-layer roma-layer-moderna roma-road-moderna" d="M302,542 C386,470 468,430 548,404 C660,368 742,344 840,352"/>
             <path id="roma-route" class="roma-route" d="M326,334 L406,356 L526,310 L622,278"/>
 
             <g class="roma-point is-active" data-point="cesare-foro" tabindex="0">
@@ -5296,10 +5350,34 @@
               <circle cx="242" cy="462" r="9"></circle>
               <text x="260" y="458">CINECITTA</text>
             </g>
+            <g class="roma-point" data-point="roma-trastevere" tabindex="0">
+              <circle cx="422" cy="386" r="9"></circle>
+              <text x="440" y="382">TRASTEVERE</text>
+            </g>
+            <g class="roma-point" data-point="roma-termini" tabindex="0">
+              <circle cx="540" cy="230" r="9"></circle>
+              <text x="558" y="226">TERMINI</text>
+            </g>
+            <g class="roma-point" data-point="roma-appia" tabindex="0">
+              <circle cx="334" cy="486" r="9"></circle>
+              <text x="352" y="482">APPIA</text>
+            </g>
+            <g class="roma-point" data-point="roma-caracalla" tabindex="0">
+              <circle cx="386" cy="430" r="9"></circle>
+              <text x="404" y="426">CARACALLA</text>
+            </g>
           </svg>
         </div>
 
         <aside class="roma-panel" id="roma-panel">
+          <div class="roma-layer-tabs" id="roma-layer-tabs">
+            <button class="roma-layer-btn is-active" data-layer="antica" type="button">
+              <span class="it">Layer Antica</span><span class="ua">Античний шар</span>
+            </button>
+            <button class="roma-layer-btn" data-layer="moderna" type="button">
+              <span class="it">Layer Moderna</span><span class="ua">Сучасний шар</span>
+            </button>
+          </div>
           <div class="roma-era-tabs" id="roma-era-tabs">
             <button class="roma-era-btn is-active" data-era="antica" type="button">Antica</button>
             <button class="roma-era-btn" data-era="rinascimento" type="button">Rinascimento</button>
@@ -7161,6 +7239,7 @@
     (function () {
       const stage = document.getElementById('roma-stage');
       const route = document.getElementById('roma-route');
+      const layerTabs = document.getElementById('roma-layer-tabs');
       const eraTabs = document.getElementById('roma-era-tabs');
       const heroTabs = document.getElementById('roma-hero-tabs');
       const meta = document.getElementById('roma-meta');
@@ -7170,7 +7249,7 @@
       const textUa = document.getElementById('roma-text-ua');
       const fact1v = document.getElementById('roma-fact-1v');
       const fact2v = document.getElementById('roma-fact-2v');
-      if (!stage || !route || !eraTabs || !heroTabs) return;
+      if (!stage || !route || !layerTabs || !eraTabs || !heroTabs) return;
 
       const heroByEra = {
         antica: 'cesare',
@@ -7182,84 +7261,99 @@
       const heroes = {
         cesare: {
           era: 'antica',
-          route: 'M326,334 L406,356 L526,310 L622,278',
-          points: ['cesare-foro', 'cesare-colosseo', 'cesare-pantheon', 'michelangelo-vaticano'],
+          layer: 'antica',
+          route: 'M334,486 L386,430 L326,334 L406,356 L526,310 L622,278',
+          points: ['roma-appia', 'roma-caracalla', 'cesare-foro', 'cesare-colosseo', 'cesare-pantheon', 'michelangelo-vaticano'],
           meta: 'Roma · Foro · Colosseo · Pantheon',
           it: {
             title: 'Cesare<br>e la matrice imperiale',
             text: 'Dalla regia del Foro al Colosseo come macchina civica: Roma antica stabilisce una sintassi urbana che ancora ordina l\'Occidente.',
-            f1: '3.2 km',
-            f2: '4'
+            f1: '4.1 km',
+            f2: '6'
           },
           ua: {
             title: 'Цезар<br>і імперська матриця',
             text: 'Від режисури Форуму до Колізею як громадянської машини: античний Рим створює міський синтаксис, який досі формує Захід.',
-            f1: '3.2 км',
-            f2: '4'
+            f1: '4.1 км',
+            f2: '6'
           }
         },
         michelangelo: {
           era: 'rinascimento',
-          route: 'M622,278 L454,332 L566,268 L512,300',
-          points: ['michelangelo-vaticano', 'michelangelo-campidoglio', 'michelangelo-popolo', 'bernini-navona'],
+          layer: 'antica',
+          route: 'M622,278 L566,268 L540,230 L454,332 L512,300',
+          points: ['michelangelo-vaticano', 'michelangelo-popolo', 'roma-termini', 'michelangelo-campidoglio', 'bernini-navona'],
           meta: 'Roma · Vaticano · Campidoglio · Popolo',
           it: {
             title: 'Michelangelo<br>e la città plastica',
             text: 'Tra Campidoglio e San Pietro, Roma diventa corpo scultoreo: assi prospettici, piazze come palcoscenico e gerarchie della luce.',
-            f1: '2.4 km',
-            f2: '3'
+            f1: '2.8 km',
+            f2: '5'
           },
           ua: {
             title: 'Мікеланджело<br>і пластичне місто',
             text: 'Між Капітолієм і Святим Петром Рим стає скульптурним тілом: перспективні осі, площі як сцена і світлові ієрархії.',
-            f1: '2.4 км',
-            f2: '3'
+            f1: '2.8 км',
+            f2: '5'
           }
         },
         bernini: {
           era: 'barocco',
-          route: 'M512,300 L570,316 L606,292 L566,268',
-          points: ['bernini-navona', 'bernini-santangelo', 'bernini-sanpietro', 'michelangelo-popolo'],
+          layer: 'moderna',
+          route: 'M512,300 L570,316 L606,292 L566,268 L422,386',
+          points: ['bernini-navona', 'bernini-santangelo', 'bernini-sanpietro', 'michelangelo-popolo', 'roma-trastevere'],
           meta: 'Roma · Navona · Sant\'Angelo · San Pietro',
           it: {
             title: 'Bernini<br>e il teatro barocco',
             text: 'Piazza Navona, il colonnato di San Pietro e il ponte scenografico: il Barocco trasforma Roma in una coreografia continua.',
-            f1: '1.9 km',
-            f2: '3'
+            f1: '2.6 km',
+            f2: '5'
           },
           ua: {
             title: 'Берніні<br>і бароковий театр',
             text: 'Площа Навона, колонада Святого Петра й сценографічний міст: бароко перетворює Рим на безперервну хореографію.',
-            f1: '1.9 км',
-            f2: '3'
+            f1: '2.6 км',
+            f2: '5'
           }
         },
         fellini: {
           era: 'cinema',
-          route: 'M560,248 L504,286 L406,356 L242,462',
-          points: ['fellini-veneto', 'fellini-trevi', 'cesare-colosseo', 'fellini-cinecitta'],
+          layer: 'moderna',
+          route: 'M560,248 L504,286 L422,386 L406,356 L242,462 L540,230',
+          points: ['fellini-veneto', 'fellini-trevi', 'roma-trastevere', 'cesare-colosseo', 'fellini-cinecitta', 'roma-termini'],
           meta: 'Roma · Via Veneto · Trevi · Cinecitta',
           it: {
             title: 'Fellini<br>e la Roma cinematica',
             text: 'Dalla dolce vita di Via Veneto agli studi di Cinecitta: Roma diventa set permanente in cui memoria e finzione coincidono.',
-            f1: '8.7 km',
-            f2: '4'
+            f1: '9.4 km',
+            f2: '6'
           },
           ua: {
             title: 'Фелліні<br>і кінематичний Рим',
             text: 'Від dolce vita на Via Veneto до студій Cinecitta: Рим стає постійним майданчиком, де пам\'ять і вигадка збігаються.',
-            f1: '8.7 км',
-            f2: '4'
+            f1: '9.4 км',
+            f2: '6'
           }
         }
       };
 
       let activeHero = 'cesare';
+      let activeLayer = 'antica';
+
+      function setLayer(layerKey) {
+        if (!layerKey) return;
+        activeLayer = layerKey;
+        stage.dataset.mapLayer = layerKey;
+        layerTabs.querySelectorAll('.roma-layer-btn').forEach(btn => {
+          btn.classList.toggle('is-active', btn.dataset.layer === layerKey);
+        });
+      }
 
       function renderHero(heroKey) {
         const hero = heroes[heroKey];
         if (!hero) return;
         activeHero = heroKey;
+        setLayer(hero.layer || activeLayer);
         route.setAttribute('d', hero.route);
         meta.textContent = hero.meta;
         titleIt.innerHTML = hero.it.title;
@@ -7279,6 +7373,12 @@
           point.classList.toggle('is-active', hero.points.includes(point.dataset.point));
         });
       }
+
+      layerTabs.addEventListener('click', function (event) {
+        const btn = event.target.closest('.roma-layer-btn');
+        if (!btn) return;
+        setLayer(btn.dataset.layer);
+      });
 
       heroTabs.addEventListener('click', function (event) {
         const btn = event.target.closest('.roma-hero-btn');
@@ -7310,6 +7410,7 @@
         renderHero(activeHero);
       };
 
+      setLayer('antica');
       renderHero('cesare');
     })();
 
