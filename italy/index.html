@@ -4691,6 +4691,96 @@
       }
     }
 
+    /* ═══════════════════════════════════════
+       GLOBAL MOBILE READABILITY PASS
+    ═══════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .mat-label,
+      .det-hover span,
+      .ritmo-cell h4,
+      .ritmo-cell p,
+      .thread-card h4,
+      .thread-card p,
+      .mc-entry-it,
+      .mc-entry-mod,
+      .armir-fact h5,
+      .armir-fact p,
+      .resonance-item p,
+      .sp-geo,
+      .sp-title,
+      .sp-text,
+      .crono-card-geo {
+        text-shadow: 0 2px 12px rgba(8, 8, 8, 0.46);
+      }
+
+      .mat-label {
+        background: linear-gradient(to top, rgba(10, 10, 10, 0.6), rgba(10, 10, 10, 0.14));
+      }
+
+      .det-item::after,
+      .thread-card::after,
+      .mc-entry::after,
+      .armir-fact::after,
+      .resonance-item::after,
+      .ritmo-cell::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+        background: linear-gradient(to top, rgba(8, 8, 8, 0.54), rgba(8, 8, 8, 0.06) 56%);
+      }
+
+      .det-item > *,
+      .thread-card > *,
+      .mc-entry > *,
+      .armir-fact > *,
+      .resonance-item > *,
+      .ritmo-cell > * {
+        position: relative;
+        z-index: 2;
+      }
+
+      .crono-card-img-overlay {
+        background: linear-gradient(to bottom, rgba(12, 12, 12, 0.06), rgba(12, 12, 12, 0.58));
+      }
+
+      .crono-card-year {
+        color: rgba(249, 245, 238, 0.86);
+      }
+
+      .crono-card-geo {
+        color: rgba(249, 245, 238, 0.82);
+        font-size: 8.4px;
+      }
+    }
+
+    .img-fallback {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(140deg, rgba(38, 36, 34, 0.88), rgba(65, 56, 47, 0.78));
+      border: 1px solid rgba(196, 180, 154, 0.24);
+    }
+
+    .img-fallback::before {
+      content: 'Wikimedia image unavailable';
+      position: absolute;
+      left: 12px;
+      bottom: 10px;
+      font-family: var(--sans);
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(234, 224, 210, 0.76);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .img-fallback > img {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+
   </style>
 </head>
 
@@ -6614,6 +6704,33 @@
       document.addEventListener('keydown', event => {
         if (event.key === 'Escape' && lightbox.classList.contains('open')) closeZoom();
       });
+    })();
+
+    // ── Broken image guard (Wikimedia fallback) ──────────────
+    (function () {
+      function getFallbackHolder(img) {
+        return img.closest('.crono-card-img, .manifesto-image, .micro-card, .micro-atlas-card, .imm-card, .arch-main-img, .arch-sm, .arch-photo-side')
+          || img.parentElement;
+      }
+
+      function handleImageError(img) {
+        if (!img || img.dataset.failed === '1') return;
+        img.dataset.failed = '1';
+        if (img.closest('.guide-assistant')) return;
+        const holder = getFallbackHolder(img);
+        if (!holder) return;
+        holder.classList.add('img-fallback');
+      }
+
+      document.querySelectorAll('img').forEach(function (img) {
+        if (img.closest('.guide-assistant')) return;
+        img.addEventListener('error', function () { handleImageError(img); });
+      });
+
+      window.addEventListener('error', function (event) {
+        const target = event && event.target;
+        if (target && target.tagName === 'IMG') handleImageError(target);
+      }, true);
     })();
 
     // ── IL PARALLELO — drag comparator ───
