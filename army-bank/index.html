@@ -274,6 +274,36 @@
           або вибраних підписниках.
         </div>
       </div>
+      <div class="feat-item">
+        <span class="feat-num">10</span>
+        <div class="feat-title">Месенджер · WebRTC</div>
+        <div class="feat-desc">
+          Вбудований <strong>зашифрований месенджер</strong> із голосовими
+          повідомленнями, вкладеннями, реакціями. <strong>WebRTC 1:1 і групові
+          дзвінки</strong> через Socket.IO-сигналізацію. Push-сповіщення для
+          дзвінків і чатів навіть при закритій вкладці.
+        </div>
+      </div>
+      <div class="feat-item">
+        <span class="feat-num">11</span>
+        <div class="feat-title">Bank Assistant · AI</div>
+        <div class="feat-desc">
+          Агент-панель із <strong>SSE-стримінгом</strong> відповідей у реальному
+          часі. Асистент підключений до реальних даних рахунку — баланс,
+          транзакції, кредити. Адмін може запускати задачі з прогресом і
+          переривати виконання.
+        </div>
+      </div>
+      <div class="feat-item">
+        <span class="feat-num">12</span>
+        <div class="feat-title">Crash Game · Store</div>
+        <div class="feat-desc">
+          Мультиплеєрна гра <strong>Crash</strong> через Socket.IO — реальний
+          час, множник, авто-вивід. Вбудований <strong>Магазин</strong> із
+          кешбек-балами та каталогом товарів. Щоденний бонус із зростаючою
+          серією.
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -446,42 +476,126 @@
       у PostgreSQL — без JWT-секретів, з можливістю інвалідації будь-якого токена миттєво.
     </p>
     <div class="arch-box">
+      <!-- Clients -->
       <div class="arch-row">
-        <div class="arch-node accent">PWA · React 18 + TS</div>
-        <div class="arch-node">Android · Kotlin + Retrofit</div>
-        <div class="arch-node dim">REST Client · curl / Postman</div>
+        <div class="arch-node accent">PWA · React 18 + TS · Vite</div>
+        <div class="arch-node accent">Admin SPA · 14+ розділів</div>
+        <div class="arch-node">Operator Panel</div>
+        <div class="arch-node dim">Android · Kotlin + Retrofit</div>
       </div>
       <div class="arch-connector">
         <div class="arch-line"></div>
-        <span>HTTPS · Bearer Auth · Session у PostgreSQL</span>
+        <span>HTTPS · Bearer Auth · Idempotency-Key · Session у PostgreSQL</span>
         <div class="arch-line"></div>
       </div>
+      <!-- API -->
       <div class="arch-row">
-        <div class="arch-node accent grow">Flask REST API · army-bank.onrender.com · Gunicorn</div>
+        <div class="arch-node accent grow">Flask REST API · Gunicorn · army-bank.onrender.com</div>
+        <div class="arch-node accent" style="white-space:nowrap">Socket.IO · WebRTC Signaling · Crash Game</div>
       </div>
       <div class="arch-connector">
         <div class="arch-line"></div>
-        <span>Blueprint routing · @auth_required · @role_required</span>
+        <span>Blueprint routing · @auth_required · @role_required · Input validation</span>
         <div class="arch-line"></div>
       </div>
+      <!-- Blueprints -->
       <div class="arch-row">
-        <div class="arch-node">auth · passkey</div>
-        <div class="arch-node">credit · deposit</div>
-        <div class="arch-node">analytics · agent</div>
-        <div class="arch-node">push · feature</div>
-        <div class="arch-node">admin · operator</div>
+        <div class="arch-node">auth · passkey · session</div>
+        <div class="arch-node">credit · deposit · fx</div>
+        <div class="arch-node">analytics · budget · goals</div>
+        <div class="arch-node">messenger · calls · media</div>
+        <div class="arch-node">push · feature · store</div>
+        <div class="arch-node">admin · operator · agent</div>
       </div>
       <div class="arch-connector">
         <div class="arch-line"></div>
-        <span>database.py · єдиний адаптер PostgreSQL / SQLite</span>
+        <span>database.py · єдиний адаптер · PostgreSQL NUMERIC · SELECT FOR UPDATE</span>
         <div class="arch-line"></div>
       </div>
+      <!-- Storage + External -->
       <div class="arch-row">
-        <div class="arch-node accent">PostgreSQL · production · Render</div>
+        <div class="arch-node accent">PostgreSQL · Render · production</div>
         <div class="arch-node dim">SQLite · local dev</div>
-        <div class="arch-node dim">pywebpush · VAPID Push</div>
-        <div class="arch-node dim">НБУ API · FX rates</div>
+        <div class="arch-node dim">pywebpush · VAPID</div>
+        <div class="arch-node dim">НБУ API · FX live</div>
+        <div class="arch-node dim">WebCrypto · ECDSA docs</div>
+        <div class="arch-node dim">GitHub Actions · CI/CD</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- API MAP -->
+<section class="section" id="api">
+  <div class="container">
+    <div class="section-label">§ REST API · 60+ Endpoints</div>
+    <h2 class="section-title">Карта <em>маршрутів</em></h2>
+    <p class="section-desc">
+      Кожен Blueprint — ізольований контур із власними маршрутами, декораторами
+      і правилами доступу. Єдина точка входу — <code style="font-family:var(--font-mono);font-size:13px;color:var(--accent);background:rgba(212,196,181,.08);padding:2px 6px">army-bank.onrender.com/api/</code>
+    </p>
+    <div class="api-map">
+
+      <div class="api-bp">
+        <div class="api-bp-name">auth · session · passkey</div>
+        <div class="api-routes">
+          <div class="api-route"><span class="api-method post">POST</span><span class="api-path">/register · /login · /logout</span></div>
+          <div class="api-route"><span class="api-method post">POST</span><span class="api-path">/passkey/register · /passkey/login</span></div>
+          <div class="api-route"><span class="api-method get">GET</span><span class="api-path">/me · /sessions</span></div>
+          <div class="api-route"><span class="api-method del">DEL</span><span class="api-path">/sessions/{id}</span></div>
+        </div>
+      </div>
+
+      <div class="api-bp">
+        <div class="api-bp-name">account · cards · transfers</div>
+        <div class="api-routes">
+          <div class="api-route"><span class="api-method get">GET</span><span class="api-path">/balance · /transactions</span></div>
+          <div class="api-route"><span class="api-method post">POST</span><span class="api-path">/transfer · /deposit-funds</span></div>
+          <div class="api-route"><span class="api-method get">GET</span><span class="api-path">/cards · /statement</span></div>
+          <div class="api-route"><span class="api-method post">POST</span><span class="api-path">/export/csv · /export/pdf</span></div>
+        </div>
+      </div>
+
+      <div class="api-bp">
+        <div class="api-bp-name">credit · deposit · fx</div>
+        <div class="api-routes">
+          <div class="api-route"><span class="api-method post">POST</span><span class="api-path">/credits/apply · /repay</span></div>
+          <div class="api-route"><span class="api-method post">POST</span><span class="api-path">/deposits/open · /close</span></div>
+          <div class="api-route"><span class="api-method get">GET</span><span class="api-path">/fx/rates · /fx/history</span></div>
+          <div class="api-route"><span class="api-method post">POST</span><span class="api-path">/fx/exchange</span></div>
+        </div>
+      </div>
+
+      <div class="api-bp">
+        <div class="api-bp-name">analytics · budget · goals</div>
+        <div class="api-routes">
+          <div class="api-route"><span class="api-method get">GET</span><span class="api-path">/analytics/overview</span></div>
+          <div class="api-route"><span class="api-method get">GET</span><span class="api-path">/analytics/heatmap · /sparkline</span></div>
+          <div class="api-route"><span class="api-method get">GET</span><span class="api-path">/budget · /score</span></div>
+          <div class="api-route"><span class="api-method post">POST</span><span class="api-path">/goals · /goals/{id}/contribute</span></div>
+        </div>
+      </div>
+
+      <div class="api-bp">
+        <div class="api-bp-name">messenger · calls · media</div>
+        <div class="api-routes">
+          <div class="api-route"><span class="api-method get">GET</span><span class="api-path">/chats · /chats/{id}/messages</span></div>
+          <div class="api-route"><span class="api-method post">POST</span><span class="api-path">/chats · /messages/send</span></div>
+          <div class="api-route"><span class="api-method post">POST</span><span class="api-path">/media/upload</span></div>
+          <div class="api-route"><span class="api-method get">GET</span><span class="api-path">WS: /socket.io · signaling</span></div>
+        </div>
+      </div>
+
+      <div class="api-bp">
+        <div class="api-bp-name">push · store · agent</div>
+        <div class="api-routes">
+          <div class="api-route"><span class="api-method post">POST</span><span class="api-path">/push/subscribe · /send</span></div>
+          <div class="api-route"><span class="api-method get">GET</span><span class="api-path">/store/catalog · /cashback</span></div>
+          <div class="api-route"><span class="api-method post">POST</span><span class="api-path">/store/purchase</span></div>
+          <div class="api-route"><span class="api-method get">GET</span><span class="api-path">SSE: /agent/stream</span></div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
