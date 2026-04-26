@@ -60,6 +60,27 @@
         }
       }
     </script>
+    <script>
+      /* Source protection — runs before React */
+      (function () {
+        // Block right-click
+        document.addEventListener('contextmenu', function (e) { e.preventDefault(); }, true);
+        // Block DevTools / View-Source shortcuts
+        document.addEventListener('keydown', function (e) {
+          var c = e.ctrlKey || e.metaKey;
+          if (
+            e.key === 'F12' ||
+            (c && (e.key === 'u' || e.key === 'U')) ||
+            (c && (e.key === 's' || e.key === 'S')) ||
+            (c && e.shiftKey && /^[iIjJkK]$/.test(e.key))
+          ) { e.preventDefault(); e.stopPropagation(); }
+        }, true);
+        // Block image drag
+        document.addEventListener('dragstart', function (e) {
+          if (e.target && e.target.tagName === 'IMG') e.preventDefault();
+        }, true);
+      })();
+    </script>
     <style>
       ::-webkit-scrollbar { width: 4px; }
       ::-webkit-scrollbar-track { background: #0a0a0a; }
@@ -67,6 +88,9 @@
       ::-webkit-scrollbar-thumb:hover { background: #555; }
       html, body { max-width: 100%; overflow-x: hidden; }
       body { background-color: #050505; color: #e5e5e5; }
+      /* Protect visual content from trivial selection */
+      img, canvas, video { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
+      ::selection { background: rgba(212,196,181,0.18); color: inherit; }
       .font-editorial { font-family: 'Cormorant Garamond', serif; }
       .bg-noise {
         position: fixed; top: 0; left: 0;
@@ -603,8 +627,9 @@
 
       function setHtml(id, value) {
         const el = document.getElementById(id);
+        // Only allow our known safe tags: <br> <em> — strip anything else
         if (!el || typeof value !== 'string') return;
-        el.innerHTML = value;
+        el.innerHTML = value.replace(/<(?!\/?(?:br|em)\b)[^>]*>/gi, '');
       }
 
       function applyABSectionLocale(lang) {
@@ -959,7 +984,8 @@
       function injectLatestPublication() {
         const section = document.getElementById('science');
         if (!section) return false;
-        const list = section.querySelector('.border-t.border-white\\/10');
+        // Tailwind class `border-white/10` — `/` breaks strict CSS selector parsers, use attribute contains
+        const list = section.querySelector('[class*="border-white"]') || section.querySelector('[class*="border-t"]');
         if (!list) return false;
         if (list.querySelector('[data-pub-id="aip-2026-edge-energy"]')) return true;
 
