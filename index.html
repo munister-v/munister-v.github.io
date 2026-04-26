@@ -724,18 +724,38 @@
         });
       }
 
-      // Move ARM Bank MVP section to right after the Methodology section in the React app
+      // Reorder sections:
+      // Hero → Capabilities (#experience) → Science (#science) → Methodology → ARM Bank → Italy → Cases
       function injectARMBank() {
         const methodology = document.getElementById('methodology');
         const mvp = document.getElementById('army-bank-mvp');
         const italy = document.getElementById('italy-showcase');
-        if (methodology && mvp) {
-          methodology.after(mvp);
-          if (italy) mvp.after(italy);
-          scheduleABLocaleSync();
-          return true;
+        const experience = document.getElementById('experience');
+        const science = document.getElementById('science');
+
+        if (!methodology) return false;
+
+        // Find hero — the section immediately before #methodology in the DOM
+        const hero = methodology.previousElementSibling;
+
+        // Place Capabilities right after hero (before methodology)
+        if (hero && experience && experience !== hero.nextElementSibling) {
+          hero.after(experience);
         }
-        return false;
+        // Place Science right after Capabilities
+        if (experience && science && science !== experience.nextElementSibling) {
+          experience.after(science);
+        }
+
+        // Place ARM Bank after Methodology
+        if (mvp) {
+          methodology.after(mvp);
+          // Italy right after ARM Bank
+          if (italy) mvp.after(italy);
+        }
+
+        scheduleABLocaleSync();
+        return true;
       }
 
       function bindLangSwitcherSync() {
