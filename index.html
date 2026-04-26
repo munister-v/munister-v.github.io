@@ -676,6 +676,33 @@
         applyItalySectionLocale(getCurrentPortfolioLang());
       }
 
+      // Patch timeline job titles to Researcher framing
+      const TIMELINE_PATCHES = {
+        'CTO & Co-founder': 'Lead Researcher & Technologist',
+        'Senior System Analyst & Integrator': 'Systems Researcher & Integrator',
+        'Mobile & Web Developer / Consultant': 'R&D Researcher & Developer',
+        'Leading technical strategy and R&D. Orchestrating development teams, selecting technology stacks (TS, Swift, Python), and ensuring product market fit through data analysis. Managing infrastructure for B2B platforms and mobile apps.':
+          'Independent research into FinTech systems architecture, adaptive product modeling, and data-driven decision frameworks. Applied R&D across B2B platform design, technology stack selection (TS, Swift, Python), and infrastructure scalability for high-load systems.',
+        'Executed full-cycle automation for restaurant chains. Italy (Milan), Montenegro (Budva), Serbia (Belgrade). Analyzed operational bottlenecks, deployed network infrastructure, and integrated custom software solutions.':
+          'Field research and automation analysis across EU restaurant operations — Milan, Budva, Belgrade. Studied operational bottleneck patterns, deployed network infrastructure, and validated integration hypotheses with custom software solutions.',
+        'Hands-on development and technical consulting. Focus on clean architecture, responsive UI/UX, and reliable backend integration for culture, arts, and commercial sectors.':
+          'Applied research into UX behavior and information architecture across culture, arts, and commercial domains. Development focused on translating research findings into clean, measurable interfaces.',
+      };
+
+      function patchTimeline() {
+        const exp = document.getElementById('experience');
+        if (!exp) return false;
+        const walker = document.createTreeWalker(exp, NodeFilter.SHOW_TEXT);
+        let node;
+        while ((node = walker.nextNode())) {
+          const t = node.textContent;
+          if (TIMELINE_PATCHES[t.trim()]) {
+            node.textContent = TIMELINE_PATCHES[t.trim()];
+          }
+        }
+        return true;
+      }
+
       function injectLatestPublication() {
         const section = document.getElementById('science');
         if (!section) return false;
@@ -754,6 +781,7 @@
           if (italy) mvp.after(italy);
         }
 
+        patchTimeline();
         scheduleABLocaleSync();
         return true;
       }
