@@ -676,6 +676,259 @@
         applyItalySectionLocale(getCurrentPortfolioLang());
       }
 
+      // Replace #methodology section with visual research map
+      function injectMethodologyMap() {
+        const m = document.getElementById('methodology');
+        if (!m || m.dataset.mapInjected) return !!m;
+
+        m.dataset.mapInjected = '1';
+        m.innerHTML = `
+<style>
+.rm-wrap { max-width: 1200px; margin: 0 auto; padding: 80px 48px; }
+@media (max-width: 768px) { .rm-wrap { padding: 56px 24px; } }
+
+.rm-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; text-transform: uppercase; letter-spacing: .15em;
+  color: #6b6b6b; margin-bottom: 18px;
+}
+.rm-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(34px, 5vw, 56px); font-weight: 300;
+  color: #fff; line-height: 1.06; margin-bottom: 16px;
+}
+.rm-title em { font-style: italic; color: #d4c4b5; }
+.rm-sub {
+  font-size: 14px; color: #8a8a8a; line-height: 1.75;
+  max-width: 580px; margin-bottom: 64px; font-weight: 400;
+}
+
+/* cluster grid */
+.rm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 1px;
+}
+.rm-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-top: none;
+}
+.rm-cluster {
+  background: #111;
+  padding: 32px 28px;
+  transition: background .18s;
+}
+.rm-cluster:hover { background: #161616; }
+
+.rm-cluster-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px; text-transform: uppercase; letter-spacing: .14em;
+  color: rgba(212,196,181,0.5); margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px;
+}
+.rm-cluster-label::before {
+  content: ''; display: inline-block;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(212,196,181,0.5); flex-shrink: 0;
+}
+.rm-cluster-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 400; color: #f0ece4;
+  margin-bottom: 16px; line-height: 1.2;
+}
+.rm-nodes {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.rm-node {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 500; letter-spacing: .06em;
+  padding: 4px 10px;
+  border: 1px solid rgba(255,255,255,0.09);
+  color: #a3a3a3;
+  background: rgba(255,255,255,0.03);
+  white-space: nowrap;
+}
+.rm-node.hi {
+  color: #d4c4b5;
+  background: rgba(212,196,181,0.08);
+  border-color: rgba(212,196,181,0.22);
+}
+.rm-node.dim {
+  color: #555; border-color: rgba(255,255,255,0.05);
+}
+
+@media (max-width: 900px) {
+  .rm-grid { grid-template-columns: 1fr 1fr; }
+  .rm-grid-2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .rm-grid { grid-template-columns: 1fr; }
+}
+</style>
+<div class="rm-wrap">
+  <div class="rm-eyebrow">§ Research Map &amp; Technical Scope</div>
+  <h2 class="rm-title">Що вивчав і з чим <em>працював</em></h2>
+  <p class="rm-sub">
+    Від мікроконтролерів і вбудованих систем до фінансових платформ і наукових публікацій —
+    карта технічного та дослідницького досвіду по кластерах.
+  </p>
+
+  <div class="rm-grid">
+
+    <!-- Embedded & Hardware -->
+    <div class="rm-cluster">
+      <div class="rm-cluster-label">Embedded · IoT · Hardware</div>
+      <div class="rm-cluster-title">Вбудовані системи</div>
+      <div class="rm-nodes">
+        <span class="rm-node hi">Arduino</span>
+        <span class="rm-node hi">ESP32 / NodeMCU</span>
+        <span class="rm-node">STM32</span>
+        <span class="rm-node hi">UART · I2C · SPI</span>
+        <span class="rm-node">PWM · ADC</span>
+        <span class="rm-node">Sensors & actuators</span>
+        <span class="rm-node hi">POS terminals</span>
+        <span class="rm-node">Fiscal printers</span>
+        <span class="rm-node">KDS (Kitchen Display)</span>
+        <span class="rm-node">Guest Wi-Fi analytics</span>
+        <span class="rm-node dim">RTOS basics</span>
+      </div>
+    </div>
+
+    <!-- Control Theory & Science -->
+    <div class="rm-cluster">
+      <div class="rm-cluster-label">Control Theory · Cybernetics · R&D</div>
+      <div class="rm-cluster-title">Теорія керування</div>
+      <div class="rm-nodes">
+        <span class="rm-node hi">Matlab / Simulink</span>
+        <span class="rm-node hi">PID controllers</span>
+        <span class="rm-node">State-space models</span>
+        <span class="rm-node">Regression analysis</span>
+        <span class="rm-node hi">Neural networks</span>
+        <span class="rm-node">Adaptive algorithms</span>
+        <span class="rm-node hi">DSP · Signal processing</span>
+        <span class="rm-node">Fog computing · IoT</span>
+        <span class="rm-node hi">Scopus / WoS papers</span>
+        <span class="rm-node">H-index 13 · 350+ citations</span>
+      </div>
+    </div>
+
+    <!-- Languages -->
+    <div class="rm-cluster">
+      <div class="rm-cluster-label">Languages · Runtimes</div>
+      <div class="rm-cluster-title">Мови та платформи</div>
+      <div class="rm-nodes">
+        <span class="rm-node hi">TypeScript</span>
+        <span class="rm-node hi">Python 3</span>
+        <span class="rm-node hi">Swift (iOS)</span>
+        <span class="rm-node">JavaScript ES2022</span>
+        <span class="rm-node">C / C++ (embedded)</span>
+        <span class="rm-node dim">Kotlin (Android)</span>
+        <span class="rm-node">Node.js</span>
+        <span class="rm-node dim">Matlab scripting</span>
+        <span class="rm-node">SQL</span>
+      </div>
+    </div>
+
+    <!-- Frontend & Mobile -->
+    <div class="rm-cluster">
+      <div class="rm-cluster-label">Frontend · Mobile · PWA</div>
+      <div class="rm-cluster-title">Інтерфейси</div>
+      <div class="rm-nodes">
+        <span class="rm-node hi">React 18</span>
+        <span class="rm-node hi">Vite</span>
+        <span class="rm-node">Next.js</span>
+        <span class="rm-node hi">Service Worker</span>
+        <span class="rm-node hi">WebAuthn / Face ID</span>
+        <span class="rm-node">WebRTC</span>
+        <span class="rm-node hi">Web Push VAPID</span>
+        <span class="rm-node">Web Audio API</span>
+        <span class="rm-node hi">SwiftUI (iOS)</span>
+        <span class="rm-node dim">WebGL · Three.js</span>
+        <span class="rm-node">Grasshopper</span>
+      </div>
+    </div>
+
+    <!-- Backend & Data -->
+    <div class="rm-cluster">
+      <div class="rm-cluster-label">Backend · Data · Infrastructure</div>
+      <div class="rm-cluster-title">Сервер та дані</div>
+      <div class="rm-nodes">
+        <span class="rm-node hi">Flask · Python</span>
+        <span class="rm-node hi">PostgreSQL</span>
+        <span class="rm-node">SQLite</span>
+        <span class="rm-node">Redis</span>
+        <span class="rm-node hi">REST API design</span>
+        <span class="rm-node">SSE streaming</span>
+        <span class="rm-node">Docker</span>
+        <span class="rm-node dim">Kubernetes basics</span>
+        <span class="rm-node">AWS · DigitalOcean</span>
+        <span class="rm-node">Render · GitHub Actions</span>
+        <span class="rm-node hi">bcrypt · WebCrypto</span>
+      </div>
+    </div>
+
+    <!-- Research Domains -->
+    <div class="rm-cluster">
+      <div class="rm-cluster-label">Research Domains · Applied</div>
+      <div class="rm-cluster-title">Предметні області</div>
+      <div class="rm-nodes">
+        <span class="rm-node hi">FinTech architecture</span>
+        <span class="rm-node hi">UX research</span>
+        <span class="rm-node">EdTech · LMS design</span>
+        <span class="rm-node hi">HoReCa automation</span>
+        <span class="rm-node">Algo-trading · DSP</span>
+        <span class="rm-node hi">Information architecture</span>
+        <span class="rm-node">Behavioral modeling</span>
+        <span class="rm-node">Parametric urbanism</span>
+        <span class="rm-node dim">Visual research · Italy</span>
+        <span class="rm-node">Generative art</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- bottom 2-col row -->
+  <div class="rm-grid-2">
+    <div class="rm-cluster">
+      <div class="rm-cluster-label">AI · Machine Learning · Data Science</div>
+      <div class="rm-cluster-title">Машинне навчання</div>
+      <div class="rm-nodes">
+        <span class="rm-node hi">Predictive modeling</span>
+        <span class="rm-node">TensorFlow (basic)</span>
+        <span class="rm-node hi">Regression · Classification</span>
+        <span class="rm-node hi">NLP · Semantics</span>
+        <span class="rm-node">User behavior analysis</span>
+        <span class="rm-node hi">Industry 4.0 · OPC-UA</span>
+        <span class="rm-node dim">Edge computing · Fog nodes</span>
+        <span class="rm-node">Time-series analysis</span>
+      </div>
+    </div>
+    <div class="rm-cluster">
+      <div class="rm-cluster-label">Network · Integration · Systems</div>
+      <div class="rm-cluster-title">Мережі та інтеграції</div>
+      <div class="rm-nodes">
+        <span class="rm-node hi">TCP/IP · Wi-Fi · MQTT</span>
+        <span class="rm-node">VPN · VLAN</span>
+        <span class="rm-node hi">WebSocket · SSE</span>
+        <span class="rm-node">Modbus · RS-485</span>
+        <span class="rm-node hi">POS integration</span>
+        <span class="rm-node">Inventory flow systems</span>
+        <span class="rm-node hi">CI/CD · GitHub Actions</span>
+        <span class="rm-node">Agile · Scrum · R&D lead</span>
+      </div>
+    </div>
+  </div>
+</div>`;
+        return true;
+      }
+
       // Patch timeline job titles to Researcher framing
       const TIMELINE_PATCHES = {
         'CTO & Co-founder': 'Lead Researcher & Technologist',
@@ -782,6 +1035,7 @@
         }
 
         patchTimeline();
+        injectMethodologyMap();
         scheduleABLocaleSync();
         return true;
       }
