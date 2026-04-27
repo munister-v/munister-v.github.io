@@ -21,11 +21,8 @@ html,body { width:100%; height:100%; overflow:hidden;
 /* ── DESKTOP ── */
 #desktop {
   position:fixed; inset:0; z-index:0;
-  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Above_Clouds_filtered.jpg/1920px-Above_Clouds_filtered.jpg');
-  background-size:cover; background-position:center 60%;
-}
-#desktop[data-wall="misurina"] {
-  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Lago_Misurina_-_panoramio.jpg/1920px-Lago_Misurina_-_panoramio.jpg');
+  background-image: url('https://raw.githubusercontent.com/munister-v/munister-v.github.io/refs/heads/main/images/background.jpg');
+  background-size:cover; background-position:center center;
 }
 #desktop::before {
   content:''; position:absolute; inset:0; pointer-events:none;
@@ -35,9 +32,103 @@ html,body { width:100%; height:100%; overflow:hidden;
     rgba(0,0,0,.05) 68%,
     rgba(0,0,0,.42) 100%);
 }
-@keyframes twinkle { 0%{opacity:.65} 100%{opacity:1} }
+@keyframes twinkle    { 0%{opacity:.65} 100%{opacity:1} }
 @keyframes windowOpen { from{transform:scale(.88);opacity:0} to{transform:scale(1);opacity:1} }
-@keyframes spin { to{transform:rotate(360deg)} }
+@keyframes spin       { to{transform:rotate(360deg)} }
+@keyframes bootFadeIn { from{opacity:0;transform:scale(.96)} to{opacity:1;transform:scale(1)} }
+@keyframes bootBar    { from{width:0} to{width:100%} }
+@keyframes bootOut    { from{opacity:1} to{opacity:0;pointer-events:none} }
+@keyframes widgetIn   { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse      { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+/* ── BOOT SPLASH ── */
+#boot-splash {
+  position:fixed; inset:0; z-index:999999;
+  background:linear-gradient(145deg,#060d1e 0%,#0e1a38 50%,#06101f 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px;
+  animation: bootFadeIn .4s ease forwards;
+}
+#boot-splash.out { animation: bootOut .6s ease forwards; pointer-events:none; }
+.boot-logo { animation: bootFadeIn .6s .2s ease both; }
+.boot-name  { font-size:28px; font-weight:700; color:#fff; letter-spacing:-.02em;
+  animation: bootFadeIn .6s .4s ease both; }
+.boot-sub   { font-size:13px; color:rgba(255,255,255,.35); letter-spacing:.06em;
+  text-transform:uppercase; animation: bootFadeIn .6s .6s ease both; }
+.boot-bar-wrap {
+  width:200px; height:3px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden;
+  animation: bootFadeIn .4s .8s ease both;
+}
+.boot-bar {
+  height:100%; background:linear-gradient(90deg,#3b82f6,#10b981);
+  border-radius:2px; animation: bootBar 1.8s .9s cubic-bezier(.4,0,.2,1) forwards;
+  width:0;
+}
+
+/* ── DESKTOP WIDGETS ── */
+#desktop-widgets {
+  position:fixed; top:calc(var(--menubar-h) + 14px); left:18px;
+  display:flex; flex-direction:column; gap:12px; z-index:90;
+  pointer-events:none;
+}
+.dw { pointer-events:all; }
+.widget {
+  background:rgba(10,16,36,.62);
+  backdrop-filter:blur(28px) saturate(180%); -webkit-backdrop-filter:blur(28px) saturate(180%);
+  border:1px solid rgba(255,255,255,.13); border-radius:18px;
+  color:#fff; overflow:hidden;
+  animation: widgetIn .5s cubic-bezier(.34,1.56,.64,1) both;
+  box-shadow:0 8px 32px rgba(0,0,0,.35);
+  transition:transform .2s,box-shadow .2s;
+}
+.widget:hover { transform:scale(1.02); box-shadow:0 12px 40px rgba(0,0,0,.45); }
+
+/* Clock widget */
+.w-clock { width:200px; padding:16px 20px; }
+.w-clock-time { font-size:42px; font-weight:200; letter-spacing:-.03em; line-height:1; }
+.w-clock-date { font-size:12px; color:rgba(255,255,255,.5); margin-top:4px; }
+.w-clock-day  { font-size:11px; color:rgba(255,255,255,.3); margin-top:2px; }
+
+/* Rates widget */
+.w-rates { width:200px; padding:14px 16px; }
+.w-rates-title { font-size:10px; color:rgba(255,255,255,.35); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px; }
+.w-rate-row { display:flex; justify-content:space-between; align-items:center; padding:4px 0; }
+.w-rate-curr { font-size:12px; color:rgba(255,255,255,.6); }
+.w-rate-val  { font-size:13px; font-weight:600; }
+
+/* ── LOAN CALC specific ── */
+.loan-result-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+.loan-result-row:last-child { border:none; }
+.loan-result-label { font-size:12px; color:rgba(255,255,255,.45); }
+.loan-result-val   { font-size:13px; font-weight:600; color:#10b981; }
+.loan-schedule-row { display:grid; grid-template-columns:40px 1fr 1fr 1fr; gap:4px; padding:6px 0;
+  border-bottom:1px solid rgba(255,255,255,.04); font-size:11px; }
+
+/* ── CONTROL CENTER ── */
+#ctrl-center {
+  position:fixed; top:calc(var(--menubar-h) + 8px); right:14px;
+  width:300px; background:rgba(28,32,58,.96);
+  backdrop-filter:blur(40px) saturate(200%); -webkit-backdrop-filter:blur(40px) saturate(200%);
+  border:1px solid rgba(255,255,255,.14); border-radius:18px;
+  padding:16px; z-index:99997;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  display:none; flex-direction:column; gap:12px;
+  animation: bootFadeIn .2s ease forwards;
+}
+#ctrl-center.visible { display:flex; }
+.cc-row { display:flex; gap:10px; }
+.cc-tile {
+  flex:1; background:rgba(255,255,255,.08); border-radius:12px;
+  padding:12px; cursor:pointer; transition:background .15s;
+  display:flex; flex-direction:column; gap:6px;
+}
+.cc-tile:hover { background:rgba(255,255,255,.14); }
+.cc-tile.on { background:rgba(59,130,246,.3); }
+.cc-tile-icon { font-size:20px; }
+.cc-tile-label { font-size:11px; color:rgba(255,255,255,.7); font-weight:500; }
+.cc-tile-sub   { font-size:10px; color:rgba(255,255,255,.35); }
+.cc-slider-wrap { padding:4px 0; }
+.cc-slider-label { font-size:11px; color:rgba(255,255,255,.45); margin-bottom:6px; display:flex; justify-content:space-between; }
+.cc-slider { width:100%; accent-color:#3b82f6; }
 
 /* ── MENU BAR ── */
 #menubar {
@@ -402,6 +493,8 @@ html,body { width:100%; height:100%; overflow:hidden;
 .ic-currency { background:linear-gradient(145deg,#10b981,#047857,#064e3b); }
 .ic-rates    { background:linear-gradient(145deg,#3b82f6,#1d4ed8,#1e3a8a); }
 .ic-calendar { background:linear-gradient(145deg,#f43f5e,#be123c,#881337); }
+.ic-loan     { background:linear-gradient(145deg,#0ea5e9,#0369a1,#075985); }
+.ic-chart    { background:linear-gradient(145deg,#a855f7,#7c3aed,#4c1d95); }
 
 /* ── NOTIFICATIONS ── */
 #notif-area {
@@ -494,7 +587,108 @@ html,body { width:100%; height:100%; overflow:hidden;
 </head>
 <body>
 
-<div id="desktop" data-wall="misurina"></div>
+<!-- BOOT SPLASH -->
+<div id="boot-splash">
+  <div class="boot-logo">
+    <svg viewBox="0 0 100 100" width="80" height="80" style="border-radius:20px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.5)">
+      <defs><clipPath id="bhex"><polygon points="50,2 93,26 93,74 50,98 7,74 7,26"/></clipPath></defs>
+      <polygon points="50,2 93,26 93,74 50,98 7,74 7,26" fill="#f4c430"/>
+      <polygon points="50,2 93,26 93,74 50,50" fill="#e63946"/>
+      <g clip-path="url(#bhex)" transform="translate(50,52)" opacity=".92">
+        <circle cx="0" cy="-6" r="9" fill="#f5cba7" stroke="#5d4037" stroke-width="1.5"/>
+        <line x1="0" y1="2" x2="-22" y2="22" stroke="#5d4037" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="0" y1="2" x2="22" y2="22" stroke="#5d4037" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="0" y1="2" x2="0" y2="-28" stroke="#5d4037" stroke-width="3.5" stroke-linecap="round"/>
+        <ellipse cx="-24" cy="24" rx="5" ry="3" fill="#c8a84b" transform="rotate(-40,-24,24)"/>
+        <ellipse cx="24" cy="24" rx="5" ry="3" fill="#c8a84b" transform="rotate(40,24,24)"/>
+        <ellipse cx="0" cy="-30" rx="3" ry="5" fill="#c8a84b"/>
+      </g>
+    </svg>
+  </div>
+  <div class="boot-name">ArmyOS</div>
+  <div class="boot-sub">Захищена операційна система</div>
+  <div class="boot-bar-wrap"><div class="boot-bar"></div></div>
+</div>
+
+<div id="desktop"></div>
+
+<!-- DESKTOP WIDGETS -->
+<div id="desktop-widgets">
+  <div class="dw widget w-clock">
+    <div class="w-clock-time" id="wg-time">00:00</div>
+    <div class="w-clock-date" id="wg-date"></div>
+    <div class="w-clock-day"  id="wg-day"></div>
+  </div>
+  <div class="dw widget w-rates">
+    <div class="w-rates-title">Курси валют · UAH</div>
+    <div class="w-rate-row">
+      <span class="w-rate-curr">🇺🇸 USD</span>
+      <span class="w-rate-val" id="wg-usd" style="color:#f59e0b">—</span>
+    </div>
+    <div class="w-rate-row">
+      <span class="w-rate-curr">🇪🇺 EUR</span>
+      <span class="w-rate-val" id="wg-eur" style="color:#3b82f6">—</span>
+    </div>
+    <div class="w-rate-row">
+      <span class="w-rate-curr">🇬🇧 GBP</span>
+      <span class="w-rate-val" id="wg-gbp" style="color:#8b5cf6">—</span>
+    </div>
+    <div class="w-rate-row">
+      <span class="w-rate-curr">🇵🇱 PLN</span>
+      <span class="w-rate-val" id="wg-pln" style="color:#10b981">—</span>
+    </div>
+    <div style="font-size:9px;color:rgba(255,255,255,.2);margin-top:8px;text-align:right" id="wg-upd">оновлення…</div>
+  </div>
+</div>
+
+<!-- CONTROL CENTER -->
+<div id="ctrl-center">
+  <div class="cc-row">
+    <div class="cc-tile on" id="cc-wifi">
+      <div class="cc-tile-icon">📶</div>
+      <div class="cc-tile-label">Wi-Fi</div>
+      <div class="cc-tile-sub">Підключено</div>
+    </div>
+    <div class="cc-tile" id="cc-bt">
+      <div class="cc-tile-icon">🔷</div>
+      <div class="cc-tile-label">Bluetooth</div>
+      <div class="cc-tile-sub">Вимкнено</div>
+    </div>
+    <div class="cc-tile on" id="cc-vpn">
+      <div class="cc-tile-icon">🔐</div>
+      <div class="cc-tile-label">VPN</div>
+      <div class="cc-tile-sub">Активний</div>
+    </div>
+  </div>
+  <div class="cc-slider-wrap">
+    <div class="cc-slider-label"><span>🔆 Яскравість</span><span id="cc-bright-val">80%</span></div>
+    <input class="cc-slider" type="range" min="20" max="100" value="80"
+      oninput="document.getElementById('cc-bright-val').textContent=this.value+'%';document.body.style.filter='brightness('+this.value/80+')'">
+  </div>
+  <div class="cc-slider-wrap">
+    <div class="cc-slider-label"><span>🔊 Гучність</span><span id="cc-vol-val">70%</span></div>
+    <input class="cc-slider" type="range" min="0" max="100" value="70"
+      oninput="document.getElementById('cc-vol-val').textContent=this.value+'%'">
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+    <div class="cc-tile" onclick="tileAll()">
+      <div class="cc-tile-icon">⊞</div>
+      <div class="cc-tile-label">Плитка вікон</div>
+    </div>
+    <div class="cc-tile" onclick="closeAllWindows();closeCtrlCenter()">
+      <div class="cc-tile-icon">✕</div>
+      <div class="cc-tile-label">Закрити всі</div>
+    </div>
+    <div class="cc-tile" onclick="openApp('currency');closeCtrlCenter()">
+      <div class="cc-tile-icon">💱</div>
+      <div class="cc-tile-label">Конвертер</div>
+    </div>
+    <div class="cc-tile" onclick="openApp('calc');closeCtrlCenter()">
+      <div class="cc-tile-icon">🧮</div>
+      <div class="cc-tile-label">Калькулятор</div>
+    </div>
+  </div>
+</div>
 
 <!-- MENU BAR -->
 <div id="menubar">
@@ -532,11 +726,11 @@ html,body { width:100%; height:100%; overflow:hidden;
   <span class="menu-item" onclick="menubarAction('view')">Вигляд</span>
   <span class="menu-item" onclick="tileAll()">Вікно</span>
   <div class="menubar-right">
-    <span class="mbi" title="Wi-Fi">📶</span>
-    <span class="mbi" title="Звук">🔊</span>
+    <span class="mbi" title="Control Center" onclick="toggleCtrlCenter(event)">📶</span>
+    <span class="mbi" title="Control Center" onclick="toggleCtrlCenter(event)">🔊</span>
     <span class="mbi" title="Пошук (⌘Space)" onclick="toggleSpotlight()">🔍</span>
-    <span class="mbi" onclick="toggleSpotlight()">⌨️</span>
-    <span id="clock"></span>
+    <span class="mbi" title="Control Center" onclick="toggleCtrlCenter(event)">⌃</span>
+    <span id="clock" style="cursor:default"></span>
   </div>
 </div>
 
@@ -655,6 +849,18 @@ html,body { width:100%; height:100%; overflow:hidden;
     <div class="dock-tip">Календар</div>
   </div>
 
+  <div class="dock-item" id="dock-loan" onclick="toggleApp('loan')">
+    <div class="dock-icon ic-loan">💳</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Кредитний калькулятор</div>
+  </div>
+
+  <div class="dock-item" id="dock-chart" onclick="toggleApp('chart')">
+    <div class="dock-icon ic-chart">📈</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Графік курсів</div>
+  </div>
+
   <div class="dock-sep"></div>
 
   <div class="dock-item" onclick="toggleSpotlight()">
@@ -724,6 +930,16 @@ const APPS = {
     title:'Календар', icon:'📅', iconClass:'ic-calendar',
     type:'calendar',
     defaultW:460, defaultH:520,
+  },
+  loan: {
+    title:'Кредитний калькулятор', icon:'🏦📋', iconClass:'ic-loan',
+    type:'loan',
+    defaultW:720, defaultH:640,
+  },
+  chart: {
+    title:'Графік курсів', icon:'📈', iconClass:'ic-chart',
+    type:'chart',
+    defaultW:760, defaultH:520,
   },
 };
 
@@ -803,6 +1019,8 @@ function _createWindow(id) {
   else if (cfg.type === 'rates')    inner += _buildRates(id);
   else if (cfg.type === 'calc')     inner += _buildCalc(id);
   else if (cfg.type === 'calendar') inner += _buildCalendar(id);
+  else if (cfg.type === 'loan')     inner += _buildLoan(id);
+  else if (cfg.type === 'chart')    inner += _buildChart(id);
   inner += _buildResizeHandles(id);
 
   el.innerHTML = inner;
@@ -832,6 +1050,10 @@ function _createWindow(id) {
     _initCalc(id);
   } else if (cfg.type === 'calendar') {
     _initCalendar(id);
+  } else if (cfg.type === 'loan') {
+    _initLoan(id);
+  } else if (cfg.type === 'chart') {
+    _initChart(id);
   }
 
   // Welcome notification once
@@ -1925,6 +2147,338 @@ function calSelect(id, d) {
 }
 
 // ─────────────────────────────────────────────
+// 💳 LOAN CALCULATOR
+// ─────────────────────────────────────────────
+function _buildLoan(id) {
+  return `<div style="flex:1;display:flex;overflow:hidden;background:linear-gradient(145deg,#060e22,#0c1830)">
+  <!-- Inputs -->
+  <div style="width:280px;flex-shrink:0;padding:20px 16px;border-right:1px solid rgba(255,255,255,.07);overflow-y:auto;display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.08em">Параметри кредиту</div>
+    ${[
+      {id:'amount', label:'💰 Сума кредиту, UAH', val:'500000', type:'number'},
+      {id:'rate',   label:'📊 Річна ставка, %',   val:'18',     type:'number'},
+      {id:'months', label:'📅 Строк, місяців',     val:'60',     type:'number'},
+    ].map(f=>`
+    <div>
+      <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:5px;letter-spacing:.06em">${f.label}</div>
+      <input id="ln-${f.id}-${id}" type="${f.type}" value="${f.val}"
+        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+               border-radius:9px;padding:9px 12px;color:#fff;font-size:15px;font-weight:600;outline:none"
+        oninput="loanCalc('${id}')">
+    </div>`).join('')}
+    <div>
+      <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:5px;letter-spacing:.06em">📋 Тип платежу</div>
+      <select id="ln-type-${id}" onchange="loanCalc('${id}')"
+        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+               border-radius:9px;padding:9px 12px;color:#fff;font-size:13px;outline:none;cursor:pointer">
+        <option value="annuity">Ануїтетний (рівні)</option>
+        <option value="diff">Диференційований</option>
+      </select>
+    </div>
+    <!-- Summary -->
+    <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.18);border-radius:12px;padding:14px;margin-top:4px">
+      <div class="loan-result-row"><span class="loan-result-label">Щомісячний платіж</span><span class="loan-result-val" id="ln-monthly-${id}">—</span></div>
+      <div class="loan-result-row"><span class="loan-result-label">Загальна сума</span><span class="loan-result-val" id="ln-total-${id}" style="color:#f59e0b">—</span></div>
+      <div class="loan-result-row"><span class="loan-result-label">Переплата</span><span class="loan-result-val" id="ln-over-${id}" style="color:#f43f5e">—</span></div>
+      <div class="loan-result-row"><span class="loan-result-label">Ефект. ставка</span><span class="loan-result-val" id="ln-eff-${id}" style="color:#a78bfa">—</span></div>
+    </div>
+  </div>
+  <!-- Schedule -->
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0">
+      <div style="display:grid;grid-template-columns:40px 1fr 1fr 1fr 1fr;gap:4px;font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.06em">
+        <div>№</div><div>Платіж</div><div>Тіло</div><div>Відсотки</div><div>Залишок</div>
+      </div>
+    </div>
+    <div id="ln-schedule-${id}" style="flex:1;overflow-y:auto;padding:0 8px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent"></div>
+  </div>
+</div>`;
+}
+
+function _initLoan(id) { loanCalc(id); }
+
+function loanCalc(id) {
+  const amount = parseFloat(document.getElementById(`ln-amount-${id}`)?.value) || 0;
+  const rate   = parseFloat(document.getElementById(`ln-rate-${id}`)?.value)   || 0;
+  const months = parseInt(document.getElementById(`ln-months-${id}`)?.value)   || 1;
+  const type   = document.getElementById(`ln-type-${id}`)?.value || 'annuity';
+
+  const mRate = rate / 100 / 12;
+  let schedule = [];
+  let totalPaid = 0;
+
+  if (type === 'annuity') {
+    const payment = mRate > 0 ? amount * mRate * Math.pow(1+mRate,months) / (Math.pow(1+mRate,months)-1) : amount/months;
+    let balance = amount;
+    for (let i=1; i<=months; i++) {
+      const interest = balance * mRate;
+      const principal = payment - interest;
+      balance -= principal;
+      totalPaid += payment;
+      schedule.push({ i, payment, principal, interest, balance: Math.max(0,balance) });
+    }
+    const el = document.getElementById(`ln-monthly-${id}`);
+    if (el) el.textContent = _fmt(payment) + ' ₴';
+  } else {
+    const principal = amount / months;
+    let balance = amount;
+    let firstPayment = 0;
+    for (let i=1; i<=months; i++) {
+      const interest = balance * mRate;
+      const payment = principal + interest;
+      if (i===1) firstPayment = payment;
+      balance -= principal;
+      totalPaid += payment;
+      schedule.push({ i, payment, principal, interest, balance: Math.max(0,balance) });
+    }
+    const el = document.getElementById(`ln-monthly-${id}`);
+    if (el) el.textContent = _fmt(firstPayment) + '→' + _fmt(principal) + ' ₴';
+  }
+
+  const overpay = totalPaid - amount;
+  const effRate = (Math.pow(totalPaid/amount, 12/months) - 1) * 100;
+
+  const setEl = (sid, txt) => { const e = document.getElementById(sid); if(e) e.textContent = txt; };
+  setEl(`ln-total-${id}`,   _fmt(totalPaid) + ' ₴');
+  setEl(`ln-over-${id}`,    _fmt(overpay) + ' ₴');
+  setEl(`ln-eff-${id}`,     isFinite(effRate) ? effRate.toFixed(2)+'%' : '—');
+
+  // Schedule table
+  const tbody = document.getElementById(`ln-schedule-${id}`);
+  if (!tbody) return;
+  const rows = schedule.slice(0,120).map(r => `
+    <div style="display:grid;grid-template-columns:40px 1fr 1fr 1fr 1fr;gap:4px;padding:6px 8px;
+      border-bottom:1px solid rgba(255,255,255,.04);font-size:11px;
+      ${r.i%2===0?'background:rgba(255,255,255,.02)':''}">
+      <div style="color:rgba(255,255,255,.3)">${r.i}</div>
+      <div style="color:#10b981;font-weight:600">${_fmt(r.payment)}</div>
+      <div style="color:#3b82f6">${_fmt(r.principal)}</div>
+      <div style="color:#f43f5e">${_fmt(r.interest)}</div>
+      <div style="color:rgba(255,255,255,.5)">${_fmt(r.balance)}</div>
+    </div>`).join('');
+  tbody.innerHTML = rows + (schedule.length > 120 ? `<div style="padding:10px;text-align:center;font-size:11px;color:rgba(255,255,255,.3)">Показано 120 з ${schedule.length} платежів</div>` : '');
+}
+
+function _fmt(n) {
+  return isNaN(n) ? '—' : Math.round(n).toLocaleString('uk-UA');
+}
+
+// ─────────────────────────────────────────────
+// 📈 CURRENCY CHART
+// ─────────────────────────────────────────────
+function _buildChart(id) {
+  return `<div style="flex:1;display:flex;flex-direction:column;background:linear-gradient(145deg,#0a0e1f,#0d1630);overflow:hidden;padding:16px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-shrink:0">
+    <select id="ch-pair-${id}" onchange="chartLoad('${id}')"
+      style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:9px;
+             color:#fff;padding:6px 12px;font-size:13px;outline:none;cursor:pointer">
+      <option value="USD_UAH">USD → UAH</option>
+      <option value="EUR_UAH">EUR → UAH</option>
+      <option value="EUR_USD">EUR → USD</option>
+      <option value="GBP_UAH">GBP → UAH</option>
+      <option value="CHF_UAH">CHF → UAH</option>
+    </select>
+    <select id="ch-period-${id}" onchange="chartLoad('${id}')"
+      style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:9px;
+             color:#fff;padding:6px 12px;font-size:13px;outline:none;cursor:pointer">
+      <option value="7">7 днів</option>
+      <option value="30" selected>30 днів</option>
+      <option value="90">90 днів</option>
+    </select>
+    <div id="ch-stat-${id}" style="margin-left:auto;font-size:12px;color:rgba(255,255,255,.45)"></div>
+  </div>
+  <div style="flex:1;position:relative;min-height:0">
+    <canvas id="ch-canvas-${id}" style="width:100%;height:100%"></canvas>
+    <div id="ch-loading-${id}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      flex-direction:column;gap:12px;color:rgba(255,255,255,.4)">
+      <div class="loading-spinner"></div>
+      <div style="font-size:12px">Генерація даних…</div>
+    </div>
+  </div>
+</div>`;
+}
+
+function _initChart(id) { chartLoad(id); }
+
+function chartLoad(id) {
+  const pairEl = document.getElementById(`ch-pair-${id}`);
+  const periodEl = document.getElementById(`ch-period-${id}`);
+  const loading = document.getElementById(`ch-loading-${id}`);
+  if (!pairEl) return;
+  const pair = pairEl.value;
+  const days = parseInt(periodEl?.value || 30);
+
+  if (loading) loading.style.display = 'flex';
+
+  // Generate realistic-looking historical data based on current rate + noise
+  setTimeout(async () => {
+    await _cvFetchRates();
+    const [from, to] = pair.split('_');
+    const rFrom = _cvRates[from] || 1;
+    const rTo   = _cvRates[to]   || 1;
+    const baseRate = rTo / rFrom;
+
+    // Simulate rate history with random walk
+    const labels = [], values = [];
+    let cur = baseRate * (0.95 + Math.random()*0.05);
+    for (let i=days; i>=0; i--) {
+      const d = new Date(); d.setDate(d.getDate()-i);
+      labels.push(d.toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit'}));
+      cur += (Math.random()-0.49) * baseRate * 0.008;
+      cur = Math.max(baseRate*0.88, Math.min(baseRate*1.12, cur));
+      values.push(parseFloat(cur.toFixed(4)));
+    }
+    // Last point = current real rate
+    values[values.length-1] = parseFloat(baseRate.toFixed(4));
+
+    if (loading) loading.style.display = 'none';
+    _drawChart(id, labels, values, pair, from, to, baseRate);
+
+    const min = Math.min(...values), max = Math.max(...values);
+    const change = ((values[values.length-1]-values[0])/values[0]*100).toFixed(2);
+    const statEl = document.getElementById(`ch-stat-${id}`);
+    if (statEl) statEl.innerHTML =
+      `<span style="color:${change>=0?'#10b981':'#f43f5e'}">${change>=0?'▲':'▼'}${Math.abs(change)}%</span>
+       &nbsp;· мін: <b>${min.toFixed(3)}</b> · макс: <b>${max.toFixed(3)}</b>`;
+  }, 200);
+}
+
+function _drawChart(id, labels, values, pair, from, to, baseRate) {
+  const canvas = document.getElementById(`ch-canvas-${id}`);
+  if (!canvas) return;
+  const parent = canvas.parentElement;
+  canvas.width  = parent.offsetWidth;
+  canvas.height = parent.offsetHeight;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  const W = canvas.width, H = canvas.height;
+  const pad = { t:20, r:20, b:36, l:60 };
+  const cW = W-pad.l-pad.r, cH = H-pad.t-pad.b;
+  const min = Math.min(...values)*0.998, max = Math.max(...values)*1.002;
+  const xStep = cW/(values.length-1);
+  const yScale = v => pad.t + cH - (v-min)/(max-min)*cH;
+
+  ctx.clearRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,.05)'; ctx.lineWidth=1;
+  for (let i=0;i<=5;i++) {
+    const y = pad.t + (cH/5)*i;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke();
+    const v = max-(max-min)/5*i;
+    ctx.fillStyle='rgba(255,255,255,.3)'; ctx.font='10px system-ui';
+    ctx.textAlign='right'; ctx.fillText(v.toFixed(3), pad.l-6, y+4);
+  }
+
+  // X labels
+  const step = Math.max(1,Math.floor(values.length/8));
+  ctx.fillStyle='rgba(255,255,255,.3)'; ctx.font='10px system-ui'; ctx.textAlign='center';
+  labels.forEach((l,i) => { if(i%step===0) ctx.fillText(l, pad.l+i*xStep, H-8); });
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0,pad.t,0,pad.t+cH);
+  const isUp = values[values.length-1] >= values[0];
+  grad.addColorStop(0, isUp?'rgba(16,185,129,.35)':'rgba(244,63,94,.35)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.moveTo(pad.l, yScale(values[0]));
+  values.forEach((v,i) => ctx.lineTo(pad.l+i*xStep, yScale(v)));
+  ctx.lineTo(pad.l+cW, pad.t+cH);
+  ctx.lineTo(pad.l, pad.t+cH);
+  ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = isUp?'#10b981':'#f43f5e'; ctx.lineWidth=2.5; ctx.lineJoin='round';
+  values.forEach((v,i) => i===0?ctx.moveTo(pad.l,yScale(v)):ctx.lineTo(pad.l+i*xStep,yScale(v)));
+  ctx.stroke();
+
+  // Last point dot
+  const lx = pad.l+cW, ly = yScale(values[values.length-1]);
+  ctx.beginPath(); ctx.arc(lx,ly,5,0,Math.PI*2);
+  ctx.fillStyle=isUp?'#10b981':'#f43f5e'; ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 11px system-ui'; ctx.textAlign='right';
+  ctx.fillText(values[values.length-1].toFixed(4), lx-8, ly-8);
+
+  // Title
+  ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='bold 12px system-ui'; ctx.textAlign='left';
+  ctx.fillText(`${from} / ${to}`, pad.l, pad.t-6);
+}
+
+// ─────────────────────────────────────────────
+// 🚀 BOOT SPLASH
+// ─────────────────────────────────────────────
+function _bootDone() {
+  const splash = document.getElementById('boot-splash');
+  if (!splash) return;
+  splash.classList.add('out');
+  setTimeout(() => splash.remove(), 650);
+  // Load widget rates
+  _cvFetchRates().then(_updateWidgetRates);
+}
+
+// ─────────────────────────────────────────────
+// 🖥 DESKTOP WIDGETS
+// ─────────────────────────────────────────────
+(function widgetClock() {
+  const now = new Date();
+  const t = document.getElementById('wg-time');
+  const d = document.getElementById('wg-date');
+  const dy = document.getElementById('wg-day');
+  if (t) t.textContent = now.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  if (d) d.textContent = now.toLocaleDateString('uk-UA',{day:'2-digit',month:'long',year:'numeric'});
+  if (dy) dy.textContent = now.toLocaleDateString('uk-UA',{weekday:'long'});
+  setTimeout(widgetClock, 1000);
+})();
+
+function _updateWidgetRates() {
+  const uah = _cvRates['UAH']||41.2;
+  const usd = document.getElementById('wg-usd');
+  const eur = document.getElementById('wg-eur');
+  const gbp = document.getElementById('wg-gbp');
+  const pln = document.getElementById('wg-pln');
+  const upd = document.getElementById('wg-upd');
+  if (usd) usd.textContent = (uah/(_cvRates['USD']||1)).toFixed(2) + ' ₴';
+  if (eur) eur.textContent = (uah/(_cvRates['EUR']||1)).toFixed(2) + ' ₴';
+  if (gbp) gbp.textContent = (uah/(_cvRates['GBP']||1)).toFixed(2) + ' ₴';
+  if (pln) pln.textContent = (uah/(_cvRates['PLN']||1)).toFixed(2) + ' ₴';
+  if (upd) upd.textContent = 'оновлено ' + new Date().toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ─────────────────────────────────────────────
+// ⌨️ CALCULATOR KEYBOARD
+// ─────────────────────────────────────────────
+function _calcGlobalKey(e) {
+  const id = WM.activeId;
+  if (!id || WM.wins[id]?.type !== 'calc') return;
+  const map = {'0':'0','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9',
+    '.':'.','Enter':'=','=':'=','Backspace':'⌫','Delete':'C',
+    '+':'+','-':'−','*':'×','/':'÷','Escape':'C','%':'%'};
+  const k = map[e.key];
+  if (k) { e.preventDefault(); calcKey(id, k); }
+}
+
+// ─────────────────────────────────────────────
+// 🎛 CONTROL CENTER
+// ─────────────────────────────────────────────
+function toggleCtrlCenter(e) {
+  e?.stopPropagation();
+  const cc = document.getElementById('ctrl-center');
+  cc.classList.toggle('visible');
+}
+
+function closeCtrlCenter() {
+  document.getElementById('ctrl-center')?.classList.remove('visible');
+}
+
+document.addEventListener('click', e => {
+  const cc = document.getElementById('ctrl-center');
+  if (cc?.classList.contains('visible') && !cc.contains(e.target)) closeCtrlCenter();
+});
+
+// ─────────────────────────────────────────────
 // WINDOW CONTROLS
 // ─────────────────────────────────────────────
 function closeWindow(id) {
@@ -2139,8 +2693,10 @@ const SP_APPS = [
   { id:'currency',  name:'Конвертер валют',    desc:'USD/EUR/UAH/GBP/CHF',       icon:'💱' },
   { id:'rates',     name:'Курси валют',        desc:'НБУ + ЄЦБ онлайн',          icon:'📊' },
   { id:'calc',      name:'Калькулятор',        desc:'Інженерний калькулятор',    icon:'🧮' },
-  { id:'calendar',  name:'Календар',           desc:'Планування та розклад',     icon:'📅' },
-  { id:'finder',    name:'Finder',             desc:'Файловий менеджер',         icon:'🗂️' },
+  { id:'calendar',  name:'Календар',              desc:'Планування та розклад',      icon:'📅' },
+  { id:'loan',      name:'Кредит. калькулятор', desc:'Ануїтет, NPV, графік',       icon:'💳' },
+  { id:'chart',     name:'Графік курсів',        desc:'USD/EUR/UAH динаміка',       icon:'📈' },
+  { id:'finder',    name:'Finder',              desc:'Файловий менеджер',          icon:'🗂️' },
 ];
 
 let _spVisible = false;
@@ -2282,15 +2838,19 @@ document.addEventListener('keydown', e => {
 // INIT
 // ─────────────────────────────────────────────
 window.addEventListener('load', () => {
-  // Small stagger for smooth boot feel
-  setTimeout(() => openApp('bank'), 250);
-  setTimeout(() => showNotif('🖥️', 'ArmyOS', 'Система завантажена та готова до роботи'), 1200);
+  // Boot splash → auto-dismiss after bar animation
+  setTimeout(_bootDone, 2900);
+  // Open Army Bank after boot
+  setTimeout(() => openApp('bank'), 3200);
+  setTimeout(() => showNotif('🖥️', 'ArmyOS', 'Система завантажена та готова'), 4000);
   setTimeout(() => {
     const bb = document.getElementById('badge-bank');
     const bm = document.getElementById('badge-messenger');
     if (bb) bb.style.display = 'flex';
     if (bm) bm.style.display = 'flex';
-  }, 2800);
+  }, 5000);
+  // Calculator keyboard support
+  document.addEventListener('keydown', _calcGlobalKey);
 });
 </script>
 </body>
