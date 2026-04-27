@@ -21,16 +21,19 @@ html,body { width:100%; height:100%; overflow:hidden;
 /* ── DESKTOP ── */
 #desktop {
   position:fixed; inset:0; z-index:0;
-  background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=85&auto=format&fit=crop');
-  background-size:cover; background-position:center;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Above_Clouds_filtered.jpg/1920px-Above_Clouds_filtered.jpg');
+  background-size:cover; background-position:center 60%;
+}
+#desktop[data-wall="misurina"] {
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Lago_Misurina_-_panoramio.jpg/1920px-Lago_Misurina_-_panoramio.jpg');
 }
 #desktop::before {
   content:''; position:absolute; inset:0; pointer-events:none;
   background: linear-gradient(to bottom,
-    rgba(0,0,0,.32) 0%,
-    rgba(0,0,0,.08) 40%,
-    rgba(0,0,0,.08) 70%,
-    rgba(0,0,0,.45) 100%);
+    rgba(0,0,0,.28) 0%,
+    rgba(0,0,0,.05) 35%,
+    rgba(0,0,0,.05) 68%,
+    rgba(0,0,0,.42) 100%);
 }
 @keyframes twinkle { 0%{opacity:.65} 100%{opacity:1} }
 @keyframes windowOpen { from{transform:scale(.88);opacity:0} to{transform:scale(1);opacity:1} }
@@ -62,27 +65,7 @@ html,body { width:100%; height:100%; overflow:hidden;
 .menubar-right .mbi { font-size:14px; cursor:pointer; line-height:1; }
 #clock { font-size:12px; font-weight:500; color:rgba(255,255,255,.9); letter-spacing:.02em; }
 
-/* ── DESKTOP ICONS ── */
-#desktop-icons {
-  position:fixed; top:calc(var(--menubar-h) + 16px); right:16px;
-  display:flex; flex-direction:column; gap:14px; z-index:100;
-}
-.desktop-icon {
-  display:flex; flex-direction:column; align-items:center; gap:5px;
-  cursor:pointer; width:72px;
-}
-.desktop-icon .di-wrap {
-  width:56px; height:56px; border-radius:14px;
-  display:flex; align-items:center; justify-content:center; font-size:28px;
-  transition:transform .2s,box-shadow .2s;
-  box-shadow:0 4px 14px rgba(0,0,0,.4);
-}
-.desktop-icon:hover .di-wrap { transform:scale(1.1) translateY(-2px); }
-.desktop-icon .di-label {
-  font-size:11px; color:#fff; text-align:center;
-  text-shadow:0 1px 3px rgba(0,0,0,1), 0 0 8px rgba(0,0,0,.9);
-  font-weight:500;
-}
+/* desktop icons removed — all apps live in Dock */
 
 /* ── WINDOWS ── */
 .window {
@@ -416,6 +399,9 @@ html,body { width:100%; height:100%; overflow:hidden;
 .ic-editor   { background:linear-gradient(145deg,#e83e8c,#9b1b5a,#5c0f35); }
 .ic-finder   { background:linear-gradient(145deg,#0ea5e9,#0369a1,#0c4a6e); }
 .ic-calc     { background:linear-gradient(145deg,#f59e0b,#b45309,#78350f); }
+.ic-currency { background:linear-gradient(145deg,#10b981,#047857,#064e3b); }
+.ic-rates    { background:linear-gradient(145deg,#3b82f6,#1d4ed8,#1e3a8a); }
+.ic-calendar { background:linear-gradient(145deg,#f43f5e,#be123c,#881337); }
 
 /* ── NOTIFICATIONS ── */
 #notif-area {
@@ -508,17 +494,36 @@ html,body { width:100%; height:100%; overflow:hidden;
 </head>
 <body>
 
-<div id="desktop"></div>
+<div id="desktop" data-wall="misurina"></div>
 
 <!-- MENU BAR -->
 <div id="menubar">
-  <!-- Trinacria logo -->
-  <div class="apple-logo" style="width:20px;height:20px;margin-right:6px;flex-shrink:0">
-    <svg viewBox="0 0 100 100" width="20" height="20">
-      <polygon points="50,2 93,76 7,76" fill="#e63946" opacity=".9"/>
-      <polygon points="50,98 7,24 93,24" fill="#f4d03f" opacity=".9"/>
-      <circle cx="50" cy="50" r="16" fill="rgba(255,255,255,.15)"/>
-      <text x="50" y="56" text-anchor="middle" font-size="20" fill="rgba(255,255,255,.9)">⚜</text>
+  <!-- Trinacria / Sicilian flag logo -->
+  <div style="width:22px;height:22px;margin-right:8px;flex-shrink:0;cursor:pointer" title="ArmyOS">
+    <svg viewBox="0 0 100 100" width="22" height="22" style="border-radius:5px;overflow:hidden">
+      <defs>
+        <clipPath id="hex"><polygon points="50,2 93,26 93,74 50,98 7,74 7,26"/></clipPath>
+      </defs>
+      <!-- Hex background: diagonal red/yellow -->
+      <polygon points="50,2 93,26 93,74 50,98 7,74 7,26" fill="#f4c430"/>
+      <polygon points="7,26 93,26 93,74 50,98 7,74" fill="#f4c430"/>
+      <polygon points="50,2 93,26 7,26" fill="#e63946"/>
+      <polygon points="50,2 93,26 93,74 50,50" fill="#e63946"/>
+      <!-- Trinacria (simplified 3 legs) -->
+      <g clip-path="url(#hex)" transform="translate(50,52)" opacity=".92">
+        <!-- Center face circle -->
+        <circle cx="0" cy="-6" r="9" fill="#f5cba7" stroke="#5d4037" stroke-width="1.5"/>
+        <!-- 3 legs radiating out -->
+        <line x1="0" y1="2" x2="-22" y2="22" stroke="#5d4037" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="0" y1="2" x2="22" y2="22" stroke="#5d4037" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="0" y1="2" x2="0" y2="-28" stroke="#5d4037" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- Wheat ears -->
+        <ellipse cx="-24" cy="24" rx="5" ry="3" fill="#c8a84b" transform="rotate(-40,-24,24)"/>
+        <ellipse cx="24" cy="24" rx="5" ry="3" fill="#c8a84b" transform="rotate(40,24,24)"/>
+        <ellipse cx="0" cy="-30" rx="3" ry="5" fill="#c8a84b"/>
+      </g>
+      <!-- Hex border -->
+      <polygon points="50,2 93,26 93,74 50,98 7,74 7,26" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>
     </svg>
   </div>
   <span class="menu-item bold" id="menubar-app-name">ArmyOS</span>
@@ -535,29 +540,6 @@ html,body { width:100%; height:100%; overflow:hidden;
   </div>
 </div>
 
-<!-- Desktop icons -->
-<div id="desktop-icons">
-  <div class="desktop-icon" ondblclick="openApp('bank')">
-    <div class="di-wrap ic-bank">🏦</div>
-    <span class="di-label">Army Bank</span>
-  </div>
-  <div class="desktop-icon" ondblclick="openApp('messenger')">
-    <div class="di-wrap ic-messenger">💬</div>
-    <span class="di-label">Messenger</span>
-  </div>
-  <div class="desktop-icon" ondblclick="openApp('admin')">
-    <div class="di-wrap ic-admin">🛡️</div>
-    <span class="di-label">Admin</span>
-  </div>
-  <div class="desktop-icon" ondblclick="openApp('market')">
-    <div class="di-wrap ic-market">🛒</div>
-    <span class="di-label">Marketplace</span>
-  </div>
-  <div class="desktop-icon" ondblclick="openApp('editor')">
-    <div class="di-wrap ic-editor">📝</div>
-    <span class="di-label">Редактор</span>
-  </div>
-</div>
 
 <!-- Notifications -->
 <div id="notif-area"></div>
@@ -577,11 +559,18 @@ html,body { width:100%; height:100%; overflow:hidden;
 <div id="ctx-menu">
   <div class="ctx-item" onclick="ctxNew()">📄 Новий документ</div>
   <div class="ctx-sep"></div>
+  <div style="padding:3px 10px;font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em">Додатки</div>
   <div class="ctx-item" onclick="openApp('bank')">🏦 Army Bank</div>
   <div class="ctx-item" onclick="openApp('messenger')">💬 Messenger</div>
   <div class="ctx-item" onclick="openApp('admin')">🛡️ Army Admin</div>
   <div class="ctx-item" onclick="openApp('market')">🛒 Marketplace</div>
-  <div class="ctx-item" onclick="openApp('editor')">📝 Текстовий редактор</div>
+  <div class="ctx-sep"></div>
+  <div style="padding:3px 10px;font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em">Утиліти</div>
+  <div class="ctx-item" onclick="openApp('currency')">💱 Конвертер валют</div>
+  <div class="ctx-item" onclick="openApp('rates')">📊 Курси валют</div>
+  <div class="ctx-item" onclick="openApp('calc')">🧮 Калькулятор</div>
+  <div class="ctx-item" onclick="openApp('calendar')">📅 Календар</div>
+  <div class="ctx-item" onclick="openApp('editor')">📝 Редактор</div>
   <div class="ctx-sep"></div>
   <div class="ctx-item" onclick="tileAll()">⊞ Розмістити вікна</div>
   <div class="ctx-item" onclick="closeAllWindows()">✕ Закрити всі</div>
@@ -642,6 +631,32 @@ html,body { width:100%; height:100%; overflow:hidden;
 
   <div class="dock-sep"></div>
 
+  <div class="dock-item" id="dock-currency" onclick="toggleApp('currency')">
+    <div class="dock-icon ic-currency">💱</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Конвертер валют</div>
+  </div>
+
+  <div class="dock-item" id="dock-rates" onclick="toggleApp('rates')">
+    <div class="dock-icon ic-rates">📊</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Курси валют</div>
+  </div>
+
+  <div class="dock-item" id="dock-calc" onclick="toggleApp('calc')">
+    <div class="dock-icon ic-calc">🧮</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Калькулятор</div>
+  </div>
+
+  <div class="dock-item" id="dock-calendar" onclick="toggleApp('calendar')">
+    <div class="dock-icon ic-calendar">📅</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Календар</div>
+  </div>
+
+  <div class="dock-sep"></div>
+
   <div class="dock-item" onclick="toggleSpotlight()">
     <div class="dock-icon" style="background:linear-gradient(145deg,#374151,#1f2937)">🔍</div>
     <div class="dock-dot"></div>
@@ -689,6 +704,26 @@ const APPS = {
     title:'Finder', icon:'🗂️', iconClass:'ic-finder',
     type:'finder',
     defaultW:780, defaultH:520,
+  },
+  currency: {
+    title:'Конвертер валют', icon:'💱', iconClass:'ic-currency',
+    type:'currency',
+    defaultW:460, defaultH:580,
+  },
+  rates: {
+    title:'Курси валют', icon:'📊', iconClass:'ic-rates',
+    type:'rates',
+    defaultW:580, defaultH:620,
+  },
+  calc: {
+    title:'Калькулятор', icon:'🧮', iconClass:'ic-calc',
+    type:'calc',
+    defaultW:320, defaultH:520,
+  },
+  calendar: {
+    title:'Календар', icon:'📅', iconClass:'ic-calendar',
+    type:'calendar',
+    defaultW:460, defaultH:520,
   },
 };
 
@@ -761,9 +796,13 @@ function _createWindow(id) {
 
   // Build inner HTML
   let inner = _buildTitlebar(id, cfg);
-  if (cfg.type === 'browser')  inner += _buildBrowser(id, cfg);
-  else if (cfg.type === 'editor') inner += _buildEditor(id);
-  else if (cfg.type === 'finder') inner += _buildFinder(id);
+  if (cfg.type === 'browser')   inner += _buildBrowser(id, cfg);
+  else if (cfg.type === 'editor')   inner += _buildEditor(id);
+  else if (cfg.type === 'finder')   inner += _buildFinder(id);
+  else if (cfg.type === 'currency') inner += _buildCurrency(id);
+  else if (cfg.type === 'rates')    inner += _buildRates(id);
+  else if (cfg.type === 'calc')     inner += _buildCalc(id);
+  else if (cfg.type === 'calendar') inner += _buildCalendar(id);
   inner += _buildResizeHandles(id);
 
   el.innerHTML = inner;
@@ -785,6 +824,14 @@ function _createWindow(id) {
     _initEditor(id);
   } else if (cfg.type === 'finder') {
     _initFinder(id);
+  } else if (cfg.type === 'currency') {
+    _initCurrency(id);
+  } else if (cfg.type === 'rates') {
+    _initRates(id);
+  } else if (cfg.type === 'calc') {
+    _initCalc(id);
+  } else if (cfg.type === 'calendar') {
+    _initCalendar(id);
   }
 
   // Welcome notification once
@@ -1440,6 +1487,444 @@ function _buildFinder(id) {
 function _initFinder(id) {}
 
 // ─────────────────────────────────────────────
+// 💱 CURRENCY CONVERTER
+// ─────────────────────────────────────────────
+function _buildCurrency(id) {
+  return `<div style="flex:1;display:flex;flex-direction:column;background:linear-gradient(145deg,#0a1628,#0d1f3c);overflow:hidden">
+  <div style="padding:20px 20px 10px;border-bottom:1px solid rgba(255,255,255,.07)">
+    <div style="font-size:11px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Сума</div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <input id="cv-amount-${id}" type="number" value="100" min="0" step="any"
+        style="flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;
+               padding:12px 14px;font-size:22px;font-weight:600;color:#fff;outline:none;width:100%"
+        oninput="cvConvert('${id}')">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-top:12px">
+      <select id="cv-from-${id}" onchange="cvConvert('${id}')"
+        style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;
+               color:#fff;padding:8px 10px;font-size:14px;outline:none;cursor:pointer">
+        <option value="USD">🇺🇸 USD — Долар</option>
+        <option value="EUR">🇪🇺 EUR — Євро</option>
+        <option value="UAH" selected>🇺🇦 UAH — Гривня</option>
+        <option value="GBP">🇬🇧 GBP — Фунт</option>
+        <option value="CHF">🇨🇭 CHF — Франк</option>
+        <option value="PLN">🇵🇱 PLN — Злотий</option>
+        <option value="CZK">🇨🇿 CZK — Крона</option>
+        <option value="JPY">🇯🇵 JPY — Єна</option>
+        <option value="CNY">🇨🇳 CNY — Юань</option>
+      </select>
+      <button onclick="cvSwap('${id}')"
+        style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+               color:#fff;font-size:16px;cursor:pointer;transition:background .15s"
+        onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">⇄</button>
+      <select id="cv-to-${id}" onchange="cvConvert('${id}')"
+        style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;
+               color:#fff;padding:8px 10px;font-size:14px;outline:none;cursor:pointer">
+        <option value="USD" selected>🇺🇸 USD — Долар</option>
+        <option value="EUR">🇪🇺 EUR — Євро</option>
+        <option value="UAH">🇺🇦 UAH — Гривня</option>
+        <option value="GBP">🇬🇧 GBP — Фунт</option>
+        <option value="CHF">🇨🇭 CHF — Франк</option>
+        <option value="PLN">🇵🇱 PLN — Злотий</option>
+        <option value="CZK">🇨🇿 CZK — Крона</option>
+        <option value="JPY">🇯🇵 JPY — Єна</option>
+        <option value="CNY">🇨🇳 CNY — Юань</option>
+      </select>
+    </div>
+  </div>
+  <div style="padding:20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.07)">
+    <div id="cv-result-${id}" style="font-size:36px;font-weight:700;color:#10b981;letter-spacing:-.02em">—</div>
+    <div id="cv-rate-${id}" style="font-size:12px;color:rgba(255,255,255,.35);margin-top:6px">Завантаження курсів…</div>
+    <div id="cv-updated-${id}" style="font-size:10px;color:rgba(255,255,255,.2);margin-top:3px"></div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:12px 16px">
+    <div style="font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Швидкі суми</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px" id="cv-quick-${id}">
+      ${[100,500,1000,5000,10000,50000].map(v=>`
+        <button onclick="document.getElementById('cv-amount-${id}').value=${v};cvConvert('${id}')"
+          style="padding:8px;border-radius:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+                 color:rgba(255,255,255,.7);font-size:12px;cursor:pointer;transition:background .15s"
+          onmouseover="this.style.background='rgba(255,255,255,.14)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">${v.toLocaleString()}</button>`).join('')}
+    </div>
+    <div style="margin-top:16px;padding:12px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.07)">
+      <div style="font-size:10px;color:rgba(255,255,255,.3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em">Крос-курси</div>
+      <div id="cv-cross-${id}" style="font-size:12px;color:rgba(255,255,255,.55);line-height:1.9"></div>
+    </div>
+  </div>
+</div>`;
+}
+
+const _cvRates = {}; // cache
+let _cvLoaded = false;
+
+async function _cvFetchRates() {
+  if (_cvLoaded) return;
+  try {
+    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    const d = await r.json();
+    Object.assign(_cvRates, d.rates);
+    _cvRates['USD'] = 1;
+    _cvLoaded = true;
+  } catch(_) {
+    // fallback approximate rates
+    Object.assign(_cvRates, { USD:1, EUR:0.92, UAH:41.2, GBP:0.79, CHF:0.89, PLN:4.02, CZK:23.1, JPY:149.5, CNY:7.24 });
+    _cvLoaded = true;
+  }
+}
+
+function _initCurrency(id) {
+  _cvFetchRates().then(() => cvConvert(id));
+}
+
+function cvConvert(id) {
+  if (!_cvLoaded) { _cvFetchRates().then(() => cvConvert(id)); return; }
+  const amt   = parseFloat(document.getElementById(`cv-amount-${id}`)?.value) || 0;
+  const from  = document.getElementById(`cv-from-${id}`)?.value || 'UAH';
+  const to    = document.getElementById(`cv-to-${id}`)?.value   || 'USD';
+  const rFrom = _cvRates[from] || 1;
+  const rTo   = _cvRates[to]   || 1;
+  const result = (amt / rFrom) * rTo;
+  const rate   = rTo / rFrom;
+
+  const rEl = document.getElementById(`cv-result-${id}`);
+  const rtEl = document.getElementById(`cv-rate-${id}`);
+  const upEl = document.getElementById(`cv-updated-${id}`);
+  const crEl = document.getElementById(`cv-cross-${id}`);
+
+  if (rEl) rEl.textContent = result.toLocaleString('uk-UA', { maximumFractionDigits: 4 }) + ' ' + to;
+  if (rtEl) rtEl.textContent = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+  if (upEl) upEl.textContent = 'Джерело: exchangerate-api.com';
+
+  // Cross rates
+  const pairs = ['USD','EUR','UAH','GBP','CHF','PLN'].filter(c => c !== from && c !== to).slice(0,4);
+  if (crEl) crEl.innerHTML = pairs.map(c => {
+    const r2 = (_cvRates[c]||1) / rFrom;
+    return `<div style="display:flex;justify-content:space-between"><span>1 ${from} → ${c}</span><span style="color:#10b981;font-weight:600">${r2.toFixed(4)}</span></div>`;
+  }).join('');
+}
+
+function cvSwap(id) {
+  const fromEl = document.getElementById(`cv-from-${id}`);
+  const toEl   = document.getElementById(`cv-to-${id}`);
+  if (!fromEl || !toEl) return;
+  [fromEl.value, toEl.value] = [toEl.value, fromEl.value];
+  cvConvert(id);
+}
+
+// ─────────────────────────────────────────────
+// 📊 EXCHANGE RATES TABLE
+// ─────────────────────────────────────────────
+function _buildRates(id) {
+  return `<div style="flex:1;display:flex;flex-direction:column;background:linear-gradient(145deg,#0a1628,#0d1f3c);overflow:hidden">
+  <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:15px;font-weight:600;color:#fff">Курси валют</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.35);margin-top:2px" id="rates-src-${id}">Завантаження…</div>
+    </div>
+    <button onclick="_initRates('${id}')"
+      style="padding:5px 12px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+             color:rgba(255,255,255,.7);font-size:12px;cursor:pointer">↻ Оновити</button>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:12px" id="rates-body-${id}">
+    <div style="text-align:center;padding:40px;color:rgba(255,255,255,.3)">
+      <div style="font-size:32px;margin-bottom:10px">📡</div>
+      <div>Завантаження курсів НБУ…</div>
+    </div>
+  </div>
+</div>`;
+}
+
+async function _initRates(id) {
+  const body = document.getElementById(`rates-body-${id}`);
+  const src  = document.getElementById(`rates-src-${id}`);
+  if (!body) return;
+  body.innerHTML = `<div style="text-align:center;padding:40px;color:rgba(255,255,255,.3)"><div class="loading-spinner" style="margin:0 auto 12px"></div><div>Завантаження…</div></div>`;
+
+  await _cvFetchRates();
+
+  const BASE = 'UAH';
+  const currencies = [
+    { code:'USD', flag:'🇺🇸', name:'Долар США' },
+    { code:'EUR', flag:'🇪🇺', name:'Євро' },
+    { code:'GBP', flag:'🇬🇧', name:'Фунт стерлінгів' },
+    { code:'CHF', flag:'🇨🇭', name:'Швейцарський франк' },
+    { code:'PLN', flag:'🇵🇱', name:'Польський злотий' },
+    { code:'CZK', flag:'🇨🇿', name:'Чеська крона' },
+    { code:'JPY', flag:'🇯🇵', name:'Японська єна' },
+    { code:'CNY', flag:'🇨🇳', name:'Китайський юань' },
+    { code:'CAD', flag:'🇨🇦', name:'Канадський долар' },
+    { code:'AUD', flag:'🇦🇺', name:'Австралійський долар' },
+    { code:'NOK', flag:'🇳🇴', name:'Норвезька крона' },
+    { code:'SEK', flag:'🇸🇪', name:'Шведська крона' },
+  ];
+
+  const rUAH = _cvRates['UAH'] || 41.2;
+
+  body.innerHTML = `
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+    <div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:14px">
+      <div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em">USD/UAH</div>
+      <div style="font-size:24px;font-weight:700;color:#10b981;margin-top:4px">${(rUAH/_cvRates['USD']).toFixed(2)}</div>
+    </div>
+    <div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:12px;padding:14px">
+      <div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em">EUR/UAH</div>
+      <div style="font-size:24px;font-weight:700;color:#3b82f6;margin-top:4px">${(rUAH/_cvRates['EUR']).toFixed(2)}</div>
+    </div>
+  </div>
+  <table style="width:100%;border-collapse:collapse">
+    <thead>
+      <tr style="font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em">
+        <th style="text-align:left;padding:6px 10px">Валюта</th>
+        <th style="text-align:right;padding:6px 10px">UAH/1</th>
+        <th style="text-align:right;padding:6px 10px">USD/1</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${currencies.map(c => {
+        const rUSD = _cvRates[c.code] || 1;
+        const uah  = rUAH / rUSD;
+        const usd  = 1 / rUSD;
+        return `<tr style="border-top:1px solid rgba(255,255,255,.05);transition:background .1s"
+          onmouseover="this.style.background='rgba(255,255,255,.05)'" onmouseout="this.style.background=''">
+          <td style="padding:10px;font-size:13px;color:rgba(255,255,255,.85)">
+            <span style="margin-right:6px;font-size:16px">${c.flag}</span>
+            <span style="font-weight:600">${c.code}</span>
+            <span style="font-size:11px;color:rgba(255,255,255,.4);margin-left:6px">${c.name}</span>
+          </td>
+          <td style="padding:10px;text-align:right;font-size:13px;font-weight:600;color:#10b981">${uah.toFixed(2)}</td>
+          <td style="padding:10px;text-align:right;font-size:12px;color:rgba(255,255,255,.5)">${usd.toFixed(4)}</td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>`;
+
+  if (src) src.textContent = 'Джерело: exchangerate-api.com · ' + new Date().toLocaleTimeString('uk-UA');
+}
+
+// ─────────────────────────────────────────────
+// 🧮 CALCULATOR
+// ─────────────────────────────────────────────
+function _buildCalc(id) {
+  const rows = [
+    ['C','±','%','÷'],
+    ['7','8','9','×'],
+    ['4','5','6','−'],
+    ['1','2','3','+'],
+    ['0','.',  '⌫','='],
+  ];
+  return `<div style="flex:1;display:flex;flex-direction:column;background:#1c1c1e;overflow:hidden">
+  <div style="padding:20px 20px 10px;text-align:right;flex-shrink:0">
+    <div id="calc-expr-${id}" style="font-size:13px;color:rgba(255,255,255,.35);min-height:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"> </div>
+    <div id="calc-disp-${id}" style="font-size:48px;font-weight:300;color:#fff;letter-spacing:-.02em;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">0</div>
+  </div>
+  <div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(5,1fr);gap:1px;background:rgba(255,255,255,.08)">
+    ${rows.flatMap(row => row.map(k => {
+      const isOp  = ['÷','×','−','+','='].includes(k);
+      const isTop = ['C','±','%'].includes(k);
+      const isZero = k === '0';
+      const bg = isOp ? (k==='='?'#ff9f0a':'#ff9f0a') : isTop ? '#636366' : '#2c2c2e';
+      const fgCol = isOp ? '#fff' : '#fff';
+      return `<button onclick="calcKey('${id}','${k}')"
+        data-key="${k}"
+        style="background:${k==='='?'#ff9f0a':isOp?'#ff9f0a':isTop?'#636366':'#2c2c2e'};
+               border:none;color:${fgCol};font-size:${isZero?'22px':'24px'};font-weight:300;
+               cursor:pointer;transition:filter .1s;display:flex;align-items:center;
+               justify-content:${isZero?'flex-start':'center'};
+               padding:${isZero?'0 0 0 28px':'0'};
+               ${isZero?'grid-column:span 2;':''}"
+        onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">${k}</button>`;
+    })).join('')}
+  </div>
+  <div style="padding:10px 14px;background:#1c1c1e;border-top:1px solid rgba(255,255,255,.08);display:flex;gap:8px;flex-wrap:wrap">
+    ${['sin','cos','tan','√','x²','1/x','log','ln','π','e'].map(k=>`
+      <button onclick="calcKey('${id}','${k}')"
+        style="padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
+               color:rgba(255,255,255,.7);font-size:11px;cursor:pointer;transition:background .12s"
+        onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">${k}</button>`).join('')}
+  </div>
+</div>`;
+}
+
+const _calcState = {};
+
+function _initCalc(id) {
+  _calcState[id] = { display:'0', expr:'', op:null, prev:null, newNum:true };
+}
+
+function calcKey(id, k) {
+  const s = _calcState[id];
+  if (!s) return;
+  const disp = document.getElementById(`calc-disp-${id}`);
+  const expr = document.getElementById(`calc-expr-${id}`);
+  let cur = parseFloat(s.display) || 0;
+
+  if (k === 'C') { s.display='0'; s.expr=''; s.op=null; s.prev=null; s.newNum=true; }
+  else if (k === '±') { s.display = String(-parseFloat(s.display)); }
+  else if (k === '%')  { s.display = String(parseFloat(s.display)/100); }
+  else if (k === '⌫') { s.display = s.display.length>1 ? s.display.slice(0,-1) : '0'; }
+  else if (k === 'π')  { s.display = String(Math.PI); s.newNum=true; }
+  else if (k === 'e')  { s.display = String(Math.E); s.newNum=true; }
+  else if (k === '√')  { s.display = String(Math.sqrt(cur)); s.expr=`√(${cur})`; }
+  else if (k === 'x²') { s.display = String(cur*cur); s.expr=`(${cur})²`; }
+  else if (k === '1/x'){ s.display = String(1/cur); s.expr=`1/(${cur})`; }
+  else if (k === 'log'){ s.display = String(Math.log10(cur)); s.expr=`log(${cur})`; }
+  else if (k === 'ln') { s.display = String(Math.log(cur)); s.expr=`ln(${cur})`; }
+  else if (k === 'sin'){ s.display = String(Math.sin(cur*Math.PI/180)); s.expr=`sin(${cur}°)`; }
+  else if (k === 'cos'){ s.display = String(Math.cos(cur*Math.PI/180)); s.expr=`cos(${cur}°)`; }
+  else if (k === 'tan'){ s.display = String(Math.tan(cur*Math.PI/180)); s.expr=`tan(${cur}°)`; }
+  else if (['+','−','×','÷'].includes(k)) {
+    if (s.op && !s.newNum) {
+      const res = _calcCompute(s.prev, parseFloat(s.display), s.op);
+      s.display = String(res); s.expr = `${res} ${k}`;
+    } else {
+      s.expr = `${s.display} ${k}`;
+    }
+    s.op = k; s.prev = parseFloat(s.display); s.newNum = true;
+  }
+  else if (k === '=') {
+    if (s.op && s.prev !== null) {
+      const res = _calcCompute(s.prev, parseFloat(s.display), s.op);
+      s.expr = `${s.prev} ${s.op} ${s.display} =`;
+      s.display = String(parseFloat(res.toFixed(10)));
+      s.op = null; s.prev = null; s.newNum = true;
+    }
+  }
+  else if (k === '.') {
+    if (s.newNum) { s.display='0.'; s.newNum=false; }
+    else if (!s.display.includes('.')) s.display += '.';
+  }
+  else { // digit
+    if (s.newNum || s.display==='0') { s.display=k; s.newNum=false; }
+    else if (s.display.replace('-','').length < 15) s.display += k;
+  }
+
+  // Format display
+  let dispVal = s.display;
+  const num = parseFloat(dispVal);
+  if (!isNaN(num) && !dispVal.endsWith('.') && Math.abs(num) > 1e-10) {
+    dispVal = parseFloat(num.toFixed(10)).toString();
+  }
+  if (dispVal.length > 12) { dispVal = parseFloat(dispVal).toExponential(4); }
+
+  if (disp) disp.textContent = dispVal;
+  if (expr) expr.textContent = s.expr || ' ';
+}
+
+function _calcCompute(a,b,op) {
+  if (op==='+') return a+b;
+  if (op==='−') return a-b;
+  if (op==='×') return a*b;
+  if (op==='÷') return b!==0 ? a/b : 0;
+  return b;
+}
+
+// ─────────────────────────────────────────────
+// 📅 CALENDAR
+// ─────────────────────────────────────────────
+function _buildCalendar(id) {
+  return `<div style="flex:1;display:flex;flex-direction:column;background:linear-gradient(145deg,#1a0824,#0d1628);overflow:hidden">
+  <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between">
+    <button onclick="calNav('${id}',-1)"
+      style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:#fff;cursor:pointer;font-size:16px">‹</button>
+    <div id="cal-title-${id}" style="font-size:15px;font-weight:600;color:#fff"></div>
+    <button onclick="calNav('${id}',1)"
+      style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:#fff;cursor:pointer;font-size:16px">›</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);padding:10px 14px 6px;gap:2px" id="cal-days-head-${id}">
+    ${['Пн','Вт','Ср','Чт','Пт','Сб','Нд'].map(d=>`
+      <div style="text-align:center;font-size:10px;font-weight:600;color:rgba(255,255,255,.35);padding:4px 0;letter-spacing:.04em">${d}</div>`).join('')}
+  </div>
+  <div style="flex:1;padding:0 14px 14px;display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:1fr;gap:3px" id="cal-grid-${id}"></div>
+  <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,.07);display:flex;gap:8px;align-items:center">
+    <button onclick="calToday('${id}')"
+      style="padding:5px 14px;border-radius:8px;background:rgba(244,63,94,.15);border:1px solid rgba(244,63,94,.3);
+             color:#f43f5e;font-size:12px;font-weight:500;cursor:pointer">Сьогодні</button>
+    <div id="cal-sel-${id}" style="font-size:12px;color:rgba(255,255,255,.4)"></div>
+  </div>
+</div>`;
+}
+
+const _calState = {};
+
+function _initCalendar(id) {
+  const now = new Date();
+  _calState[id] = { year: now.getFullYear(), month: now.getMonth(), selected: null };
+  calRender(id);
+}
+
+function calNav(id, dir) {
+  const s = _calState[id];
+  if (!s) return;
+  s.month += dir;
+  if (s.month > 11) { s.month=0; s.year++; }
+  if (s.month < 0)  { s.month=11; s.year--; }
+  calRender(id);
+}
+
+function calToday(id) {
+  const now = new Date();
+  _calState[id] = { year:now.getFullYear(), month:now.getMonth(), selected:now.getDate() };
+  calRender(id);
+}
+
+function calRender(id) {
+  const s = _calState[id];
+  if (!s) return;
+  const title = document.getElementById(`cal-title-${id}`);
+  const grid  = document.getElementById(`cal-grid-${id}`);
+  const sel   = document.getElementById(`cal-sel-${id}`);
+  if (!grid) return;
+
+  const months = ['Січень','Лютий','Березень','Квітень','Травень','Червень',
+                  'Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+  if (title) title.textContent = `${months[s.month]} ${s.year}`;
+
+  const today = new Date();
+  const firstDay = new Date(s.year, s.month, 1).getDay();
+  const offset   = (firstDay + 6) % 7; // Mon=0
+  const daysInMonth = new Date(s.year, s.month+1, 0).getDate();
+  const prevDays = new Date(s.year, s.month, 0).getDate();
+
+  let cells = '';
+  // Previous month grey days
+  for (let i=offset-1; i>=0; i--) {
+    cells += `<div style="display:flex;align-items:center;justify-content:center;font-size:13px;color:rgba(255,255,255,.15);border-radius:8px">${prevDays-i}</div>`;
+  }
+  // Current month
+  for (let d=1; d<=daysInMonth; d++) {
+    const isToday = d===today.getDate() && s.month===today.getMonth() && s.year===today.getFullYear();
+    const isSel   = d===s.selected;
+    const dow     = new Date(s.year,s.month,d).getDay();
+    const isWknd  = dow===0||dow===6;
+    const bg  = isSel ? '#f43f5e' : isToday ? 'rgba(244,63,94,.2)' : 'transparent';
+    const fg  = isSel ? '#fff' : isToday ? '#f43f5e' : isWknd ? 'rgba(244,100,120,.8)' : 'rgba(255,255,255,.82)';
+    const fw  = isToday||isSel ? '700' : '400';
+    cells += `<div onclick="calSelect('${id}',${d})"
+      style="display:flex;align-items:center;justify-content:center;font-size:13px;
+             font-weight:${fw};color:${fg};background:${bg};border-radius:8px;
+             cursor:pointer;transition:background .12s;border:${isToday&&!isSel?'1px solid rgba(244,63,94,.4)':'1px solid transparent'}"
+      onmouseover="if(!${isSel})this.style.background='rgba(255,255,255,.08)'"
+      onmouseout="this.style.background='${bg}'">${d}</div>`;
+  }
+  // Next month fill
+  const remaining = 42 - offset - daysInMonth;
+  for (let d=1; d<=remaining && remaining<7; d++) {
+    cells += `<div style="display:flex;align-items:center;justify-content:center;font-size:13px;color:rgba(255,255,255,.15);border-radius:8px">${d}</div>`;
+  }
+  grid.innerHTML = cells;
+
+  const months2=['Січня','Лютого','Березня','Квітня','Травня','Червня','Липня','Серпня','Вересня','Жовтня','Листопада','Грудня'];
+  if (sel) sel.textContent = s.selected ? `Обрано: ${s.selected} ${months2[s.month]} ${s.year}` : '';
+}
+
+function calSelect(id, d) {
+  const s = _calState[id];
+  if (!s) return;
+  s.selected = d;
+  calRender(id);
+}
+
+// ─────────────────────────────────────────────
 // WINDOW CONTROLS
 // ─────────────────────────────────────────────
 function closeWindow(id) {
@@ -1646,12 +2131,16 @@ function showNotif(icon, app, body) {
 // SPOTLIGHT
 // ─────────────────────────────────────────────
 const SP_APPS = [
-  { id:'bank',      name:'Army Bank',    desc:'Фінансові операції',     icon:'🏦' },
-  { id:'messenger', name:'Messenger',    desc:'Захищений месенджер',    icon:'💬' },
-  { id:'admin',     name:'Army Admin',   desc:'Панель адміністратора',  icon:'🛡️' },
-  { id:'market',    name:'Marketplace',  desc:'Маркетплейс обладнання', icon:'🛒' },
-  { id:'editor',    name:'Редактор',     desc:'Текстовий редактор',     icon:'📝' },
-  { id:'finder',    name:'Finder',       desc:'Файловий менеджер',      icon:'🗂️' },
+  { id:'bank',      name:'Army Bank',         desc:'Фінансові операції',        icon:'🏦' },
+  { id:'messenger', name:'Messenger',          desc:'Захищений месенджер',       icon:'💬' },
+  { id:'admin',     name:'Army Admin',         desc:'Панель адміністратора',     icon:'🛡️' },
+  { id:'market',    name:'Marketplace',        desc:'Маркетплейс обладнання',    icon:'🛒' },
+  { id:'editor',    name:'Редактор',           desc:'Текстовий редактор',        icon:'📝' },
+  { id:'currency',  name:'Конвертер валют',    desc:'USD/EUR/UAH/GBP/CHF',       icon:'💱' },
+  { id:'rates',     name:'Курси валют',        desc:'НБУ + ЄЦБ онлайн',          icon:'📊' },
+  { id:'calc',      name:'Калькулятор',        desc:'Інженерний калькулятор',    icon:'🧮' },
+  { id:'calendar',  name:'Календар',           desc:'Планування та розклад',     icon:'📅' },
+  { id:'finder',    name:'Finder',             desc:'Файловий менеджер',         icon:'🗂️' },
 ];
 
 let _spVisible = false;
