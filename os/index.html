@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArmyOS</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --menubar-h: 28px;
+  --dock-h: 88px;
+  --radius: 12px;
+  --win-bg: rgba(18,22,46,0.94);
+  --shadow-idle: 0 20px 60px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3);
+  --shadow-active: 0 40px 100px rgba(0,0,0,0.7), 0 12px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.16);
+}
+html,body { width:100%; height:100%; overflow:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+  user-select:none; -webkit-user-select:none; }
+
+/* ── DESKTOP ── */
+#desktop {
+  position:fixed; inset:0; z-index:0;
+  background: radial-gradient(ellipse at 18% 28%, #0a2a5e 0%,transparent 52%),
+              radial-gradient(ellipse at 82% 72%, #1a0a3d 0%,transparent 52%),
+              radial-gradient(ellipse at 50% 50%, #0d1f4a 0%,transparent 75%),
+              linear-gradient(155deg,#05102a 0%,#0e1e45 35%,#1a0a38 70%,#050d1f 100%);
+}
+#desktop::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,.9) 0%,transparent 100%),
+    radial-gradient(1px 1px at 23% 7%,rgba(255,255,255,.7) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 39% 19%,rgba(255,255,255,.8) 0%,transparent 100%),
+    radial-gradient(1px 1px at 58% 4%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 74% 17%,rgba(255,255,255,.9) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 87% 11%,rgba(255,255,255,.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 14% 38%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 33% 53%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 63% 33%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 91% 44%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(2px 2px at 48% 68%,rgba(200,210,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 19% 73%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 79% 82%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 44% 88%,rgba(255,255,255,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 68% 57%,rgba(255,255,255,.6) 0%,transparent 100%);
+  animation: twinkle 5s ease-in-out infinite alternate;
+}
+#desktop::after {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse 80% 40% at 28% 62%,rgba(0,110,255,.07) 0%,transparent 60%),
+              radial-gradient(ellipse 60% 30% at 72% 38%,rgba(110,0,255,.05) 0%,transparent 60%);
+  animation: aurora 9s ease-in-out infinite alternate;
+}
+@keyframes twinkle { 0%{opacity:.65} 100%{opacity:1} }
+@keyframes aurora  { 0%{transform:translateX(-4%) translateY(2%)} 100%{transform:translateX(4%) translateY(-2%)} }
+@keyframes windowOpen { from{transform:scale(.88);opacity:0} to{transform:scale(1);opacity:1} }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ── MENU BAR ── */
+#menubar {
+  position:fixed; top:0; left:0; right:0; height:var(--menubar-h);
+  background:rgba(8,12,30,.78);
+  backdrop-filter:blur(28px) saturate(180%); -webkit-backdrop-filter:blur(28px) saturate(180%);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  display:flex; align-items:center; padding:0 14px; gap:4px;
+  z-index:9999;
+}
+.apple-logo { width:16px; height:16px; margin-right:8px; display:flex; align-items:center; justify-content:center; }
+.apple-logo svg { fill:rgba(255,255,255,.88); }
+.menu-item {
+  color:rgba(255,255,255,.85); font-size:13px; font-weight:500;
+  padding:2px 9px; border-radius:4px; cursor:pointer;
+  transition:background .15s; letter-spacing:-.01em; white-space:nowrap;
+}
+.menu-item:hover { background:rgba(255,255,255,.12); }
+.menu-item.bold { font-weight:700; }
+#menubar-app-name { font-weight:600; color:#fff; }
+.menubar-right {
+  margin-left:auto; display:flex; align-items:center; gap:10px;
+  color:rgba(255,255,255,.82); font-size:12px;
+}
+.menubar-right .mbi { font-size:14px; cursor:pointer; line-height:1; }
+#clock { font-size:12px; font-weight:500; color:rgba(255,255,255,.9); letter-spacing:.02em; }
+
+/* ── DESKTOP ICONS ── */
+#desktop-icons {
+  position:fixed; top:calc(var(--menubar-h) + 16px); right:16px;
+  display:flex; flex-direction:column; gap:14px; z-index:100;
+}
+.desktop-icon {
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  cursor:pointer; width:72px;
+}
+.desktop-icon .di-wrap {
+  width:56px; height:56px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center; font-size:28px;
+  transition:transform .2s,box-shadow .2s;
+  box-shadow:0 4px 14px rgba(0,0,0,.4);
+}
+.desktop-icon:hover .di-wrap { transform:scale(1.1) translateY(-2px); }
+.desktop-icon .di-label {
+  font-size:11px; color:#fff; text-align:center;
+  text-shadow:0 1px 5px rgba(0,0,0,.9); font-weight:500;
+}
+
+/* ── WINDOWS ── */
+.window {
+  position:fixed; display:flex; flex-direction:column;
+  background:var(--win-bg);
+  backdrop-filter:blur(40px) saturate(180%); -webkit-backdrop-filter:blur(40px) saturate(180%);
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-idle);
+  overflow:hidden; z-index:1000;
+  min-width:340px; min-height:220px;
+  animation:windowOpen .22s cubic-bezier(.34,1.56,.64,1) forwards;
+  will-change:transform;
+}
+.window.active { box-shadow:var(--shadow-active); z-index:1010; }
+.window.minimized { display:none !important; }
+.window.maximized {
+  top:var(--menubar-h) !important; left:0 !important;
+  width:100vw !important;
+  height:calc(100vh - var(--menubar-h) - var(--dock-h) - 10px) !important;
+  border-radius:0 !important;
+}
+
+/* Titlebar */
+.titlebar {
+  height:38px; display:flex; align-items:center; padding:0 12px;
+  background:rgba(255,255,255,.035); border-bottom:1px solid rgba(255,255,255,.07);
+  cursor:grab; flex-shrink:0; gap:8px;
+}
+.titlebar:active { cursor:grabbing; }
+.traffic-lights { display:flex; gap:6px; margin-right:6px; }
+.tl {
+  width:12px; height:12px; border-radius:50%; cursor:pointer; position:relative;
+  flex-shrink:0; transition:filter .15s;
+}
+.tl:hover { filter:brightness(1.15); }
+.tl.close  { background:#ff5f57; box-shadow:0 0 0 .5px #e0443e; }
+.tl.mini   { background:#febc2e; box-shadow:0 0 0 .5px #d4a017; }
+.tl.maxi   { background:#28c840; box-shadow:0 0 0 .5px #1aaa2f; }
+.tl-icon {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-size:7px; color:rgba(0,0,0,.55); opacity:0; transition:opacity .15s; font-weight:700;
+}
+.traffic-lights:hover .tl-icon { opacity:1; }
+.win-title {
+  flex:1; text-align:center; font-size:13px; font-weight:600;
+  color:rgba(255,255,255,.83); letter-spacing:-.01em;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  pointer-events:none; overflow:hidden;
+}
+.win-title-icon { font-size:15px; }
+.win-title-text { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.titlebar-actions { display:flex; gap:4px; margin-left:auto; }
+.tb-btn {
+  height:20px; padding:0 7px; border-radius:5px;
+  background:rgba(255,255,255,.07); border:none;
+  color:rgba(255,255,255,.6); cursor:pointer; font-size:11px;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .15s,color .15s; white-space:nowrap; gap:3px;
+}
+.tb-btn:hover { background:rgba(255,255,255,.15); color:rgba(255,255,255,.95); }
+.tb-btn.active-btn { background:rgba(80,120,255,.3); color:#7eb0ff; }
+
+/* ── BROWSER TOOLBAR ── */
+.browser-toolbar {
+  display:flex; align-items:center; padding:5px 10px; gap:6px;
+  background:rgba(0,0,0,.22); border-bottom:1px solid rgba(255,255,255,.06);
+  flex-shrink:0;
+}
+.nav-btn {
+  width:24px; height:24px; border:none; background:none;
+  color:rgba(255,255,255,.45); cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:5px; transition:color .15s,background .15s; flex-shrink:0;
+}
+.nav-btn:hover:not(:disabled) { color:rgba(255,255,255,.9); background:rgba(255,255,255,.1); }
+.nav-btn:disabled { color:rgba(255,255,255,.2); cursor:default; }
+.address-wrap {
+  flex:1; display:flex; align-items:center; gap:6px;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1);
+  border-radius:7px; padding:0 8px; height:24px;
+  transition:border-color .15s, background .15s;
+}
+.address-wrap:focus-within { border-color:rgba(100,160,255,.5); background:rgba(255,255,255,.12); }
+.address-lock { font-size:10px; color:rgba(100,220,100,.8); flex-shrink:0; }
+.address-input {
+  flex:1; background:none; border:none; outline:none;
+  color:rgba(255,255,255,.75); font-size:11.5px;
+  font-family:'SF Mono',ui-monospace,monospace;
+}
+.address-input::selection { background:rgba(100,160,255,.3); }
+
+/* Browser tabs */
+.browser-tabs {
+  display:flex; align-items:flex-end; padding:0 10px; gap:2px;
+  background:rgba(0,0,0,.18); border-bottom:1px solid rgba(255,255,255,.06);
+  flex-shrink:0; overflow-x:auto; scrollbar-width:none; min-height:32px;
+}
+.browser-tabs::-webkit-scrollbar { display:none; }
+.browser-tab {
+  display:flex; align-items:center; gap:5px;
+  padding:5px 12px 5px 10px; border-radius:8px 8px 0 0;
+  cursor:pointer; font-size:11.5px; color:rgba(255,255,255,.55);
+  min-width:80px; max-width:180px; flex-shrink:0;
+  background:rgba(255,255,255,.04);
+  border:1px solid transparent; border-bottom:none;
+  transition:background .15s,color .15s;
+  position:relative;
+}
+.browser-tab.active {
+  background:rgba(255,255,255,.1); color:rgba(255,255,255,.9);
+  border-color:rgba(255,255,255,.1);
+}
+.browser-tab:hover:not(.active) { background:rgba(255,255,255,.07); color:rgba(255,255,255,.7); }
+.tab-favicon { font-size:12px; flex-shrink:0; }
+.tab-title { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.tab-close {
+  width:14px; height:14px; border-radius:50%; border:none;
+  background:transparent; color:rgba(255,255,255,.35); cursor:pointer;
+  font-size:10px; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:background .15s,color .15s;
+}
+.tab-close:hover { background:rgba(255,60,60,.3); color:#ff8080; }
+.tab-new {
+  display:flex; align-items:center; justify-content:center;
+  width:24px; height:24px; border-radius:50%; border:none;
+  background:none; color:rgba(255,255,255,.4); cursor:pointer;
+  font-size:18px; margin-bottom:4px; flex-shrink:0;
+  transition:color .15s,background .15s;
+}
+.tab-new:hover { color:#fff; background:rgba(255,255,255,.1); }
+
+/* iframe */
+.window-content {
+  flex:1; overflow:hidden; position:relative; background:#fff;
+}
+.window-content iframe { width:100%; height:100%; border:none; display:block; }
+.loading-overlay {
+  position:absolute; inset:0; z-index:10;
+  background:linear-gradient(135deg,#0b1a40,#18073a);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+  transition:opacity .35s;
+}
+.loading-overlay.hidden { opacity:0; pointer-events:none; }
+.loading-app-icon { font-size:52px; }
+.loading-spinner {
+  width:30px; height:30px; border:2px solid rgba(255,255,255,.12);
+  border-top-color:rgba(255,255,255,.75); border-radius:50%;
+  animation:spin .75s linear infinite;
+}
+.loading-text { color:rgba(255,255,255,.45); font-size:12px; }
+
+/* Resize handles */
+.rh { position:absolute; z-index:20; }
+.rh-se { bottom:0; right:0; width:18px; height:18px; cursor:se-resize; }
+.rh-s  { bottom:0; left:18px; right:18px; height:5px; cursor:s-resize; }
+.rh-e  { top:38px; right:0; width:5px; bottom:5px; cursor:e-resize; }
+.rh-sw { bottom:0; left:0; width:18px; height:18px; cursor:sw-resize; }
+.rh-w  { top:38px; left:0; width:5px; bottom:5px; cursor:w-resize; }
+.rh-se::after {
+  content:''; position:absolute; bottom:3px; right:3px;
+  width:10px; height:10px;
+  border-right:2px solid rgba(255,255,255,.22); border-bottom:2px solid rgba(255,255,255,.22);
+  border-radius:0 0 2px 0;
+}
+
+/* ── TEXT EDITOR ── */
+.editor-root { flex:1; display:flex; flex-direction:column; overflow:hidden; background:#1a1d2e; }
+.editor-toolbar {
+  display:flex; align-items:center; gap:4px; padding:5px 10px;
+  background:rgba(0,0,0,.3); border-bottom:1px solid rgba(255,255,255,.07);
+  flex-shrink:0; flex-wrap:wrap;
+}
+.ed-btn {
+  height:22px; padding:0 8px; border-radius:5px; border:none;
+  background:rgba(255,255,255,.07); color:rgba(255,255,255,.7);
+  cursor:pointer; font-size:11px; display:flex; align-items:center; gap:4px;
+  transition:background .15s,color .15s; white-space:nowrap;
+}
+.ed-btn:hover { background:rgba(255,255,255,.14); color:#fff; }
+.ed-btn.danger:hover { background:rgba(255,60,60,.25); color:#ff8080; }
+.ed-sep { width:1px; height:18px; background:rgba(255,255,255,.1); margin:0 2px; }
+.ed-select {
+  height:22px; padding:0 6px; border-radius:5px; border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.07); color:rgba(255,255,255,.75);
+  font-size:11px; cursor:pointer; outline:none;
+}
+.ed-filename {
+  flex:1; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
+  border-radius:5px; color:rgba(255,255,255,.8); font-size:11px;
+  padding:0 8px; height:22px; outline:none;
+  transition:border-color .15s;
+}
+.ed-filename:focus { border-color:rgba(100,160,255,.5); }
+.editor-body { flex:1; display:flex; overflow:hidden; }
+.line-numbers {
+  padding:10px 8px 10px 10px; font-family:'SF Mono',ui-monospace,monospace;
+  font-size:13px; line-height:1.7; color:rgba(255,255,255,.2);
+  background:rgba(0,0,0,.25); text-align:right; min-width:44px;
+  overflow:hidden; flex-shrink:0; user-select:none;
+  border-right:1px solid rgba(255,255,255,.05);
+}
+.ed-textarea {
+  flex:1; padding:10px 14px; font-family:'SF Mono',ui-monospace,monospace;
+  font-size:13px; line-height:1.7; color:#d4d8f0; background:transparent;
+  border:none; outline:none; resize:none; overflow-y:auto;
+  scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.15) transparent;
+  user-select:text; -webkit-user-select:text; tab-size:2;
+  white-space:pre; overflow-wrap:normal; overflow-x:auto;
+}
+.ed-textarea::selection { background:rgba(100,150,255,.3); }
+.ed-textarea::-webkit-scrollbar { width:6px; height:6px; }
+.ed-textarea::-webkit-scrollbar-thumb { background:rgba(255,255,255,.15); border-radius:3px; }
+.editor-statusbar {
+  display:flex; align-items:center; gap:12px; padding:3px 12px;
+  background:rgba(0,0,0,.4); border-top:1px solid rgba(255,255,255,.06);
+  font-size:10.5px; color:rgba(255,255,255,.35); flex-shrink:0;
+}
+.editor-statusbar span { display:flex; align-items:center; gap:4px; }
+.ed-dot { width:6px; height:6px; border-radius:50%; background:#28c840; }
+.ed-dot.modified { background:#febc2e; }
+
+/* ── FILES SIDEBAR ── */
+.files-sidebar {
+  width:160px; flex-shrink:0; background:rgba(0,0,0,.25);
+  border-right:1px solid rgba(255,255,255,.06);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.files-sidebar-header {
+  padding:8px 10px; font-size:10px; font-weight:600;
+  color:rgba(255,255,255,.35); text-transform:uppercase; letter-spacing:.08em;
+  border-bottom:1px solid rgba(255,255,255,.06); flex-shrink:0;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.fs-list { flex:1; overflow-y:auto; padding:4px; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.1) transparent; }
+.fs-item {
+  padding:5px 8px; border-radius:6px; font-size:11.5px; color:rgba(255,255,255,.6);
+  cursor:pointer; display:flex; align-items:center; gap:6px; transition:background .12s,color .12s;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.fs-item:hover { background:rgba(255,255,255,.08); color:rgba(255,255,255,.9); }
+.fs-item.active { background:rgba(100,150,255,.2); color:#7eb0ff; }
+.fs-item .fi-icon { font-size:13px; flex-shrink:0; }
+.fs-item .fi-name { overflow:hidden; text-overflow:ellipsis; }
+
+/* ── DOCK ── */
+#dock {
+  position:fixed; bottom:8px; left:50%; transform:translateX(-50%);
+  height:var(--dock-h);
+  background:rgba(255,255,255,.09);
+  backdrop-filter:blur(32px) saturate(200%); -webkit-backdrop-filter:blur(32px) saturate(200%);
+  border:1px solid rgba(255,255,255,.17); border-radius:22px;
+  padding:8px 16px; display:flex; align-items:flex-end; gap:8px;
+  z-index:9998;
+  box-shadow:0 8px 32px rgba(0,0,0,.45),0 2px 8px rgba(0,0,0,.3),
+             inset 0 1px 0 rgba(255,255,255,.11);
+}
+.dock-sep { width:1px; height:46px; background:rgba(255,255,255,.17); margin:0 4px; align-self:center; }
+.dock-item {
+  display:flex; flex-direction:column; align-items:center;
+  cursor:pointer; position:relative;
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1);
+}
+.dock-item:hover { transform:translateY(-14px) scale(1.28); }
+.dock-item:hover .dock-tip { opacity:1; transform:translateX(-50%) translateY(-4px); }
+.dock-icon {
+  width:56px; height:56px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center; font-size:30px;
+  position:relative; overflow:hidden;
+  box-shadow:0 4px 14px rgba(0,0,0,.35);
+}
+.dock-dot { width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,.8); margin-top:3px; opacity:0; transition:opacity .2s; }
+.dock-item.running .dock-dot { opacity:1; }
+.dock-tip {
+  position:absolute; bottom:calc(100% + 14px); left:50%;
+  transform:translateX(-50%) translateY(0);
+  background:rgba(22,27,52,.94); backdrop-filter:blur(12px);
+  color:rgba(255,255,255,.9); font-size:11px; font-weight:500;
+  padding:4px 10px; border-radius:7px; white-space:nowrap;
+  opacity:0; pointer-events:none;
+  transition:opacity .18s,transform .18s;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 4px 16px rgba(0,0,0,.35);
+}
+.dock-badge {
+  position:absolute; top:-4px; right:-4px;
+  background:#ff3b30; color:#fff; font-size:9px; font-weight:700;
+  min-width:16px; height:16px; border-radius:8px;
+  display:none; align-items:center; justify-content:center;
+  padding:0 4px; border:2px solid rgba(18,22,46,.95);
+}
+
+/* App icon gradients */
+.ic-bank     { background:linear-gradient(145deg,#1a4fa8,#0d2d6b,#0a1f50); }
+.ic-messenger{ background:linear-gradient(145deg,#2d9a4e,#1a6b30,#0f4a1f); }
+.ic-admin    { background:linear-gradient(145deg,#7c3aed,#4c1d95,#2d0f5e); }
+.ic-market   { background:linear-gradient(145deg,#ea6c00,#b84d00,#7a3000); }
+.ic-editor   { background:linear-gradient(145deg,#e83e8c,#9b1b5a,#5c0f35); }
+.ic-finder   { background:linear-gradient(145deg,#0ea5e9,#0369a1,#0c4a6e); }
+.ic-calc     { background:linear-gradient(145deg,#f59e0b,#b45309,#78350f); }
+
+/* ── NOTIFICATIONS ── */
+#notif-area {
+  position:fixed; top:calc(var(--menubar-h) + 10px); right:14px;
+  display:flex; flex-direction:column; gap:8px; z-index:99999; width:300px;
+}
+.notif {
+  background:rgba(22,27,52,.97); backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.12); border-radius:14px;
+  padding:12px 14px; display:flex; align-items:flex-start; gap:10px;
+  box-shadow:0 8px 28px rgba(0,0,0,.45);
+  transform:translateX(120%); transition:transform .38s cubic-bezier(.34,1.56,.64,1);
+  cursor:pointer;
+}
+.notif.show { transform:translateX(0); }
+.notif-ico { font-size:24px; flex-shrink:0; }
+.notif-app { font-size:10px; font-weight:600; color:rgba(255,255,255,.45); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
+.notif-title { font-size:13px; font-weight:600; color:rgba(255,255,255,.95); margin-bottom:2px; }
+.notif-body { font-size:12px; color:rgba(255,255,255,.55); line-height:1.4; }
+
+/* ── SPOTLIGHT ── */
+#spotlight {
+  position:fixed; inset:0; background:rgba(0,0,0,.5); backdrop-filter:blur(5px);
+  display:flex; align-items:flex-start; justify-content:center; padding-top:18vh;
+  z-index:99998; opacity:0; pointer-events:none; transition:opacity .18s;
+}
+#spotlight.visible { opacity:1; pointer-events:all; }
+.sp-box {
+  width:580px; background:rgba(22,27,52,.97); backdrop-filter:blur(40px) saturate(200%);
+  border:1px solid rgba(255,255,255,.14); border-radius:16px;
+  box-shadow:0 40px 90px rgba(0,0,0,.65); overflow:hidden;
+}
+.sp-input-row {
+  display:flex; align-items:center; padding:14px 18px; gap:10px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.sp-search-icon { font-size:17px; color:rgba(255,255,255,.38); }
+#sp-input {
+  flex:1; background:none; border:none; outline:none;
+  font-size:20px; color:#fff; font-weight:300;
+}
+#sp-input::placeholder { color:rgba(255,255,255,.28); }
+.sp-results { padding:6px; max-height:320px; overflow-y:auto; }
+.sp-result {
+  display:flex; align-items:center; gap:12px; padding:9px 11px;
+  border-radius:10px; cursor:pointer; transition:background .12s;
+}
+.sp-result:hover,.sp-result.sel { background:rgba(255,255,255,.1); }
+.sp-r-icon { font-size:22px; }
+.sp-r-name { font-size:14px; font-weight:500; color:rgba(255,255,255,.9); }
+.sp-r-desc { font-size:11.5px; color:rgba(255,255,255,.42); }
+
+/* ── CONTEXT MENU ── */
+#ctx-menu {
+  position:fixed; background:rgba(22,27,52,.97); backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:4px;
+  box-shadow:0 8px 32px rgba(0,0,0,.55); z-index:99999; display:none; min-width:190px;
+}
+.ctx-item {
+  padding:6px 13px; font-size:13px; color:rgba(255,255,255,.82);
+  cursor:pointer; border-radius:6px; display:flex; align-items:center; gap:9px;
+  transition:background .1s;
+}
+.ctx-item:hover { background:rgba(255,255,255,.1); }
+.ctx-sep { height:1px; background:rgba(255,255,255,.08); margin:3px 0; }
+
+/* ── MODAL DIALOG ── */
+#modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(4px);
+  display:none; align-items:center; justify-content:center; z-index:999999;
+}
+#modal-overlay.visible { display:flex; }
+.modal-box {
+  background:rgba(22,27,52,.98); border:1px solid rgba(255,255,255,.14);
+  border-radius:14px; padding:24px 28px; min-width:320px;
+  box-shadow:0 32px 80px rgba(0,0,0,.7);
+}
+.modal-title { font-size:16px; font-weight:600; color:#fff; margin-bottom:8px; }
+.modal-body { font-size:13px; color:rgba(255,255,255,.6); margin-bottom:20px; line-height:1.5; }
+.modal-actions { display:flex; justify-content:flex-end; gap:8px; }
+.modal-btn {
+  padding:6px 18px; border-radius:8px; border:none; cursor:pointer;
+  font-size:13px; font-weight:500; transition:filter .15s;
+}
+.modal-btn:hover { filter:brightness(1.1); }
+.modal-btn.cancel { background:rgba(255,255,255,.12); color:rgba(255,255,255,.8); }
+.modal-btn.confirm { background:#1a4fa8; color:#fff; }
+.modal-btn.danger { background:#c0392b; color:#fff; }
+</style>
+</head>
+<body>
+
+<div id="desktop"></div>
+
+<!-- MENU BAR -->
+<div id="menubar">
+  <div class="apple-logo">
+    <svg width="13" height="16" viewBox="0 0 814 1000">
+      <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-37.5-155.5-127.4C46 790.9 0 663.8 0 542.6c0-207.8 135.4-317.7 268.5-317.7 100.5 0 184.4 66.6 246.9 66.6 59.4 0 152.4-70.8 264.9-70.8 40.2 0 145.1 3.8 216.1 95.3zm-327.3-178.8c12.2-57 44.4-113.2 95-149.5 50.6-36.3 108.7-57 166.3-57l.8 3.4c-6.7 58.8-38.8 115.7-89 151.8C582 149.3 521.3 168.7 460.8 162.1z"/>
+    </svg>
+  </div>
+  <span class="menu-item bold" id="menubar-app-name">ArmyOS</span>
+  <span class="menu-item" id="mb-file" onclick="menubarAction('file')">Файл</span>
+  <span class="menu-item" onclick="menubarAction('edit')">Правка</span>
+  <span class="menu-item" onclick="menubarAction('view')">Вигляд</span>
+  <span class="menu-item" onclick="tileAll()">Вікно</span>
+  <div class="menubar-right">
+    <span class="mbi" title="Wi-Fi">📶</span>
+    <span class="mbi" title="Звук">🔊</span>
+    <span class="mbi" title="Пошук (⌘Space)" onclick="toggleSpotlight()">🔍</span>
+    <span class="mbi" onclick="toggleSpotlight()">⌨️</span>
+    <span id="clock"></span>
+  </div>
+</div>
+
+<!-- Desktop icons -->
+<div id="desktop-icons">
+  <div class="desktop-icon" ondblclick="openApp('bank')">
+    <div class="di-wrap ic-bank">🏦</div>
+    <span class="di-label">Army Bank</span>
+  </div>
+  <div class="desktop-icon" ondblclick="openApp('messenger')">
+    <div class="di-wrap ic-messenger">💬</div>
+    <span class="di-label">Messenger</span>
+  </div>
+  <div class="desktop-icon" ondblclick="openApp('admin')">
+    <div class="di-wrap ic-admin">🛡️</div>
+    <span class="di-label">Admin</span>
+  </div>
+  <div class="desktop-icon" ondblclick="openApp('market')">
+    <div class="di-wrap ic-market">🛒</div>
+    <span class="di-label">Marketplace</span>
+  </div>
+  <div class="desktop-icon" ondblclick="openApp('editor')">
+    <div class="di-wrap ic-editor">📝</div>
+    <span class="di-label">Редактор</span>
+  </div>
+</div>
+
+<!-- Notifications -->
+<div id="notif-area"></div>
+
+<!-- Spotlight -->
+<div id="spotlight" onclick="spBgClick(event)">
+  <div class="sp-box">
+    <div class="sp-input-row">
+      <span class="sp-search-icon">🔍</span>
+      <input id="sp-input" type="text" placeholder="Spotlight" oninput="spFilter(this.value)" onkeydown="spKey(event)">
+    </div>
+    <div class="sp-results" id="sp-results"></div>
+  </div>
+</div>
+
+<!-- Context menu -->
+<div id="ctx-menu">
+  <div class="ctx-item" onclick="ctxNew()">📄 Новий документ</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="openApp('bank')">🏦 Army Bank</div>
+  <div class="ctx-item" onclick="openApp('messenger')">💬 Messenger</div>
+  <div class="ctx-item" onclick="openApp('admin')">🛡️ Army Admin</div>
+  <div class="ctx-item" onclick="openApp('market')">🛒 Marketplace</div>
+  <div class="ctx-item" onclick="openApp('editor')">📝 Текстовий редактор</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="tileAll()">⊞ Розмістити вікна</div>
+  <div class="ctx-item" onclick="closeAllWindows()">✕ Закрити всі</div>
+</div>
+
+<!-- Modal -->
+<div id="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<!-- DOCK -->
+<div id="dock">
+  <div class="dock-item" id="dock-finder" onclick="openApp('finder')">
+    <div class="dock-icon ic-finder">🗂️</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Finder</div>
+  </div>
+
+  <div class="dock-sep"></div>
+
+  <div class="dock-item" id="dock-bank" onclick="toggleApp('bank')">
+    <div class="dock-icon ic-bank" style="position:relative">
+      🏦<div class="dock-badge" id="badge-bank">3</div>
+    </div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Army Bank</div>
+  </div>
+
+  <div class="dock-item" id="dock-messenger" onclick="toggleApp('messenger')">
+    <div class="dock-icon ic-messenger" style="position:relative">
+      💬<div class="dock-badge" id="badge-messenger">7</div>
+    </div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Messenger</div>
+  </div>
+
+  <div class="dock-item" id="dock-admin" onclick="toggleApp('admin')">
+    <div class="dock-icon ic-admin">🛡️</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Army Admin</div>
+  </div>
+
+  <div class="dock-item" id="dock-market" onclick="toggleApp('market')">
+    <div class="dock-icon ic-market">🛒</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Marketplace</div>
+  </div>
+
+  <div class="dock-item" id="dock-editor" onclick="toggleApp('editor')">
+    <div class="dock-icon ic-editor">📝</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Редактор</div>
+  </div>
+
+  <div class="dock-sep"></div>
+
+  <div class="dock-item" onclick="toggleSpotlight()">
+    <div class="dock-icon" style="background:linear-gradient(145deg,#374151,#1f2937)">🔍</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Spotlight (⌘Space)</div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ─────────────────────────────────────────────
+// APP REGISTRY
+// ─────────────────────────────────────────────
+const APPS = {
+  bank: {
+    title:'Army Bank', icon:'🏦', iconClass:'ic-bank',
+    type:'browser',
+    defaultUrl:'https://army-bank.onrender.com/',
+    defaultW:1100, defaultH:680,
+  },
+  messenger: {
+    title:'Messenger', icon:'💬', iconClass:'ic-messenger',
+    type:'browser',
+    defaultUrl:'https://army-bank.onrender.com/messenger',
+    defaultW:860, defaultH:640,
+  },
+  admin: {
+    title:'Army Admin', icon:'🛡️', iconClass:'ic-admin',
+    type:'browser',
+    defaultUrl:'https://munister.com.ua/army-admin/',
+    defaultW:1200, defaultH:730,
+  },
+  market: {
+    title:'Marketplace', icon:'🛒', iconClass:'ic-market',
+    type:'browser',
+    defaultUrl:'https://munister.com.ua/marketplace/',
+    defaultW:1120, defaultH:710,
+  },
+  editor: {
+    title:'Редактор', icon:'📝', iconClass:'ic-editor',
+    type:'editor',
+    defaultW:920, defaultH:680,
+  },
+  finder: {
+    title:'Finder', icon:'🗂️', iconClass:'ic-finder',
+    type:'finder',
+    defaultW:780, defaultH:520,
+  },
+};
+
+// ─────────────────────────────────────────────
+// WINDOW MANAGER STATE
+// ─────────────────────────────────────────────
+const WM = {
+  wins: {},       // id -> { el, cfg, maximized, prevRect, type }
+  zBase: 1000,
+  activeId: null,
+};
+
+// ─────────────────────────────────────────────
+// CLOCK
+// ─────────────────────────────────────────────
+(function clockTick() {
+  const el = document.getElementById('clock');
+  const now = new Date();
+  const d = now.toLocaleDateString('uk-UA', { weekday:'short', day:'2-digit', month:'short' });
+  const t = now.toLocaleTimeString('uk-UA', { hour:'2-digit', minute:'2-digit' });
+  if (el) el.textContent = `${d}  ${t}`;
+  setTimeout(clockTick, 1000 - now.getMilliseconds());
+})();
+
+// ─────────────────────────────────────────────
+// OPEN / TOGGLE
+// ─────────────────────────────────────────────
+function openApp(id) {
+  const w = WM.wins[id];
+  if (w) {
+    w.el.classList.remove('minimized');
+    bringToFront(id);
+    return;
+  }
+  _createWindow(id);
+}
+
+function toggleApp(id) {
+  const w = WM.wins[id];
+  if (!w) { openApp(id); return; }
+  if (w.el.classList.contains('minimized')) {
+    w.el.classList.remove('minimized');
+    bringToFront(id);
+  } else if (WM.activeId === id) {
+    w.el.classList.add('minimized');
+  } else {
+    bringToFront(id);
+  }
+}
+
+// ─────────────────────────────────────────────
+// CREATE WINDOW
+// ─────────────────────────────────────────────
+function _createWindow(id) {
+  const cfg = APPS[id];
+  if (!cfg) return;
+
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const MENU = 28, DOCK = 96;
+  const cnt = Object.keys(WM.wins).length;
+  const winW = Math.min(cfg.defaultW, vw - 40);
+  const winH = Math.min(cfg.defaultH, vh - MENU - DOCK - 20);
+  const left = Math.max(10, 60 + (cnt % 5) * 32);
+  const top  = Math.max(MENU + 4, MENU + 20 + (cnt % 5) * 26);
+
+  const el = document.createElement('div');
+  el.className = 'window';
+  el.id = `win-${id}`;
+  el.style.cssText = `width:${winW}px;height:${winH}px;left:${left}px;top:${top}px;`;
+
+  // Build inner HTML
+  let inner = _buildTitlebar(id, cfg);
+  if (cfg.type === 'browser')  inner += _buildBrowser(id, cfg);
+  else if (cfg.type === 'editor') inner += _buildEditor(id);
+  else if (cfg.type === 'finder') inner += _buildFinder(id);
+  inner += _buildResizeHandles(id);
+
+  el.innerHTML = inner;
+  document.body.appendChild(el);
+
+  WM.wins[id] = { el, cfg, maximized:false, prevRect:null, type:cfg.type };
+
+  _attachDrag(id);
+  _attachResize(id);
+  el.addEventListener('mousedown', () => bringToFront(id), true);
+
+  document.getElementById(`dock-${id}`)?.classList.add('running');
+  bringToFront(id);
+
+  // Post-init for browser tabs
+  if (cfg.type === 'browser') {
+    _initBrowserState(id);
+  } else if (cfg.type === 'editor') {
+    _initEditor(id);
+  } else if (cfg.type === 'finder') {
+    _initFinder(id);
+  }
+
+  // Welcome notification once
+  const notifs = {
+    bank:      [cfg.icon, cfg.title, 'Баланс успішно завантажено'],
+    messenger: [cfg.icon, cfg.title, 'Нові повідомлення від @command'],
+    admin:     [cfg.icon, cfg.title, 'Новий запит на доступ'],
+    market:    [cfg.icon, cfg.title, 'Замовлення №1248 підтверджено'],
+    editor:    [cfg.icon, cfg.title, 'Автозбереження увімкнено'],
+  };
+  if (notifs[id]) setTimeout(() => showNotif(...notifs[id]), 1800);
+
+  updateMenubarTitle();
+}
+
+function _buildTitlebar(id, cfg) {
+  return `
+  <div class="titlebar" id="tb-${id}">
+    <div class="traffic-lights">
+      <div class="tl close"  onclick="closeWindow('${id}')"><span class="tl-icon">✕</span></div>
+      <div class="tl mini"   onclick="minimizeWindow('${id}')"><span class="tl-icon">−</span></div>
+      <div class="tl maxi"   onclick="maximizeWindow('${id}')"><span class="tl-icon">⊞</span></div>
+    </div>
+    <div class="win-title">
+      <span class="win-title-icon">${cfg.icon}</span>
+      <span class="win-title-text" id="wt-${id}">${cfg.title}</span>
+    </div>
+    <div class="titlebar-actions" id="tba-${id}"></div>
+  </div>`;
+}
+
+function _buildResizeHandles(id) {
+  return `
+  <div class="rh rh-se" data-rh="${id}" data-dir="se"></div>
+  <div class="rh rh-s"  data-rh="${id}" data-dir="s"></div>
+  <div class="rh rh-e"  data-rh="${id}" data-dir="e"></div>
+  <div class="rh rh-sw" data-rh="${id}" data-dir="sw"></div>
+  <div class="rh rh-w"  data-rh="${id}" data-dir="w"></div>`;
+}
+
+// ─────────────────────────────────────────────
+// BROWSER APP
+// ─────────────────────────────────────────────
+const _browserState = {}; // id -> { tabs:[], activeTab }
+
+function _buildBrowser(id, cfg) {
+  return `
+  <div class="browser-tabs" id="btabs-${id}"></div>
+  <div class="browser-toolbar" id="btb-${id}">
+    <button class="nav-btn" id="bb-back-${id}"   onclick="browserNav('${id}','back')"    title="Назад"    disabled>‹</button>
+    <button class="nav-btn" id="bb-fwd-${id}"    onclick="browserNav('${id}','fwd')"     title="Вперед"   disabled>›</button>
+    <button class="nav-btn" id="bb-reload-${id}" onclick="browserNav('${id}','reload')"  title="Оновити">↻</button>
+    <div class="address-wrap">
+      <span class="address-lock" id="bl-lock-${id}">🔒</span>
+      <input class="address-input" id="ba-${id}" value="${cfg.defaultUrl}"
+        onkeydown="if(event.key==='Enter')browserGo('${id}',this.value)"
+        onfocus="this.select()">
+    </div>
+    <button class="nav-btn" onclick="browserNav('${id}','newtab')" title="Нова вкладка">＋</button>
+    <button class="nav-btn" onclick="openExternal('${id}')" title="Відкрити зовні">↗</button>
+  </div>
+  <div class="window-content" id="wc-${id}">
+    <div class="loading-overlay" id="load-${id}">
+      <div class="loading-app-icon">${cfg.icon}</div>
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Завантаження…</div>
+    </div>
+    <iframe id="frame-${id}" src="${cfg.defaultUrl}"
+      onload="onFrameLoad('${id}')"
+      referrerpolicy="no-referrer" allow="fullscreen"></iframe>
+  </div>`;
+}
+
+function _initBrowserState(id) {
+  const cfg = APPS[id];
+  _browserState[id] = {
+    tabs: [{ url: cfg.defaultUrl, title: cfg.title, icon: cfg.icon, history:[], hIdx:-1 }],
+    active: 0,
+  };
+  _renderTabs(id);
+  _updateNavButtons(id);
+}
+
+function _renderTabs(id) {
+  const st = _browserState[id];
+  if (!st) return;
+  const bar = document.getElementById(`btabs-${id}`);
+  if (!bar) return;
+  bar.innerHTML = st.tabs.map((t,i) => `
+    <div class="browser-tab ${i===st.active?'active':''}" onclick="switchTab('${id}',${i})">
+      <span class="tab-favicon">${t.icon||'🌐'}</span>
+      <span class="tab-title">${t.title||t.url}</span>
+      <button class="tab-close" onclick="closeTab('${id}',${i},event)" title="Закрити">×</button>
+    </div>`).join('') +
+    `<button class="tab-new" onclick="browserNav('${id}','newtab')" title="Нова вкладка">+</button>`;
+}
+
+function switchTab(id, idx) {
+  const st = _browserState[id];
+  if (!st || idx === st.active) return;
+  st.active = idx;
+  const t = st.tabs[idx];
+  const frame = document.getElementById(`frame-${id}`);
+  const addr  = document.getElementById(`ba-${id}`);
+  if (frame) { frame.src = t.url; }
+  if (addr)  { addr.value = t.url; }
+  _renderTabs(id);
+  _updateNavButtons(id);
+}
+
+function closeTab(id, idx, e) {
+  e.stopPropagation();
+  const st = _browserState[id];
+  if (!st) return;
+  if (st.tabs.length === 1) { closeWindow(id); return; }
+  st.tabs.splice(idx, 1);
+  if (st.active >= st.tabs.length) st.active = st.tabs.length - 1;
+  switchTab(id, st.active);
+}
+
+function browserNav(id, action) {
+  const st = _browserState[id];
+  if (!st) return;
+  if (action === 'newtab') {
+    st.tabs.push({ url:'https://army-bank.onrender.com/', title:'Army Bank', icon:'🏦', history:[], hIdx:-1 });
+    st.active = st.tabs.length - 1;
+    const frame = document.getElementById(`frame-${id}`);
+    if (frame) frame.src = 'https://army-bank.onrender.com/';
+    const addr = document.getElementById(`ba-${id}`);
+    if (addr) addr.value = 'https://army-bank.onrender.com/';
+    _renderTabs(id);
+    showLoading(id);
+    return;
+  }
+  const t = st.tabs[st.active];
+  const frame = document.getElementById(`frame-${id}`);
+  if (!frame) return;
+  if (action === 'reload') { showLoading(id); frame.src = frame.src; }
+  else if (action === 'back' && t.hIdx > 0) {
+    t.hIdx--;
+    const u = t.history[t.hIdx];
+    frame.src = u;
+    const addr = document.getElementById(`ba-${id}`);
+    if (addr) addr.value = u;
+    showLoading(id);
+  } else if (action === 'fwd' && t.hIdx < t.history.length - 1) {
+    t.hIdx++;
+    const u = t.history[t.hIdx];
+    frame.src = u;
+    const addr = document.getElementById(`ba-${id}`);
+    if (addr) addr.value = u;
+    showLoading(id);
+  }
+  _updateNavButtons(id);
+}
+
+function browserGo(id, rawUrl) {
+  let url = rawUrl.trim();
+  if (!url) return;
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  const frame = document.getElementById(`frame-${id}`);
+  const addr  = document.getElementById(`ba-${id}`);
+  const st    = _browserState[id];
+  if (!frame || !st) return;
+  const t = st.tabs[st.active];
+  t.history = t.history.slice(0, t.hIdx + 1);
+  t.history.push(url);
+  t.hIdx = t.history.length - 1;
+  t.url = url;
+  frame.src = url;
+  if (addr) addr.value = url;
+  _updateNavButtons(id);
+  showLoading(id);
+}
+
+function _updateNavButtons(id) {
+  const st = _browserState[id];
+  if (!st) return;
+  const t  = st.tabs[st.active];
+  const bb = document.getElementById(`bb-back-${id}`);
+  const bf = document.getElementById(`bb-fwd-${id}`);
+  if (bb) bb.disabled = !t || t.hIdx <= 0;
+  if (bf) bf.disabled = !t || t.hIdx >= (t.history.length - 1);
+}
+
+function onFrameLoad(id) {
+  const ov = document.getElementById(`load-${id}`);
+  if (ov) ov.classList.add('hidden');
+  // Try to get title from iframe (same-origin only)
+  try {
+    const frame = document.getElementById(`frame-${id}`);
+    const title = frame?.contentDocument?.title;
+    if (title) {
+      const st = _browserState[id];
+      if (st) st.tabs[st.active].title = title;
+      _renderTabs(id);
+    }
+  } catch(_) {}
+}
+
+function showLoading(id) {
+  const ov = document.getElementById(`load-${id}`);
+  if (ov) ov.classList.remove('hidden');
+}
+
+function openExternal(id) {
+  const st = _browserState[id];
+  const url = st ? st.tabs[st.active].url : APPS[id]?.defaultUrl;
+  if (url) window.open(url, '_blank');
+}
+
+// ─────────────────────────────────────────────
+// TEXT EDITOR
+// ─────────────────────────────────────────────
+const _editorState = {}; // id -> { files:[], activeFile, nextId }
+
+function _buildEditor(id) {
+  return `
+  <div class="editor-root" id="er-${id}">
+    <div class="editor-toolbar">
+      <button class="ed-btn" onclick="edNew('${id}')">📄 Новий</button>
+      <button class="ed-btn" onclick="edOpen('${id}')">📂 Відкрити</button>
+      <button class="ed-btn" onclick="edSave('${id}')">💾 Зберегти</button>
+      <button class="ed-btn" onclick="edSaveAs('${id}')">🖫 Зберегти як…</button>
+      <div class="ed-sep"></div>
+      <button class="ed-btn" onclick="edDownload('${id}')">⬇ Завантажити</button>
+      <div class="ed-sep"></div>
+      <select class="ed-select" id="ed-lang-${id}" onchange="edChangeLang('${id}',this.value)">
+        <option value="plain">Текст</option>
+        <option value="js">JavaScript</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="json">JSON</option>
+        <option value="md">Markdown</option>
+        <option value="py">Python</option>
+      </select>
+      <div class="ed-sep"></div>
+      <input class="ed-filename" id="ed-fn-${id}" value="untitled.txt"
+        onchange="edRenameActive('${id}',this.value)"
+        onkeydown="if(event.key==='Enter')this.blur()">
+      <div class="ed-sep"></div>
+      <button class="ed-btn" onclick="edUndo('${id}')" title="Ctrl+Z">↩ Undo</button>
+      <button class="ed-btn" onclick="edRedo('${id}')" title="Ctrl+Y">↪ Redo</button>
+      <div class="ed-sep"></div>
+      <button class="ed-btn danger" onclick="edClear('${id}')">🗑 Очистити</button>
+    </div>
+    <div class="editor-body">
+      <div class="files-sidebar">
+        <div class="files-sidebar-header">
+          <span>Файли</span>
+          <button class="ed-btn" style="height:18px;padding:0 6px;font-size:10px" onclick="edNew('${id}')">+</button>
+        </div>
+        <div class="fs-list" id="ed-fs-${id}"></div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+        <div class="editor-body" style="flex:1;overflow:hidden">
+          <div class="line-numbers" id="ed-ln-${id}">1</div>
+          <textarea class="ed-textarea" id="ed-ta-${id}"
+            spellcheck="false"
+            onscroll="syncScroll('${id}')"
+            oninput="edInput('${id}')"
+            onkeydown="edKeydown(event,'${id}')"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="editor-statusbar">
+      <span><div class="ed-dot" id="ed-dot-${id}"></div> <span id="ed-status-${id}">Збережено</span></span>
+      <span>Рядок: <b id="ed-ln-cur-${id}">1</b></span>
+      <span>Стовп: <b id="ed-col-${id}">1</b></span>
+      <span>Слів: <b id="ed-wc-${id}">0</b></span>
+      <span>Символів: <b id="ed-cc-${id}">0</b></span>
+      <span id="ed-lang-label-${id}" style="margin-left:auto;opacity:.5">Текст</span>
+    </div>
+  </div>`;
+}
+
+function _initEditor(id) {
+  _editorState[id] = { files: [], activeFile: null, nextId: 1 };
+  edNew(id, 'untitled.txt', '');
+  // Keyboard shortcuts inside textarea
+  const ta = document.getElementById(`ed-ta-${id}`);
+  if (ta) {
+    ta.addEventListener('keydown', e => edKeydown(e, id));
+  }
+}
+
+function _edActiveFile(id) {
+  const st = _editorState[id];
+  if (!st || st.activeFile == null) return null;
+  return st.files.find(f => f.fid === st.activeFile) || null;
+}
+
+function edNew(id, name, content) {
+  const st = _editorState[id];
+  if (!st) return;
+  name = name || `untitled-${st.nextId++}.txt`;
+  content = content !== undefined ? content : '';
+  const fid = Date.now() + Math.random();
+  st.files.push({ fid, name, content, modified: false, lang: _inferLang(name), undoStack: [content], undoIdx: 0 });
+  st.activeFile = fid;
+  edRefresh(id);
+}
+
+function edOpen(id) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt,.md,.js,.html,.css,.json,.py,.ts,.xml,.csv,.log,text/*';
+  input.onchange = async () => {
+    const file = input.files[0];
+    if (!file) return;
+    const text = await file.text();
+    edNew(id, file.name, text);
+    showNotif('📂', 'Редактор', `Файл «${file.name}» відкрито`);
+  };
+  input.click();
+}
+
+function edSave(id) {
+  const f = _edActiveFile(id);
+  if (!f) return;
+  // Persist to localStorage
+  try { localStorage.setItem('editor_' + f.fid, JSON.stringify({ name: f.name, content: f.content, lang: f.lang })); } catch(_) {}
+  f.modified = false;
+  _setStatus(id, 'Збережено');
+  edRefreshSidebar(id);
+  showNotif('💾', 'Редактор', `«${f.name}» збережено`);
+}
+
+function edSaveAs(id) {
+  const f = _edActiveFile(id);
+  if (!f) return;
+  const name = prompt('Назва файлу:', f.name);
+  if (!name) return;
+  f.name = name;
+  f.lang = _inferLang(name);
+  const fn = document.getElementById(`ed-fn-${id}`);
+  if (fn) fn.value = name;
+  edSave(id);
+}
+
+function edDownload(id) {
+  const f = _edActiveFile(id);
+  if (!f) return;
+  const blob = new Blob([f.content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = f.name; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showNotif('⬇', 'Редактор', `«${f.name}» завантажено`);
+}
+
+function edClear(id) {
+  showModal('Очистити файл', 'Видалити весь вміст поточного файлу?', [
+    { label:'Скасувати', cls:'cancel', cb: closeModal },
+    { label:'Очистити',  cls:'danger', cb: () => { closeModal(); _setContent(id,''); } },
+  ]);
+}
+
+function edRenameActive(id, name) {
+  const f = _edActiveFile(id);
+  if (!f) return;
+  f.name = name;
+  f.lang = _inferLang(name);
+  f.modified = true;
+  _setStatus(id, 'Змінено');
+  edRefreshSidebar(id);
+  document.getElementById(`ed-lang-label-${id}`).textContent = f.lang;
+}
+
+function edChangeLang(id, lang) {
+  const f = _edActiveFile(id);
+  if (!f) return;
+  f.lang = lang;
+  document.getElementById(`ed-lang-label-${id}`).textContent = lang;
+}
+
+function edUndo(id) {
+  const f = _edActiveFile(id);
+  if (!f || f.undoIdx <= 0) return;
+  f.undoIdx--;
+  f.content = f.undoStack[f.undoIdx];
+  _syncTextarea(id);
+}
+
+function edRedo(id) {
+  const f = _edActiveFile(id);
+  if (!f || f.undoIdx >= f.undoStack.length - 1) return;
+  f.undoIdx++;
+  f.content = f.undoStack[f.undoIdx];
+  _syncTextarea(id);
+}
+
+function edInput(id) {
+  const ta = document.getElementById(`ed-ta-${id}`);
+  const f  = _edActiveFile(id);
+  if (!ta || !f) return;
+  const val = ta.value;
+  f.content = val;
+  f.modified = true;
+  // Undo stack
+  f.undoStack = f.undoStack.slice(0, f.undoIdx + 1);
+  f.undoStack.push(val);
+  if (f.undoStack.length > 200) f.undoStack.shift();
+  f.undoIdx = f.undoStack.length - 1;
+  _setStatus(id, 'Змінено');
+  edRefreshSidebar(id);
+  updateLineNumbers(id);
+  updateStats(id);
+}
+
+function edKeydown(e, id) {
+  const ta = document.getElementById(`ed-ta-${id}`);
+  if (!ta) return;
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); edSave(id); return; }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); edUndo(id); return; }
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) { e.preventDefault(); edRedo(id); return; }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); edNew(id); return; }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'o') { e.preventDefault(); edOpen(id); return; }
+  // Tab → insert 2 spaces
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const s = ta.selectionStart, end = ta.selectionEnd;
+    ta.value = ta.value.substring(0, s) + '  ' + ta.value.substring(end);
+    ta.selectionStart = ta.selectionEnd = s + 2;
+    edInput(id);
+  }
+}
+
+function edRefresh(id) {
+  const st = _editorState[id];
+  if (!st) return;
+  edRefreshSidebar(id);
+  const f = _edActiveFile(id);
+  if (!f) return;
+  _syncTextarea(id);
+  const fn = document.getElementById(`ed-fn-${id}`);
+  if (fn) fn.value = f.name;
+  const ls = document.getElementById(`ed-lang-${id}`);
+  if (ls) ls.value = f.lang;
+  document.getElementById(`ed-lang-label-${id}`).textContent = f.lang;
+  _setStatus(id, f.modified ? 'Змінено' : 'Збережено');
+}
+
+function edRefreshSidebar(id) {
+  const st = _editorState[id];
+  if (!st) return;
+  const list = document.getElementById(`ed-fs-${id}`);
+  if (!list) return;
+  list.innerHTML = st.files.map(f => `
+    <div class="fs-item ${f.fid===st.activeFile?'active':''}" onclick="edOpenFile('${id}',${f.fid.toString().replace('.','_')})">
+      <span class="fi-icon">${_langIcon(f.lang)}</span>
+      <span class="fi-name">${f.name}${f.modified?' •':''}</span>
+    </div>`).join('');
+}
+
+function edOpenFile(id, fidStr) {
+  const st = _editorState[id];
+  if (!st) return;
+  const fid = st.files.find(f => f.fid.toString().replace('.','_') === String(fidStr))?.fid;
+  if (!fid) return;
+  st.activeFile = fid;
+  edRefresh(id);
+}
+
+function _syncTextarea(id) {
+  const f  = _edActiveFile(id);
+  const ta = document.getElementById(`ed-ta-${id}`);
+  if (!f || !ta) return;
+  ta.value = f.content;
+  updateLineNumbers(id);
+  updateStats(id);
+}
+
+function _setContent(id, val) {
+  const f  = _edActiveFile(id);
+  const ta = document.getElementById(`ed-ta-${id}`);
+  if (!f || !ta) return;
+  f.content = val;
+  ta.value  = val;
+  f.modified = true;
+  updateLineNumbers(id);
+  updateStats(id);
+}
+
+function _setStatus(id, msg) {
+  const s = document.getElementById(`ed-status-${id}`);
+  const d = document.getElementById(`ed-dot-${id}`);
+  if (s) s.textContent = msg;
+  if (d) {
+    d.classList.toggle('modified', msg !== 'Збережено');
+  }
+}
+
+function updateLineNumbers(id) {
+  const ta = document.getElementById(`ed-ta-${id}`);
+  const ln = document.getElementById(`ed-ln-${id}`);
+  if (!ta || !ln) return;
+  const lines = ta.value.split('\n').length;
+  ln.textContent = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
+}
+
+function updateStats(id) {
+  const ta = document.getElementById(`ed-ta-${id}`);
+  if (!ta) return;
+  const val = ta.value;
+  const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+  const chars = val.length;
+  const pos = ta.selectionStart;
+  const lines = val.substring(0, pos).split('\n');
+  const row = lines.length, col = lines[lines.length - 1].length + 1;
+  const wc = document.getElementById(`ed-wc-${id}`);
+  const cc = document.getElementById(`ed-cc-${id}`);
+  const lc = document.getElementById(`ed-ln-cur-${id}`);
+  const cl = document.getElementById(`ed-col-${id}`);
+  if (wc) wc.textContent = words;
+  if (cc) cc.textContent = chars;
+  if (lc) lc.textContent = row;
+  if (cl) cl.textContent = col;
+}
+
+function syncScroll(id) {
+  const ta = document.getElementById(`ed-ta-${id}`);
+  const ln = document.getElementById(`ed-ln-${id}`);
+  if (ta && ln) ln.scrollTop = ta.scrollTop;
+}
+
+function _inferLang(name) {
+  const ext = name.split('.').pop().toLowerCase();
+  const map = { js:'js', ts:'js', jsx:'js', tsx:'js', html:'html', htm:'html', css:'css', json:'json', md:'md', py:'py', txt:'plain' };
+  return map[ext] || 'plain';
+}
+
+function _langIcon(lang) {
+  const m = { js:'🟨', html:'🌐', css:'🎨', json:'📋', md:'📖', py:'🐍', plain:'📄' };
+  return m[lang] || '📄';
+}
+
+// ─────────────────────────────────────────────
+// FINDER
+// ─────────────────────────────────────────────
+function _buildFinder(id) {
+  return `
+  <div style="display:flex;flex:1;overflow:hidden;background:#1a1d2e">
+    <div style="width:160px;background:rgba(0,0,0,.25);border-right:1px solid rgba(255,255,255,.07);padding:10px 0;flex-shrink:0">
+      ${['🏠 Дім','📥 Завантаження','📄 Документи','🖥 Робочий стіл'].map(x=>`
+        <div style="padding:6px 14px;font-size:12px;color:rgba(255,255,255,.65);cursor:pointer;border-radius:6px;margin:0 4px;transition:background .12s"
+          onmouseover="this.style.background='rgba(255,255,255,.08)'" onmouseout="this.style.background=''" >
+          ${x}
+        </div>`).join('')}
+    </div>
+    <div style="flex:1;padding:16px;display:flex;flex-wrap:wrap;gap:12px;align-content:flex-start;overflow-y:auto">
+      ${['📝 Редактор','🏦 Army Bank','💬 Messenger','🛡️ Admin','🛒 Market'].map((x,i)=>`
+        <div ondblclick="openApp(['editor','bank','messenger','admin','market'][${i}])"
+          style="width:80px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 6px;border-radius:10px;transition:background .15s"
+          onmouseover="this.style.background='rgba(255,255,255,.08)'" onmouseout="this.style.background=''">
+          <div style="font-size:36px">${x.split(' ')[0]}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.7);text-align:center">${x.split(' ').slice(1).join(' ')}</div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function _initFinder(id) {}
+
+// ─────────────────────────────────────────────
+// WINDOW CONTROLS
+// ─────────────────────────────────────────────
+function closeWindow(id) {
+  const w = WM.wins[id];
+  if (!w) return;
+
+  // Warn if editor has unsaved changes
+  if (w.type === 'editor') {
+    const st = _editorState[id];
+    const unsaved = st?.files.some(f => f.modified);
+    if (unsaved) {
+      showModal('Незбережені зміни', 'Закрити редактор без збереження?', [
+        { label:'Скасувати', cls:'cancel', cb: closeModal },
+        { label:'Зберегти і закрити', cls:'confirm', cb: () => { closeModal(); edSave(id); _doClose(id); } },
+        { label:'Закрити', cls:'danger', cb: () => { closeModal(); _doClose(id); } },
+      ]);
+      return;
+    }
+  }
+  _doClose(id);
+}
+
+function _doClose(id) {
+  const w = WM.wins[id];
+  if (!w) return;
+  w.el.style.transition = 'transform .18s,opacity .18s';
+  w.el.style.transform  = 'scale(.88)';
+  w.el.style.opacity    = '0';
+  w.el.style.pointerEvents = 'none';
+  setTimeout(() => {
+    w.el.remove();
+    delete WM.wins[id];
+    delete _browserState[id];
+    delete _editorState[id];
+    document.getElementById(`dock-${id}`)?.classList.remove('running');
+    if (WM.activeId === id) {
+      WM.activeId = null;
+      updateMenubarTitle();
+    }
+  }, 200);
+}
+
+function minimizeWindow(id) {
+  const w = WM.wins[id];
+  if (!w) return;
+  w.el.classList.add('minimized');
+  if (WM.activeId === id) { WM.activeId = null; updateMenubarTitle(); }
+}
+
+function maximizeWindow(id) {
+  const w = WM.wins[id];
+  if (!w) return;
+  if (w.maximized) {
+    const r = w.prevRect;
+    w.el.classList.remove('maximized');
+    w.el.style.cssText = `width:${r.w}px;height:${r.h}px;left:${r.x}px;top:${r.y}px;`;
+    w.maximized = false;
+  } else {
+    w.prevRect = { w:w.el.offsetWidth, h:w.el.offsetHeight, x:w.el.offsetLeft, y:w.el.offsetTop };
+    w.el.classList.add('maximized');
+    w.el.style.cssText = '';
+    w.maximized = true;
+  }
+}
+
+function bringToFront(id) {
+  const w = WM.wins[id];
+  if (!w) return;
+  WM.zBase++;
+  Object.values(WM.wins).forEach(ww => ww.el.classList.remove('active'));
+  w.el.style.zIndex = WM.zBase;
+  w.el.classList.add('active');
+  WM.activeId = id;
+  updateMenubarTitle();
+}
+
+function updateMenubarTitle() {
+  const id = WM.activeId;
+  const el = document.getElementById('menubar-app-name');
+  if (el) el.textContent = id ? APPS[id]?.title || 'ArmyOS' : 'ArmyOS';
+}
+
+function tileAll() {
+  const ids = Object.keys(WM.wins).filter(id => !WM.wins[id].el.classList.contains('minimized'));
+  if (!ids.length) return;
+  const MENU = 28, DOCK = 96;
+  const aw = window.innerWidth, ah = window.innerHeight - MENU - DOCK;
+  const cols = Math.ceil(Math.sqrt(ids.length)), rows = Math.ceil(ids.length / cols);
+  const ww = Math.floor(aw / cols), wh = Math.floor(ah / rows);
+  ids.forEach((id, i) => {
+    const col = i % cols, row = Math.floor(i / cols);
+    const w = WM.wins[id];
+    if (w.maximized) { w.el.classList.remove('maximized'); w.el.style.cssText = ''; w.maximized = false; }
+    w.el.style.cssText = `width:${ww}px;height:${wh}px;left:${col*ww}px;top:${MENU+row*wh}px;z-index:${w.el.style.zIndex}`;
+  });
+}
+
+function closeAllWindows() {
+  [...Object.keys(WM.wins)].forEach(id => _doClose(id));
+}
+
+// ─────────────────────────────────────────────
+// DRAG
+// ─────────────────────────────────────────────
+function _attachDrag(id) {
+  const el = document.getElementById(`win-${id}`);
+  const tb = document.getElementById(`tb-${id}`);
+  if (!el || !tb) return;
+
+  tb.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    if (e.target.closest('.traffic-lights,.titlebar-actions,.tb-btn')) return;
+    const w = WM.wins[id];
+    if (!w || w.maximized) return;
+    e.preventDefault();
+
+    const sx = e.clientX - el.offsetLeft;
+    const sy = e.clientY - el.offsetTop;
+    const MENU = 28;
+
+    const onMove = e2 => {
+      const nx = Math.max(0, Math.min(window.innerWidth - 80, e2.clientX - sx));
+      const ny = Math.max(MENU, e2.clientY - sy);
+      el.style.left = nx + 'px';
+      el.style.top  = ny + 'px';
+    };
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+
+  // Double-click title to maximize
+  tb.addEventListener('dblclick', e => {
+    if (e.target.closest('.traffic-lights,.titlebar-actions')) return;
+    maximizeWindow(id);
+  });
+}
+
+// ─────────────────────────────────────────────
+// RESIZE
+// ─────────────────────────────────────────────
+function _attachResize(id) {
+  const el = document.getElementById(`win-${id}`);
+  if (!el) return;
+
+  el.querySelectorAll('[data-rh]').forEach(rh => {
+    const dir = rh.dataset.dir;
+    rh.addEventListener('mousedown', e => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const w = WM.wins[id];
+      if (!w || w.maximized) return;
+
+      const sx = e.clientX, sy = e.clientY;
+      const sw = el.offsetWidth, sh = el.offsetHeight;
+      const sl = el.offsetLeft, st = el.offsetTop;
+
+      const onMove = e2 => {
+        const dx = e2.clientX - sx, dy = e2.clientY - sy;
+        let nw = sw, nh = sh, nl = sl, nt = st;
+        if (dir.includes('e'))  nw = Math.max(340, sw + dx);
+        if (dir.includes('s'))  nh = Math.max(220, sh + dy);
+        if (dir.includes('w')) { nw = Math.max(340, sw - dx); nl = sl + (sw - nw); }
+        el.style.width  = nw + 'px';
+        el.style.height = nh + 'px';
+        el.style.left   = nl + 'px';
+        el.style.top    = nt + 'px';
+      };
+      const onUp = () => {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  });
+}
+
+// ─────────────────────────────────────────────
+// NOTIFICATIONS
+// ─────────────────────────────────────────────
+function showNotif(icon, app, body) {
+  const area = document.getElementById('notif-area');
+  const n = document.createElement('div');
+  n.className = 'notif';
+  n.innerHTML = `
+    <div class="notif-ico">${icon}</div>
+    <div>
+      <div class="notif-app">${app}</div>
+      <div class="notif-title">${app}</div>
+      <div class="notif-body">${body}</div>
+    </div>`;
+  n.onclick = () => n.remove();
+  area.appendChild(n);
+  requestAnimationFrame(() => n.classList.add('show'));
+  setTimeout(() => { n.classList.remove('show'); setTimeout(() => n.remove(), 400); }, 4500);
+}
+
+// ─────────────────────────────────────────────
+// SPOTLIGHT
+// ─────────────────────────────────────────────
+const SP_APPS = [
+  { id:'bank',      name:'Army Bank',    desc:'Фінансові операції',     icon:'🏦' },
+  { id:'messenger', name:'Messenger',    desc:'Захищений месенджер',    icon:'💬' },
+  { id:'admin',     name:'Army Admin',   desc:'Панель адміністратора',  icon:'🛡️' },
+  { id:'market',    name:'Marketplace',  desc:'Маркетплейс обладнання', icon:'🛒' },
+  { id:'editor',    name:'Редактор',     desc:'Текстовий редактор',     icon:'📝' },
+  { id:'finder',    name:'Finder',       desc:'Файловий менеджер',      icon:'🗂️' },
+];
+
+let _spVisible = false;
+
+function toggleSpotlight() {
+  _spVisible = !_spVisible;
+  const s = document.getElementById('spotlight');
+  s.classList.toggle('visible', _spVisible);
+  if (_spVisible) {
+    spFilter('');
+    setTimeout(() => document.getElementById('sp-input')?.focus(), 40);
+  }
+}
+
+function spBgClick(e) {
+  if (e.target === document.getElementById('spotlight')) toggleSpotlight();
+}
+
+function spFilter(q) {
+  const list = q ? SP_APPS.filter(a => (a.name+a.desc).toLowerCase().includes(q.toLowerCase())) : SP_APPS;
+  const r = document.getElementById('sp-results');
+  if (!r) return;
+  r.innerHTML = list.map(a => `
+    <div class="sp-result" onclick="spOpen('${a.id}')">
+      <span class="sp-r-icon">${a.icon}</span>
+      <div>
+        <div class="sp-r-name">${a.name}</div>
+        <div class="sp-r-desc">${a.desc}</div>
+      </div>
+    </div>`).join('');
+}
+
+function spOpen(id) { toggleSpotlight(); openApp(id); }
+
+function spKey(e) {
+  if (e.key === 'Escape') toggleSpotlight();
+  if (e.key === 'Enter') {
+    const first = document.querySelector('.sp-result');
+    if (first) first.click();
+  }
+}
+
+// ─────────────────────────────────────────────
+// CONTEXT MENU
+// ─────────────────────────────────────────────
+document.getElementById('desktop').addEventListener('contextmenu', e => {
+  e.preventDefault();
+  const m = document.getElementById('ctx-menu');
+  m.style.display = 'block';
+  m.style.left = Math.min(e.clientX, window.innerWidth - 210) + 'px';
+  m.style.top  = Math.min(e.clientY, window.innerHeight - 240) + 'px';
+});
+
+document.addEventListener('click', e => {
+  const m = document.getElementById('ctx-menu');
+  if (!m.contains(e.target)) m.style.display = 'none';
+});
+
+function ctxNew() {
+  document.getElementById('ctx-menu').style.display = 'none';
+  openApp('editor');
+}
+
+// ─────────────────────────────────────────────
+// MODAL
+// ─────────────────────────────────────────────
+function showModal(title, body, buttons) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent  = body;
+  const acts = document.getElementById('modal-actions');
+  acts.innerHTML = '';
+  buttons.forEach(b => {
+    const btn = document.createElement('button');
+    btn.className = `modal-btn ${b.cls}`;
+    btn.textContent = b.label;
+    btn.onclick = b.cb;
+    acts.appendChild(btn);
+  });
+  document.getElementById('modal-overlay').classList.add('visible');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('visible');
+}
+
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+
+// ─────────────────────────────────────────────
+// MENU BAR ACTIONS
+// ─────────────────────────────────────────────
+function menubarAction(action) {
+  const id = WM.activeId;
+  if (action === 'file') {
+    if (id === 'editor') {
+      showModal('Файл', 'Дії з файлом:', [
+        { label:'Новий (⌘N)',     cls:'cancel',  cb: () => { closeModal(); edNew(id); } },
+        { label:'Відкрити (⌘O)', cls:'cancel',  cb: () => { closeModal(); edOpen(id); } },
+        { label:'Зберегти (⌘S)', cls:'confirm', cb: () => { closeModal(); edSave(id); } },
+        { label:'Завантажити',   cls:'cancel',  cb: () => { closeModal(); edDownload(id); } },
+      ]);
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
+// KEYBOARD SHORTCUTS (GLOBAL)
+// ─────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  const active = WM.activeId;
+
+  // Spotlight
+  if ((e.metaKey || e.ctrlKey) && e.key === ' ') { e.preventDefault(); toggleSpotlight(); return; }
+  if (e.key === 'Escape') {
+    if (_spVisible) { toggleSpotlight(); return; }
+    const mOver = document.getElementById('modal-overlay');
+    if (mOver.classList.contains('visible')) { closeModal(); return; }
+  }
+
+  // Window shortcuts
+  if ((e.metaKey || e.ctrlKey) && !e.shiftKey) {
+    if (e.key === 'w' && active) { e.preventDefault(); closeWindow(active); return; }
+    if (e.key === 'm' && active) { e.preventDefault(); minimizeWindow(active); return; }
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const ids = Object.keys(WM.wins).filter(id => !WM.wins[id].el.classList.contains('minimized'));
+      if (ids.length > 1) {
+        const idx = ids.indexOf(active);
+        const next = ids[(idx + 1) % ids.length];
+        bringToFront(next);
+      }
+      return;
+    }
+  }
+});
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+window.addEventListener('load', () => {
+  // Small stagger for smooth boot feel
+  setTimeout(() => openApp('bank'), 250);
+  setTimeout(() => showNotif('🖥️', 'ArmyOS', 'Система завантажена та готова до роботи'), 1200);
+  setTimeout(() => {
+    const bb = document.getElementById('badge-bank');
+    const bm = document.getElementById('badge-messenger');
+    if (bb) bb.style.display = 'flex';
+    if (bm) bm.style.display = 'flex';
+  }, 2800);
+});
+</script>
+</body>
+</html>
