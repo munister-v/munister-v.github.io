@@ -289,9 +289,9 @@
     <div class="bg-noise"></div>
 
     <div id="welcome">
-        <div class="w-badge">§ Educational Platform 2026</div>
-        <div class="w-title">TaxHub <em>Ukraine</em><br>Architecture & Law</div>
-        <button class="btn-primary" onclick="boot()">Enter System</button>
+        <div class="w-badge">§ Tax Game 2026</div>
+        <div class="w-title">Сюжетний <em>Симулятор</em><br>Податкового Консультанта</div>
+        <button class="btn-primary" onclick="boot()">Почати Кар'єру</button>
     </div>
 
     <div id="desktop">
@@ -416,18 +416,18 @@
     <!-- Simulator Window -->
     <div id="win-quiz" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'quiz')">
-            <div class="win-title">Симулятор</div>
+            <div class="win-title">Кар'єра Консультанта</div>
             <div class="win-controls"><button class="ctrl ctrl-min" onclick="minimizeWin('quiz')"></button><button class="ctrl ctrl-max" onclick="maximizeWin('quiz')"></button><button class="ctrl ctrl-close" onclick="closeWin('quiz')"></button></div>
         </div>
         <div class="win-body">
             <div class="quiz-container">
                 <div class="quiz-header-top">
-                    <span class="label" style="margin:0;">Інтерактивний Кейс (2026)</span>
-                    <span class="xp-gain-badge">Нагорода: 1000 XP</span>
+                    <span class="label" style="margin:0;">Сюжетна Кампанія: Сезон 1</span>
+                    <span class="xp-gain-badge">Нагорода: 1000 XP + Досягнення</span>
                 </div>
                 
-                <h1 class="h1">Податковий <em>Інспектор</em></h1>
-                <p class="p" id="quiz-desc">Спробуйте себе у ролі податкового консультанта. Допоможіть клієнту правильно відкрити бізнес та сплатити податки у реаліях 2026 року. За кожну правильну відповідь ви отримуєте XP!</p>
+                <h1 class="h1">Історія однієї <em>Еко-Ферми</em></h1>
+                <p class="p" id="quiz-desc">Ваш перший клієнт — молодий фермер, який хоче легалізувати бізнес. Проведіть його від невеликого саду до міжнародної компанії. Приймайте стратегічні податкові рішення.</p>
                 
                 <div id="quiz-area" style="display:none;">
                     <div class="quiz-progress" id="quiz-progress"></div>
@@ -435,18 +435,18 @@
                     <div class="quiz-question" id="question-text">Завдання?</div>
                     <div class="quiz-options" id="options-container"></div>
                     <div class="quiz-feedback" id="feedback-box"></div>
-                    <button class="btn-primary" id="next-btn" style="display:none; margin-top: 24px;" onclick="nextQuestion()">Наступний крок →</button>
+                    <button class="btn-primary" id="next-btn" style="display:none; margin-top: 24px;" onclick="nextQuestion()">Продовжити історію →</button>
                 </div>
 
                 <div id="quiz-result" style="display:none; padding-top:20px;">
-                    <div style="font-size: 42px; margin-bottom:16px; color: var(--sand);">§</div>
-                    <h2 style="font-family: var(--serif); font-size: 42px; color: #fff; margin-bottom: 16px; font-weight: 400;">Кейс Завершено</h2>
-                    <p class="p" style="font-size: 18px;">Ви прийняли правильні рішення у <strong id="score-text" style="color:var(--sand); font-family: var(--mono); font-size: 22px;">0/0</strong> ситуаціях.</p>
+                    <div style="font-size: 42px; margin-bottom:16px; color: var(--sand);">🏆</div>
+                    <h2 style="font-family: var(--serif); font-size: 42px; color: #fff; margin-bottom: 16px; font-weight: 400;">Кампанію Завершено</h2>
+                    <p class="p" style="font-size: 18px;">Ви прийняли правильні рішення у <strong id="score-text" style="color:var(--sand); font-family: var(--mono); font-size: 22px;">0/0</strong> епізодах.</p>
                     <p class="p" id="result-desc"></p>
-                    <button class="btn-ghost" onclick="initQuiz()" style="margin-top: 16px;">Повторити кейс</button>
+                    <button class="btn-ghost" onclick="initQuiz()" style="margin-top: 16px;">Почати Сезон 1 з початку</button>
                 </div>
 
-                <button class="btn-primary" id="start-quiz-btn" onclick="startQuiz()" style="margin-top: 24px;">Почати симуляцію</button>
+                <button class="btn-primary" id="start-quiz-btn" onclick="startQuiz()" style="margin-top: 24px;">Розпочати гру</button>
             </div>
         </div>
     </div>
@@ -593,7 +593,10 @@
         function boot() {
             document.getElementById('welcome').style.opacity = '0';
             document.getElementById('welcome').style.pointerEvents = 'none';
-            setTimeout(() => { openWin('profile'); }, 400); // Auto open profile
+            setTimeout(() => { 
+                openWin('profile'); 
+                setTimeout(() => { openWin('quiz'); }, 200); // Focus on Game first
+            }, 400); 
         }
 
         // Window Management
@@ -739,35 +742,35 @@
             unlockAch(2);
         }
 
-        // Simulator Logic (Updated for 2026)
+        // Simulator Logic (Game Campaign)
         const quizData = [
             { 
-                context: "Рік 2026. До вас звернувся ІТ-спеціаліст Олександр. Він планує надавати послуги з розробки ПЗ для іноземних компаній (B2B). Очікуваний дохід: 120 000 грн на місяць.",
-                q: "Яку систему оподаткування ви йому порадите?", 
-                options: ["ФОП 1 група", "ФОП 2 група", "ФОП 3 група (5%)", "ТОВ на загальній системі"], 
-                a: 2, 
-                exp: "ФОП 3 групи — єдиний варіант для надання послуг іноземним контрагентам (B2B). 2 група не дозволяє послуги нерезидентам, а 1 група — лише для роздрібного ринку." 
-            },
-            { 
-                context: "Олександр відкрив ФОП 3 групи (5%). За перший місяць він отримав на свій рахунок 100 000 грн від замовника.",
-                q: "Яку суму Єдиного податку він має сплатити за цей дохід?", 
-                options: ["0 грн (експорт послуг не оподатковується)", "5 000 грн", "18 000 грн (ПДФО)", "1 870 грн"], 
+                context: "Епізод 1: Старт. Клієнт отримав у спадок 10 гектарів землі. Він вирішив вирощувати еко-яблука та лохину, продаючи їх на місцевому ринку та в найближчі супермаркети. Очікуваний дохід у перший рік: близько 1 млн грн.",
+                q: "Яку форму реєстрації найвигідніше обрати для такого фермера?", 
+                options: ["ФОП 1 група", "ФОП 4 група (сільгоспвиробники)", "ФОП 2 група", "ТОВ з ПДВ"], 
                 a: 1, 
-                exp: "Для ФОП 3 групи (без ПДВ) ставка Єдиного податку становить 5% від усього доходу. 100 000 * 0.05 = 5 000 грн." 
+                exp: "ФОП 4 групи створена спеціально для фермерів. Сума податку тут залежить не від доходу, а від площі та якості землі (нормативної грошової оцінки). Це найвигідніше для тих, хто має власну землю." 
             },
             { 
-                context: "Окрім Єдиного податку, Олександр зобов'язаний сплачувати ЄСВ. Мінімальна зарплата у 2026 році становить 8500 грн.",
-                q: "Скільки становить мінімальний щомісячний платіж з ЄСВ у 2026 році?", 
-                options: ["1 560 грн", "1 760 грн", "1 870 грн", "22% від його доходу 100к"], 
+                context: "Епізод 2: Перші працівники. Ферма росте. Почався сезон збору яблук. Клієнту потрібно офіційно найняти 5 сезонних робітників. Він обіцяє кожному 'чистими' 15 000 грн на руки.",
+                q: "Які податки має сплатити ФОП-фермер за найманих працівників?", 
+                options: ["Він звільнений від податків за найм працівників", "Платить лише ЄСВ (22%)", "Платить ПДФО (18%), Військовий збір (1.5%) та ЄСВ (22%)", "Працівники самі платять податки"], 
                 a: 2, 
-                exp: "Мінімальний страховий внесок (ЄСВ) розраховується як 22% від мінімальної заробітної плати (8500 грн): 8500 * 0.22 = 1 870 грн." 
+                exp: "Незалежно від групи ФОП, при наймі працівників роботодавець стає податковим агентом. Він зобов'язаний нараховувати та сплачувати ПДФО, ВЗ та ЄСВ з офіційної зарплати." 
             },
             { 
-                context: "Пройшов перший квартал роботи. Олександру час подати звітність до податкової.",
-                q: "Який термін подання податкової декларації платника єдиного податку (3 група)?", 
-                options: ["До 20 числа наступного місяця", "Протягом 40 днів після закінчення кварталу", "Раз на рік", "Протягом 10 днів після отримання доходу"], 
+                context: "Епізод 3: Експорт. Яблука стали справжнім хітом! Польська мережа супермаркетів підписує з клієнтом контракт на експорт партії яблук вартістю 2 мільйони гривень.",
+                q: "Які податкові наслідки при експорті товару?", 
+                options: ["Експорт заборонений для ФОП", "Експорт дозволений. Ставка ПДВ на експорт становить 0%", "Доведеться сплатити 20% ПДВ при вивезенні", "Треба переходити на ТОВ"], 
                 a: 1, 
-                exp: "Платники єдиного податку 3 групи подають декларацію щокварталу, протягом 40 календарних днів після закінчення звітного кварталу." 
+                exp: "ФОП має повне право займатися експортом. Більше того, експорт товарів оподатковується ПДВ за ставкою 0%, що є стимулом від держави для продажу товарів за кордон." 
+            },
+            { 
+                context: "Епізод 4: Великий бізнес. Клієнт вирішив побудувати завод з виробництва яблучного соку. Інвестор з Києва готовий дати 10 млн грн в обмін на 30% частки в бізнесі.",
+                q: "Що ви як експерт порадите зробити юридично?", 
+                options: ["Відкрити ще один ФОП", "Зареєструвати ТОВ (Товариство з обмеженою відповідальністю)", "Укласти усний договір про партнерство", "Перевести ФОП на 3 групу"], 
+                a: 1, 
+                exp: "ФОП — це бізнес однієї людини, його не можна 'розділити' на відсотки. Для залучення інвесторів та чіткого розподілу часток (70% на 30%) обов'язково реєструється ТОВ." 
             }
         ];
         
@@ -858,11 +861,11 @@
                 
                 let desc = "";
                 if (score === quizData.length) {
-                    desc = "Блискуче! Ви відмінно орієнтуєтесь у податках 2026 року.";
+                    desc = "Блискуче! Ви врятували фермера від штрафів та допомогли йому стати міжнародною компанією. Рівень пройдено!";
                     unlockAch(3);
                 }
-                else if (score >= quizData.length / 2) desc = "Хороший результат, але деякі нюанси ще варто вивчити.";
-                else desc = "Рекомендуємо ще раз перечитати Податковий кодекс у нашому довіднику.";
+                else if (score >= quizData.length / 2) desc = "Хороший результат! Ферма працює, але ви зробили кілька помилок, які коштували грошей.";
+                else desc = "Ферма збанкрутувала через податкові перевірки. Рекомендуємо перечитати Довідник.";
                 document.getElementById('result-desc').innerText = desc;
             }
         }
