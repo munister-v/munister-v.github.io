@@ -881,6 +881,215 @@ html, body {
   .di:active { transform:translateY(-6px); }
   .tl { width:15px; height:15px; }
 }
+
+/* ══════════════════════════════════════
+   SETTINGS WINDOW
+══════════════════════════════════════ */
+.settings-root { flex:1; display:flex; overflow:hidden; background:#0e0d0b; }
+.st-sidebar {
+  width:160px; flex-shrink:0; background:rgba(0,0,0,.22);
+  border-right:1px solid var(--line); display:flex; flex-direction:column;
+  padding:10px 6px; gap:2px; overflow-y:auto;
+}
+.st-si {
+  padding:9px 12px; border-radius:6px; font-size:12px;
+  color:rgba(238,231,214,.55); cursor:pointer; transition:all .14s;
+  display:flex; align-items:center; gap:9px; letter-spacing:.01em;
+}
+.st-si:hover { background:var(--glass-md); color:rgba(238,231,214,.8); }
+.st-si.active { background:rgba(180,154,114,.12); color:var(--bronze); }
+.st-si-icon { font-size:14px; width:18px; text-align:center; flex-shrink:0; opacity:.7; }
+.st-content { flex:1; overflow-y:auto; padding:22px 24px; scrollbar-width:thin; scrollbar-color:rgba(180,154,114,.08) transparent; }
+.st-sec { display:none; }
+.st-sec.active { display:block; animation:fadeUp .18s ease; }
+.st-h { font-family:var(--serif); font-size:22px; font-weight:300; color:var(--ivory); margin-bottom:20px; }
+.st-group { margin-bottom:26px; }
+.st-group-label { font-size:9px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:rgba(180,154,114,.45); margin-bottom:12px; }
+.st-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(246,240,227,.05); }
+.st-row:last-child { border:none; }
+.st-row-label { font-size:12.5px; color:rgba(238,231,214,.75); }
+.st-row-sub { font-size:10px; color:rgba(180,154,114,.38); margin-top:2px; }
+/* Wallpaper grid */
+.st-wp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+.st-wp-thumb {
+  aspect-ratio:16/10; border-radius:6px; cursor:pointer;
+  border:2px solid transparent; overflow:hidden; position:relative;
+  transition:border-color .15s, transform .15s;
+}
+.st-wp-thumb:hover { transform:scale(1.03); }
+.st-wp-thumb.active { border-color:var(--bronze); }
+.st-wp-thumb img, .st-wp-thumb div { width:100%; height:100%; object-fit:cover; display:block; }
+/* Theme pills */
+.st-theme-row { display:flex; gap:8px; margin-top:10px; }
+.st-theme-pill {
+  flex:1; padding:10px 6px; border-radius:8px; text-align:center;
+  font-size:10.5px; cursor:pointer; border:1px solid var(--line);
+  color:rgba(238,231,214,.55); transition:all .15s; font-weight:500;
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+}
+.st-theme-pill:hover { background:var(--glass-md); color:rgba(238,231,214,.8); }
+.st-theme-pill.active { background:rgba(180,154,114,.12); border-color:var(--line-gold); color:var(--bronze); }
+.st-theme-swatch { width:24px; height:24px; border-radius:50%; border:1px solid rgba(238,231,214,.15); }
+/* Toggle switch */
+.st-toggle { position:relative; width:36px; height:20px; flex-shrink:0; }
+.st-toggle input { opacity:0; width:0; height:0; position:absolute; }
+.st-toggle-track {
+  position:absolute; inset:0; border-radius:10px; cursor:pointer;
+  background:rgba(246,240,227,.1); border:1px solid var(--line);
+  transition:background .2s;
+}
+.st-toggle input:checked ~ .st-toggle-track { background:rgba(180,154,114,.3); border-color:rgba(180,154,114,.5); }
+.st-toggle-thumb {
+  position:absolute; top:3px; left:3px;
+  width:14px; height:14px; border-radius:50%;
+  background:rgba(238,231,214,.4); transition:transform .2s, background .2s; pointer-events:none;
+}
+.st-toggle input:checked ~ .st-toggle-track ~ .st-toggle-thumb,
+.st-toggle input:checked ~ .st-toggle-thumb { transform:translateX(16px); background:var(--bronze); }
+/* Slider */
+.st-slider { width:140px; accent-color:var(--bronze); }
+/* About block */
+.st-about-mark { font-family:var(--serif); font-size:48px; font-weight:300; color:var(--ivory); line-height:1; margin-bottom:8px; }
+.st-about-mark strong { font-weight:500; color:var(--bronze); }
+.st-about-ver { font-size:10px; color:rgba(180,154,114,.45); letter-spacing:.1em; margin-bottom:24px; }
+.st-about-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(246,240,227,.05); }
+.st-about-key { font-size:11px; color:rgba(180,154,114,.4); }
+.st-about-val { font-size:11px; color:rgba(238,231,214,.7); font-family:var(--serif); }
+
+/* ══════════════════════════════════════
+   MESSAGES WINDOW
+══════════════════════════════════════ */
+.messages-root { flex:1; display:flex; overflow:hidden; background:#0c0b09; }
+.msg-sidebar {
+  width:240px; flex-shrink:0; border-right:1px solid var(--line);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.msg-sb-head {
+  padding:14px 14px 10px; border-bottom:1px solid var(--line); flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.msg-sb-title { font-family:var(--serif); font-size:16px; font-weight:400; color:var(--ivory); }
+.msg-sb-new { width:22px; height:22px; border-radius:50%; background:var(--glass); border:1px solid var(--line); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px; color:rgba(180,154,114,.5); transition:all .15s; }
+.msg-sb-new:hover { background:var(--glass-md); color:var(--bronze); }
+.msg-search {
+  padding:8px 10px; border-bottom:1px solid var(--line); flex-shrink:0;
+}
+.msg-search-input {
+  width:100%; background:var(--glass); border:1px solid var(--line); border-radius:6px;
+  padding:6px 10px; font-size:11px; color:rgba(238,231,214,.7); outline:none;
+  font-family:var(--sans);
+}
+.msg-search-input:focus { border-color:var(--line-gold); }
+.msg-search-input::placeholder { color:rgba(180,154,114,.25); }
+.msg-conv-list { flex:1; overflow-y:auto; scrollbar-width:thin; scrollbar-color:rgba(180,154,114,.06) transparent; }
+.msg-conv {
+  display:flex; align-items:center; gap:10px; padding:11px 13px;
+  cursor:pointer; transition:background .12s; border-bottom:1px solid rgba(246,240,227,.03);
+  position:relative;
+}
+.msg-conv:hover { background:var(--glass); }
+.msg-conv.active { background:rgba(180,154,114,.08); }
+.msg-conv-av {
+  width:36px; height:36px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-family:var(--serif); font-weight:500;
+  background:var(--glass-md); border:1px solid var(--line);
+}
+.msg-conv-info { flex:1; overflow:hidden; }
+.msg-conv-name { font-size:12.5px; color:rgba(238,231,214,.82); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.msg-conv-last { font-size:10.5px; color:rgba(180,154,114,.4); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.msg-conv-time { font-size:9px; color:rgba(180,154,114,.3); flex-shrink:0; align-self:flex-start; margin-top:2px; }
+.msg-conv-badge { position:absolute; top:10px; right:10px; background:var(--terracotta); color:rgba(238,231,214,.9); font-size:8px; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px; font-weight:600; }
+
+.msg-thread { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+.msg-thread-head {
+  padding:12px 16px; border-bottom:1px solid var(--line); flex-shrink:0;
+  display:flex; align-items:center; gap:12px;
+}
+.msg-thread-av { width:34px; height:34px; border-radius:50%; background:var(--glass-md); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:12px; font-family:var(--serif); }
+.msg-thread-name { font-size:13.5px; font-weight:500; color:rgba(238,231,214,.88); }
+.msg-thread-status { font-size:9.5px; color:rgba(180,154,114,.4); margin-top:1px; }
+.msg-thread-actions { margin-left:auto; display:flex; gap:6px; }
+.msg-action-btn { width:26px; height:26px; border-radius:50%; background:var(--glass); border:1px solid var(--line); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; color:rgba(180,154,114,.5); transition:all .15s; }
+.msg-action-btn:hover { background:var(--glass-md); color:var(--bronze); }
+.msg-body { flex:1; overflow-y:auto; padding:16px 16px; display:flex; flex-direction:column; gap:10px; scrollbar-width:thin; scrollbar-color:rgba(180,154,114,.06) transparent; }
+.msg-bubble { display:flex; flex-direction:column; gap:2px; }
+.msg-bubble.me { align-items:flex-end; }
+.msg-bubble.them { align-items:flex-start; }
+.msg-b {
+  max-width:72%; padding:9px 13px; border-radius:14px; font-size:12.5px; line-height:1.55;
+}
+.msg-bubble.me .msg-b { background:rgba(180,154,114,.18); border:1px solid rgba(180,154,114,.28); color:rgba(238,231,214,.9); border-radius:14px 14px 4px 14px; }
+.msg-bubble.them .msg-b { background:rgba(246,240,227,.05); border:1px solid var(--line); color:rgba(238,231,214,.82); border-radius:14px 14px 14px 4px; font-family:var(--serif); font-size:13px; }
+.msg-btime { font-size:8.5px; color:rgba(180,154,114,.3); padding:0 4px; }
+.msg-date-sep { text-align:center; font-size:9px; color:rgba(180,154,114,.3); letter-spacing:.08em; text-transform:uppercase; padding:4px 0; }
+.msg-input-row {
+  display:flex; align-items:flex-end; gap:8px; padding:12px 14px;
+  border-top:1px solid var(--line); flex-shrink:0;
+}
+.msg-input {
+  flex:1; background:var(--glass); border:1px solid var(--line); border-radius:10px;
+  padding:9px 13px; font-size:12.5px; font-family:var(--sans);
+  color:rgba(238,231,214,.85); outline:none; resize:none; max-height:100px;
+  transition:border-color .15s; line-height:1.5; min-height:38px; scrollbar-width:none;
+}
+.msg-input::-webkit-scrollbar { display:none; }
+.msg-input:focus { border-color:var(--line-gold); }
+.msg-input::placeholder { color:rgba(180,154,114,.28); }
+.msg-send {
+  width:36px; height:36px; border-radius:10px; flex-shrink:0;
+  background:rgba(180,154,114,.16); border:1px solid rgba(180,154,114,.3);
+  color:rgba(180,154,114,.75); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; font-size:14px;
+  transition:all .15s;
+}
+.msg-send:hover { background:rgba(180,154,114,.26); color:var(--bronze); border-color:var(--bronze); }
+
+/* ══════════════════════════════════════
+   MARKET NATIVE WINDOW
+══════════════════════════════════════ */
+.market-root { flex:1; display:flex; flex-direction:column; overflow:hidden; background:#0d0c0a; }
+.mkt-head {
+  padding:14px 22px 12px; border-bottom:1px solid var(--line); flex-shrink:0;
+  display:flex; align-items:center; gap:14px;
+}
+.mkt-title { font-family:var(--serif); font-size:18px; font-weight:300; color:var(--ivory); flex:1; }
+.mkt-cats { display:flex; gap:6px; }
+.mkt-cat {
+  padding:4px 12px; border-radius:20px; font-size:10.5px;
+  background:var(--glass); border:1px solid var(--line);
+  color:rgba(238,231,214,.55); cursor:pointer; transition:all .15s; letter-spacing:.03em;
+}
+.mkt-cat:hover { background:var(--glass-md); color:rgba(238,231,214,.8); }
+.mkt-cat.active { background:rgba(180,154,114,.12); border-color:var(--line-gold); color:var(--bronze); }
+.mkt-grid {
+  flex:1; overflow-y:auto; padding:18px 20px;
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px;
+  scrollbar-width:thin; scrollbar-color:rgba(180,154,114,.06) transparent;
+}
+.mkt-card {
+  background:rgba(17,16,14,.8); border:1px solid var(--line); border-radius:var(--radius);
+  display:flex; flex-direction:column; overflow:hidden; cursor:pointer;
+  transition:border-color .2s, box-shadow .2s; animation:fadeUp .2s ease;
+}
+.mkt-card:hover { border-color:var(--line-gold); box-shadow:0 8px 28px rgba(0,0,0,.4); }
+.mkt-card-img {
+  height:130px; display:flex; align-items:center; justify-content:center; font-size:52px;
+  background:linear-gradient(145deg,rgba(246,240,227,.03),rgba(246,240,227,.01));
+  border-bottom:1px solid var(--line); flex-shrink:0; position:relative;
+}
+.mkt-badge { position:absolute; top:8px; right:8px; background:var(--terracotta); color:rgba(238,231,214,.9); font-size:7.5px; padding:2px 7px; border-radius:20px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
+.mkt-badge.new { background:var(--olive); }
+.mkt-card-body { padding:12px 13px 14px; flex:1; display:flex; flex-direction:column; gap:4px; }
+.mkt-card-name { font-size:13px; font-weight:500; color:rgba(238,231,214,.88); }
+.mkt-card-desc { font-size:10.5px; color:rgba(180,154,114,.45); line-height:1.5; flex:1; }
+.mkt-card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
+.mkt-card-price { font-family:var(--serif); font-size:16px; font-weight:400; color:var(--bronze); }
+.mkt-card-btn { padding:5px 14px; border-radius:6px; background:rgba(180,154,114,.1); border:1px solid rgba(180,154,114,.22); color:rgba(180,154,114,.7); font-size:10px; cursor:pointer; transition:all .15s; font-family:var(--sans); }
+.mkt-card-btn:hover { background:rgba(180,154,114,.2); color:var(--bronze); border-color:var(--bronze); }
+.mkt-footer { padding:8px 22px; border-top:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.mkt-footer-text { font-size:9px; color:rgba(180,154,114,.28); letter-spacing:.06em; }
+
 </style>
 </head>
 <body>
@@ -1034,9 +1243,9 @@ html, body {
   <div class="ctx-sep"></div>
   <div class="ctx-section">Applications</div>
   <div class="ctx-item" onclick="openApp('bank')">ARM OS Bank</div>
-  <div class="ctx-item" onclick="openApp('messenger')">Messenger</div>
+  <div class="ctx-item" onclick="openApp('messages')">Messages</div>
+  <div class="ctx-item" onclick="openApp('market_native')">Marketplace</div>
   <div class="ctx-item" onclick="openApp('admin')">Admin Panel</div>
-  <div class="ctx-item" onclick="openApp('market')">Marketplace</div>
   <div class="ctx-sep"></div>
   <div class="ctx-section">Instruments</div>
   <div class="ctx-item" onclick="openApp('currency')">Currency Converter</div>
@@ -1158,7 +1367,7 @@ html, body {
   <div class="dock-sep"></div>
 
   <!-- Messages -->
-  <div class="di" id="dock-messenger" onclick="toggleApp('messenger')">
+  <div class="di" id="dock-messenger" onclick="toggleApp('messages')">
     <div class="di-icon" style="position:relative">
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
         <rect x="2" y="4" width="18" height="12" rx="2.5" stroke="rgba(180,154,114,.5)" stroke-width="1.1" fill="rgba(180,154,114,.05)"/>
@@ -1190,7 +1399,7 @@ html, body {
   <div class="dock-sep"></div>
 
   <!-- Settings -->
-  <div class="di" onclick="toggleCtrlCenter(event)">
+  <div class="di" id="dock-settings" onclick="toggleApp('settings')">
     <div class="di-icon">
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
         <circle cx="11" cy="11" r="3" stroke="rgba(180,154,114,.5)" stroke-width="1.1" fill="none"/>
@@ -1199,7 +1408,7 @@ html, body {
     </div>
     <div class="di-label">Settings</div>
     <div class="di-dot"></div>
-    <div class="di-tip">Settings</div>
+    <div class="di-tip">ARM OS Settings</div>
   </div>
 </div>
 
@@ -1336,6 +1545,21 @@ const APPS = {
     type:'units',
     defaultW:400, defaultH:560,
   },
+  settings: {
+    title:'ARM OS Settings', label:'Preferences · System', icon:'⚙️', iconClass:'ic-settings',
+    type:'settings',
+    defaultW:780, defaultH:560,
+  },
+  messages: {
+    title:'Messages', label:'Secure Messenger · ARM OS', icon:'💬', iconClass:'ic-messages',
+    type:'messages',
+    defaultW:880, defaultH:620,
+  },
+  market_native: {
+    title:'Marketplace', label:'ARM OS Market · Products', icon:'🛍️', iconClass:'ic-market2',
+    type:'market_native',
+    defaultW:1020, defaultH:660,
+  },
 };
 
 // ─────────────────────────────────────────────
@@ -1420,6 +1644,9 @@ function _createWindow(id) {
   else if (cfg.type === 'chart')    inner += _buildChart(id);
   else if (cfg.type === 'qr')       inner += _buildQr(id);
   else if (cfg.type === 'units')    inner += _buildUnits(id);
+  else if (cfg.type === 'settings') inner += _buildSettings(id);
+  else if (cfg.type === 'messages') inner += _buildMessages(id);
+  else if (cfg.type === 'market_native') inner += _buildMarketNative(id);
   inner += _buildResizeHandles(id);
 
   el.innerHTML = inner;
@@ -3175,21 +3402,22 @@ function showNotif(icon, app, body) {
 // SPOTLIGHT
 // ─────────────────────────────────────────────
 const SP_APPS = [
-  { id:'ledger', name:'ARM OS Ledger', desc:'Secure Financial Interface', icon:'🏦' },
-  { id:'bank',      name:'Financial Interface', desc:'Private balance · Secure environment',        icon:'🏦' },
-  { id:'messenger', name:'Messenger',          desc:'Secure · Encrypted channel',       icon:'💬' },
-  { id:'admin',     name:'Admin Panel',        desc:'Access control · ARM OS',     icon:'🛡️' },
-  { id:'market',    name:'Marketplace',        desc:'Products · ARM OS',    icon:'🛒' },
-  { id:'editor',    name:'Editor',             desc:'Documents · ARM OS',        icon:'📝' },
-  { id:'currency',  name:'Currency',           desc:'USD · EUR · UAH · GBP',       icon:'💱' },
-  { id:'rates',     name:'Rates',              desc:'Live exchange rates',          icon:'📊' },
-  { id:'calc',      name:'Calculator',         desc:'Engineering · ARM OS',    icon:'🧮' },
-  { id:'calendar',  name:'Calendar',           desc:'Planning · Schedule',      icon:'📅' },
-  { id:'loan',      name:'Loan Calc',          desc:'Annuity · NPV · Schedule',       icon:'💳' },
-  { id:'chart',     name:'Chart',              desc:'Market dynamics · Rates',       icon:'📈' },
-  { id:'finder',    name:'Files',              desc:'File system · ARM OS',          icon:'🗂️' },
-  { id:'qr',        name:'QR Code',            desc:'Generate · Download',         icon:'⬛' },
-  { id:'units',     name:'Units',              desc:'Length · Mass · Temperature', icon:'📐' },
+  { id:'bank',      name:'ARM OS Bank',        desc:'Private balance · Secure environment', icon:'🏦', cat:'Finance' },
+  { id:'currency',  name:'Currency',           desc:'USD · EUR · UAH · GBP',          icon:'💱', cat:'Finance' },
+  { id:'rates',     name:'Exchange Rates',     desc:'Live NBU · Market rates',               icon:'📊', cat:'Finance' },
+  { id:'loan',      name:'Loan Calculator',    desc:'Annuity · NPV · Schedule',           icon:'💳', cat:'Finance' },
+  { id:'chart',     name:'Rate Chart',         desc:'Market dynamics · Rates',              icon:'📈', cat:'Finance' },
+  { id:'messages',  name:'Messages',           desc:'Secure · Encrypted channel',            icon:'💬', cat:'Communication' },
+  { id:'market_native', name:'Marketplace',   desc:'Products · ARM OS Market',             icon:'🛍️', cat:'Communication' },
+  { id:'messenger', name:'ARM Bank Messenger', desc:'Open bank messenger web app',             icon:'📬', cat:'Communication' },
+  { id:'editor',    name:'Editor',             desc:'Documents · ARM OS',                   icon:'📝', cat:'Tools' },
+  { id:'calc',      name:'Calculator',         desc:'Engineering · ARM OS',                 icon:'🧮', cat:'Tools' },
+  { id:'calendar',  name:'Calendar',           desc:'Planning · Schedule',                  icon:'📅', cat:'Tools' },
+  { id:'finder',    name:'Files',              desc:'File system · ARM OS',                 icon:'🗂️', cat:'Tools' },
+  { id:'qr',        name:'QR Generator',       desc:'Generate QR · Download PNG',           icon:'⬛', cat:'Tools' },
+  { id:'units',     name:'Unit Converter',     desc:'Length · Mass · Temperature',       icon:'📐', cat:'Tools' },
+  { id:'settings',  name:'ARM OS Settings',    desc:'Appearance · System · About',       icon:'⚙️', cat:'System' },
+  { id:'admin',     name:'Admin Panel',        desc:'Access control · ARM OS',             icon:'🛡️', cat:'System' },
 ];
 
 let _spVisible = false;
@@ -3208,27 +3436,79 @@ function spBgClick(e) {
   if (e.target === document.getElementById('spotlight')) toggleSpotlight();
 }
 
+let _spSelIdx = 0;
+
 function spFilter(q) {
-  const list = q ? SP_APPS.filter(a => (a.name+a.desc).toLowerCase().includes(q.toLowerCase())) : SP_APPS;
+  _spSelIdx = 0;
   const r = document.getElementById('sp-results');
   if (!r) return;
-  r.innerHTML = list.map(a => `
-    <div class="sp-result" onclick="spOpen('${a.id}')">
+
+  // Math expression detection
+  const mathQ = q.replace(/^\s*[=]?\s*/,'').trim();
+  const isMath = mathQ && /^[\d\s\+\-\*\/\^\(\)\.%]+$/.test(mathQ);
+  if (isMath && mathQ.length > 1) {
+    try {
+      // safe eval via Function
+      const res = Function('"use strict"; return (' + mathQ + ')')();
+      if (typeof res === 'number' && isFinite(res)) {
+        r.innerHTML = `<div style="padding:10px 16px 6px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(180,154,114,.4)">Calculator</div>
+          <div class="sp-result sp-result-math sel" onclick="spCalcCopy('${res}')">
+            <span class="sp-r-icon" style="font-size:22px;font-family:var(--serif)">◎</span>
+            <div style="flex:1">
+              <div class="sp-r-name" style="font-family:var(--serif);font-size:20px;font-weight:300">${res.toLocaleString('uk-UA',{maximumFractionDigits:8})}</div>
+              <div class="sp-r-desc">${mathQ} — натисніть, щоб скопіювати</div>
+            </div>
+          </div>`;
+        return;
+      }
+    } catch(_) {}
+  }
+
+  const list = q ? SP_APPS.filter(a => (a.name+a.desc).toLowerCase().includes(q.toLowerCase())) : SP_APPS;
+  const cats = {};
+  list.forEach(a => { const c = a.cat||'Apps'; (cats[c]=cats[c]||[]).push(a); });
+  r.innerHTML = Object.entries(cats).map(([cat, apps]) =>
+    `<div style="padding:10px 16px 6px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(180,154,114,.4)">${cat}</div>` +
+    apps.map(a => `
+    <div class="sp-result" data-sp-id="${a.id}" onclick="spOpen('${a.id}')">
       <span class="sp-r-icon">${a.icon}</span>
       <div>
         <div class="sp-r-name">${a.name}</div>
         <div class="sp-r-desc">${a.desc}</div>
       </div>
-    </div>`).join('');
+    </div>`).join('')
+  ).join('');
+  _spUpdateSel();
 }
 
-function spOpen(id) { toggleSpotlight(); openApp(id); }
+function _spUpdateSel() {
+  const items = document.querySelectorAll('#sp-results .sp-result');
+  items.forEach((el,i) => el.classList.toggle('sel', i === _spSelIdx));
+  const sel = items[_spSelIdx];
+  if (sel) sel.scrollIntoView({ block:'nearest' });
+}
+
+function spCalcCopy(val) {
+  navigator.clipboard?.writeText(String(val)).catch(()=>{});
+  toggleSpotlight();
+  showNotif('◎','Spotlight',`${val} — скопійовано`);
+}
+
+function spOpen(id) {
+  if (!id) return;
+  toggleSpotlight();
+  if (id === 'ctrl-center') { toggleCtrlCenter(); return; }
+  openApp(id);
+}
 
 function spKey(e) {
-  if (e.key === 'Escape') toggleSpotlight();
+  const items = document.querySelectorAll('#sp-results .sp-result');
+  if (e.key === 'Escape') { toggleSpotlight(); return; }
+  if (e.key === 'ArrowDown') { e.preventDefault(); _spSelIdx = Math.min(_spSelIdx+1, items.length-1); _spUpdateSel(); return; }
+  if (e.key === 'ArrowUp')   { e.preventDefault(); _spSelIdx = Math.max(_spSelIdx-1, 0); _spUpdateSel(); return; }
   if (e.key === 'Enter') {
-    const first = document.querySelector('.sp-result');
-    if (first) first.click();
+    const sel = items[_spSelIdx];
+    if (sel) sel.click();
   }
 }
 
@@ -3849,6 +4129,479 @@ document.addEventListener('keydown', e => {
 // ─────────────────────────────────────────────
 // ARM OS LEDGER (native banking window)
 // ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// ⚙️ SETTINGS WINDOW
+// ─────────────────────────────────────────────
+function _buildSettings(id) {
+  return `
+  <div class="settings-root">
+    <div class="st-sidebar">
+      <div class="st-si active" data-st-sec="appearance" onclick="stSwitch('${id}','appearance',this)">
+        <span class="st-si-icon">🎨</span>Appearance
+      </div>
+      <div class="st-si" data-st-sec="widgets" onclick="stSwitch('${id}','widgets',this)">
+        <span class="st-si-icon">📐</span>Widgets
+      </div>
+      <div class="st-si" data-st-sec="system" onclick="stSwitch('${id}','system',this)">
+        <span class="st-si-icon">⚡</span>System
+      </div>
+      <div class="st-si" data-st-sec="about" onclick="stSwitch('${id}','about',this)">
+        <span class="st-si-icon">◎</span>About
+      </div>
+    </div>
+    <div class="st-content">
+
+      <div class="st-sec active" id="st-sec-appearance-${id}">
+        <div class="st-h">Appearance</div>
+
+        <div class="st-group">
+          <div class="st-group-label">Wallpaper</div>
+          <div class="st-wp-grid">
+            <div class="st-wp-thumb active" onclick="stWallpaper(0,this)">
+              <img src="https://raw.githubusercontent.com/munister-v/munister-v.github.io/refs/heads/main/images/background.jpg" alt="Default">
+            </div>
+            <div class="st-wp-thumb" onclick="stWallpaper(1,this)">
+              <div style="background:linear-gradient(145deg,#0d1117,#1a2744,#0d1117)"></div>
+            </div>
+            <div class="st-wp-thumb" onclick="stWallpaper(2,this)">
+              <div style="background:linear-gradient(160deg,#111008,#2a1f0a,#0d0c08)"></div>
+            </div>
+            <div class="st-wp-thumb" onclick="stWallpaper(3,this)">
+              <div style="background:linear-gradient(145deg,#0a0f0a,#0f1f12,#0a0f0a)"></div>
+            </div>
+            <div class="st-wp-thumb" onclick="stWallpaper(4,this)">
+              <div style="background:linear-gradient(160deg,#12100f,#1e1a18,#0e0c0b)"></div>
+            </div>
+            <div class="st-wp-thumb" onclick="stWallpaper(5,this)">
+              <div style="background:radial-gradient(ellipse at 30% 30%,#1a1228,#0c0a12,#080810)"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="st-group">
+          <div class="st-group-label">Theme</div>
+          <div class="st-theme-row">
+            <div class="st-theme-pill active" onclick="stTheme('graphite',this)">
+              <div class="st-theme-swatch" style="background:#1f1e1b"></div>Graphite
+            </div>
+            <div class="st-theme-pill" onclick="stTheme('midnight',this)">
+              <div class="st-theme-swatch" style="background:#0d0f1a"></div>Midnight
+            </div>
+            <div class="st-theme-pill" onclick="stTheme('warm',this)">
+              <div class="st-theme-swatch" style="background:#1a1510"></div>Warm
+            </div>
+          </div>
+        </div>
+
+        <div class="st-group">
+          <div class="st-group-label">Interface</div>
+          <div class="st-row">
+            <div>
+              <div class="st-row-label">Transparency</div>
+              <div class="st-row-sub">Glass surfaces & blur effects</div>
+            </div>
+            <input class="st-slider" type="range" min="0" max="100" value="80"
+              oninput="stTransparency(this.value)">
+          </div>
+          <div class="st-row">
+            <div>
+              <div class="st-row-label">Animations</div>
+              <div class="st-row-sub">Window open & transition effects</div>
+            </div>
+            <label class="st-toggle">
+              <input type="checkbox" checked onchange="stToggleAnim(this.checked)">
+              <div class="st-toggle-track"></div>
+              <div class="st-toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="st-row">
+            <div>
+              <div class="st-row-label">Dock labels</div>
+              <div class="st-row-sub">Show app names below icons</div>
+            </div>
+            <label class="st-toggle">
+              <input type="checkbox" checked onchange="stToggleDockLabels(this.checked)">
+              <div class="st-toggle-track"></div>
+              <div class="st-toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="st-sec" id="st-sec-widgets-${id}">
+        <div class="st-h">Widgets</div>
+        <div class="st-group">
+          <div class="st-group-label">Active Widgets</div>
+          ${['Temporal · W—01','Financial Indicators · W—02','Architectural Context · W—03','Light of the Day · W—04','System State · W—05'].map((w,i) => `
+          <div class="st-row">
+            <div class="st-row-label">${w}</div>
+            <label class="st-toggle">
+              <input type="checkbox" checked onchange="stToggleWidget(${i},this.checked)">
+              <div class="st-toggle-track"></div>
+              <div class="st-toggle-thumb"></div>
+            </label>
+          </div>`).join('')}
+        </div>
+        <div class="st-group">
+          <div class="st-group-label">Exchange Rates Refresh</div>
+          <div class="st-row">
+            <div>
+              <div class="st-row-label">Auto-refresh interval</div>
+              <div class="st-row-sub">Live rates from exchangerate-api.com</div>
+            </div>
+            <select style="background:var(--glass);border:1px solid var(--line);color:rgba(238,231,214,.65);padding:4px 8px;border-radius:5px;font-size:11px;outline:none">
+              <option>5 min</option><option selected>15 min</option><option>30 min</option><option>1 hr</option>
+            </select>
+          </div>
+          <div class="st-row">
+            <div class="st-row-label">Location for light widget</div>
+            <span style="font-size:11px;color:rgba(180,154,114,.55);font-family:var(--serif);font-style:italic">Kyiv, Ukraine</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="st-sec" id="st-sec-system-${id}">
+        <div class="st-h">System</div>
+        <div class="st-group">
+          <div class="st-group-label">Security</div>
+          <div class="st-row"><div class="st-row-label">Encryption</div><span style="font-size:11px;color:rgba(140,190,130,.8)">TLS 1.3 · Active</span></div>
+          <div class="st-row"><div class="st-row-label">Session</div><span style="font-size:11px;color:rgba(140,190,130,.8)">Authenticated</span></div>
+          <div class="st-row"><div class="st-row-label">VPN</div><span style="font-size:11px;color:rgba(238,231,214,.55)">Not configured</span></div>
+        </div>
+        <div class="st-group">
+          <div class="st-group-label">Language & Region</div>
+          <div class="st-row">
+            <div class="st-row-label">Interface language</div>
+            <div style="display:flex;gap:6px">
+              <div onclick="stLang('uk',this)" style="padding:4px 10px;border-radius:4px;font-size:10px;cursor:pointer;border:1px solid var(--line-gold);color:var(--bronze);background:rgba(180,154,114,.1)">UA</div>
+              <div onclick="stLang('en',this)" style="padding:4px 10px;border-radius:4px;font-size:10px;cursor:pointer;border:1px solid var(--line);color:rgba(238,231,214,.45)">EN</div>
+            </div>
+          </div>
+          <div class="st-row"><div class="st-row-label">Time zone</div><span style="font-size:11px;color:rgba(238,231,214,.6)">Europe/Kyiv · UTC+3</span></div>
+        </div>
+        <div class="st-group">
+          <div class="st-group-label">Display</div>
+          <div class="st-row">
+            <div><div class="st-row-label">Brightness</div></div>
+            <input class="st-slider" type="range" min="20" max="100" value="80"
+              oninput="document.body.style.filter='brightness('+this.value/80+')'">
+          </div>
+        </div>
+      </div>
+
+      <div class="st-sec" id="st-sec-about-${id}">
+        <div class="st-h">About</div>
+        <div class="st-about-mark"><strong>ARM</strong>OS</div>
+        <div class="st-about-ver">Version 2.0 · April 2026</div>
+        <div class="st-group">
+          <div class="st-group-label">System Information</div>
+          <div class="st-about-row"><span class="st-about-key">Build</span><span class="st-about-val">ARM OS · Premium Fintech</span></div>
+          <div class="st-about-row"><span class="st-about-key">Architecture</span><span class="st-about-val">Vanilla JS · CSS Design System</span></div>
+          <div class="st-about-row"><span class="st-about-key">Typography</span><span class="st-about-val">Cormorant Garamond · Inter</span></div>
+          <div class="st-about-row"><span class="st-about-key">Runtime</span><span class="st-about-val">Single HTML File</span></div>
+          <div class="st-about-row"><span class="st-about-key">Bank Integration</span><span class="st-about-val">army-bank.onrender.com</span></div>
+          <div class="st-about-row"><span class="st-about-key">Philosophy</span><span class="st-about-val">Architecture · Matter · Light</span></div>
+          <div class="st-about-row"><span class="st-about-key">Author</span><span class="st-about-val">Viacheslav Munister</span></div>
+        </div>
+        <div class="st-group">
+          <div class="st-group-label">Links</div>
+          <div class="st-row" style="cursor:pointer" onclick="window.open('https://munister.com.ua','_blank')">
+            <span class="st-row-label">munister.com.ua</span>
+            <span style="font-size:11px;color:rgba(180,154,114,.4)">↗</span>
+          </div>
+          <div class="st-row" style="cursor:pointer" onclick="window.open('https://army-bank.onrender.com','_blank')">
+            <span class="st-row-label">ARM Bank</span>
+            <span style="font-size:11px;color:rgba(180,154,114,.4)">↗</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>`;
+}
+
+function stSwitch(winId, sec, el) {
+  el.closest('.settings-root').querySelectorAll('.st-si').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  el.closest('.settings-root').querySelectorAll('.st-sec').forEach(e => e.classList.remove('active'));
+  const s = document.getElementById(`st-sec-${sec}-${winId}`);
+  if (s) s.classList.add('active');
+}
+
+function stWallpaper(idx, el) {
+  el.closest('.st-wp-grid').querySelectorAll('.st-wp-thumb').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  const bg = document.getElementById('desktop');
+  if (!bg) return;
+  const wps = [
+    "url('https://raw.githubusercontent.com/munister-v/munister-v.github.io/refs/heads/main/images/background.jpg') center/cover",
+    'linear-gradient(145deg,#0d1117,#1a2744,#0d1117)',
+    'linear-gradient(160deg,#111008,#2a1f0a,#0d0c08)',
+    'linear-gradient(145deg,#0a0f0a,#0f1f12,#0a0f0a)',
+    'linear-gradient(160deg,#12100f,#1e1a18,#0e0c0b)',
+    'radial-gradient(ellipse at 30% 30%,#1a1228,#0c0a12,#080810)',
+  ];
+  bg.style.backgroundImage = wps[idx].includes('url(') ? wps[idx].split(' center')[0] : 'none';
+  if (idx > 0) bg.style.background = wps[idx];
+  else { bg.style.background = ''; bg.style.backgroundImage = wps[0].split(' center')[0]; bg.style.backgroundSize='cover'; bg.style.backgroundPosition='center'; }
+}
+
+function stTheme(theme, el) {
+  el.closest('.st-theme-row').querySelectorAll('.st-theme-pill').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  const root = document.documentElement;
+  const themes = {
+    graphite: { '--charcoal':'#11110f', '--graphite':'#1f1e1b', '--ivory':'#eee7d6', '--bronze':'#b49a72' },
+    midnight: { '--charcoal':'#080b14', '--graphite':'#10152a', '--ivory':'#dce4f0', '--bronze':'#7a9abf' },
+    warm:     { '--charcoal':'#120e09', '--graphite':'#1e170f', '--ivory':'#f0e8d4', '--bronze':'#c4924a' },
+  };
+  Object.entries(themes[theme]||{}).forEach(([k,v]) => root.style.setProperty(k,v));
+  showNotif('◎','ARM OS',`Theme: ${theme.charAt(0).toUpperCase()+theme.slice(1)}`);
+}
+
+function stTransparency(val) {
+  const a = val / 100;
+  document.documentElement.style.setProperty('--glass',`rgba(246,240,227,${(a*0.06).toFixed(3)})`);
+  document.documentElement.style.setProperty('--glass-md',`rgba(246,240,227,${(a*0.10).toFixed(3)})`);
+}
+
+function stToggleAnim(on) {
+  document.documentElement.style.setProperty('--win-anim', on ? 'winOpen .26s cubic-bezier(.22,1,.36,1) forwards' : 'none');
+}
+
+function stToggleDockLabels(on) {
+  document.querySelectorAll('.di-label').forEach(el => el.style.display = on ? '' : 'none');
+}
+
+function stToggleWidget(idx, on) {
+  const widgets = document.querySelectorAll('#widgets .wg');
+  if (widgets[idx]) widgets[idx].style.display = on ? '' : 'none';
+}
+
+function stLang(lang) {
+  showNotif('◎','ARM OS', lang === 'uk' ? 'Мова змінена: Українська' : 'Language changed: English');
+}
+
+// ─────────────────────────────────────────────
+// 💬 MESSAGES WINDOW
+// ─────────────────────────────────────────────
+const _MSG_CONVS = [
+  { id:'c1', name:'Олексій Коваль', init:'ОК', color:'#4a6741', status:'Online', lastMsg:'Документи готові до підписання', time:'09:41', badge:2,
+    msgs:[
+      { from:'them', text:'Доброго ранку! Переказ підтверджено.', time:'09:15' },
+      { from:'me', text:'Дякую, все отримав.', time:'09:22' },
+      { from:'them', text:'Документи готові до підписання. Можете перевірити у розділі Files.', time:'09:38' },
+      { from:'them', text:'Також нагадую — зустріч о 14:00.', time:'09:41' },
+    ]},
+  { id:'c2', name:'ARM Bank', init:'AB', color:'#1a3a24', status:'System', lastMsg:'Ваша виписка за квітень готова', time:'08:00', badge:1,
+    msgs:[
+      { from:'them', text:'Вітаємо! Ваша щомісячна виписка за квітень 2026 р. доступна для завантаження.', time:'08:00' },
+      { from:'them', text:'Зайдіть у розділ Documents → Statement, або відкрийте ARM OS Bank.', time:'08:00' },
+    ]},
+  { id:'c3', name:'Марія Савченко', init:'МС', color:'#5a3a4a', status:'Yesterday', lastMsg:'Окей, до зустрічі!', time:'Вчора', badge:0,
+    msgs:[
+      { from:'me', text:'Марія, підтвердіть будь ласка отримання платежу.', time:'Вчора · 16:30' },
+      { from:'them', text:'Так, отримала. Все вірно. До зустрічі!', time:'Вчора · 16:45' },
+    ]},
+  { id:'c4', name:'Vladyslav M.', init:'VM', color:'#2a3a5a', status:'2 days ago', lastMsg:'Meeting confirmed for Monday', time:'27 Apr', badge:0,
+    msgs:[
+      { from:'them', text:'Hi! Meeting confirmed for Monday 9:00 AM. Agenda: Q2 review.', time:'27 Apr · 14:00' },
+      { from:'me', text:'Confirmed. See you then.', time:'27 Apr · 14:15' },
+    ]},
+  { id:'c5', name:'Security', init:'🔒', color:'#3a2a1a', status:'System', lastMsg:'New login detected · Kyiv', time:'26 Apr', badge:0,
+    msgs:[
+      { from:'them', text:'New login detected from Kyiv, Ukraine. If this was you, no action needed.', time:'26 Apr · 10:11' },
+    ]},
+];
+
+let _msgActive = {};
+
+function _buildMessages(id) {
+  const convHtml = _MSG_CONVS.map(c => `
+    <div class="msg-conv ${c.id==='c1'?'active':''}" data-conv="${c.id}" onclick="msgSelectConv('${id}','${c.id}',this)">
+      <div class="msg-conv-av" style="background:${c.color}20;border-color:${c.color}40;color:${c.color}">${c.init}</div>
+      <div class="msg-conv-info">
+        <div class="msg-conv-name">${c.name}</div>
+        <div class="msg-conv-last">${c.lastMsg}</div>
+      </div>
+      <div class="msg-conv-time">${c.time}</div>
+      ${c.badge ? `<div class="msg-conv-badge">${c.badge}</div>` : ''}
+    </div>`).join('');
+
+  return `
+  <div class="messages-root">
+    <div class="msg-sidebar">
+      <div class="msg-sb-head">
+        <div class="msg-sb-title">Messages</div>
+        <button class="msg-sb-new" title="New message">✏</button>
+      </div>
+      <div class="msg-search">
+        <input class="msg-search-input" placeholder="Search conversations…" oninput="msgSearch('${id}',this.value)">
+      </div>
+      <div class="msg-conv-list" id="msg-convlist-${id}">${convHtml}</div>
+    </div>
+    <div class="msg-thread" id="msg-thread-${id}"></div>
+  </div>`;
+}
+
+function _initMessages(id) {
+  _msgActive[id] = 'c1';
+  msgSelectConv(id, 'c1', null);
+}
+
+function msgSelectConv(winId, convId, el) {
+  _msgActive[winId] = convId;
+  // Update sidebar active
+  document.querySelectorAll(`#msg-convlist-${winId} .msg-conv`).forEach(e => e.classList.toggle('active', e.dataset.conv === convId));
+  // Remove badge
+  const convEl = document.querySelector(`#msg-convlist-${winId} [data-conv="${convId}"]`);
+  if (convEl) { const b = convEl.querySelector('.msg-conv-badge'); if (b) b.remove(); }
+
+  const c = _MSG_CONVS.find(x => x.id === convId);
+  if (!c) return;
+
+  const msgsHtml = c.msgs.map((m,i) => {
+    const isDate = m.dateLabel;
+    if (isDate) return `<div class="msg-date-sep">${m.dateLabel}</div>`;
+    return `<div class="msg-bubble ${m.from}">
+      <div class="msg-b">${m.text}</div>
+      <div class="msg-btime">${m.time}</div>
+    </div>`;
+  }).join('');
+
+  const thread = document.getElementById(`msg-thread-${winId}`);
+  if (!thread) return;
+  thread.innerHTML = `
+    <div class="msg-thread-head">
+      <div class="msg-thread-av" style="background:${c.color}20;border-color:${c.color}40;color:${c.color}">${c.init}</div>
+      <div>
+        <div class="msg-thread-name">${c.name}</div>
+        <div class="msg-thread-status">${c.status}</div>
+      </div>
+      <div class="msg-thread-actions">
+        <button class="msg-action-btn" title="Call">📞</button>
+        <button class="msg-action-btn" title="Video">📹</button>
+        <button class="msg-action-btn" title="Info">ℹ</button>
+      </div>
+    </div>
+    <div class="msg-body" id="msg-body-${winId}">${msgsHtml}</div>
+    <div class="msg-input-row">
+      <textarea class="msg-input" id="msg-input-${winId}" rows="1" placeholder="Message ${c.name}…"
+        onkeydown="msgKeydown('${winId}',event)" oninput="this.style.height='';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+      <button class="msg-send" onclick="msgSend('${winId}')">➔</button>
+    </div>`;
+  // Scroll to bottom
+  setTimeout(() => { const b = document.getElementById(`msg-body-${winId}`); if(b) b.scrollTop = b.scrollHeight; }, 50);
+}
+
+function msgSend(winId) {
+  const inp = document.getElementById(`msg-input-${winId}`);
+  const text = inp?.value?.trim();
+  if (!text) return;
+  inp.value = ''; inp.style.height = '';
+  const body = document.getElementById(`msg-body-${winId}`);
+  if (!body) return;
+  const t = new Date().toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'});
+  const div = document.createElement('div');
+  div.className = 'msg-bubble me';
+  div.innerHTML = `<div class="msg-b">${text}</div><div class="msg-btime">${t}</div>`;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+  // Auto-reply after delay
+  const replies = ['Зрозумів.','Дякую за повідомлення!','Гаразд, опрацюю.','Побачив, відповім трохи пізніше.','OK, noted.'];
+  const convId = _msgActive[winId];
+  if (convId && convId !== 'c2' && convId !== 'c5') {
+    setTimeout(() => {
+      const div2 = document.createElement('div');
+      div2.className = 'msg-bubble them';
+      div2.innerHTML = `<div class="msg-b">${replies[Math.floor(Math.random()*replies.length)]}</div><div class="msg-btime">${new Date().toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'})}</div>`;
+      body.appendChild(div2);
+      body.scrollTop = body.scrollHeight;
+    }, 1200 + Math.random()*1500);
+  }
+}
+
+function msgKeydown(winId, e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); msgSend(winId); }
+}
+
+function msgSearch(winId, q) {
+  const convs = document.querySelectorAll(`#msg-convlist-${winId} .msg-conv`);
+  convs.forEach(el => {
+    const name = el.querySelector('.msg-conv-name')?.textContent || '';
+    el.style.display = !q || name.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+// ─────────────────────────────────────────────
+// 🛍 MARKET NATIVE WINDOW
+// ─────────────────────────────────────────────
+const _MKT_PRODUCTS = [
+  { name:'ARM OS Premium', desc:'Full access to ARM OS financial environment. All features, priority support.', price:'₴ 1,200 / рік', icon:'⬛', cat:'all', badge:'Popular' },
+  { name:'Analytics Pro', desc:'Advanced financial analytics, export to PDF/CSV, AI insights.', price:'₴ 480 / міс', icon:'📈', cat:'finance' },
+  { name:'Secure Vault', desc:'Encrypted document storage. E2E encryption, zero-knowledge architecture.', price:'₴ 240 / міс', icon:'🔐', cat:'security', badge:'New', badgeType:'new' },
+  { name:'Leonardo AI +', desc:'Extended AI assistant. Full conversation history, financial planning module.', price:'₴ 360 / міс', icon:'◎', cat:'ai' },
+  { name:'Multi-Account', desc:'Connect up to 5 bank accounts. Unified balance, cross-account analytics.', price:'₴ 600 / рік', icon:'🏦', cat:'finance' },
+  { name:'Card Designer', desc:'Custom virtual card designs. Premium metal gradients & monograms.', price:'₴ 120 / міс', icon:'💳', cat:'finance', badge:'New', badgeType:'new' },
+  { name:'ARM OS Business', desc:'Team access for 10 users. Admin panel, role management, audit logs.', price:'₴ 4,800 / рік', icon:'🏛', cat:'business' },
+  { name:'API Access', desc:'Full REST API access. Build your own integrations with ARM OS platform.', price:'₴ 960 / рік', icon:'⚡', cat:'business' },
+];
+
+function _buildMarketNative(id) {
+  const cards = _MKT_PRODUCTS.map(p => `
+    <div class="mkt-card" onclick="mktCardClick('${p.name}')">
+      <div class="mkt-card-img">
+        ${p.icon === '◎' ? `<span style="font-family:var(--serif);font-size:56px;font-weight:300;color:var(--bronze);opacity:.7">${p.icon}</span>` : `<span>${p.icon}</span>`}
+        ${p.badge ? `<div class="mkt-badge ${p.badgeType||''}">${p.badge}</div>` : ''}
+      </div>
+      <div class="mkt-card-body">
+        <div class="mkt-card-name">${p.name}</div>
+        <div class="mkt-card-desc">${p.desc}</div>
+        <div class="mkt-card-footer">
+          <div class="mkt-card-price">${p.price}</div>
+          <button class="mkt-card-btn" onclick="event.stopPropagation();mktAddCart('${p.name}')">Add</button>
+        </div>
+      </div>
+    </div>`).join('');
+
+  return `
+  <div class="market-root">
+    <div class="mkt-head">
+      <div class="mkt-title">ARM OS Marketplace</div>
+      <div class="mkt-cats">
+        <div class="mkt-cat active" onclick="mktFilter('all',this)">All</div>
+        <div class="mkt-cat" onclick="mktFilter('finance',this)">Finance</div>
+        <div class="mkt-cat" onclick="mktFilter('ai',this)">AI</div>
+        <div class="mkt-cat" onclick="mktFilter('security',this)">Security</div>
+        <div class="mkt-cat" onclick="mktFilter('business',this)">Business</div>
+      </div>
+    </div>
+    <div class="mkt-grid" id="mkt-grid-${id}">${cards}</div>
+    <div class="mkt-footer">
+      <span class="mkt-footer-text">ARM OS Marketplace · ${_MKT_PRODUCTS.length} products · Secure payment</span>
+      <span style="font-size:10px;color:rgba(180,154,114,.3)">🔒 Encrypted</span>
+    </div>
+  </div>`;
+}
+
+function mktFilter(cat, el) {
+  document.querySelectorAll('.mkt-cat').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.mkt-card').forEach((card, i) => {
+    const p = _MKT_PRODUCTS[i];
+    card.style.display = (cat === 'all' || p.cat === cat) ? '' : 'none';
+  });
+}
+
+function mktCardClick(name) {
+  showNotif('🛍', 'Marketplace', name + ' — натисніть Add для додавання.');
+}
+
+function mktAddCart(name) {
+  showNotif('✓', 'Marketplace', name + ' — додано до кошика.');
+}
+
+
 function _buildLedger(id) {
   return `
 <div class="ledger-root" id="lr-${id}">
