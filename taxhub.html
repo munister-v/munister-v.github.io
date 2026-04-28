@@ -44,10 +44,26 @@
             overflow: hidden;
         }
 
-        /* Subtle Noise Background */
+        /* Noise overlay */
         .bg-noise {
-            position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* Animated background orbs */
+        .bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.12;
+            animation: orbFloat 20s ease-in-out infinite alternate;
+        }
+        .orb-1 { width: 700px; height: 700px; background: radial-gradient(circle, #c9a84c, transparent 70%); top: -20%; left: -15%; animation-duration: 25s; }
+        .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, #d4c4b5, transparent 70%); bottom: -10%; right: -10%; animation-duration: 18s; animation-delay: -8s; }
+        .orb-3 { width: 350px; height: 350px; background: radial-gradient(circle, #8cbe82, transparent 70%); top: 40%; left: 40%; animation-duration: 22s; animation-delay: -14s; opacity: 0.06; }
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.97); }
+            100% { transform: translate(20px, -10px) scale(1.02); }
         }
 
         #desktop {
@@ -58,7 +74,6 @@
             grid-auto-rows: 120px;
             gap: 20px;
             align-content: flex-start;
-            background: radial-gradient(1200px 520px at 8% -10%, rgba(212,196,181,.04), transparent 62%);
         }
 
         .icon {
@@ -81,14 +96,23 @@
 
         /* Windows */
         .window {
-            position: absolute; width: min(850px, 95vw); height: min(650px, calc(100vh - var(--taskbar-h) - 20px));
-            background: linear-gradient(180deg, #111, #0b0b0b);
+            position: absolute;
+            width: min(820px, 95vw);
+            height: min(600px, calc(100vh - var(--taskbar-h) - 24px));
+            background: linear-gradient(160deg, rgba(18,16,12,0.97) 0%, rgba(9,8,7,0.98) 100%);
             border: 1px solid var(--border);
-            border-radius: 12px; display: none; flex-direction: column;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.03), 0 20px 50px rgba(0,0,0,.8);
+            border-radius: 14px; display: none; flex-direction: column;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 32px 80px rgba(0,0,0,.85), 0 0 0 0.5px rgba(0,0,0,0.5);
             z-index: 100; overflow: hidden;
-            animation: winOpen 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: winOpen 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(2px);
         }
+        /* Per-window sizes */
+        #win-profile { width: min(680px, 95vw); height: min(620px, calc(100vh - var(--taskbar-h) - 24px)); }
+        #win-pku    { width: min(760px, 95vw); height: min(580px, calc(100vh - var(--taskbar-h) - 24px)); }
+        #win-quiz   { width: min(800px, 95vw); height: min(680px, calc(100vh - var(--taskbar-h) - 24px)); }
+        #win-calc   { width: min(620px, 95vw); height: min(560px, calc(100vh - var(--taskbar-h) - 24px)); }
+        #win-guide  { width: min(900px, 95vw); height: min(600px, calc(100vh - var(--taskbar-h) - 24px)); }
         .window.active { display: flex; }
         .window.minimized { display: none; }
         .window.maximized { top: 0 !important; left: 0 !important; width: 100vw !important; height: calc(100vh - var(--taskbar-h)) !important; border-radius: 0; border: none; border-bottom: 1px solid var(--border); }
@@ -297,6 +321,11 @@
 </head>
 <body>
     <div class="bg-noise"></div>
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
 
     <div id="welcome">
         <div class="w-badge">§ Tax Game 2026</div>
@@ -396,27 +425,52 @@
             
             <div class="accordion">
                 <div class="acc-item">
-                    <div class="acc-header" onclick="toggleAcc(this)">Розділ I: Загальні положення</div>
+                    <div class="acc-header" onclick="toggleAcc(this)">Розділ I: Загальні положення (ст. 1–39)</div>
                     <div class="acc-body">
-                        Охоплює статті 1–39. Визначає основні принципи податкового законодавства України, вичерпний перелік податків та зборів, що справляються в Україні, а також права та обов'язки платників податків і контролюючих органів.
-                        <strong>Ключові поняття:</strong> Податковий обов'язок, податковий агент, податкова пільга.
+                        Визначає основні принципи: законність, рівність, невідворотність відповідальності. Встановлює вичерпний перелік загальнодержавних і місцевих податків та зборів. Регулює права та обов'язки платників і контролюючих органів (ДПС України).
+                        <strong>Ключові поняття:</strong> Податковий обов'язок — сукупність обов'язків платника щодо обчислення та сплати податку. Податковий агент — особа (напр. роботодавець), яка утримує і перераховує податок за платника.
                     </div>
                 </div>
                 <div class="acc-item">
-                    <div class="acc-header" onclick="toggleAcc(this)">Розділ IV: ПДФО</div>
+                    <div class="acc-header" onclick="toggleAcc(this)">Розділ II: Адміністрування податків</div>
                     <div class="acc-body">
-                        Податок на доходи фізичних осіб (статті 162–179). Платниками є резиденти та нерезиденти, які отримують доходи з джерелом походження в Україні.
-                        <strong>Основна ставка:</strong> 18%. Також передбачені ставки 5% (дивіденди), 9% та 0%. Військовий збір зберігається на рівні 1.5% (залежить від поправок).
+                        Регулює порядок постановки на облік, подання звітності, проведення перевірок. Встановлює строки давності (1095 днів для звичайних перевірок). Визначає процедуру оскарження рішень ДПС.
+                        <strong>Важливо для ФОП:</strong> При відкритті ФОП реєстрація в ДПС відбувається автоматично через державного реєстратора. Перша звітність — за підсумком першого звітного кварталу.
                     </div>
                 </div>
                 <div class="acc-item">
-                    <div class="acc-header" onclick="toggleAcc(this)">Розділ XIV: Спрощена система</div>
+                    <div class="acc-header" onclick="toggleAcc(this)">Розділ IV: ПДФО (ст. 162–179)</div>
                     <div class="acc-body">
-                        Спрощена система оподаткування, обліку та звітності. Спрямована на зниження податкового навантаження для малого бізнесу. Ліміти доходу прив'язані до МЗП (мін. зарплати). На 2026 рік прогнозована МЗП становить 8500 грн.
-                        <strong>Групи ФОП:</strong> 
-                        <br>1 група (роздрібний продаж/послуги населенню, до 1.4 млн грн ліміт).
-                        <br>2 група (послуги, виробництво, до 7 млн грн ліміт).
-                        <br>3 група (до 9.8 млн грн ліміт, ставка 5% від доходу).
+                        Податок на доходи фізичних осіб. Платники — резиденти (з усіх доходів) і нерезиденти (з доходів із джерелом в Україні).
+                        <strong>Ставки 2026:</strong> 18% — базова (зарплата, ФОП на загальній системі); 9% — дивіденди від нерезидентів; 5% — дивіденди від резидентів; 0% — деякі соціальні виплати.
+                        <strong>Військовий збір:</strong> 1,5% справляється з тих самих доходів, що й ПДФО.
+                    </div>
+                </div>
+                <div class="acc-item">
+                    <div class="acc-header" onclick="toggleAcc(this)">Розділ V: ПДВ (ст. 180–211)</div>
+                    <div class="acc-body">
+                        Податок на додану вартість — непрямий податок, включений у ціну товарів/послуг. Реєстрація платником ПДВ є обов'язковою при перевищенні 1 млн грн обороту за 12 місяців.
+                        <strong>Ставки:</strong> 20% — базова; 7% — ліки та медвироби; 0% — експорт товарів; звільнені — освіта, охорона здоров'я.
+                        <strong>Право на ПК:</strong> Платник ПДВ має право на податковий кредит — відрахування «вхідного» ПДВ з «вихідного».
+                    </div>
+                </div>
+                <div class="acc-item">
+                    <div class="acc-header" onclick="toggleAcc(this)">Розділ XIV: Спрощена система (ФОП)</div>
+                    <div class="acc-body">
+                        Спрямована на зниження навантаження для малого бізнесу. Ліміти доходу прив'язані до МЗП. На 2026 рік МЗП = 8500 грн.
+                        <strong>Група 1:</strong> Фізичні ринки, дохід до ~1.4 млн грн. Фіксований податок ~302 грн/міс (до 10% від ПМ).
+                        <strong>Група 2:</strong> Послуги населенню та ЮО-єдинникам, виробництво. Дохід до ~7 млн грн. Фіксований податок 1700 грн/міс (20% МЗП).
+                        <strong>Група 3:</strong> Будь-яка діяльність, включаючи B2B з нерезидентами. Дохід до ~9.8 млн грн. Ставка 5% від доходу (або 3%+ПДВ).
+                        <strong>Група 4:</strong> Виключно сільгоспвиробники. Ставка залежить від площі та якості землі (НГО), не від доходу.
+                    </div>
+                </div>
+                <div class="acc-item">
+                    <div class="acc-header" onclick="toggleAcc(this)">ЄСВ — Єдиний соціальний внесок</div>
+                    <div class="acc-body">
+                        ЄСВ не є частиною ПКУ, проте нерозривно пов'язаний з підприємницькою діяльністю. Нараховується відповідно до Закону України «Про збір та облік ЄСВ».
+                        <strong>Для роботодавців:</strong> 22% від бази нарахування зарплати (понад мінімальну).
+                        <strong>Для ФОП (мінімум, 2026):</strong> 22% × 8500 грн = 1870 грн/місяць незалежно від доходу. За відсутності діяльності ФОП може не сплачувати (окремі винятки).
+                        <strong>Звітність:</strong> Щокварталу разом з декларацією про ЄП, або у складі форми ЄСВ-1.
                     </div>
                 </div>
             </div>
@@ -564,24 +618,34 @@
             
             <div class="guide-grid">
                 <div class="guide-card">
-                    <div class="guide-title">ПДФО <span class="highlight-2026">Без змін</span></div>
-                    <div class="guide-text">Податок на доходи фізичних осіб. Утримується із зарплати, виграшів, інвестиційного прибутку.</div>
-                    <div class="guide-rate">Ставка: 18%</div>
+                    <div class="guide-title">ПДФО <span class="highlight-2026">2026</span></div>
+                    <div class="guide-text">Податок на доходи фізичних осіб. Утримується з зарплати, дивідендів, виграшів, інвестиційного прибутку. Базова ставка стабільна з 2016 року.</div>
+                    <div class="guide-rate">18% / 9% / 5%</div>
                 </div>
                 <div class="guide-card">
-                    <div class="guide-title">ЄСВ <span class="highlight-2026">Зріс</span></div>
-                    <div class="guide-text">Єдиний соціальний внесок. Страховий платіж. Мінімальна сума у 2026 складатиме 1870 грн (22% від 8500).</div>
-                    <div class="guide-rate">Ставка: 22%</div>
+                    <div class="guide-title">ЄСВ <span class="highlight-2026">↑ Зріс</span></div>
+                    <div class="guide-text">Єдиний соціальний внесок. Мінімальний платіж ФОП у 2026 — 1870 грн/міс (22% від МЗП 8500 грн). Дає право на пенсійний та страховий стаж.</div>
+                    <div class="guide-rate">22% від МЗП</div>
                 </div>
                 <div class="guide-card">
-                    <div class="guide-title">ПДВ <span class="highlight-2026">Без змін</span></div>
-                    <div class="guide-text">Податок на додану вартість. Включений у ціну більшості товарів та послуг, які ми купуємо щодня.</div>
-                    <div class="guide-rate">Основна: 20%</div>
+                    <div class="guide-title">ПДВ <span class="highlight-2026">2026</span></div>
+                    <div class="guide-text">Непрямий податок, включений у ціну. Обов'язкова реєстрація при оборотах понад 1 млн грн. Ставка 0% — для всіх видів експорту товарів.</div>
+                    <div class="guide-rate">20% / 7% / 0%</div>
                 </div>
                 <div class="guide-card">
-                    <div class="guide-title">Військовий збір</div>
-                    <div class="guide-text">Збір для фінансування Збройних Сил. Сплачується з тих самих доходів, що й ПДФО.</div>
-                    <div class="guide-rate">Ставка: 1.5%</div>
+                    <div class="guide-title">Військ. збір</div>
+                    <div class="guide-text">Фінансування ЗСУ. Нараховується на ті самі доходи, що й ПДФО (зарплата, дивіденди, авторські тощо). Введений у 2014, продовжений до особливого рішення.</div>
+                    <div class="guide-rate">1.5%</div>
+                </div>
+                <div class="guide-card">
+                    <div class="guide-title">ФОП 3 гр. <span class="highlight-2026">Popular</span></div>
+                    <div class="guide-text">Найгнучкіша форма для малого бізнесу та IT. Можна працювати з будь-якими клієнтами, включно з іноземними (B2B). Ліміт доходу — ~9.8 млн грн/рік.</div>
+                    <div class="guide-rate">5% від доходу</div>
+                </div>
+                <div class="guide-card">
+                    <div class="guide-title">Податок на прибуток</div>
+                    <div class="guide-text">Для юридичних осіб (ТОВ, АТ) на загальній системі. База — фінансовий результат за П(С)БО або МСФЗ з коригуваннями. Квартальна звітність.</div>
+                    <div class="guide-rate">18%</div>
                 </div>
             </div>
         </div>
