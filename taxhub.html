@@ -16,9 +16,9 @@
             --surface-light: #171717;
             --sand: #d4c4b5;
             --sand-muted: rgba(212, 196, 181, 0.5);
-            --border: rgba(212, 196, 181, 0.15);
-            --text-main: #e5e5e5;
-            --text-dim: #909090;
+            --border: rgba(212, 196, 181, 0.2);
+            --text-main: #f0f0f0;
+            --text-dim: #b3b3b3;
             
             --sans: 'Inter', sans-serif;
             --mono: 'JetBrains Mono', monospace;
@@ -119,27 +119,27 @@
         }
 
         /* Typography inside windows */
-        .h1 { font-family: var(--serif); font-size: clamp(32px, 5vw, 48px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; color: var(--sand); }
+        .h1 { font-family: var(--serif); font-size: clamp(34px, 5vw, 52px); font-weight: 400; line-height: 1.1; margin-bottom: 20px; color: var(--sand); }
         .h1 em { font-style: italic; color: #fff; }
-        .p { font-size: 14px; line-height: 1.8; color: var(--text-dim); margin-bottom: 24px; font-weight: 400; max-width: 65ch; }
+        .p { font-size: 16px; line-height: 1.7; color: var(--text-dim); margin-bottom: 24px; font-weight: 500; max-width: 65ch; }
         
-        .label { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: #737373; margin-bottom: 12px; display: block; }
+        .label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-dim); margin-bottom: 12px; display: block; }
 
         /* Accordion (PKU) */
         .accordion { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--border); padding-top: 16px; }
         .acc-item { border-bottom: 1px solid var(--border); }
         .acc-header {
             padding: 16px 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-            font-family: var(--serif); font-size: 20px; color: var(--sand); font-weight: 400; transition: color 0.2s;
+            font-family: var(--serif); font-size: 22px; color: var(--sand); font-weight: 500; transition: color 0.2s;
         }
         .acc-header:hover { color: #fff; }
-        .acc-header::after { content: '+'; font-family: var(--mono); font-size: 14px; color: var(--text-dim); }
+        .acc-header::after { content: '+'; font-family: var(--mono); font-size: 16px; color: var(--text-main); }
         .acc-item.open .acc-header::after { content: '−'; }
         .acc-body {
-            max-height: 0; overflow: hidden; transition: 0.3s ease; color: var(--text-dim); font-size: 13px; line-height: 1.7;
+            max-height: 0; overflow: hidden; transition: 0.3s ease; color: var(--text-main); font-size: 15px; font-weight: 400; line-height: 1.7;
         }
-        .acc-item.open .acc-body { padding-bottom: 24px; max-height: 400px; }
-        .acc-body strong { color: var(--sand); font-weight: 500; font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-top: 12px; margin-bottom: 4px; }
+        .acc-item.open .acc-body { padding-bottom: 24px; max-height: 500px; }
+        .acc-body strong { color: var(--sand); font-weight: 600; font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-top: 14px; margin-bottom: 6px; }
 
         /* Buttons */
         .btn-primary {
@@ -157,30 +157,32 @@
         }
         .btn-ghost:hover { background: rgba(212,196,181,.08); }
 
-        /* Quiz */
-        .quiz-container { max-width: 600px; }
-        .quiz-progress { display: flex; gap: 4px; margin-bottom: 24px; }
-        .quiz-dot { height: 2px; flex: 1; background: var(--border); }
+        /* Quiz / Simulator */
+        .quiz-container { max-width: 650px; }
+        .quiz-progress { display: flex; gap: 6px; margin-bottom: 28px; }
+        .quiz-dot { height: 3px; flex: 1; background: var(--border); border-radius: 2px; }
         .quiz-dot.active { background: var(--sand); }
         .quiz-dot.done { background: var(--success); }
         
-        .quiz-question { font-family: var(--serif); font-size: 28px; font-weight: 400; color: #fff; margin-bottom: 24px; line-height: 1.3; }
-        .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+        .sim-context { background: rgba(255,255,255,0.03); padding: 20px; border-left: 2px solid var(--sand); margin-bottom: 24px; font-size: 15px; color: var(--text-main); line-height: 1.6; }
+        
+        .quiz-question { font-family: var(--serif); font-size: 30px; font-weight: 500; color: #fff; margin-bottom: 24px; line-height: 1.3; }
+        .quiz-options { display: flex; flex-direction: column; gap: 10px; }
         .quiz-option {
-            padding: 16px 20px; background: var(--surface); border: 1px solid var(--border);
-            cursor: pointer; transition: 0.2s; font-size: 14px; color: var(--text-main);
-            display: flex; align-items: center; gap: 12px; border-radius: 4px;
+            padding: 18px 24px; background: var(--surface); border: 1px solid var(--border);
+            cursor: pointer; transition: 0.2s; font-size: 16px; font-weight: 500; color: var(--text-main);
+            display: flex; align-items: center; gap: 14px; border-radius: 6px;
         }
-        .quiz-option::before { content: ''; width: 12px; height: 12px; border: 1px solid var(--text-dim); transition: 0.2s; border-radius: 2px; }
-        .quiz-option:hover:not(.disabled) { border-color: var(--sand-muted); }
+        .quiz-option::before { content: ''; width: 14px; height: 14px; border: 2px solid var(--text-dim); transition: 0.2s; border-radius: 3px; flex-shrink: 0; }
+        .quiz-option:hover:not(.disabled) { border-color: var(--sand); }
         .quiz-option.selected::before { background: var(--sand); border-color: var(--sand); }
-        .quiz-option.correct { border-color: var(--success); color: var(--success); }
+        .quiz-option.correct { border-color: var(--success); color: var(--success); background: rgba(140, 190, 130, 0.05); }
         .quiz-option.correct::before { background: var(--success); border-color: var(--success); }
-        .quiz-option.wrong { border-color: var(--danger); color: var(--danger); opacity: 0.7; }
+        .quiz-option.wrong { border-color: var(--danger); color: var(--danger); opacity: 0.8; background: rgba(214, 58, 66, 0.05); }
         .quiz-option.wrong::before { background: var(--danger); border-color: var(--danger); }
         .quiz-option.disabled { pointer-events: none; }
         
-        .quiz-feedback { margin-top: 20px; padding: 16px; font-size: 13px; line-height: 1.6; display: none; border-left: 2px solid; background: rgba(255,255,255,0.02); }
+        .quiz-feedback { margin-top: 24px; padding: 20px; font-size: 15px; font-weight: 500; line-height: 1.6; display: none; border-left: 3px solid; background: rgba(255,255,255,0.03); border-radius: 0 4px 4px 0; }
         .quiz-feedback.success { border-color: var(--success); color: var(--text-main); }
         .quiz-feedback.error { border-color: var(--danger); color: var(--text-main); }
 
@@ -206,13 +208,13 @@
         .result-row.total strong { font-family: var(--serif); font-size: 32px; color: #fff; font-weight: 300; }
 
         /* Guide Grid */
-        .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-        .guide-card { padding: 24px; border: 1px solid var(--border); border-radius: 8px; background: rgba(10,10,10,0.5); transition: 0.3s; }
-        .guide-card:hover { border-color: var(--sand-muted); }
-        .guide-icon { font-size: 20px; margin-bottom: 16px; opacity: 0.8; }
-        .guide-title { font-family: var(--serif); font-size: 24px; color: var(--sand); margin-bottom: 8px; }
-        .guide-text { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 16px; }
-        .guide-rate { font-family: var(--mono); font-size: 10px; color: #fff; padding: 4px 8px; border: 1px solid var(--border); display: inline-block; letter-spacing: 0.05em; }
+        .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+        .guide-card { padding: 28px; border: 1px solid var(--border); border-radius: 12px; background: rgba(10,10,10,0.5); transition: 0.3s; }
+        .guide-card:hover { border-color: var(--sand-muted); box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
+        .guide-icon { font-size: 24px; margin-bottom: 18px; opacity: 0.9; }
+        .guide-title { font-family: var(--serif); font-size: 28px; font-weight: 500; color: var(--sand); margin-bottom: 10px; }
+        .guide-text { font-size: 15px; color: var(--text-main); line-height: 1.7; margin-bottom: 20px; font-weight: 400; }
+        .guide-rate { font-family: var(--mono); font-size: 12px; font-weight: 500; color: #fff; padding: 6px 12px; border: 1px solid var(--border); display: inline-block; letter-spacing: 0.05em; border-radius: 4px; }
 
         /* Taskbar */
         #taskbar {
@@ -331,31 +333,33 @@
     <!-- Quiz Window -->
     <div id="win-quiz" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'quiz')">
-            <div class="win-title">Квіз-Лабораторія</div>
+            <div class="win-title">Симулятор</div>
             <div class="win-controls"><button class="ctrl ctrl-min" onclick="minimizeWin('quiz')"></button><button class="ctrl ctrl-max" onclick="maximizeWin('quiz')"></button><button class="ctrl ctrl-close" onclick="closeWin('quiz')"></button></div>
         </div>
         <div class="win-body">
             <div class="quiz-container">
-                <span class="label">Оцінювання Знань</span>
-                <h1 class="h1">Перевірка <em>Знань</em></h1>
-                <p class="p" id="quiz-desc">Пройдіть короткий тест на знання основ оподаткування в Україні. Дізнайтеся свій рівень.</p>
+                <span class="label">Інтерактивний Симулятор</span>
+                <h1 class="h1">Податковий <em>Інспектор</em></h1>
+                <p class="p" id="quiz-desc">Спробуйте себе у ролі консультанта. Допоможіть клієнту правильно відкрити бізнес та сплатити податки. Уважно читайте умови!</p>
                 
                 <div id="quiz-area" style="display:none;">
                     <div class="quiz-progress" id="quiz-progress"></div>
-                    <div class="quiz-question" id="question-text">Питання?</div>
+                    <div class="sim-context" id="sim-context" style="display:none;">Контекст задачі</div>
+                    <div class="quiz-question" id="question-text">Завдання?</div>
                     <div class="quiz-options" id="options-container"></div>
                     <div class="quiz-feedback" id="feedback-box"></div>
-                    <button class="btn-primary" id="next-btn" style="display:none;" onclick="nextQuestion()">Наступне питання →</button>
+                    <button class="btn-primary" id="next-btn" style="display:none; margin-top: 24px;" onclick="nextQuestion()">Наступний крок →</button>
                 </div>
 
                 <div id="quiz-result" style="display:none; padding-top:20px;">
-                    <div style="font-size: 32px; margin-bottom:16px;">§</div>
-                    <h2 style="font-family: var(--serif); font-size: 36px; color: #fff; margin-bottom: 12px; font-weight: 300;">Тест Завершено</h2>
-                    <p class="p">Ваш результат: <strong id="score-text" style="color:var(--sand); font-family: var(--mono); font-size: 18px;">0/0</strong></p>
-                    <button class="btn-ghost" onclick="initQuiz()" style="margin-top: 16px;">Пройти ще раз</button>
+                    <div style="font-size: 42px; margin-bottom:16px; color: var(--sand);">§</div>
+                    <h2 style="font-family: var(--serif); font-size: 42px; color: #fff; margin-bottom: 16px; font-weight: 400;">Кейс Завершено</h2>
+                    <p class="p" style="font-size: 18px;">Ви прийняли правильні рішення у <strong id="score-text" style="color:var(--sand); font-family: var(--mono); font-size: 22px;">0/0</strong> ситуаціях.</p>
+                    <p class="p" id="result-desc"></p>
+                    <button class="btn-ghost" onclick="initQuiz()" style="margin-top: 16px;">Почати новий кейс</button>
                 </div>
 
-                <button class="btn-primary" id="start-quiz-btn" onclick="startQuiz()" style="margin-top: 24px;">Почати тестування</button>
+                <button class="btn-primary" id="start-quiz-btn" onclick="startQuiz()" style="margin-top: 24px;">Почати симуляцію</button>
             </div>
         </div>
     </div>
@@ -618,11 +622,36 @@
             document.getElementById('res-esv-emp').innerText = esv.toFixed(2);
         }
 
-        // Quiz Logic
+        // Quiz / Simulator Logic
         const quizData = [
-            { q: "Який податок є непрямим?", options: ["ПДФО", "Податок на майно", "ПДВ", "Єдиний податок"], a: 2, exp: "ПДВ — це непрямий податок, що включається в ціну товарів та сплачується кінцевим споживачем." },
-            { q: "Яка стандартна ставка ПДФО?", options: ["15%", "18%", "20%", "5%"], a: 1, exp: "Основна ставка ПДФО становить 18% від бази оподаткування." },
-            { q: "Скільки складає ЄСВ для ФОП (мінімальний платіж у 2024-2025)?", options: ["1474 грн", "1560 грн", "1760 грн", "1800 грн"], a: 2, exp: "Мінімальний ЄСВ розраховується як 22% від мінімальної зарплати (8000 * 0.22 = 1760 грн)." }
+            { 
+                context: "До вас звернувся ІТ-спеціаліст Олександр. Він планує надавати послуги з розробки ПЗ для іноземних компаній (B2B). Очікуваний дохід: 120 000 грн на місяць.",
+                q: "Яку систему оподаткування ви йому порадите?", 
+                options: ["ФОП 1 група", "ФОП 2 група", "ФОП 3 група (5%)", "ТОВ на загальній системі"], 
+                a: 2, 
+                exp: "ФОП 3 групи — єдиний варіант для надання послуг іноземним контрагентам (B2B). 2 група не дозволяє послуги нерезидентам, а 1 група — лише для роздрібного ринку." 
+            },
+            { 
+                context: "Олександр відкрив ФОП 3 групи (5%). За перший місяць він отримав на свій рахунок 100 000 грн (в еквіваленті) від іноземного замовника.",
+                q: "Яку суму Єдиного податку він має задекларувати та сплатити за цей дохід?", 
+                options: ["0 грн (експорт послуг не оподатковується)", "5 000 грн", "18 000 грн (ПДФО)", "1 760 грн"], 
+                a: 1, 
+                exp: "Для ФОП 3 групи (без ПДВ) ставка Єдиного податку становить 5% від усього доходу. 100 000 * 0.05 = 5 000 грн." 
+            },
+            { 
+                context: "Окрім Єдиного податку, Олександр, як і всі ФОПи, зобов'язаний сплачувати ЄСВ (Єдиний соціальний внесок), щоб мати страховий стаж.",
+                q: "Скільки становить мінімальний щомісячний платіж з ЄСВ у 2024-2025 роках (при мін. ЗП = 8000 грн)?", 
+                options: ["1 560 грн", "1 760 грн", "2 000 грн", "22% від доходу (22 000 грн)"], 
+                a: 1, 
+                exp: "Мінімальний страховий внесок (ЄСВ) розраховується як 22% від розміру мінімальної заробітної плати: 8000 * 0.22 = 1 760 грн." 
+            },
+            { 
+                context: "Пройшов перший квартал роботи. Олександру час подати звітність до податкової.",
+                q: "Який термін подання податкової декларації платника єдиного податку (3 група)?", 
+                options: ["До 20 числа наступного місяця", "Протягом 40 днів після закінчення кварталу", "Раз на рік", "Протягом 10 днів після отримання доходу"], 
+                a: 1, 
+                exp: "Платники єдиного податку 3 групи подають декларацію щокварталу, протягом 40 календарних днів, що настають за останнім календарним днем звітного кварталу." 
+            }
         ];
         
         let currentQ = 0;
@@ -645,6 +674,14 @@
         function renderQuestion() {
             const q = quizData[currentQ];
             document.getElementById('question-text').innerText = `${currentQ + 1}. ${q.q}`;
+            
+            const ctxBox = document.getElementById('sim-context');
+            if (q.context) {
+                ctxBox.style.display = 'block';
+                ctxBox.innerHTML = `<strong>Ситуація:</strong> ${q.context}`;
+            } else {
+                ctxBox.style.display = 'none';
+            }
             
             // Progress dots
             const prog = document.getElementById('quiz-progress');
@@ -680,13 +717,13 @@
             if (idx === q.a) {
                 el.classList.add('correct');
                 fb.className = 'quiz-feedback success';
-                fb.innerHTML = `<strong>Correct.</strong> ${q.exp}`;
+                fb.innerHTML = `<strong>Вірно.</strong> ${q.exp}`;
                 score++;
             } else {
                 el.classList.add('wrong');
                 opts[q.a].classList.add('correct');
                 fb.className = 'quiz-feedback error';
-                fb.innerHTML = `<strong>Incorrect.</strong> ${q.exp}`;
+                fb.innerHTML = `<strong>Помилка.</strong> ${q.exp}`;
             }
             
             document.getElementById('next-btn').style.display = 'inline-flex';
@@ -700,6 +737,12 @@
                 document.getElementById('quiz-area').style.display = 'none';
                 document.getElementById('quiz-result').style.display = 'block';
                 document.getElementById('score-text').innerText = `${score} / ${quizData.length}`;
+                
+                let desc = "";
+                if (score === quizData.length) desc = "Блискуче! Ви відмінно орієнтуєтесь у податках ФОП.";
+                else if (score >= quizData.length / 2) desc = "Хороший результат, але деякі нюанси ще варто вивчити.";
+                else desc = "Рекомендуємо ще раз перечитати Податковий кодекс у нашому довіднику.";
+                document.getElementById('result-desc').innerText = desc;
             }
         }
 
