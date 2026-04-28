@@ -158,6 +158,76 @@ html,body { width:100%; height:100%; overflow:hidden;
 
 /* desktop icons removed — all apps live in Dock */
 
+/* ── MENUBAR DROPDOWN ── */
+.mb-dropdown {
+  position:fixed; top:var(--menubar-h); min-width:220px;
+  background:rgba(22,26,50,.97); backdrop-filter:blur(32px);
+  border:1px solid rgba(255,255,255,.12); border-radius:10px;
+  padding:4px; z-index:99999; box-shadow:0 16px 48px rgba(0,0,0,.6);
+  animation:bootFadeIn .12s ease forwards;
+}
+.mb-dd-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:6px 14px; border-radius:6px; font-size:13px;
+  color:rgba(255,255,255,.85); cursor:pointer; transition:background .1s; gap:16px;
+}
+.mb-dd-item:hover { background:rgba(59,130,246,.35); color:#fff; }
+.mb-dd-item.disabled { color:rgba(255,255,255,.25); pointer-events:none; }
+.mb-dd-sep { height:1px; background:rgba(255,255,255,.08); margin:3px 0; }
+.mb-dd-key { font-size:11px; color:rgba(255,255,255,.3); white-space:nowrap; }
+
+/* ── FIND BAR (editor) ── */
+.find-bar {
+  display:flex; align-items:center; gap:8px; padding:5px 10px;
+  background:rgba(0,0,0,.3); border-bottom:1px solid rgba(255,255,255,.07);
+  flex-shrink:0;
+}
+.find-input {
+  flex:1; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+  border-radius:7px; padding:4px 10px; color:#fff; font-size:13px; outline:none;
+  transition:border-color .15s;
+}
+.find-input:focus { border-color:rgba(100,160,255,.5); }
+.find-count { font-size:11px; color:rgba(255,255,255,.35); white-space:nowrap; min-width:50px; }
+.find-btn {
+  padding:3px 10px; border-radius:6px; background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.7);
+  font-size:12px; cursor:pointer; transition:background .12s;
+}
+.find-btn:hover { background:rgba(255,255,255,.16); color:#fff; }
+
+/* ── STICKY NOTES ── */
+.sticky-note {
+  position:fixed; z-index:500; width:200px; min-height:140px;
+  border-radius:10px; padding:0; overflow:hidden;
+  box-shadow:0 8px 28px rgba(0,0,0,.45); display:flex; flex-direction:column;
+  animation:windowOpen .2s ease;
+}
+.sticky-header {
+  height:28px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 10px; cursor:grab; flex-shrink:0; font-size:11px; font-weight:600;
+}
+.sticky-header:active { cursor:grabbing; }
+.sticky-close {
+  width:14px; height:14px; border-radius:50%; border:none; cursor:pointer;
+  background:rgba(0,0,0,.2); color:rgba(0,0,0,.5); font-size:9px; display:flex;
+  align-items:center; justify-content:center; transition:background .12s;
+}
+.sticky-close:hover { background:rgba(0,0,0,.35); }
+.sticky-body {
+  flex:1; padding:8px; resize:none; border:none; outline:none;
+  font-size:13px; line-height:1.55; background:transparent;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  user-select:text; -webkit-user-select:text;
+}
+
+/* ── SNAP INDICATOR ── */
+#snap-preview {
+  position:fixed; background:rgba(59,130,246,.18);
+  border:2px solid rgba(59,130,246,.4); border-radius:10px;
+  pointer-events:none; z-index:9990; display:none; transition:all .1s;
+}
+
 /* ── WINDOWS ── */
 .window {
   position:fixed; display:flex; flex-direction:column;
@@ -495,6 +565,8 @@ html,body { width:100%; height:100%; overflow:hidden;
 .ic-calendar { background:linear-gradient(145deg,#f43f5e,#be123c,#881337); }
 .ic-loan     { background:linear-gradient(145deg,#0ea5e9,#0369a1,#075985); }
 .ic-chart    { background:linear-gradient(145deg,#a855f7,#7c3aed,#4c1d95); }
+.ic-qr       { background:linear-gradient(145deg,#374151,#1f2937,#111827); }
+.ic-units    { background:linear-gradient(145deg,#d97706,#92400e,#78350f); }
 
 /* ── NOTIFICATIONS ── */
 #notif-area {
@@ -720,11 +792,11 @@ html,body { width:100%; height:100%; overflow:hidden;
       <polygon points="50,2 93,26 93,74 50,98 7,74 7,26" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>
     </svg>
   </div>
-  <span class="menu-item bold" id="menubar-app-name">ArmyOS</span>
-  <span class="menu-item" id="mb-file" onclick="menubarAction('file')">Файл</span>
-  <span class="menu-item" onclick="menubarAction('edit')">Правка</span>
-  <span class="menu-item" onclick="menubarAction('view')">Вигляд</span>
-  <span class="menu-item" onclick="tileAll()">Вікно</span>
+  <span class="menu-item bold" id="menubar-app-name" onclick="mbMenu('app',this)">ArmyOS</span>
+  <span class="menu-item" id="mb-file" onclick="mbMenu('file',this)">Файл</span>
+  <span class="menu-item" id="mb-edit" onclick="mbMenu('edit',this)">Правка</span>
+  <span class="menu-item" id="mb-view" onclick="mbMenu('view',this)">Вигляд</span>
+  <span class="menu-item" id="mb-win"  onclick="mbMenu('win',this)">Вікно</span>
   <div class="menubar-right">
     <span class="mbi" title="Control Center" onclick="toggleCtrlCenter(event)">📶</span>
     <span class="mbi" title="Control Center" onclick="toggleCtrlCenter(event)">🔊</span>
@@ -778,6 +850,10 @@ html,body { width:100%; height:100%; overflow:hidden;
     <div class="modal-actions" id="modal-actions"></div>
   </div>
 </div>
+
+<div id="snap-preview"></div>
+<div id="mb-dd-container"></div>
+<div id="sticky-container"></div>
 
 <!-- DOCK -->
 <div id="dock">
@@ -863,6 +939,26 @@ html,body { width:100%; height:100%; overflow:hidden;
 
   <div class="dock-sep"></div>
 
+  <div class="dock-item" id="dock-qr" onclick="toggleApp('qr')">
+    <div class="dock-icon ic-qr">⬛</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">QR Генератор</div>
+  </div>
+
+  <div class="dock-item" id="dock-units" onclick="toggleApp('units')">
+    <div class="dock-icon ic-units">📐</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Конвертер одиниць</div>
+  </div>
+
+  <div class="dock-item" onclick="addStickyNote()" title="Нотатка на робочому столі">
+    <div class="dock-icon" style="background:linear-gradient(145deg,#fbbf24,#d97706,#92400e)">📌</div>
+    <div class="dock-dot"></div>
+    <div class="dock-tip">Sticky Note</div>
+  </div>
+
+  <div class="dock-sep"></div>
+
   <div class="dock-item" onclick="toggleSpotlight()">
     <div class="dock-icon" style="background:linear-gradient(145deg,#374151,#1f2937)">🔍</div>
     <div class="dock-dot"></div>
@@ -940,6 +1036,16 @@ const APPS = {
     title:'Графік курсів', icon:'📈', iconClass:'ic-chart',
     type:'chart',
     defaultW:760, defaultH:520,
+  },
+  qr: {
+    title:'QR Генератор', icon:'⬛', iconClass:'ic-qr',
+    type:'qr',
+    defaultW:380, defaultH:500,
+  },
+  units: {
+    title:'Конвертер одиниць', icon:'📐', iconClass:'ic-units',
+    type:'units',
+    defaultW:400, defaultH:560,
   },
 };
 
@@ -1021,6 +1127,8 @@ function _createWindow(id) {
   else if (cfg.type === 'calendar') inner += _buildCalendar(id);
   else if (cfg.type === 'loan')     inner += _buildLoan(id);
   else if (cfg.type === 'chart')    inner += _buildChart(id);
+  else if (cfg.type === 'qr')       inner += _buildQr(id);
+  else if (cfg.type === 'units')    inner += _buildUnits(id);
   inner += _buildResizeHandles(id);
 
   el.innerHTML = inner;
@@ -1054,6 +1162,10 @@ function _createWindow(id) {
     _initLoan(id);
   } else if (cfg.type === 'chart') {
     _initChart(id);
+  } else if (cfg.type === 'qr') {
+    _initQr(id);
+  } else if (cfg.type === 'units') {
+    _initUnits(id);
   }
 
   // Welcome notification once
@@ -2604,10 +2716,23 @@ function _attachDrag(id) {
       const ny = Math.max(MENU, e2.clientY - sy);
       el.style.left = nx + 'px';
       el.style.top  = ny + 'px';
+      const snap = _snapCheck(e2.clientX, e2.clientY);
+      const sp = document.getElementById('snap-preview');
+      if (sp) {
+        if (snap) {
+          sp.style.cssText = `display:block;left:${snap.rect.left}px;top:${snap.rect.top}px;width:${snap.rect.width}px;height:${snap.rect.height}px;`;
+        } else {
+          sp.style.display = 'none';
+        }
+      }
     };
-    const onUp = () => {
+    const onUp = e2 => {
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onUp);
+      const sp = document.getElementById('snap-preview');
+      if (sp) sp.style.display = 'none';
+      const snap = _snapCheck(e2.clientX, e2.clientY);
+      if (snap) _snapApply(id, snap.zone, snap.rect);
     };
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
@@ -2697,6 +2822,8 @@ const SP_APPS = [
   { id:'loan',      name:'Кредит. калькулятор', desc:'Ануїтет, NPV, графік',       icon:'💳' },
   { id:'chart',     name:'Графік курсів',        desc:'USD/EUR/UAH динаміка',       icon:'📈' },
   { id:'finder',    name:'Finder',              desc:'Файловий менеджер',          icon:'🗂️' },
+  { id:'qr',        name:'QR-генератор',        desc:'Створення QR-кодів',         icon:'⬛' },
+  { id:'units',     name:'Конвертер одиниць',   desc:'Довжина, маса, температура', icon:'📐' },
 ];
 
 let _spVisible = false;
@@ -2789,17 +2916,465 @@ document.getElementById('modal-overlay').addEventListener('click', e => {
 // ─────────────────────────────────────────────
 // MENU BAR ACTIONS
 // ─────────────────────────────────────────────
-function menubarAction(action) {
-  const id = WM.activeId;
-  if (action === 'file') {
-    if (id === 'editor') {
-      showModal('Файл', 'Дії з файлом:', [
-        { label:'Новий (⌘N)',     cls:'cancel',  cb: () => { closeModal(); edNew(id); } },
-        { label:'Відкрити (⌘O)', cls:'cancel',  cb: () => { closeModal(); edOpen(id); } },
-        { label:'Зберегти (⌘S)', cls:'confirm', cb: () => { closeModal(); edSave(id); } },
-        { label:'Завантажити',   cls:'cancel',  cb: () => { closeModal(); edDownload(id); } },
-      ]);
-    }
+// ─────────────────────────────────────────────
+// MENUBAR DROPDOWNS
+// ─────────────────────────────────────────────
+let _mbOpen = null;
+
+function mbMenu(section, triggerEl) {
+  closeMbDropdown();
+  const id   = WM.activeId;
+  const type = id ? WM.wins[id]?.type : null;
+  const rect = triggerEl.getBoundingClientRect();
+
+  const menus = {
+    app: [
+      { label:'Про ArmyOS', key:'', cb:()=>showModal('ArmyOS v2.0','Тонкий клієнт · Захищена ОС · munister.com.ua/os',[{label:'OK',cls:'confirm',cb:closeModal}]) },
+      'sep',
+      { label:'Spotlight…', key:'⌘Space', cb:toggleSpotlight },
+      { label:'Control Center', key:'', cb:()=>toggleCtrlCenter() },
+      'sep',
+      { label:'Розмістити вікна', key:'', cb:tileAll },
+      { label:'Закрити всі', key:'', cb:closeAllWindows },
+    ],
+    file: type === 'editor' ? [
+      { label:'Новий файл',    key:'⌘N', cb:()=>edNew(id) },
+      { label:'Відкрити…',    key:'⌘O', cb:()=>edOpen(id) },
+      'sep',
+      { label:'Зберегти',     key:'⌘S', cb:()=>edSave(id) },
+      { label:'Зберегти як…', key:'⌘⇧S', cb:()=>edSaveAs(id) },
+      { label:'Завантажити',  key:'⌘D', cb:()=>edDownload(id) },
+      'sep',
+      { label:'Закрити вкладку', key:'⌘W', cb:()=>closeWindow(id) },
+    ] : type === 'browser' ? [
+      { label:'Нова вкладка',     key:'⌘T', cb:()=>browserNav(id,'newtab') },
+      { label:'Оновити',          key:'⌘R', cb:()=>browserNav(id,'reload') },
+      'sep',
+      { label:'Відкрити зовні',   key:'⌘↗', cb:()=>openExternal(id) },
+      'sep',
+      { label:'Закрити',          key:'⌘W', cb:()=>closeWindow(id) },
+    ] : type === 'loan' ? [
+      { label:'Скопіювати результат', key:'', cb:()=>{
+        const t=document.getElementById(`ln-monthly-${id}`)?.textContent;
+        if(t) navigator.clipboard?.writeText(t);
+        showNotif('📋','Кредит',`Скопійовано: ${t}`);
+      }},
+    ] : [
+      { label:'Закрити', key:'⌘W', cb:()=>id&&closeWindow(id), disabled:!id },
+    ],
+
+    edit: type === 'editor' ? [
+      { label:'Скасувати',    key:'⌘Z',  cb:()=>edUndo(id) },
+      { label:'Повторити',   key:'⌘Y',  cb:()=>edRedo(id) },
+      'sep',
+      { label:'Знайти…',     key:'⌘F',  cb:()=>edToggleFind(id) },
+      'sep',
+      { label:'Виділити все', key:'⌘A', cb:()=>{ const t=document.getElementById(`ed-ta-${id}`); t?.select(); } },
+      { label:'Очистити',    key:'',    cb:()=>edClear(id) },
+    ] : type === 'browser' ? [
+      { label:'Назад',       key:'⌘←', cb:()=>browserNav(id,'back') },
+      { label:'Вперед',      key:'⌘→', cb:()=>browserNav(id,'fwd') },
+    ] : type === 'calc' ? [
+      { label:'Скинути',     key:'Esc', cb:()=>calcKey(id,'C') },
+      { label:'Видалити',    key:'⌫',   cb:()=>calcKey(id,'⌫') },
+    ] : [
+      { label:'(Немає дій)', key:'', cb:()=>{}, disabled:true },
+    ],
+
+    view: [
+      ...(type === 'editor' ? [
+        { label:'Збільшити шрифт',  key:'⌘+', cb:()=>_edFontSize(id, 1) },
+        { label:'Зменшити шрифт',  key:'⌘−', cb:()=>_edFontSize(id,-1) },
+        'sep',
+      ] : []),
+      { label:'На весь екран',     key:'⌘⇧F', cb:()=>id&&maximizeWindow(id) },
+      { label:'Розгорнути вікно',  key:'',     cb:()=>id&&maximizeWindow(id) },
+      'sep',
+      { label:'Теки вікон (плитка)', key:'', cb:tileAll },
+    ],
+
+    win: [
+      { label:'Мінімізувати',      key:'⌘M', cb:()=>id&&minimizeWindow(id), disabled:!id },
+      { label:'Розгорнути',        key:'',   cb:()=>id&&maximizeWindow(id),  disabled:!id },
+      { label:'Закрити',           key:'⌘W', cb:()=>id&&closeWindow(id),     disabled:!id },
+      'sep',
+      ...Object.entries(WM.wins).map(([wid,w])=>({
+        label: (WM.activeId===wid?'✓ ':'    ') + APPS[wid]?.title,
+        key:'', cb:()=>toggleApp(wid)
+      })),
+    ],
+  };
+
+  const items = menus[section] || [];
+  const dd = document.createElement('div');
+  dd.className = 'mb-dropdown';
+  dd.style.left = rect.left + 'px';
+
+  dd.innerHTML = items.map(item => {
+    if (item === 'sep') return '<div class="mb-dd-sep"></div>';
+    return `<div class="mb-dd-item ${item.disabled?'disabled':''}" data-cb="${btoa(unescape(encodeURIComponent('_mbCb'+Math.random())))}">
+      <span>${item.label}</span>
+      <span class="mb-dd-key">${item.key||''}</span>
+    </div>`;
+  }).join('');
+
+  // Attach callbacks via event
+  const itemEls = dd.querySelectorAll('.mb-dd-item:not(.disabled)');
+  items.filter(i=>i!=='sep'&&!i.disabled).forEach((item,i)=>{
+    if(itemEls[i]) itemEls[i].addEventListener('click',()=>{ closeMbDropdown(); item.cb(); });
+  });
+
+  document.getElementById('mb-dd-container').appendChild(dd);
+  _mbOpen = dd;
+
+  setTimeout(()=>document.addEventListener('click', closeMbDropdown, {once:true}), 10);
+}
+
+function closeMbDropdown() {
+  if (_mbOpen) { _mbOpen.remove(); _mbOpen = null; }
+}
+
+function menubarAction(action) {} // legacy stub
+
+function _edFontSize(id, dir) {
+  const ta = document.getElementById(`ed-ta-${id}`);
+  if (!ta) return;
+  const cur = parseFloat(getComputedStyle(ta).fontSize) || 13;
+  ta.style.fontSize = Math.max(9, Math.min(28, cur + dir*1.5)) + 'px';
+  syncScroll(id);
+}
+
+// ─────────────────────────────────────────────
+// FIND & REPLACE (editor)
+// ─────────────────────────────────────────────
+function edToggleFind(id) {
+  const root = document.getElementById(`er-${id}`);
+  if (!root) return;
+  let bar = document.getElementById(`ed-find-bar-${id}`);
+  if (bar) { bar.remove(); return; }
+
+  bar = document.createElement('div');
+  bar.id = `ed-find-bar-${id}`;
+  bar.className = 'find-bar';
+  bar.innerHTML = `
+    <input class="find-input" id="ed-fi-${id}" placeholder="Знайти…" oninput="edFind('${id}')">
+    <input class="find-input" id="ed-ri-${id}" placeholder="Замінити…" style="max-width:160px">
+    <span class="find-count" id="ed-fc-${id}"></span>
+    <button class="find-btn" onclick="edFindNext('${id}',false)">↑</button>
+    <button class="find-btn" onclick="edFindNext('${id}',true)">↓</button>
+    <button class="find-btn" onclick="edFindReplace('${id}')">Замінити</button>
+    <button class="find-btn" onclick="edFindReplaceAll('${id}')">Всі</button>
+    <button class="find-btn" onclick="document.getElementById('ed-find-bar-${id}')?.remove()">✕</button>`;
+
+  const toolbar = root.querySelector('.editor-toolbar');
+  toolbar?.insertAdjacentElement('afterend', bar);
+  setTimeout(()=>document.getElementById(`ed-fi-${id}`)?.focus(), 50);
+}
+
+const _findState = {};
+
+function edFind(id) {
+  const q = document.getElementById(`ed-fi-${id}`)?.value || '';
+  const ta = document.getElementById(`ed-ta-${id}`);
+  const cnt = document.getElementById(`ed-fc-${id}`);
+  if (!ta) return;
+  if (!q) { _findState[id] = null; if(cnt) cnt.textContent=''; return; }
+  const text = ta.value;
+  const matches = [];
+  let idx = 0;
+  while((idx = text.toLowerCase().indexOf(q.toLowerCase(), idx)) !== -1) {
+    matches.push(idx); idx += q.length;
+  }
+  _findState[id] = { matches, cur: 0, q };
+  if (cnt) cnt.textContent = matches.length ? `${1}/${matches.length}` : '0 знайдено';
+  if (matches.length) { ta.focus(); ta.setSelectionRange(matches[0], matches[0]+q.length); }
+}
+
+function edFindNext(id, forward) {
+  const s = _findState[id]; if (!s || !s.matches.length) return;
+  s.cur = (s.cur + (forward?1:-1) + s.matches.length) % s.matches.length;
+  const ta = document.getElementById(`ed-ta-${id}`);
+  const cnt = document.getElementById(`ed-fc-${id}`);
+  if (ta) { ta.focus(); ta.setSelectionRange(s.matches[s.cur], s.matches[s.cur]+s.q.length); }
+  if (cnt) cnt.textContent = `${s.cur+1}/${s.matches.length}`;
+}
+
+function edFindReplace(id) {
+  const s = _findState[id]; if (!s || !s.matches.length) return;
+  const ta = document.getElementById(`ed-ta-${id}`);
+  const rep = document.getElementById(`ed-ri-${id}`)?.value || '';
+  if (!ta) return;
+  const pos = s.matches[s.cur];
+  ta.value = ta.value.substring(0,pos) + rep + ta.value.substring(pos+s.q.length);
+  edInput(id); edFind(id);
+}
+
+function edFindReplaceAll(id) {
+  const ta = document.getElementById(`ed-ta-${id}`);
+  const fi = document.getElementById(`ed-fi-${id}`);
+  const ri = document.getElementById(`ed-ri-${id}`);
+  if (!ta || !fi) return;
+  const q = fi.value, rep = ri?.value||'';
+  if (!q) return;
+  const count = (ta.value.match(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'))||[]).length;
+  ta.value = ta.value.split(q).join(rep);
+  edInput(id);
+  showNotif('🔍','Редактор',`Замінено ${count} входжень`);
+}
+
+// ─────────────────────────────────────────────
+// ⬛ QR CODE GENERATOR
+// ─────────────────────────────────────────────
+function _buildQr(id) {
+  return `<div style="flex:1;display:flex;flex-direction:column;background:linear-gradient(145deg,#111827,#1f2937);overflow:hidden;padding:20px;gap:16px">
+  <div>
+    <div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Текст або URL</div>
+    <textarea id="qr-text-${id}" rows="4" placeholder="https://munister.com.ua/os"
+      style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;
+             padding:10px;color:#fff;font-size:13px;outline:none;resize:none;font-family:monospace"
+      oninput="qrGenerate('${id}')">https://munister.com.ua/os</textarea>
+  </div>
+  <div style="display:flex;gap:10px">
+    <div style="flex:1">
+      <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em">Розмір</div>
+      <select id="qr-size-${id}" onchange="qrGenerate('${id}')"
+        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;
+               color:#fff;padding:6px;font-size:12px;outline:none">
+        <option value="128">128×128</option>
+        <option value="200" selected>200×200</option>
+        <option value="256">256×256</option>
+      </select>
+    </div>
+    <div style="flex:1">
+      <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em">Колір</div>
+      <div style="display:flex;gap:6px">
+        <input type="color" id="qr-fg-${id}" value="#000000" onchange="qrGenerate('${id}')"
+          style="width:40px;height:32px;border:none;border-radius:6px;cursor:pointer;background:none">
+        <input type="color" id="qr-bg-${id}" value="#ffffff" onchange="qrGenerate('${id}')"
+          style="width:40px;height:32px;border:none;border-radius:6px;cursor:pointer;background:none">
+      </div>
+    </div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px">
+    <canvas id="qr-canvas-${id}" style="border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.5)"></canvas>
+    <button onclick="qrDownload('${id}')"
+      style="padding:8px 24px;border-radius:10px;background:rgba(59,130,246,.3);border:1px solid rgba(59,130,246,.4);
+             color:#7eb8ff;font-size:13px;font-weight:500;cursor:pointer;transition:background .15s"
+      onmouseover="this.style.background='rgba(59,130,246,.5)'" onmouseout="this.style.background='rgba(59,130,246,.3)'">⬇ Завантажити PNG</button>
+  </div>
+</div>`;
+}
+
+function _initQr(id) { qrGenerate(id); }
+
+function qrGenerate(id) {
+  const text = document.getElementById(`qr-text-${id}`)?.value || ' ';
+  const size = parseInt(document.getElementById(`qr-size-${id}`)?.value||200);
+  const fg   = document.getElementById(`qr-fg-${id}`)?.value || '#000000';
+  const bg   = document.getElementById(`qr-bg-${id}`)?.value || '#ffffff';
+  const canvas = document.getElementById(`qr-canvas-${id}`);
+  if (!canvas) return;
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  // Simple QR-like pattern using Google Charts API via img (CORS safe)
+  const img = new Image();
+  const url = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}&color=${fg.slice(1)}&bgcolor=${bg.slice(1)}&format=png`;
+  img.crossOrigin='anonymous';
+  img.onload = ()=>{ ctx.drawImage(img,0,0,size,size); };
+  img.onerror = ()=>{
+    // Fallback: draw a placeholder
+    ctx.fillStyle=bg; ctx.fillRect(0,0,size,size);
+    ctx.fillStyle=fg; ctx.font=`${size/10}px monospace`; ctx.textAlign='center';
+    ctx.fillText('QR', size/2, size/2);
+  };
+  img.src = url;
+}
+
+function qrDownload(id) {
+  const canvas = document.getElementById(`qr-canvas-${id}`);
+  if (!canvas) return;
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = 'qr-code.png'; a.click();
+}
+
+// ─────────────────────────────────────────────
+// 📐 UNIT CONVERTER
+// ─────────────────────────────────────────────
+function _buildUnits(id) {
+  const cats = ['Довжина','Площа','Об\'єм','Маса','Температура','Час','Швидкість','Дані'];
+  return `<div style="flex:1;display:flex;flex-direction:column;background:linear-gradient(145deg,#1a1000,#2a1800);overflow:hidden">
+  <div style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;display:flex;gap:6px;flex-wrap:wrap">
+    ${cats.map((c,i)=>`
+      <button onclick="unitsCat('${id}','${c}')" id="uc-btn-${i}-${id}"
+        style="padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.1);
+               background:${i===0?'rgba(217,119,6,.3)':'rgba(255,255,255,.06)'};
+               color:${i===0?'#fbbf24':'rgba(255,255,255,.6)'};font-size:11px;cursor:pointer;transition:all .15s">${c}</button>`).join('')}
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px" id="uc-body-${id}"></div>
+</div>`;
+}
+
+const _unitsData = {
+  'Довжина':{ units:['мм','см','м','км','дюйм','фут','ярд','миля'], to_m:[0.001,0.01,1,1000,0.0254,0.3048,0.9144,1609.34] },
+  'Площа':  { units:['мм²','см²','м²','км²','га','акр','фут²'], to_m2:[1e-6,1e-4,1,1e6,10000,4046.86,0.0929] },
+  'Об\'єм': { units:['мл','л','м³','галон(US)','пінта','унція'], to_l:[0.001,1,1000,3.785,0.473,0.0296] },
+  'Маса':   { units:['мг','г','кг','т','унція','фунт','карат'], to_kg:[1e-6,0.001,1,1000,0.02835,0.4536,0.0002] },
+  'Температура': { units:['°C','°F','K'], special:true },
+  'Час':    { units:['мс','с','хв','год','доба','тиждень','місяць','рік'], to_s:[0.001,1,60,3600,86400,604800,2629800,31557600] },
+  'Швидкість':{ units:['м/с','км/год','миля/год','вузол'], to_ms:[1,0.2778,0.44704,0.5144] },
+  'Дані':   { units:['біт','байт','КБ','МБ','ГБ','ТБ'], to_bit:[1,8,8192,8388608,8589934592,8796093022208] },
+};
+const _ucState = {};
+
+function _initUnits(id) { _ucState[id]={cat:'Довжина',val:1,from:0}; unitsCat(id,'Довжина'); }
+
+function unitsCat(id, cat) {
+  if (!_ucState[id]) _ucState[id]={};
+  _ucState[id].cat = cat;
+  _ucState[id].val = 1;
+  _ucState[id].from = 0;
+
+  // Update buttons
+  const cats = ['Довжина','Площа','Об\'єм','Маса','Температура','Час','Швидкість','Дані'];
+  cats.forEach((c,i)=>{
+    const b = document.getElementById(`uc-btn-${i}-${id}`);
+    if(!b) return;
+    const active = c===cat;
+    b.style.background = active?'rgba(217,119,6,.3)':'rgba(255,255,255,.06)';
+    b.style.color       = active?'#fbbf24':'rgba(255,255,255,.6)';
+    b.style.borderColor = active?'rgba(217,119,6,.4)':'rgba(255,255,255,.1)';
+  });
+  unitsRender(id);
+}
+
+function unitsRender(id) {
+  const s = _ucState[id]; if(!s) return;
+  const d = _unitsData[s.cat]; if(!d) return;
+  const body = document.getElementById(`uc-body-${id}`); if(!body) return;
+
+  body.innerHTML = `
+  <div style="background:rgba(255,255,255,.06);border-radius:12px;padding:14px">
+    <div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Вхідне значення</div>
+    <div style="display:flex;gap:8px">
+      <input id="uc-val-${id}" type="number" value="${s.val}"
+        style="flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;
+               padding:8px 12px;color:#fff;font-size:16px;font-weight:600;outline:none"
+        oninput="unitsConvert('${id}',this.value)">
+      <select id="uc-from-${id}" onchange="unitsChangeFrom('${id}',this.value)"
+        style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;
+               color:#fff;padding:8px;font-size:13px;outline:none;cursor:pointer">
+        ${d.units.map((u,i)=>`<option value="${i}" ${i===s.from?'selected':''}>${u}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px" id="uc-results-${id}"></div>`;
+
+  unitsConvert(id, s.val);
+}
+
+function unitsChangeFrom(id, fromIdx) {
+  if(_ucState[id]) _ucState[id].from = parseInt(fromIdx);
+  unitsConvert(id, document.getElementById(`uc-val-${id}`)?.value || 1);
+}
+
+function unitsConvert(id, rawVal) {
+  const s = _ucState[id]; if(!s) return;
+  const d = _unitsData[s.cat]; if(!d) return;
+  const val = parseFloat(rawVal) || 0;
+  const results = document.getElementById(`uc-results-${id}`); if(!results) return;
+
+  let converted = [];
+  if (d.special && s.cat === 'Температура') {
+    const toC = s.from===0 ? val : s.from===1 ? (val-32)*5/9 : val-273.15;
+    converted = [toC, toC*9/5+32, toC+273.15];
+  } else {
+    const key = Object.values(d)[1]; // to_x array
+    const inBase = val * key[s.from];
+    converted = key.map(f => inBase/f);
+  }
+
+  results.innerHTML = d.units.map((u,i)=>{
+    if (i === s.from) return '';
+    const v = converted[i];
+    const disp = Math.abs(v) > 1e6 || (Math.abs(v)<0.001&&v!==0) ? v.toExponential(4) : parseFloat(v.toFixed(6)).toString();
+    return `<div style="display:flex;justify-content:space-between;align-items:center;
+      padding:10px 14px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.06)">
+      <span style="font-size:12px;color:rgba(255,255,255,.5)">${u}</span>
+      <span style="font-size:15px;font-weight:600;color:#fbbf24">${disp}</span>
+    </div>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────
+// 📌 STICKY NOTES
+// ─────────────────────────────────────────────
+const _stickyColors = [
+  {bg:'#fef08a',fg:'#713f12',header:'#fde047'},
+  {bg:'#bbf7d0',fg:'#14532d',header:'#86efac'},
+  {bg:'#bfdbfe',fg:'#1e3a8a',header:'#93c5fd'},
+  {bg:'#fecaca',fg:'#7f1d1d',header:'#fca5a5'},
+  {bg:'#e9d5ff',fg:'#4c1d95',header:'#c4b5fd'},
+];
+let _stickyCount = 0;
+
+function addStickyNote() {
+  const c = _stickyColors[_stickyCount % _stickyColors.length];
+  _stickyCount++;
+  const id = 'sticky-' + _stickyCount;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const x = 80 + Math.random()*(vw-360);
+  const y = 60 + Math.random()*(vh-280);
+
+  const el = document.createElement('div');
+  el.className = 'sticky-note';
+  el.id = id;
+  el.style.cssText = `left:${x}px;top:${y}px;z-index:${WM.zBase++}`;
+  el.innerHTML = `
+    <div class="sticky-header" style="background:${c.header};color:${c.fg}" id="sh-${id}">
+      <span>📌 Нотатка ${_stickyCount}</span>
+      <button class="sticky-close" onclick="document.getElementById('${id}').remove()">✕</button>
+    </div>
+    <textarea class="sticky-body" style="background:${c.bg};color:${c.fg}"
+      placeholder="Введіть нотатку…"></textarea>`;
+
+  document.getElementById('sticky-container').appendChild(el);
+
+  // Make draggable
+  const handle = el.querySelector('.sticky-header');
+  handle.addEventListener('mousedown', e => {
+    if (e.target.closest('.sticky-close')) return;
+    e.preventDefault();
+    const sx = e.clientX - el.offsetLeft, sy = e.clientY - el.offsetTop;
+    const move = e2 => { el.style.left=(e2.clientX-sx)+'px'; el.style.top=(e2.clientY-sy)+'px'; };
+    const up = () => { document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',up); };
+    document.addEventListener('mousemove',move);
+    document.addEventListener('mouseup',up);
+  });
+}
+
+// ─────────────────────────────────────────────
+// ⊞ WINDOW SNAP
+// ─────────────────────────────────────────────
+const _snapPreview = document.getElementById('snap-preview') || {style:{}};
+let _snapZone = null;
+
+function _snapCheck(x, y) {
+  const MENU=28, DOCK=96, W=window.innerWidth, H=window.innerHeight;
+  const avH = H - MENU - DOCK;
+  if (y <= MENU + 4)        return { zone:'max', rect:{left:0,top:MENU,width:W,height:avH} };
+  if (x <= 4)               return { zone:'left',rect:{left:0,top:MENU,width:W/2,height:avH} };
+  if (x >= W - 4)           return { zone:'right',rect:{left:W/2,top:MENU,width:W/2,height:avH} };
+  return null;
+}
+
+function _snapApply(winId, zone, rect) {
+  const w = WM.wins[winId]; if(!w||w.maximized) return;
+  if (zone === 'max') {
+    w.prevRect = {w:w.el.offsetWidth,h:w.el.offsetHeight,x:w.el.offsetLeft,y:w.el.offsetTop};
+    w.el.classList.add('maximized'); w.el.style.cssText=''; w.maximized=true;
+  } else {
+    w.el.style.cssText=`left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;z-index:${w.el.style.zIndex}`;
   }
 }
 
