@@ -101,10 +101,8 @@
 
         .window {
             position: absolute;
-            width: 1000px;
-            max-width: 95vw;
-            height: 750px;
-            max-height: 88vh;
+            width: min(1000px, 95vw);
+            height: min(700px, calc(100vh - var(--taskbar-h) - 20px));
             background: rgba(15, 13, 11, 0.99);
             backdrop-filter: var(--blur);
             border: 1px solid var(--line);
@@ -114,7 +112,7 @@
             box-shadow: var(--shadow);
             z-index: 100;
             overflow: hidden;
-            animation: winOpen 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: winOpen 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .window.active { display: flex; }
@@ -183,9 +181,9 @@
         .tl-year { font-family: var(--serif); font-size: 28px; color: var(--bronze); margin-bottom: 10px; }
         .tl-text { font-size: 17px; color: rgba(246,240,227,0.88); line-height: 1.7; }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             #desktop { grid-template-columns: repeat(3, 1fr); padding: 15px; }
-            .window { width: 100vw; height: calc(100vh - var(--taskbar-h)); top: 0 !important; left: 0 !important; border-radius: 0; }
+            .window { width: 100vw !important; height: calc(100vh - var(--taskbar-h)) !important; top: 0 !important; left: 0 !important; border-radius: 0; }
             #start-btn span { display: none; }
         }
     </style>
@@ -214,7 +212,7 @@
 
     <!-- WINDOWS WITH FULL CONTENT -->
     
-    <div id="win-early" class="window" style="top:40px; left:40px;">
+    <div id="win-early" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'early')">
             <div class="win-title">01. Генезис</div>
             <div class="win-btns"><button class="win-btn min" onclick="minimizeWin('early')"></button><button class="win-btn max" onclick="maximizeWin('early')"></button><button class="win-btn close" onclick="closeWin('early')"></button></div>
@@ -235,7 +233,7 @@
         </div>
     </div>
 
-    <div id="win-kharkiv" class="window" style="top:70px; left:70px;">
+    <div id="win-kharkiv" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'kharkiv')">
             <div class="win-title">02. Харків</div>
             <div class="win-btns"><button class="win-btn min" onclick="minimizeWin('kharkiv')"></button><button class="win-btn max" onclick="maximizeWin('kharkiv')"></button><button class="win-btn close" onclick="closeWin('kharkiv')"></button></div>
@@ -252,7 +250,7 @@
         </div>
     </div>
 
-    <div id="win-brotherhood" class="window" style="top:100px; left:100px;">
+    <div id="win-brotherhood" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'brotherhood')">
             <div class="win-title">03. Братство</div>
             <div class="win-btns"><button class="win-btn min" onclick="minimizeWin('brotherhood')"></button><button class="win-btn max" onclick="maximizeWin('brotherhood')"></button><button class="win-btn close" onclick="closeWin('brotherhood')"></button></div>
@@ -272,7 +270,7 @@
         </div>
     </div>
 
-    <div id="win-arrest" class="window" style="top:130px; left:130px;">
+    <div id="win-arrest" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'arrest')">
             <div class="win-title">04. Каземат</div>
             <div class="win-btns"><button class="win-btn min" onclick="minimizeWin('arrest')"></button><button class="win-btn max" onclick="maximizeWin('arrest')"></button><button class="win-btn close" onclick="closeWin('arrest')"></button></div>
@@ -288,7 +286,7 @@
         </div>
     </div>
 
-    <div id="win-saratov" class="window" style="top:160px; left:160px;">
+    <div id="win-saratov" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'saratov')">
             <div class="win-title">05. Заслання</div>
             <div class="win-btns"><button class="win-btn min" onclick="minimizeWin('saratov')"></button><button class="win-btn max" onclick="maximizeWin('saratov')"></button><button class="win-btn close" onclick="closeWin('saratov')"></button></div>
@@ -304,7 +302,7 @@
         </div>
     </div>
 
-    <div id="win-petersburg" class="window" style="top:190px; left:190px;">
+    <div id="win-petersburg" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'petersburg')">
             <div class="win-title">06. Тріумф</div>
             <div class="win-btns"><button class="win-btn min" onclick="minimizeWin('petersburg')"></button><button class="win-btn max" onclick="maximizeWin('petersburg')"></button><button class="win-btn close" onclick="closeWin('petersburg')"></button></div>
@@ -323,7 +321,7 @@
         </div>
     </div>
 
-    <div id="win-debates" class="window" style="top:220px; left:220px;">
+    <div id="win-debates" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'debates')">
             <div class="win-title">07. Диспути</div>
             <div class="win-btns"><button class="win-btn min" onclick="minimizeWin('debates')"></button><button class="win-btn max" onclick="maximizeWin('debates')"></button><button class="win-btn close" onclick="closeWin('debates')"></button></div>
@@ -339,7 +337,7 @@
         </div>
     </div>
 
-    <div id="win-love" class="window" style="top:250px; left:250px;">
+    <div id="win-love" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'love')">
             <div class="win-title">08. Аліна</div>
             <div class="win-btns"><button class="win-btn min" onclick="minimizeWin('love')"></button><button class="win-btn max" onclick="maximizeWin('love')"></button><button class="win-btn close" onclick="closeWin('love')"></button></div>
@@ -355,7 +353,7 @@
         </div>
     </div>
 
-    <div id="win-legacy" class="window" style="top:280px; left:280px;">
+    <div id="win-legacy" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'legacy')">
             <div class="win-title">09. Спадщина</div>
             <div class="win-btns"><button class="win-btn min" onclick="minimizeWin('legacy')"></button><button class="win-btn max" onclick="maximizeWin('legacy')"></button><button class="win-btn close" onclick="closeWin('legacy')"></button></div>
@@ -370,7 +368,7 @@
         </div>
     </div>
 
-    <div id="win-timeline" class="window" style="top:50px; left:350px;">
+    <div id="win-timeline" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'timeline')">
             <div class="win-title">Хроніка</div>
             <div class="win-btns"><button class="win-btn close" onclick="closeWin('timeline')"></button></div>
@@ -388,7 +386,7 @@
         </div>
     </div>
 
-    <div id="win-gallery" class="window" style="top:150px; left:450px;">
+    <div id="win-gallery" class="window">
         <div class="win-head" onmousedown="startDrag(event, 'gallery')">
             <div class="win-title">Архів</div>
             <div class="win-btns"><button class="win-btn close" onclick="closeWin('gallery')"></button></div>
@@ -415,19 +413,38 @@
         const openWindows = new Set();
         let zIndexCounter = 1000;
 
+        const TASKBAR_H = 68;
+
         function boot() {
             document.getElementById('welcome').style.opacity = '0';
             setTimeout(() => document.getElementById('welcome').style.display = 'none', 1000);
         }
 
+        function centerWin(win) {
+            const vw = window.innerWidth;
+            const vh = window.innerHeight - TASKBAR_H;
+            const ww = win.offsetWidth;
+            const wh = win.offsetHeight;
+            const left = Math.max(0, Math.round((vw - ww) / 2));
+            const top  = Math.max(0, Math.round((vh - wh) / 2));
+            win.style.left = left + 'px';
+            win.style.top  = top  + 'px';
+        }
+
         function openWin(id) {
             const win = document.getElementById('win-' + id);
             if (!win) return;
+            const isNew = !openWindows.has(id);
             win.classList.add('active');
             win.classList.remove('minimized');
-            if (window.innerWidth < 600) win.classList.add('maximized');
+            if (window.innerWidth <= 768) {
+                win.classList.add('maximized');
+            } else if (isNew) {
+                // Center after paint so offsetWidth/Height are available
+                requestAnimationFrame(() => centerWin(win));
+            }
             focusWin(id);
-            if (!openWindows.has(id)) {
+            if (isNew) {
                 openWindows.add(id);
                 updateTaskbar();
             }
@@ -492,7 +509,7 @@
         let dragOffset = { x: 0, y: 0 };
 
         function startDrag(e, id) {
-            if (window.innerWidth < 600 || document.getElementById('win-' + id).classList.contains('maximized')) return;
+            if (window.innerWidth <= 768 || document.getElementById('win-' + id).classList.contains('maximized')) return;
             focusWin(id);
             activeWin = document.getElementById('win-' + id);
             const clientX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
@@ -505,8 +522,12 @@
 
         function drag(e) {
             if (!activeWin) return;
-            activeWin.style.left = (e.clientX - dragOffset.x) + 'px';
-            activeWin.style.top = (e.clientY - dragOffset.y) + 'px';
+            const maxLeft = window.innerWidth - activeWin.offsetWidth;
+            const maxTop  = window.innerHeight - TASKBAR_H - activeWin.offsetHeight;
+            const newLeft = Math.max(0, Math.min(e.clientX - dragOffset.x, maxLeft));
+            const newTop  = Math.max(0, Math.min(e.clientY - dragOffset.y, maxTop));
+            activeWin.style.left = newLeft + 'px';
+            activeWin.style.top  = newTop  + 'px';
         }
 
         function stopDrag() {
