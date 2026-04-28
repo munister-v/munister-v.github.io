@@ -1348,10 +1348,11 @@
       }
 
       // Reorder sections:
-      // Hero → Capabilities (#experience) → Science (#science) → Methodology → ARM Bank → Italy → Cases
+      // Hero → Capabilities (#experience) → Science/Professional Trajectory (#science) → ARM OS → Methodology → ARM Bank → Italy → Cases
       function injectARMBank() {
         const methodology = document.getElementById('methodology');
         const mvp = document.getElementById('army-bank-mvp');
+        const armos = document.getElementById('armos-showcase');
         const italy = document.getElementById('italy-showcase');
         const experience = document.getElementById('experience');
         const science = document.getElementById('science');
@@ -1368,6 +1369,11 @@
         // Place Science right after Capabilities
         if (experience && science && science !== experience.nextElementSibling) {
           experience.after(science);
+        }
+
+        // Place ARM OS right after Science (#science = Professional Trajectory)
+        if (armos && science && armos !== science.nextElementSibling) {
+          science.after(armos);
         }
 
         // Place ARM Bank after Methodology
