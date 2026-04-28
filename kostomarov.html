@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Микола Костомаров — Історична довідка</title>
-    <meta name="description" content="Детальна інтерактивна біографія Миколи Костомарова — видатного історика, етнографа та ідеолога Кирило-Мефодіївського братства.">
+    <title>Микола Костомаров — Історична платформа</title>
+    <meta name="description" content="Детальна інтерактивна біографія Миколи Костомарова — видатного історика, етнографа та ідеолога.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -14,15 +14,15 @@
             --bronze: #b49a72;
             --bronze-dark: #8e7958;
             --bg: #0c0b09;
-            --line: rgba(246, 240, 227, 0.08);
+            --line: rgba(246, 240, 227, 0.1);
             --line-gold: rgba(180, 154, 114, 0.3);
             --glass: rgba(255, 255, 255, 0.03);
-            --glass-md: rgba(255, 255, 255, 0.07);
-            --glass-lg: rgba(255, 255, 255, 0.12);
+            --glass-md: rgba(255, 255, 255, 0.08);
+            --glass-lg: rgba(255, 255, 255, 0.14);
             --serif: 'Playfair Display', serif;
             --sans: 'Inter', sans-serif;
-            --shadow: 0 20px 50px rgba(0,0,0,0.5);
-            --blur: blur(14px);
+            --shadow: 0 30px 60px rgba(0,0,0,0.6);
+            --blur: blur(16px);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
@@ -46,8 +46,8 @@
             inset: 0;
             padding: 24px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, 110px);
-            grid-template-rows: repeat(auto-fill, 120px);
+            grid-template-columns: repeat(auto-fill, 100px);
+            grid-template-rows: repeat(auto-fill, 110px);
             grid-auto-flow: column;
             gap: 12px;
             align-content: flex-start;
@@ -59,13 +59,13 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 110px;
-            height: 120px;
+            width: 100px;
+            height: 110px;
             cursor: pointer;
-            border-radius: 12px;
+            border-radius: 14px;
             transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
             border: 1px solid transparent;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
         }
 
@@ -76,80 +76,77 @@
         }
 
         .icon-img {
-            width: 56px;
-            height: 56px;
+            width: 52px;
+            height: 52px;
             background: var(--glass-md);
-            border-radius: 14px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 8px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            margin-bottom: 6px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
             border: 1px solid var(--line-gold);
-            font-size: 26px;
+            font-size: 24px;
             color: var(--bronze);
             backdrop-filter: var(--blur);
             transition: transform 0.2s;
         }
 
-        .icon:hover .icon-img {
-            transform: scale(1.1);
-            color: var(--ivory);
-            background: var(--bronze);
-        }
+        .icon:hover .icon-img { transform: scale(1.1); color: var(--ivory); background: var(--bronze); }
 
         .icon-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 500;
             color: rgba(246, 240, 227, 0.9);
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
             line-height: 1.2;
+            word-break: break-word;
         }
 
         /* Windows */
         .window {
             position: absolute;
-            top: 15%;
-            left: 20%;
-            width: 760px;
-            max-width: 90vw;
-            height: 600px;
+            width: 700px;
+            max-width: 95vw;
+            height: 500px;
             max-height: 80vh;
-            background: rgba(15, 14, 12, 0.93);
+            background: rgba(15, 14, 12, 0.94);
             backdrop-filter: var(--blur);
             border: 1px solid var(--line);
-            border-radius: 18px;
-            display: flex;
+            border-radius: 16px;
+            display: none;
             flex-direction: column;
             box-shadow: var(--shadow);
             z-index: 100;
-            opacity: 0;
-            transform: scale(0.9) translateY(20px);
-            pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+            animation: winOpen 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .window.active {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-            pointer-events: all;
+        .window.active { display: flex; }
+        .window.minimized { display: none; }
+        .window.maximized { top: 0 !important; left: 0 !important; width: 100vw !important; height: calc(100vh - 56px) !important; border-radius: 0; }
+
+        @keyframes winOpen {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .win-head {
-            height: 52px;
-            padding: 0 18px;
+            height: 48px;
+            padding: 0 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid var(--line);
             flex-shrink: 0;
             cursor: move;
+            background: rgba(255,255,255,0.02);
         }
 
         .win-title {
             font-family: var(--serif);
-            font-size: 14px;
-            letter-spacing: 0.03em;
+            font-size: 13px;
+            letter-spacing: 0.02em;
             color: var(--bronze);
             display: flex;
             align-items: center;
@@ -157,7 +154,8 @@
         }
 
         .win-btns { display: flex; gap: 8px; }
-        .win-btn { width: 12px; height: 12px; border-radius: 50%; background: var(--line); cursor: pointer; }
+        .win-btn { width: 12px; height: 12px; border-radius: 50%; background: var(--line); cursor: pointer; transition: transform 0.1s; }
+        .win-btn:active { transform: scale(0.9); }
         .win-btn.close { background: #ff5f56; }
         .win-btn.min { background: #ffbd2e; }
         .win-btn.max { background: #27c93f; }
@@ -165,7 +163,7 @@
         .win-body {
             flex: 1;
             overflow-y: auto;
-            padding: 44px;
+            padding: 32px;
             scrollbar-width: thin;
             scrollbar-color: var(--bronze) transparent;
         }
@@ -175,31 +173,24 @@
 
         .win-h {
             font-family: var(--serif);
-            font-size: 38px;
+            font-size: 32px;
             font-weight: 400;
             line-height: 1.1;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             color: var(--ivory);
-            border-left: 5px solid var(--bronze);
-            padding-left: 20px;
+            border-left: 4px solid var(--bronze);
+            padding-left: 16px;
         }
 
-        .win-p {
-            font-size: 16.5px;
-            line-height: 1.8;
-            color: rgba(246, 240, 227, 0.82);
-            margin-bottom: 24px;
-            text-align: justify;
-        }
+        .win-p { font-size: 15px; line-height: 1.7; color: rgba(246, 240, 227, 0.8); margin-bottom: 20px; text-align: justify; }
 
         .win-img {
             width: 100%;
-            height: 340px;
+            height: 280px;
             object-fit: cover;
             border-radius: 12px;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             border: 1px solid var(--line);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
         }
 
         /* Taskbar */
@@ -208,36 +199,58 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 64px;
+            height: 56px;
             background: rgba(12, 11, 9, 0.95);
             backdrop-filter: var(--blur);
             border-top: 1px solid var(--line);
             z-index: 1000;
             display: flex;
             align-items: center;
-            padding: 0 20px;
-            gap: 14px;
+            padding: 0 12px;
+            gap: 8px;
         }
 
         #start-btn {
-            height: 44px;
-            padding: 0 24px;
+            height: 38px;
+            padding: 0 16px;
             background: var(--bronze);
             color: var(--bg);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             font-weight: 600;
-            font-size: 15px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 15px rgba(180, 154, 114, 0.3);
+            margin-right: 8px;
         }
 
-        #start-btn:hover { background: var(--ivory); transform: translateY(-1px); }
+        #start-btn:hover { background: var(--ivory); }
 
-        .tb-time { margin-left: auto; font-size: 15px; font-weight: 500; color: var(--bronze); letter-spacing: 0.06em; }
+        .tb-item {
+            height: 38px;
+            padding: 0 12px;
+            background: var(--glass);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--bronze);
+            cursor: pointer;
+            transition: all 0.2s;
+            max-width: 140px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tb-item:hover { background: var(--glass-md); }
+        .tb-item.active { background: rgba(180, 154, 114, 0.2); border-color: var(--line-gold); }
+
+        .tb-time { margin-left: auto; font-size: 13px; font-weight: 500; color: var(--bronze); padding: 0 8px; letter-spacing: 0.05em; }
 
         /* Welcome Screen */
         #welcome {
@@ -249,48 +262,67 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.8s ease;
         }
 
-        .w-logo { font-family: var(--serif); font-size: 76px; color: var(--ivory); margin-bottom: 12px; opacity: 0; transform: translateY(20px); animation: fadeUp 1s forwards 0.5s; }
+        .w-logo { font-family: var(--serif); font-size: 64px; color: var(--ivory); margin-bottom: 8px; }
         .w-logo span { color: var(--bronze); }
-        .w-line { width: 160px; height: 1px; background: var(--bronze); margin-bottom: 40px; transform: scaleX(0); animation: scaleIn 1s forwards 0.8s; }
-        .w-btn { padding: 18px 52px; border: 1px solid var(--line-gold); background: transparent; color: var(--bronze); font-family: var(--serif); font-size: 22px; cursor: pointer; transition: all 0.3s; border-radius: 50px; opacity: 0; animation: fadeIn 1s forwards 1.5s; }
-        .w-btn:hover { background: var(--bronze); color: var(--bg); box-shadow: 0 0 60px rgba(180, 154, 114, 0.5); }
-
-        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { to { opacity: 1; } }
-        @keyframes scaleIn { to { transform: scaleX(1); } }
+        .w-line { width: 120px; height: 1px; background: var(--bronze); margin-bottom: 32px; }
+        .w-btn { padding: 14px 40px; border: 1px solid var(--line-gold); background: transparent; color: var(--bronze); font-family: var(--serif); font-size: 18px; cursor: pointer; border-radius: 40px; transition: all 0.3s; }
+        .w-btn:hover { background: var(--bronze); color: var(--bg); box-shadow: 0 0 40px rgba(180, 154, 114, 0.4); }
 
         /* Widgets */
         #widgets {
             position: absolute;
             right: 32px;
             top: 32px;
-            width: 360px;
+            width: 320px;
             display: flex;
             flex-direction: column;
-            gap: 28px;
+            gap: 20px;
             z-index: 1;
         }
 
-        .widget { background: var(--glass); backdrop-filter: var(--blur); border: 1px solid var(--line); border-radius: 24px; padding: 32px; box-shadow: var(--shadow); }
-        .widget-h { font-family: var(--serif); font-size: 22px; color: var(--bronze); margin-bottom: 20px; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
-        .widget-p { font-size: 15px; line-height: 1.7; color: rgba(246, 240, 227, 0.65); }
+        .widget { background: var(--glass); backdrop-filter: var(--blur); border: 1px solid var(--line); border-radius: 20px; padding: 24px; box-shadow: var(--shadow); }
+        .widget-h { font-family: var(--serif); font-size: 18px; color: var(--bronze); margin-bottom: 12px; }
+        .widget-p { font-size: 13px; line-height: 1.6; color: rgba(246, 240, 227, 0.6); }
 
         .portrait {
             width: 100%;
-            height: 440px;
+            height: 340px;
             object-fit: cover;
-            border-radius: 16px;
+            border-radius: 14px;
             border: 1px solid var(--line-gold);
-            margin-bottom: 24px;
-            filter: contrast(1.08);
-            transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1);
+            margin-bottom: 16px;
         }
-        .portrait:hover { transform: scale(1.03); }
 
-        @media (max-width: 1024px) { #widgets { display: none; } .window { left: 5%; width: 90%; top: 5%; height: 85%; } }
+        /* ADAPTIVE */
+        @media (max-width: 1024px) {
+            #widgets { display: none; }
+            .window { width: 90vw; height: 70vh; top: 10% !important; left: 5% !important; }
+        }
+
+        @media (max-width: 600px) {
+            #desktop { grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 16px; }
+            .icon { width: auto; height: 100px; }
+            .window { width: 100vw; height: calc(100vh - 56px); top: 0 !important; left: 0 !important; border-radius: 0; }
+            .win-body { padding: 20px; }
+            .win-h { font-size: 24px; }
+            #start-btn span { display: none; }
+            .tb-item { max-width: 80px; font-size: 9px; }
+        }
+
+        /* Gallery Grid */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+        .gal-img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); cursor: zoom-in; transition: transform 0.2s; }
+        .gal-img:hover { transform: scale(1.05); border-color: var(--bronze); }
+
+        /* Library List */
+        .lib-list { list-style: none; }
+        .lib-item { padding: 12px; border-bottom: 1px solid var(--line); }
+        .lib-title { font-family: var(--serif); font-size: 18px; color: var(--bronze); margin-bottom: 4px; }
+        .lib-desc { font-size: 12px; color: rgba(246,240,227,0.5); line-height: 1.4; }
+
     </style>
 </head>
 <body>
@@ -299,7 +331,7 @@
     <div id="welcome">
         <div class="w-logo">Микола <span>Костомаров</span></div>
         <div class="w-line"></div>
-        <div class="w-logo" style="font-size: 30px; animation-delay: 1s; font-style: italic;">Історична платформа</div>
+        <div class="w-logo" style="font-size: 24px; font-style: italic;">Історична платформа</div>
         <button class="w-btn" onclick="boot()">Розпочати огляд</button>
     </div>
 
@@ -325,211 +357,284 @@
             <div class="icon-img">📚</div>
             <div class="icon-label">Наукова праця.doc</div>
         </div>
+        <div class="icon" onclick="openWin('gallery')">
+            <div class="icon-img">🖼️</div>
+            <div class="icon-label">Галерея.img</div>
+        </div>
+        <div class="icon" onclick="openWin('library')">
+            <div class="icon-img">📖</div>
+            <div class="icon-label">Бібліотека.exe</div>
+        </div>
     </div>
 
     <!-- Widgets -->
     <div id="widgets">
         <div class="widget">
             <img src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Mykola_Kostomarov_by_Petr_Borel_%28cropped%29.jpg" alt="Микола Костомаров" class="portrait">
-            <div class="widget-h">Микола Іванович Костомаров</div>
+            <div class="widget-h">М. І. Костомаров</div>
             <div class="widget-p">
-                <strong>1817 — 1885</strong><br><br>
-                Видатний історик, етнограф та мислитель. Людина, яка довела самобутність українського народу через наукове дослідження його душі та історії. Поліглот, що володів понад 10 мовами.
-            </div>
-        </div>
-        <div class="widget">
-            <div class="widget-h">Пророче слово</div>
-            <div class="widget-p" style="font-style: italic; color: var(--ivory); font-size: 16px; line-height: 1.5;">
-                "І встане Україна з своєї могили, і покличе братів своїх слов’ян, і почують вони голос її, і встане Слов’янщина, і не зостанеться ні царя, ні царевича, ні пана..."
+                <strong>1817 — 1885</strong><br>
+                Історик, який відкрив душу народу.
             </div>
         </div>
     </div>
 
     <!-- Windows -->
-    <div id="win-early" class="window">
-        <div class="win-head">
+    <div id="win-early" class="window" style="top:100px; left:100px;">
+        <div class="win-head" onmousedown="startDrag(event, 'early')">
             <div class="win-title">🏫 Харківський період.doc</div>
             <div class="win-btns">
-                <div class="win-btn min"></div><div class="win-btn max"></div><div class="win-btn close" onclick="closeWin('early')"></div>
+                <div class="win-btn min" onclick="minimizeWin('early')"></div>
+                <div class="win-btn max" onclick="maximizeWin('early')"></div>
+                <div class="win-btn close" onclick="closeWin('early')"></div>
             </div>
         </div>
         <div class="win-body">
-            <div class="win-content">
-                <h2 class="win-h">Походження та Харків</h2>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/1/15/GRW431_Kostomarov.jpg" class="win-img" alt="Харківський університет">
-                <p class="win-p">
-                    Микола Костомаров народився 16 травня 1817 року в слободі Юрасівка. Його доля була визначена складною юридичною колізією: він був сином поміщика Івана Костомарова та кріпачки Тетяни Мельникової (Роздорожньої). Оскільки шлюб батьків було оформлено після народження сина, Микола вважався кріпаком власного батька.
-                </p>
-                <p class="win-p">
-                    Трагічна загибель батька у 1828 році, якого вбили його ж кріпаки, залишила родину у відчаї. Матері довелося пройти через численні судові позови та сплатити великі суми, щоб викупити сина та забезпечити йому майбутнє вільної людини.
-                </p>
-                <p class="win-p">
-                    Навчання в Харківському університеті (1833–1837) відкрило в ньому пристрасного дослідника. Під впливом викладачів, таких як Петро Гулак-Артемовський, він захопився романтизмом та етнографією. Саме тоді Костомаров сформулював свій головний принцип: історія — це не життя правителів, а життя самого народу.
-                </p>
-            </div>
+            <h2 class="win-h">Походження та Харків</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/15/GRW431_Kostomarov.jpg" class="win-img">
+            <p class="win-p">
+                Микола Костомаров народився 16 травня 1817 року. Був сином поміщика та кріпачки, що визначило його чутливість до соціальної несправедливості. Харківський період сформував його як вченого-романтика.
+            </p>
         </div>
     </div>
 
-    <div id="win-brotherhood" class="window">
-        <div class="win-head">
+    <div id="win-brotherhood" class="window" style="top:120px; left:120px;">
+        <div class="win-head" onmousedown="startDrag(event, 'brotherhood')">
             <div class="win-title">📜 КМ Братство.doc</div>
             <div class="win-btns">
-                <div class="win-btn min"></div><div class="win-btn max"></div><div class="win-btn close" onclick="closeWin('brotherhood')"></div>
+                <div class="win-btn min" onclick="minimizeWin('brotherhood')"></div>
+                <div class="win-btn max" onclick="maximizeWin('brotherhood')"></div>
+                <div class="win-btn close" onclick="closeWin('brotherhood')"></div>
             </div>
         </div>
         <div class="win-body">
-            <div class="win-content">
-                <h2 class="win-h">Кирило-Мефодіївське братство</h2>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/%D0%9A%D1%83%D0%BB%D1%96%D1%88_%D1%82%D0%B0_%D0%9A%D0%BE%D1%81%D1%82%D0%BE%D0%BC%D0%B0%D1%80%D0%BE%D0%B2.jpg" class="win-img" alt="Куліш та Костомаров">
-                <p class="win-p">
-                    Призначення професором кафедри історії Київського університету у 1846 році стало початком найважливішого етапу його політичного життя. Разом із Тарасом Шевченком, Пантелеймоном Кулішем, Миколою Гулаком та Василем Білозерським він засновує Кирило-Мефодіївське братство.
-                </p>
-                <p class="win-p">
-                    Костомаров був ідейним серцем організації. Саме він написав «Книгу буття українського народу» — документ, що проголошував рівність усіх слов'янських народів та неминучість падіння деспотії. Це був сміливий проект федеративної слов'янської республіки з демократичним устроєм.
-                </p>
-                <p class="win-p">
-                    Програма братства включала скасування кріпацтва, ліквідацію станового поділу та запровадження широкої освіти для селян. Візія Костомарова передбачала перетворення Києва на інтелектуальний центр вільної Слов'янщини.
-                </p>
-            </div>
+            <h2 class="win-h">Кирило-Мефодіївське братство</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/%D0%9A%D1%83%D0%BB%D1%96%D1%88_%D1%82%D0%B0_%D0%9A%D0%BE%D1%81%D1%82%D0%BE%D0%BC%D0%B0%D1%80%D0%BE%D0%B2.jpg" class="win-img">
+            <p class="win-p">
+                У Києві Костомаров став серцем Братства. Його «Книга буття українського народу» проголошувала християнський демократизм та федералізм слов'ян.
+            </p>
         </div>
     </div>
 
-    <div id="win-exile" class="window">
-        <div class="win-head">
+    <div id="win-exile" class="window" style="top:140px; left:140px;">
+        <div class="win-head" onmousedown="startDrag(event, 'exile')">
             <div class="win-title">⛓️ Ув'язнення.doc</div>
             <div class="win-btns">
-                <div class="win-btn min"></div><div class="win-btn max"></div><div class="win-btn close" onclick="closeWin('exile')"></div>
+                <div class="win-btn min" onclick="minimizeWin('exile')"></div>
+                <div class="win-btn max" onclick="maximizeWin('exile')"></div>
+                <div class="win-btn close" onclick="closeWin('exile')"></div>
             </div>
         </div>
         <div class="win-body">
-            <div class="win-content">
-                <h2 class="win-h">Випробування вірності</h2>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Portrait_of_Historian_M._Kostomarov_by_Nikolay_Ghe.jpg" class="win-img" alt="Портрет роботи Миколи Ге">
-                <p class="win-p">
-                    Навесні 1847 року життя Костомарова розкололося навпіл. За доносом Олексія Петрова братство було розгромлене. Історика заарештували за кілька днів до його весілля з Аліною Крагельською. Замість святкового вбрання він одягнув тюремну робу в казематах Петропавловської фортеці.
-                </p>
-                <p class="win-p">
-                    Рік одиночного ув'язнення був лише початком. Його заслали до Саратова на 8 років із суворою забороною викладати та публікуватися під власним ім'ям. Але Костомаров не здався: він працював дільничним писарем, збирав матеріали про Степана Разіна та продовжував шліфувати свої історичні теорії.
-                </p>
-                <p class="win-p">
-                    Його кохана Аліна чекала на нього все життя. Після заслання він зустрів її вже вдовою, і через 28 років після перших заручин вони нарешті побралися, довівши, що справжнє почуття сильніше за імперську репресивну машину.
-                </p>
-            </div>
+            <h2 class="win-h">Випробування вірності</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Portrait_of_Historian_M._Kostomarov_by_Nikolay_Ghe.jpg" class="win-img">
+            <p class="win-p">
+                Арешт у 1847 році розірвав плани на весілля та кар'єру. Заслання до Саратова стало часом титанічної праці в архівах та вивчення народних повстань.
+            </p>
         </div>
     </div>
 
-    <div id="win-petersburg" class="window">
-        <div class="win-head">
+    <div id="win-petersburg" class="window" style="top:160px; left:160px;">
+        <div class="win-head" onmousedown="startDrag(event, 'petersburg')">
             <div class="win-title">🏛️ Петербург.doc</div>
             <div class="win-btns">
-                <div class="win-btn min"></div><div class="win-btn max"></div><div class="win-btn close" onclick="closeWin('petersburg')"></div>
+                <div class="win-btn min" onclick="minimizeWin('petersburg')"></div>
+                <div class="win-btn max" onclick="maximizeWin('petersburg')"></div>
+                <div class="win-btn close" onclick="closeWin('petersburg')"></div>
             </div>
         </div>
         <div class="win-body">
-            <div class="win-content">
-                <h2 class="win-h">Науковий тріумф</h2>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Nikola_i_Ivanovich_Kostomarov%2C_head-and-shoulders_portrait%2C_facing_front_LCCN99615560.jpg" class="win-img" alt="Фотопортрет 1880">
-                <p class="win-p">
-                    Повернення до Петербурга після амністії 1855 року стало тріумфальним. У 1859 році він очолив кафедру історії Петербурзького університету. Його лекції збирали аншлаги: люди стояли в проходах, щоб почути вченого, який осмілився говорити про історію не царів, а народних мас.
-                </p>
-                <p class="win-p">
-                    У 1861 році він публікує епохальну статтю «Дві руські народності», де вперше на академічному рівні обґрунтовує різницю між українським (спрямованим на особисту свободу та громаду) та російським (орієнтованим на самодержавство та централізацію) типами політичної культури.
-                </p>
-                <p class="win-p">
-                    Разом із Т. Шевченком та П. Кулішем він стає активним учасником «Громади» та видає журнал «Основа». Костомаров перетворив історичну науку на зброю в боротьбі за право українців на власну ідентичність та культуру.
-                </p>
+            <h2 class="win-h">Науковий тріумф</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Nikola_i_Ivanovich_Kostomarov%2C_head-and-shoulders_portrait%2C_facing_front_LCCN99615560.jpg" class="win-img">
+            <p class="win-p">
+                У Петербурзі Костомаров став найпопулярнішим лектором імперії. Стаття «Дві руські народності» стала маніфестом української самобутності.
+            </p>
+        </div>
+    </div>
+
+    <div id="win-legacy" class="window" style="top:180px; left:180px;">
+        <div class="win-head" onmousedown="startDrag(event, 'legacy')">
+            <div class="win-title">📚 Наукова праця.doc</div>
+            <div class="win-btns">
+                <div class="win-btn min" onclick="minimizeWin('legacy')"></div>
+                <div class="win-btn max" onclick="maximizeWin('legacy')"></div>
+                <div class="win-btn close" onclick="closeWin('legacy')"></div>
+            </div>
+        </div>
+        <div class="win-body">
+            <h2 class="win-h">Спадщина вченого</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/81/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%B1%D1%83%D1%82%D1%82%D1%8F_%D1%83%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D1%81%D1%8C%D0%BA%D0%BE%D0%B3%D0%BE_%D0%BD%D0%B0%D1%80%D0%BE%D0%B4%D1%83.jpg" class="win-img">
+            <p class="win-p">
+                Класичні праці «Богдан Хмельницький», «Руїна», «Мазепа» стали основою для Грушевського та всієї подальшої української історіографії.
+            </p>
+        </div>
+    </div>
+
+    <!-- NEW WINDOWS -->
+    <div id="win-gallery" class="window" style="top:200px; left:200px;">
+        <div class="win-head" onmousedown="startDrag(event, 'gallery')">
+            <div class="win-title">🖼️ Галерея.img</div>
+            <div class="win-btns">
+                <div class="win-btn min" onclick="minimizeWin('gallery')"></div>
+                <div class="win-btn max" onclick="maximizeWin('gallery')"></div>
+                <div class="win-btn close" onclick="closeWin('gallery')"></div>
+            </div>
+        </div>
+        <div class="win-body">
+            <h2 class="win-h">Портретна галерея</h2>
+            <div class="gallery-grid">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/ff/Mykola_Kostomarov_by_Petr_Borel.jpg" class="gal-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Portrait_of_Historian_M._Kostomarov_by_Nikolay_Ghe.jpg" class="gal-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Nikolay_Ivanovich_Kostomarov_%28by_K._Makovskiy%29.jpg" class="gal-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Kostomarov_7.jpg" class="gal-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/15/GRW431_Kostomarov.jpg" class="gal-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/94/%D0%A3%D0%BD%D1%96%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D1%82%D0%B5%D1%82_%D0%A1%D0%B2.%D0%92%D0%BE%D0%BB%D0%BE%D0%B4%D0%B8%D0%BC%D0%B8%D1%80%D0%B0_%D0%9A%D0%B8%D1%97%D0%B2_1888.jpg" class="gal-img">
             </div>
         </div>
     </div>
 
-    <div id="win-legacy" class="window">
-        <div class="win-head">
-            <div class="win-title">📚 Наукова праця.doc</div>
+    <div id="win-library" class="window" style="top:220px; left:220px;">
+        <div class="win-head" onmousedown="startDrag(event, 'library')">
+            <div class="win-title">📖 Бібліотека.exe</div>
             <div class="win-btns">
-                <div class="win-btn min"></div><div class="win-btn max"></div><div class="win-btn close" onclick="closeWin('legacy')"></div>
+                <div class="win-btn min" onclick="minimizeWin('library')"></div>
+                <div class="win-btn max" onclick="maximizeWin('library')"></div>
+                <div class="win-btn close" onclick="closeWin('library')"></div>
             </div>
         </div>
         <div class="win-body">
-            <div class="win-content">
-                <h2 class="win-h">Спадщина вченого</h2>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/8/81/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%B1%D1%83%D1%82%D1%82%D1%8F_%D1%83%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D1%81%D1%8C%D0%BA%D0%BE%D0%B3%D0%BE_%D0%BD%D0%B0%D1%80%D0%BE%D0%B4%D1%83.jpg" class="win-img" alt="Книга буття">
-                <p class="win-p">
-                    Науковий доробок Костомарова — це понад 300 праць, що охоплюють історію України, Росії та Польщі. Його монографії «Богдан Хмельницький», «Руїна», «Мазепа», «Мазепинці» заклали фундамент сучасної української історіографії.
-                </p>
-                <p class="win-p">
-                    Він вважав Михайла Грушевського своїм інтелектуальним спадкоємцем. Саме завдяки Костомарову українська історія вийшла за межі фольклору та стала серйозною академічною дисципліною. Його метод роботи з документами та археографічні видання залишаються взірцем для істориків і сьогодні.
-                </p>
-                <p class="win-p">
-                    Визнання Костомарова як мислителя світового рівня підтверджується тим, що 150-річчя від дня його народження відзначалося за рішенням ЮНЕСКО. Він назавжди залишився в історії як архітектор української національної ідеї, що поєднала наукову істину з мрією про свободу.
-                </p>
+            <h2 class="win-h">Вибрані праці</h2>
+            <div class="lib-list">
+                <div class="lib-item">
+                    <div class="lib-title">Богдан Хмельницький (1857)</div>
+                    <div class="lib-desc">Монументальне дослідження епохи Визвольної війни.</div>
+                </div>
+                <div class="lib-item">
+                    <div class="lib-title">Дві руські народності (1861)</div>
+                    <div class="lib-desc">Порівняльний аналіз психології українського та російського народів.</div>
+                </div>
+                <div class="lib-item">
+                    <div class="lib-title">Книга буття українського народу</div>
+                    <div class="lib-desc">Політично-релігійний маніфест Кирило-Мефодіївського братства.</div>
+                </div>
+                <div class="lib-item">
+                    <div class="lib-title">Руїна (1879)</div>
+                    <div class="lib-desc">Аналіз трагічного періоду історії після смерті Хмельницького.</div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Taskbar -->
     <div id="taskbar">
-        <div id="start-btn" onclick="toggleMenu()">
-             📜 Біографія та факти
-        </div>
+        <div id="start-btn" onclick="toggleMenu()">📜 <span>Біографія</span></div>
+        <div id="taskbar-items" style="display:flex; gap:6px;"></div>
         <div class="tb-time" id="clock">12:00</div>
     </div>
 
     <script>
+        const openWindows = new Set();
+        let zIndexCounter = 1000;
+
         function boot() {
-            const welcome = document.getElementById('welcome');
-            welcome.style.opacity = '0';
-            setTimeout(() => welcome.style.display = 'none', 1000);
+            document.getElementById('welcome').style.opacity = '0';
+            setTimeout(() => document.getElementById('welcome').style.display = 'none', 800);
         }
 
         function openWin(id) {
             const win = document.getElementById('win-' + id);
             win.classList.add('active');
-            win.style.zIndex = Math.floor(Date.now() / 1000);
+            win.classList.remove('minimized');
+            focusWin(id);
+            if (!openWindows.has(id)) {
+                openWindows.add(id);
+                updateTaskbar();
+            }
         }
 
         function closeWin(id) {
-            document.getElementById('win-' + id).classList.remove('active');
+            const win = document.getElementById('win-' + id);
+            win.classList.remove('active');
+            win.classList.remove('maximized');
+            openWindows.delete(id);
+            updateTaskbar();
+        }
+
+        function minimizeWin(id) {
+            const win = document.getElementById('win-' + id);
+            win.classList.add('minimized');
+            updateTaskbar();
+        }
+
+        function maximizeWin(id) {
+            const win = document.getElementById('win-' + id);
+            win.classList.toggle('maximized');
+        }
+
+        function focusWin(id) {
+            const win = document.getElementById('win-' + id);
+            win.style.zIndex = ++zIndexCounter;
+            updateTaskbar();
+        }
+
+        function updateTaskbar() {
+            const container = document.getElementById('taskbar-items');
+            container.innerHTML = '';
+            openWindows.forEach(id => {
+                const win = document.getElementById('win-' + id);
+                const title = win.querySelector('.win-title').innerText;
+                const item = document.createElement('div');
+                item.className = 'tb-item' + (win.classList.contains('active') && !win.classList.contains('minimized') ? ' active' : '');
+                item.innerText = title;
+                item.onclick = () => {
+                    if (win.classList.contains('minimized')) {
+                        win.classList.remove('minimized');
+                        focusWin(id);
+                    } else if (win.style.zIndex == zIndexCounter && !win.classList.contains('minimized')) {
+                        minimizeWin(id);
+                    } else {
+                        focusWin(id);
+                    }
+                };
+                container.appendChild(item);
+            });
         }
 
         function updateClock() {
             const now = new Date();
-            const h = String(now.getHours()).padStart(2, '0');
-            const m = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('clock').innerText = h + ':' + m;
+            document.getElementById('clock').innerText = now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
         }
-
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Simple Dragging
-        const windows = document.querySelectorAll('.window');
-        windows.forEach(win => {
-            const head = win.querySelector('.win-head');
-            let isDragging = false;
-            let offset = [0,0];
+        // Dragging Logic
+        let activeWin = null;
+        let dragOffset = { x: 0, y: 0 };
 
-            head.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                offset = [
-                    win.offsetLeft - e.clientX,
-                    win.offsetTop - e.clientY
-                ];
-                win.style.zIndex = Math.floor(Date.now() / 1000);
-            });
+        function startDrag(e, id) {
+            if (document.getElementById('win-' + id).classList.contains('maximized')) return;
+            focusWin(id);
+            activeWin = document.getElementById('win-' + id);
+            dragOffset.x = e.clientX - activeWin.offsetLeft;
+            dragOffset.y = e.clientY - activeWin.offsetTop;
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+        }
 
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                win.style.left = (e.clientX + offset[0]) + 'px';
-                win.style.top = (e.clientY + offset[1]) + 'px';
-            });
+        function drag(e) {
+            if (!activeWin) return;
+            activeWin.style.left = (e.clientX - dragOffset.x) + 'px';
+            activeWin.style.top = (e.clientY - dragOffset.y) + 'px';
+        }
 
-            document.addEventListener('mouseup', () => {
-                isDragging = false;
-            });
-        });
+        function stopDrag() {
+            activeWin = null;
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+        }
 
         function toggleMenu() {
-            alert('Історична платформа: Микола Костомаров (1817-1885).\nВсі матеріали базуються на архівних джерелах та наукових дослідженнях.');
+            alert('Архівна платформа Миколи Костомарова.\nv2.5 (Adaptive Build)');
         }
     </script>
 </body>
