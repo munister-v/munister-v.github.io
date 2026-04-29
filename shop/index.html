@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Munister — The slowly-made pantry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@300;400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    /* Dark terroir luxury palette */
+    --olv-bg:          #0C1208;
+    --olv-surface:     #141A0E;
+    --olv-cream:       #1B2413;   /* "lighter" dark surface */
+    --olv-ink:         #EDE4CE;   /* warm champagne text */
+    --olv-ink-soft:    #7A8268;
+    --olv-moss:        #3E5A2A;
+    --olv-amber:       #C9A040;   /* burnished gold */
+    --olv-amber-soft:  rgba(201,160,64,0.12);
+    --olv-terra:       #B5622E;
+    --olv-plum:        #3A1E2A;
+    --olv-terracotta:  #8A3E22;
+    --olv-light:       #F0E8D4;   /* cream for contrast sections */
+    --olv-border:      rgba(237,228,206,0.08);
+    --olv-border-gold: rgba(201,160,64,0.3);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--olv-bg); color: var(--olv-ink); }
+  body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  button { font-family: inherit; }
+
+  /* Category card hover arrow */
+  .mn-cat-card:hover .mn-cat-arrow { opacity: 1 !important; }
+  .mn-cat-card:hover > div:first-child { transform: scale(1.03); transition: transform .5s ease; }
+
+  /* Shop card link style */
+  .mn-shop-card:hover { border-color: var(--olv-border-gold) !important; }
+
+  @keyframes olvScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-33.333%); }
+  }
+  .olv-marquee { animation: olvScroll 38s linear infinite; }
+  @keyframes olv-fadein {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes olv-page-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .olv-page { animation: olv-page-in .4s ease both; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+@media (max-width: 768px) {
+  .olv-desktop-nav { display: none !important; }
+  .olv-mobile-toggle { display: flex !important; }
+  .olv-hero-grid { grid-template-columns: 1fr !important; }
+  .olv-pantry-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .olv-products-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .olv-footer-grid { grid-template-columns: 1fr 1fr !important; }
+  .olv-founder-grid { grid-template-columns: 1fr !important; }
+  .olv-journal-grid { grid-template-columns: 1fr !important; }
+  .olv-featured-slab { grid-template-columns: 1fr !important; }
+  .olv-pdp-hero { grid-template-columns: 1fr !important; }
+  .olv-journey { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
+  .olv-reviews-grid { grid-template-columns: 1fr !important; }
+  .olv-builder-grid { grid-template-columns: 1fr !important; }
+  .olv-recs-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .olv-shop-hero-padding { padding: 36px 16px 28px !important; }
+  .olv-hero-padding { padding: 48px 24px !important; }
+}
+@media (max-width: 480px) {
+  .olv-pantry-grid { grid-template-columns: 1fr !important; }
+  .olv-products-grid { grid-template-columns: 1fr !important; }
+}
+/* Scroll reveal */
+.olv-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.olv-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="shop-pdp.jsx"></script>
+<script type="text/babel" src="extras.jsx"></script>
+<script type="text/babel" src="pages.jsx"></script>
+<script type="text/babel" src="search.jsx"></script>
+<script type="text/babel" src="flavor-compass.jsx"></script>
+
+<script type="text/babel">
+const { useState, useMemo, useEffect, useRef } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "palette": "forest",
+  "heroVariant": "editorial",
+  "showMarquee": true,
+  "showFoundersNote": true,
+  "headline": "The pantry, slowly made.",
+  "accent": "amber"
+}/*EDITMODE-END*/;
+
+const PRODUCTS = [
+  { id: "evoo-robusto", cat: "evoo", name: "Robusto Verde EVOO", note: "bold · peppery · grass", size: "350ml", price: 36, tone: "amber", tag: "Bestseller", rating: 4.9, reviews: 612, lot: "2026-04A", region: "Iza Valley", harvest: "Oct 2025 harvest", shelf: "Best within 18mo", desc: "Pressed from Koroneiki olives picked the morning of October 12. Polyphenol-rich and assertive — a finishing oil for tomatoes, beans, grilled bread and almost everything else.", tasting: ["Pepper", "Cut grass", "Artichoke"], sizes: [{label: "100ml", price: 14}, {label: "350ml", price: 36}, {label: "500ml", price: 48}] },
+  { id: "evoo-delicato", cat: "evoo", name: "Delicato Solare EVOO", note: "soft · buttery · fennel", size: "350ml", price: 32, tone: "cream", rating: 4.8, reviews: 401, lot: "2026-03B", region: "Lower Iza", harvest: "Sept 2025 harvest", shelf: "Best within 18mo", desc: "A gentle, almost creamy oil — built for everyday cooking, salad dressings and finishing fish.", tasting: ["Almond", "Fennel", "Butter"], sizes: [{label: "100ml", price: 12}, {label: "350ml", price: 32}] },
+  { id: "evoo-citrus", cat: "evoo", name: "Lemon-Pressed EVOO", note: "bright · citrus · zest", size: "350ml", price: 38, tone: "amber", tag: "New", rating: 4.9, reviews: 188, lot: "2026-02C", region: "Iza Valley", harvest: "Oct 2025 harvest", shelf: "Best within 12mo", desc: "Whole Sicilian lemons co-pressed with green olives. Pour over ricotta, pasta, or a finished risotto.", tasting: ["Lemon zest", "Olive", "Honey"], sizes: [{label: "350ml", price: 38}] },
+
+  { id: "honey-acacia", cat: "honey", name: "Acacia Wild Honey", note: "clear · floral · mild", size: "300g", price: 22, tone: "amber", rating: 4.9, reviews: 322, lot: "2025-08A", region: "Beech forest hives", harvest: "Aug 2025", shelf: "Best within 24mo", desc: "Pale, glassy honey from acacia blossoms. Stays liquid for over a year.", tasting: ["Vanilla", "Pear", "Light"] },
+  { id: "honey-chestnut", cat: "honey", name: "Chestnut Forest Honey", note: "dark · woody · bitter-sweet", size: "300g", price: 24, tone: "moss", rating: 4.7, reviews: 211, lot: "2025-07B", region: "High forest", harvest: "Jul 2025", shelf: "Best within 24mo", desc: "Dark amber, bittersweet honey for cheese boards and morning toast.", tasting: ["Wood", "Caramel", "Tannin"] },
+  { id: "honey-meadow", cat: "honey", name: "Spring Meadow Honey", note: "sunny · multifloral", size: "300g", price: 20, tone: "cream", tag: "Bestseller", rating: 4.8, reviews: 488, lot: "2026-04A", region: "Lower meadows", harvest: "Apr 2026", shelf: "Best within 24mo", desc: "A bright, multi-floral spring honey — wildflowers, clover, dandelion.", tasting: ["Clover", "Pollen", "Sun"] },
+
+  { id: "vin-cherry", cat: "vinegar", name: "Sour Cherry Vinegar", note: "fruit-forward · tart", size: "250ml", price: 26, tone: "plum", tag: "New", rating: 4.8, reviews: 96, lot: "2025-09A", region: "Orchard B", harvest: "Sept 2025", shelf: "Best within 36mo", desc: "Wild-fermented from sour cherries. Use with duck, beets, lentils, or a splash in seltzer.", tasting: ["Cherry", "Tart", "Wood"] },
+  { id: "vin-rose", cat: "vinegar", name: "Rose & White Wine Vinegar", note: "floral · delicate", size: "250ml", price: 22, tone: "terracotta", rating: 4.7, reviews: 142, lot: "2025-06A", region: "Vine row 12", harvest: "Jun 2025", shelf: "Best within 36mo", desc: "Steeped with petals from our garden. Brightens strawberries, salads, and gin.", tasting: ["Rose", "Apple", "Bright"] },
+  { id: "vin-honey", cat: "vinegar", name: "Honey-Aged Vinegar", note: "sweet · mellow", size: "250ml", price: 28, tone: "amber", rating: 4.9, reviews: 73, lot: "2025-04B", region: "Cellar 2", harvest: "Apr 2025", shelf: "Best within 36mo", desc: "Aged in oak with our own meadow honey for nine months.", tasting: ["Honey", "Oak", "Caramel"] },
+
+  { id: "inf-garlic", cat: "infused", name: "Roasted Garlic Oil", note: "savory · deep · roast", size: "250ml", price: 28, tone: "sage", rating: 4.8, reviews: 209, lot: "2026-03B", region: "Co-op 4", harvest: "Mar 2026", shelf: "Best within 12mo", desc: "Slow-roasted garlic confited into our Delicato base — pour over anything.", tasting: ["Garlic", "Toast", "Round"] },
+  { id: "inf-basil", cat: "infused", name: "Wild Basil Oil", note: "green · herbal · fresh", size: "250ml", price: 26, tone: "moss", rating: 4.7, reviews: 154, lot: "2026-04A", region: "Greenhouse", harvest: "Apr 2026", shelf: "Best within 12mo", desc: "Pulverized fresh basil into early-harvest oil — finish a tomato salad and stop.", tasting: ["Basil", "Pepper", "Lawn"] },
+  { id: "inf-chili", cat: "infused", name: "Smoked Chili Oil", note: "warm · smoky · slow", size: "250ml", price: 26, tone: "terracotta", tag: "Bestseller", rating: 4.9, reviews: 380, lot: "2026-02A", region: "Co-op 2", harvest: "Feb 2026", shelf: "Best within 12mo", desc: "Smoked over beech wood with three chilis. Eggs will never be the same.", tasting: ["Smoke", "Chili", "Earth"] },
+];
+
+/* ── Scroll reveal ── */
+function useScrollReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll(".olv-reveal");
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+    }, { threshold: 0.08 });
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  });
+}
+
+/* ── Scroll-shrink Header ── */
+function AppHeader({ cartCount, onOpenCart, route, setRoute, onMobileMenu, onBuilder, onSearch }) {
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setCompact(window.scrollY > 60);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const pad = compact ? "10px 28px" : "16px 28px";
+  const logoSz = compact ? 17 : 20;
+
+  return (
+    <header style={{
+      background: "var(--olv-bg)",
+      borderBottom: "1px solid rgba(31,42,26,0.08)",
+      position: "sticky", top: 0, zIndex: 50,
+      transition: "box-shadow .25s",
+      boxShadow: compact ? "0 4px 20px rgba(31,42,26,0.07)" : "none",
+    }}>
+      {!compact && <AnnouncementBar />}
+      <div style={{ display:"grid", gridTemplateColumns:"1fr auto 1fr", alignItems:"center", padding: pad, transition:"padding .25s" }}>
+        {/* Left */}
+        <div style={{ display:"flex", alignItems:"center", gap:18 }}>
+          <button className="olv-mobile-toggle" onClick={onMobileMenu}
+            style={{ display:"none", background:"transparent", border:0, cursor:"pointer", color:"var(--olv-ink)", flexDirection:"column", gap:5, padding:4 }}>
+            <span style={{ width:22, height:1.5, background:"currentColor", display:"block" }} />
+            <span style={{ width:16, height:1.5, background:"currentColor", display:"block" }} />
+            <span style={{ width:22, height:1.5, background:"currentColor", display:"block" }} />
+          </button>
+          <nav className="olv-desktop-nav" style={{ display:"flex", gap:20, fontSize:13.5, fontFamily:"'Inter', sans-serif", alignItems:"center" }}>
+            {[["shop","Shop"],["gifts","Gifts"],["journal","Journal"],["story","Our Story"]].map(([id,label]) => (
+              <a key={id} href="#" onClick={e => { e.preventDefault(); setRoute(id); }}
+                style={{ color:"var(--olv-ink)", textDecoration:"none", fontWeight:450,
+                  paddingBottom:2, borderBottom: route===id ? "1px solid var(--olv-ink)" : "1px solid transparent",
+                  transition:"border-color .15s" }}>
+                {label}
+              </a>
+            ))}
+            <a href="#" onClick={e => { e.preventDefault(); onBuilder(); }}
+              style={{ color:"var(--olv-moss)", textDecoration:"none", fontWeight:500, fontSize:12.5,
+                background:"rgba(62,74,53,0.09)", padding:"5px 11px", borderRadius:999 }}>
+              ✦ Build pantry
+            </a>
+          </nav>
+        </div>
+        {/* Logo */}
+        <a href="#" onClick={e => { e.preventDefault(); setRoute("home"); }} style={{ textDecoration:"none", justifySelf:"center" }}>
+          <Logo size={logoSz} />
+        </a>
+        {/* Right */}
+        <div style={{ display:"flex", gap:14, justifyContent:"flex-end", alignItems:"center", color:"var(--olv-ink)" }}>
+          <button onClick={onSearch} style={{ background:"transparent", border:0, cursor:"pointer", color:"inherit", padding:4, display:"inline-flex", gap:6, alignItems:"center", fontFamily:"'Inter',sans-serif", fontSize:13 }}>
+            <Icon.search /> <span className="olv-desktop-nav">Search</span>
+          </button>
+          <button style={{ background:"transparent", border:0, cursor:"pointer", color:"inherit", padding:4, display:"inline-flex" }}><Icon.user /></button>
+          <button onClick={onOpenCart} style={{ background:"transparent", border:0, cursor:"pointer", color:"inherit", padding:4, display:"inline-flex", position:"relative" }}>
+            <Icon.bag />
+            {cartCount > 0 && (
+              <span style={{ position:"absolute", top:-4, right:-6, background:"var(--olv-moss)", color:"var(--olv-cream)",
+                fontSize:10, fontWeight:600, borderRadius:999, minWidth:16, height:16, display:"grid", placeItems:"center", padding:"0 4px" }}>
+                {cartCount}
+              </span>
+            )}
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ── Wishlist heart ── */
+function WishBtn({ id, wishlist, toggle }) {
+  const on = wishlist.includes(id);
+  return (
+    <button onClick={e => { e.stopPropagation(); toggle(id); }} title={on ? "Remove from wishlist" : "Save"} style={{
+      background: on ? "var(--olv-amber)" : "rgba(255,255,255,0.82)",
+      border: 0, width: 32, height: 32, borderRadius: "50%",
+      display: "grid", placeItems: "center", cursor: "pointer",
+      transition: "background .18s, transform .15s",
+      transform: on ? "scale(1.12)" : "scale(1)",
+    }}>
+      <svg viewBox="0 0 24 24" width="14" height="14" fill={on ? "var(--olv-ink)" : "none"}
+        stroke={on ? "var(--olv-ink)" : "currentColor"} strokeWidth="1.8">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </button>
+  );
+}
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [cart, setCart] = useState([]);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [toast, setToast] = useState("");
+  const [route, setRoute] = useState("home");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [wishlist, setWishlist] = useState([]);
+
+  useScrollReveal();
+
+  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 2400); };
+
+  const addToCart = (p, qty = 1) => {
+    setCart(prev => {
+      const ex = prev.find(x => x.id === p.id && x.size === p.size);
+      if (ex) return prev.map(x => x === ex ? { ...x, qty: x.qty + qty } : x);
+      return [...prev, { ...p, qty }];
+    });
+    showToast(`Added ${p.name} to bag`);
+  };
+
+  const toggleWish = (id) => {
+    setWishlist(w => w.includes(id) ? w.filter(x => x !== id) : [...w, id]);
+  };
+
+  const navTo = (r) => { setRoute(r); window.scrollTo({ top: 0 }); };
+
+  // Keyboard shortcut: "/" opens search
+  useEffect(() => {
+    const h = (e) => { if (e.key === "/" && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== "INPUT") { e.preventDefault(); setSearchOpen(true); } };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, []);
+
+  useEffect(() => {
+    const palettes = {
+      forest: { bg:"#0C1208", surface:"#141A0E", cream:"#1B2413", ink:"#EDE4CE", inkSoft:"#7A8268", moss:"#3E5A2A", amber:"#C9A040", amberSoft:"rgba(201,160,64,0.12)", border:"rgba(237,228,206,0.08)", borderGold:"rgba(201,160,64,0.3)" },
+      obsidian:{ bg:"#080808", surface:"#111111", cream:"#1A1A1A", ink:"#F0E8D8", inkSoft:"#666", moss:"#2A3820", amber:"#D4A840", amberSoft:"rgba(212,168,64,0.12)", border:"rgba(240,232,216,0.07)", borderGold:"rgba(212,168,64,0.28)" },
+      wine:   { bg:"#0E080C", surface:"#160C12", cream:"#1E1018", ink:"#F0DDD8", inkSoft:"#7A5E62", moss:"#4A2030", amber:"#C87860", amberSoft:"rgba(200,120,96,0.12)", border:"rgba(240,221,216,0.07)", borderGold:"rgba(200,120,96,0.28)" },
+      slate:  { bg:"#0A0D12", surface:"#111520", cream:"#181C28", ink:"#DDE4F0", inkSoft:"#6070A0", moss:"#1E3058", amber:"#6090D8", amberSoft:"rgba(96,144,216,0.12)", border:"rgba(221,228,240,0.07)", borderGold:"rgba(96,144,216,0.28)" },
+    };
+    const pal = palettes[tweaks.palette] || palettes.forest;
+    const r = document.documentElement;
+    Object.entries({
+      "--olv-bg": pal.bg, "--olv-surface": pal.surface, "--olv-cream": pal.cream,
+      "--olv-ink": pal.ink, "--olv-ink-soft": pal.inkSoft, "--olv-moss": pal.moss,
+      "--olv-amber": pal.amber, "--olv-amber-soft": pal.amberSoft,
+      "--olv-border": pal.border, "--olv-border-gold": pal.borderGold,
+      "--olv-light": pal.light || "#F0E8D4",
+    }).forEach(([k,v]) => r.style.setProperty(k,v));
+  }, [tweaks.palette]);
+
+  const cartCount = cart.reduce((s, it) => s + it.qty, 0);
+  const currentPage = typeof route === "object" ? route.page : route;
+
+  const renderPage = () => {
+    if (currentPage === "builder") {
+      return <div className="olv-page"><PantryBuilder products={PRODUCTS} onAdd={addToCart} onClose={() => navTo("shop")} /></div>;
+    }
+    if (currentPage === "shop") {
+      return <div className="olv-page"><ShopPage products={PRODUCTS} onAdd={addToCart} setRoute={navTo} wishlist={wishlist} toggleWish={toggleWish} /></div>;
+    }
+    if (currentPage === "gifts") {
+      return <div className="olv-page"><GiftsPage products={PRODUCTS} onAdd={addToCart} setRoute={navTo} /></div>;
+    }
+    if (currentPage === "journal") {
+      return <div className="olv-page"><JournalPage setRoute={navTo} /></div>;
+    }
+    if (currentPage === "story") {
+      return <div className="olv-page"><StoryPage /></div>;
+    }
+    if (currentPage === "pdp" && route.product) {
+      return <div className="olv-page"><ProductDetailPage p={route.product} onAdd={addToCart} setRoute={navTo} allProducts={PRODUCTS} /></div>;
+    }
+    // Home
+    return (
+      <main className="olv-page">
+        <Hero onShop={() => navTo("shop")} headline={tweaks.headline} />
+        {tweaks.showMarquee && <Marquee />}
+        <div className="olv-reveal"><PantryGrid onCategory={() => navTo("shop")} /></div>
+        <BestSellers
+          products={PRODUCTS} onAdd={addToCart}
+          onOpen={p => navTo({ page:"pdp", product:p })}
+          wishlist={wishlist} toggleWish={toggleWish}
+        />
+        <div className="olv-reveal">
+          <FlavorCompass products={PRODUCTS} onOpen={p => navTo({ page:"pdp", product:p })} />
+        </div>
+        <div className="olv-reveal"><FeaturedSlab /></div>
+        <div className="olv-reveal"><Editorial /></div>
+        {tweaks.showFoundersNote && <div className="olv-reveal"><FoundersNote /></div>}
+        <div className="olv-reveal"><Journal onMore={() => navTo("journal")} /></div>
+        <div className="olv-reveal" style={{ background:"var(--olv-amber)", padding:"64px 28px", textAlign:"center" }}>
+          <div style={{ fontFamily:"'JetBrains Mono', monospace", fontSize:11, letterSpacing:"0.22em", textTransform:"uppercase", color:"var(--olv-ink)", opacity:0.65, marginBottom:14 }}>✦ Not sure where to start?</div>
+          <h2 style={{ fontFamily:"'DM Serif Display', serif", fontSize:"clamp(30px,3.6vw,46px)", margin:"0 0 12px", fontWeight:400, letterSpacing:"-0.01em" }}>
+            Build your perfect pantry in 3 questions.
+          </h2>
+          <p style={{ fontFamily:"'Inter', sans-serif", fontSize:15, color:"var(--olv-ink)", opacity:0.78, marginBottom:28, maxWidth:480, marginInline:"auto", lineHeight:1.55 }}>
+            Tell us your mood, how you cook, and your budget. We'll match you to your four.
+          </p>
+          <button onClick={() => navTo("builder")} style={{
+            background:"var(--olv-ink)", color:"var(--olv-cream)", border:0,
+            padding:"15px 28px", borderRadius:999, fontFamily:"'Inter', sans-serif",
+            fontSize:14, fontWeight:500, cursor:"pointer",
+            display:"inline-flex", alignItems:"center", gap:8,
+          }}>Start the quiz <Icon.arrow /></button>
+        </div>
+        <div className="olv-reveal"><Newsletter /></div>
+      </main>
+    );
+  };
+
+  const showNav = currentPage !== "builder";
+
+  return (
+    <div data-screen-label="Munister">
+      <CustomCursor />
+      {showNav && (
+        <AppHeader
+          cartCount={cartCount}
+          onOpenCart={() => setCartOpen(true)}
+          onSearch={() => setSearchOpen(true)}
+          route={currentPage}
+          setRoute={navTo}
+          onMobileMenu={() => setMobileOpen(true)}
+          onBuilder={() => navTo("builder")}
+        />
+      )}
+      {renderPage()}
+      {showNav && <Footer />}
+
+      <SearchOverlay products={PRODUCTS} open={searchOpen} onClose={() => setSearchOpen(false)}
+        onProduct={p => navTo({ page:"pdp", product:p })} />
+      <MobileNav open={mobileOpen} onClose={() => setMobileOpen(false)}
+        setRoute={navTo} cartCount={cartCount} onOpenCart={() => setCartOpen(true)} />
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} items={cart} setItems={setCart} />
+      <Toast msg={toast} />
+
+      <TweaksPanel title="Munister">
+        <TweakSection label="Palette">
+          <TweakRadio value={tweaks.palette} onChange={v => setTweak("palette",v)}
+            options={[{value:"forest",label:"Forest"},{value:"obsidian",label:"Obsidian"},{value:"wine",label:"Wine"},{value:"slate",label:"Slate"}]} />
+        </TweakSection>
+        <TweakSection label="Sections">
+          <TweakToggle label="Marquee strip" value={tweaks.showMarquee} onChange={v => setTweak("showMarquee",v)} />
+          <TweakToggle label="Founder's note" value={tweaks.showFoundersNote} onChange={v => setTweak("showFoundersNote",v)} />
+        </TweakSection>
+        <TweakSection label="Hero copy">
+          <TweakText label="Headline" value={tweaks.headline} onChange={v => setTweak("headline",v)} />
+        </TweakSection>
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
