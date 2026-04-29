@@ -37,13 +37,13 @@ function ShopPage({ products, onAdd, setRoute }) {
         borderBottom: "1px solid rgba(31,42,26,0.08)",
       }}>
         <div style={{ maxWidth: 1400, marginInline: "auto" }}>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 12 }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 12 }}>
             ◐ The full pantry
           </div>
-          <h1 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "clamp(44px, 5vw, 72px)", margin: 0, fontWeight: 400, letterSpacing: "-0.015em", lineHeight: 1 }}>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(44px, 5vw, 72px)", margin: 0, fontWeight: 400, letterSpacing: "-0.015em", lineHeight: 1 }}>
             Shop the collection.
           </h1>
-          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: "var(--olv-ink-soft)", marginTop: 14, maxWidth: 540, lineHeight: 1.55 }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: 15, color: "var(--olv-ink-soft)", marginTop: 14, maxWidth: 540, lineHeight: 1.55 }}>
             {filtered.length} products — pressed, fermented, and jarred by hand across fourteen farms in the Carpathian foothills.
           </p>
         </div>
@@ -65,14 +65,14 @@ function ShopPage({ products, onAdd, setRoute }) {
                 color: activeFilters.includes(c.id) ? "var(--olv-cream)" : "var(--olv-ink)",
                 border: "1px solid rgba(31,42,26,0.25)",
                 padding: "8px 15px", borderRadius: 999,
-                fontFamily: "'Inter', sans-serif", fontSize: 12.5,
+                fontFamily: "var(--font-body)", fontSize: 12.5,
                 cursor: "pointer", transition: "all .18s",
               }}>{c.label}</button>
             ))}
             {activeFilters.length > 0 && (
               <button onClick={() => setActiveFilters([])} style={{
                 background: "transparent", color: "var(--olv-ink-soft)",
-                border: "none", fontFamily: "'Inter', sans-serif", fontSize: 12.5,
+                border: "none", fontFamily: "var(--font-body)", fontSize: 12.5,
                 cursor: "pointer", textDecoration: "underline",
               }}>Clear all</button>
             )}
@@ -80,7 +80,7 @@ function ShopPage({ products, onAdd, setRoute }) {
           {/* Sort + view */}
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
             <select value={sort} onChange={e => setSort(e.target.value)} style={{
-              fontFamily: "'Inter', sans-serif", fontSize: 12.5,
+              fontFamily: "var(--font-body)", fontSize: 12.5,
               background: "transparent", border: "1px solid rgba(31,42,26,0.2)",
               color: "var(--olv-ink)", padding: "8px 12px", borderRadius: 999, cursor: "pointer",
             }}>
@@ -95,7 +95,7 @@ function ShopPage({ products, onAdd, setRoute }) {
                   background: view === v ? "var(--olv-ink)" : "transparent",
                   color: view === v ? "var(--olv-cream)" : "var(--olv-ink)",
                   border: 0, padding: "8px 14px", fontSize: 11.5,
-                  fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.1em",
+                  fontFamily: "var(--font-mono)", letterSpacing: "0.1em",
                   textTransform: "uppercase", cursor: "pointer",
                 }}>{v === "grid" ? "⊞" : "☰"}</button>
               ))}
@@ -184,7 +184,7 @@ function ShopCard({ p, i, onAdd, onClick }) {
           <span style={{
             position: "absolute", top: 12, left: 12,
             background: "var(--olv-ink)", color: "var(--olv-cream)",
-            fontFamily: "'JetBrains Mono', monospace",
+            fontFamily: "var(--font-mono)",
             fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase",
             padding: "5px 9px",
           }}>{p.tag}</span>
@@ -200,7 +200,7 @@ function ShopCard({ p, i, onAdd, onClick }) {
           {p.tasting.map(t => (
             <span key={t} style={{
               background: "rgba(251,247,238,0.9)",
-              fontFamily: "'JetBrains Mono', monospace",
+              fontFamily: "var(--font-mono)",
               fontSize: 9, letterSpacing: "0.16em", textTransform: "uppercase",
               padding: "5px 8px", color: "var(--olv-ink)",
             }}>{t}</span>
@@ -209,12 +209,12 @@ function ShopCard({ p, i, onAdd, onClick }) {
       </div>
       <div style={{ marginTop: 14 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-          <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 20, letterSpacing: "-0.01em", lineHeight: 1.1 }}>{p.name}</div>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 14 }}>${p.price}</div>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 20, letterSpacing: "-0.01em", lineHeight: 1.1 }}>{p.name}</div>
+          <div style={{ fontFamily: "var(--font-body)", fontSize: 14 }}>${p.price}</div>
         </div>
-        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 4 }}>{p.note} · {p.size}</div>
+        <div style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 4 }}>{p.note} · {p.size}</div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12 }}>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11.5, color: "var(--olv-ink-soft)", display: "flex", gap: 4, alignItems: "center" }}>
+          <div style={{ fontFamily: "var(--font-body)", fontSize: 11.5, color: "var(--olv-ink-soft)", display: "flex", gap: 4, alignItems: "center" }}>
             <Icon.star /> {p.rating} <span style={{ opacity: 0.5 }}>({p.reviews})</span>
           </div>
           <button
@@ -224,7 +224,7 @@ function ShopCard({ p, i, onAdd, onClick }) {
               color: hover ? "var(--olv-cream)" : "var(--olv-ink)",
               border: "1px solid rgba(31,42,26,0.3)",
               padding: "8px 14px", borderRadius: 999,
-              fontFamily: "'Inter', sans-serif", fontSize: 12,
+              fontFamily: "var(--font-body)", fontSize: 12,
               cursor: "pointer", transition: "all .2s",
               display: "inline-flex", alignItems: "center", gap: 5,
             }}
@@ -257,12 +257,12 @@ function ShopListRow({ p, onAdd, onClick }) {
         <Placeholder label={p.name} tone={p.tone} />
       </div>
       <div>
-        <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, letterSpacing: "-0.01em" }}>{p.name}</div>
-        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "var(--olv-ink-soft)", marginTop: 4 }}>{p.note} · {p.size} · Lot {p.lot}</div>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 22, letterSpacing: "-0.01em" }}>{p.name}</div>
+        <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--olv-ink-soft)", marginTop: 4 }}>{p.note} · {p.size} · Lot {p.lot}</div>
         <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
           {p.tasting.map(t => (
             <span key={t} style={{
-              fontFamily: "'JetBrains Mono', monospace", fontSize: 9.5,
+              fontFamily: "var(--font-mono)", fontSize: 9.5,
               letterSpacing: "0.14em", textTransform: "uppercase",
               border: "1px solid rgba(31,42,26,0.15)", padding: "4px 8px",
               color: "var(--olv-ink)",
@@ -271,13 +271,13 @@ function ShopListRow({ p, onAdd, onClick }) {
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10 }}>
-        <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 24 }}>${p.price}</div>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 24 }}>${p.price}</div>
         <button
           onClick={(e) => { e.stopPropagation(); onAdd(p); }}
           style={{
             background: "var(--olv-ink)", color: "var(--olv-cream)",
             border: 0, padding: "10px 18px", borderRadius: 999,
-            fontFamily: "'Inter', sans-serif", fontSize: 12.5, cursor: "pointer",
+            fontFamily: "var(--font-body)", fontSize: 12.5, cursor: "pointer",
             display: "inline-flex", alignItems: "center", gap: 6,
           }}
         ><Icon.plus /> Add to bag</button>
@@ -320,7 +320,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
   return (
     <div style={{ background: "var(--olv-bg)" }}>
       {/* Breadcrumb */}
-      <div style={{ padding: "18px 28px", borderBottom: "1px solid rgba(31,42,26,0.07)", fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink-soft)" }}>
+      <div style={{ padding: "18px 28px", borderBottom: "1px solid rgba(31,42,26,0.07)", fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink-soft)" }}>
         <a href="#" onClick={e => { e.preventDefault(); setRoute("home"); }} style={{ color: "inherit", textDecoration: "none" }}>Home</a>
         {" · "}
         <a href="#" onClick={e => { e.preventDefault(); setRoute("shop"); }} style={{ color: "inherit", textDecoration: "none" }}>Shop</a>
@@ -337,7 +337,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
           <div style={{
             position: "absolute", top: 24, left: 24,
             background: "var(--olv-cream)", padding: "10px 14px",
-            fontFamily: "'JetBrains Mono', monospace", fontSize: 10,
+            fontFamily: "var(--font-mono)", fontSize: 10,
             letterSpacing: "0.18em", textTransform: "uppercase",
             color: "var(--olv-ink)",
           }}>
@@ -348,15 +348,15 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
         {/* Right: purchase panel */}
         <div ref={panelRef} style={{ padding: "56px 60px", display: "flex", flexDirection: "column", gap: 20, background: "var(--olv-cream)" }}>
           <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)" }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)" }}>
               {p.region}
             </div>
-            <h1 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "clamp(32px, 3.2vw, 46px)", margin: "10px 0 0", fontWeight: 400, letterSpacing: "-0.015em", lineHeight: 1.05 }}>
+            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(32px, 3.2vw, 46px)", margin: "10px 0 0", fontWeight: 400, letterSpacing: "-0.015em", lineHeight: 1.05 }}>
               {p.name}
             </h1>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "'Inter', sans-serif", fontSize: 13 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "var(--font-body)", fontSize: 13 }}>
             <div style={{ display: "flex", gap: 2, color: "var(--olv-amber)" }}>
               {Array(5).fill(0).map((_, i) => <Icon.star key={i} style={{ opacity: i < Math.round(p.rating) ? 1 : 0.25 }} />)}
             </div>
@@ -364,7 +364,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
             <span style={{ color: "var(--olv-ink-soft)" }}>({p.reviews} reviews)</span>
           </div>
 
-          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, lineHeight: 1.65, color: "var(--olv-ink)", margin: 0 }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: 15, lineHeight: 1.65, color: "var(--olv-ink)", margin: 0 }}>
             {p.desc}
           </p>
 
@@ -374,7 +374,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
               <div key={t} style={{
                 border: "1px solid rgba(31,42,26,0.14)",
                 padding: "10px 8px", textAlign: "center",
-                fontFamily: "'JetBrains Mono', monospace", fontSize: 10,
+                fontFamily: "var(--font-mono)", fontSize: 10,
                 letterSpacing: "0.16em", textTransform: "uppercase",
                 color: "var(--olv-ink)",
               }}>{t}</div>
@@ -384,7 +384,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
           {/* Size picker */}
           {sizes.length > 1 && (
             <div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 10 }}>Size</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 10 }}>Size</div>
               <div style={{ display: "flex", gap: 8 }}>
                 {sizes.map((s, i) => (
                   <button key={s.label} onClick={() => setSize(i)} style={{
@@ -392,7 +392,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
                     background: size === i ? "var(--olv-ink)" : "transparent",
                     color: size === i ? "var(--olv-cream)" : "var(--olv-ink)",
                     padding: "10px 16px", borderRadius: 999,
-                    fontFamily: "'Inter', sans-serif", fontSize: 13,
+                    fontFamily: "var(--font-body)", fontSize: 13,
                     cursor: "pointer", transition: "all .15s",
                   }}>{s.label} · ${s.price}</button>
                 ))}
@@ -402,11 +402,11 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
 
           {/* Price + qty + add */}
           <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 4 }}>
-            <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 32 }}>${(active.price * qty).toFixed(2)}</div>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: 32 }}>${(active.price * qty).toFixed(2)}</div>
             <div style={{ flex: 1 }} />
             <div style={{ display: "inline-flex", border: "1px solid rgba(31,42,26,0.2)", borderRadius: 999, alignItems: "center" }}>
               <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ background: "transparent", border: 0, cursor: "pointer", color: "var(--olv-ink)", padding: "10px 14px", display: "inline-flex" }}><Icon.minus /></button>
-              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, padding: "0 6px", minWidth: 20, textAlign: "center" }}>{qty}</span>
+              <span style={{ fontFamily: "var(--font-body)", fontSize: 15, padding: "0 6px", minWidth: 20, textAlign: "center" }}>{qty}</span>
               <button onClick={() => setQty(q => q + 1)} style={{ background: "transparent", border: 0, cursor: "pointer", color: "var(--olv-ink)", padding: "10px 14px", display: "inline-flex" }}><Icon.plus /></button>
             </div>
           </div>
@@ -416,7 +416,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
               background: addedPulse ? "var(--olv-moss)" : "var(--olv-ink)",
               color: "var(--olv-cream)",
               border: 0, padding: "16px 28px", borderRadius: 999,
-              fontFamily: "'Inter', sans-serif", fontSize: 14, fontWeight: 500,
+              fontFamily: "var(--font-body)", fontSize: 14, fontWeight: 500,
               cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: 8,
               transition: "background .25s",
             }}
@@ -425,7 +425,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
           </button>
 
           {/* Meta */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 4, fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--olv-ink-soft)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 4, fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--olv-ink-soft)" }}>
             <div style={{ display: "flex", gap: 6, alignItems: "center" }}><Icon.leaf /> {p.shelf}</div>
             <div style={{ display: "flex", gap: 6, alignItems: "center" }}><Icon.drop /> {p.harvest}</div>
           </div>
@@ -445,7 +445,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
                 background: "transparent", border: 0,
                 borderBottom: tab === t ? "2px solid var(--olv-ink)" : "2px solid transparent",
                 padding: "18px 22px",
-                fontFamily: "'Inter', sans-serif", fontSize: 13.5, fontWeight: tab === t ? 500 : 400,
+                fontFamily: "var(--font-body)", fontSize: 13.5, fontWeight: tab === t ? 500 : 400,
                 color: tab === t ? "var(--olv-ink)" : "var(--olv-ink-soft)",
                 cursor: "pointer", textTransform: "capitalize", letterSpacing: 0.2,
                 marginBottom: -1,
@@ -457,11 +457,11 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
             {tab === "story" && (
               <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 60, alignItems: "start" }}>
                 <div>
-                  <h3 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 36, margin: "0 0 18px", fontWeight: 400, letterSpacing: "-0.01em" }}>The farm story.</h3>
-                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15.5, lineHeight: 1.7, color: "var(--olv-ink)", margin: 0 }}>
+                  <h3 style={{ fontFamily: "var(--font-display)", fontSize: 36, margin: "0 0 18px", fontWeight: 400, letterSpacing: "-0.01em" }}>The farm story.</h3>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: 15.5, lineHeight: 1.7, color: "var(--olv-ink)", margin: 0 }}>
                     This lot was pressed at the co-operative press in {p.region} on the morning the olives reached exactly the right phenolic peak — which our growers test by hand, not machine. The oil spent thirty-six hours settling in stainless before bottling, with no filtering, no additives, and no intervention beyond gravity.
                   </p>
-                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15.5, lineHeight: 1.7, color: "var(--olv-ink)", marginTop: 16 }}>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: 15.5, lineHeight: 1.7, color: "var(--olv-ink)", marginTop: 16 }}>
                     Every bottle is dated to the day it was pressed. If you hold this one to the light, you can still see the natural green haze of fresh chlorophyll — a sign it came from us, not a warehouse.
                   </p>
                 </div>
@@ -473,8 +473,8 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
 
             {tab === "pairings" && (
               <div>
-                <h3 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 36, margin: "0 0 10px", fontWeight: 400, letterSpacing: "-0.01em" }}>Goes beautifully with.</h3>
-                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14.5, color: "var(--olv-ink-soft)", marginBottom: 32, marginTop: 8 }}>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: 36, margin: "0 0 10px", fontWeight: 400, letterSpacing: "-0.01em" }}>Goes beautifully with.</h3>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: 14.5, color: "var(--olv-ink-soft)", marginBottom: 32, marginTop: 8 }}>
                   Suggestions from our in-house cook and test kitchen.
                 </p>
                 <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
@@ -482,17 +482,17 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts }) {
                     <div key={pair} style={{
                       padding: "14px 20px",
                       border: "1px solid rgba(31,42,26,0.12)",
-                      fontFamily: "'DM Serif Display', serif", fontSize: 20,
+                      fontFamily: "var(--font-display)", fontSize: 20,
                       color: "var(--olv-ink)",
                     }}>{pair}</div>
                   ))}
                 </div>
                 <div style={{ marginTop: 48 }}>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 16 }}>Recipe idea</div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 16 }}>Recipe idea</div>
                   <div style={{ background: "var(--olv-cream)", padding: "32px", display: "grid", gridTemplateColumns: "1fr 200px", gap: 32, alignItems: "center" }}>
                     <div>
-                      <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, letterSpacing: "-0.01em" }}>Finish a {pairs[0]?.toLowerCase()} with {p.name} and flaked salt.</div>
-                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: "var(--olv-ink-soft)", marginTop: 10, lineHeight: 1.55 }}>
+                      <div style={{ fontFamily: "var(--font-display)", fontSize: 26, letterSpacing: "-0.01em" }}>Finish a {pairs[0]?.toLowerCase()} with {p.name} and flaked salt.</div>
+                      <div style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "var(--olv-ink-soft)", marginTop: 10, lineHeight: 1.55 }}>
                         That's it. That's the recipe. The oil does the work — you just make sure it's at room temperature first.
                       </div>
                     </div>
@@ -523,10 +523,10 @@ function LotJourney({ p }) {
   return (
     <div style={{ background: "var(--olv-ink)", color: "var(--olv-cream)", padding: "72px 28px" }}>
       <div style={{ maxWidth: 1200, marginInline: "auto" }}>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6, marginBottom: 14 }}>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6, marginBottom: 14 }}>
           Lot {p.lot} · Traceability
         </div>
-        <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "clamp(30px, 3vw, 42px)", fontWeight: 400, margin: "0 0 48px", letterSpacing: "-0.01em" }}>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(30px, 3vw, 42px)", fontWeight: 400, margin: "0 0 48px", letterSpacing: "-0.01em" }}>
           From grove to your kitchen door.
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 0, position: "relative" }}>
@@ -538,14 +538,14 @@ function LotJourney({ p }) {
                 width: 40, height: 40, borderRadius: "50%",
                 border: "1.5px solid rgba(255,255,255,0.4)",
                 display: "grid", placeItems: "center",
-                fontFamily: "'JetBrains Mono', monospace", fontSize: 16,
+                fontFamily: "var(--font-mono)", fontSize: 16,
                 background: i === 0 ? "var(--olv-amber)" : "transparent",
                 color: i === 0 ? "var(--olv-ink)" : "var(--olv-cream)",
                 marginBottom: 18,
               }}>{s.icon}</div>
-              <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 20, marginBottom: 4 }}>{s.label}</div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", opacity: 0.6, marginBottom: 10 }}>{s.date}</div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, lineHeight: 1.6, opacity: 0.75 }}>{s.desc}</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: 20, marginBottom: 4 }}>{s.label}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", opacity: 0.6, marginBottom: 10 }}>{s.date}</div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: 13, lineHeight: 1.6, opacity: 0.75 }}>{s.desc}</div>
             </div>
           ))}
         </div>
@@ -567,22 +567,22 @@ function ReviewsSection({ p }) {
     <div>
       <div style={{ display: "flex", alignItems: "flex-end", gap: 32, marginBottom: 40 }}>
         <div>
-          <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 72, lineHeight: 1, letterSpacing: "-0.02em" }}>{avg}</div>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 72, lineHeight: 1, letterSpacing: "-0.02em" }}>{avg}</div>
           <div style={{ display: "flex", gap: 3, marginTop: 8, color: "var(--olv-amber)" }}>
             {Array(5).fill(0).map((_, i) => <Icon.star key={i} style={{ width: 18, height: 18, opacity: i < Math.round(avg) ? 1 : 0.25 }} />)}
           </div>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "var(--olv-ink-soft)", marginTop: 6 }}>{p.reviews} verified harvests</div>
+          <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--olv-ink-soft)", marginTop: 6 }}>{p.reviews} verified harvests</div>
         </div>
         <div style={{ flex: 1, maxWidth: 320 }}>
           {[5,4,3,2,1].map(n => {
             const pct = n === 5 ? 72 : n === 4 ? 20 : n === 3 ? 6 : n === 2 ? 1 : 1;
             return (
               <div key={n} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, width: 8 }}>{n}</span>
+                <span style={{ fontFamily: "var(--font-body)", fontSize: 12, width: 8 }}>{n}</span>
                 <div style={{ flex: 1, height: 5, background: "rgba(31,42,26,0.1)", borderRadius: 999, overflow: "hidden" }}>
                   <div style={{ width: `${pct}%`, height: "100%", background: "var(--olv-amber)" }} />
                 </div>
-                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11.5, color: "var(--olv-ink-soft)", width: 26 }}>{pct}%</span>
+                <span style={{ fontFamily: "var(--font-body)", fontSize: 11.5, color: "var(--olv-ink-soft)", width: 26 }}>{pct}%</span>
               </div>
             );
           })}
@@ -594,8 +594,8 @@ function ReviewsSection({ p }) {
             <div style={{ display: "flex", gap: 3, color: "var(--olv-amber)", marginBottom: 12 }}>
               {Array(5).fill(0).map((_, j) => <Icon.star key={j} style={{ opacity: j < r.rating ? 1 : 0.25 }} />)}
             </div>
-            <p style={{ fontFamily: "'DM Serif Display', serif", fontSize: 19, lineHeight: 1.3, margin: "0 0 14px", fontStyle: "italic" }}>"{r.text}"</p>
-            <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--olv-ink-soft)" }}>
+            <p style={{ fontFamily: "var(--font-display)", fontSize: 19, lineHeight: 1.3, margin: "0 0 14px", fontStyle: "italic" }}>"{r.text}"</p>
+            <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--olv-ink-soft)" }}>
               <span>{r.name} · {r.loc}</span>
               <span>{r.ago}</span>
             </div>
@@ -623,14 +623,14 @@ function StickyAddBar({ p, activePrice, onAdd, visible }) {
         <Placeholder label={p.name} tone={p.tone} />
       </div>
       <div style={{ flex: 1 }}>
-        <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 18, lineHeight: 1.1 }}>{p.name}</div>
-        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 2 }}>{p.note}</div>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 18, lineHeight: 1.1 }}>{p.name}</div>
+        <div style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 2 }}>{p.note}</div>
       </div>
-      <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 24 }}>${activePrice}</div>
+      <div style={{ fontFamily: "var(--font-display)", fontSize: 24 }}>${activePrice}</div>
       <button onClick={onAdd} style={{
         background: "var(--olv-ink)", color: "var(--olv-cream)", border: 0,
         padding: "13px 22px", borderRadius: 999,
-        fontFamily: "'Inter', sans-serif", fontSize: 13.5, fontWeight: 500,
+        fontFamily: "var(--font-body)", fontSize: 13.5, fontWeight: 500,
         cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 7,
         whiteSpace: "nowrap",
       }}>Add to bag <Icon.arrow /></button>
@@ -647,8 +647,8 @@ function RelatedProducts({ p, allProducts, onAdd, onOpen }) {
   return (
     <section style={{ padding: "72px 28px 90px", background: "var(--olv-cream)" }}>
       <div style={{ maxWidth: 1200, marginInline: "auto" }}>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 10 }}>◒ You might also like</div>
-        <h3 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "clamp(28px, 3vw, 40px)", margin: "0 0 36px", fontWeight: 400, letterSpacing: "-0.01em" }}>From the same pantry.</h3>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 10 }}>◒ You might also like</div>
+        <h3 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(28px, 3vw, 40px)", margin: "0 0 36px", fontWeight: 400, letterSpacing: "-0.01em" }}>From the same pantry.</h3>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20 }}>
           {related.map(rp => (
             <div key={rp.id} style={{ color: "var(--olv-ink)" }}>
@@ -656,12 +656,12 @@ function RelatedProducts({ p, allProducts, onAdd, onOpen }) {
                 <Placeholder label={`${rp.name} · ${rp.note}`} tone={rp.tone} />
               </div>
               <div style={{ marginTop: 12 }}>
-                <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 18, lineHeight: 1.1 }}>{rp.name}</div>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 3 }}>{rp.note} · ${rp.price}</div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: 18, lineHeight: 1.1 }}>{rp.name}</div>
+                <div style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 3 }}>{rp.note} · ${rp.price}</div>
                 <button onClick={() => onAdd(rp)} style={{
                   marginTop: 10, background: "transparent", color: "var(--olv-ink)",
                   border: "1px solid rgba(31,42,26,0.25)", padding: "8px 14px", borderRadius: 999,
-                  fontFamily: "'Inter', sans-serif", fontSize: 12, cursor: "pointer",
+                  fontFamily: "var(--font-body)", fontSize: 12, cursor: "pointer",
                   display: "inline-flex", alignItems: "center", gap: 5,
                 }}><Icon.plus /> Add</button>
               </div>
