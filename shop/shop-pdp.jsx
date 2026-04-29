@@ -17,8 +17,7 @@ function ShopPage({ products, onAdd, setRoute, copy, money }) {
 
   return (
     <div style={{ background: "var(--olv-bg)", minHeight: "100vh" }}>
-      <div style={{ background: "linear-gradient(180deg, rgba(236,223,205,0.84), rgba(248,241,230,0.72))", padding: "72px 28px 52px", borderBottom: "1px solid rgba(31,42,26,0.08)", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 14% 28%, rgba(190,101,56,0.12), transparent 22%), radial-gradient(circle at 82% 24%, rgba(86,102,75,0.08), transparent 18%)" }} />
+      <div style={{ background: "var(--olv-cream)", padding: "64px 28px 44px", borderBottom: "1px solid rgba(31,42,26,0.08)" }}>
         <div style={{ maxWidth: 1400, marginInline: "auto" }}>
           <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 12, fontWeight: 800 }}>
             {copy.shop.eyebrow}
@@ -32,7 +31,7 @@ function ShopPage({ products, onAdd, setRoute, copy, money }) {
         </div>
       </div>
 
-      <div className="mn-soft-panel" style={{ position: "sticky", top: 0, zIndex: 30, margin: "16px 28px 0", padding: "14px 18px" }}>
+      <div style={{ position: "sticky", top: 0, zIndex: 30, background: "var(--olv-bg)", borderBottom: "1px solid rgba(31,42,26,0.08)", padding: "14px 28px" }}>
         <div style={{ maxWidth: 1400, marginInline: "auto", display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
           <div style={{ display: "flex", gap: 7, flexWrap: "wrap", flex: 1 }}>
             {copy.shop.filters.map((c) => (
@@ -95,7 +94,7 @@ function ShopPage({ products, onAdd, setRoute, copy, money }) {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1400, marginInline: "auto", padding: "48px 28px 96px" }}>
+      <div style={{ maxWidth: 1400, marginInline: "auto", padding: "40px 28px 90px" }}>
         {view === "grid" ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 28 }}>
             {filtered.map((p, i) => (
@@ -135,22 +134,20 @@ function ShopCard({ p, i, onAdd, onClick, copy, money }) {
     <div ref={ref} style={{ opacity: 0, transform: "translateY(24px)", transition: `opacity .5s ease ${i * 0.04}s, transform .5s ease ${i * 0.04}s`, color: "var(--olv-ink)" }} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <div onClick={onClick} style={{ position: "relative", aspectRatio: "4/5", cursor: "pointer", overflow: "hidden" }}>
         <Placeholder src={p.image} label={p.name} tone={p.tone} />
-        <div style={{ position: "absolute", inset: 0, background: hover ? "linear-gradient(to top, rgba(20,27,21,0.42), rgba(31,42,26,0.04))" : "linear-gradient(to top, rgba(20,27,21,0.12), transparent 40%)", transition: "background .25s" }} />
-        <div style={{ position: "absolute", inset: hover ? "14px" : "18px", border: "1px solid rgba(255,255,255,0.24)", transition: "inset .25s", pointerEvents: "none" }} />
-        {p.tag ? <span className="mn-metal-label" style={{ position: "absolute", top: 12, left: 12, color: "var(--olv-ink)", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", padding: "5px 9px", fontWeight: 800 }}>{p.tag}</span> : null}
+        <div style={{ position: "absolute", inset: 0, background: hover ? "linear-gradient(to top, rgba(31,42,26,0.26), rgba(31,42,26,0.02))" : "transparent", transition: "background .25s" }} />
+        {p.tag ? <span style={{ position: "absolute", top: 12, left: 12, background: "rgba(255,250,242,0.94)", color: "var(--olv-ink)", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", padding: "5px 9px", fontWeight: 800 }}>{p.tag}</span> : null}
         <div style={{ position: "absolute", bottom: 12, left: 12, right: 12, display: "flex", gap: 5, flexWrap: "wrap", transform: hover ? "translateY(0)" : "translateY(10px)", opacity: hover ? 1 : 0, transition: "all .25s" }}>
           {p.tasting.map((t) => (
             <span key={t} style={{ background: "rgba(251,247,238,0.92)", fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: "0.16em", textTransform: "uppercase", padding: "5px 8px", color: "var(--olv-ink)", fontWeight: 800 }}>{t}</span>
           ))}
         </div>
       </div>
-      <div className="mn-soft-panel" style={{ marginTop: -24, marginInline: "10px", position: "relative", zIndex: 2, padding: "14px 14px 12px" }}>
+      <div style={{ marginTop: 14 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
           <div style={{ fontFamily: "var(--font-display)", fontSize: 22, letterSpacing: "-0.02em", lineHeight: 1.08, fontWeight: 700 }}>{p.name}</div>
           <div style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 700 }}>{money(p.price)}</div>
         </div>
-        <div style={{ fontFamily: "var(--font-label)", fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--olv-amber)", marginTop: 4, fontWeight: 800 }}>{p.region}</div>
-        <div style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--olv-ink-soft)", marginTop: 5, fontWeight: 600 }}>{p.note} · {p.size}</div>
+        <div style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--olv-ink-soft)", marginTop: 4, fontWeight: 600 }}>{p.note} · {p.size}</div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, gap: 12 }}>
           <div style={{ fontFamily: "var(--font-body)", fontSize: 11.5, color: "var(--olv-ink-soft)", display: "flex", gap: 4, alignItems: "center", fontWeight: 700 }}>
             <Icon.star style={{ color: "var(--olv-amber)" }} /> {p.rating} <span style={{ opacity: 0.55 }}>({p.reviews})</span>
@@ -166,18 +163,16 @@ function ShopCard({ p, i, onAdd, onClick, copy, money }) {
 
 function ShopListRow({ p, onAdd, onClick, copy, money }) {
   return (
-    <div className="mn-soft-panel" style={{ display: "grid", gridTemplateColumns: "124px 1fr auto", gap: 22, padding: "18px", borderColor: "rgba(31,42,26,0.09)", alignItems: "center", cursor: "pointer" }} onClick={onClick}>
-      <div style={{ aspectRatio: "1/1", overflow: "hidden", position: "relative" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "100px 1fr auto", gap: 22, padding: "20px 0", borderBottom: "1px solid rgba(31,42,26,0.07)", alignItems: "center", cursor: "pointer" }} onClick={onClick}>
+      <div style={{ aspectRatio: "1/1", overflow: "hidden" }}>
         <Placeholder src={p.image} label={p.name} tone={p.tone} />
-        <div style={{ position: "absolute", inset: 10, border: "1px solid rgba(255,255,255,0.22)", pointerEvents: "none" }} />
       </div>
       <div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 24, letterSpacing: "-0.02em", fontWeight: 700 }}>{p.name}</div>
-        <div style={{ fontFamily: "var(--font-label)", fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--olv-amber)", marginTop: 4, fontWeight: 800 }}>{p.region}</div>
         <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--olv-ink-soft)", marginTop: 4, fontWeight: 600 }}>{p.note} · {p.size} · {p.lot}</div>
         <div style={{ display: "flex", gap: 6, marginTop: 10, flexWrap: "wrap" }}>
           {p.tasting.map((t) => (
-            <span key={t} className="mn-metal-label" style={{ fontFamily: "var(--font-label)", fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase", padding: "4px 8px", color: "var(--olv-ink)", fontWeight: 800 }}>{t}</span>
+            <span key={t} style={{ fontFamily: "var(--font-label)", fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase", border: "1px solid rgba(31,42,26,0.15)", padding: "4px 8px", color: "var(--olv-ink)", fontWeight: 800 }}>{t}</span>
           ))}
         </div>
       </div>
@@ -221,17 +216,15 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
         <span style={{ color: "var(--olv-ink)" }}>{p.name}</span>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 680, margin: "22px 28px 0", boxShadow: "var(--olv-shadow-soft)" }} className="olv-pdp-hero">
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 620 }} className="olv-pdp-hero">
         <div style={{ position: "relative" }}>
           <Placeholder src={p.image} label={p.name} tone={p.tone} style={{ position: "absolute", inset: 0 }} />
-          <div style={{ position: "absolute", inset: 18, border: "1px solid rgba(255,255,255,0.24)", pointerEvents: "none" }} />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,23,18,0.32), transparent 40%)" }} />
-          <div className="mn-metal-label" style={{ position: "absolute", top: 24, left: 24, padding: "10px 14px", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink)", fontWeight: 800 }}>
+          <div style={{ position: "absolute", top: 24, left: 24, background: "rgba(255,250,242,0.94)", padding: "10px 14px", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink)", fontWeight: 800 }}>
             {p.lot} · {p.harvest}
           </div>
         </div>
 
-        <div ref={panelRef} style={{ padding: "60px 60px", display: "flex", flexDirection: "column", gap: 20, background: "linear-gradient(180deg, rgba(252,247,239,0.94), rgba(236,223,205,0.88))" }}>
+        <div ref={panelRef} style={{ padding: "56px 60px", display: "flex", flexDirection: "column", gap: 20, background: "var(--olv-cream)" }}>
           <div>
             <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", fontWeight: 800 }}>{p.region}</div>
             <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(34px,3.2vw,48px)", margin: "10px 0 0", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.04 }}>{p.name}</h1>
@@ -291,9 +284,9 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
       <LotJourney copy={copy} />
       <StickyAddBar p={p} activePrice={active.price} onAdd={handleAdd} visible={stickyVisible} copy={copy} money={money} />
 
-      <div style={{ background: "transparent", padding: "0 28px" }}>
+      <div style={{ background: "var(--olv-bg)", padding: "0 28px" }}>
         <div style={{ maxWidth: 1200, marginInline: "auto" }}>
-          <div className="mn-soft-panel" style={{ display: "flex", gap: 0, flexWrap: "wrap", padding: "0 12px", marginTop: "26px" }}>
+          <div style={{ display: "flex", gap: 0, borderBottom: "1px solid rgba(31,42,26,0.1)", flexWrap: "wrap" }}>
             {[
               { id: "story", label: copy.shop.story },
               { id: "pairings", label: copy.shop.pairings },
@@ -330,14 +323,11 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
                 </div>
                 <div style={{ marginTop: 48 }}>
                   <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 16, fontWeight: 800 }}>{copy.shop.recipeIdea}</div>
-                  <div className="mn-soft-panel olv-founder-grid" style={{ padding: "32px", display: "grid", gridTemplateColumns: "1fr 200px", gap: 32, alignItems: "center" }}>
+                  <div style={{ background: "var(--olv-cream)", padding: "32px", display: "grid", gridTemplateColumns: "1fr 200px", gap: 32, alignItems: "center" }} className="olv-founder-grid">
                     <div>
                       <div style={{ fontFamily: "var(--font-display)", fontSize: 28, letterSpacing: "-0.02em", fontWeight: 700 }}>{p.recipe}</div>
                     </div>
-                    <div style={{ position: "relative" }}>
-                      <Placeholder src={p.image} label={p.name} tone={p.tone} style={{ aspectRatio: "1/1" }} />
-                      <div style={{ position: "absolute", inset: 12, border: "1px solid rgba(255,255,255,0.22)", pointerEvents: "none" }} />
-                    </div>
+                    <Placeholder src={p.image} label={p.name} tone={p.tone} style={{ aspectRatio: "1/1" }} />
                   </div>
                 </div>
               </div>
@@ -354,7 +344,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
 
 function LotJourney({ copy }) {
   return (
-    <div style={{ background: "linear-gradient(180deg, var(--olv-ink) 0%, #29362d 100%)", color: "var(--olv-cream)", padding: "78px 28px" }}>
+    <div style={{ background: "var(--olv-ink)", color: "var(--olv-cream)", padding: "72px 28px" }}>
       <div style={{ maxWidth: 1200, marginInline: "auto" }}>
         <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6, marginBottom: 14, fontWeight: 800 }}>
           {copy.shop.lotTrace}
@@ -363,7 +353,7 @@ function LotJourney({ copy }) {
           {copy.shop.journeyTitle}
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 0, position: "relative" }} className="olv-journey">
-          <div style={{ position: "absolute", top: 20, left: "10%", right: "10%", height: 1, background: "linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.22), rgba(255,255,255,0.04))" }} />
+          <div style={{ position: "absolute", top: 20, left: "10%", right: "10%", height: 1, background: "rgba(255,255,255,0.15)" }} />
           {copy.shop.journey.map((step, i) => (
             <div key={step.label} style={{ padding: "0 16px 0 0", position: "relative" }}>
               <div style={{ width: 40, height: 40, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.4)", display: "grid", placeItems: "center", fontFamily: "var(--font-label)", fontSize: 13, fontWeight: 800, background: i === 0 ? "var(--olv-amber)" : "transparent", color: i === 0 ? "var(--olv-ink)" : "var(--olv-cream)", marginBottom: 18 }}>{String(i + 1).padStart(2, "0")}</div>
@@ -405,9 +395,9 @@ function ReviewsSection({ p, copy }) {
           })}
         </div>
       </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }} className="olv-reviews-grid">
-          {copy.reviews.map((review, i) => (
-          <div key={i} className="mn-soft-panel" style={{ padding: "24px 26px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }} className="olv-reviews-grid">
+        {copy.reviews.map((review, i) => (
+          <div key={i} style={{ background: "var(--olv-cream)", padding: "24px 26px" }}>
             <div style={{ display: "flex", gap: 3, color: "var(--olv-amber)", marginBottom: 12 }}>
               {Array(5).fill(0).map((_, j) => <Icon.star key={j} style={{ opacity: j < 5 ? 1 : 0.25 }} />)}
             </div>
@@ -443,7 +433,7 @@ function RelatedProducts({ p, allProducts, onAdd, onOpen, copy, money }) {
   const related = allProducts.filter((x) => x.id !== p.id && x.cat === p.cat).slice(0, 4);
   if (!related.length) return null;
   return (
-    <section style={{ padding: "82px 28px 96px", background: "linear-gradient(180deg, rgba(236,223,205,0.72), rgba(244,236,223,0.92))" }}>
+    <section style={{ padding: "72px 28px 90px", background: "var(--olv-cream)" }}>
       <div style={{ maxWidth: 1200, marginInline: "auto" }}>
         <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 10, fontWeight: 800 }}>{copy.shop.relatedEyebrow}</div>
         <h3 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(28px,3vw,40px)", margin: "0 0 36px", fontWeight: 700, letterSpacing: "-0.03em" }}>{copy.shop.relatedTitle}</h3>

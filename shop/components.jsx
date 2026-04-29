@@ -131,18 +131,16 @@ const iconBtn = {
 function Hero({ copy, onShop, onGifts }) {
   return (
     <section style={{
-      background: "linear-gradient(180deg, rgba(255,250,243,0.72) 0%, rgba(241,227,210,0.88) 100%)",
-      minHeight: "92vh",
+      background: "linear-gradient(180deg, #fbf6ee 0%, #f2e3d3 100%)",
+      minHeight: "88vh",
       display: "grid",
       gridTemplateColumns: "1.02fr 0.98fr",
       position: "relative",
       borderBottom: "1px solid var(--olv-border)",
-      overflow: "hidden",
     }} className="olv-hero-grid">
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 14% 18%, rgba(190,101,56,0.14), transparent 22%), radial-gradient(circle at 82% 24%, rgba(78,94,73,0.12), transparent 20%)", pointerEvents: "none" }} />
       <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", padding: "72px 60px 72px 52px", position: "relative" }} className="olv-hero-padding">
         <div style={{ position: "absolute", top: 12, left: 36, fontFamily: "var(--font-display)", fontSize: "22vw", color: "transparent", WebkitTextStroke: "1px rgba(35,49,38,0.05)", lineHeight: 1, pointerEvents: "none", userSelect: "none", whiteSpace: "nowrap" }}>M</div>
-        <div className="mn-paper" style={{ position: "relative", zIndex: 2, padding: "34px 34px 30px", maxWidth: 630 }}>
+        <div style={{ position: "relative", zIndex: 2 }}>
           <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.24em", textTransform: "uppercase", color: "var(--olv-amber)", marginBottom: 24, display: "inline-flex", alignItems: "center", gap: 12, fontWeight: 800 }}>
             <span style={{ width: 28, height: 1, background: "currentColor", display: "inline-block" }} />
             {copy.hero.eyebrow}
@@ -158,7 +156,7 @@ function Hero({ copy, onShop, onGifts }) {
             {copy.hero.body}
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <button onClick={onShop} style={{ ...btnPrimary, boxShadow: "0 18px 28px rgba(31,43,34,0.18)" }} className="mn-hover-sheen">{copy.hero.primary} <Icon.arrow /></button>
+            <button onClick={onShop} style={btnPrimary}>{copy.hero.primary} <Icon.arrow /></button>
             <button onClick={onGifts} style={btnGold}>{copy.hero.secondary}</button>
           </div>
           <div style={{ marginTop: 48, display: "flex", gap: 36, paddingTop: 28, borderTop: "1px solid var(--olv-border)", flexWrap: "wrap" }}>
@@ -173,20 +171,14 @@ function Hero({ copy, onShop, onGifts }) {
       </div>
       <div style={{ position: "relative", overflow: "hidden", borderLeft: "1px solid var(--olv-border)" }}>
         <Placeholder src={copy.hero.image} label="hero" tone="gold" style={{ position: "absolute", inset: 0 }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(247,241,230,0.18) 0%, rgba(34,27,20,0.12) 100%)" }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,16,12,0.14), transparent 45%)" }} />
-        <div className="mn-frame" style={{ position: "absolute", inset: "34px 32px 118px 62px", border: "1px solid rgba(255,255,255,0.32)", pointerEvents: "none" }} />
-        <div className="mn-paper mn-hero-stack" style={{ position: "absolute", bottom: 34, left: 28, padding: "22px 24px", maxWidth: 320 }}>
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(247,241,230,0.24) 0%, rgba(34,27,20,0.06) 100%)" }} />
+        <div style={{ position: "absolute", bottom: 34, left: 28, background: "rgba(255,250,242,0.94)", border: "1px solid var(--olv-border)", padding: "20px 22px", maxWidth: 320, boxShadow: "0 16px 40px rgba(106,84,59,0.08)" }}>
           <div style={{ fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-amber)", marginBottom: 8, fontWeight: 800 }}>{copy.hero.cardEyebrow}</div>
           <div style={{ fontFamily: "var(--font-display)", fontSize: 24, color: "var(--olv-ink)", lineHeight: 1.08, fontWeight: 700 }}>{copy.hero.cardTitle}</div>
           <div style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--olv-ink-soft)", marginTop: 10, lineHeight: 1.65, fontWeight: 600 }}>{copy.hero.cardBody}</div>
         </div>
-        <div className="mn-metal-label" style={{ position: "absolute", top: 28, right: 28, padding: "10px 14px", animation: "mn-float 5.8s ease-in-out infinite" }}>
+        <div style={{ position: "absolute", top: 28, right: 28, background: "rgba(255,250,242,0.84)", border: "1px solid var(--olv-border)", padding: "10px 14px", backdropFilter: "blur(8px)" }}>
           <Logo size={13} />
-        </div>
-        <div className="mn-metal-label" style={{ position: "absolute", bottom: 42, right: 32, padding: "12px 14px", maxWidth: 160 }}>
-          <div style={{ fontFamily: "var(--font-label)", fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--olv-moss)", fontWeight: 800, marginBottom: 6 }}>Flagship edit</div>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: 19, lineHeight: 1.04, fontWeight: 700 }}>Shelf-first, gift-ready, locally rooted.</div>
         </div>
       </div>
     </section>
@@ -195,7 +187,7 @@ function Hero({ copy, onShop, onGifts }) {
 
 function PantryGrid({ copy, cards, onCategory }) {
   return (
-    <section style={{ background: "transparent", padding: "96px 0 0", position: "relative" }}>
+    <section style={{ background: "var(--olv-surface)", padding: "90px 0 0" }}>
       <div style={{ maxWidth: 1400, marginInline: "auto", padding: "0 48px 48px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 48, gap: 16, flexWrap: "wrap" }}>
           <div>
@@ -205,21 +197,18 @@ function PantryGrid({ copy, cards, onCategory }) {
           <button onClick={() => onCategory("all")} style={btnGold}>{copy.home.shopAll} <Icon.arrow /></button>
         </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", height: 500, boxShadow: "var(--olv-shadow-soft)" }} className="olv-pantry-grid">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", height: 500 }} className="olv-pantry-grid">
         {cards.map((card) => (
           <a
             key={card.id}
             href="#"
             onClick={(e) => { e.preventDefault(); onCategory(card.id); }}
-            style={{ textDecoration: "none", color: "var(--olv-ink)", position: "relative", overflow: "hidden", display: "block", borderRight: "1px solid rgba(255,255,255,0.08)" }}
+            style={{ textDecoration: "none", color: "var(--olv-ink)", position: "relative", overflow: "hidden", display: "block" }}
             className="mn-cat-card"
           >
             <Placeholder src={card.image} label={card.label} tone={card.tone} style={{ position: "absolute", inset: 0 }} />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,23,18,0.78) 12%, rgba(35,49,38,0.18) 62%)" }} />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(35,49,38,0.58) 16%, rgba(35,49,38,0.1) 70%)" }} />
             <div style={{ position: "absolute", top: -20, right: -8, fontFamily: "var(--font-display)", fontSize: 156, color: "transparent", WebkitTextStroke: "1px rgba(255,255,255,0.22)", lineHeight: 1, pointerEvents: "none", fontWeight: 700 }}>{card.number}</div>
-            <div className="mn-metal-label" style={{ position: "absolute", top: 18, left: 18, padding: "7px 9px" }}>
-              <div style={{ fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--olv-moss)", fontWeight: 800 }}>{card.number}</div>
-            </div>
             <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "24px 20px" }}>
               <div style={{ fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "#fff7eb", marginBottom: 8, fontWeight: 800 }}>{card.number}</div>
               <div style={{ fontFamily: "var(--font-display)", fontSize: 28, lineHeight: 1.02, color: "#fffaf1", fontWeight: 700 }}>{card.label}</div>
@@ -239,12 +228,9 @@ function ProductCard({ p, idx, copy, money, onAdd, onOpen, wishlist, toggleWish 
     <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} style={{ color: "var(--olv-ink)", position: "relative" }}>
       <div onClick={() => onOpen(p)} style={{ position: "relative", aspectRatio: "3/4", cursor: "pointer", overflow: "hidden", background: "var(--olv-surface)" }}>
         <Placeholder src={p.image} label={p.name} tone={p.tone} style={{ position: "absolute", inset: 0 }} />
-        <div style={{ position: "absolute", inset: 0, background: hover ? "linear-gradient(to top, rgba(20,27,21,0.44), rgba(35,49,38,0.05))" : "linear-gradient(to top, rgba(20,27,21,0.12), transparent 44%)", transition: "background .25s" }} />
-        <div style={{ position: "absolute", inset: hover ? "14px" : "18px", border: "1px solid rgba(255,255,255,0.24)", transition: "inset .25s", pointerEvents: "none" }} />
-        <div className="mn-metal-label" style={{ position: "absolute", top: 12, left: 14, padding: "6px 8px" }}>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: 14, color: "var(--olv-ink)", letterSpacing: "0.06em", fontWeight: 700 }}>{String(idx + 1).padStart(2, "0")}</div>
-        </div>
-        {p.tag ? <span className="mn-metal-label" style={{ position: "absolute", top: 12, right: 14, color: "var(--olv-ink)", fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: "0.16em", textTransform: "uppercase", fontWeight: 800, padding: "6px 9px" }}>{p.tag}</span> : null}
+        <div style={{ position: "absolute", inset: 0, background: hover ? "linear-gradient(to top, rgba(35,49,38,0.34), rgba(35,49,38,0.03))" : "transparent", transition: "background .25s" }} />
+        <div style={{ position: "absolute", top: 12, left: 14, fontFamily: "var(--font-display)", fontSize: 14, color: "#fff9f1", letterSpacing: "0.06em", fontWeight: 700 }}>{String(idx + 1).padStart(2, "0")}</div>
+        {p.tag ? <span style={{ position: "absolute", top: 12, right: 14, background: "rgba(255,250,242,0.94)", color: "var(--olv-ink)", fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: "0.16em", textTransform: "uppercase", fontWeight: 800, padding: "6px 9px", border: "1px solid rgba(31,42,26,0.08)" }}>{p.tag}</span> : null}
         {toggleWish ? (
           <button onClick={(e) => { e.stopPropagation(); toggleWish(p.id); }} style={{ position: "absolute", bottom: 12, right: 14, background: "transparent", border: 0, cursor: "pointer", color: wished ? "#fff7eb" : "rgba(255,247,235,0.6)", fontSize: 18, lineHeight: 1, padding: 4 }}>
             {wished ? "♥" : "♡"}
@@ -277,21 +263,15 @@ function ProductCard({ p, idx, copy, money, onAdd, onOpen, wishlist, toggleWish 
           }}
         ><Icon.plus /> {copy.shop.add} · {money(p.price)}</button>
       </div>
-      <div className="mn-soft-panel" style={{ marginTop: -30, marginInline: "14px", position: "relative", zIndex: 2, padding: "16px 16px 14px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 14 }}>
-          <div>
-            <div style={{ fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--olv-amber)", marginBottom: 6, fontWeight: 800 }}>{p.region}</div>
-            <div style={{ fontFamily: "var(--font-display)", fontSize: 24, lineHeight: 1.04, letterSpacing: "-0.02em", fontWeight: 700 }}>{p.name}</div>
-            <div style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--olv-ink-soft)", marginTop: 6, fontWeight: 600 }}>{p.note} · {p.size}</div>
-          </div>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: 24, color: "var(--olv-ink)", fontWeight: 700 }}>{money(p.price)}</div>
+      <div style={{ marginTop: 14, display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 14 }}>
+        <div>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 24, lineHeight: 1.04, letterSpacing: "-0.02em", fontWeight: 700 }}>{p.name}</div>
+          <div style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--olv-ink-soft)", marginTop: 6, fontWeight: 600 }}>{p.note} · {p.size}</div>
         </div>
-        <div style={{ marginTop: 10, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11.5, color: "var(--olv-ink-soft)", fontFamily: "var(--font-body)", fontWeight: 700 }}>
-            <Icon.star style={{ color: "var(--olv-amber)" }} /> {p.rating} <span style={{ opacity: 0.55 }}>· {p.reviews}</span>
-          </div>
-          <div style={{ fontFamily: "var(--font-label)", fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--olv-moss)", fontWeight: 800 }}>{p.lot}</div>
-        </div>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 24, color: "var(--olv-ink)", fontWeight: 700 }}>{money(p.price)}</div>
+      </div>
+      <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 4, fontSize: 11.5, color: "var(--olv-ink-soft)", fontFamily: "var(--font-body)", fontWeight: 600 }}>
+        <Icon.star style={{ color: "var(--olv-amber)" }} /> {p.rating} <span style={{ opacity: 0.55 }}>· {p.reviews}</span>
       </div>
     </div>
   );
@@ -302,37 +282,35 @@ function BestSellers({ products, copy, money, onAdd, onOpen, wishlist, toggleWis
   const tabs = [{ id: "all", label: copy.home.shopAll }, ...copy.shop.filters];
   const list = useMemo(() => tab === "all" ? products : products.filter((p) => p.cat === tab), [tab, products]);
   return (
-    <section style={{ padding: "104px 48px", background: "transparent" }}>
+    <section style={{ padding: "96px 48px", background: "var(--olv-bg)" }}>
       <div style={{ maxWidth: 1400, marginInline: "auto" }}>
-        <div className="mn-soft-panel" style={{ padding: "28px 30px", marginBottom: 30 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 16 }}>
-            <div>
-              <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--olv-amber)", marginBottom: 12, fontWeight: 800 }}>{copy.home.bestEyebrow}</div>
-              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(40px,4.5vw,58px)", margin: 0, fontWeight: 700, letterSpacing: "-0.03em", color: "var(--olv-ink)" }}>{copy.home.bestTitle}</h2>
-            </div>
-            <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-              {tabs.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setTab(t.id)}
-                  style={{
-                    background: tab === t.id ? "var(--olv-ink)" : "transparent",
-                    color: tab === t.id ? "var(--olv-surface)" : "var(--olv-ink-soft)",
-                    border: "1px solid",
-                    borderColor: tab === t.id ? "var(--olv-ink)" : "var(--olv-border)",
-                    padding: "9px 16px",
-                    fontFamily: "var(--font-label)",
-                    fontSize: 11.5,
-                    fontWeight: 800,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    cursor: "pointer",
-                  }}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 44, flexWrap: "wrap", gap: 16 }}>
+          <div>
+            <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--olv-amber)", marginBottom: 12, fontWeight: 800 }}>{copy.home.bestEyebrow}</div>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(40px,4.5vw,58px)", margin: 0, fontWeight: 700, letterSpacing: "-0.03em", color: "var(--olv-ink)" }}>{copy.home.bestTitle}</h2>
+          </div>
+          <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+            {tabs.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                style={{
+                  background: tab === t.id ? "var(--olv-ink)" : "transparent",
+                  color: tab === t.id ? "var(--olv-surface)" : "var(--olv-ink-soft)",
+                  border: "1px solid",
+                  borderColor: tab === t.id ? "var(--olv-ink)" : "var(--olv-border)",
+                  padding: "9px 16px",
+                  fontFamily: "var(--font-label)",
+                  fontSize: 11.5,
+                  fontWeight: 800,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
           </div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 24 }} className="olv-products-grid">
@@ -348,16 +326,12 @@ function BestSellers({ products, copy, money, onAdd, onOpen, wishlist, toggleWis
 function FoundersNote({ copy }) {
   const founderImage = window.MUNISTER.assets.teaJar;
   return (
-    <section style={{ padding: "112px 48px", background: "transparent" }}>
-      <div className="mn-soft-panel olv-founder-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", maxWidth: 1300, marginInline: "auto", overflow: "hidden" }}>
+    <section style={{ padding: "96px 48px", background: "var(--olv-surface)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", maxWidth: 1300, marginInline: "auto", border: "1px solid var(--olv-border)", background: "var(--olv-light)" }} className="olv-founder-grid">
         <div style={{ position: "relative", aspectRatio: "1/1" }}>
           <Placeholder src={founderImage} label="founder note" tone="sage" />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,23,18,0.28), transparent 48%)" }} />
-          <div className="mn-metal-label" style={{ position: "absolute", left: 24, bottom: 24, padding: "10px 12px" }}>
-            <div style={{ fontFamily: "var(--font-label)", fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--olv-moss)", fontWeight: 800 }}>Flagship story block</div>
-          </div>
         </div>
-        <div style={{ padding: "66px 56px", display: "flex", flexDirection: "column", justifyContent: "center", background: "linear-gradient(180deg, rgba(255,253,249,0.8), rgba(255,248,240,0.52))" }}>
+        <div style={{ padding: "60px 52px", display: "flex", flexDirection: "column", justifyContent: "center", background: "var(--olv-light)" }}>
           <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--olv-amber)", marginBottom: 18, fontWeight: 800 }}>{copy.home.founderEyebrow}</div>
           <blockquote style={{ fontFamily: "var(--font-display)", fontSize: "clamp(26px,3vw,40px)", lineHeight: 1.12, margin: "0 0 22px", letterSpacing: "-0.025em", color: "var(--olv-ink)", fontWeight: 700, fontStyle: "italic" }}>
             "{copy.home.founderQuote}"
@@ -384,9 +358,8 @@ function Newsletter({ copy }) {
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
   return (
-    <section style={{ padding: "112px 48px 110px", background: "transparent" }}>
-      <div className="mn-soft-panel" style={{ maxWidth: 780, marginInline: "auto", textAlign: "center", padding: "54px 44px", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 18% 18%, rgba(190,101,56,0.12), transparent 24%), radial-gradient(circle at 84% 76%, rgba(86,102,75,0.12), transparent 24%)", pointerEvents: "none" }} />
+    <section style={{ padding: "96px 48px", background: "var(--olv-bg)", borderTop: "1px solid var(--olv-border)" }}>
+      <div style={{ maxWidth: 620, marginInline: "auto", textAlign: "center" }}>
         <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--olv-amber)", marginBottom: 16, fontWeight: 800 }}>{copy.home.newsletterEyebrow}</div>
         <div style={{ width: 40, height: 1, background: "var(--olv-amber)", opacity: 0.5, marginInline: "auto", marginBottom: 24 }} />
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(36px,4vw,52px)", margin: "0 0 14px", fontWeight: 700, lineHeight: 1.07, letterSpacing: "-0.03em", color: "var(--olv-ink)" }}>{copy.home.newsletterTitle}</h2>
@@ -411,31 +384,30 @@ function Newsletter({ copy }) {
 
 function Footer({ copy }) {
   return (
-    <footer style={{ background: "linear-gradient(180deg, #243228 0%, #1c271f 100%)", color: "var(--olv-cream)", padding: "96px 48px 32px", borderTop: "1px solid rgba(255,255,255,0.08)", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 14% 18%, rgba(190,101,56,0.18), transparent 24%), radial-gradient(circle at 82% 18%, rgba(255,249,240,0.08), transparent 18%)", pointerEvents: "none" }} />
-      <div style={{ maxWidth: 1400, marginInline: "auto", position: "relative" }}>
-        <div className="mn-soft-panel olv-footer-grid" style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: 40, marginBottom: 40, padding: "36px 34px", background: "linear-gradient(180deg, rgba(255,249,240,0.09), rgba(255,249,240,0.05))", borderColor: "rgba(255,255,255,0.08)" }}>
+    <footer style={{ background: "#efe2d0", color: "var(--olv-ink)", padding: "80px 48px 32px", borderTop: "1px solid var(--olv-border)" }}>
+      <div style={{ maxWidth: 1400, marginInline: "auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: 40, marginBottom: 64 }} className="olv-footer-grid">
           <div>
             <Logo size={20} />
-            <p style={{ fontFamily: "var(--font-body)", fontSize: 13.5, lineHeight: 1.75, color: "rgba(244,236,223,0.74)", marginTop: 16, maxWidth: 340, fontWeight: 600 }}>{copy.footer.body}</p>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: 13.5, lineHeight: 1.75, color: "var(--olv-ink-soft)", marginTop: 16, maxWidth: 340, fontWeight: 600 }}>{copy.footer.body}</p>
             <div style={{ display: "flex", gap: 8, marginTop: 20, flexWrap: "wrap" }}>
               {copy.footer.badges.map((badge) => (
-                <span key={badge} className="mn-metal-label" style={{ fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", padding: "5px 10px", color: "var(--olv-ink)", fontWeight: 800, borderRadius: 999 }}>{badge}</span>
+                <span key={badge} style={{ fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", border: "1px solid var(--olv-border-gold)", padding: "5px 10px", color: "var(--olv-amber)", fontWeight: 800, borderRadius: 999 }}>{badge}</span>
               ))}
             </div>
           </div>
           {copy.footer.cols.map((col) => (
             <div key={col.title}>
-              <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(240,173,118,0.96)", marginBottom: 16, fontWeight: 800 }}>{col.title}</div>
+              <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--olv-amber)", marginBottom: 16, fontWeight: 800 }}>{col.title}</div>
               <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
                 {col.items.map((item) => (
-                  <li key={item}><a href="#" style={{ fontFamily: "var(--font-body)", fontSize: 13.5, color: "rgba(244,236,223,0.72)", textDecoration: "none", fontWeight: 600 }}>{item}</a></li>
+                  <li key={item}><a href="#" style={{ fontFamily: "var(--font-body)", fontSize: 13.5, color: "var(--olv-ink-soft)", textDecoration: "none", fontWeight: 600 }}>{item}</a></li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.12)", paddingTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(244,236,223,0.52)", fontWeight: 800, gap: 12, flexWrap: "wrap" }}>
+        <div style={{ borderTop: "1px solid var(--olv-border)", paddingTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--olv-ink-soft)", fontWeight: 800, gap: 12, flexWrap: "wrap" }}>
           <span>{copy.footer.left}</span>
           <span>{copy.footer.right}</span>
         </div>
