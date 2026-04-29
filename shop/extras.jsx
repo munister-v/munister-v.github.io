@@ -52,7 +52,7 @@ function MobileNav({ open, onClose, setRoute, cartCount, onOpenCart, copy, lang,
           ))}
         </div>
         <div style={{ marginTop: 24 }}>
-          <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 10, fontWeight: 800 }}>Language</div>
+          <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 10, fontWeight: 700 }}>Language</div>
           <div style={{ display: "flex", gap: 8 }}>
             {window.MUNISTER.languages.map((entry) => (
               <button
@@ -68,7 +68,7 @@ function MobileNav({ open, onClose, setRoute, cartCount, onOpenCart, copy, lang,
                   fontSize: 11,
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   cursor: "pointer",
                 }}
               >
