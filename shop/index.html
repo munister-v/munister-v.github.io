@@ -10,18 +10,20 @@
 
 <style>
   :root {
-    --olv-bg:          #f7f1e6;
-    --olv-surface:     #fffaf2;
-    --olv-cream:       #efe3d2;
-    --olv-ink:         #233126;
-    --olv-ink-soft:    #66705f;
-    --olv-moss:        #56664b;
-    --olv-amber:       #c86a3c;
+    --olv-bg:          #f4ecdf;
+    --olv-surface:     #fff9f0;
+    --olv-cream:       #ecdfcd;
+    --olv-ink:         #1f2b22;
+    --olv-ink-soft:    #677062;
+    --olv-moss:        #4e5e49;
+    --olv-amber:       #be6538;
     --olv-amber-soft:  rgba(200,106,60,0.12);
-    --olv-terra:       #b86a48;
-    --olv-light:       #fffdf8;
-    --olv-border:      rgba(35,49,38,0.11);
-    --olv-border-gold: rgba(200,106,60,0.32);
+    --olv-terra:       #ac5f3d;
+    --olv-light:       #fffdf9;
+    --olv-border:      rgba(31,43,34,0.12);
+    --olv-border-gold: rgba(190,101,56,0.32);
+    --olv-shadow:      0 28px 80px rgba(69, 49, 25, 0.11);
+    --olv-shadow-soft: 0 18px 45px rgba(69, 49, 25, 0.08);
     --font-display:    'Cormorant Garamond', serif;
     --font-body:       'Manrope', sans-serif;
     --font-label:      'Inter', sans-serif;
@@ -29,12 +31,61 @@
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--olv-bg); color: var(--olv-ink); }
-  body { font-family: var(--font-body); -webkit-font-smoothing: antialiased; font-weight: 500; }
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    font-weight: 500;
+    background:
+      radial-gradient(circle at top left, rgba(190,101,56,0.10), transparent 28%),
+      radial-gradient(circle at 85% 18%, rgba(86,102,75,0.10), transparent 24%),
+      linear-gradient(180deg, #f6efe3 0%, #f3ebde 100%);
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.38;
+    background-image:
+      linear-gradient(rgba(31,43,34,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(31,43,34,0.03) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: radial-gradient(circle at center, black 42%, transparent 88%);
+  }
   a { color: inherit; }
   button, input, select { font-family: inherit; }
   .mn-cat-card:hover .mn-cat-arrow { opacity: 1 !important; }
-  .mn-cat-card:hover > div:first-child { transform: scale(1.03); transition: transform .5s ease; }
+  .mn-cat-card:hover > div:first-child { transform: scale(1.04); transition: transform .7s ease; }
   .mn-shop-card:hover { border-color: var(--olv-border-gold) !important; }
+  .mn-paper {
+    background: rgba(255, 249, 240, 0.84);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: var(--olv-shadow);
+  }
+  .mn-soft-panel {
+    border: 1px solid var(--olv-border);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,251,244,0.64)),
+      var(--olv-surface);
+    box-shadow: var(--olv-shadow-soft);
+  }
+  .mn-metal-label {
+    border: 1px solid rgba(255,255,255,0.55);
+    background: rgba(255, 252, 247, 0.70);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 14px 30px rgba(60,48,31,0.08);
+  }
+  .mn-frame {
+    position: relative;
+  }
+  .mn-frame::after {
+    content: "";
+    position: absolute;
+    inset: 16px;
+    border: 1px solid rgba(255,255,255,0.34);
+    pointer-events: none;
+  }
   @keyframes olv-fadein {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -44,6 +95,30 @@
     to   { opacity: 1; transform: translateY(0); }
   }
   .olv-page { animation: olv-page-in .4s ease both; }
+  @keyframes mn-float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes mn-sheen {
+    from { transform: translateX(-130%) rotate(10deg); }
+    to { transform: translateX(180%) rotate(10deg); }
+  }
+  .mn-hover-sheen {
+    position: relative;
+    overflow: hidden;
+  }
+  .mn-hover-sheen::after {
+    content: "";
+    position: absolute;
+    inset: -20% auto -20% -35%;
+    width: 32%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: translateX(-130%) rotate(10deg);
+    pointer-events: none;
+  }
+  .mn-hover-sheen:hover::after {
+    animation: mn-sheen .85s ease;
+  }
 
   @media (max-width: 960px) {
     .olv-desktop-nav { display: none !important; }
@@ -57,6 +132,7 @@
     .olv-journey { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
     .olv-reviews-grid { grid-template-columns: 1fr !important; }
     .olv-hero-padding { padding: 48px 24px !important; }
+    .mn-hero-stack { position: relative !important; inset: auto !important; margin: 16px !important; }
   }
   @media (max-width: 640px) {
     .olv-pantry-grid { grid-template-columns: 1fr !important; }

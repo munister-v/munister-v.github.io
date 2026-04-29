@@ -6,7 +6,8 @@ function GiftsPage({ onAdd, copy, money }) {
 
   return (
     <div style={{ background: "var(--olv-bg)" }}>
-      <div style={{ background: "var(--olv-ink)", color: "var(--olv-cream)", padding: "80px 28px 64px", textAlign: "center" }}>
+      <div style={{ background: "linear-gradient(180deg, var(--olv-ink) 0%, #27342b 100%)", color: "var(--olv-cream)", padding: "92px 28px 70px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 20% 24%, rgba(190,101,56,0.16), transparent 22%), radial-gradient(circle at 82% 26%, rgba(255,255,255,0.08), transparent 18%)" }} />
         <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6, marginBottom: 16, fontWeight: 800 }}>
           {copy.gifts.eyebrow}
         </div>
@@ -43,12 +44,13 @@ function GiftsPage({ onAdd, copy, money }) {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1400, marginInline: "auto", padding: "52px 28px 90px" }}>
+      <div style={{ maxWidth: 1400, marginInline: "auto", padding: "64px 28px 96px" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24 }}>
           {shown.map((bundle) => (
-            <div key={bundle.id} style={{ background: "var(--olv-cream)", overflow: "hidden" }}>
+            <div key={bundle.id} className="mn-soft-panel mn-hover-sheen" style={{ overflow: "hidden" }}>
               <div style={{ position: "relative", aspectRatio: "4/3" }}>
                 <Placeholder src={bundle.image} label={bundle.name} tone={bundle.tone} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,23,18,0.28), transparent 54%)" }} />
                 <div style={{ position: "absolute", top: 14, right: 14, background: "var(--olv-amber)", color: "var(--olv-ink)", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", padding: "6px 10px", fontWeight: 800 }}>
                   -{money(bundle.saving)}
                 </div>
@@ -77,7 +79,7 @@ function GiftsPage({ onAdd, copy, money }) {
           ))}
         </div>
 
-        <div style={{ marginTop: 64, background: "var(--olv-amber)", padding: "48px 52px", display: "grid", gridTemplateColumns: "1fr auto", gap: 28, alignItems: "center" }}>
+        <div className="mn-soft-panel" style={{ marginTop: 72, padding: "48px 52px", display: "grid", gridTemplateColumns: "1fr auto", gap: 28, alignItems: "center", background: "linear-gradient(135deg, rgba(190,101,56,0.16), rgba(255,251,244,0.86))" }}>
           <div>
             <div style={{ fontFamily: "var(--font-display)", fontSize: 30, letterSpacing: "-0.02em", marginBottom: 8, fontWeight: 700 }}>
               {copy.gifts.noteTitle}
@@ -101,7 +103,8 @@ function StoryPage({ copy }) {
 
   return (
     <div style={{ background: "var(--olv-bg)" }}>
-      <div style={{ background: "var(--olv-amber)", padding: "96px 28px", textAlign: "center" }}>
+      <div style={{ background: "linear-gradient(180deg, #c87244 0%, #b9653c 100%)", padding: "104px 28px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 16% 20%, rgba(255,255,255,0.16), transparent 20%), radial-gradient(circle at 84% 30%, rgba(31,43,34,0.12), transparent 18%)" }} />
         <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-ink)", opacity: 0.65, marginBottom: 18, fontWeight: 800 }}>{copy.storyPage.eyebrow}</div>
         <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(40px,5vw,72px)", margin: "0 0 24px", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.04, maxWidth: 980, marginInline: "auto" }}>
           {copy.storyPage.title}
@@ -111,9 +114,13 @@ function StoryPage({ copy }) {
         </p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", background: "var(--olv-cream)" }} className="olv-founder-grid">
+      <div className="mn-soft-panel olv-founder-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", background: "var(--olv-cream)", maxWidth: 1340, margin: "-54px auto 0", overflow: "hidden", position: "relative", zIndex: 2 }}>
         <div style={{ position: "relative", aspectRatio: "1/1" }}>
           <Placeholder src={heroImage} label="sunflower" tone="gold" />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,23,18,0.24), transparent 52%)" }} />
+          <div className="mn-metal-label" style={{ position: "absolute", left: 24, bottom: 24, padding: "10px 12px" }}>
+            <div style={{ fontFamily: "var(--font-label)", fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--olv-moss)", fontWeight: 800 }}>Rooted in Ukrainian harvests</div>
+          </div>
         </div>
         <div style={{ padding: "72px 60px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 20 }}>
           <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", fontWeight: 800 }}>{copy.storyPage.founderEyebrow}</div>
@@ -126,14 +133,14 @@ function StoryPage({ copy }) {
         </div>
       </div>
 
-      <div style={{ padding: "90px 28px", background: "var(--olv-bg)" }}>
+      <div style={{ padding: "98px 28px", background: "transparent" }}>
         <div style={{ maxWidth: 1040, marginInline: "auto" }}>
           <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 14, fontWeight: 800 }}>{copy.storyPage.timelineEyebrow}</div>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(34px,3.8vw,50px)", margin: "0 0 40px", fontWeight: 700, letterSpacing: "-0.03em" }}>{copy.storyPage.timelineTitle}</h2>
           <div style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", gap: 36 }} className="olv-founder-grid">
             <div style={{ display: "grid", gap: 18 }}>
               {copy.storyPage.milestones.map((step) => (
-                <div key={step.year} style={{ background: "var(--olv-surface)", border: "1px solid var(--olv-border)", padding: "22px 22px" }}>
+                <div key={step.year} className="mn-soft-panel" style={{ padding: "22px 22px" }}>
                   <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-amber)", marginBottom: 8, fontWeight: 800 }}>{step.year}</div>
                   <div style={{ fontFamily: "var(--font-body)", fontSize: 15, color: "var(--olv-ink)", lineHeight: 1.7, fontWeight: 600 }}>{step.event}</div>
                 </div>
@@ -146,7 +153,7 @@ function StoryPage({ copy }) {
         </div>
       </div>
 
-      <div style={{ background: "var(--olv-ink)", color: "var(--olv-cream)", padding: "80px 28px" }}>
+      <div style={{ background: "linear-gradient(180deg, var(--olv-ink) 0%, #28352b 100%)", color: "var(--olv-cream)", padding: "88px 28px" }}>
         <div style={{ maxWidth: 1200, marginInline: "auto" }}>
           <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6, marginBottom: 14, fontWeight: 800 }}>{copy.storyPage.valuesEyebrow}</div>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(32px,3.4vw,46px)", margin: "0 0 48px", fontWeight: 700, letterSpacing: "-0.02em" }}>{copy.storyPage.valuesTitle}</h2>
