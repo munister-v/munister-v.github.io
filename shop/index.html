@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="uk">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Munister — The slowly-made pantry</title>
+<title>Munister — The Modern Ukrainian Pantry</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@300;400;450;500;600&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
   :root {
@@ -14,16 +14,14 @@
     --olv-surface:     #fffaf2;
     --olv-cream:       #efe3d2;
     --olv-ink:         #233126;
-    --olv-ink-soft:    #6a7464;
-    --olv-moss:        #55664a;
-    --olv-amber:       #d56c3d;
-    --olv-amber-soft:  rgba(213,108,61,0.12);
-    --olv-terra:       #bb6c44;
-    --olv-plum:        #6e5552;
-    --olv-terracotta:  #b86a48;
+    --olv-ink-soft:    #66705f;
+    --olv-moss:        #56664b;
+    --olv-amber:       #c86a3c;
+    --olv-amber-soft:  rgba(200,106,60,0.12);
+    --olv-terra:       #b86a48;
     --olv-light:       #fffdf8;
     --olv-border:      rgba(35,49,38,0.11);
-    --olv-border-gold: rgba(213,108,61,0.32);
+    --olv-border-gold: rgba(200,106,60,0.32);
     --font-display:    'Cormorant Garamond', serif;
     --font-body:       'Manrope', sans-serif;
     --font-label:      'Inter', sans-serif;
@@ -31,22 +29,12 @@
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--olv-bg); color: var(--olv-ink); }
-  body { font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+  body { font-family: var(--font-body); -webkit-font-smoothing: antialiased; font-weight: 500; }
   a { color: inherit; }
   button, input, select { font-family: inherit; }
-
-  /* Category card hover arrow */
   .mn-cat-card:hover .mn-cat-arrow { opacity: 1 !important; }
   .mn-cat-card:hover > div:first-child { transform: scale(1.03); transition: transform .5s ease; }
-
-  /* Shop card link style */
   .mn-shop-card:hover { border-color: var(--olv-border-gold) !important; }
-
-  @keyframes olvScroll {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-33.333%); }
-  }
-  .olv-marquee { animation: olvScroll 38s linear infinite; }
   @keyframes olv-fadein {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -56,49 +44,46 @@
     to   { opacity: 1; transform: translateY(0); }
   }
   .olv-page { animation: olv-page-in .4s ease both; }
+
+  @media (max-width: 960px) {
+    .olv-desktop-nav { display: none !important; }
+    .olv-mobile-toggle { display: flex !important; }
+    .olv-hero-grid { grid-template-columns: 1fr !important; }
+    .olv-pantry-grid { grid-template-columns: repeat(2,1fr) !important; height: auto !important; }
+    .olv-products-grid { grid-template-columns: repeat(2,1fr) !important; }
+    .olv-footer-grid { grid-template-columns: 1fr 1fr !important; }
+    .olv-founder-grid { grid-template-columns: 1fr !important; }
+    .olv-pdp-hero { grid-template-columns: 1fr !important; }
+    .olv-journey { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
+    .olv-reviews-grid { grid-template-columns: 1fr !important; }
+    .olv-hero-padding { padding: 48px 24px !important; }
+  }
+  @media (max-width: 640px) {
+    .olv-pantry-grid { grid-template-columns: 1fr !important; }
+    .olv-products-grid { grid-template-columns: 1fr !important; }
+    .olv-footer-grid { grid-template-columns: 1fr !important; }
+    .olv-journey { grid-template-columns: 1fr !important; }
+  }
+
+  .olv-reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .olv-reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 </style>
 </head>
 <body>
 <div id="root"></div>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 
-<style>
-@media (max-width: 768px) {
-  .olv-desktop-nav { display: none !important; }
-  .olv-mobile-toggle { display: flex !important; }
-  .olv-hero-grid { grid-template-columns: 1fr !important; }
-  .olv-pantry-grid { grid-template-columns: repeat(2,1fr) !important; }
-  .olv-products-grid { grid-template-columns: repeat(2,1fr) !important; }
-  .olv-footer-grid { grid-template-columns: 1fr 1fr !important; }
-  .olv-founder-grid { grid-template-columns: 1fr !important; }
-  .olv-journal-grid { grid-template-columns: 1fr !important; }
-  .olv-featured-slab { grid-template-columns: 1fr !important; }
-  .olv-pdp-hero { grid-template-columns: 1fr !important; }
-  .olv-journey { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
-  .olv-reviews-grid { grid-template-columns: 1fr !important; }
-  .olv-builder-grid { grid-template-columns: 1fr !important; }
-  .olv-recs-grid { grid-template-columns: repeat(2,1fr) !important; }
-  .olv-shop-hero-padding { padding: 36px 16px 28px !important; }
-  .olv-hero-padding { padding: 48px 24px !important; }
-}
-@media (max-width: 480px) {
-  .olv-pantry-grid { grid-template-columns: 1fr !important; }
-  .olv-products-grid { grid-template-columns: 1fr !important; }
-}
-/* Scroll reveal */
-.olv-reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity .6s ease, transform .6s ease;
-}
-.olv-reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-</style>
+<script type="text/babel" src="content.js"></script>
 <script type="text/babel" src="components.jsx"></script>
 <script type="text/babel" src="shop-pdp.jsx"></script>
 <script type="text/babel" src="extras.jsx"></script>
@@ -108,39 +93,22 @@
 <script type="text/babel">
 const { useState, useEffect } = React;
 
-const PRODUCTS = [
-  { id: "evoo-robusto", cat: "evoo", name: "Robusto Verde EVOO", note: "bold · peppery · grass", size: "350ml", price: 36, tone: "amber", tag: "Bestseller", rating: 4.9, reviews: 612, lot: "2026-04A", region: "Iza Valley", harvest: "Oct 2025 harvest", shelf: "Best within 18mo", desc: "Pressed from Koroneiki olives picked the morning of October 12. Polyphenol-rich and assertive — a finishing oil for tomatoes, beans, grilled bread and almost everything else.", tasting: ["Pepper", "Cut grass", "Artichoke"], sizes: [{label: "100ml", price: 14}, {label: "350ml", price: 36}, {label: "500ml", price: 48}] },
-  { id: "evoo-delicato", cat: "evoo", name: "Delicato Solare EVOO", note: "soft · buttery · fennel", size: "350ml", price: 32, tone: "cream", rating: 4.8, reviews: 401, lot: "2026-03B", region: "Lower Iza", harvest: "Sept 2025 harvest", shelf: "Best within 18mo", desc: "A gentle, almost creamy oil — built for everyday cooking, salad dressings and finishing fish.", tasting: ["Almond", "Fennel", "Butter"], sizes: [{label: "100ml", price: 12}, {label: "350ml", price: 32}] },
-  { id: "evoo-citrus", cat: "evoo", name: "Lemon-Pressed EVOO", note: "bright · citrus · zest", size: "350ml", price: 38, tone: "amber", tag: "New", rating: 4.9, reviews: 188, lot: "2026-02C", region: "Iza Valley", harvest: "Oct 2025 harvest", shelf: "Best within 12mo", desc: "Whole Sicilian lemons co-pressed with green olives. Pour over ricotta, pasta, or a finished risotto.", tasting: ["Lemon zest", "Olive", "Honey"], sizes: [{label: "350ml", price: 38}] },
-
-  { id: "honey-acacia", cat: "honey", name: "Acacia Wild Honey", note: "clear · floral · mild", size: "300g", price: 22, tone: "amber", rating: 4.9, reviews: 322, lot: "2025-08A", region: "Beech forest hives", harvest: "Aug 2025", shelf: "Best within 24mo", desc: "Pale, glassy honey from acacia blossoms. Stays liquid for over a year.", tasting: ["Vanilla", "Pear", "Light"] },
-  { id: "honey-chestnut", cat: "honey", name: "Chestnut Forest Honey", note: "dark · woody · bitter-sweet", size: "300g", price: 24, tone: "moss", rating: 4.7, reviews: 211, lot: "2025-07B", region: "High forest", harvest: "Jul 2025", shelf: "Best within 24mo", desc: "Dark amber, bittersweet honey for cheese boards and morning toast.", tasting: ["Wood", "Caramel", "Tannin"] },
-  { id: "honey-meadow", cat: "honey", name: "Spring Meadow Honey", note: "sunny · multifloral", size: "300g", price: 20, tone: "cream", tag: "Bestseller", rating: 4.8, reviews: 488, lot: "2026-04A", region: "Lower meadows", harvest: "Apr 2026", shelf: "Best within 24mo", desc: "A bright, multi-floral spring honey — wildflowers, clover, dandelion.", tasting: ["Clover", "Pollen", "Sun"] },
-
-  { id: "vin-cherry", cat: "vinegar", name: "Sour Cherry Vinegar", note: "fruit-forward · tart", size: "250ml", price: 26, tone: "plum", tag: "New", rating: 4.8, reviews: 96, lot: "2025-09A", region: "Orchard B", harvest: "Sept 2025", shelf: "Best within 36mo", desc: "Wild-fermented from sour cherries. Use with duck, beets, lentils, or a splash in seltzer.", tasting: ["Cherry", "Tart", "Wood"] },
-  { id: "vin-rose", cat: "vinegar", name: "Rose & White Wine Vinegar", note: "floral · delicate", size: "250ml", price: 22, tone: "terracotta", rating: 4.7, reviews: 142, lot: "2025-06A", region: "Vine row 12", harvest: "Jun 2025", shelf: "Best within 36mo", desc: "Steeped with petals from our garden. Brightens strawberries, salads, and gin.", tasting: ["Rose", "Apple", "Bright"] },
-  { id: "vin-honey", cat: "vinegar", name: "Honey-Aged Vinegar", note: "sweet · mellow", size: "250ml", price: 28, tone: "amber", rating: 4.9, reviews: 73, lot: "2025-04B", region: "Cellar 2", harvest: "Apr 2025", shelf: "Best within 36mo", desc: "Aged in oak with our own meadow honey for nine months.", tasting: ["Honey", "Oak", "Caramel"] },
-
-  { id: "inf-garlic", cat: "infused", name: "Roasted Garlic Oil", note: "savory · deep · roast", size: "250ml", price: 28, tone: "sage", rating: 4.8, reviews: 209, lot: "2026-03B", region: "Co-op 4", harvest: "Mar 2026", shelf: "Best within 12mo", desc: "Slow-roasted garlic confited into our Delicato base — pour over anything.", tasting: ["Garlic", "Toast", "Round"] },
-  { id: "inf-basil", cat: "infused", name: "Wild Basil Oil", note: "green · herbal · fresh", size: "250ml", price: 26, tone: "moss", rating: 4.7, reviews: 154, lot: "2026-04A", region: "Greenhouse", harvest: "Apr 2026", shelf: "Best within 12mo", desc: "Pulverized fresh basil into early-harvest oil — finish a tomato salad and stop.", tasting: ["Basil", "Pepper", "Lawn"] },
-  { id: "inf-chili", cat: "infused", name: "Smoked Chili Oil", note: "warm · smoky · slow", size: "250ml", price: 26, tone: "terracotta", tag: "Bestseller", rating: 4.9, reviews: 380, lot: "2026-02A", region: "Co-op 2", harvest: "Feb 2026", shelf: "Best within 12mo", desc: "Smoked over beech wood with three chilis. Eggs will never be the same.", tasting: ["Smoke", "Chili", "Earth"] },
-];
-
-/* ── Scroll reveal ── */
 function useScrollReveal() {
   useEffect(() => {
     const els = document.querySelectorAll(".olv-reveal");
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+      });
     }, { threshold: 0.08 });
-    els.forEach(el => obs.observe(el));
+    els.forEach((el) => obs.observe(el));
     return () => obs.disconnect();
   });
 }
 
-/* ── Scroll-shrink Header ── */
-function AppHeader({ cartCount, onOpenCart, route, setRoute, onMobileMenu, onSearch }) {
+function AppHeader({ cartCount, onOpenCart, route, setRoute, onMobileMenu, onSearch, copy, lang, setLang }) {
   const [compact, setCompact] = useState(false);
+
   useEffect(() => {
     const onScroll = () => setCompact(window.scrollY > 60);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -148,55 +116,75 @@ function AppHeader({ cartCount, onOpenCart, route, setRoute, onMobileMenu, onSea
   }, []);
 
   const pad = compact ? "12px 28px" : "18px 28px";
-  const logoSz = compact ? 17 : 21;
+  const logoSize = compact ? 17 : 21;
+  const currentPage = typeof route === "object" ? route.page : route;
 
   return (
     <header style={{
-      background: "rgba(247,241,230,0.92)",
+      background: "rgba(247,241,230,0.94)",
       borderBottom: "1px solid var(--olv-border)",
-      position: "sticky", top: 0, zIndex: 50,
+      position: "sticky",
+      top: 0,
+      zIndex: 50,
       transition: "box-shadow .25s, background .25s",
       boxShadow: compact ? "0 8px 30px rgba(60,48,31,0.08)" : "none",
       backdropFilter: "blur(10px)",
     }}>
-      {!compact && <AnnouncementBar />}
-      <div style={{ display:"grid", gridTemplateColumns:"1fr auto 1fr", alignItems:"center", padding: pad, transition:"padding .25s" }}>
-        {/* Left */}
-        <div style={{ display:"flex", alignItems:"center", gap:18 }}>
-          <button className="olv-mobile-toggle" onClick={onMobileMenu}
-            style={{ display:"none", background:"transparent", border:0, cursor:"pointer", color:"var(--olv-ink)", flexDirection:"column", gap:5, padding:4 }}>
-            <span style={{ width:22, height:1.5, background:"currentColor", display:"block" }} />
-            <span style={{ width:16, height:1.5, background:"currentColor", display:"block" }} />
-            <span style={{ width:22, height:1.5, background:"currentColor", display:"block" }} />
+      {!compact ? <AnnouncementBar copy={copy} /> : null}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", padding: pad, transition: "padding .25s", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+          <button className="olv-mobile-toggle" onClick={onMobileMenu} style={{ display: "none", background: "transparent", border: 0, cursor: "pointer", color: "var(--olv-ink)", flexDirection: "column", gap: 5, padding: 4 }}>
+            <span style={{ width: 22, height: 1.5, background: "currentColor", display: "block" }} />
+            <span style={{ width: 16, height: 1.5, background: "currentColor", display: "block" }} />
+            <span style={{ width: 22, height: 1.5, background: "currentColor", display: "block" }} />
           </button>
-          <nav className="olv-desktop-nav" style={{ display:"flex", gap:22, fontSize:13, fontFamily:"var(--font-label)", alignItems:"center" }}>
-            {[["shop","Shop"],["gifts","Gifts"],["story","Our Story"]].map(([id,label]) => (
-              <a key={id} href="#" onClick={e => { e.preventDefault(); setRoute(id); }}
-                style={{ color:"var(--olv-ink)", textDecoration:"none", fontWeight:600, letterSpacing:"0.08em", textTransform:"uppercase",
-                  paddingBottom:4, borderBottom: route===id ? "1px solid var(--olv-amber)" : "1px solid transparent",
-                  transition:"border-color .15s" }}>
+          <nav className="olv-desktop-nav" style={{ display: "flex", gap: 22, fontSize: 12.5, fontFamily: "var(--font-label)", alignItems: "center" }}>
+            {[["shop", copy.nav.shop], ["gifts", copy.nav.gifts], ["story", copy.nav.story]].map(([id, label]) => (
+              <a key={id} href="#" onClick={(e) => { e.preventDefault(); setRoute(id); }} style={{ color: "var(--olv-ink)", textDecoration: "none", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", paddingBottom: 4, borderBottom: currentPage === id ? "1px solid var(--olv-amber)" : "1px solid transparent" }}>
                 {label}
               </a>
             ))}
           </nav>
         </div>
-        {/* Logo */}
-        <a href="#" onClick={e => { e.preventDefault(); setRoute("home"); }} style={{ textDecoration:"none", justifySelf:"center" }}>
-          <Logo size={logoSz} />
+
+        <a href="#" onClick={(e) => { e.preventDefault(); setRoute("home"); }} style={{ textDecoration: "none", justifySelf: "center" }}>
+          <Logo size={logoSize} />
         </a>
-        {/* Right */}
-        <div style={{ display:"flex", gap:14, justifyContent:"flex-end", alignItems:"center", color:"var(--olv-ink)" }}>
-          <button onClick={onSearch} style={{ background:"transparent", border:0, cursor:"pointer", color:"inherit", padding:4, display:"inline-flex", gap:6, alignItems:"center", fontFamily:"var(--font-label)", fontSize:12.5, letterSpacing:"0.08em", textTransform:"uppercase" }}>
-            <Icon.search /> <span className="olv-desktop-nav">Search</span>
+
+        <div style={{ display: "flex", gap: 14, justifyContent: "flex-end", alignItems: "center", color: "var(--olv-ink)" }}>
+          <div className="olv-desktop-nav" style={{ display: "flex", gap: 6 }}>
+            {window.MUNISTER.languages.map((entry) => (
+              <button
+                key={entry.id}
+                onClick={() => setLang(entry.id)}
+                style={{
+                  background: lang === entry.id ? "var(--olv-ink)" : "transparent",
+                  color: lang === entry.id ? "var(--olv-surface)" : "var(--olv-ink)",
+                  border: "1px solid var(--olv-border)",
+                  padding: "7px 10px",
+                  borderRadius: 999,
+                  fontFamily: "var(--font-label)",
+                  fontSize: 10.5,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                }}
+              >
+                {entry.short}
+              </button>
+            ))}
+          </div>
+          <button onClick={onSearch} style={{ background: "transparent", border: 0, cursor: "pointer", color: "inherit", padding: 4, display: "inline-flex", gap: 6, alignItems: "center", fontFamily: "var(--font-label)", fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 800 }}>
+            <Icon.search /> <span className="olv-desktop-nav">{copy.nav.search}</span>
           </button>
-          <button onClick={onOpenCart} style={{ background:"transparent", border:0, cursor:"pointer", color:"inherit", padding:4, display:"inline-flex", position:"relative" }}>
+          <button onClick={onOpenCart} style={{ background: "transparent", border: 0, cursor: "pointer", color: "inherit", padding: 4, display: "inline-flex", position: "relative" }}>
             <Icon.bag />
-            {cartCount > 0 && (
-              <span style={{ position:"absolute", top:-4, right:-6, background:"var(--olv-moss)", color:"var(--olv-cream)",
-                fontSize:10, fontWeight:600, borderRadius:999, minWidth:16, height:16, display:"grid", placeItems:"center", padding:"0 4px" }}>
+            {cartCount > 0 ? (
+              <span style={{ position: "absolute", top: -4, right: -6, background: "var(--olv-moss)", color: "var(--olv-cream)", fontSize: 10, fontWeight: 800, borderRadius: 999, minWidth: 16, height: 16, display: "grid", placeItems: "center", padding: "0 4px" }}>
                 {cartCount}
               </span>
-            )}
+            ) : null}
           </button>
         </div>
       </div>
@@ -204,26 +192,8 @@ function AppHeader({ cartCount, onOpenCart, route, setRoute, onMobileMenu, onSea
   );
 }
 
-/* ── Wishlist heart ── */
-function WishBtn({ id, wishlist, toggle }) {
-  const on = wishlist.includes(id);
-  return (
-    <button onClick={e => { e.stopPropagation(); toggle(id); }} title={on ? "Remove from wishlist" : "Save"} style={{
-      background: on ? "var(--olv-amber)" : "rgba(255,255,255,0.82)",
-      border: 0, width: 32, height: 32, borderRadius: "50%",
-      display: "grid", placeItems: "center", cursor: "pointer",
-      transition: "background .18s, transform .15s",
-      transform: on ? "scale(1.12)" : "scale(1)",
-    }}>
-      <svg viewBox="0 0 24 24" width="14" height="14" fill={on ? "var(--olv-ink)" : "none"}
-        stroke={on ? "var(--olv-ink)" : "currentColor"} strokeWidth="1.8">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-      </svg>
-    </button>
-  );
-}
-
 function App() {
+  const [lang, setLang] = useState(window.MUNISTER.defaultLang);
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [toast, setToast] = useState("");
@@ -232,86 +202,112 @@ function App() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [wishlist, setWishlist] = useState([]);
 
+  const copy = window.MUNISTER.getCopy(lang);
+  const products = window.MUNISTER.getProducts(lang);
+  const categoryCards = window.MUNISTER.getCategoryCards(lang);
+  const money = window.MUNISTER.formatPrice;
+
   useScrollReveal();
 
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 2400); };
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.title = copy.metaTitle;
+  }, [lang, copy.metaTitle]);
+
+  useEffect(() => {
+    setCart((prev) => prev.map((item) => {
+      const next = products.find((p) => p.id === item.id);
+      return next ? { ...item, name: next.name, note: next.note, image: next.image, tone: next.tone } : item;
+    }));
+    setRoute((prev) => {
+      if (typeof prev === "object" && prev.page === "pdp" && prev.product) {
+        const next = products.find((p) => p.id === prev.product.id);
+        return next ? { page: "pdp", product: next } : prev;
+      }
+      return prev;
+    });
+  }, [lang]);
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 2400);
+  };
 
   const addToCart = (p, qty = 1) => {
-    setCart(prev => {
-      const ex = prev.find(x => x.id === p.id && x.size === p.size);
-      if (ex) return prev.map(x => x === ex ? { ...x, qty: x.qty + qty } : x);
+    setCart((prev) => {
+      const existing = prev.find((x) => x.id === p.id && x.size === p.size);
+      if (existing) return prev.map((x) => x === existing ? { ...x, qty: x.qty + qty } : x);
       return [...prev, { ...p, qty }];
     });
-    showToast(`Added ${p.name} to bag`);
+    showToast(`${p.name} · ${copy.toasts.added}`);
   };
 
   const toggleWish = (id) => {
-    setWishlist(w => w.includes(id) ? w.filter(x => x !== id) : [...w, id]);
+    setWishlist((w) => w.includes(id) ? w.filter((x) => x !== id) : [...w, id]);
   };
 
-  const navTo = (r) => { setRoute(r); window.scrollTo({ top: 0 }); };
+  const navTo = (target) => {
+    setRoute(target);
+    setMobileOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-  // Keyboard shortcut: "/" opens search
   useEffect(() => {
-    const h = (e) => { if (e.key === "/" && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== "INPUT") { e.preventDefault(); setSearchOpen(true); } };
-    window.addEventListener("keydown", h);
-    return () => window.removeEventListener("keydown", h);
+    const handler = (e) => {
+      if (e.key === "/" && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== "INPUT") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  const cartCount = cart.reduce((s, it) => s + it.qty, 0);
+  const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
   const currentPage = typeof route === "object" ? route.page : route;
 
   const renderPage = () => {
     if (currentPage === "shop") {
-      return <div className="olv-page"><ShopPage products={PRODUCTS} onAdd={addToCart} setRoute={navTo} wishlist={wishlist} toggleWish={toggleWish} /></div>;
+      return <div className="olv-page"><ShopPage products={products} onAdd={addToCart} setRoute={navTo} copy={copy} money={money} /></div>;
     }
     if (currentPage === "gifts") {
-      return <div className="olv-page"><GiftsPage products={PRODUCTS} onAdd={addToCart} setRoute={navTo} /></div>;
+      return <div className="olv-page"><GiftsPage onAdd={addToCart} copy={copy} money={money} /></div>;
     }
     if (currentPage === "story") {
-      return <div className="olv-page"><StoryPage /></div>;
+      return <div className="olv-page"><StoryPage copy={copy} /></div>;
     }
     if (currentPage === "pdp" && route.product) {
-      return <div className="olv-page"><ProductDetailPage p={route.product} onAdd={addToCart} setRoute={navTo} allProducts={PRODUCTS} /></div>;
+      return <div className="olv-page"><ProductDetailPage p={route.product} onAdd={addToCart} setRoute={navTo} allProducts={products} copy={copy} money={money} /></div>;
     }
-    // Home
     return (
       <main className="olv-page">
-        <Hero onShop={() => navTo("shop")} onGifts={() => navTo("gifts")} />
-        <div className="olv-reveal"><PantryGrid onCategory={() => navTo("shop")} /></div>
-        <BestSellers
-          products={PRODUCTS} onAdd={addToCart}
-          onOpen={p => navTo({ page:"pdp", product:p })}
-          wishlist={wishlist} toggleWish={toggleWish}
-        />
-        <div className="olv-reveal"><FoundersNote /></div>
-        <div className="olv-reveal"><Newsletter /></div>
+        <Hero copy={copy} onShop={() => navTo("shop")} onGifts={() => navTo("gifts")} />
+        <div className="olv-reveal"><PantryGrid copy={copy} cards={categoryCards} onCategory={() => navTo("shop")} /></div>
+        <BestSellers products={products} copy={copy} money={money} onAdd={addToCart} onOpen={(p) => navTo({ page: "pdp", product: p })} wishlist={wishlist} toggleWish={toggleWish} />
+        <div className="olv-reveal"><FoundersNote copy={copy} /></div>
+        <div className="olv-reveal"><Newsletter copy={copy} /></div>
       </main>
     );
   };
 
-  const showNav = true;
-
   return (
     <div data-screen-label="Munister">
-      {showNav && (
-        <AppHeader
-          cartCount={cartCount}
-          onOpenCart={() => setCartOpen(true)}
-          onSearch={() => setSearchOpen(true)}
-          route={currentPage}
-          setRoute={navTo}
-          onMobileMenu={() => setMobileOpen(true)}
-        />
-      )}
+      <AppHeader
+        cartCount={cartCount}
+        onOpenCart={() => setCartOpen(true)}
+        onSearch={() => setSearchOpen(true)}
+        route={route}
+        setRoute={navTo}
+        onMobileMenu={() => setMobileOpen(true)}
+        copy={copy}
+        lang={lang}
+        setLang={setLang}
+      />
       {renderPage()}
-      {showNav && <Footer />}
-
-      <SearchOverlay products={PRODUCTS} open={searchOpen} onClose={() => setSearchOpen(false)}
-        onProduct={p => navTo({ page:"pdp", product:p })} />
-      <MobileNav open={mobileOpen} onClose={() => setMobileOpen(false)}
-        setRoute={navTo} cartCount={cartCount} onOpenCart={() => setCartOpen(true)} />
-      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} items={cart} setItems={setCart} />
+      <Footer copy={copy} />
+      <SearchOverlay products={products} open={searchOpen} onClose={() => setSearchOpen(false)} onProduct={(p) => navTo({ page: "pdp", product: p })} copy={copy} money={money} />
+      <MobileNav open={mobileOpen} onClose={() => setMobileOpen(false)} setRoute={navTo} cartCount={cartCount} onOpenCart={() => setCartOpen(true)} copy={copy} lang={lang} setLang={setLang} />
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} items={cart} setItems={setCart} copy={copy} money={money} />
       <Toast msg={toast} />
     </div>
   );
