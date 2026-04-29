@@ -57,7 +57,7 @@ function SearchOverlay({ products, open, onClose, onProduct }) {
               placeholder="Search oils, honey, vinegars, recipes…"
               style={{
                 flex: 1, border: 0, background: "transparent", outline: "none",
-                fontFamily: "'DM Serif Display', serif", fontSize: "clamp(22px, 2.8vw, 34px)",
+                fontFamily: "var(--font-display)", fontSize: "clamp(22px, 2.8vw, 34px)",
                 color: "var(--olv-ink)", letterSpacing: "-0.01em",
               }}
             />
@@ -69,7 +69,7 @@ function SearchOverlay({ products, open, onClose, onProduct }) {
           {/* Suggestions / results */}
           {q.length < 2 ? (
             <div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 14 }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 14 }}>
                 Try searching for
               </div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -77,7 +77,7 @@ function SearchOverlay({ products, open, onClose, onProduct }) {
                   <button key={s} onClick={() => setQ(s)} style={{
                     background: "var(--olv-cream)", border: "1px solid rgba(31,42,26,0.15)",
                     padding: "10px 16px", borderRadius: 999, cursor: "pointer",
-                    fontFamily: "'Inter', sans-serif", fontSize: 13.5, color: "var(--olv-ink)",
+                    fontFamily: "var(--font-body)", fontSize: 13.5, color: "var(--olv-ink)",
                     transition: "background .15s",
                   }}>{s}</button>
                 ))}
@@ -85,12 +85,12 @@ function SearchOverlay({ products, open, onClose, onProduct }) {
             </div>
           ) : results.length === 0 ? (
             <div style={{ textAlign: "center", padding: "40px 0" }}>
-              <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 28, color: "var(--olv-ink)", marginBottom: 8 }}>No results for "{q}"</div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: "var(--olv-ink-soft)" }}>Try "olive oil", "honey", or "vinegar".</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: 28, color: "var(--olv-ink)", marginBottom: 8 }}>No results for "{q}"</div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "var(--olv-ink-soft)" }}>Try "olive oil", "honey", or "vinegar".</div>
             </div>
           ) : (
             <div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 16 }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 16 }}>
                 {results.length} result{results.length !== 1 ? "s" : ""} for "{q}"
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 18 }}>
@@ -101,8 +101,8 @@ function SearchOverlay({ products, open, onClose, onProduct }) {
                       <Placeholder label={p.name} tone={p.tone} />
                     </div>
                     <div style={{ padding: "12px 14px" }}>
-                      <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 18, lineHeight: 1.1 }}>{p.name}</div>
-                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 4 }}>{p.note} · ${p.price}</div>
+                      <div style={{ fontFamily: "var(--font-display)", fontSize: 18, lineHeight: 1.1 }}>{p.name}</div>
+                      <div style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 4 }}>{p.note} · ${p.price}</div>
                     </div>
                   </button>
                 ))}

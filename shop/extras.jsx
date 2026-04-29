@@ -104,7 +104,7 @@ function CustomCursor() {
         overflow: "hidden",
       }}>
         <span className="cursor-label" style={{
-          fontFamily: "'JetBrains Mono', monospace",
+          fontFamily: "var(--font-mono)",
           fontSize: 8, letterSpacing: "0.12em", textTransform: "uppercase",
           color: "var(--olv-ink)", opacity: 0, transition: "opacity .2s",
           textAlign: "center", lineHeight: 1.2, padding: "0 4px",
@@ -176,13 +176,13 @@ function PantryBuilder({ products, onAdd, onClose }) {
     return (
       <div style={{ padding: "60px 40px", maxWidth: 900, marginInline: "auto" }}>
         <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 14 }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 14 }}>
             ✶ Your pantry, matched
           </div>
-          <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "clamp(36px, 4vw, 54px)", margin: "0 0 14px", fontWeight: 400, letterSpacing: "-0.01em" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(36px, 4vw, 54px)", margin: "0 0 14px", fontWeight: 400, letterSpacing: "-0.01em" }}>
             We found your four.
           </h2>
-          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: "var(--olv-ink-soft)", maxWidth: 480, marginInline: "auto", lineHeight: 1.55 }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: 15, color: "var(--olv-ink-soft)", maxWidth: 480, marginInline: "auto", lineHeight: 1.55 }}>
             Based on your answers — a {picks.mood} mood, {picks.use} style — here's where we'd start.
           </p>
         </div>
@@ -192,12 +192,12 @@ function PantryBuilder({ products, onAdd, onClose }) {
               <div style={{ aspectRatio: "3/4", marginBottom: 12 }}>
                 <Placeholder label={p.name} tone={p.tone} />
               </div>
-              <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 18 }}>{p.name}</div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 3, marginBottom: 12 }}>{p.note} · ${p.price}</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: 18 }}>{p.name}</div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 3, marginBottom: 12 }}>{p.note} · ${p.price}</div>
               <button onClick={() => onAdd(p)} style={{
                 background: "var(--olv-ink)", color: "var(--olv-cream)",
                 border: 0, padding: "10px 16px", borderRadius: 999, width: "100%",
-                fontFamily: "'Inter', sans-serif", fontSize: 12.5,
+                fontFamily: "var(--font-body)", fontSize: 12.5,
                 cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
               }}><Icon.plus /> Add to bag</button>
             </div>
@@ -207,12 +207,12 @@ function PantryBuilder({ products, onAdd, onClose }) {
           <button onClick={() => { setStep(0); setPicks({}); }} style={{
             background: "transparent", color: "var(--olv-ink-soft)",
             border: "1px solid rgba(31,42,26,0.2)", padding: "11px 22px", borderRadius: 999,
-            fontFamily: "'Inter', sans-serif", fontSize: 13, cursor: "pointer", marginRight: 10,
+            fontFamily: "var(--font-body)", fontSize: 13, cursor: "pointer", marginRight: 10,
           }}>Start over</button>
           <button onClick={onClose} style={{
             background: "var(--olv-amber)", color: "var(--olv-ink)",
             border: 0, padding: "11px 22px", borderRadius: 999,
-            fontFamily: "'Inter', sans-serif", fontSize: 13, cursor: "pointer",
+            fontFamily: "var(--font-body)", fontSize: 13, cursor: "pointer",
           }}>Back to shop <Icon.arrow /></button>
         </div>
       </div>
@@ -224,24 +224,24 @@ function PantryBuilder({ products, onAdd, onClose }) {
       {/* Progress */}
       <div style={{ background: "var(--olv-cream)", padding: "20px 28px", borderBottom: "1px solid rgba(31,42,26,0.08)" }}>
         <div style={{ maxWidth: 900, marginInline: "auto", display: "flex", alignItems: "center", gap: 18 }}>
-          <button onClick={onClose} style={{ background: "transparent", border: 0, cursor: "pointer", color: "var(--olv-ink-soft)", fontFamily: "'Inter', sans-serif", fontSize: 13 }}>← Back</button>
+          <button onClick={onClose} style={{ background: "transparent", border: 0, cursor: "pointer", color: "var(--olv-ink-soft)", fontFamily: "var(--font-body)", fontSize: 13 }}>← Back</button>
           <div style={{ flex: 1, height: 3, background: "rgba(31,42,26,0.1)", borderRadius: 999, overflow: "hidden" }}>
             <div style={{ width: `${((step) / steps.length) * 100}%`, height: "100%", background: "var(--olv-moss)", transition: "width .4s" }} />
           </div>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "0.16em", color: "var(--olv-ink-soft)" }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", color: "var(--olv-ink-soft)" }}>
             {step + 1} / {steps.length}
           </div>
         </div>
       </div>
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "64px 28px" }}>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 16 }}>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 16 }}>
           Question {step + 1}
         </div>
-        <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "clamp(32px, 4vw, 52px)", margin: "0 0 10px", fontWeight: 400, letterSpacing: "-0.015em", textAlign: "center" }}>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(32px, 4vw, 52px)", margin: "0 0 10px", fontWeight: 400, letterSpacing: "-0.015em", textAlign: "center" }}>
           {cur.q}
         </h2>
-        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: "var(--olv-ink-soft)", marginBottom: 44, textAlign: "center" }}>{cur.sub}</p>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: 15, color: "var(--olv-ink-soft)", marginBottom: 44, textAlign: "center" }}>{cur.sub}</p>
 
         <div style={{
           display: "grid",
@@ -266,9 +266,9 @@ function PantryBuilder({ products, onAdd, onClose }) {
                 transition: "all .18s",
               }}
             >
-              <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 32, marginBottom: 6 }}>{opt.icon}</div>
-              <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 21, marginBottom: 6, letterSpacing: "-0.01em" }}>{opt.label}</div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, opacity: 0.7, lineHeight: 1.4 }}>{opt.desc}</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: 32, marginBottom: 6 }}>{opt.icon}</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: 21, marginBottom: 6, letterSpacing: "-0.01em" }}>{opt.label}</div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: 13, opacity: 0.7, lineHeight: 1.4 }}>{opt.desc}</div>
             </button>
           ))}
         </div>
@@ -282,8 +282,6 @@ function MobileNav({ open, onClose, setRoute, cartCount, onOpenCart }) {
   const links = [
     { id: "shop", label: "Shop" },
     { id: "gifts", label: "Gifts" },
-    { id: "journal", label: "Journal" },
-    { id: "builder", label: "Build My Pantry ✦" },
     { id: "story", label: "Our Story" },
   ];
   return (
@@ -308,7 +306,7 @@ function MobileNav({ open, onClose, setRoute, cartCount, onOpenCart }) {
         <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
           {links.map(l => (
             <a key={l.id} href="#" onClick={(e) => { e.preventDefault(); setRoute(l.id); onClose(); }} style={{
-              fontFamily: "'DM Serif Display', serif", fontSize: 28,
+              fontFamily: "var(--font-display)", fontSize: 28,
               color: "var(--olv-ink)", textDecoration: "none",
               padding: "10px 0", borderBottom: "1px solid rgba(31,42,26,0.06)",
               letterSpacing: "-0.01em",
@@ -317,9 +315,9 @@ function MobileNav({ open, onClose, setRoute, cartCount, onOpenCart }) {
         </nav>
         <div style={{ marginTop: "auto" }}>
           <button onClick={() => { onOpenCart(); onClose(); }} style={{
-            width: "100%", background: "var(--olv-ink)", color: "var(--olv-cream)",
+            width: "100%", background: "var(--olv-ink)", color: "var(--olv-surface)",
             border: 0, padding: "14px 20px", borderRadius: 999,
-            fontFamily: "'Inter', sans-serif", fontSize: 13.5, cursor: "pointer",
+            fontFamily: "var(--font-label)", fontSize: 13.5, cursor: "pointer",
             display: "flex", justifyContent: "center", alignItems: "center", gap: 8,
           }}>
             <Icon.bag /> Bag ({cartCount})

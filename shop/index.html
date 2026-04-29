@@ -6,31 +6,34 @@
 <title>Munister — The slowly-made pantry</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@300;400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@300;400;450;500;600&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    /* Dark terroir luxury palette */
-    --olv-bg:          #0C1208;
-    --olv-surface:     #141A0E;
-    --olv-cream:       #1B2413;   /* "lighter" dark surface */
-    --olv-ink:         #EDE4CE;   /* warm champagne text */
-    --olv-ink-soft:    #7A8268;
-    --olv-moss:        #3E5A2A;
-    --olv-amber:       #C9A040;   /* burnished gold */
-    --olv-amber-soft:  rgba(201,160,64,0.12);
-    --olv-terra:       #B5622E;
-    --olv-plum:        #3A1E2A;
-    --olv-terracotta:  #8A3E22;
-    --olv-light:       #F0E8D4;   /* cream for contrast sections */
-    --olv-border:      rgba(237,228,206,0.08);
-    --olv-border-gold: rgba(201,160,64,0.3);
+    --olv-bg:          #f7f1e6;
+    --olv-surface:     #fffaf2;
+    --olv-cream:       #efe3d2;
+    --olv-ink:         #233126;
+    --olv-ink-soft:    #6a7464;
+    --olv-moss:        #55664a;
+    --olv-amber:       #d56c3d;
+    --olv-amber-soft:  rgba(213,108,61,0.12);
+    --olv-terra:       #bb6c44;
+    --olv-plum:        #6e5552;
+    --olv-terracotta:  #b86a48;
+    --olv-light:       #fffdf8;
+    --olv-border:      rgba(35,49,38,0.11);
+    --olv-border-gold: rgba(213,108,61,0.32);
+    --font-display:    'Cormorant Garamond', serif;
+    --font-body:       'Manrope', sans-serif;
+    --font-label:      var(--font-body);
+    --font-mono:       var(--font-mono);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--olv-bg); color: var(--olv-ink); }
-  body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  button { font-family: inherit; }
+  button, input, select { font-family: inherit; }
 
   /* Category card hover arrow */
   .mn-cat-card:hover .mn-cat-arrow { opacity: 1 !important; }
@@ -96,25 +99,14 @@
   transform: translateY(0);
 }
 </style>
-<script type="text/babel" src="tweaks-panel.jsx"></script>
 <script type="text/babel" src="components.jsx"></script>
 <script type="text/babel" src="shop-pdp.jsx"></script>
 <script type="text/babel" src="extras.jsx"></script>
 <script type="text/babel" src="pages.jsx"></script>
 <script type="text/babel" src="search.jsx"></script>
-<script type="text/babel" src="flavor-compass.jsx"></script>
 
 <script type="text/babel">
-const { useState, useMemo, useEffect, useRef } = React;
-
-const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "palette": "forest",
-  "heroVariant": "editorial",
-  "showMarquee": true,
-  "showFoundersNote": true,
-  "headline": "The pantry, slowly made.",
-  "accent": "amber"
-}/*EDITMODE-END*/;
+const { useState, useEffect } = React;
 
 const PRODUCTS = [
   { id: "evoo-robusto", cat: "evoo", name: "Robusto Verde EVOO", note: "bold · peppery · grass", size: "350ml", price: 36, tone: "amber", tag: "Bestseller", rating: 4.9, reviews: 612, lot: "2026-04A", region: "Iza Valley", harvest: "Oct 2025 harvest", shelf: "Best within 18mo", desc: "Pressed from Koroneiki olives picked the morning of October 12. Polyphenol-rich and assertive — a finishing oil for tomatoes, beans, grilled bread and almost everything else.", tasting: ["Pepper", "Cut grass", "Artichoke"], sizes: [{label: "100ml", price: 14}, {label: "350ml", price: 36}, {label: "500ml", price: 48}] },
@@ -147,7 +139,7 @@ function useScrollReveal() {
 }
 
 /* ── Scroll-shrink Header ── */
-function AppHeader({ cartCount, onOpenCart, route, setRoute, onMobileMenu, onBuilder, onSearch }) {
+function AppHeader({ cartCount, onOpenCart, route, setRoute, onMobileMenu, onSearch }) {
   const [compact, setCompact] = useState(false);
   useEffect(() => {
     const onScroll = () => setCompact(window.scrollY > 60);
@@ -155,16 +147,17 @@ function AppHeader({ cartCount, onOpenCart, route, setRoute, onMobileMenu, onBui
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const pad = compact ? "10px 28px" : "16px 28px";
-  const logoSz = compact ? 17 : 20;
+  const pad = compact ? "12px 28px" : "18px 28px";
+  const logoSz = compact ? 17 : 21;
 
   return (
     <header style={{
-      background: "var(--olv-bg)",
-      borderBottom: "1px solid rgba(31,42,26,0.08)",
+      background: "rgba(247,241,230,0.92)",
+      borderBottom: "1px solid var(--olv-border)",
       position: "sticky", top: 0, zIndex: 50,
-      transition: "box-shadow .25s",
-      boxShadow: compact ? "0 4px 20px rgba(31,42,26,0.07)" : "none",
+      transition: "box-shadow .25s, background .25s",
+      boxShadow: compact ? "0 8px 30px rgba(60,48,31,0.08)" : "none",
+      backdropFilter: "blur(10px)",
     }}>
       {!compact && <AnnouncementBar />}
       <div style={{ display:"grid", gridTemplateColumns:"1fr auto 1fr", alignItems:"center", padding: pad, transition:"padding .25s" }}>
@@ -176,20 +169,15 @@ function AppHeader({ cartCount, onOpenCart, route, setRoute, onMobileMenu, onBui
             <span style={{ width:16, height:1.5, background:"currentColor", display:"block" }} />
             <span style={{ width:22, height:1.5, background:"currentColor", display:"block" }} />
           </button>
-          <nav className="olv-desktop-nav" style={{ display:"flex", gap:20, fontSize:13.5, fontFamily:"'Inter', sans-serif", alignItems:"center" }}>
-            {[["shop","Shop"],["gifts","Gifts"],["journal","Journal"],["story","Our Story"]].map(([id,label]) => (
+          <nav className="olv-desktop-nav" style={{ display:"flex", gap:22, fontSize:13, fontFamily:"var(--font-label)", alignItems:"center" }}>
+            {[["shop","Shop"],["gifts","Gifts"],["story","Our Story"]].map(([id,label]) => (
               <a key={id} href="#" onClick={e => { e.preventDefault(); setRoute(id); }}
-                style={{ color:"var(--olv-ink)", textDecoration:"none", fontWeight:450,
-                  paddingBottom:2, borderBottom: route===id ? "1px solid var(--olv-ink)" : "1px solid transparent",
+                style={{ color:"var(--olv-ink)", textDecoration:"none", fontWeight:600, letterSpacing:"0.08em", textTransform:"uppercase",
+                  paddingBottom:4, borderBottom: route===id ? "1px solid var(--olv-amber)" : "1px solid transparent",
                   transition:"border-color .15s" }}>
                 {label}
               </a>
             ))}
-            <a href="#" onClick={e => { e.preventDefault(); onBuilder(); }}
-              style={{ color:"var(--olv-moss)", textDecoration:"none", fontWeight:500, fontSize:12.5,
-                background:"rgba(62,74,53,0.09)", padding:"5px 11px", borderRadius:999 }}>
-              ✦ Build pantry
-            </a>
           </nav>
         </div>
         {/* Logo */}
@@ -198,10 +186,9 @@ function AppHeader({ cartCount, onOpenCart, route, setRoute, onMobileMenu, onBui
         </a>
         {/* Right */}
         <div style={{ display:"flex", gap:14, justifyContent:"flex-end", alignItems:"center", color:"var(--olv-ink)" }}>
-          <button onClick={onSearch} style={{ background:"transparent", border:0, cursor:"pointer", color:"inherit", padding:4, display:"inline-flex", gap:6, alignItems:"center", fontFamily:"'Inter',sans-serif", fontSize:13 }}>
+          <button onClick={onSearch} style={{ background:"transparent", border:0, cursor:"pointer", color:"inherit", padding:4, display:"inline-flex", gap:6, alignItems:"center", fontFamily:"var(--font-label)", fontSize:12.5, letterSpacing:"0.08em", textTransform:"uppercase" }}>
             <Icon.search /> <span className="olv-desktop-nav">Search</span>
           </button>
-          <button style={{ background:"transparent", border:0, cursor:"pointer", color:"inherit", padding:4, display:"inline-flex" }}><Icon.user /></button>
           <button onClick={onOpenCart} style={{ background:"transparent", border:0, cursor:"pointer", color:"inherit", padding:4, display:"inline-flex", position:"relative" }}>
             <Icon.bag />
             {cartCount > 0 && (
@@ -237,7 +224,6 @@ function WishBtn({ id, wishlist, toggle }) {
 }
 
 function App() {
-  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [toast, setToast] = useState("");
@@ -272,31 +258,10 @@ function App() {
     return () => window.removeEventListener("keydown", h);
   }, []);
 
-  useEffect(() => {
-    const palettes = {
-      forest: { bg:"#0C1208", surface:"#141A0E", cream:"#1B2413", ink:"#EDE4CE", inkSoft:"#7A8268", moss:"#3E5A2A", amber:"#C9A040", amberSoft:"rgba(201,160,64,0.12)", border:"rgba(237,228,206,0.08)", borderGold:"rgba(201,160,64,0.3)" },
-      obsidian:{ bg:"#080808", surface:"#111111", cream:"#1A1A1A", ink:"#F0E8D8", inkSoft:"#666", moss:"#2A3820", amber:"#D4A840", amberSoft:"rgba(212,168,64,0.12)", border:"rgba(240,232,216,0.07)", borderGold:"rgba(212,168,64,0.28)" },
-      wine:   { bg:"#0E080C", surface:"#160C12", cream:"#1E1018", ink:"#F0DDD8", inkSoft:"#7A5E62", moss:"#4A2030", amber:"#C87860", amberSoft:"rgba(200,120,96,0.12)", border:"rgba(240,221,216,0.07)", borderGold:"rgba(200,120,96,0.28)" },
-      slate:  { bg:"#0A0D12", surface:"#111520", cream:"#181C28", ink:"#DDE4F0", inkSoft:"#6070A0", moss:"#1E3058", amber:"#6090D8", amberSoft:"rgba(96,144,216,0.12)", border:"rgba(221,228,240,0.07)", borderGold:"rgba(96,144,216,0.28)" },
-    };
-    const pal = palettes[tweaks.palette] || palettes.forest;
-    const r = document.documentElement;
-    Object.entries({
-      "--olv-bg": pal.bg, "--olv-surface": pal.surface, "--olv-cream": pal.cream,
-      "--olv-ink": pal.ink, "--olv-ink-soft": pal.inkSoft, "--olv-moss": pal.moss,
-      "--olv-amber": pal.amber, "--olv-amber-soft": pal.amberSoft,
-      "--olv-border": pal.border, "--olv-border-gold": pal.borderGold,
-      "--olv-light": pal.light || "#F0E8D4",
-    }).forEach(([k,v]) => r.style.setProperty(k,v));
-  }, [tweaks.palette]);
-
   const cartCount = cart.reduce((s, it) => s + it.qty, 0);
   const currentPage = typeof route === "object" ? route.page : route;
 
   const renderPage = () => {
-    if (currentPage === "builder") {
-      return <div className="olv-page"><PantryBuilder products={PRODUCTS} onAdd={addToCart} onClose={() => navTo("shop")} /></div>;
-    }
     if (currentPage === "shop") {
       return <div className="olv-page"><ShopPage products={PRODUCTS} onAdd={addToCart} setRoute={navTo} wishlist={wishlist} toggleWish={toggleWish} /></div>;
     }
@@ -315,46 +280,23 @@ function App() {
     // Home
     return (
       <main className="olv-page">
-        <Hero onShop={() => navTo("shop")} headline={tweaks.headline} />
-        {tweaks.showMarquee && <Marquee />}
+        <Hero onShop={() => navTo("shop")} />
         <div className="olv-reveal"><PantryGrid onCategory={() => navTo("shop")} /></div>
         <BestSellers
           products={PRODUCTS} onAdd={addToCart}
           onOpen={p => navTo({ page:"pdp", product:p })}
           wishlist={wishlist} toggleWish={toggleWish}
         />
-        <div className="olv-reveal">
-          <FlavorCompass products={PRODUCTS} onOpen={p => navTo({ page:"pdp", product:p })} />
-        </div>
-        <div className="olv-reveal"><FeaturedSlab /></div>
-        <div className="olv-reveal"><Editorial /></div>
-        {tweaks.showFoundersNote && <div className="olv-reveal"><FoundersNote /></div>}
-        <div className="olv-reveal"><Journal onMore={() => navTo("journal")} /></div>
-        <div className="olv-reveal" style={{ background:"var(--olv-amber)", padding:"64px 28px", textAlign:"center" }}>
-          <div style={{ fontFamily:"'JetBrains Mono', monospace", fontSize:11, letterSpacing:"0.22em", textTransform:"uppercase", color:"var(--olv-ink)", opacity:0.65, marginBottom:14 }}>✦ Not sure where to start?</div>
-          <h2 style={{ fontFamily:"'DM Serif Display', serif", fontSize:"clamp(30px,3.6vw,46px)", margin:"0 0 12px", fontWeight:400, letterSpacing:"-0.01em" }}>
-            Build your perfect pantry in 3 questions.
-          </h2>
-          <p style={{ fontFamily:"'Inter', sans-serif", fontSize:15, color:"var(--olv-ink)", opacity:0.78, marginBottom:28, maxWidth:480, marginInline:"auto", lineHeight:1.55 }}>
-            Tell us your mood, how you cook, and your budget. We'll match you to your four.
-          </p>
-          <button onClick={() => navTo("builder")} style={{
-            background:"var(--olv-ink)", color:"var(--olv-cream)", border:0,
-            padding:"15px 28px", borderRadius:999, fontFamily:"'Inter', sans-serif",
-            fontSize:14, fontWeight:500, cursor:"pointer",
-            display:"inline-flex", alignItems:"center", gap:8,
-          }}>Start the quiz <Icon.arrow /></button>
-        </div>
+        <div className="olv-reveal"><FoundersNote /></div>
         <div className="olv-reveal"><Newsletter /></div>
       </main>
     );
   };
 
-  const showNav = currentPage !== "builder";
+  const showNav = true;
 
   return (
     <div data-screen-label="Munister">
-      <CustomCursor />
       {showNav && (
         <AppHeader
           cartCount={cartCount}
@@ -363,7 +305,6 @@ function App() {
           route={currentPage}
           setRoute={navTo}
           onMobileMenu={() => setMobileOpen(true)}
-          onBuilder={() => navTo("builder")}
         />
       )}
       {renderPage()}
@@ -375,20 +316,6 @@ function App() {
         setRoute={navTo} cartCount={cartCount} onOpenCart={() => setCartOpen(true)} />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} items={cart} setItems={setCart} />
       <Toast msg={toast} />
-
-      <TweaksPanel title="Munister">
-        <TweakSection label="Palette">
-          <TweakRadio value={tweaks.palette} onChange={v => setTweak("palette",v)}
-            options={[{value:"forest",label:"Forest"},{value:"obsidian",label:"Obsidian"},{value:"wine",label:"Wine"},{value:"slate",label:"Slate"}]} />
-        </TweakSection>
-        <TweakSection label="Sections">
-          <TweakToggle label="Marquee strip" value={tweaks.showMarquee} onChange={v => setTweak("showMarquee",v)} />
-          <TweakToggle label="Founder's note" value={tweaks.showFoundersNote} onChange={v => setTweak("showFoundersNote",v)} />
-        </TweakSection>
-        <TweakSection label="Hero copy">
-          <TweakText label="Headline" value={tweaks.headline} onChange={v => setTweak("headline",v)} />
-        </TweakSection>
-      </TweaksPanel>
     </div>
   );
 }
