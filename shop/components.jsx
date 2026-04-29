@@ -91,7 +91,7 @@ function Marquee() {
 }
 
 /* ── Hero ────────────────────────────────────────────────────── */
-function Hero({ onShop }) {
+function Hero({ onShop, onGifts }) {
   return (
     <section style={{ background:"linear-gradient(180deg, #fbf6ee 0%, #f3e7d8 100%)", minHeight:"88vh", display:"grid", gridTemplateColumns:"1.05fr 0.95fr", position:"relative", borderBottom:"1px solid var(--olv-border)" }} className="olv-hero-grid">
       <div style={{ display:"flex", flexDirection:"column", justifyContent:"center", padding:"72px 60px 72px 52px", position:"relative" }} className="olv-hero-padding">
@@ -113,7 +113,7 @@ function Hero({ onShop }) {
           </p>
           <div style={{ display:"flex", gap:12 }}>
             <button onClick={onShop} style={btnPrimary}>Shop the pantry <Icon.arrow /></button>
-            <button style={btnGold}>See gift sets</button>
+            <button onClick={onGifts} style={btnGold}>See gift sets</button>
           </div>
           <div style={{ marginTop:48, display:"flex", gap:36, paddingTop:28, borderTop:"1px solid var(--olv-border)" }}>
             {[["14","Partner farms"],["48 hrs","Press to bottle"],["Gift-ready","By design"]].map(([n,l])=>(
@@ -154,7 +154,6 @@ function PantryGrid({ onCategory }) {
     { id:"honey",   label:"Wild Honey",   n:"02", tone:"amber", img:"honey jars · forest light" },
     { id:"vinegar", label:"Vinegars",     n:"03", tone:"plum",  img:"vinegar · cherry, rose" },
     { id:"infused", label:"Infused Oils", n:"04", tone:"moss",  img:"garlic & basil infused" },
-    { id:"kitchen", label:"Kitchen",      n:"05", tone:"dark",  img:"ceramics, spoon, linen" },
   ];
   return (
     <section style={{ background:"var(--olv-surface)", padding:"90px 0 0" }}>
@@ -413,9 +412,9 @@ function Newsletter() {
 /* ── Footer ──────────────────────────────────────────────────── */
 function Footer() {
   const cols = [
-    { h:"Shop",    items:["Olive Oils","Wild Honey","Vinegars","Infused Oils","Kitchen","Gift Sets"] },
-    { h:"Explore", items:["Our Story","Field Journal","Recipes","Press","Trade & Wholesale"] },
-    { h:"Help",    items:["Shipping","Returns & Refills","Contact","FAQ","Find a Stockist"] },
+    { h:"Shop",    items:["Olive Oils","Wild Honey","Vinegars","Infused Oils","Gift Sets"] },
+    { h:"Explore", items:["Our Story","Gift Sets","Best Sellers","Find a Stockist"] },
+    { h:"Help",    items:["Shipping","Returns & Refills","Contact","FAQ"] },
   ];
   return (
     <footer style={{ background:"#efe2d0", color:"var(--olv-ink)", padding:"80px 48px 32px", borderTop:"1px solid var(--olv-border)" }}>
