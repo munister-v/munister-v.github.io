@@ -40,7 +40,7 @@ function SearchOverlay({ products, open, onClose, onProduct, copy, money }) {
 
           {q.length < 2 ? (
             <div>
-              <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 14, fontWeight: 800 }}>
+              <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 14, fontWeight: 700 }}>
                 {copy.search.try}
               </div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -54,11 +54,11 @@ function SearchOverlay({ products, open, onClose, onProduct, copy, money }) {
           ) : results.length === 0 ? (
             <div style={{ textAlign: "center", padding: "40px 0" }}>
               <div style={{ fontFamily: "var(--font-display)", fontSize: 30, color: "var(--olv-ink)", marginBottom: 8, fontWeight: 700 }}>{copy.search.empty}</div>
-              <div style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "var(--olv-ink-soft)", fontWeight: 600 }}>{copy.search.emptyBody}</div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "var(--olv-ink-soft)", fontWeight: 500 }}>{copy.search.emptyBody}</div>
             </div>
           ) : (
             <div>
-              <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 16, fontWeight: 800 }}>
+              <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 16, fontWeight: 700 }}>
                 {results.length} {copy.search.results}
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: 18 }}>
@@ -69,7 +69,7 @@ function SearchOverlay({ products, open, onClose, onProduct, copy, money }) {
                     </div>
                     <div style={{ padding: "12px 14px" }}>
                       <div style={{ fontFamily: "var(--font-display)", fontSize: 20, lineHeight: 1.08, fontWeight: 700 }}>{p.name}</div>
-                      <div style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--olv-ink-soft)", marginTop: 4, fontWeight: 600 }}>{p.note} · {money(p.price)}</div>
+                      <div style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--olv-ink-soft)", marginTop: 4, fontWeight: 500 }}>{p.note} · {money(p.price)}</div>
                     </div>
                   </button>
                 ))}

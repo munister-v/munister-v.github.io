@@ -19,13 +19,13 @@ function ShopPage({ products, onAdd, setRoute, copy, money }) {
     <div style={{ background: "var(--olv-bg)", minHeight: "100vh" }}>
       <div style={{ background: "var(--olv-cream)", padding: "64px 28px 44px", borderBottom: "1px solid rgba(31,42,26,0.08)" }}>
         <div style={{ maxWidth: 1400, marginInline: "auto" }}>
-          <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 12, fontWeight: 800 }}>
+          <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 12, fontWeight: 700 }}>
             {copy.shop.eyebrow}
           </div>
           <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(44px,5vw,72px)", margin: 0, fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1 }}>
             {copy.shop.title}
           </h1>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: 15, color: "var(--olv-ink-soft)", marginTop: 14, maxWidth: 620, lineHeight: 1.65, fontWeight: 600 }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: 15, color: "var(--olv-ink-soft)", marginTop: 14, maxWidth: 620, lineHeight: 1.65, fontWeight: 500 }}>
             {filtered.length} {copy.shop.body}
           </p>
         </div>
@@ -46,7 +46,7 @@ function ShopPage({ products, onAdd, setRoute, copy, money }) {
                   borderRadius: 999,
                   fontFamily: "var(--font-label)",
                   fontSize: 12,
-                  fontWeight: 800,
+                  fontWeight: 700,
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
                   cursor: "pointer",
@@ -80,7 +80,7 @@ function ShopPage({ products, onAdd, setRoute, copy, money }) {
                     padding: "8px 14px",
                     fontSize: 11.5,
                     fontFamily: "var(--font-label)",
-                    fontWeight: 800,
+                    fontWeight: 700,
                     letterSpacing: "0.1em",
                     textTransform: "uppercase",
                     cursor: "pointer",
@@ -135,10 +135,10 @@ function ShopCard({ p, i, onAdd, onClick, copy, money }) {
       <div onClick={onClick} style={{ position: "relative", aspectRatio: "4/5", cursor: "pointer", overflow: "hidden" }}>
         <Placeholder src={p.image} label={p.name} tone={p.tone} />
         <div style={{ position: "absolute", inset: 0, background: hover ? "linear-gradient(to top, rgba(31,42,26,0.26), rgba(31,42,26,0.02))" : "transparent", transition: "background .25s" }} />
-        {p.tag ? <span style={{ position: "absolute", top: 12, left: 12, background: "rgba(255,250,242,0.94)", color: "var(--olv-ink)", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", padding: "5px 9px", fontWeight: 800 }}>{p.tag}</span> : null}
+        {p.tag ? <span style={{ position: "absolute", top: 12, left: 12, background: "rgba(255,250,242,0.94)", color: "var(--olv-ink)", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", padding: "5px 9px", fontWeight: 700 }}>{p.tag}</span> : null}
         <div style={{ position: "absolute", bottom: 12, left: 12, right: 12, display: "flex", gap: 5, flexWrap: "wrap", transform: hover ? "translateY(0)" : "translateY(10px)", opacity: hover ? 1 : 0, transition: "all .25s" }}>
           {p.tasting.map((t) => (
-            <span key={t} style={{ background: "rgba(251,247,238,0.92)", fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: "0.16em", textTransform: "uppercase", padding: "5px 8px", color: "var(--olv-ink)", fontWeight: 800 }}>{t}</span>
+            <span key={t} style={{ background: "rgba(251,247,238,0.92)", fontFamily: "var(--font-label)", fontSize: 9, letterSpacing: "0.16em", textTransform: "uppercase", padding: "5px 8px", color: "var(--olv-ink)", fontWeight: 700 }}>{t}</span>
           ))}
         </div>
       </div>
@@ -147,12 +147,12 @@ function ShopCard({ p, i, onAdd, onClick, copy, money }) {
           <div style={{ fontFamily: "var(--font-display)", fontSize: 22, letterSpacing: "-0.02em", lineHeight: 1.08, fontWeight: 700 }}>{p.name}</div>
           <div style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 700 }}>{money(p.price)}</div>
         </div>
-        <div style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--olv-ink-soft)", marginTop: 4, fontWeight: 600 }}>{p.note} · {p.size}</div>
+        <div style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--olv-ink-soft)", marginTop: 4, fontWeight: 500 }}>{p.note} · {p.size}</div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, gap: 12 }}>
           <div style={{ fontFamily: "var(--font-body)", fontSize: 11.5, color: "var(--olv-ink-soft)", display: "flex", gap: 4, alignItems: "center", fontWeight: 700 }}>
             <Icon.star style={{ color: "var(--olv-amber)" }} /> {p.rating} <span style={{ opacity: 0.55 }}>({p.reviews})</span>
           </div>
-          <button onClick={(e) => { e.stopPropagation(); onAdd(p); }} style={{ background: hover ? "var(--olv-ink)" : "transparent", color: hover ? "var(--olv-cream)" : "var(--olv-ink)", border: "1px solid rgba(31,42,26,0.3)", padding: "8px 14px", borderRadius: 999, fontFamily: "var(--font-label)", fontSize: 11.5, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", transition: "all .2s", display: "inline-flex", alignItems: "center", gap: 5 }}>
+          <button onClick={(e) => { e.stopPropagation(); onAdd(p); }} style={{ background: hover ? "var(--olv-ink)" : "transparent", color: hover ? "var(--olv-cream)" : "var(--olv-ink)", border: "1px solid rgba(31,42,26,0.3)", padding: "8px 14px", borderRadius: 999, fontFamily: "var(--font-label)", fontSize: 11.5, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", transition: "all .2s", display: "inline-flex", alignItems: "center", gap: 5 }}>
             <Icon.plus /> {copy.shop.add}
           </button>
         </div>
@@ -169,10 +169,10 @@ function ShopListRow({ p, onAdd, onClick, copy, money }) {
       </div>
       <div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 24, letterSpacing: "-0.02em", fontWeight: 700 }}>{p.name}</div>
-        <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--olv-ink-soft)", marginTop: 4, fontWeight: 600 }}>{p.note} · {p.size} · {p.lot}</div>
+        <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--olv-ink-soft)", marginTop: 4, fontWeight: 500 }}>{p.note} · {p.size} · {p.lot}</div>
         <div style={{ display: "flex", gap: 6, marginTop: 10, flexWrap: "wrap" }}>
           {p.tasting.map((t) => (
-            <span key={t} style={{ fontFamily: "var(--font-label)", fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase", border: "1px solid rgba(31,42,26,0.15)", padding: "4px 8px", color: "var(--olv-ink)", fontWeight: 800 }}>{t}</span>
+            <span key={t} style={{ fontFamily: "var(--font-label)", fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase", border: "1px solid rgba(31,42,26,0.15)", padding: "4px 8px", color: "var(--olv-ink)", fontWeight: 700 }}>{t}</span>
           ))}
         </div>
       </div>
@@ -208,7 +208,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
 
   return (
     <div style={{ background: "var(--olv-bg)" }}>
-      <div style={{ padding: "18px 28px", borderBottom: "1px solid rgba(31,42,26,0.07)", fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink-soft)", fontWeight: 800 }}>
+      <div style={{ padding: "18px 28px", borderBottom: "1px solid rgba(31,42,26,0.07)", fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink-soft)", fontWeight: 700 }}>
         <a href="#" onClick={(e) => { e.preventDefault(); setRoute("home"); }} style={{ color: "inherit", textDecoration: "none" }}>{copy.shop.backHome}</a>
         {" · "}
         <a href="#" onClick={(e) => { e.preventDefault(); setRoute("shop"); }} style={{ color: "inherit", textDecoration: "none" }}>{copy.shop.backShop}</a>
@@ -219,14 +219,14 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 620 }} className="olv-pdp-hero">
         <div style={{ position: "relative" }}>
           <Placeholder src={p.image} label={p.name} tone={p.tone} style={{ position: "absolute", inset: 0 }} />
-          <div style={{ position: "absolute", top: 24, left: 24, background: "rgba(255,250,242,0.94)", padding: "10px 14px", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink)", fontWeight: 800 }}>
+          <div style={{ position: "absolute", top: 24, left: 24, background: "rgba(255,250,242,0.94)", padding: "10px 14px", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink)", fontWeight: 700 }}>
             {p.lot} · {p.harvest}
           </div>
         </div>
 
         <div ref={panelRef} style={{ padding: "56px 60px", display: "flex", flexDirection: "column", gap: 20, background: "var(--olv-cream)" }}>
           <div>
-            <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", fontWeight: 800 }}>{p.region}</div>
+            <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", fontWeight: 700 }}>{p.region}</div>
             <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(34px,3.2vw,48px)", margin: "10px 0 0", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.04 }}>{p.name}</h1>
           </div>
 
@@ -238,11 +238,11 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
             <span style={{ color: "var(--olv-ink-soft)" }}>({p.reviews})</span>
           </div>
 
-          <p style={{ fontFamily: "var(--font-body)", fontSize: 15.5, lineHeight: 1.7, color: "var(--olv-ink)", margin: 0, fontWeight: 600 }}>{p.desc}</p>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: 15.5, lineHeight: 1.7, color: "var(--olv-ink)", margin: 0, fontWeight: 500 }}>{p.desc}</p>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
             {p.tasting.map((t) => (
-              <div key={t} style={{ border: "1px solid rgba(31,42,26,0.14)", padding: "10px 8px", textAlign: "center", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--olv-ink)", fontWeight: 800 }}>
+              <div key={t} style={{ border: "1px solid rgba(31,42,26,0.14)", padding: "10px 8px", textAlign: "center", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--olv-ink)", fontWeight: 700 }}>
                 {t}
               </div>
             ))}
@@ -250,7 +250,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
 
           {sizes.length > 1 ? (
             <div>
-              <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 10, fontWeight: 800 }}>{copy.shop.size}</div>
+              <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginBottom: 10, fontWeight: 700 }}>{copy.shop.size}</div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {sizes.map((s, i) => (
                   <button key={s.label} onClick={() => setSize(i)} style={{ border: `1.5px solid ${size === i ? "var(--olv-ink)" : "rgba(31,42,26,0.2)"}`, background: size === i ? "var(--olv-ink)" : "transparent", color: size === i ? "var(--olv-cream)" : "var(--olv-ink)", padding: "10px 16px", borderRadius: 999, fontFamily: "var(--font-body)", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
@@ -270,11 +270,11 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
               <button onClick={() => setQty((q) => q + 1)} style={{ background: "transparent", border: 0, cursor: "pointer", color: "var(--olv-ink)", padding: "10px 14px", display: "inline-flex" }}><Icon.plus /></button>
             </div>
           </div>
-          <button onClick={handleAdd} style={{ background: addedPulse ? "var(--olv-moss)" : "var(--olv-ink)", color: "var(--olv-cream)", border: 0, padding: "16px 28px", borderRadius: 999, fontFamily: "var(--font-label)", fontSize: 12.5, fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: 8, transition: "background .25s" }}>
+          <button onClick={handleAdd} style={{ background: addedPulse ? "var(--olv-moss)" : "var(--olv-ink)", color: "var(--olv-cream)", border: 0, padding: "16px 28px", borderRadius: 999, fontFamily: "var(--font-label)", fontSize: 12.5, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: 8, transition: "background .25s" }}>
             {addedPulse ? <><Icon.check /> {copy.shop.added}</> : <>{copy.shop.addBag} · {money(active.price * qty)} <Icon.arrow /></>}
           </button>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 4, fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--olv-ink-soft)", fontWeight: 800 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 4, fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--olv-ink-soft)", fontWeight: 700 }}>
             <div>{p.shelf}</div>
             <div>{p.harvest}</div>
           </div>
@@ -292,7 +292,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
               { id: "pairings", label: copy.shop.pairings },
               { id: "reviews", label: copy.shop.reviews },
             ].map((entry) => (
-              <button key={entry.id} onClick={() => setTab(entry.id)} style={{ background: "transparent", border: 0, borderBottom: tab === entry.id ? "2px solid var(--olv-ink)" : "2px solid transparent", padding: "18px 22px", fontFamily: "var(--font-label)", fontSize: 12, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: tab === entry.id ? "var(--olv-ink)" : "var(--olv-ink-soft)", cursor: "pointer", marginBottom: -1 }}>
+              <button key={entry.id} onClick={() => setTab(entry.id)} style={{ background: "transparent", border: 0, borderBottom: tab === entry.id ? "2px solid var(--olv-ink)" : "2px solid transparent", padding: "18px 22px", fontFamily: "var(--font-label)", fontSize: 12, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: tab === entry.id ? "var(--olv-ink)" : "var(--olv-ink-soft)", cursor: "pointer", marginBottom: -1 }}>
                 {entry.label}
               </button>
             ))}
@@ -303,8 +303,8 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
               <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 60, alignItems: "start" }} className="olv-founder-grid">
                 <div>
                   <h3 style={{ fontFamily: "var(--font-display)", fontSize: 38, margin: "0 0 18px", fontWeight: 700, letterSpacing: "-0.03em" }}>{copy.shop.storyHeading}</h3>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: 15.5, lineHeight: 1.72, color: "var(--olv-ink)", margin: 0, fontWeight: 600 }}>{p.story}</p>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: 15.5, lineHeight: 1.72, color: "var(--olv-ink)", marginTop: 16, fontWeight: 600 }}>{copy.shop.storyBody}</p>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: 15.5, lineHeight: 1.72, color: "var(--olv-ink)", margin: 0, fontWeight: 500 }}>{p.story}</p>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: 15.5, lineHeight: 1.72, color: "var(--olv-ink)", marginTop: 16, fontWeight: 500 }}>{copy.shop.storyBody}</p>
                 </div>
                 <div style={{ position: "relative", aspectRatio: "4/5" }}>
                   <Placeholder src={p.image} label={p.name} tone={p.tone} />
@@ -315,14 +315,14 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
             {tab === "pairings" ? (
               <div>
                 <h3 style={{ fontFamily: "var(--font-display)", fontSize: 38, margin: "0 0 10px", fontWeight: 700, letterSpacing: "-0.03em" }}>{copy.shop.pairingsHeading}</h3>
-                <p style={{ fontFamily: "var(--font-body)", fontSize: 14.5, color: "var(--olv-ink-soft)", marginBottom: 32, marginTop: 8, fontWeight: 600 }}>{copy.shop.pairingsBody}</p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: 14.5, color: "var(--olv-ink-soft)", marginBottom: 32, marginTop: 8, fontWeight: 500 }}>{copy.shop.pairingsBody}</p>
                 <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                   {p.pairings.map((pair) => (
                     <div key={pair} style={{ padding: "14px 20px", border: "1px solid rgba(31,42,26,0.12)", fontFamily: "var(--font-display)", fontSize: 22, color: "var(--olv-ink)", fontWeight: 700 }}>{pair}</div>
                   ))}
                 </div>
                 <div style={{ marginTop: 48 }}>
-                  <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 16, fontWeight: 800 }}>{copy.shop.recipeIdea}</div>
+                  <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 16, fontWeight: 700 }}>{copy.shop.recipeIdea}</div>
                   <div style={{ background: "var(--olv-cream)", padding: "32px", display: "grid", gridTemplateColumns: "1fr 200px", gap: 32, alignItems: "center" }} className="olv-founder-grid">
                     <div>
                       <div style={{ fontFamily: "var(--font-display)", fontSize: 28, letterSpacing: "-0.02em", fontWeight: 700 }}>{p.recipe}</div>
@@ -346,7 +346,7 @@ function LotJourney({ copy }) {
   return (
     <div style={{ background: "var(--olv-ink)", color: "var(--olv-cream)", padding: "72px 28px" }}>
       <div style={{ maxWidth: 1200, marginInline: "auto" }}>
-        <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6, marginBottom: 14, fontWeight: 800 }}>
+        <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6, marginBottom: 14, fontWeight: 700 }}>
           {copy.shop.lotTrace}
         </div>
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(30px,3vw,42px)", fontWeight: 700, margin: "0 0 48px", letterSpacing: "-0.03em" }}>
@@ -356,10 +356,10 @@ function LotJourney({ copy }) {
           <div style={{ position: "absolute", top: 20, left: "10%", right: "10%", height: 1, background: "rgba(255,255,255,0.15)" }} />
           {copy.shop.journey.map((step, i) => (
             <div key={step.label} style={{ padding: "0 16px 0 0", position: "relative" }}>
-              <div style={{ width: 40, height: 40, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.4)", display: "grid", placeItems: "center", fontFamily: "var(--font-label)", fontSize: 13, fontWeight: 800, background: i === 0 ? "var(--olv-amber)" : "transparent", color: i === 0 ? "var(--olv-ink)" : "var(--olv-cream)", marginBottom: 18 }}>{String(i + 1).padStart(2, "0")}</div>
+              <div style={{ width: 40, height: 40, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.4)", display: "grid", placeItems: "center", fontFamily: "var(--font-label)", fontSize: 13, fontWeight: 700, background: i === 0 ? "var(--olv-amber)" : "transparent", color: i === 0 ? "var(--olv-ink)" : "var(--olv-cream)", marginBottom: 18 }}>{String(i + 1).padStart(2, "0")}</div>
               <div style={{ fontFamily: "var(--font-display)", fontSize: 22, marginBottom: 4, fontWeight: 700 }}>{step.label}</div>
-              <div style={{ fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", opacity: 0.6, marginBottom: 10, fontWeight: 800 }}>{step.date}</div>
-              <div style={{ fontFamily: "var(--font-body)", fontSize: 13.5, lineHeight: 1.65, opacity: 0.8, fontWeight: 600 }}>{step.desc}</div>
+              <div style={{ fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", opacity: 0.6, marginBottom: 10, fontWeight: 700 }}>{step.date}</div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: 13.5, lineHeight: 1.65, opacity: 0.8, fontWeight: 500 }}>{step.desc}</div>
             </div>
           ))}
         </div>
@@ -378,7 +378,7 @@ function ReviewsSection({ p, copy }) {
           <div style={{ display: "flex", gap: 3, marginTop: 8, color: "var(--olv-amber)" }}>
             {Array(5).fill(0).map((_, i) => <Icon.star key={i} style={{ width: 18, height: 18, opacity: i < Math.round(avg) ? 1 : 0.25 }} />)}
           </div>
-          <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--olv-ink-soft)", marginTop: 6, fontWeight: 600 }}>{copy.shop.reviewsTitle}</div>
+          <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--olv-ink-soft)", marginTop: 6, fontWeight: 500 }}>{copy.shop.reviewsTitle}</div>
         </div>
         <div style={{ flex: 1, maxWidth: 340 }}>
           {[5, 4, 3, 2, 1].map((n) => {
@@ -402,7 +402,7 @@ function ReviewsSection({ p, copy }) {
               {Array(5).fill(0).map((_, j) => <Icon.star key={j} style={{ opacity: j < 5 ? 1 : 0.25 }} />)}
             </div>
             <p style={{ fontFamily: "var(--font-display)", fontSize: 20, lineHeight: 1.32, margin: "0 0 14px", fontStyle: "italic", fontWeight: 700 }}>"{review.text}"</p>
-            <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--olv-ink-soft)", fontWeight: 800, gap: 10 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--olv-ink-soft)", fontWeight: 700, gap: 10 }}>
               <span>{review.name} · {review.loc}</span>
               <span>{review.ago}</span>
             </div>
@@ -421,7 +421,7 @@ function StickyAddBar({ p, activePrice, onAdd, visible, copy, money }) {
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 18, lineHeight: 1.1, fontWeight: 700 }}>{p.name}</div>
-        <div style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 2, fontWeight: 600 }}>{p.note}</div>
+        <div style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 2, fontWeight: 500 }}>{p.note}</div>
       </div>
       <div style={{ fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 700 }}>{money(activePrice)}</div>
       <button onClick={onAdd} style={{ ...btnPrimary, whiteSpace: "nowrap" }}>{copy.shop.stickyAdd} <Icon.arrow /></button>
@@ -435,7 +435,7 @@ function RelatedProducts({ p, allProducts, onAdd, onOpen, copy, money }) {
   return (
     <section style={{ padding: "72px 28px 90px", background: "var(--olv-cream)" }}>
       <div style={{ maxWidth: 1200, marginInline: "auto" }}>
-        <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 10, fontWeight: 800 }}>{copy.shop.relatedEyebrow}</div>
+        <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 10, fontWeight: 700 }}>{copy.shop.relatedEyebrow}</div>
         <h3 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(28px,3vw,40px)", margin: "0 0 36px", fontWeight: 700, letterSpacing: "-0.03em" }}>{copy.shop.relatedTitle}</h3>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20 }} className="olv-products-grid">
           {related.map((rp) => (
@@ -445,8 +445,8 @@ function RelatedProducts({ p, allProducts, onAdd, onOpen, copy, money }) {
               </div>
               <div style={{ marginTop: 12 }}>
                 <div style={{ fontFamily: "var(--font-display)", fontSize: 20, lineHeight: 1.08, fontWeight: 700 }}>{rp.name}</div>
-                <div style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--olv-ink-soft)", marginTop: 3, fontWeight: 600 }}>{rp.note} · {money(rp.price)}</div>
-                <button onClick={() => onAdd(rp)} style={{ marginTop: 10, background: "transparent", color: "var(--olv-ink)", border: "1px solid rgba(31,42,26,0.25)", padding: "8px 14px", borderRadius: 999, fontFamily: "var(--font-label)", fontSize: 11.5, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 5 }}>
+                <div style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--olv-ink-soft)", marginTop: 3, fontWeight: 500 }}>{rp.note} · {money(rp.price)}</div>
+                <button onClick={() => onAdd(rp)} style={{ marginTop: 10, background: "transparent", color: "var(--olv-ink)", border: "1px solid rgba(31,42,26,0.25)", padding: "8px 14px", borderRadius: 999, fontFamily: "var(--font-label)", fontSize: 11.5, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 5 }}>
                   <Icon.plus /> {copy.shop.add}
                 </button>
               </div>

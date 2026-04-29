@@ -7,20 +7,20 @@ function GiftsPage({ onAdd, copy, money }) {
   return (
     <div style={{ background: "var(--olv-bg)" }}>
       <div style={{ background: "var(--olv-ink)", color: "var(--olv-cream)", padding: "80px 28px 64px", textAlign: "center" }}>
-        <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6, marginBottom: 16, fontWeight: 800 }}>
+        <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6, marginBottom: 16, fontWeight: 700 }}>
           {copy.gifts.eyebrow}
         </div>
         <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(46px,5.6vw,78px)", margin: "0 0 16px", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1 }}>
           {copy.gifts.title}
         </h1>
-        <p style={{ fontFamily: "var(--font-body)", fontSize: 16, opacity: 0.75, maxWidth: 620, marginInline: "auto", lineHeight: 1.7, fontWeight: 600 }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: 16, opacity: 0.75, maxWidth: 620, marginInline: "auto", lineHeight: 1.7, fontWeight: 500 }}>
           {copy.gifts.body}
         </p>
       </div>
 
       <div style={{ background: "var(--olv-cream)", padding: "22px 28px", borderBottom: "1px solid rgba(31,42,26,0.07)", position: "sticky", top: 0, zIndex: 20 }}>
         <div style={{ maxWidth: 1400, marginInline: "auto", display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-          <span style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginRight: 4, fontWeight: 800 }}>{copy.gifts.occasion}</span>
+          <span style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-ink-soft)", marginRight: 4, fontWeight: 700 }}>{copy.gifts.occasion}</span>
           {copy.gifts.occasions.map((option) => (
             <button
               key={option.id}
@@ -49,16 +49,16 @@ function GiftsPage({ onAdd, copy, money }) {
             <div key={bundle.id} style={{ background: "var(--olv-cream)", overflow: "hidden" }}>
               <div style={{ position: "relative", aspectRatio: "4/3" }}>
                 <Placeholder src={bundle.image} label={bundle.name} tone={bundle.tone} />
-                <div style={{ position: "absolute", top: 14, right: 14, background: "var(--olv-amber)", color: "var(--olv-ink)", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", padding: "6px 10px", fontWeight: 800 }}>
+                <div style={{ position: "absolute", top: 14, right: 14, background: "var(--olv-amber)", color: "var(--olv-ink)", fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", padding: "6px 10px", fontWeight: 700 }}>
                   -{money(bundle.saving)}
                 </div>
               </div>
               <div style={{ padding: "24px 22px" }}>
                 <div style={{ fontFamily: "var(--font-display)", fontSize: 28, letterSpacing: "-0.02em", marginBottom: 8, fontWeight: 700 }}>{bundle.name}</div>
-                <p style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "var(--olv-ink-soft)", lineHeight: 1.7, marginBottom: 14, fontWeight: 600 }}>{bundle.desc}</p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "var(--olv-ink-soft)", lineHeight: 1.7, marginBottom: 14, fontWeight: 500 }}>{bundle.desc}</p>
                 <ul style={{ listStyle: "none", padding: 0, margin: "0 0 18px", display: "flex", flexDirection: "column", gap: 6 }}>
                   {bundle.items.map((item) => (
-                    <li key={item} style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--olv-ink-soft)", display: "flex", gap: 8, alignItems: "center", fontWeight: 800 }}>
+                    <li key={item} style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--olv-ink-soft)", display: "flex", gap: 8, alignItems: "center", fontWeight: 700 }}>
                       <span style={{ color: "var(--olv-moss)" }}>◆</span> {item}
                     </li>
                   ))}
@@ -82,7 +82,7 @@ function GiftsPage({ onAdd, copy, money }) {
             <div style={{ fontFamily: "var(--font-display)", fontSize: 30, letterSpacing: "-0.02em", marginBottom: 8, fontWeight: 700 }}>
               {copy.gifts.noteTitle}
             </div>
-            <div style={{ fontFamily: "var(--font-body)", fontSize: 14.5, color: "var(--olv-ink)", opacity: 0.8, lineHeight: 1.65, fontWeight: 600 }}>
+            <div style={{ fontFamily: "var(--font-body)", fontSize: 14.5, color: "var(--olv-ink)", opacity: 0.8, lineHeight: 1.65, fontWeight: 500 }}>
               {copy.gifts.noteBody}
             </div>
           </div>
@@ -102,11 +102,11 @@ function StoryPage({ copy }) {
   return (
     <div style={{ background: "var(--olv-bg)" }}>
       <div style={{ background: "var(--olv-amber)", padding: "96px 28px", textAlign: "center" }}>
-        <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-ink)", opacity: 0.65, marginBottom: 18, fontWeight: 800 }}>{copy.storyPage.eyebrow}</div>
+        <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-ink)", opacity: 0.65, marginBottom: 18, fontWeight: 700 }}>{copy.storyPage.eyebrow}</div>
         <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(40px,5vw,72px)", margin: "0 0 24px", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.04, maxWidth: 980, marginInline: "auto" }}>
           {copy.storyPage.title}
         </h1>
-        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px,2.3vw,24px)", color: "var(--olv-ink)", opacity: 0.84, maxWidth: 760, marginInline: "auto", lineHeight: 1.55, fontWeight: 600 }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(18px,2.3vw,24px)", color: "var(--olv-ink)", opacity: 0.84, maxWidth: 760, marginInline: "auto", lineHeight: 1.55, fontWeight: 500 }}>
           {copy.storyPage.lead}
         </p>
       </div>
@@ -116,11 +116,11 @@ function StoryPage({ copy }) {
           <Placeholder src={heroImage} label="sunflower" tone="gold" />
         </div>
         <div style={{ padding: "72px 60px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 20 }}>
-          <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", fontWeight: 800 }}>{copy.storyPage.founderEyebrow}</div>
+          <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", fontWeight: 700 }}>{copy.storyPage.founderEyebrow}</div>
           <blockquote style={{ fontFamily: "var(--font-display)", fontSize: "clamp(24px,2.8vw,38px)", margin: "0 0 18px", fontWeight: 700, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--olv-ink)" }}>
             "{copy.storyPage.founderQuote}"
           </blockquote>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: 15.5, lineHeight: 1.75, color: "var(--olv-ink-soft)", margin: 0, fontWeight: 600 }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: 15.5, lineHeight: 1.75, color: "var(--olv-ink-soft)", margin: 0, fontWeight: 500 }}>
             {copy.storyPage.founderBody}
           </p>
         </div>
@@ -128,14 +128,14 @@ function StoryPage({ copy }) {
 
       <div style={{ padding: "90px 28px", background: "var(--olv-bg)" }}>
         <div style={{ maxWidth: 1040, marginInline: "auto" }}>
-          <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 14, fontWeight: 800 }}>{copy.storyPage.timelineEyebrow}</div>
+          <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 14, fontWeight: 700 }}>{copy.storyPage.timelineEyebrow}</div>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(34px,3.8vw,50px)", margin: "0 0 40px", fontWeight: 700, letterSpacing: "-0.03em" }}>{copy.storyPage.timelineTitle}</h2>
           <div style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", gap: 36 }} className="olv-founder-grid">
             <div style={{ display: "grid", gap: 18 }}>
               {copy.storyPage.milestones.map((step) => (
                 <div key={step.year} style={{ background: "var(--olv-surface)", border: "1px solid var(--olv-border)", padding: "22px 22px" }}>
-                  <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-amber)", marginBottom: 8, fontWeight: 800 }}>{step.year}</div>
-                  <div style={{ fontFamily: "var(--font-body)", fontSize: 15, color: "var(--olv-ink)", lineHeight: 1.7, fontWeight: 600 }}>{step.event}</div>
+                  <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--olv-amber)", marginBottom: 8, fontWeight: 700 }}>{step.year}</div>
+                  <div style={{ fontFamily: "var(--font-body)", fontSize: 15, color: "var(--olv-ink)", lineHeight: 1.7, fontWeight: 500 }}>{step.event}</div>
                 </div>
               ))}
             </div>
@@ -148,14 +148,14 @@ function StoryPage({ copy }) {
 
       <div style={{ background: "var(--olv-ink)", color: "var(--olv-cream)", padding: "80px 28px" }}>
         <div style={{ maxWidth: 1200, marginInline: "auto" }}>
-          <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6, marginBottom: 14, fontWeight: 800 }}>{copy.storyPage.valuesEyebrow}</div>
+          <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6, marginBottom: 14, fontWeight: 700 }}>{copy.storyPage.valuesEyebrow}</div>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(32px,3.4vw,46px)", margin: "0 0 48px", fontWeight: 700, letterSpacing: "-0.02em" }}>{copy.storyPage.valuesTitle}</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 32 }}>
             {copy.storyPage.values.map((value) => (
               <div key={value.title} style={{ borderTop: "1px solid rgba(255,255,255,0.14)", paddingTop: 24 }}>
                 <div style={{ fontFamily: "var(--font-display)", fontSize: 36, marginBottom: 10, color: "var(--olv-amber)", fontWeight: 700 }}>{value.icon}</div>
                 <div style={{ fontFamily: "var(--font-display)", fontSize: 26, marginBottom: 12, letterSpacing: "-0.02em", fontWeight: 700 }}>{value.title}</div>
-                <div style={{ fontFamily: "var(--font-body)", fontSize: 14.5, lineHeight: 1.7, opacity: 0.78, fontWeight: 600 }}>{value.desc}</div>
+                <div style={{ fontFamily: "var(--font-body)", fontSize: 14.5, lineHeight: 1.7, opacity: 0.78, fontWeight: 500 }}>{value.desc}</div>
               </div>
             ))}
           </div>
