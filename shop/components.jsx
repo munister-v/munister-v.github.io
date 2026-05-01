@@ -298,6 +298,70 @@ function ProductCard({ p, idx, copy, money, onAdd, onOpen, wishlist, toggleWish 
   );
 }
 
+function SeasonalEdit({ products, copy, money, onAdd, onOpen, onShop }) {
+  const seasonal = copy.home.seasonal;
+  if (!seasonal?.items?.length) return null;
+  const cards = seasonal.items
+    .map((entry) => ({ entry, product: products.find((p) => p.id === entry.productId) }))
+    .filter((item) => item.product);
+
+  if (!cards.length) return null;
+
+  return (
+    <section style={{ background: "var(--olv-surface)", padding: "94px 48px 26px" }} className="olv-section-pad">
+      <div style={{ maxWidth: 1400, marginInline: "auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "0.9fr 2.1fr", gap: 34, alignItems: "start" }} className="olv-founder-grid">
+          <div style={{ position: "sticky", top: 118 }}>
+            <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-amber)", marginBottom: 14, fontWeight: 700 }}>
+              {seasonal.eyebrow}
+            </div>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(34px,4vw,54px)", margin: "0 0 16px", lineHeight: 1.06, letterSpacing: "-0.03em", color: "var(--olv-ink)", fontWeight: 700 }}>
+              {seasonal.title}
+            </h2>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: 15.5, lineHeight: 1.72, color: "var(--olv-ink-soft)", margin: "0 0 24px", maxWidth: 360, fontWeight: 500 }}>
+              {seasonal.body}
+            </p>
+            <button onClick={onShop} style={btnGold}>{seasonal.footer} <Icon.arrow /></button>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }} className="olv-seasonal-grid">
+            {cards.map(({ entry, product }) => (
+              <article key={product.id} style={{ background: "var(--olv-bg)", border: "1px solid var(--olv-border)", overflow: "hidden", color: "var(--olv-ink)" }}>
+                <div onClick={() => onOpen(product)} style={{ position: "relative", aspectRatio: "4/5", cursor: "pointer", overflow: "hidden" }}>
+                  <Placeholder src={product.image} label={product.name} tone={product.tone} style={{ position: "absolute", inset: 0 }} />
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(31,42,26,0.18), rgba(31,42,26,0.00) 54%)" }} />
+                  <span style={{ position: "absolute", top: 14, left: 14, background: "rgba(255,252,243,0.92)", color: "var(--olv-ink)", fontFamily: "var(--font-label)", fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", padding: "6px 10px", fontWeight: 700 }}>
+                    {entry.reason}
+                  </span>
+                </div>
+                <div style={{ padding: "22px 20px 20px" }}>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 28, lineHeight: 1.05, letterSpacing: "-0.025em", marginBottom: 8, fontWeight: 700 }}>
+                    {product.name}
+                  </div>
+                  <div style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: "var(--olv-ink-soft)", marginBottom: 14, fontWeight: 600 }}>
+                    {product.note} · {product.size}
+                  </div>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: 14.5, lineHeight: 1.7, color: "var(--olv-ink)", minHeight: 72, margin: "0 0 18px", fontWeight: 500 }}>
+                    {entry.line}
+                  </p>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                    <div style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 700 }}>
+                      {money(product.price)}
+                    </div>
+                    <button onClick={() => onAdd(product)} style={{ ...btnPrimary, padding: "11px 18px" }}>
+                      <Icon.plus /> {entry.cta}
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function BestSellers({ products, copy, money, onAdd, onOpen, wishlist, toggleWish }) {
   const [tab, setTab] = useState("all");
   const tabs = [{ id: "all", label: copy.home.shopAll }, ...copy.shop.filters];
@@ -554,6 +618,7 @@ Object.assign(window, {
   Logo,
   Hero,
   PantryGrid,
+  SeasonalEdit,
   ProductCard,
   BestSellers,
   FoundersNote,

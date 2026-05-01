@@ -962,6 +962,32 @@ window.MUNISTER = (() => {
         newsletterPlaceholder: "you@kitchen.ua",
         newsletterCta: "Підписатись",
         newsletterDone: "Готово",
+        seasonal: {
+          eyebrow: "Сезонний вибір",
+          title: "Те, з чого найкраще почати зараз.",
+          body: "Коротка добірка товарів, які найкраще показують українську pantry-полицю саме цього сезону.",
+          footer: "Дивитись усю крамницю",
+          items: [
+            {
+              productId: "pumpkin-oil",
+              reason: "нова партія",
+              line: "Густа, підсмажена, для буряка, сиру і теплих салатів.",
+              cta: "Додати в кошик",
+            },
+            {
+              productId: "cherry-varennya",
+              reason: "для сніданку",
+              line: "Яскраве, трохи терпке, добре до сирників і тостів.",
+              cta: "Додати в кошик",
+            },
+            {
+              productId: "thyme-tea",
+              reason: "весняний вибір",
+              line: "Сухий карпатський профіль, чистий аромат і дуже зібрана чашка.",
+              cta: "Додати в кошик",
+            },
+          ],
+        },
       },
       footer: {
         body: "Олії, мед, варення та чай з українським характером і спокійнішою візуальною мовою.",
@@ -1141,6 +1167,32 @@ window.MUNISTER = (() => {
         newsletterPlaceholder: "you@kitchen.com",
         newsletterCta: "Subscribe",
         newsletterDone: "Done",
+        seasonal: {
+          eyebrow: "Seasonal Edit",
+          title: "The best place to begin right now.",
+          body: "A short curation of products that currently express the Ukrainian pantry most clearly.",
+          footer: "Shop the full pantry",
+          items: [
+            {
+              productId: "pumpkin-oil",
+              reason: "new batch",
+              line: "Dense and toasted, made for beets, cheese, and warm salads.",
+              cta: "Add to bag",
+            },
+            {
+              productId: "cherry-varennya",
+              reason: "breakfast pick",
+              line: "Bright and slightly tart, especially good with syrnyky and toast.",
+              cta: "Add to bag",
+            },
+            {
+              productId: "thyme-tea",
+              reason: "spring pick",
+              line: "A dry Carpathian profile with a clean aroma and a focused cup.",
+              cta: "Add to bag",
+            },
+          ],
+        },
       },
       footer: {
         body: "Oils, honey, preserves, and tea with a Ukrainian center of gravity and a calmer design language.",
@@ -1320,6 +1372,32 @@ window.MUNISTER = (() => {
         newsletterPlaceholder: "you@kitchen.it",
         newsletterCta: "Iscriviti",
         newsletterDone: "Fatto",
+        seasonal: {
+          eyebrow: "Scelta stagionale",
+          title: "Il modo migliore per cominciare adesso.",
+          body: "Una piccola selezione di prodotti che raccontano con piu chiarezza la dispensa ucraina di questo momento.",
+          footer: "Vedi tutta la dispensa",
+          items: [
+            {
+              productId: "pumpkin-oil",
+              reason: "nuovo lotto",
+              line: "Denso e tostato, perfetto con barbabietole, formaggio e insalate tiepide.",
+              cta: "Aggiungi",
+            },
+            {
+              productId: "cherry-varennya",
+              reason: "per la colazione",
+              line: "Vivace e leggermente acidula, ottima con syrnyky e pane tostato.",
+              cta: "Aggiungi",
+            },
+            {
+              productId: "thyme-tea",
+              reason: "scelta di primavera",
+              line: "Profilo secco dei Carpazi, aroma pulito e tazza molto nitida.",
+              cta: "Aggiungi",
+            },
+          ],
+        },
       },
       footer: {
         body: "Oli, miele, conserve e tè con un baricentro ucraino e una lingua visiva più tranquilla.",
