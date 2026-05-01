@@ -313,6 +313,9 @@
   .crm-product-grid,
   .crm-merch-grid,
   .crm-calendar-grid,
+  .crm-order-layout,
+  .crm-warning-grid,
+  .crm-editor-grid,
   .crm-roadmap {
     display: grid;
     gap: 16px;
@@ -321,6 +324,9 @@
   .crm-product-grid { grid-template-columns: repeat(2, 1fr); }
   .crm-merch-grid { grid-template-columns: repeat(3, 1fr); }
   .crm-calendar-grid { grid-template-columns: repeat(2, 1fr); }
+  .crm-order-layout { grid-template-columns: 1.15fr 0.85fr; }
+  .crm-warning-grid { grid-template-columns: repeat(2, 1fr); }
+  .crm-editor-grid { grid-template-columns: repeat(3, 1fr); }
   .crm-roadmap { grid-template-columns: repeat(3, 1fr); }
   .crm-customer-card,
   .crm-product-card,
@@ -451,6 +457,94 @@
     font-size: 12.5px;
     line-height: 1.6;
   }
+  .crm-select {
+    width: 100%;
+    border: 1px solid var(--crm-border);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.7);
+    padding: 12px 14px;
+    color: var(--crm-ink);
+    font-size: 13px;
+    font-weight: 600;
+    outline: none;
+  }
+  .crm-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--crm-soft);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .crm-action-btn {
+    border: 1px solid var(--crm-border);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.58);
+    padding: 8px 12px;
+    color: var(--crm-ink);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+  }
+  .crm-action-btn.is-active {
+    background: var(--crm-ink);
+    border-color: var(--crm-ink);
+    color: #fff8ef;
+  }
+  .crm-soft-list {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--crm-soft);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .crm-checklist {
+    display: grid;
+    gap: 10px;
+  }
+  .crm-check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid var(--crm-border);
+    background: rgba(255,250,241,0.76);
+  }
+  .crm-check-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    margin-top: 5px;
+    background: var(--crm-gold);
+    flex: 0 0 auto;
+  }
+  .crm-check-copy {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--crm-soft);
+  }
+  .crm-check-copy strong {
+    display: block;
+    color: var(--crm-ink);
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+  .crm-row-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .crm-divider {
+    height: 1px;
+    background: var(--crm-border);
+    margin: 18px 0;
+  }
   .crm-section {
     display: none;
   }
@@ -480,6 +574,9 @@
     .crm-customer-grid,
     .crm-merch-grid,
     .crm-calendar-grid,
+    .crm-order-layout,
+    .crm-warning-grid,
+    .crm-editor-grid,
     .crm-roadmap {
       grid-template-columns: 1fr;
     }
@@ -556,6 +653,44 @@ const orders = [
   { id: "MN-2401", status: "shipped", priority: "normal", customer: "Софія Н.", city: "Івано-Франківськ", total: 1210, items: ["Лляна олія", "Соняшниковий мед", "Чай з меліси"], source: "Seasonal edit", eta: "в дорозі" },
 ];
 
+const orderIntel = {
+  "MN-2405": {
+    note: "Подарункове замовлення для мами. Попросили теплу кремову листівку і акуратний пакувальний шовк.",
+    next: "Закріпити hand-written note і віддати в кур'єрське вікно до 18:00.",
+    pack: "gift-ready box",
+    contact: "Instagram DM",
+    productIds: ["pumpkin-oil", "cherry-varennya", "thyme-tea"],
+  },
+  "MN-2404": {
+    note: "Повторна покупка після весняної розсилки. Без додаткових побажань, важлива швидка відправка.",
+    next: "Дочекатися доставки і відправити thank-you follow-up через 48 годин.",
+    pack: "classic pantry wrap",
+    contact: "Direct",
+    productIds: ["sunflower-oil", "linden-honey", "chamomile-tea"],
+  },
+  "MN-2403": {
+    note: "Замовлення стоїть на hold: клієнтка просила уточнити термін придатності акацієвого меду перед оплатою.",
+    next: "Подзвонити до 16:00, підтвердити batch і розморозити checkout.",
+    pack: "premium sample insert",
+    contact: "Phone follow-up",
+    productIds: ["sunflower-oil", "acacia-honey", "quince-confiture", "chamomile-tea"],
+  },
+  "MN-2402": {
+    note: "Невеликий gifting-order з побажанням зробити набір більш домашнім і спокійним за подачею.",
+    next: "Перевірити gift note і закрити пакування до ранкової відправки.",
+    pack: "small warm bundle",
+    contact: "Gift flow",
+    productIds: ["cherry-varennya", "sunflower-honey", "melissa-tea"],
+  },
+  "MN-2401": {
+    note: "Клієнтка зайшла з seasonal блоку, тому важливо підхопити її після доставки email-історією про чайну полицю.",
+    next: "Підготувати post-purchase email з блоком `що спробувати далі`.",
+    pack: "seasonal insert",
+    contact: "Email",
+    productIds: ["linseed-oil", "sunflower-honey", "melissa-tea"],
+  },
+};
+
 const customers = [
   { name: "Олена К.", tier: "VIP", city: "Київ", orders: 7, ltv: 8460, last: "2 дні тому", favorite: "Гарбузова олія", note: "Часто бере подарункові замовлення і просить hand-written note." },
   { name: "Марко С.", tier: "Repeat", city: "Львів", orders: 4, ltv: 4120, last: "5 днів тому", favorite: "Чебрецевий чай", note: "Добре реагує на seasonal mail і bundle-пропозиції." },
@@ -573,6 +708,19 @@ const contentCalendar = [
   { week: "Тиждень 2", title: "Gift flow", owner: "Commercial", body: "Зібрати нові gift-набори та уточнити логіку подарункової комунікації.", deliverables: ["2 bundles", "gift note copy", "bundle margins"] },
   { week: "Тиждень 3", title: "Photo ops", owner: "Content", body: "Дозняти слабкі SKU та привести весь каталог до одного стандарту кадру.", deliverables: ["4 new photos", "crop pass", "asset cleanup"] },
   { week: "Тиждень 4", title: "Email + SEO", owner: "Growth", body: "Підготувати контентний хвіст, щоб storefront працював не лише візуально.", deliverables: ["1 email", "4 category intros", "meta titles"] },
+];
+
+const qualityQueue = [
+  { id: "walnut-oil", issue: "Потрібен чистіший front-shot без зайвого фону.", owner: "Content" },
+  { id: "sea-buckthorn", issue: "Варто підсилити texture shot, щоб конфітюр читався дорожче.", owner: "Photo" },
+  { id: "rosehip-tea", issue: "Потрібне тепліше світло і ближчий crop для преміального ефекту.", owner: "Content" },
+  { id: "quince-confiture", issue: "Потрібен hero-кадр для gifting і breakfast-flow.", owner: "Merch" },
+];
+
+const bundlePresets = [
+  { id: "breakfast", title: "Breakfast box", audience: "Для повільного сніданку", items: ["cherry-varennya", "sunflower-honey", "chamomile-tea"] },
+  { id: "spring", title: "Spring pantry edit", audience: "Легка сезонна добірка", items: ["pumpkin-oil", "thyme-tea", "quince-confiture"] },
+  { id: "gift", title: "Host gift set", audience: "Подарунок в гості", items: ["linseed-oil", "acacia-honey", "apricot-jam"] },
 ];
 
 const roadmap = {
@@ -756,7 +904,14 @@ function OverviewSection({ products, lowStock, categoryCounts, seasonalProducts 
   );
 }
 
-function OrdersSection() {
+function OrdersSection({ products }) {
+  const [selectedOrderId, setSelectedOrderId] = useState(orders[0].id);
+  const selectedOrder = orders.find((order) => order.id === selectedOrderId) || orders[0];
+  const intel = orderIntel[selectedOrder.id];
+  const orderProducts = (intel?.productIds || [])
+    .map((id) => products.find((product) => product.id === id))
+    .filter(Boolean);
+
   return (
     <section className="crm-section is-active">
       <div className="crm-card">
@@ -781,6 +936,7 @@ function OrdersSection() {
               <th>Total</th>
               <th>Status</th>
               <th>ETA</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -799,10 +955,90 @@ function OrdersSection() {
                 <td style={{ fontWeight: 800 }}>{money(order.total)}</td>
                 <td><span className={`crm-badge ${order.status}`}>{order.status}</span></td>
                 <td>{order.eta}</td>
+                <td>
+                  <button
+                    type="button"
+                    className={`crm-action-btn ${selectedOrderId === order.id ? "is-active" : ""}`}
+                    onClick={() => setSelectedOrderId(order.id)}
+                  >
+                    {selectedOrderId === order.id ? "opened" : "open"}
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+
+        <div className="crm-order-layout" style={{ marginTop: 24 }}>
+          <div className="crm-mini-card">
+            <div className="crm-row-top">
+              <div>
+                <div className="crm-eyebrow">Fulfillment detail</div>
+                <div className="crm-merch-name" style={{ marginTop: 6 }}>{selectedOrder.id} · {selectedOrder.customer}</div>
+              </div>
+              <span className={`crm-badge ${selectedOrder.status}`}>{selectedOrder.status}</span>
+            </div>
+            <div className="crm-meta-line">
+              <span>{selectedOrder.city}</span>
+              <span>{selectedOrder.source}</span>
+              <span>{intel.pack}</span>
+              <span>{intel.contact}</span>
+            </div>
+            <div className="crm-divider" />
+            <div className="crm-card-body">{intel.note}</div>
+            <div className="crm-divider" />
+            <div className="crm-eyebrow">Items in order</div>
+            <ul className="crm-soft-list" style={{ marginTop: 12 }}>
+              {selectedOrder.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+            {orderProducts.length ? (
+              <>
+                <div className="crm-divider" />
+                <div className="crm-eyebrow">Related product view</div>
+                <div className="crm-stack" style={{ marginTop: 14 }}>
+                  {orderProducts.map((product) => (
+                    <div key={product.id} className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
+                      <div className="crm-mini-head">
+                        <div className="crm-mini-title">{product.name}</div>
+                        <span className="crm-badge live">{money(product.price)}</span>
+                      </div>
+                      <div className="crm-mini-meta">{product.note} · stock {stockByProduct[product.id] ?? "—"}</div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+          </div>
+
+          <div className="crm-mini-card">
+            <div className="crm-eyebrow">Next actions</div>
+            <div className="crm-checklist" style={{ marginTop: 14 }}>
+              <div className="crm-check-item">
+                <span className="crm-check-dot" />
+                <div className="crm-check-copy">
+                  <strong>Operational next step</strong>
+                  {intel.next}
+                </div>
+              </div>
+              <div className="crm-check-item">
+                <span className="crm-check-dot" />
+                <div className="crm-check-copy">
+                  <strong>Packaging standard</strong>
+                  Перевірити `gift-ready` подачу, чистий папір, вкладку і підпис на коробці перед закриттям.
+                </div>
+              </div>
+              <div className="crm-check-item">
+                <span className="crm-check-dot" />
+                <div className="crm-check-copy">
+                  <strong>Customer follow-up</strong>
+                  Після доставки відправити доречний післяпродажний дотик: gift-note, recipe tip або next-best SKU.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -851,6 +1087,10 @@ function CustomersSection() {
 }
 
 function CatalogSection({ products, lowStock }) {
+  const queueProducts = qualityQueue
+    .map((item) => ({ ...item, product: products.find((product) => product.id === item.id) }))
+    .filter((item) => item.product);
+
   return (
     <section className="crm-section is-active">
       <div className="crm-card">
@@ -903,12 +1143,50 @@ function CatalogSection({ products, lowStock }) {
         <div className="crm-card-body" style={{ marginTop: 20 }}>
           Low stock watch: {lowStock.map((item) => item.name).join(", ")}.
         </div>
+
+        <div className="crm-warning-grid" style={{ marginTop: 24 }}>
+          <div className="crm-mini-card">
+            <div className="crm-eyebrow">Inventory warnings</div>
+            <div className="crm-stack" style={{ marginTop: 14 }}>
+              {lowStock.map((product) => (
+                <div key={product.id} className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
+                  <div className="crm-mini-head">
+                    <div className="crm-mini-title">{product.name}</div>
+                    <span className="crm-badge priority">stock {stockByProduct[product.id]}</span>
+                  </div>
+                  <div className="crm-mini-meta">{product.size} · {money(product.price)} · потрібно підтвердити наступну партію цього тижня.</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="crm-mini-card">
+            <div className="crm-eyebrow">Photo and quality queue</div>
+            <div className="crm-stack" style={{ marginTop: 14 }}>
+              {queueProducts.map(({ id, issue, owner, product }) => (
+                <div key={id} className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
+                  <div className="crm-mini-head">
+                    <div className="crm-mini-title">{product.name}</div>
+                    <span className="crm-badge normal">{owner}</span>
+                  </div>
+                  <div className="crm-mini-meta">{issue}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-function MerchSection({ seasonalProducts, copy }) {
+function MerchSection({ seasonalProducts, copy, products }) {
+  const [seasonalSlotIds, setSeasonalSlotIds] = useState(copy.home.seasonal.items.map((entry) => entry.productId));
+  const [activeBundleId, setActiveBundleId] = useState(bundlePresets[0].id);
+  const liveSeasonalProducts = seasonalSlotIds.map((id) => products.find((product) => product.id === id)).filter(Boolean);
+  const activeBundle = bundlePresets.find((bundle) => bundle.id === activeBundleId) || bundlePresets[0];
+  const activeBundleProducts = activeBundle.items.map((id) => products.find((product) => product.id === id)).filter(Boolean);
+
   return (
     <section className="crm-section is-active">
       <div className="crm-card">
@@ -938,32 +1216,76 @@ function MerchSection({ seasonalProducts, copy }) {
           <div className="crm-mini-card">
             <div className="crm-eyebrow">Seasonal edit live now</div>
             <div className="crm-stack" style={{ marginTop: 14 }}>
-              {copy.home.seasonal.items.map((entry) => {
-                const product = seasonalProducts.find((item) => item.id === entry.productId);
+              {liveSeasonalProducts.map((product, idx) => {
                 if (!product) return null;
                 return (
-                  <div key={entry.productId} className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
+                  <div key={product.id} className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
                     <div className="crm-mini-head">
-                      <div className="crm-mini-title">{product.name}</div>
-                      <span className="crm-badge live">{entry.reason}</span>
+                      <div className="crm-mini-title">{String(idx + 1).padStart(2, "0")} · {product.name}</div>
+                      <span className={`crm-badge ${(stockByProduct[product.id] ?? 0) <= 8 ? "priority" : "live"}`}>
+                        stock {stockByProduct[product.id] ?? "—"}
+                      </span>
                     </div>
-                    <div className="crm-mini-meta">{entry.line}</div>
+                    <div className="crm-mini-meta">{product.note} · {money(product.price)}</div>
                   </div>
                 );
               })}
             </div>
+            <div className="crm-divider" />
+            <div className="crm-eyebrow">Seasonal slot manager</div>
+            <div className="crm-editor-grid" style={{ marginTop: 14 }}>
+              {seasonalSlotIds.map((productId, idx) => (
+                <div key={`slot-${idx}`} className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
+                  <label className="crm-label" htmlFor={`seasonal-slot-${idx}`}>slot {idx + 1}</label>
+                  <select
+                    id={`seasonal-slot-${idx}`}
+                    className="crm-select"
+                    value={productId}
+                    onChange={(event) => {
+                      const next = [...seasonalSlotIds];
+                      next[idx] = event.target.value;
+                      setSeasonalSlotIds(next);
+                    }}
+                  >
+                    {products.map((product) => (
+                      <option key={product.id} value={product.id}>{product.name}</option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </div>
           </div>
+
           <div className="crm-mini-card">
-            <div className="crm-eyebrow">Bundle opportunities</div>
+            <div className="crm-eyebrow">Bundle editor</div>
+            <label className="crm-label" htmlFor="bundle-select" style={{ marginTop: 14 }}>featured bundle</label>
+            <select
+              id="bundle-select"
+              className="crm-select"
+              value={activeBundleId}
+              onChange={(event) => setActiveBundleId(event.target.value)}
+            >
+              {bundlePresets.map((bundle) => (
+                <option key={bundle.id} value={bundle.id}>{bundle.title}</option>
+              ))}
+            </select>
+            <div className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)", marginTop: 14 }}>
+              <div className="crm-mini-head">
+                <div className="crm-mini-title">{activeBundle.title}</div>
+                <span className="crm-badge live">{activeBundle.audience}</span>
+              </div>
+              <div className="crm-mini-meta">Curated bundle preview for the current storefront merchandising flow.</div>
+            </div>
             <div className="crm-stack" style={{ marginTop: 14 }}>
-              <div className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
-                <div className="crm-mini-title">Breakfast box</div>
-                <div className="crm-mini-meta">Вишневе варення + соняшниковий мед + ромашковий чай.</div>
-              </div>
-              <div className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
-                <div className="crm-mini-title">Spring pantry edit</div>
-                <div className="crm-mini-meta">Гарбузова олія + чебрецевий чай + айвовий конфітюр.</div>
-              </div>
+              {activeBundleProducts.map((product) => (
+                <div key={product.id} className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
+                  <div className="crm-mini-head">
+                    <div className="crm-mini-title">{product.name}</div>
+                    <span className="crm-badge normal">{product.cat}</span>
+                  </div>
+                  <div className="crm-mini-meta">{product.note} · {money(product.price)}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -1098,10 +1420,10 @@ function App() {
         </div>
 
         {active === "overview" ? <OverviewSection products={products} lowStock={lowStock} categoryCounts={categoryCounts} seasonalProducts={seasonalProducts} /> : null}
-        {active === "orders" ? <OrdersSection /> : null}
+        {active === "orders" ? <OrdersSection products={products} /> : null}
         {active === "customers" ? <CustomersSection /> : null}
         {active === "catalog" ? <CatalogSection products={products} lowStock={lowStock} /> : null}
-        {active === "merch" ? <MerchSection seasonalProducts={seasonalProducts} copy={copy} /> : null}
+        {active === "merch" ? <MerchSection seasonalProducts={seasonalProducts} copy={copy} products={products} /> : null}
         {active === "calendar" ? <CalendarSection /> : null}
         {active === "roadmap" ? <RoadmapSection /> : null}
       </main>
