@@ -1,0 +1,1066 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Munister CRM — Admin Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap&subset=cyrillic,cyrillic-ext,latin,latin-ext" rel="stylesheet">
+<style>
+  :root {
+    --crm-bg: #f3ecdd;
+    --crm-surface: #fbf7ef;
+    --crm-panel: #f6efe1;
+    --crm-card: #fffaf1;
+    --crm-ink: #172117;
+    --crm-soft: #66705f;
+    --crm-moss: #31432d;
+    --crm-amber: #b8521e;
+    --crm-gold: #d9b070;
+    --crm-plum: #5b2e2c;
+    --crm-border: rgba(23,33,23,0.10);
+    --crm-shadow: 0 18px 48px rgba(23,33,23,0.08);
+    --font-display: "Lora", Georgia, serif;
+    --font-body: "Manrope", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background:
+      radial-gradient(circle at top left, rgba(217,176,112,0.24), transparent 28%),
+      linear-gradient(180deg, #f7f1e6 0%, #f1ead9 100%);
+    color: var(--crm-ink);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+  }
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  button, input, select { font: inherit; }
+  .crm-shell {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+  }
+  .crm-sidebar {
+    background: rgba(22,30,23,0.95);
+    color: #f8f0e1;
+    padding: 28px 22px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .crm-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .crm-brand-word {
+    font-family: var(--font-display);
+    font-size: 24px;
+    letter-spacing: 0.18em;
+    font-weight: 700;
+  }
+  .crm-brand-note {
+    margin-top: 8px;
+    color: rgba(248,240,225,0.68);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .crm-side-section {
+    margin-top: 26px;
+  }
+  .crm-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .crm-sidebar .crm-eyebrow {
+    color: rgba(248,240,225,0.52);
+    margin-bottom: 10px;
+  }
+  .crm-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .crm-nav-btn {
+    width: 100%;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    color: inherit;
+    border-radius: 18px;
+    padding: 14px 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .crm-nav-btn.is-active {
+    background: rgba(217,176,112,0.14);
+    border-color: rgba(217,176,112,0.30);
+    transform: translateX(2px);
+  }
+  .crm-nav-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .crm-nav-body {
+    color: rgba(248,240,225,0.68);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .crm-side-chip-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .crm-side-chip {
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 8px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    color: rgba(248,240,225,0.78);
+  }
+  .crm-main {
+    padding: 28px 30px 46px;
+  }
+  .crm-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 26px;
+    flex-wrap: wrap;
+  }
+  .crm-headline {
+    font-family: var(--font-display);
+    font-size: clamp(38px, 4vw, 58px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin: 6px 0 0;
+    font-weight: 700;
+  }
+  .crm-head-copy {
+    max-width: 720px;
+    color: var(--crm-soft);
+    font-size: 15px;
+    line-height: 1.7;
+    margin-top: 14px;
+  }
+  .crm-toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .crm-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 10px 14px;
+    border: 1px solid var(--crm-border);
+    background: rgba(255,255,255,0.55);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--crm-ink);
+  }
+  .crm-primary {
+    border: 0;
+    background: var(--crm-ink);
+    color: #fff8ef;
+  }
+  .crm-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  .crm-stat-card,
+  .crm-card {
+    background: rgba(255,250,241,0.84);
+    border: 1px solid var(--crm-border);
+    box-shadow: var(--crm-shadow);
+    backdrop-filter: blur(8px);
+  }
+  .crm-stat-card {
+    padding: 20px 22px;
+    border-radius: 24px;
+  }
+  .crm-stat-value {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    margin: 8px 0;
+  }
+  .crm-stat-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--crm-soft);
+    font-weight: 700;
+  }
+  .crm-grid {
+    display: grid;
+    gap: 18px;
+  }
+  .crm-grid.two {
+    grid-template-columns: 1.3fr 0.9fr;
+  }
+  .crm-card {
+    border-radius: 26px;
+    padding: 24px;
+  }
+  .crm-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .crm-card-title {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 2.6vw, 34px);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    margin: 8px 0 0;
+    font-weight: 700;
+  }
+  .crm-card-body {
+    color: var(--crm-soft);
+    font-size: 14px;
+    line-height: 1.65;
+    max-width: 56ch;
+  }
+  .crm-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .crm-table th {
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--crm-soft);
+    padding: 0 0 10px;
+    font-weight: 800;
+  }
+  .crm-table td {
+    padding: 14px 0;
+    border-top: 1px solid var(--crm-border);
+    vertical-align: top;
+    font-size: 14px;
+  }
+  .crm-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+  .crm-badge.shipped { background: rgba(49,67,45,0.12); color: var(--crm-moss); }
+  .crm-badge.packed { background: rgba(184,82,30,0.12); color: var(--crm-amber); }
+  .crm-badge.hold { background: rgba(91,46,44,0.12); color: var(--crm-plum); }
+  .crm-badge.live { background: rgba(217,176,112,0.18); color: #7d5618; }
+  .crm-badge.priority { background: rgba(184,82,30,0.14); color: var(--crm-amber); }
+  .crm-badge.normal { background: rgba(23,33,23,0.08); color: var(--crm-soft); }
+  .crm-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .crm-mini-card {
+    background: rgba(255,255,255,0.50);
+    border: 1px solid var(--crm-border);
+    border-radius: 20px;
+    padding: 16px 18px;
+  }
+  .crm-mini-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .crm-mini-title {
+    font-size: 15px;
+    font-weight: 800;
+  }
+  .crm-mini-meta {
+    color: var(--crm-soft);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .crm-customer-grid,
+  .crm-product-grid,
+  .crm-merch-grid,
+  .crm-roadmap {
+    display: grid;
+    gap: 16px;
+  }
+  .crm-customer-grid { grid-template-columns: repeat(3, 1fr); }
+  .crm-product-grid { grid-template-columns: repeat(2, 1fr); }
+  .crm-merch-grid { grid-template-columns: repeat(3, 1fr); }
+  .crm-roadmap { grid-template-columns: repeat(3, 1fr); }
+  .crm-customer-card,
+  .crm-product-card,
+  .crm-merch-card,
+  .crm-road-col {
+    border: 1px solid var(--crm-border);
+    border-radius: 22px;
+    background: rgba(255,255,255,0.52);
+    overflow: hidden;
+  }
+  .crm-customer-card,
+  .crm-product-card,
+  .crm-merch-card {
+    padding: 18px;
+  }
+  .crm-customer-name,
+  .crm-product-name,
+  .crm-merch-name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 4px 0 8px;
+    font-weight: 700;
+  }
+  .crm-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .crm-kpi-box {
+    background: rgba(255,250,241,0.70);
+    border: 1px solid var(--crm-border);
+    border-radius: 16px;
+    padding: 12px;
+  }
+  .crm-kpi-label {
+    color: var(--crm-soft);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 700;
+  }
+  .crm-kpi-value {
+    margin-top: 8px;
+    font-size: 19px;
+    font-weight: 800;
+  }
+  .crm-product-top {
+    display: grid;
+    grid-template-columns: 82px 1fr;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .crm-thumb {
+    width: 82px;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    border-radius: 18px;
+    background: var(--crm-panel);
+  }
+  .crm-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .crm-meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    color: var(--crm-soft);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .crm-progress {
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(23,33,23,0.08);
+    overflow: hidden;
+    margin-top: 12px;
+  }
+  .crm-progress > span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--crm-amber), #d68a56);
+  }
+  .crm-road-col {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .crm-road-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--crm-border);
+  }
+  .crm-road-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 700;
+  }
+  .crm-road-note {
+    color: var(--crm-soft);
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .crm-task {
+    background: rgba(255,250,241,0.76);
+    border: 1px solid var(--crm-border);
+    border-radius: 18px;
+    padding: 14px;
+  }
+  .crm-task-title {
+    font-size: 14px;
+    font-weight: 800;
+    margin: 6px 0 6px;
+  }
+  .crm-task-body {
+    color: var(--crm-soft);
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+  .crm-section {
+    display: none;
+  }
+  .crm-section.is-active {
+    display: block;
+    animation: crmIn .28s ease both;
+  }
+  @keyframes crmIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .crm-empty-note {
+    color: var(--crm-soft);
+    font-size: 13px;
+  }
+  @media (max-width: 1180px) {
+    .crm-shell { grid-template-columns: 1fr; }
+    .crm-sidebar {
+      position: static;
+      height: auto;
+      border-right: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .crm-main { padding-top: 22px; }
+    .crm-stats { grid-template-columns: repeat(2, 1fr); }
+    .crm-grid.two,
+    .crm-customer-grid,
+    .crm-merch-grid,
+    .crm-roadmap {
+      grid-template-columns: 1fr;
+    }
+    .crm-product-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 680px) {
+    .crm-main { padding: 20px 16px 32px; }
+    .crm-stats { grid-template-columns: 1fr; }
+    .crm-card, .crm-stat-card { padding: 18px; border-radius: 20px; }
+    .crm-product-top { grid-template-columns: 68px 1fr; }
+    .crm-thumb { width: 68px; border-radius: 14px; }
+    .crm-kpi-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="content.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+<script type="text/babel">
+const { useMemo, useState } = React;
+
+const tabs = [
+  { id: "overview", title: "Огляд", body: "Пульс магазину, revenue і вузькі місця." },
+  { id: "orders", title: "Замовлення", body: "Черга відправок, пріоритети і SLA." },
+  { id: "customers", title: "Клієнти", body: "VIP, retention і gifting-поведінка." },
+  { id: "catalog", title: "Каталог", body: "SKU, stock, маржинальність і фото." },
+  { id: "merch", title: "Мерч", body: "Seasonal edit, bundles і home-модулі." },
+  { id: "roadmap", title: "Roadmap", body: "P1 / P2 / P3 для розвитку рішення." },
+];
+
+const stockByProduct = {
+  "sunflower-oil": 38,
+  "pumpkin-oil": 14,
+  "linden-honey": 21,
+  "meadow-honey": 18,
+  "cherry-varennya": 9,
+  "sea-buckthorn": 7,
+  "carpathian-herbal-tea": 16,
+  "linseed-oil": 11,
+  "acacia-honey": 24,
+  "blueberry-varennya": 12,
+  "chamomile-tea": 19,
+  "ivan-chai": 8,
+  "walnut-oil": 6,
+  "hemp-oil": 10,
+  "buckwheat-honey": 13,
+  "strawberry-jam": 15,
+  "apricot-jam": 8,
+  "mint-tea": 17,
+  "sunflower-honey": 9,
+  "quince-confiture": 11,
+  "melissa-tea": 14,
+  "thyme-tea": 6,
+  "rosehip-tea": 10,
+};
+
+const margins = {
+  oil: "46%",
+  honey: "52%",
+  preserves: "49%",
+  tea: "58%",
+};
+
+const orders = [
+  { id: "MN-2405", status: "packed", priority: "priority", customer: "Олена К.", city: "Київ", total: 1580, items: ["Гарбузова олія", "Варення з вишні", "Чебрецевий чай"], source: "Instagram", eta: "сьогодні 18:00" },
+  { id: "MN-2404", status: "shipped", priority: "normal", customer: "Марко С.", city: "Львів", total: 980, items: ["Набір для гостин"], source: "Direct", eta: "в дорозі" },
+  { id: "MN-2403", status: "hold", priority: "priority", customer: "Ірина Т.", city: "Дніпро", total: 2140, items: ["Соняшникова олія", "Акацієвий мед", "Айвовий конфітюр", "Ромашковий чай"], source: "Homepage", eta: "очікує дзвінка" },
+  { id: "MN-2402", status: "packed", priority: "normal", customer: "Тарас Б.", city: "Одеса", total: 760, items: ["Теплий вечір"], source: "Gift flow", eta: "завтра 12:00" },
+  { id: "MN-2401", status: "shipped", priority: "normal", customer: "Софія Н.", city: "Івано-Франківськ", total: 1210, items: ["Лляна олія", "Соняшниковий мед", "Чай з меліси"], source: "Seasonal edit", eta: "в дорозі" },
+];
+
+const customers = [
+  { name: "Олена К.", tier: "VIP", city: "Київ", orders: 7, ltv: 8460, last: "2 дні тому", favorite: "Гарбузова олія", note: "Часто бере подарункові замовлення і просить hand-written note." },
+  { name: "Марко С.", tier: "Repeat", city: "Львів", orders: 4, ltv: 4120, last: "5 днів тому", favorite: "Чебрецевий чай", note: "Добре реагує на seasonal mail і bundle-пропозиції." },
+  { name: "Ірина Т.", tier: "New", city: "Дніпро", orders: 2, ltv: 2140, last: "сьогодні", favorite: "Акацієвий мед", note: "Зайшла з home hero, довго дивилась PDP перед додаванням у кошик." },
+];
+
+const merchCards = [
+  { title: "Seasonal Edit", state: "live", body: "Зараз на home стоїть тріо: гарбузова олія, вишневе варення, чебрецевий чай.", owner: "Merch", due: "оновити за 12 днів" },
+  { title: "Gift Bundles", state: "priority", body: "Потрібно посилити `Солодкий стіл` і окремо зібрати весняний breakfast-set.", owner: "Commercial", due: "цього тижня" },
+  { title: "Photo Standard", state: "normal", body: "Ще є 4 SKU, які варто дозняти в єдиному світлі, щоб витримати флагманську подачу.", owner: "Content", due: "наступний спринт" },
+];
+
+const roadmap = {
+  p1: [
+    { tag: "P1", title: "Core catalog cleanup", body: "Залишити 12–16 strongest SKU, прибрати слабкі дублікати і фіналізувати product hierarchy." },
+    { tag: "P1", title: "Home / Shop / PDP polish", body: "Дотиснути mobile rhythm, product trust blocks, sticky CTA і мерч-структуру." },
+    { tag: "P1", title: "Gift logic", body: "Зібрати 3–5 сильних наборів з reason-to-buy, card note і clear audience." },
+  ],
+  p2: [
+    { tag: "P2", title: "Shop by occasion", body: "Додати сценарні колекції: сніданок, до чаю, на подарунок, для сирної тарілки." },
+    { tag: "P2", title: "Cross-sell / free shipping", body: "Підключити buy-together, threshold messaging і легкий growth layer." },
+    { tag: "P2", title: "Trust layer", body: "FAQ, доставка, повернення, batch transparency, gift-ready messaging." },
+  ],
+  p3: [
+    { tag: "P3", title: "Analytics", body: "Поставити події на PDP, seasonal, bundles, add-to-cart і newsletter." },
+    { tag: "P3", title: "SEO structure", body: "Підготувати category copy, meta titles, product wording і indexable entry pages." },
+    { tag: "P3", title: "Content ops", body: "Описати workflow для сезонних оновлень, нових SKU і фотопродакшну." },
+  ],
+};
+
+function money(v) {
+  return window.MUNISTER.formatPrice(v);
+}
+
+function LogoMark() {
+  return (
+    <svg width="34" height="26" viewBox="0 0 34 26" fill="none" aria-hidden="true">
+      <path d="M2 23 L10 6 L17 17 L24 6 L32 23" stroke="#f8f0e1" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round"/>
+      <line x1="2" y1="23" x2="32" y2="23" stroke="#f8f0e1" strokeWidth="1.6" strokeLinecap="round"/>
+      <circle cx="17" cy="3.5" r="2.1" fill="#d9b070"/>
+    </svg>
+  );
+}
+
+function Sidebar({ active, setActive }) {
+  return (
+    <aside className="crm-sidebar">
+      <div className="crm-brand">
+        <LogoMark />
+        <div className="crm-brand-word">MUNISTER</div>
+      </div>
+      <div className="crm-brand-note">
+        Demo CRM та адмінка для storefront-рішення: керування замовленнями, асортиментом, сезонними добірками і roadmap.
+      </div>
+
+      <div className="crm-side-section">
+        <div className="crm-eyebrow">Navigation</div>
+        <div className="crm-nav">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`crm-nav-btn ${active === tab.id ? "is-active" : ""}`}
+              onClick={() => setActive(tab.id)}
+            >
+              <div className="crm-nav-title">{tab.title}</div>
+              <div className="crm-nav-body">{tab.body}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="crm-side-section">
+        <div className="crm-eyebrow">Live flags</div>
+        <div className="crm-side-chip-grid">
+          <span className="crm-side-chip">23 SKU в каталозі</span>
+          <span className="crm-side-chip">Seasonal edit live</span>
+          <span className="crm-side-chip">4 bundle flows</span>
+          <span className="crm-side-chip">UA / EN / IT</span>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function SectionHeader({ eyebrow, title, body, actions }) {
+  return (
+    <div className="crm-card-head">
+      <div>
+        <div className="crm-eyebrow">{eyebrow}</div>
+        <div className="crm-card-title">{title}</div>
+        {body ? <div className="crm-card-body">{body}</div> : null}
+      </div>
+      {actions ? <div className="crm-toolbar">{actions}</div> : null}
+    </div>
+  );
+}
+
+function OverviewSection({ products, lowStock, categoryCounts, seasonalProducts }) {
+  const revenueToday = orders.reduce((sum, order) => sum + order.total, 0);
+  const avgOrder = Math.round(revenueToday / orders.length);
+  return (
+    <section className="crm-section is-active">
+      <div className="crm-stats">
+        <div className="crm-stat-card">
+          <div className="crm-eyebrow">Orders today</div>
+          <div className="crm-stat-value">{orders.length}</div>
+          <div className="crm-stat-meta"><span>2 priority</span><span>1 hold</span></div>
+        </div>
+        <div className="crm-stat-card">
+          <div className="crm-eyebrow">Revenue today</div>
+          <div className="crm-stat-value">{money(revenueToday)}</div>
+          <div className="crm-stat-meta"><span>AOV {money(avgOrder)}</span><span>Gift share 28%</span></div>
+        </div>
+        <div className="crm-stat-card">
+          <div className="crm-eyebrow">Catalog health</div>
+          <div className="crm-stat-value">{products.length}</div>
+          <div className="crm-stat-meta"><span>{lowStock.length} low stock</span><span>{Object.keys(categoryCounts).length} categories</span></div>
+        </div>
+        <div className="crm-stat-card">
+          <div className="crm-eyebrow">Merch focus</div>
+          <div className="crm-stat-value">P1</div>
+          <div className="crm-stat-meta"><span>Storefront polish</span><span>Gift logic next</span></div>
+        </div>
+      </div>
+
+      <div className="crm-grid two">
+        <div className="crm-card">
+          <SectionHeader
+            eyebrow="Operational pulse"
+            title="Що потребує уваги сьогодні."
+            body="Короткий зріз по замовленнях, ризиках стоку і сезонній вітрині. Саме так команда бачить storefront як керовану систему, а не просто красивий сайт."
+            actions={
+              <>
+                <span className="crm-pill">Sync 19:42</span>
+                <span className="crm-pill crm-primary">Open dispatch board</span>
+              </>
+            }
+          />
+          <table className="crm-table">
+            <thead>
+              <tr>
+                <th>Block</th>
+                <th>Status</th>
+                <th>Owner</th>
+                <th>Next action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Seasonal Edit</td>
+                <td><span className="crm-badge live">live</span></td>
+                <td>Merch</td>
+                <td>Оновити слот через 12 днів</td>
+              </tr>
+              <tr>
+                <td>Low stock SKU</td>
+                <td><span className="crm-badge priority">6 items</span></td>
+                <td>Ops</td>
+                <td>Підтвердити допоставку `walnut-oil`, `thyme-tea`, `sea-buckthorn`</td>
+              </tr>
+              <tr>
+                <td>Gift bundles</td>
+                <td><span className="crm-badge packed">review</span></td>
+                <td>Commercial</td>
+                <td>Зібрати новий breakfast-set до кінця спринту</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="crm-card">
+          <SectionHeader
+            eyebrow="Seasonal focus"
+            title="Що зараз веде home."
+            body="Три товари, які зараз відкривають вітрину і мають найкращий мерч-сенс."
+          />
+          <div className="crm-stack">
+            {seasonalProducts.map((product, idx) => (
+              <div key={product.id} className="crm-mini-card">
+                <div className="crm-mini-head">
+                  <div className="crm-mini-title">{String(idx + 1).padStart(2, "0")} · {product.name}</div>
+                  <span className="crm-badge live">{product.cat}</span>
+                </div>
+                <div className="crm-mini-meta">{product.note} · {money(product.price)} · stock {stockByProduct[product.id] ?? "—"}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function OrdersSection() {
+  return (
+    <section className="crm-section is-active">
+      <div className="crm-card">
+        <SectionHeader
+          eyebrow="Dispatch queue"
+          title="Замовлення і відправка."
+          body="Demo-черга, яка показує як магазин можна вести після запуску: пріоритети, джерело замовлення, ручні нотатки і SLA для подарункових сценаріїв."
+          actions={
+            <>
+              <span className="crm-pill">SLA 1–3 дні</span>
+              <span className="crm-pill crm-primary">Створити накладну</span>
+            </>
+          }
+        />
+        <table className="crm-table">
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Source</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>ETA</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order) => (
+              <tr key={order.id}>
+                <td>
+                  <div style={{ fontWeight: 800 }}>{order.id}</div>
+                  <div className="crm-empty-note">{order.city}</div>
+                </td>
+                <td>
+                  <div style={{ fontWeight: 700 }}>{order.customer}</div>
+                  <span className={`crm-badge ${order.priority}`}>{order.priority === "priority" ? "priority" : "normal"}</span>
+                </td>
+                <td>{order.items.join(", ")}</td>
+                <td>{order.source}</td>
+                <td style={{ fontWeight: 800 }}>{money(order.total)}</td>
+                <td><span className={`crm-badge ${order.status}`}>{order.status}</span></td>
+                <td>{order.eta}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function CustomersSection() {
+  return (
+    <section className="crm-section is-active">
+      <div className="crm-card">
+        <SectionHeader
+          eyebrow="Client base"
+          title="Клієнти і retention."
+          body="У storefront рівня premium особливо важливо бачити не лише замовлення, а й поведінку: хто повертається, хто купує на подарунок, хто реагує на seasonal-merch."
+        />
+        <div className="crm-customer-grid">
+          {customers.map((customer) => (
+            <div key={customer.name} className="crm-customer-card">
+              <div className="crm-eyebrow">{customer.tier}</div>
+              <div className="crm-customer-name">{customer.name}</div>
+              <div className="crm-meta-line">
+                <span>{customer.city}</span>
+                <span>Last order: {customer.last}</span>
+              </div>
+              <div className="crm-kpi-row">
+                <div className="crm-kpi-box">
+                  <div className="crm-kpi-label">Orders</div>
+                  <div className="crm-kpi-value">{customer.orders}</div>
+                </div>
+                <div className="crm-kpi-box">
+                  <div className="crm-kpi-label">LTV</div>
+                  <div className="crm-kpi-value">{money(customer.ltv)}</div>
+                </div>
+                <div className="crm-kpi-box">
+                  <div className="crm-kpi-label">Top SKU</div>
+                  <div className="crm-kpi-value" style={{ fontSize: 16 }}>{customer.favorite}</div>
+                </div>
+              </div>
+              <div className="crm-progress"><span style={{ width: `${Math.min(100, customer.orders * 12)}%` }} /></div>
+              <div className="crm-card-body" style={{ marginTop: 12 }}>{customer.note}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CatalogSection({ products, lowStock }) {
+  return (
+    <section className="crm-section is-active">
+      <div className="crm-card">
+        <SectionHeader
+          eyebrow="SKU management"
+          title="Каталог, сток і quality control."
+          body="Тут демо-адмінка показує головне: фото, category-fit, low-stock сигнали і rough margin. Это уже ближе к реальному merch-кабинету, чем к абстрактному дашборду."
+          actions={<span className="crm-pill">{products.length} SKU active</span>}
+        />
+        <div className="crm-product-grid">
+          {products.slice(0, 10).map((product) => {
+            const stock = stockByProduct[product.id] ?? 0;
+            const pct = Math.max(8, Math.min(100, stock * 3));
+            return (
+              <div key={product.id} className="crm-product-card">
+                <div className="crm-product-top">
+                  <div className="crm-thumb"><img src={product.image} alt={product.name} /></div>
+                  <div>
+                    <div className="crm-eyebrow">{product.cat}</div>
+                    <div className="crm-product-name">{product.name}</div>
+                    <div className="crm-meta-line">
+                      <span>{product.size}</span>
+                      <span>{money(product.price)}</span>
+                      <span>margin {margins[product.cat] || "—"}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="crm-card-body">{product.desc}</div>
+                <div className="crm-kpi-row" style={{ marginTop: 16 }}>
+                  <div className="crm-kpi-box">
+                    <div className="crm-kpi-label">Stock</div>
+                    <div className="crm-kpi-value">{stock}</div>
+                  </div>
+                  <div className="crm-kpi-box">
+                    <div className="crm-kpi-label">Rating</div>
+                    <div className="crm-kpi-value">{product.rating}</div>
+                  </div>
+                  <div className="crm-kpi-box">
+                    <div className="crm-kpi-label">Status</div>
+                    <div className="crm-kpi-value" style={{ fontSize: 16 }}>
+                      {stock <= 8 ? "low" : "ok"}
+                    </div>
+                  </div>
+                </div>
+                <div className="crm-progress"><span style={{ width: `${pct}%` }} /></div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="crm-card-body" style={{ marginTop: 20 }}>
+          Low stock watch: {lowStock.map((item) => item.name).join(", ")}.
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MerchSection({ seasonalProducts, copy }) {
+  return (
+    <section className="crm-section is-active">
+      <div className="crm-card">
+        <SectionHeader
+          eyebrow="Merchandising"
+          title="Home-модули, seasonal slots і bundles."
+          body="Тут команда керує не тільки товарами, а саме подачею: яка трійка стоїть на вході, які набори пушимо, що оновлюємо наступним."
+          actions={<span className="crm-pill crm-primary">Edit seasonal slots</span>}
+        />
+        <div className="crm-merch-grid">
+          {merchCards.map((card) => (
+            <div key={card.title} className="crm-merch-card">
+              <div className="crm-mini-head">
+                <div className="crm-merch-name">{card.title}</div>
+                <span className={`crm-badge ${card.state}`}>{card.state}</span>
+              </div>
+              <div className="crm-card-body">{card.body}</div>
+              <div className="crm-meta-line" style={{ marginTop: 14 }}>
+                <span>owner: {card.owner}</span>
+                <span>{card.due}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="crm-grid two" style={{ marginTop: 20 }}>
+          <div className="crm-mini-card">
+            <div className="crm-eyebrow">Seasonal edit live now</div>
+            <div className="crm-stack" style={{ marginTop: 14 }}>
+              {copy.home.seasonal.items.map((entry) => {
+                const product = seasonalProducts.find((item) => item.id === entry.productId);
+                if (!product) return null;
+                return (
+                  <div key={entry.productId} className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
+                    <div className="crm-mini-head">
+                      <div className="crm-mini-title">{product.name}</div>
+                      <span className="crm-badge live">{entry.reason}</span>
+                    </div>
+                    <div className="crm-mini-meta">{entry.line}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="crm-mini-card">
+            <div className="crm-eyebrow">Bundle opportunities</div>
+            <div className="crm-stack" style={{ marginTop: 14 }}>
+              <div className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
+                <div className="crm-mini-title">Breakfast box</div>
+                <div className="crm-mini-meta">Вишневе варення + соняшниковий мед + ромашковий чай.</div>
+              </div>
+              <div className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
+                <div className="crm-mini-title">Spring pantry edit</div>
+                <div className="crm-mini-meta">Гарбузова олія + чебрецевий чай + айвовий конфітюр.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function RoadmapSection() {
+  return (
+    <section className="crm-section is-active">
+      <div className="crm-card">
+        <SectionHeader
+          eyebrow="Execution board"
+          title="Global roadmap розвитку."
+          body="Тут ваш `Must / Should / Later` уже переведён в управляемую доску `P1 / P2 / P3`, чтобы из стратегии сразу переходить в работу команды."
+        />
+        <div className="crm-roadmap">
+          <div className="crm-road-col">
+            <div className="crm-road-head">
+              <div className="crm-road-title">P1</div>
+              <div className="crm-road-note">now</div>
+            </div>
+            {roadmap.p1.map((task) => (
+              <div key={task.title} className="crm-task">
+                <span className="crm-badge priority">{task.tag}</span>
+                <div className="crm-task-title">{task.title}</div>
+                <div className="crm-task-body">{task.body}</div>
+              </div>
+            ))}
+          </div>
+          <div className="crm-road-col">
+            <div className="crm-road-head">
+              <div className="crm-road-title">P2</div>
+              <div className="crm-road-note">next</div>
+            </div>
+            {roadmap.p2.map((task) => (
+              <div key={task.title} className="crm-task">
+                <span className="crm-badge packed">{task.tag}</span>
+                <div className="crm-task-title">{task.title}</div>
+                <div className="crm-task-body">{task.body}</div>
+              </div>
+            ))}
+          </div>
+          <div className="crm-road-col">
+            <div className="crm-road-head">
+              <div className="crm-road-title">P3</div>
+              <div className="crm-road-note">later</div>
+            </div>
+            {roadmap.p3.map((task) => (
+              <div key={task.title} className="crm-task">
+                <span className="crm-badge normal">{task.tag}</span>
+                <div className="crm-task-title">{task.title}</div>
+                <div className="crm-task-body">{task.body}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function App() {
+  const [active, setActive] = useState("overview");
+  const products = useMemo(() => window.MUNISTER.getProducts("uk"), []);
+  const copy = useMemo(() => window.MUNISTER.getCopy("uk"), []);
+  const categoryCounts = useMemo(() => products.reduce((acc, product) => {
+    acc[product.cat] = (acc[product.cat] || 0) + 1;
+    return acc;
+  }, {}), [products]);
+  const lowStock = useMemo(() => products.filter((product) => (stockByProduct[product.id] ?? 0) <= 8), [products]);
+  const seasonalProducts = useMemo(
+    () => copy.home.seasonal.items.map((entry) => products.find((product) => product.id === entry.productId)).filter(Boolean),
+    [copy, products]
+  );
+
+  return (
+    <div className="crm-shell">
+      <Sidebar active={active} setActive={setActive} />
+      <main className="crm-main">
+        <div className="crm-topbar">
+          <div>
+            <div className="crm-eyebrow">Munister operations demo</div>
+            <h1 className="crm-headline">CRM + admin для storefront-рішення.</h1>
+            <div className="crm-head-copy">
+              Один екран для операційної команди: замовлення, клієнти, каталог, seasonal-merch та roadmap розвитку. Це демо показує, як `shop/` може вирости в керовану комерційну систему.
+            </div>
+          </div>
+          <div className="crm-toolbar">
+            <span className="crm-pill">Live catalog: {products.length} SKU</span>
+            <span className="crm-pill">Low stock: {lowStock.length}</span>
+            <span className="crm-pill crm-primary">Open weekly review</span>
+          </div>
+        </div>
+
+        {active === "overview" ? <OverviewSection products={products} lowStock={lowStock} categoryCounts={categoryCounts} seasonalProducts={seasonalProducts} /> : null}
+        {active === "orders" ? <OrdersSection /> : null}
+        {active === "customers" ? <CustomersSection /> : null}
+        {active === "catalog" ? <CatalogSection products={products} lowStock={lowStock} /> : null}
+        {active === "merch" ? <MerchSection seasonalProducts={seasonalProducts} copy={copy} /> : null}
+        {active === "roadmap" ? <RoadmapSection /> : null}
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
