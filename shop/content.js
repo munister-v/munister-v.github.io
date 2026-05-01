@@ -995,7 +995,7 @@ window.MUNISTER = (() => {
         cols: [
           { title: "Крамниця", items: ["Олії", "Мед", "Варення", "Чаї"] },
           { title: "Дослідити", items: ["Набори", "Історія", "Бестселери", "Подарунки"] },
-          { title: "Сервіс", items: ["Доставка", "Повернення", "Контакт", "FAQ"] },
+          { title: "Сервіс", items: ["Доставка", "Повернення", "Контакт", "FAQ", "CRM demo"] },
         ],
         left: "© 2026 Munister · українська pantry-колекція",
         right: "Повільно зібрано · чесно подано",
@@ -1200,7 +1200,7 @@ window.MUNISTER = (() => {
         cols: [
           { title: "Shop", items: ["Oils", "Honey", "Preserves", "Tea"] },
           { title: "Explore", items: ["Gift sets", "Our story", "Best sellers", "Giving"] },
-          { title: "Help", items: ["Shipping", "Returns", "Contact", "FAQ"] },
+          { title: "Help", items: ["Shipping", "Returns", "Contact", "FAQ", "CRM demo"] },
         ],
         left: "© 2026 Munister · Ukrainian pantry collection",
         right: "Assembled slowly · presented honestly",
@@ -1405,7 +1405,7 @@ window.MUNISTER = (() => {
         cols: [
           { title: "Negozio", items: ["Oli", "Mieli", "Conserve", "Tisane"] },
           { title: "Esplora", items: ["Set regalo", "La storia", "Più scelti", "Regali"] },
-          { title: "Servizio", items: ["Spedizione", "Resi", "Contatti", "FAQ"] },
+          { title: "Servizio", items: ["Spedizione", "Resi", "Contatti", "FAQ", "CRM demo"] },
         ],
         left: "© 2026 Munister · collezione dispensa ucraina",
         right: "Assemblata con calma · presentata con onestà",
