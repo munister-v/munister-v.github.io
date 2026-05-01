@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
 <title>Munister — The Modern Ukrainian Pantry</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,7 +56,15 @@
     --tracking-wider: 0.12em;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--olv-bg); color: var(--olv-ink); }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--olv-bg);
+    color: var(--olv-ink);
+    overflow-x: hidden;
+    overscroll-behavior-y: none;
+    scroll-behavior: smooth;
+  }
   body {
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
@@ -65,7 +73,9 @@
     font-size: var(--text-base);
     line-height: var(--leading-body);
     font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    touch-action: pan-y;
   }
+  img { max-width: 100%; }
   a { color: inherit; }
   button, input, select { font-family: inherit; }
   .mn-cat-card:hover .mn-cat-arrow { opacity: 1 !important; }
@@ -101,9 +111,22 @@
     .olv-products-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
     .olv-footer-grid { grid-template-columns: 1fr !important; }
     .olv-journey { grid-template-columns: 1fr !important; }
+    .olv-journey-line { display: none !important; }
     .olv-hero-padding { padding: 40px 20px 36px !important; }
     .olv-color-strip { padding: 48px 20px !important; }
     .olv-section-pad { padding-left: 20px !important; padding-right: 20px !important; }
+    .olv-shop-header { padding: 42px 20px 28px !important; }
+    .olv-shop-toolbar { padding: 12px 18px !important; }
+    .olv-shop-toolbar-row { gap: 12px !important; }
+    .olv-shop-controls { width: 100% !important; justify-content: space-between !important; }
+    .olv-shop-products-wrap { padding: 28px 18px 88px !important; }
+    .olv-shop-list-row { grid-template-columns: 88px 1fr !important; gap: 14px !important; }
+    .olv-shop-list-actions { grid-column: 1 / -1 !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; }
+    .olv-pdp-panel { padding: 34px 20px !important; }
+    .olv-pdp-meta { grid-template-columns: 1fr !important; }
+    .olv-pdp-price-row { flex-wrap: wrap !important; }
+    .olv-sticky-add { padding: 12px 16px !important; gap: 12px !important; flex-wrap: wrap !important; }
+    .olv-sticky-cta { width: 100% !important; justify-content: center !important; }
     h1 { font-size: clamp(40px, 11vw, 64px) !important; }
     h2 { font-size: clamp(28px, 7vw, 42px) !important; }
     .olv-hero-stats { gap: 22px !important; }
@@ -116,6 +139,7 @@
   @media (max-width: 420px) {
     h1 { font-size: clamp(36px, 12vw, 56px) !important; line-height: 1.02 !important; }
     .olv-hero-padding { padding: 36px 18px 32px !important; }
+    .olv-sticky-add { padding-bottom: 14px !important; }
   }
 
   .olv-reveal {

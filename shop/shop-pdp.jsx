@@ -17,7 +17,7 @@ function ShopPage({ products, onAdd, setRoute, copy, money }) {
 
   return (
     <div style={{ background: "var(--olv-bg)", minHeight: "100vh" }}>
-      <div style={{ background: "var(--olv-cream)", padding: "64px 28px 44px", borderBottom: "1px solid rgba(31,42,26,0.08)" }}>
+      <div className="olv-shop-header" style={{ background: "var(--olv-cream)", padding: "64px 28px 44px", borderBottom: "1px solid rgba(31,42,26,0.08)" }}>
         <div style={{ maxWidth: 1400, marginInline: "auto" }}>
           <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", marginBottom: 12, fontWeight: 700 }}>
             {copy.shop.eyebrow}
@@ -31,8 +31,8 @@ function ShopPage({ products, onAdd, setRoute, copy, money }) {
         </div>
       </div>
 
-      <div style={{ position: "sticky", top: 0, zIndex: 30, background: "var(--olv-bg)", borderBottom: "1px solid rgba(31,42,26,0.08)", padding: "14px 28px" }}>
-        <div style={{ maxWidth: 1400, marginInline: "auto", display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+      <div className="olv-shop-toolbar" style={{ position: "sticky", top: 0, zIndex: 30, background: "var(--olv-bg)", borderBottom: "1px solid rgba(31,42,26,0.08)", padding: "14px 28px" }}>
+        <div className="olv-shop-toolbar-row" style={{ maxWidth: 1400, marginInline: "auto", display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
           <div style={{ display: "flex", gap: 7, flexWrap: "wrap", flex: 1 }}>
             {copy.shop.filters.map((c) => (
               <button
@@ -61,7 +61,7 @@ function ShopPage({ products, onAdd, setRoute, copy, money }) {
               </button>
             ) : null}
           </div>
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <div className="olv-shop-controls" style={{ display: "flex", gap: 10, alignItems: "center" }}>
             <select value={sort} onChange={(e) => setSort(e.target.value)} style={{ fontFamily: "var(--font-body)", fontSize: 12.5, background: "transparent", border: "1px solid rgba(31,42,26,0.2)", color: "var(--olv-ink)", padding: "8px 12px", borderRadius: 999, cursor: "pointer", fontWeight: 700 }}>
               <option value="popular">{copy.shop.sorts.popular}</option>
               <option value="rating">{copy.shop.sorts.rating}</option>
@@ -94,7 +94,7 @@ function ShopPage({ products, onAdd, setRoute, copy, money }) {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1400, marginInline: "auto", padding: "40px 28px 90px" }}>
+      <div className="olv-shop-products-wrap" style={{ maxWidth: 1400, marginInline: "auto", padding: "40px 28px 90px" }}>
         {view === "grid" ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 28 }}>
             {filtered.map((p, i) => (
@@ -163,7 +163,7 @@ function ShopCard({ p, i, onAdd, onClick, copy, money }) {
 
 function ShopListRow({ p, onAdd, onClick, copy, money }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "100px 1fr auto", gap: 22, padding: "20px 0", borderBottom: "1px solid rgba(31,42,26,0.07)", alignItems: "center", cursor: "pointer" }} onClick={onClick}>
+    <div className="olv-shop-list-row" style={{ display: "grid", gridTemplateColumns: "100px 1fr auto", gap: 22, padding: "20px 0", borderBottom: "1px solid rgba(31,42,26,0.07)", alignItems: "center", cursor: "pointer" }} onClick={onClick}>
       <div style={{ aspectRatio: "1/1", overflow: "hidden" }}>
         <Placeholder src={p.image} label={p.name} tone={p.tone} />
       </div>
@@ -176,7 +176,7 @@ function ShopListRow({ p, onAdd, onClick, copy, money }) {
           ))}
         </div>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10 }}>
+      <div className="olv-shop-list-actions" style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10 }}>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 26, fontWeight: 700 }}>{money(p.price)}</div>
         <button onClick={(e) => { e.stopPropagation(); onAdd(p); }} style={{ ...btnPrimary, padding: "10px 18px" }}><Icon.plus /> {copy.shop.addBag}</button>
       </div>
@@ -224,7 +224,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
           </div>
         </div>
 
-        <div ref={panelRef} style={{ padding: "56px 60px", display: "flex", flexDirection: "column", gap: 20, background: "var(--olv-cream)" }}>
+        <div ref={panelRef} className="olv-pdp-panel" style={{ padding: "56px 60px", display: "flex", flexDirection: "column", gap: 20, background: "var(--olv-cream)" }}>
           <div>
             <div style={{ fontFamily: "var(--font-label)", fontSize: 10.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--olv-moss)", fontWeight: 700 }}>{p.region}</div>
             <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(34px,3.2vw,48px)", margin: "10px 0 0", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.04 }}>{p.name}</h1>
@@ -261,7 +261,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
             </div>
           ) : null}
 
-          <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 4 }}>
+          <div className="olv-pdp-price-row" style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 4 }}>
             <div style={{ fontFamily: "var(--font-display)", fontSize: 34, fontWeight: 700 }}>{money(active.price * qty)}</div>
             <div style={{ flex: 1 }} />
             <div style={{ display: "inline-flex", border: "1px solid rgba(31,42,26,0.2)", borderRadius: 999, alignItems: "center" }}>
@@ -274,7 +274,7 @@ function ProductDetailPage({ p, onAdd, setRoute, allProducts, copy, money }) {
             {addedPulse ? <><Icon.check /> {copy.shop.added}</> : <>{copy.shop.addBag} · {money(active.price * qty)} <Icon.arrow /></>}
           </button>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 4, fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--olv-ink-soft)", fontWeight: 700 }}>
+          <div className="olv-pdp-meta" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 4, fontFamily: "var(--font-label)", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--olv-ink-soft)", fontWeight: 700 }}>
             <div>{p.shelf}</div>
             <div>{p.harvest}</div>
           </div>
@@ -353,7 +353,7 @@ function LotJourney({ copy }) {
           {copy.shop.journeyTitle}
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 0, position: "relative" }} className="olv-journey">
-          <div style={{ position: "absolute", top: 20, left: "10%", right: "10%", height: 1, background: "rgba(255,255,255,0.15)" }} />
+          <div className="olv-journey-line" style={{ position: "absolute", top: 20, left: "10%", right: "10%", height: 1, background: "rgba(255,255,255,0.15)" }} />
           {copy.shop.journey.map((step, i) => (
             <div key={step.label} style={{ padding: "0 16px 0 0", position: "relative" }}>
               <div style={{ width: 40, height: 40, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.4)", display: "grid", placeItems: "center", fontFamily: "var(--font-label)", fontSize: 13, fontWeight: 700, background: i === 0 ? "var(--olv-amber)" : "transparent", color: i === 0 ? "var(--olv-ink)" : "var(--olv-cream)", marginBottom: 18 }}>{String(i + 1).padStart(2, "0")}</div>
@@ -415,7 +415,7 @@ function ReviewsSection({ p, copy }) {
 
 function StickyAddBar({ p, activePrice, onAdd, visible, copy, money }) {
   return (
-    <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 60, background: "var(--olv-cream)", borderTop: "1px solid rgba(31,42,26,0.1)", padding: "14px 28px", display: "flex", alignItems: "center", gap: 16, transform: visible ? "translateY(0)" : "translateY(100%)", transition: "transform .3s cubic-bezier(.2,.8,.2,1)", boxShadow: "0 -12px 40px rgba(31,42,26,0.1)" }}>
+    <div className="olv-sticky-add" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 60, background: "var(--olv-cream)", borderTop: "1px solid rgba(31,42,26,0.1)", padding: "14px 28px", display: "flex", alignItems: "center", gap: 16, transform: visible ? "translateY(0)" : "translateY(100%)", transition: "transform .3s cubic-bezier(.2,.8,.2,1)", boxShadow: "0 -12px 40px rgba(31,42,26,0.1)" }}>
       <div style={{ width: 48, height: 48, flexShrink: 0 }}>
         <Placeholder src={p.image} label={p.name} tone={p.tone} />
       </div>
@@ -424,7 +424,7 @@ function StickyAddBar({ p, activePrice, onAdd, visible, copy, money }) {
         <div style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--olv-ink-soft)", marginTop: 2, fontWeight: 500 }}>{p.note}</div>
       </div>
       <div style={{ fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 700 }}>{money(activePrice)}</div>
-      <button onClick={onAdd} style={{ ...btnPrimary, whiteSpace: "nowrap" }}>{copy.shop.stickyAdd} <Icon.arrow /></button>
+      <button className="olv-sticky-cta" onClick={onAdd} style={{ ...btnPrimary, whiteSpace: "nowrap" }}>{copy.shop.stickyAdd} <Icon.arrow /></button>
     </div>
   );
 }
