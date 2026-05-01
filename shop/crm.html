@@ -697,12 +697,6 @@ const customers = [
   { name: "Ірина Т.", tier: "New", city: "Дніпро", orders: 2, ltv: 2140, last: "сьогодні", favorite: "Акацієвий мед", note: "Зайшла з home hero, довго дивилась PDP перед додаванням у кошик." },
 ];
 
-const merchCards = [
-  { title: "Seasonal Edit", state: "live", body: "Зараз на home стоїть тріо: гарбузова олія, вишневе варення, чебрецевий чай.", owner: "Merch", due: "оновити за 12 днів" },
-  { title: "Gift Bundles", state: "priority", body: "Потрібно посилити `Солодкий стіл` і окремо зібрати весняний breakfast-set.", owner: "Commercial", due: "цього тижня" },
-  { title: "Photo Standard", state: "normal", body: "Ще є 4 SKU, які варто дозняти в єдиному світлі, щоб витримати флагманську подачу.", owner: "Content", due: "наступний спринт" },
-];
-
 const contentCalendar = [
   { week: "Тиждень 1", title: "Seasonal refresh", owner: "Merch", body: "Оновити першу трійку home та reason badges під травневу подачу.", deliverables: ["3 hero SKU", "badge reasons", "new CTA order"] },
   { week: "Тиждень 2", title: "Gift flow", owner: "Commercial", body: "Зібрати нові gift-набори та уточнити логіку подарункової комунікації.", deliverables: ["2 bundles", "gift note copy", "bundle margins"] },
@@ -783,11 +777,9 @@ function Sidebar({ active, setActive }) {
       </div>
 
       <div className="crm-side-section">
-        <div className="crm-eyebrow">Live flags</div>
         <div className="crm-side-chip-grid">
           <span className="crm-side-chip">23 SKU в каталозі</span>
           <span className="crm-side-chip">Seasonal edit live</span>
-          <span className="crm-side-chip">4 bundle flows</span>
           <span className="crm-side-chip">UA / EN / IT</span>
         </div>
       </div>
@@ -808,7 +800,7 @@ function SectionHeader({ eyebrow, title, body, actions }) {
   );
 }
 
-function OverviewSection({ products, lowStock, categoryCounts, seasonalProducts }) {
+function OverviewSection({ products, lowStock, categoryCounts }) {
   const revenueToday = orders.reduce((sum, order) => sum + order.total, 0);
   const avgOrder = Math.round(revenueToday / orders.length);
   return (
@@ -836,81 +828,57 @@ function OverviewSection({ products, lowStock, categoryCounts, seasonalProducts 
         </div>
       </div>
 
-      <div className="crm-grid two">
-        <div className="crm-card">
-          <SectionHeader
-            eyebrow="Operational pulse"
-            title="Що потребує уваги сьогодні."
-            body="Короткий зріз по замовленнях, ризиках стоку і сезонній вітрині. Саме так команда бачить storefront як керовану систему, а не просто красивий сайт."
-            actions={
-              <>
-                <span className="crm-pill">Sync 19:42</span>
-                <span className="crm-pill crm-primary">Open dispatch board</span>
-              </>
-            }
-          />
-          <table className="crm-table">
-            <thead>
-              <tr>
-                <th>Block</th>
-                <th>Status</th>
-                <th>Owner</th>
-                <th>Next action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Seasonal Edit</td>
-                <td><span className="crm-badge live">live</span></td>
-                <td>Merch</td>
-                <td>Оновити слот через 12 днів</td>
-              </tr>
-              <tr>
-                <td>Low stock SKU</td>
-                <td><span className="crm-badge priority">6 items</span></td>
-                <td>Ops</td>
-                <td>Підтвердити допоставку `walnut-oil`, `thyme-tea`, `sea-buckthorn`</td>
-              </tr>
-              <tr>
-                <td>Gift bundles</td>
-                <td><span className="crm-badge packed">review</span></td>
-                <td>Commercial</td>
-                <td>Зібрати новий breakfast-set до кінця спринту</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div className="crm-card">
-          <SectionHeader
-            eyebrow="Seasonal focus"
-            title="Що зараз веде home."
-            body="Три товари, які зараз відкривають вітрину і мають найкращий мерч-сенс."
-          />
-          <div className="crm-stack">
-            {seasonalProducts.map((product, idx) => (
-              <div key={product.id} className="crm-mini-card">
-                <div className="crm-mini-head">
-                  <div className="crm-mini-title">{String(idx + 1).padStart(2, "0")} · {product.name}</div>
-                  <span className="crm-badge live">{product.cat}</span>
-                </div>
-                <div className="crm-mini-meta">{product.note} · {money(product.price)} · stock {stockByProduct[product.id] ?? "—"}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="crm-card">
+        <SectionHeader
+          eyebrow="Operational pulse"
+          title="Що потребує уваги сьогодні."
+          body="Короткий зріз по замовленнях, ризиках стоку і сезонній вітрині. Тут залишено тільки те, що реально веде команду до дії."
+          actions={
+            <>
+              <span className="crm-pill">Sync 19:42</span>
+              <span className="crm-pill crm-primary">Open dispatch board</span>
+            </>
+          }
+        />
+        <table className="crm-table">
+          <thead>
+            <tr>
+              <th>Block</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Next action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Seasonal Edit</td>
+              <td><span className="crm-badge live">live</span></td>
+              <td>Merch</td>
+              <td>Оновити слот через 12 днів</td>
+            </tr>
+            <tr>
+              <td>Low stock SKU</td>
+              <td><span className="crm-badge priority">6 items</span></td>
+              <td>Ops</td>
+              <td>Підтвердити допоставку `walnut-oil`, `thyme-tea`, `sea-buckthorn`</td>
+            </tr>
+            <tr>
+              <td>Gift bundles</td>
+              <td><span className="crm-badge packed">review</span></td>
+              <td>Commercial</td>
+              <td>Зібрати новий breakfast-set до кінця спринту</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
   );
 }
 
-function OrdersSection({ products }) {
+function OrdersSection() {
   const [selectedOrderId, setSelectedOrderId] = useState(orders[0].id);
   const selectedOrder = orders.find((order) => order.id === selectedOrderId) || orders[0];
   const intel = orderIntel[selectedOrder.id];
-  const orderProducts = (intel?.productIds || [])
-    .map((id) => products.find((product) => product.id === id))
-    .filter(Boolean);
 
   return (
     <section className="crm-section is-active">
@@ -993,23 +961,6 @@ function OrdersSection({ products }) {
                 <li key={item}>{item}</li>
               ))}
             </ul>
-            {orderProducts.length ? (
-              <>
-                <div className="crm-divider" />
-                <div className="crm-eyebrow">Related product view</div>
-                <div className="crm-stack" style={{ marginTop: 14 }}>
-                  {orderProducts.map((product) => (
-                    <div key={product.id} className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
-                      <div className="crm-mini-head">
-                        <div className="crm-mini-title">{product.name}</div>
-                        <span className="crm-badge live">{money(product.price)}</span>
-                      </div>
-                      <div className="crm-mini-meta">{product.note} · stock {stockByProduct[product.id] ?? "—"}</div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : null}
           </div>
 
           <div className="crm-mini-card">
@@ -1097,7 +1048,7 @@ function CatalogSection({ products, lowStock }) {
         <SectionHeader
           eyebrow="SKU management"
           title="Каталог, сток і quality control."
-          body="Тут демо-адмінка показує головне: фото, category-fit, low-stock сигнали і rough margin. Это уже ближе к реальному merch-кабинету, чем к абстрактному дашборду."
+          body="Тут демо-адмінка показує головне: фото, category-fit, low-stock сигнали і rough margin. Це вже ближче до реального merch-кабінету, ніж до абстрактного дашборду."
           actions={<span className="crm-pill">{products.length} SKU active</span>}
         />
         <div className="crm-product-grid">
@@ -1140,10 +1091,6 @@ function CatalogSection({ products, lowStock }) {
             );
           })}
         </div>
-        <div className="crm-card-body" style={{ marginTop: 20 }}>
-          Low stock watch: {lowStock.map((item) => item.name).join(", ")}.
-        </div>
-
         <div className="crm-warning-grid" style={{ marginTop: 24 }}>
           <div className="crm-mini-card">
             <div className="crm-eyebrow">Inventory warnings</div>
@@ -1180,7 +1127,7 @@ function CatalogSection({ products, lowStock }) {
   );
 }
 
-function MerchSection({ seasonalProducts, copy, products }) {
+function MerchSection({ copy, products }) {
   const [seasonalSlotIds, setSeasonalSlotIds] = useState(copy.home.seasonal.items.map((entry) => entry.productId));
   const [activeBundleId, setActiveBundleId] = useState(bundlePresets[0].id);
   const liveSeasonalProducts = seasonalSlotIds.map((id) => products.find((product) => product.id === id)).filter(Boolean);
@@ -1193,26 +1140,10 @@ function MerchSection({ seasonalProducts, copy, products }) {
         <SectionHeader
           eyebrow="Merchandising"
           title="Home-модули, seasonal slots і bundles."
-          body="Тут команда керує не тільки товарами, а саме подачею: яка трійка стоїть на вході, які набори пушимо, що оновлюємо наступним."
+          body="Тут команда керує подачею: яка трійка стоїть на вході і який набір підсвічуємо як наступний buying prompt."
           actions={<span className="crm-pill crm-primary">Edit seasonal slots</span>}
         />
-        <div className="crm-merch-grid">
-          {merchCards.map((card) => (
-            <div key={card.title} className="crm-merch-card">
-              <div className="crm-mini-head">
-                <div className="crm-merch-name">{card.title}</div>
-                <span className={`crm-badge ${card.state}`}>{card.state}</span>
-              </div>
-              <div className="crm-card-body">{card.body}</div>
-              <div className="crm-meta-line" style={{ marginTop: 14 }}>
-                <span>owner: {card.owner}</span>
-                <span>{card.due}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="crm-grid two" style={{ marginTop: 20 }}>
+        <div className="crm-grid two">
           <div className="crm-mini-card">
             <div className="crm-eyebrow">Seasonal edit live now</div>
             <div className="crm-stack" style={{ marginTop: 14 }}>
@@ -1394,10 +1325,6 @@ function App() {
     return acc;
   }, {}), [products]);
   const lowStock = useMemo(() => products.filter((product) => (stockByProduct[product.id] ?? 0) <= 8), [products]);
-  const seasonalProducts = useMemo(
-    () => copy.home.seasonal.items.map((entry) => products.find((product) => product.id === entry.productId)).filter(Boolean),
-    [copy, products]
-  );
 
   return (
     <div className="crm-shell">
@@ -1408,22 +1335,21 @@ function App() {
             <div className="crm-eyebrow">Munister operations demo</div>
             <h1 className="crm-headline">CRM + admin для storefront-рішення.</h1>
             <div className="crm-head-copy">
-              Один екран для операційної команди: замовлення, клієнти, каталог, seasonal-merch та roadmap розвитку. Це демо показує, як `shop/` може вирости в керовану комерційну систему.
+              Один екран для операційної команди: замовлення, клієнти, каталог, seasonal-merch та roadmap розвитку. Після аудиту тут залишено тільки ключові робочі модулі без декоративних дублювань.
             </div>
           </div>
           <div className="crm-toolbar">
             <span className="crm-pill">Live catalog: {products.length} SKU</span>
             <span className="crm-pill">Low stock: {lowStock.length}</span>
             <a className="crm-pill" href="index.html" style={{ textDecoration: "none" }}>Open storefront</a>
-            <span className="crm-pill crm-primary">Open weekly review</span>
           </div>
         </div>
 
-        {active === "overview" ? <OverviewSection products={products} lowStock={lowStock} categoryCounts={categoryCounts} seasonalProducts={seasonalProducts} /> : null}
-        {active === "orders" ? <OrdersSection products={products} /> : null}
+        {active === "overview" ? <OverviewSection products={products} lowStock={lowStock} categoryCounts={categoryCounts} /> : null}
+        {active === "orders" ? <OrdersSection /> : null}
         {active === "customers" ? <CustomersSection /> : null}
         {active === "catalog" ? <CatalogSection products={products} lowStock={lowStock} /> : null}
-        {active === "merch" ? <MerchSection seasonalProducts={seasonalProducts} copy={copy} products={products} /> : null}
+        {active === "merch" ? <MerchSection copy={copy} products={products} /> : null}
         {active === "calendar" ? <CalendarSection /> : null}
         {active === "roadmap" ? <RoadmapSection /> : null}
       </main>
