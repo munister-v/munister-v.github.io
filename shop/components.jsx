@@ -469,6 +469,11 @@ function Newsletter({ copy }) {
 }
 
 function Footer({ copy }) {
+  const hrefForItem = (item) => {
+    if (String(item).toLowerCase().includes("crm")) return "crm.html";
+    return "#";
+  };
+
   return (
     <footer style={{ background: "var(--olv-night)", color: "var(--olv-light)", padding: "96px 48px 36px" }} className="olv-section-pad">
       <div style={{ maxWidth: 1400, marginInline: "auto" }}>
@@ -487,7 +492,7 @@ function Footer({ copy }) {
               <div style={{ fontFamily: "var(--font-label)", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "#e0a36b", marginBottom: 18, fontWeight: 700 }}>{col.title}</div>
               <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
                 {col.items.map((item) => (
-                  <li key={item}><a href="#" style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "rgba(255,247,235,0.72)", textDecoration: "none", fontWeight: 400 }}>{item}</a></li>
+                  <li key={item}><a href={hrefForItem(item)} style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "rgba(255,247,235,0.72)", textDecoration: "none", fontWeight: 400 }}>{item}</a></li>
                 ))}
               </ul>
             </div>

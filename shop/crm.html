@@ -312,6 +312,7 @@
   .crm-customer-grid,
   .crm-product-grid,
   .crm-merch-grid,
+  .crm-calendar-grid,
   .crm-roadmap {
     display: grid;
     gap: 16px;
@@ -319,6 +320,7 @@
   .crm-customer-grid { grid-template-columns: repeat(3, 1fr); }
   .crm-product-grid { grid-template-columns: repeat(2, 1fr); }
   .crm-merch-grid { grid-template-columns: repeat(3, 1fr); }
+  .crm-calendar-grid { grid-template-columns: repeat(2, 1fr); }
   .crm-roadmap { grid-template-columns: repeat(3, 1fr); }
   .crm-customer-card,
   .crm-product-card,
@@ -477,6 +479,7 @@
     .crm-grid.two,
     .crm-customer-grid,
     .crm-merch-grid,
+    .crm-calendar-grid,
     .crm-roadmap {
       grid-template-columns: 1fr;
     }
@@ -508,6 +511,7 @@ const tabs = [
   { id: "customers", title: "Клієнти", body: "VIP, retention і gifting-поведінка." },
   { id: "catalog", title: "Каталог", body: "SKU, stock, маржинальність і фото." },
   { id: "merch", title: "Мерч", body: "Seasonal edit, bundles і home-модулі." },
+  { id: "calendar", title: "Календар", body: "Контент, email і фотопродакшн по тижнях." },
   { id: "roadmap", title: "Roadmap", body: "P1 / P2 / P3 для розвитку рішення." },
 ];
 
@@ -562,6 +566,13 @@ const merchCards = [
   { title: "Seasonal Edit", state: "live", body: "Зараз на home стоїть тріо: гарбузова олія, вишневе варення, чебрецевий чай.", owner: "Merch", due: "оновити за 12 днів" },
   { title: "Gift Bundles", state: "priority", body: "Потрібно посилити `Солодкий стіл` і окремо зібрати весняний breakfast-set.", owner: "Commercial", due: "цього тижня" },
   { title: "Photo Standard", state: "normal", body: "Ще є 4 SKU, які варто дозняти в єдиному світлі, щоб витримати флагманську подачу.", owner: "Content", due: "наступний спринт" },
+];
+
+const contentCalendar = [
+  { week: "Тиждень 1", title: "Seasonal refresh", owner: "Merch", body: "Оновити першу трійку home та reason badges під травневу подачу.", deliverables: ["3 hero SKU", "badge reasons", "new CTA order"] },
+  { week: "Тиждень 2", title: "Gift flow", owner: "Commercial", body: "Зібрати нові gift-набори та уточнити логіку подарункової комунікації.", deliverables: ["2 bundles", "gift note copy", "bundle margins"] },
+  { week: "Тиждень 3", title: "Photo ops", owner: "Content", body: "Дозняти слабкі SKU та привести весь каталог до одного стандарту кадру.", deliverables: ["4 new photos", "crop pass", "asset cleanup"] },
+  { week: "Тиждень 4", title: "Email + SEO", owner: "Growth", body: "Підготувати контентний хвіст, щоб storefront працював не лише візуально.", deliverables: ["1 email", "4 category intros", "meta titles"] },
 ];
 
 const roadmap = {
@@ -961,6 +972,42 @@ function MerchSection({ seasonalProducts, copy }) {
   );
 }
 
+function CalendarSection() {
+  return (
+    <section className="crm-section is-active">
+      <div className="crm-card">
+        <SectionHeader
+          eyebrow="Content operations"
+          title="Календар оновлень і продакшну."
+          body="Тижневий ритм для storefront-команди: що оновлюємо в merchandising, що дознімаємо і який growth-контент готуємо наступним."
+          actions={<span className="crm-pill crm-primary">Open content sprint</span>}
+        />
+        <div className="crm-calendar-grid">
+          {contentCalendar.map((item) => (
+            <div key={item.week} className="crm-merch-card">
+              <div className="crm-mini-head">
+                <div>
+                  <div className="crm-eyebrow">{item.week}</div>
+                  <div className="crm-merch-name">{item.title}</div>
+                </div>
+                <span className="crm-badge live">{item.owner}</span>
+              </div>
+              <div className="crm-card-body">{item.body}</div>
+              <div className="crm-stack" style={{ marginTop: 14 }}>
+                {item.deliverables.map((deliverable) => (
+                  <div key={deliverable} className="crm-mini-card" style={{ background: "rgba(255,250,241,0.62)" }}>
+                    <div className="crm-mini-meta">{deliverable}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function RoadmapSection() {
   return (
     <section className="crm-section is-active">
@@ -1045,6 +1092,7 @@ function App() {
           <div className="crm-toolbar">
             <span className="crm-pill">Live catalog: {products.length} SKU</span>
             <span className="crm-pill">Low stock: {lowStock.length}</span>
+            <a className="crm-pill" href="index.html" style={{ textDecoration: "none" }}>Open storefront</a>
             <span className="crm-pill crm-primary">Open weekly review</span>
           </div>
         </div>
@@ -1054,6 +1102,7 @@ function App() {
         {active === "customers" ? <CustomersSection /> : null}
         {active === "catalog" ? <CatalogSection products={products} lowStock={lowStock} /> : null}
         {active === "merch" ? <MerchSection seasonalProducts={seasonalProducts} copy={copy} /> : null}
+        {active === "calendar" ? <CalendarSection /> : null}
         {active === "roadmap" ? <RoadmapSection /> : null}
       </main>
     </div>
