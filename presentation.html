@@ -33,6 +33,8 @@
       --sans:       'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       --mono:       'JetBrains Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
       --slide-pad:  clamp(56px, 6vw, 96px);
+      --page-gutter: clamp(14px, 3.8vw, 52px);
+      --slide-radius: clamp(18px, 2.6vw, 34px);
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
@@ -57,14 +59,42 @@
         radial-gradient(ellipse 74% 48% at 102% 104%, rgba(118,74,28,0.24) 0%, transparent 64%),
         radial-gradient(ellipse 50% 35% at 50% 50%, rgba(20,40,30,0.15) 0%, transparent 70%);
     }
-    main { position: relative; z-index: 1; }
+    main {
+      position: relative;
+      z-index: 1;
+      padding: clamp(78px, 8vw, 112px) 0 clamp(34px, 5vw, 72px);
+    }
 
     /* ─── Layout primitives ────────────────────────────────────────────── */
     .slide {
-      max-width: 1180px;
-      margin: 0 auto;
+      width: min(1180px, calc(100% - (var(--page-gutter) * 2)));
+      max-width: none;
+      margin: 0 auto clamp(20px, 3.6vw, 44px);
       padding: var(--slide-pad) clamp(20px, 4vw, 36px);
       position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      border: 1px solid var(--line-hi);
+      border-radius: var(--slide-radius);
+      background:
+        linear-gradient(145deg, rgba(18, 36, 27, 0.86), rgba(5, 15, 10, 0.82) 58%, rgba(15, 30, 23, 0.78)),
+        radial-gradient(circle at 12% 0%, rgba(201, 169, 100, 0.11), transparent 34%);
+      box-shadow:
+        0 28px 80px rgba(0, 0, 0, 0.34),
+        inset 0 1px 0 rgba(255, 245, 220, 0.05);
+    }
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: clamp(8px, 1vw, 14px);
+      border: 1px solid rgba(201, 169, 100, 0.11);
+      border-radius: calc(var(--slide-radius) - 8px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .slide > * {
+      position: relative;
+      z-index: 1;
     }
 
     /* ─── Typography ───────────────────────────────────────────────────── */
@@ -115,7 +145,7 @@
     .topbar {
       position: fixed;
       top: 0; left: 0; right: 0;
-      padding: 14px clamp(20px, 4vw, 36px);
+      padding: 14px var(--page-gutter);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -307,6 +337,10 @@
       border-spacing: 0;
       margin: 16px 0;
     }
+    .card:has(.cmp), .table-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
     .cmp th, .cmp td {
       padding: 14px 16px;
       text-align: left;
@@ -324,6 +358,18 @@
     .cmp td.label { color: var(--txt); font-weight: 500; }
     .cmp tr:last-child td { border-bottom: 0; }
     @media (max-width: 600px) {
+      .cmp {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .cmp thead,
+      .cmp tbody {
+        display: table;
+        width: max-content;
+        min-width: min(620px, calc(100vw - 56px));
+      }
+      .cmp tr { display: table-row; }
       .cmp th, .cmp td { padding: 11px 10px; font-size: 12.5px; }
     }
 
@@ -419,7 +465,8 @@
     .divider {
       height: 1px;
       background: linear-gradient(90deg, transparent, var(--line-hi), transparent);
-      margin: 0 clamp(20px, 4vw, 36px);
+      margin: 0 var(--page-gutter) clamp(20px, 3.4vw, 42px);
+      opacity: 0.72;
     }
 
     /* ─── Footer ──────────────────────────────────────────────────────── */
@@ -451,11 +498,12 @@
 
     /* ─── Hero ────────────────────────────────────────────────────────── */
     .hero {
-      min-height: 100vh;
+      min-height: min(760px, calc(100svh - 128px));
       display: grid;
       align-content: center;
-      padding-top: 100px;
-      padding-bottom: 110px;
+      padding-top: clamp(56px, 7vw, 94px);
+      padding-bottom: clamp(70px, 8vw, 110px);
+      margin-top: 0;
     }
     .hero .meta {
       display: grid;
@@ -488,6 +536,67 @@
       50%      { transform: translate(-50%, 6px); opacity: 1; }
     }
 
+    /* ─── Responsive slide deck corrections ──────────────────────────── */
+    @media (max-width: 860px) {
+      :root { --slide-pad: clamp(34px, 7vw, 56px); }
+      main { padding-top: 76px; }
+      .slide {
+        width: min(calc(100% - 24px), 1180px);
+        border-radius: 22px;
+      }
+      .slide::before { inset: 8px; border-radius: 15px; }
+      .slide-no {
+        position: static;
+        justify-content: flex-end;
+        margin: -6px 0 22px;
+      }
+      .kicker { letter-spacing: 2.4px; gap: 10px; }
+      .kicker::before { width: 24px; }
+      .hero {
+        min-height: auto;
+        align-content: start;
+      }
+      .hero .meta { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+      .grid-2,
+      .grid-3,
+      .grid-4 { grid-template-columns: 1fr; }
+      .step { grid-template-columns: 44px 1fr; gap: 14px; }
+      .step .idx { width: 38px; height: 38px; }
+      .demo-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+    }
+
+    @media (max-width: 560px) {
+      :root { --page-gutter: 12px; --slide-pad: 28px; }
+      body { font-size: 14px; line-height: 1.58; }
+      main { padding-top: 70px; }
+      .topbar { padding: 10px 12px; gap: 10px; }
+      .brand { gap: 9px; font-size: 12.5px; }
+      .brand .logo { width: 28px; height: 28px; border-radius: 8px; font-size: 17px; }
+      .topbar .actions { gap: 6px; }
+      .btn { min-height: 42px; }
+      .btn.sm { padding: 8px 10px; font-size: 10.5px; }
+      .slide {
+        width: calc(100% - 16px);
+        padding: var(--slide-pad) 16px;
+        margin-bottom: 18px;
+        border-radius: 18px;
+      }
+      .slide::before { inset: 6px; border-radius: 13px; }
+      h1 { font-size: clamp(34px, 12vw, 52px); }
+      h2 { font-size: clamp(25px, 9vw, 34px); }
+      .lead { font-size: 15px; line-height: 1.58; }
+      .hero .meta { grid-template-columns: 1fr; margin-top: 30px; }
+      .slide-no { margin-bottom: 18px; font-size: 9.5px; }
+      .formula {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .card { border-radius: 15px; }
+      .bars { gap: 7px; height: 150px; }
+      .bar .b-lab { font-size: 9px; transform: translateX(-50%) rotate(-18deg); transform-origin: top center; }
+      .scroll-cue { display: none; }
+    }
+
     /* ─── Population dots SVG (decorative) ────────────────────────────── */
     .pop-svg circle { transition: opacity .4s, fill .4s; }
 
@@ -512,11 +621,18 @@
         page-break-inside: avoid;
         break-inside: avoid;
         min-height: 188mm;
+        width: 100%;
         max-width: 100%;
         margin: 0;
         padding: 16mm 18mm;
         position: relative;
+        overflow: visible;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
       }
+      .slide::before { display: none !important; }
       .slide:last-of-type, footer { page-break-after: auto; }
       .divider { display: none; }
       .reveal { opacity: 1 !important; transform: none !important; }
