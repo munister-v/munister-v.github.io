@@ -1818,7 +1818,328 @@
         tick();
         setInterval(tick, 1000);
       })();
+
+      /* ════════════════════════════════════════
+         QUALITY VISUAL LAYER v3
+         custom cursor · progress bar · tilt cards ·
+         stagger reveals · parallax orbs · magnetic btns
+         ════════════════════════════════════════ */
+      (function qualityLayer() {
+
+        /* ── 1. Custom cursor ── */
+        const cursorStyle = document.createElement('style');
+        cursorStyle.textContent = `
+          * { cursor: none !important; }
+          #_cur-ring {
+            position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none;
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 1px solid rgba(212,196,181,.5);
+            transform: translate(-50%,-50%);
+            transition: width .25s ease, height .25s ease, border-color .25s ease,
+                        background .25s ease, opacity .3s ease;
+            mix-blend-mode: normal;
+            will-change: transform;
+          }
+          #_cur-dot {
+            position: fixed; top: 0; left: 0; z-index: 10000; pointer-events: none;
+            width: 5px; height: 5px; border-radius: 50%;
+            background: #d4c4b5;
+            transform: translate(-50%,-50%);
+            will-change: transform;
+          }
+          #_cur-ring._hover {
+            width: 56px; height: 56px;
+            border-color: rgba(212,196,181,.75);
+            background: rgba(212,196,181,.07);
+          }
+          #_cur-ring._click {
+            width: 24px; height: 24px;
+            background: rgba(212,196,181,.18);
+          }
+          @media (hover: none), (max-width: 768px) {
+            * { cursor: auto !important; }
+            #_cur-ring, #_cur-dot { display: none; }
+          }
+        `;
+        document.head.appendChild(cursorStyle);
+
+        if (window.matchMedia('(hover: hover) and (min-width: 769px)').matches) {
+          const ring = document.createElement('div'); ring.id = '_cur-ring';
+          const dot  = document.createElement('div'); dot.id  = '_cur-dot';
+          document.body.append(ring, dot);
+
+          let mx = -200, my = -200, rx = -200, ry = -200;
+          let raf = 0;
+
+          document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+          document.addEventListener('mousedown', () => ring.classList.add('_click'));
+          document.addEventListener('mouseup', () => ring.classList.remove('_click'));
+
+          document.querySelectorAll('a,button,[role="button"]').forEach(el => {
+            el.addEventListener('mouseenter', () => ring.classList.add('_hover'));
+            el.addEventListener('mouseleave', () => ring.classList.remove('_hover'));
+          });
+
+          function loopCursor() {
+            dot.style.transform = `translate(${mx}px,${my}px) translate(-50%,-50%)`;
+            rx += (mx - rx) * 0.12;
+            ry += (my - ry) * 0.12;
+            ring.style.transform = `translate(${rx}px,${ry}px) translate(-50%,-50%)`;
+            raf = requestAnimationFrame(loopCursor);
+          }
+          loopCursor();
+        }
+
+        /* ── 2. Reading progress bar ── */
+        const pbStyle = document.createElement('style');
+        pbStyle.textContent = `
+          #_progress-bar {
+            position: fixed; top: 0; left: 0; z-index: 9998;
+            height: 2px; width: 0%;
+            background: linear-gradient(90deg, #6a5acd, #d4c4b5, #b49a72);
+            background-size: 200% 100%;
+            animation: _pb-shift 4s linear infinite;
+            transition: width .1s linear;
+            pointer-events: none;
+          }
+          @keyframes _pb-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+          }
+        `;
+        document.head.appendChild(pbStyle);
+        const pb = document.createElement('div'); pb.id = '_progress-bar';
+        document.body.prepend(pb);
+        window.addEventListener('scroll', () => {
+          const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+          pb.style.width = Math.min(pct, 100) + '%';
+        }, { passive: true });
+
+        /* ── 3. Ambient orb parallax (background) ── */
+        const orbStyle = document.createElement('style');
+        orbStyle.textContent = `
+          #_orb-wrap {
+            position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+          }
+          .orb {
+            position: absolute; border-radius: 50%; filter: blur(120px);
+            will-change: transform; transition: opacity 1.2s ease;
+          }
+          .orb-1 {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(106,90,205,.055), transparent 70%);
+            top: -200px; right: -150px;
+          }
+          .orb-2 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(180,154,114,.05), transparent 70%);
+            bottom: 20%; left: -180px;
+          }
+          .orb-3 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(212,196,181,.04), transparent 70%);
+            top: 55%; right: 10%;
+          }
+        `;
+        document.head.appendChild(orbStyle);
+        const orbWrap = document.createElement('div'); orbWrap.id = '_orb-wrap';
+        ['orb-1','orb-2','orb-3'].forEach(c => {
+          const o = document.createElement('div'); o.className = 'orb ' + c;
+          orbWrap.appendChild(o);
+        });
+        document.body.prepend(orbWrap);
+
+        if (window.matchMedia('(prefers-reduced-motion: no-preference) and (min-width: 769px)').matches) {
+          const orbs = orbWrap.querySelectorAll('.orb');
+          window.addEventListener('scroll', () => {
+            const y = window.scrollY;
+            orbs[0].style.transform = `translateY(${y * 0.06}px)`;
+            orbs[1].style.transform = `translateY(${-y * 0.04}px)`;
+            orbs[2].style.transform = `translateY(${y * 0.03}px)`;
+          }, { passive: true });
+        }
+
+        /* ── 4. 3D tilt on research map clusters ── */
+        function addTilt(selector, strength) {
+          document.querySelectorAll(selector).forEach(el => {
+            el.addEventListener('mousemove', e => {
+              const r = el.getBoundingClientRect();
+              const cx = r.left + r.width / 2;
+              const cy = r.top  + r.height / 2;
+              const dx = (e.clientX - cx) / (r.width  / 2);
+              const dy = (e.clientY - cy) / (r.height / 2);
+              el.style.transform = `perspective(600px) rotateY(${dx * strength}deg) rotateX(${-dy * strength}deg) translateY(-4px)`;
+              el.style.transition = 'transform .08s ease, box-shadow .2s ease, background .2s ease';
+            });
+            el.addEventListener('mouseleave', () => {
+              el.style.transform = '';
+              el.style.transition = 'transform .4s ease, background .2s ease, box-shadow .2s ease';
+            });
+          });
+        }
+        // Attach after Research Map is injected
+        function tryAttachTilt() {
+          const clusters = document.querySelectorAll('.rm-cluster');
+          if (clusters.length) { addTilt('.rm-cluster', 4); return true; }
+          return false;
+        }
+        if (!tryAttachTilt()) {
+          const to = new MutationObserver(() => { if (tryAttachTilt()) to.disconnect(); });
+          const m = document.getElementById('methodology');
+          if (m) to.observe(m, { childList: true, subtree: true });
+        }
+
+        /* ── 5. Stagger reveal for grid children ── */
+        function staggerReveal(parentSel, childSel, delayStep) {
+          document.querySelectorAll(parentSel).forEach(parent => {
+            const children = parent.querySelectorAll(childSel);
+            children.forEach((child, i) => {
+              child.style.opacity = '0';
+              child.style.transform = 'translateY(18px)';
+              child.style.transition = `opacity .6s ease ${i * delayStep}ms, transform .6s ease ${i * delayStep}ms`;
+            });
+            const obs = new IntersectionObserver(([entry]) => {
+              if (entry.isIntersecting) {
+                children.forEach(child => {
+                  child.style.opacity = '1';
+                  child.style.transform = 'none';
+                });
+                obs.unobserve(parent);
+              }
+            }, { threshold: 0.1 });
+            obs.observe(parent);
+          });
+        }
+        window.addEventListener('load', () => {
+          staggerReveal('.ab-stack', '.ab-tag', 60);
+          staggerReveal('.ao-stack', '.ao-tag', 60);
+          staggerReveal('.ab-stats', '.ab-stat', 100);
+          staggerReveal('.ao-stats', '.ao-stat', 120);
+        });
+
+        /* ── 6. Magnetic effect on primary CTAs ── */
+        function magneticBtn(el) {
+          el.addEventListener('mousemove', e => {
+            const r = el.getBoundingClientRect();
+            const dx = e.clientX - (r.left + r.width  / 2);
+            const dy = e.clientY - (r.top  + r.height / 2);
+            el.style.transform = `translate(${dx * 0.22}px, ${dy * 0.22}px)`;
+            el.style.transition = 'transform .1s ease';
+          });
+          el.addEventListener('mouseleave', () => {
+            el.style.transform = '';
+            el.style.transition = 'transform .5s cubic-bezier(.22,.62,.36,1)';
+          });
+        }
+        function tryAttachMagnetic() {
+          const btns = document.querySelectorAll('.ab-cta, .ao-cta, .it-cta');
+          if (btns.length) { btns.forEach(magneticBtn); return true; }
+          return false;
+        }
+        if (!tryAttachMagnetic()) {
+          window.addEventListener('load', tryAttachMagnetic);
+        }
+
+        /* ── 7. Section number glitch text effect ── */
+        const GLYPHS = '0123456789§∑∏√∂∫≈';
+        function glitchText(el, final) {
+          let steps = 0; const total = 10;
+          const id = setInterval(() => {
+            el.textContent = GLYPHS[Math.floor(Math.random() * GLYPHS.length)] +
+                             GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+            if (++steps >= total) { clearInterval(id); el.textContent = final; }
+          }, 40);
+        }
+        const secNumObs = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              glitchText(e.target, e.target.dataset.val || e.target.textContent);
+              secNumObs.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.8 });
+        function attachGlitch() {
+          document.querySelectorAll('.ab-stat-n, .ao-stat-n').forEach(el => {
+            el.dataset.val = el.textContent;
+            secNumObs.observe(el);
+          });
+        }
+        window.addEventListener('load', attachGlitch);
+
+        /* ── 8. Horizontal rule gradient line under headings ── */
+        const hrStyle = document.createElement('style');
+        hrStyle.textContent = `
+          #army-bank-mvp .ab-title,
+          #armos-showcase .ao-title,
+          #italy-showcase .it-title {
+            position: relative;
+          }
+          #army-bank-mvp h2.ab-title::after,
+          #armos-showcase h2.ao-title::after,
+          #italy-showcase h2.it-title::after {
+            content: '';
+            position: absolute;
+            bottom: -12px; left: 0;
+            width: 0; height: 1px;
+            background: linear-gradient(90deg, #d4c4b5, transparent);
+            transition: width .9s cubic-bezier(.22,.62,.36,1) .3s;
+          }
+          #army-bank-mvp h2.ab-title.vis-visible::after,
+          #armos-showcase h2.ao-title.vis-visible::after,
+          #italy-showcase h2.it-title.vis-visible::after {
+            width: 60%;
+          }
+        `;
+        document.head.appendChild(hrStyle);
+
+        /* ── 9. Italy section image grain animation ── */
+        const grainStyle = document.createElement('style');
+        grainStyle.textContent = `
+          .it-preview::after {
+            content: '';
+            position: absolute; inset: 0; pointer-events: none; z-index: 2;
+            opacity: 0.028;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+            background-size: 180px;
+            animation: _grain-shift 0.8s steps(1) infinite;
+          }
+          @keyframes _grain-shift {
+            0%  { background-position: 0 0; }
+            20% { background-position: -30px 40px; }
+            40% { background-position: 50px -20px; }
+            60% { background-position: -50px 30px; }
+            80% { background-position: 30px -50px; }
+          }
+          .ao-preview::after {
+            content: '';
+            position: absolute; inset: 0; pointer-events: none; z-index: 4;
+            opacity: 0.022;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g2)'/%3E%3C/svg%3E");
+            background-size: 180px;
+            animation: _grain-shift 1.2s steps(1) infinite;
+          }
+        `;
+        document.head.appendChild(grainStyle);
+
+        /* ── 10. Smooth section color temperature shift ── */
+        const colorShiftStyle = document.createElement('style');
+        colorShiftStyle.textContent = `
+          #army-bank-mvp {
+            background:
+              radial-gradient(900px 600px at 72% 50%, rgba(30,200,100,.025), transparent 65%),
+              linear-gradient(135deg, rgba(212,196,181,.03) 0%, transparent 60%);
+          }
+          #armos-showcase {
+            background:
+              radial-gradient(900px 500px at 20% 60%, rgba(180,154,114,.04), transparent 62%),
+              linear-gradient(160deg, rgba(180,154,114,.04) 0%, rgba(17,17,15,.0) 60%,rgba(11,11,9,.03) 100%);
+          }
+        `;
+        document.head.appendChild(colorShiftStyle);
+
+      })();
     </script>
   </body>
 </html>
+
 
