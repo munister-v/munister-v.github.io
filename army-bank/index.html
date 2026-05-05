@@ -25,6 +25,7 @@
       <li><a href="#features">Функціонал</a></li>
       <li><a href="#workflow">Як працює</a></li>
       <li><a href="#stack">Стек</a></li>
+      <li><a href="#gallery">Галерея</a></li>
       <li><a href="https://munister.com.ua">munister.com.ua</a></li>
     </ul>
     <a href="https://army-bank.onrender.com/dashboard" target="_blank" class="nav-cta">Відкрити додаток</a>
@@ -676,6 +677,130 @@
   </div>
 </section>
 
+<!-- GALLERY -->
+<section class="gallery-section section" id="gallery">
+  <div class="section-inner">
+    <div class="section-label">§ Скріншоти</div>
+    <h2 class="section-title">Додаток <em>зсередини</em></h2>
+    <p class="section-desc">Продуманий інтерфейс — від сплеш-екрану до аналітики витрат і профілю.</p>
+  </div>
+
+  <div class="gallery-track-wrap">
+    <div class="gallery-track" id="galleryTrack">
+
+      <div class="phone-slide">
+        <div class="phone-mockup">
+          <div class="phone-dynamic-island"></div>
+          <img src="screens/screen-9.jpg" alt="Splash" loading="lazy">
+        </div>
+        <div class="slide-label">
+          <div class="slide-label-name">Splash</div>
+          <div class="slide-label-sub">Toscana Private Flow</div>
+        </div>
+      </div>
+
+      <div class="phone-slide">
+        <div class="phone-mockup">
+          <div class="phone-dynamic-island"></div>
+          <img src="screens/screen-8.jpg" alt="Огляд" loading="lazy">
+        </div>
+        <div class="slide-label">
+          <div class="slide-label-name">Огляд</div>
+          <div class="slide-label-sub">Баланс і картки</div>
+        </div>
+      </div>
+
+      <div class="phone-slide">
+        <div class="phone-mockup">
+          <div class="phone-dynamic-island"></div>
+          <img src="screens/screen-7.jpg" alt="Операції" loading="lazy">
+        </div>
+        <div class="slide-label">
+          <div class="slide-label-name">Операції</div>
+          <div class="slide-label-sub">Аналітика витрат</div>
+        </div>
+      </div>
+
+      <div class="phone-slide">
+        <div class="phone-mockup">
+          <div class="phone-dynamic-island"></div>
+          <img src="screens/screen-6.jpg" alt="Картки" loading="lazy">
+        </div>
+        <div class="slide-label">
+          <div class="slide-label-name">Картки</div>
+          <div class="slide-label-sub">Управління картками</div>
+        </div>
+      </div>
+
+      <div class="phone-slide">
+        <div class="phone-mockup">
+          <div class="phone-dynamic-island"></div>
+          <img src="screens/screen-5.jpg" alt="Магазин" loading="lazy">
+        </div>
+        <div class="slide-label">
+          <div class="slide-label-name">Магазин</div>
+          <div class="slide-label-sub">Каталог товарів</div>
+        </div>
+      </div>
+
+      <div class="phone-slide">
+        <div class="phone-mockup">
+          <div class="phone-dynamic-island"></div>
+          <img src="screens/screen-4.jpg" alt="Замовлення" loading="lazy">
+        </div>
+        <div class="slide-label">
+          <div class="slide-label-name">Замовлення</div>
+          <div class="slide-label-sub">Історія покупок</div>
+        </div>
+      </div>
+
+      <div class="phone-slide">
+        <div class="phone-mockup">
+          <div class="phone-dynamic-island"></div>
+          <img src="screens/screen-3.jpg" alt="Профіль" loading="lazy">
+        </div>
+        <div class="slide-label">
+          <div class="slide-label-name">Профіль</div>
+          <div class="slide-label-sub">Особисті дані</div>
+        </div>
+      </div>
+
+      <div class="phone-slide">
+        <div class="phone-mockup">
+          <div class="phone-dynamic-island"></div>
+          <img src="screens/screen-2.jpg" alt="Безпека" loading="lazy">
+        </div>
+        <div class="slide-label">
+          <div class="slide-label-name">Безпека</div>
+          <div class="slide-label-sub">Face ID / 2FA</div>
+        </div>
+      </div>
+
+      <div class="phone-slide">
+        <div class="phone-mockup">
+          <div class="phone-dynamic-island"></div>
+          <img src="screens/screen-1.jpg" alt="Досягнення" loading="lazy">
+        </div>
+        <div class="slide-label">
+          <div class="slide-label-name">Досягнення</div>
+          <div class="slide-label-sub">Геймифікація</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="gallery-controls">
+    <button class="gallery-arrow" id="galleryPrev" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="gallery-dots" id="galleryDots"></div>
+    <button class="gallery-arrow" id="galleryNext" aria-label="Вперед">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+</section>
+
 <!-- CTA -->
 <div class="cta-section">
   <div class="cta-inner">
@@ -704,6 +829,41 @@
     </div>
   </div>
 </footer>
+
+<script>
+(function(){
+  const track = document.getElementById('galleryTrack');
+  const dotsWrap = document.getElementById('galleryDots');
+  if (!track) return;
+  const slides = track.querySelectorAll('.phone-slide');
+  let cur = 0;
+  slides.forEach((_,i)=>{
+    const d = document.createElement('div');
+    d.className='gallery-dot'+(i===0?' active':'');
+    d.onclick=()=>goTo(i);
+    dotsWrap.appendChild(d);
+  });
+  function dots(){ dotsWrap.querySelectorAll('.gallery-dot').forEach((d,i)=>d.classList.toggle('active',i===cur)); }
+  function goTo(i){
+    cur=Math.max(0,Math.min(slides.length-1,i));
+    const s=slides[cur];
+    track.scrollTo({left:s.offsetLeft-(track.offsetWidth-s.offsetWidth)/2,behavior:'smooth'});
+    dots();
+  }
+  document.getElementById('galleryPrev').onclick=()=>goTo(cur-1);
+  document.getElementById('galleryNext').onclick=()=>goTo(cur+1);
+  let t; track.addEventListener('scroll',()=>{clearTimeout(t);t=setTimeout(()=>{
+    const c=track.scrollLeft+track.offsetWidth/2;
+    let mi=0,md=Infinity;
+    slides.forEach((s,i)=>{const d=Math.abs(s.offsetLeft+s.offsetWidth/2-c);if(d<md){md=d;mi=i;}});
+    cur=mi;dots();
+  },80);},{passive:true});
+  let drag=false,sx=0,ss=0;
+  track.addEventListener('mousedown',e=>{drag=true;sx=e.pageX;ss=track.scrollLeft;});
+  document.addEventListener('mousemove',e=>{if(drag)track.scrollLeft=ss-(e.pageX-sx);});
+  document.addEventListener('mouseup',()=>drag=false);
+})();
+</script>
 
 </body>
 </html>
