@@ -19,6 +19,8 @@
       --line-strong: rgba(15, 15, 15, 0.28);
       --accent: #c4a484;
       --accent-strong: #a88b6e;
+      --surface: rgba(255, 255, 255, 0.22);
+      --deep-line: rgba(255, 250, 240, 0.12);
       --deep: #07111f;
       --deep-2: #0d1928;
       --white: #fffaf0;
@@ -30,7 +32,10 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      background: var(--bg);
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.16) 0 1px, transparent 1px 100%),
+        var(--bg);
+      background-size: min(25vw, 320px) 100%;
       color: var(--ink);
       font-family: var(--sans);
       line-height: 1.5;
@@ -53,6 +58,7 @@
       border-bottom: 1px solid var(--line);
       background: rgba(234, 234, 234, 0.92);
       backdrop-filter: blur(18px);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.38);
     }
 
     .brand, .nav-link, .icon-btn, .cart-btn {
@@ -73,6 +79,7 @@
       font-weight: 800;
       letter-spacing: 0.32em;
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .mark {
@@ -135,6 +142,7 @@
       justify-content: space-between;
       min-height: inherit;
       border-right: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(247, 244, 237, .42), transparent 64%);
     }
 
     .eyebrow {
@@ -220,7 +228,7 @@
       position: relative;
       display: grid;
       place-items: center;
-      padding: 72px clamp(24px, 4vw, 58px);
+      padding: clamp(54px, 6vw, 72px) clamp(24px, 4vw, 58px);
       background:
         radial-gradient(circle at 35% 26%, rgba(196, 164, 132, 0.23), transparent 34%),
         linear-gradient(135deg, var(--deep), var(--deep-2));
@@ -640,7 +648,7 @@
       min-height: 130px;
       border-right: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
-      background: rgba(255, 255, 255, .32);
+      background: var(--surface);
     }
 
     .material-list span {
@@ -672,7 +680,7 @@
       padding: 24px;
       border-right: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.24);
+      background: var(--surface);
     }
 
     .detail span {
@@ -708,7 +716,7 @@
       border-right: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
       overflow: hidden;
-      background: rgba(255, 255, 255, 0.2);
+      background: var(--surface);
       transition: background 180ms ease, transform 180ms ease;
     }
 
@@ -754,7 +762,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      border: 1px solid rgba(255,255,255,.14);
+      border: 1px solid var(--deep-line);
     }
 
     .mini-card h3 {
@@ -902,7 +910,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background: rgba(255,255,255,.24);
+      background: var(--surface);
     }
 
     .review p {
@@ -928,12 +936,12 @@
       min-height: 540px;
       background: var(--deep);
       color: var(--white);
-      border-bottom: 1px solid rgba(255,255,255,.1);
+      border-bottom: 1px solid var(--deep-line);
     }
 
     .order-copy {
       padding: clamp(36px, 6vw, 72px);
-      border-right: 1px solid rgba(255,255,255,.12);
+      border-right: 1px solid var(--deep-line);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -954,7 +962,7 @@
       grid-template-columns: 40px 1fr;
       gap: 18px;
       padding: 20px 0;
-      border-bottom: 1px solid rgba(255,255,255,.12);
+      border-bottom: 1px solid var(--deep-line);
       color: rgba(255,250,240,.68);
     }
 
@@ -969,12 +977,12 @@
     .footer-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(180px, .7fr));
-      border-bottom: 1px solid rgba(255,255,255,.1);
+      border-bottom: 1px solid var(--deep-line);
     }
 
     .footer-cell {
       padding: clamp(28px, 5vw, 56px);
-      border-right: 1px solid rgba(255,255,255,.1);
+      border-right: 1px solid var(--deep-line);
     }
 
     .footer-cell:last-child { border-right: 0; }
@@ -1041,7 +1049,7 @@
     }
 
     @media (max-width: 1020px) {
-      .topbar { grid-template-columns: 1fr repeat(3, 64px); }
+      .topbar { grid-template-columns: 1fr repeat(4, 64px); }
       .nav { display: none; }
       .hero, .two-col, .interactive, .order, .image-feature { grid-template-columns: 1fr; }
       .hero-copy, .order-copy { border-right: 0; }
@@ -1054,21 +1062,22 @@
     }
 
     @media (max-width: 680px) {
-      .topbar { height: 58px; grid-template-columns: minmax(150px, 1fr) repeat(4, 46px); }
+      .topbar { height: 58px; grid-template-columns: minmax(128px, 1fr) repeat(4, 44px); }
       .brand, .icon-btn, .cart-btn { min-height: 58px; }
-      .brand { padding-inline: 14px; gap: 10px; font-size: 10px; letter-spacing: .2em; }
+      .brand { padding-inline: 12px; gap: 9px; font-size: 10px; letter-spacing: .16em; }
       .mark { width: 24px; height: 24px; }
       .icon-btn svg, .cart-btn svg { width: 17px; height: 17px; }
       .cart-btn span { display: none; }
       .hamb { border-right: 0; }
       main { padding-top: 58px; }
+      .section { padding: 42px 20px; }
       .hero { min-height: auto; }
       .hero-copy { min-height: auto; padding: 26px 24px 18px; }
       .eyebrow { font-size: 9px; letter-spacing: .14em; padding: 7px 9px; }
       h1 { margin: 26px 0 14px; font-size: clamp(38px, 12.2vw, 52px); line-height: .96; }
       .lead { font-size: 17px; line-height: 1.36; max-width: 32ch; }
       .hero-footer { grid-template-columns: 1fr 1fr; margin-top: 30px; border-left: 1px solid var(--line); }
-      .spec { min-height: 92px; padding: 15px 12px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.18); }
+      .spec { min-height: 92px; padding: 15px 12px; border-bottom: 1px solid var(--line); background: var(--surface); }
       .spec:nth-child(2n) { border-right: 0; padding-left: 16px; }
       .spec small { font-size: 8px; letter-spacing: .16em; }
       .spec strong { font-size: 19px; line-height: 1.05; }
@@ -1086,13 +1095,19 @@
       .delivery { font-size: 9px; max-width: 130px; }
       .stage-note { display: none; }
       .photo-panel { min-height: 520px; }
+      .feature-copy { padding: 40px 20px; }
+      .image-feature { min-height: auto; }
       .material-list { grid-template-columns: 1fr; }
+      .material-list div, .detail, .theme, .review { padding: 20px; }
+      .mini-card, .tabs { min-height: auto; }
+      .mini-card { padding: 24px 20px; }
+      .order-copy, .order-side { padding: 40px 20px; }
       .controls { grid-template-columns: 1fr; }
       .detail-grid { grid-template-columns: 1fr; }
       .tab-nav { grid-template-columns: 1fr; }
       .tab-btn { border-right: 0; border-bottom: 1px solid var(--line); }
       .footer-grid { grid-template-columns: 1fr 1fr; }
-      .footer-cell { padding: 24px 20px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.1); }
+      .footer-cell { padding: 24px 20px; border-right: 0; border-bottom: 1px solid var(--deep-line); }
       .footer-cell:first-child { grid-column: 1 / -1; padding-top: 34px; }
       .footer-cell:nth-child(4) { grid-column: 1 / -1; }
       .footer-brand { font-size: 42px; margin-bottom: 12px; }
