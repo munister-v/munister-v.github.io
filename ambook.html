@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Все, что останется - Сергей Калинин | AM Publishing</title>
+  <meta name="description" content="Интерактивная карточка книги Сергея Калинина «Все, что останется» от AM Publishing Berlin.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #eaeaea;
+      --paper: #f7f4ed;
+      --ink: #0f0f0f;
+      --ink-soft: rgba(15, 15, 15, 0.68);
+      --ink-faint: rgba(15, 15, 15, 0.34);
+      --line: rgba(15, 15, 15, 0.15);
+      --line-strong: rgba(15, 15, 15, 0.28);
+      --accent: #c4a484;
+      --accent-strong: #a88b6e;
+      --deep: #07111f;
+      --deep-2: #0d1928;
+      --white: #fffaf0;
+      --serif: "Cormorant Garamond", Georgia, serif;
+      --sans: "Manrope", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.5;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    ::selection { background: var(--ink); color: var(--accent); }
+
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 50;
+      height: 72px;
+      display: grid;
+      grid-template-columns: minmax(180px, 260px) 1fr repeat(4, 72px);
+      border-bottom: 1px solid var(--line);
+      background: rgba(234, 234, 234, 0.92);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand, .nav-link, .icon-btn, .cart-btn {
+      min-height: 72px;
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand {
+      justify-content: flex-start;
+      gap: 14px;
+      padding: 0 26px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+    }
+
+    .mark {
+      width: 26px;
+      height: 26px;
+      border: 1px solid var(--ink);
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+
+    .mark::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 0 0 5px rgba(15, 15, 15, 0.06);
+    }
+
+    .nav {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .nav-link {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      transition: color 180ms ease, background 180ms ease;
+    }
+
+    .nav-link:hover, .icon-btn:hover, .cart-btn:hover {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .icon-btn svg, .cart-btn svg { width: 19px; height: 19px; }
+    .cart-btn { gap: 8px; font-size: 11px; color: var(--ink-soft); }
+    .hamb { background: var(--deep); color: var(--white); }
+
+    main { padding-top: 72px; }
+
+    .hero {
+      min-height: calc(100dvh - 72px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, transparent 0 50%, rgba(15, 15, 15, 0.03) 50% 100%),
+        var(--bg);
+    }
+
+    .hero-copy {
+      padding: clamp(28px, 5vw, 72px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: inherit;
+      border-right: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      width: fit-content;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line-strong);
+      padding: 8px 11px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    h1 {
+      margin: 44px 0 24px;
+      max-width: 850px;
+      font-family: var(--serif);
+      font-size: clamp(66px, 10vw, 144px);
+      line-height: 0.82;
+      letter-spacing: 0;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1 em {
+      display: block;
+      font-weight: 400;
+      text-transform: none;
+      color: var(--ink-soft);
+    }
+
+    .lead {
+      max-width: 620px;
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(23px, 2.8vw, 42px);
+      line-height: 1.05;
+      color: var(--ink-soft);
+    }
+
+    .hero-footer {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-top: 1px solid var(--line);
+      margin-top: 52px;
+    }
+
+    .spec {
+      padding: 18px 18px 16px 0;
+      border-right: 1px solid var(--line);
+    }
+
+    .spec:last-child { border-right: 0; padding-left: 18px; }
+    .spec small {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .spec strong {
+      font-family: var(--serif);
+      font-size: 23px;
+      font-weight: 600;
+    }
+
+    .book-stage {
+      min-height: inherit;
+      position: relative;
+      display: grid;
+      place-items: center;
+      padding: 72px clamp(24px, 4vw, 58px);
+      background:
+        radial-gradient(circle at 35% 26%, rgba(196, 164, 132, 0.23), transparent 34%),
+        linear-gradient(135deg, var(--deep), var(--deep-2));
+      color: var(--white);
+      overflow: hidden;
+    }
+
+    .book-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255, 250, 240, 0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 250, 240, 0.055) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.25));
+    }
+
+    .book-card {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 430px);
+      border: 1px solid rgba(255, 250, 240, 0.18);
+      background: rgba(255, 250, 240, 0.06);
+      box-shadow: 0 34px 90px rgba(0, 0, 0, 0.42);
+      transform-style: preserve-3d;
+      transition: transform 260ms ease, border-color 220ms ease;
+    }
+
+    .cover {
+      min-height: 560px;
+      position: relative;
+      overflow: hidden;
+      padding: 34px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        radial-gradient(circle at 70% 24%, rgba(196, 164, 132, 0.24), transparent 28%),
+        radial-gradient(circle at 18% 88%, rgba(192, 57, 43, 0.18), transparent 34%),
+        #100d0a;
+    }
+
+    .cover::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 0 8px;
+      border-left: 3px solid #c0392b;
+      pointer-events: none;
+    }
+
+    .cover::after {
+      content: "B";
+      position: absolute;
+      right: -12px;
+      bottom: -64px;
+      font-family: var(--serif);
+      font-size: 310px;
+      font-style: italic;
+      color: rgba(196, 164, 132, 0.08);
+      line-height: 1;
+    }
+
+    .cover-kicker {
+      position: relative;
+      z-index: 1;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(255, 250, 240, 0.5);
+    }
+
+    .cover-title {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(54px, 7vw, 78px);
+      line-height: 0.86;
+      font-weight: 700;
+    }
+
+    .cover-title em {
+      display: block;
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    .cover-author {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255, 250, 240, 0.62);
+    }
+
+    .cover-author::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .card-panel {
+      border-top: 1px solid rgba(255, 250, 240, 0.18);
+      background: rgba(7, 17, 31, 0.88);
+      padding: 22px;
+    }
+
+    .price-line {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .price {
+      font-family: var(--serif);
+      font-size: 54px;
+      line-height: 0.9;
+      font-weight: 700;
+    }
+
+    .price sup { font-family: var(--sans); font-size: 15px; color: var(--accent); }
+    .delivery { max-width: 150px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 250, 240, 0.52); text-align: right; }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 112px;
+      gap: 10px;
+    }
+
+    .primary {
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: var(--ink);
+      min-height: 50px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .primary:hover { background: var(--white); transform: translateY(-2px); }
+
+    .qty {
+      display: grid;
+      grid-template-columns: 35px 1fr 35px;
+      border: 1px solid rgba(255, 250, 240, 0.22);
+      min-height: 50px;
+    }
+
+    .qty button {
+      border: 0;
+      background: transparent;
+      color: var(--white);
+      font-size: 18px;
+    }
+
+    .qty output {
+      display: grid;
+      place-items: center;
+      border-inline: 1px solid rgba(255, 250, 240, 0.18);
+      font-size: 12px;
+      color: var(--white);
+    }
+
+    .marquee {
+      overflow: hidden;
+      border-block: 1px solid var(--line);
+      background: var(--accent);
+      color: var(--ink);
+    }
+
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 35s linear infinite;
+    }
+
+    .marquee span {
+      padding: 12px 16px;
+      font-family: var(--serif);
+      font-size: 28px;
+      font-style: italic;
+      white-space: nowrap;
+    }
+
+    @keyframes marquee {
+      to { transform: translateX(-50%); }
+    }
+
+    .section {
+      border-bottom: 1px solid var(--line);
+      padding: clamp(44px, 7vw, 88px) clamp(22px, 5vw, 72px);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+      gap: clamp(32px, 5vw, 72px);
+      align-items: start;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 26px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    .section-label::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: var(--line);
+    }
+
+    h2 {
+      margin: 0 0 24px;
+      font-family: var(--serif);
+      font-size: clamp(48px, 7vw, 96px);
+      line-height: 0.87;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    h2 em { display: block; font-weight: 400; color: var(--ink-soft); }
+
+    .body-copy {
+      font-family: var(--serif);
+      font-size: clamp(21px, 2.2vw, 31px);
+      line-height: 1.35;
+      color: var(--ink-soft);
+    }
+
+    .body-copy p { margin: 0 0 20px; }
+    .body-copy strong { color: var(--ink); font-weight: 600; }
+
+    .quote {
+      border-left: 3px solid var(--accent);
+      padding-left: 28px;
+      font-family: var(--serif);
+      font-size: clamp(30px, 4.5vw, 64px);
+      line-height: 0.98;
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .quote small {
+      display: block;
+      margin-top: 20px;
+      font-family: var(--sans);
+      font-size: 10px;
+      font-style: normal;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .detail {
+      min-height: 156px;
+      padding: 24px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .detail span {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .detail strong {
+      display: block;
+      font-family: var(--serif);
+      font-size: 28px;
+      line-height: 1.04;
+    }
+
+    .detail small { color: var(--ink-faint); }
+
+    .themes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .theme {
+      position: relative;
+      min-height: 235px;
+      padding: 28px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.2);
+      transition: background 180ms ease, transform 180ms ease;
+    }
+
+    .theme:hover { background: var(--paper); transform: translateY(-4px); }
+    .theme-num {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      color: var(--accent-strong);
+    }
+
+    .theme h3 {
+      margin: 20px 0 12px;
+      font-family: var(--serif);
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .theme p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+    .theme-bg {
+      position: absolute;
+      right: -8px;
+      bottom: -30px;
+      font-family: var(--serif);
+      font-size: 130px;
+      font-weight: 700;
+      color: rgba(15, 15, 15, 0.045);
+      line-height: 1;
+    }
+
+    .interactive {
+      display: grid;
+      grid-template-columns: minmax(310px, 0.8fr) minmax(0, 1.2fr);
+      gap: clamp(24px, 4vw, 56px);
+      align-items: stretch;
+    }
+
+    .mini-card {
+      background: var(--deep);
+      color: var(--white);
+      padding: 28px;
+      min-height: 460px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid rgba(255,255,255,.14);
+    }
+
+    .mini-card h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 54px;
+      line-height: .9;
+    }
+
+    .format-options {
+      display: grid;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .format-btn {
+      min-height: 58px;
+      border: 1px solid rgba(255, 250, 240, 0.2);
+      background: transparent;
+      color: rgba(255, 250, 240, 0.62);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      text-align: left;
+      transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+    }
+
+    .format-btn.active {
+      background: var(--white);
+      color: var(--ink);
+      border-color: var(--white);
+    }
+
+    .tabs {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      min-height: 460px;
+    }
+
+    .tab-nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .tab-btn {
+      min-height: 62px;
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .tab-btn:last-child { border-right: 0; }
+    .tab-btn.active { background: var(--ink); color: var(--white); }
+
+    .tab-panel {
+      display: none;
+      padding: clamp(24px, 4vw, 46px);
+    }
+
+    .tab-panel.active { display: block; }
+    .tab-panel p {
+      margin: 0 0 20px;
+      font-family: var(--serif);
+      font-size: clamp(23px, 2.5vw, 36px);
+      line-height: 1.22;
+      color: var(--ink-soft);
+    }
+
+    .tab-panel em { color: var(--ink); }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .stat {
+      padding: 42px 32px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .stat strong {
+      display: block;
+      font-family: var(--serif);
+      font-size: clamp(58px, 7vw, 104px);
+      line-height: .9;
+    }
+
+    .stat span { color: var(--ink-soft); font-size: 14px; }
+
+    .author {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .author-mark {
+      min-height: 430px;
+      display: grid;
+      place-items: center;
+      border-right: 1px solid var(--line);
+      background:
+        repeating-linear-gradient(-45deg, rgba(15,15,15,.04), rgba(15,15,15,.04) 1px, transparent 1px, transparent 14px),
+        var(--deep);
+      color: rgba(255,250,240,.13);
+      font-family: var(--serif);
+      font-size: 210px;
+      font-style: italic;
+    }
+
+    .author-copy { padding: clamp(28px, 5vw, 64px); }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+    .tag {
+      border: 1px solid var(--line);
+      padding: 8px 12px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .reviews {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .review {
+      padding: 30px;
+      min-height: 255px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: rgba(255,255,255,.24);
+    }
+
+    .review p {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 25px;
+      line-height: 1.18;
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+
+    .review span {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .order {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.86fr);
+      min-height: 540px;
+      background: var(--deep);
+      color: var(--white);
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+
+    .order-copy {
+      padding: clamp(36px, 6vw, 72px);
+      border-right: 1px solid rgba(255,255,255,.12);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .order h2 { color: var(--white); }
+    .order .lead { color: rgba(255,250,240,.64); }
+
+    .order-side {
+      padding: clamp(30px, 5vw, 58px);
+      display: grid;
+      align-content: center;
+      gap: 0;
+    }
+
+    .order-row {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 18px;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,250,240,.68);
+    }
+
+    .order-row b { color: var(--accent); }
+    .order-row strong { color: var(--white); font-weight: 600; }
+
+    footer {
+      background: var(--deep);
+      color: var(--white);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(180px, .7fr));
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+
+    .footer-cell {
+      padding: clamp(28px, 5vw, 56px);
+      border-right: 1px solid rgba(255,255,255,.1);
+    }
+
+    .footer-cell:last-child { border-right: 0; }
+    .footer-brand {
+      margin: 0 0 20px;
+      font-family: var(--serif);
+      font-size: clamp(54px, 6vw, 86px);
+      line-height: .9;
+    }
+
+    .footer-cell p { max-width: 430px; color: rgba(255,250,240,.62); }
+    .footer-label {
+      margin-bottom: 22px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .footer-links { display: grid; gap: 12px; }
+    .footer-links a {
+      font-family: var(--serif);
+      font-size: 29px;
+      line-height: 1;
+      color: rgba(255,250,240,.7);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px clamp(22px, 5vw, 56px);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,250,240,.38);
+    }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 80;
+      max-width: 340px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      padding: 16px 18px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.18);
+      transform: translateY(24px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast strong {
+      display: block;
+      font-size: 10px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 1020px) {
+      .topbar { grid-template-columns: 1fr repeat(3, 64px); }
+      .nav { display: none; }
+      .hero, .two-col, .interactive, .order { grid-template-columns: 1fr; }
+      .hero-copy, .order-copy { border-right: 0; }
+      .book-stage { min-height: 760px; }
+      .detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .themes, .stats, .reviews, .footer-grid { grid-template-columns: 1fr; }
+      .author { grid-template-columns: 1fr; }
+      .author-mark { min-height: 250px; border-right: 0; border-bottom: 1px solid var(--line); }
+    }
+
+    @media (max-width: 680px) {
+      .topbar { height: 62px; grid-template-columns: 1fr repeat(3, 54px); }
+      .brand, .icon-btn, .cart-btn { min-height: 62px; }
+      .brand { padding-inline: 16px; letter-spacing: .22em; }
+      .cart-btn span { display: none; }
+      main { padding-top: 62px; }
+      .hero-footer { grid-template-columns: 1fr 1fr; }
+      .spec { border-bottom: 1px solid var(--line); padding-left: 0; }
+      .book-stage { min-height: 670px; padding-inline: 18px; }
+      .cover { min-height: 500px; }
+      .controls { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .tab-nav { grid-template-columns: 1fr; }
+      .tab-btn { border-right: 0; border-bottom: 1px solid var(--line); }
+      .footer-bottom { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar" aria-label="AM Publishing navigation">
+    <a class="brand" href="https://ampublishing.org/" aria-label="AM Publishing">
+      <span class="mark" aria-hidden="true"></span>
+      <span>AM Pub.</span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a class="nav-link" href="#about">О книге</a>
+      <a class="nav-link" href="#excerpt">Отрывок</a>
+      <a class="nav-link" href="#author">Автор</a>
+      <a class="nav-link" href="#order">Заказать</a>
+    </nav>
+    <button class="icon-btn" type="button" aria-label="Поиск">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+    </button>
+    <a class="cart-btn" href="#order" aria-label="Корзина">
+      <span>(0)</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 2L3 6v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+    </a>
+    <button class="icon-btn" type="button" aria-label="Язык">RU</button>
+    <button class="icon-btn hamb" type="button" aria-label="Меню">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+    </button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div>
+          <span class="eyebrow">AM Publishing · Berlin · 2026</span>
+          <h1>Все, что <em>останется</em></h1>
+          <p class="lead">Роман о возвращении, памяти и том, что мы не можем оставить, даже когда очень хотим.</p>
+        </div>
+        <div class="hero-footer" aria-label="Book specs">
+          <div class="spec"><small>Автор</small><strong>Сергей Калинин</strong></div>
+          <div class="spec"><small>Жанр</small><strong>Роман</strong></div>
+          <div class="spec"><small>Объем</small><strong>368 стр.</strong></div>
+          <div class="spec"><small>Тираж</small><strong>Малый</strong></div>
+        </div>
+      </div>
+
+      <aside class="book-stage" aria-label="Interactive book card">
+        <article class="book-card" id="bookCard">
+          <div class="cover">
+            <div class="cover-kicker">AM Publishing · Berlin</div>
+            <h2 class="cover-title">Все, что <em>останется</em></h2>
+            <div class="cover-author">Сергей Калинин</div>
+          </div>
+          <div class="card-panel">
+            <div class="price-line">
+              <div class="price"><sup>EUR</sup> 24</div>
+              <div class="delivery">Доставка в 59 стран · 24-120 часов</div>
+            </div>
+            <div class="controls">
+              <button class="primary" type="button" id="addBtn">Добавить в заказ</button>
+              <div class="qty" aria-label="Количество">
+                <button type="button" id="minusBtn" aria-label="Уменьшить количество">-</button>
+                <output id="qtyOut">1</output>
+                <button type="button" id="plusBtn" aria-label="Увеличить количество">+</button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </aside>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>The Art of Publishing</span><span>Depth of Thought</span><span>Psychological Insight</span><span>Humanity</span><span>Prosa, die entschleunigt</span>
+        <span>The Art of Publishing</span><span>Depth of Thought</span><span>Psychological Insight</span><span>Humanity</span><span>Prosa, die entschleunigt</span>
+      </div>
+    </div>
+
+    <section class="section two-col" id="about">
+      <div>
+        <div class="section-label">О книге</div>
+        <h2>Память <em>как улика</em></h2>
+      </div>
+      <div class="body-copy">
+        <p>Это история о человеке, который возвращается в город своего детства после долгих лет отсутствия и обнаруживает, что прошлое не исчезло. Оно лишь ждало.</p>
+        <p>Роман Калинина движется сквозь три временных пласта с редкой уверенностью: <strong>послевоенная провинция, распад Советского Союза, наши дни.</strong> Память здесь не ностальгия, а улика. Каждая деталь свидетель.</p>
+        <p>«Все, что останется» - это книга о том, что мы несем с собой и чего не можем оставить, даже когда очень хотим.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="quote">Он не знал, зачем вернулся. Только - что иначе было нельзя.<small>Из романа, глава III</small></div>
+    </section>
+
+    <section class="section">
+      <div class="section-label">Детали издания</div>
+      <div class="detail-grid">
+        <div class="detail"><span>Формат</span><strong>Твердая обложка</strong><small>Hardcover</small></div>
+        <div class="detail"><span>Объем</span><strong>368 страниц</strong><small>368 Seiten</small></div>
+        <div class="detail"><span>Язык</span><strong>Русский</strong><small>Originalsprache</small></div>
+        <div class="detail"><span>Тираж</span><strong>300-1000 экз.</strong><small>Kleine Auflage</small></div>
+        <div class="detail"><span>Доставка</span><strong>59 стран</strong><small>Weltweiter Versand</small></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-label">Темы романа</div>
+      <div class="themes">
+        <article class="theme"><span class="theme-num">01</span><h3>Память как бремя</h3><p>Прошлое не отпускает - оно меняет форму. Воспоминания искажаются, но никуда не уходят.</p><div class="theme-bg">01</div></article>
+        <article class="theme"><span class="theme-num">02</span><h3>Три поколения</h3><p>Послевоенная провинция, девяностые и сегодняшний день - три эпохи, одна судьба.</p><div class="theme-bg">02</div></article>
+        <article class="theme"><span class="theme-num">03</span><h3>Возвращение домой</h3><p>Что значит вернуться туда, где тебя больше не ждут? Роман не дает удобных ответов.</p><div class="theme-bg">03</div></article>
+        <article class="theme"><span class="theme-num">04</span><h3>Молчание как язык</h3><p>То, о чем не говорят, говорит громче всего. Калинин работает с паузами и пустотами.</p><div class="theme-bg">04</div></article>
+        <article class="theme"><span class="theme-num">05</span><h3>Дом и отчуждение</h3><p>Место может оставаться прежним, но человек - нет. История разрыва с пространством детства.</p><div class="theme-bg">05</div></article>
+        <article class="theme"><span class="theme-num">06</span><h3>Цена выбора</h3><p>Каждое решение оставляет след. Один выбор, сделанный или нет, меняет все.</p><div class="theme-bg">06</div></article>
+      </div>
+    </section>
+
+    <section class="section interactive" id="excerpt">
+      <div class="mini-card">
+        <div>
+          <div class="section-label">Карточка</div>
+          <h3>Выберите издание</h3>
+        </div>
+        <div class="format-options" role="listbox" aria-label="Формат книги">
+          <button class="format-btn active" type="button" data-format="Твердая обложка" data-price="24"><span>Твердая обложка</span><strong>EUR 24</strong></button>
+          <button class="format-btn" type="button" data-format="Подарочный комплект" data-price="39"><span>Подарочный комплект</span><strong>EUR 39</strong></button>
+          <button class="format-btn" type="button" data-format="Цифровой отрывок" data-price="0"><span>Цифровой отрывок</span><strong>Free</strong></button>
+        </div>
+      </div>
+      <div class="tabs">
+        <div class="tab-nav" role="tablist" aria-label="Book details">
+          <button class="tab-btn active" type="button" data-tab="excerpt">Отрывок</button>
+          <button class="tab-btn" type="button" data-tab="numbers">В числах</button>
+          <button class="tab-btn" type="button" data-tab="delivery">Доставка</button>
+        </div>
+        <div class="tab-panel active" id="tab-excerpt">
+          <p>Город встретил его тем же запахом - <em>мокрым асфальтом и чем-то горелым</em>, что всегда висело над промышленным районом по утрам.</p>
+          <p>Дома стояли на месте. Деревья выросли. Магазин на углу стал аптекой. Но что-то главное исчезло. Или, может быть, это он перестал ему принадлежать.</p>
+          <p>Переулок Садовый, 14. Дом, в котором он не был <em>двадцать три года</em>.</p>
+        </div>
+        <div class="tab-panel" id="tab-numbers">
+          <p><em>23 года</em> разлуки предшествуют возвращению героя. Три временных слоя, одна неотпускающая нить.</p>
+          <p><em>3 эпохи</em>: послевоенная провинция, девяностые, наши дни.</p>
+          <p><em>368 страниц</em>: малый тираж, твердая обложка, авторская бумага.</p>
+        </div>
+        <div class="tab-panel" id="tab-delivery">
+          <p>AM Publishing доставляет книги в <em>59 стран мира</em>. Среднее время доставки - 24-120 часов.</p>
+          <p>Каждый экземпляр упакован как предмет: плотная бумага, защитный конверт, номер заказа и трекинг.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="stats">
+        <div class="stat"><strong>23</strong><span>года разлуки предшествуют возвращению героя.</span></div>
+        <div class="stat"><strong>3</strong><span>эпохи связывают одну семейную историю.</span></div>
+        <div class="stat"><strong>368</strong><span>страниц в малом тираже AM Publishing.</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="author">
+      <div class="author">
+        <div class="author-mark" aria-hidden="true">S</div>
+        <div class="author-copy">
+          <div class="section-label">Об авторе · Über den Autor</div>
+          <h2>Сергей <em>Калинин</em></h2>
+          <div class="body-copy">
+            <p>Сергей Калинин - прозаик, чьи тексты отличает редкое сочетание психологической точности и атмосферной плотности. Он пишет о людях в переломные моменты: когда привычное рушится, а новое еще не обрело форму.</p>
+            <p>Его проза не торопится - она живет в деталях, в паузах, в том, что остается за кадром. «Все, что останется» - его первый роман в AM Publishing. Берлин, 2026.</p>
+          </div>
+          <div class="tags">
+            <span class="tag">Психологическая проза</span>
+            <span class="tag">Современная литература</span>
+            <span class="tag">Русскоязычный автор</span>
+            <span class="tag">AM Publishing</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-label">Читатели о книге</div>
+      <div class="reviews">
+        <article class="review"><p>«Калинин превращает обыденное в невыносимо точное. Я читала и узнавала людей, места, молчание.»</p><span>Читательница из Москвы</span></article>
+        <article class="review"><p>«Роман держит не сюжетом - он держит воздухом. Той особой атмосферой, от которой не можешь оторваться.»</p><span>Читатель из Берлина</span></article>
+        <article class="review"><p>«Это книга о том, как больно возвращаться. И как еще больнее не возвращаться.»</p><span>Читатель из Тель-Авива</span></article>
+      </div>
+    </section>
+
+    <section class="order" id="order">
+      <div class="order-copy">
+        <div>
+          <div class="section-label">Заказать</div>
+          <h2>Забрать <em>домой</em></h2>
+          <p class="lead">Малый тираж. Твердая обложка. Офсетная печать. Доставка в 59 стран мира от 24 до 120 часов.</p>
+        </div>
+        <button class="primary" type="button" id="orderBtn">Оформить заказ</button>
+      </div>
+      <div class="order-side">
+        <div class="order-row"><b>01</b><span><strong>Малый тираж</strong> - каждый экземпляр на вес золота. Ограниченный тираж 300-1000 копий.</span></div>
+        <div class="order-row"><b>02</b><span><strong>Твердая обложка</strong> - офсетная печать, авторский дизайн, качественный переплет.</span></div>
+        <div class="order-row"><b>03</b><span><strong>Доставка по миру</strong> - 59 стран. Среднее время 24-120 часов.</span></div>
+        <div class="order-row"><b>04</b><span><strong>Независимое издательство</strong> - AM Publishing существует ради литературы, которая не боится глубины.</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-cell">
+        <h2 class="footer-brand">AM Publishing</h2>
+        <p>Независимое русскоязычное издательство в Берлине. Мы популяризируем литературу, которая расширяет мировоззрение и обогащает внутренний мир.</p>
+      </div>
+      <div class="footer-cell">
+        <div class="footer-label">Навигация</div>
+        <div class="footer-links"><a href="https://ampublishing.org/catalog">Каталог</a><a href="https://ampublishing.org/authors">Авторам</a><a href="https://ampublishing.org/about">О нас</a><a href="https://ampublishing.org/media">СМИ</a></div>
+      </div>
+      <div class="footer-cell">
+        <div class="footer-label">Эта книга</div>
+        <div class="footer-links"><a href="#about">О книге</a><a href="#excerpt">Отрывок</a><a href="#author">Автор</a><a href="#order">Заказать</a></div>
+      </div>
+      <div class="footer-cell">
+        <div class="footer-label">Социальный индекс</div>
+        <div class="footer-links"><a href="https://t.me/ampublishingberlin">Telegram</a><a href="https://www.instagram.com/am.publishing?igsh=b2JoMDZqdDJzMXdj">Instagram</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 AM Publishing Berlin</span><span>Impressum · Datenschutzerklärung · AGB</span></div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><strong>Добавлено</strong><span id="toastText">Книга добавлена в заказ.</span></div>
+
+  <script>
+    const bookCard = document.getElementById('bookCard');
+    const qtyOut = document.getElementById('qtyOut');
+    const plusBtn = document.getElementById('plusBtn');
+    const minusBtn = document.getElementById('minusBtn');
+    const addBtn = document.getElementById('addBtn');
+    const orderBtn = document.getElementById('orderBtn');
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toastText');
+    const formatButtons = Array.from(document.querySelectorAll('.format-btn'));
+    const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+    const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+
+    let qty = 1;
+    let format = 'Твердая обложка';
+    let toastTimer;
+
+    const showToast = (text) => {
+      toastText.textContent = text;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+    };
+
+    plusBtn.addEventListener('click', () => {
+      qty = Math.min(9, qty + 1);
+      qtyOut.value = qty;
+      qtyOut.textContent = qty;
+    });
+
+    minusBtn.addEventListener('click', () => {
+      qty = Math.max(1, qty - 1);
+      qtyOut.value = qty;
+      qtyOut.textContent = qty;
+    });
+
+    addBtn.addEventListener('click', () => showToast(`${format}: ${qty} экз. добавлено в заказ.`));
+    orderBtn.addEventListener('click', () => showToast('Оформление заказа: AM Publishing свяжется с вами для доставки.'));
+
+    formatButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        formatButtons.forEach((item) => item.classList.remove('active'));
+        button.classList.add('active');
+        format = button.dataset.format;
+        showToast(`Выбран формат: ${format}.`);
+      });
+    });
+
+    tabButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        tabButtons.forEach((item) => item.classList.remove('active'));
+        tabPanels.forEach((item) => item.classList.remove('active'));
+        button.classList.add('active');
+        document.getElementById(`tab-${button.dataset.tab}`).classList.add('active');
+      });
+    });
+
+    if (window.matchMedia('(pointer: fine)').matches) {
+      bookCard.addEventListener('mousemove', (event) => {
+        const rect = bookCard.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+        bookCard.style.transform = `perspective(900px) rotateY(${x * 10}deg) rotateX(${-y * 7}deg) translateY(-4px)`;
+      });
+      bookCard.addEventListener('mouseleave', () => {
+        bookCard.style.transform = 'perspective(900px) rotateY(0deg) rotateX(0deg)';
+      });
+    }
+  </script>
+</body>
+</html>
