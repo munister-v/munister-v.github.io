@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Все, что останется - Сергей Калинин | AM Publishing</title>
-  <meta name="description" content="Интерактивная карточка книги Сергея Калинина «Все, что останется» от AM Publishing Berlin.">
+  <title>Всё, что останется - Сергей Калинин | AM Publishing</title>
+  <meta name="description" content="Интерактивная карточка книги Сергея Калинина «Всё, что останется» от AM Publishing Berlin.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -240,33 +240,38 @@
     .book-card {
       position: relative;
       z-index: 1;
-      width: min(100%, 430px);
+      width: min(100%, 440px);
       border: 1px solid rgba(255, 250, 240, 0.18);
-      background: rgba(255, 250, 240, 0.06);
+      background: rgba(255, 250, 240, 0.08);
       box-shadow: 0 34px 90px rgba(0, 0, 0, 0.42);
       transform-style: preserve-3d;
       transition: transform 260ms ease, border-color 220ms ease;
     }
 
+    .book-card::before {
+      content: "";
+      position: absolute;
+      inset: 18px auto 118px -18px;
+      width: 28px;
+      background: linear-gradient(90deg, #020812, #111827 55%, #293242);
+      transform: translateZ(-18px) skewY(-4deg);
+      box-shadow: inset -1px 0 0 rgba(255, 250, 240, 0.15);
+    }
+
     .cover {
-      min-height: 560px;
+      min-height: 585px;
       position: relative;
       overflow: hidden;
-      padding: 34px 32px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      background:
-        radial-gradient(circle at 70% 24%, rgba(196, 164, 132, 0.24), transparent 28%),
-        radial-gradient(circle at 18% 88%, rgba(192, 57, 43, 0.18), transparent 34%),
-        #100d0a;
+      background: #07111f;
     }
 
     .cover::before {
       content: "";
       position: absolute;
-      inset: 0 0 0 8px;
-      border-left: 3px solid #c0392b;
+      inset: 0;
+      z-index: 2;
+      border: 1px solid rgba(255, 250, 240, 0.24);
+      box-shadow: inset 0 0 0 10px rgba(255, 250, 240, 0.035), inset 22px 0 26px rgba(0, 0, 0, 0.24);
       pointer-events: none;
     }
 
@@ -282,14 +287,86 @@
       line-height: 1;
     }
 
-    .cover-kicker {
-      position: relative;
+    .cover-image {
+      position: absolute;
+      inset: 0;
       z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      filter: saturate(0.98) contrast(1.02);
+      transform: scale(1.006);
+    }
+
+    .cover-glass {
+      position: absolute;
+      z-index: 3;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: end;
+      padding: 16px;
+      border: 1px solid rgba(255, 250, 240, 0.2);
+      background: rgba(7, 17, 31, 0.72);
+      backdrop-filter: blur(14px);
+    }
+
+    .cover-glass small {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255, 250, 240, 0.48);
+    }
+
+    .cover-glass strong {
+      display: block;
+      font-family: var(--serif);
+      font-size: 28px;
+      line-height: .95;
+      color: var(--white);
+    }
+
+    .edition-badge {
+      display: grid;
+      place-items: center;
+      width: 70px;
+      aspect-ratio: 1;
+      border: 1px solid rgba(196, 164, 132, 0.55);
+      color: var(--accent);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .stage-note {
+      position: absolute;
+      z-index: 2;
+      left: clamp(18px, 4vw, 42px);
+      bottom: clamp(18px, 4vw, 42px);
+      max-width: 220px;
+      color: rgba(255, 250, 240, 0.56);
       font-size: 10px;
       font-weight: 800;
-      letter-spacing: 0.24em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: rgba(255, 250, 240, 0.5);
+    }
+
+    .stage-note::before {
+      content: "";
+      display: block;
+      width: 46px;
+      height: 1px;
+      margin-bottom: 14px;
+      background: var(--accent);
     }
 
     .cover-title {
@@ -491,6 +568,96 @@
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--ink-faint);
+    }
+
+    .image-feature {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.05fr);
+      min-height: 720px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .photo-panel {
+      position: relative;
+      min-height: inherit;
+      overflow: hidden;
+      border-right: 1px solid var(--line);
+      background: var(--deep);
+    }
+
+    .photo-panel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      filter: saturate(.95) contrast(1.02);
+    }
+
+    .photo-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(7, 17, 31, .5), transparent 45%);
+      pointer-events: none;
+    }
+
+    .photo-caption {
+      position: absolute;
+      left: 28px;
+      bottom: 28px;
+      z-index: 1;
+      max-width: 320px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 250, 240, .24);
+      background: rgba(7, 17, 31, .64);
+      color: rgba(255, 250, 240, .72);
+      backdrop-filter: blur(14px);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .feature-copy {
+      padding: clamp(34px, 6vw, 80px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .material-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+      margin-top: 42px;
+    }
+
+    .material-list div {
+      padding: 22px;
+      min-height: 130px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, .32);
+    }
+
+    .material-list span {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    .material-list strong {
+      display: block;
+      font-family: var(--serif);
+      font-size: 29px;
+      line-height: 1;
     }
 
     .detail-grid {
@@ -876,9 +1043,10 @@
     @media (max-width: 1020px) {
       .topbar { grid-template-columns: 1fr repeat(3, 64px); }
       .nav { display: none; }
-      .hero, .two-col, .interactive, .order { grid-template-columns: 1fr; }
+      .hero, .two-col, .interactive, .order, .image-feature { grid-template-columns: 1fr; }
       .hero-copy, .order-copy { border-right: 0; }
       .book-stage { min-height: 760px; }
+      .photo-panel { min-height: 620px; border-right: 0; border-bottom: 1px solid var(--line); }
       .detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .themes, .stats, .reviews, .footer-grid { grid-template-columns: 1fr; }
       .author { grid-template-columns: 1fr; }
@@ -894,7 +1062,10 @@
       .hero-footer { grid-template-columns: 1fr 1fr; }
       .spec { border-bottom: 1px solid var(--line); padding-left: 0; }
       .book-stage { min-height: 670px; padding-inline: 18px; }
-      .cover { min-height: 500px; }
+      .cover { min-height: 520px; }
+      .stage-note { display: none; }
+      .photo-panel { min-height: 520px; }
+      .material-list { grid-template-columns: 1fr; }
       .controls { grid-template-columns: 1fr; }
       .detail-grid { grid-template-columns: 1fr; }
       .tab-nav { grid-template-columns: 1fr; }
@@ -942,7 +1113,7 @@
       <div class="hero-copy">
         <div>
           <span class="eyebrow">AM Publishing · Berlin · 2026</span>
-          <h1>Все, что <em>останется</em></h1>
+          <h1>Всё, что <em>останется</em></h1>
           <p class="lead">Роман о возвращении, памяти и том, что мы не можем оставить, даже когда очень хотим.</p>
         </div>
         <div class="hero-footer" aria-label="Book specs">
@@ -956,9 +1127,14 @@
       <aside class="book-stage" aria-label="Interactive book card">
         <article class="book-card" id="bookCard">
           <div class="cover">
-            <div class="cover-kicker">AM Publishing · Berlin</div>
-            <h2 class="cover-title">Все, что <em>останется</em></h2>
-            <div class="cover-author">Сергей Калинин</div>
+            <img class="cover-image" src="images/ambook-cover.jpg" alt="Обложка романа Сергея Калинина «Всё, что останется»" width="960" height="1280" fetchpriority="high">
+            <div class="cover-glass">
+              <div>
+                <small>Печатное издание · Berlin</small>
+                <strong>Твёрдая обложка</strong>
+              </div>
+              <div class="edition-badge">AM<br>2026</div>
+            </div>
           </div>
           <div class="card-panel">
             <div class="price-line">
@@ -975,6 +1151,7 @@
             </div>
           </div>
         </article>
+        <div class="stage-note">Реальная обложка, малый тираж, предметная подача для AM Publishing.</div>
       </aside>
     </section>
 
@@ -993,7 +1170,7 @@
       <div class="body-copy">
         <p>Это история о человеке, который возвращается в город своего детства после долгих лет отсутствия и обнаруживает, что прошлое не исчезло. Оно лишь ждало.</p>
         <p>Роман Калинина движется сквозь три временных пласта с редкой уверенностью: <strong>послевоенная провинция, распад Советского Союза, наши дни.</strong> Память здесь не ностальгия, а улика. Каждая деталь свидетель.</p>
-        <p>«Все, что останется» - это книга о том, что мы несем с собой и чего не можем оставить, даже когда очень хотим.</p>
+        <p>«Всё, что останется» - это книга о том, что мы несем с собой и чего не можем оставить, даже когда очень хотим.</p>
       </div>
     </section>
 
@@ -1001,10 +1178,33 @@
       <div class="quote">Он не знал, зачем вернулся. Только - что иначе было нельзя.<small>Из романа, глава III</small></div>
     </section>
 
+    <section class="image-feature" aria-label="Материальность издания">
+      <div class="photo-panel">
+        <img src="images/ambook-edition.webp" alt="Книга AM Publishing в твёрдой обложке на деревянном столе" width="1024" height="1536" loading="lazy">
+        <div class="photo-caption">Hardcover object · tactile paper · Berlin editorial edition</div>
+      </div>
+      <div class="feature-copy">
+        <div>
+          <div class="section-label">Материальность</div>
+          <h2>Книга как <em>предмет</em></h2>
+          <div class="body-copy">
+            <p>Эта карточка собрана вокруг настоящей обложки и предметного фото, чтобы издание ощущалось не как абстрактный товар, а как вещь: плотная, тихая, живая.</p>
+            <p>Контраст тёмной обложки, тёплого золота и светлой редакционной сетки связывает роман с визуальным языком AM Publishing.</p>
+          </div>
+        </div>
+        <div class="material-list">
+          <div><span>01 · Cover</span><strong>Тёмный дождь, скамья, жёлтый зонт</strong></div>
+          <div><span>02 · Object</span><strong>Тканевый hardcover на столе</strong></div>
+          <div><span>03 · Mood</span><strong>Пауза, возвращение, след памяти</strong></div>
+          <div><span>04 · Edition</span><strong>Малый тираж AM Publishing</strong></div>
+        </div>
+      </div>
+    </section>
+
     <section class="section">
       <div class="section-label">Детали издания</div>
       <div class="detail-grid">
-        <div class="detail"><span>Формат</span><strong>Твердая обложка</strong><small>Hardcover</small></div>
+        <div class="detail"><span>Формат</span><strong>Твёрдая обложка</strong><small>Hardcover</small></div>
         <div class="detail"><span>Объем</span><strong>368 страниц</strong><small>368 Seiten</small></div>
         <div class="detail"><span>Язык</span><strong>Русский</strong><small>Originalsprache</small></div>
         <div class="detail"><span>Тираж</span><strong>300-1000 экз.</strong><small>Kleine Auflage</small></div>
@@ -1031,7 +1231,7 @@
           <h3>Выберите издание</h3>
         </div>
         <div class="format-options" role="listbox" aria-label="Формат книги">
-          <button class="format-btn active" type="button" data-format="Твердая обложка" data-price="24"><span>Твердая обложка</span><strong>EUR 24</strong></button>
+          <button class="format-btn active" type="button" data-format="Твёрдая обложка" data-price="24"><span>Твёрдая обложка</span><strong>EUR 24</strong></button>
           <button class="format-btn" type="button" data-format="Подарочный комплект" data-price="39"><span>Подарочный комплект</span><strong>EUR 39</strong></button>
           <button class="format-btn" type="button" data-format="Цифровой отрывок" data-price="0"><span>Цифровой отрывок</span><strong>Free</strong></button>
         </div>
@@ -1050,7 +1250,7 @@
         <div class="tab-panel" id="tab-numbers">
           <p><em>23 года</em> разлуки предшествуют возвращению героя. Три временных слоя, одна неотпускающая нить.</p>
           <p><em>3 эпохи</em>: послевоенная провинция, девяностые, наши дни.</p>
-          <p><em>368 страниц</em>: малый тираж, твердая обложка, авторская бумага.</p>
+          <p><em>368 страниц</em>: малый тираж, твёрдая обложка, авторская бумага.</p>
         </div>
         <div class="tab-panel" id="tab-delivery">
           <p>AM Publishing доставляет книги в <em>59 стран мира</em>. Среднее время доставки - 24-120 часов.</p>
@@ -1075,7 +1275,7 @@
           <h2>Сергей <em>Калинин</em></h2>
           <div class="body-copy">
             <p>Сергей Калинин - прозаик, чьи тексты отличает редкое сочетание психологической точности и атмосферной плотности. Он пишет о людях в переломные моменты: когда привычное рушится, а новое еще не обрело форму.</p>
-            <p>Его проза не торопится - она живет в деталях, в паузах, в том, что остается за кадром. «Все, что останется» - его первый роман в AM Publishing. Берлин, 2026.</p>
+            <p>Его проза не торопится - она живет в деталях, в паузах, в том, что остается за кадром. «Всё, что останется» - его первый роман в AM Publishing. Берлин, 2026.</p>
           </div>
           <div class="tags">
             <span class="tag">Психологическая проза</span>
@@ -1101,13 +1301,13 @@
         <div>
           <div class="section-label">Заказать</div>
           <h2>Забрать <em>домой</em></h2>
-          <p class="lead">Малый тираж. Твердая обложка. Офсетная печать. Доставка в 59 стран мира от 24 до 120 часов.</p>
+          <p class="lead">Малый тираж. Твёрдая обложка. Офсетная печать. Доставка в 59 стран мира от 24 до 120 часов.</p>
         </div>
         <button class="primary" type="button" id="orderBtn">Оформить заказ</button>
       </div>
       <div class="order-side">
         <div class="order-row"><b>01</b><span><strong>Малый тираж</strong> - каждый экземпляр на вес золота. Ограниченный тираж 300-1000 копий.</span></div>
-        <div class="order-row"><b>02</b><span><strong>Твердая обложка</strong> - офсетная печать, авторский дизайн, качественный переплет.</span></div>
+        <div class="order-row"><b>02</b><span><strong>Твёрдая обложка</strong> - офсетная печать, авторский дизайн, качественный переплет.</span></div>
         <div class="order-row"><b>03</b><span><strong>Доставка по миру</strong> - 59 стран. Среднее время 24-120 часов.</span></div>
         <div class="order-row"><b>04</b><span><strong>Независимое издательство</strong> - AM Publishing существует ради литературы, которая не боится глубины.</span></div>
       </div>
@@ -1152,7 +1352,7 @@
     const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
 
     let qty = 1;
-    let format = 'Твердая обложка';
+    let format = 'Твёрдая обложка';
     let toastTimer;
 
     const showToast = (text) => {
