@@ -185,6 +185,20 @@
       line-height: 1.55;
     }
 
+    .import-box {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.26);
+      padding: 16px;
+    }
+
+    .import-box textarea {
+      min-height: 150px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
     .records {
       display: grid;
       gap: 10px;
@@ -273,6 +287,15 @@
       <div class="panel">
         <span class="kicker">02 · Payment validation</span>
         <h2>Запись платежа</h2>
+        <div class="import-box">
+          <label>Импорт из Telegram / WhatsApp
+            <textarea id="importText" placeholder="Вставьте сюда сообщение покупателя целиком. Если в нём есть AMBOOK_PAYLOAD, поля заполнятся автоматически."></textarea>
+          </label>
+          <div class="button-row">
+            <button class="btn secondary" id="importBtn" type="button">Импортировать</button>
+            <button class="btn secondary" id="pasteBtn" type="button">Вставить из буфера</button>
+          </div>
+        </div>
         <div class="form">
           <label>Номер заказа<input id="orderId" type="text" placeholder="AMB-20260507-ABCD"></label>
           <label>Покупатель<input id="buyer" type="text" placeholder="Имя покупателя"></label>
@@ -289,6 +312,7 @@
           <label>Комментарий<textarea id="note" placeholder="Например: поступление на карту сверено вручную"></textarea></label>
           <div class="button-row">
             <button class="btn" id="saveBtn" type="button" disabled>Сохранить в GitHub</button>
+            <button class="btn secondary" id="confirmBtn" type="button" disabled>Подтвердить оплату</button>
             <button class="btn secondary" id="clearBtn" type="button">Очистить форму</button>
           </div>
         </div>
@@ -314,7 +338,11 @@
       tokenInput: document.getElementById('tokenInput'),
       connectBtn: document.getElementById('connectBtn'),
       saveBtn: document.getElementById('saveBtn'),
+      confirmBtn: document.getElementById('confirmBtn'),
       clearBtn: document.getElementById('clearBtn'),
+      importText: document.getElementById('importText'),
+      importBtn: document.getElementById('importBtn'),
+      pasteBtn: document.getElementById('pasteBtn'),
       records: document.getElementById('records'),
       orderId: document.getElementById('orderId'),
       buyer: document.getElementById('buyer'),
@@ -354,6 +382,8 @@
       const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
       return new TextDecoder().decode(bytes);
     };
+
+    const decodePayload = (value) => JSON.parse(decodeBase64Utf8(value));
 
     const encodeBase64Utf8 = (value) => {
       const bytes = new TextEncoder().encode(value);
@@ -425,10 +455,12 @@
         if (user.login !== OWNER) {
           githubToken = '';
           els.saveBtn.disabled = true;
+          els.confirmBtn.disabled = true;
           throw new Error(`Ожидался GitHub login ${OWNER}, получен ${user.login}`);
         }
         els.tokenInput.value = '';
         els.saveBtn.disabled = false;
+        els.confirmBtn.disabled = false;
         setStatus(`Подключено: ${user.login}`);
         await loadLedger();
       } finally {
@@ -451,9 +483,50 @@
       };
     };
 
+    const fillFormFromRecord = (record) => {
+      els.orderId.value = record.id || '';
+      els.buyer.value = record.buyer || '';
+      els.contact.value = record.contact || '';
+      els.amount.value = record.amount || '';
+      els.paymentStatus.value = record.status || 'paid_pending_check';
+      els.note.value = [
+        record.format ? `Формат: ${record.format}` : '',
+        record.quantity ? `Количество: ${record.quantity}` : '',
+        record.city ? `Доставка: ${record.city}` : '',
+        record.note ? `Комментарий: ${record.note}` : ''
+      ].filter(Boolean).join('\n');
+    };
+
+    const parseOrderMessage = (text) => {
+      const payloadMatch = text.match(/AMBOOK_PAYLOAD:([A-Za-z0-9+/=]+)/);
+      if (payloadMatch) return decodePayload(payloadMatch[1]);
+      const findLine = (label) => {
+        const match = text.match(new RegExp(`${label}:\\s*(.+)`, 'i'));
+        return match ? match[1].trim() : '';
+      };
+      const amountRaw = findLine('Сумма').replace(/[^\d.]/g, '');
+      return {
+        id: findLine('Заказ'),
+        buyer: findLine('Имя'),
+        contact: findLine('Контакт'),
+        amount: Number(amountRaw || 0),
+        status: /оплачен|оплата отправлена|paid/i.test(text) ? 'paid_pending_check' : 'invoice_sent',
+        note: text
+      };
+    };
+
+    const importOrder = (text) => {
+      if (!text.trim()) throw new Error('Вставьте сообщение покупателя.');
+      const record = parseOrderMessage(text);
+      if (!record.id) throw new Error('Не нашел номер заказа в сообщении.');
+      fillFormFromRecord(record);
+      setStatus(`Импортировано: ${record.id}`);
+    };
+
     const saveRecord = async () => {
       const record = collectRecord();
       els.saveBtn.disabled = true;
+      els.confirmBtn.disabled = true;
       const existing = ledger.orders || [];
       const previous = existing.find((item) => item.id === record.id);
       const nextOrders = [record, ...existing.filter((item) => item.id !== record.id)];
@@ -479,7 +552,15 @@
         renderRecords();
       } finally {
         els.saveBtn.disabled = false;
+        els.confirmBtn.disabled = false;
       }
+    };
+
+    const confirmRecord = async () => {
+      els.paymentStatus.value = 'paid_confirmed';
+      const suffix = 'Платеж подтвержден вручную после сверки поступления на карту.';
+      els.note.value = els.note.value.trim() ? `${els.note.value.trim()}\n${suffix}` : suffix;
+      await saveRecord();
     };
 
     const fillForm = (id) => {
@@ -501,6 +582,7 @@
       els.amount.value = '';
       els.paymentStatus.value = 'invoice_sent';
       els.note.value = '';
+      els.importText.value = '';
     };
 
     els.connectBtn.addEventListener('click', async () => {
@@ -516,6 +598,31 @@
         await saveRecord();
       } catch (error) {
         setStatus(error.message);
+      }
+    });
+
+    els.confirmBtn.addEventListener('click', async () => {
+      try {
+        await confirmRecord();
+      } catch (error) {
+        setStatus(error.message);
+      }
+    });
+
+    els.importBtn.addEventListener('click', () => {
+      try {
+        importOrder(els.importText.value);
+      } catch (error) {
+        setStatus(error.message);
+      }
+    });
+
+    els.pasteBtn.addEventListener('click', async () => {
+      try {
+        els.importText.value = await navigator.clipboard.readText();
+        importOrder(els.importText.value);
+      } catch (error) {
+        setStatus(`Не удалось прочитать буфер: ${error.message}`);
       }
     });
 
