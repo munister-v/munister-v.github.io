@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AM Book Admin · Payment Validation</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #eaeaea;
+      --paper: #f7f4ed;
+      --ink: #111;
+      --muted: rgba(17,17,17,.62);
+      --faint: rgba(17,17,17,.34);
+      --line: rgba(17,17,17,.16);
+      --accent: #c4a484;
+      --deep: #07111f;
+      --white: #fffaf0;
+      --serif: "Cormorant Garamond", Georgia, serif;
+      --sans: "Manrope", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.18) 0 1px, transparent 1px 100%),
+        var(--bg);
+      background-size: min(25vw, 320px) 100%;
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    button, a { touch-action: manipulation; }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 3px solid rgba(196,164,132,.55);
+      outline-offset: 3px;
+    }
+    a { color: inherit; }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 56px;
+    }
+
+    .top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: start;
+      padding: clamp(26px, 5vw, 56px);
+      border: 1px solid var(--line);
+      background: rgba(247,244,237,.76);
+    }
+
+    .kicker {
+      display: block;
+      margin-bottom: 16px;
+      color: #a88b6e;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    h1, h2 {
+      margin: 0;
+      font-family: var(--serif);
+      line-height: .94;
+      font-weight: 700;
+    }
+
+    h1 { max-width: 760px; font-size: clamp(46px, 8vw, 92px); }
+    h2 { font-size: clamp(34px, 4vw, 54px); }
+    p { color: var(--muted); line-height: 1.65; }
+
+    .status {
+      min-width: 220px;
+      border: 1px solid var(--line);
+      background: var(--deep);
+      color: var(--white);
+      padding: 18px;
+      font-size: 12px;
+    }
+
+    .status strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent);
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      padding: clamp(22px, 4vw, 36px);
+    }
+
+    .form {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      color: var(--faint);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid rgba(17,17,17,.28);
+      border-radius: 0;
+      background: rgba(255,255,255,.5);
+      color: var(--ink);
+      padding: 13px 14px;
+      outline: 0;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    textarea { min-height: 96px; resize: vertical; }
+    input:focus, textarea:focus, select:focus {
+      border-color: #a88b6e;
+      box-shadow: 0 0 0 3px rgba(196,164,132,.18);
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .btn {
+      min-height: 48px;
+      border: 1px solid var(--ink);
+      background: var(--ink);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .btn.secondary {
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: .45;
+    }
+
+    .notice {
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid rgba(196,164,132,.42);
+      background: rgba(196,164,132,.12);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .records {
+      display: grid;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .record {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      border: 1px solid var(--line);
+      padding: 16px;
+      background: rgba(255,255,255,.28);
+    }
+
+    .record h3 {
+      margin: 0 0 8px;
+      font-family: var(--serif);
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .record p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .badge {
+      height: fit-content;
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      color: var(--deep);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge.paid_confirmed { background: #d8ead3; }
+    .badge.paid_pending_check { background: #fff1bf; }
+    .badge.invoice_sent { background: #dbe7f5; }
+    .badge.cancelled { background: #f0caca; }
+
+    .empty {
+      border: 1px dashed var(--line);
+      padding: 24px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 820px) {
+      .shell { width: min(100% - 24px, 1180px); padding-top: 18px; }
+      .top, .grid { grid-template-columns: 1fr; }
+      .button-row { grid-template-columns: 1fr; }
+      .record { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="top">
+      <div>
+        <span class="kicker">AM Publishing · manual payments</span>
+        <h1>Админ-панель подтверждения оплат</h1>
+        <p>Вставьте GitHub token вручную, проверьте владельца аккаунта и фиксируйте статусы заказов. Токен не хранится в коде страницы и не коммитится в репозиторий.</p>
+      </div>
+      <div class="status"><strong>Статус</strong><span id="statusText">Не авторизовано</span></div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <span class="kicker">01 · GitHub auth</span>
+        <h2>Доступ</h2>
+        <div class="form">
+          <label>
+            GitHub token
+            <input id="tokenInput" type="password" autocomplete="off" placeholder="ghp_...">
+          </label>
+          <button class="btn" id="connectBtn" type="button">Подключиться</button>
+          <div class="notice">Проверка идет через GitHub API `/user`. Доступ разрешается только если login равен `munister-v`. Для безопасности токен живет только в памяти этой вкладки.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <span class="kicker">02 · Payment validation</span>
+        <h2>Запись платежа</h2>
+        <div class="form">
+          <label>Номер заказа<input id="orderId" type="text" placeholder="AMB-20260507-ABCD"></label>
+          <label>Покупатель<input id="buyer" type="text" placeholder="Имя покупателя"></label>
+          <label>Контакт<input id="contact" type="text" placeholder="Telegram, телефон или email"></label>
+          <label>Сумма<input id="amount" type="number" min="0" step="1" placeholder="24"></label>
+          <label>Статус
+            <select id="paymentStatus">
+              <option value="invoice_sent">Выставлено на оплату</option>
+              <option value="paid_pending_check">Оплачено, нужна сверка</option>
+              <option value="paid_confirmed">Платеж подтвержден</option>
+              <option value="cancelled">Отменено</option>
+            </select>
+          </label>
+          <label>Комментарий<textarea id="note" placeholder="Например: поступление на карту сверено вручную"></textarea></label>
+          <div class="button-row">
+            <button class="btn" id="saveBtn" type="button" disabled>Сохранить в GitHub</button>
+            <button class="btn secondary" id="clearBtn" type="button">Очистить форму</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <span class="kicker">03 · Orders ledger</span>
+      <h2>Журнал подтверждений</h2>
+      <div class="records" id="records"></div>
+    </section>
+  </main>
+
+  <script>
+    const OWNER = 'munister-v';
+    const REPO = 'munister-v.github.io';
+    const BRANCH = 'main';
+    const DATA_PATH = 'data/ambook-payments.json';
+    const API_ROOT = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${DATA_PATH}`;
+
+    const els = {
+      statusText: document.getElementById('statusText'),
+      tokenInput: document.getElementById('tokenInput'),
+      connectBtn: document.getElementById('connectBtn'),
+      saveBtn: document.getElementById('saveBtn'),
+      clearBtn: document.getElementById('clearBtn'),
+      records: document.getElementById('records'),
+      orderId: document.getElementById('orderId'),
+      buyer: document.getElementById('buyer'),
+      contact: document.getElementById('contact'),
+      amount: document.getElementById('amount'),
+      paymentStatus: document.getElementById('paymentStatus'),
+      note: document.getElementById('note')
+    };
+
+    let githubToken = '';
+    let fileSha = '';
+    let ledger = { schemaVersion: 1, updatedAt: null, orders: [] };
+
+    const setStatus = (text) => {
+      els.statusText.textContent = text;
+    };
+
+    const requestGitHub = async (url, options = {}) => {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          Accept: 'application/vnd.github+json',
+          Authorization: `Bearer ${githubToken}`,
+          'X-GitHub-Api-Version': '2022-11-28',
+          ...(options.headers || {})
+        }
+      });
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(`${response.status}: ${message}`);
+      }
+      return response.json();
+    };
+
+    const decodeBase64Utf8 = (value) => {
+      const binary = atob(value.replace(/\n/g, ''));
+      const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    };
+
+    const encodeBase64Utf8 = (value) => {
+      const bytes = new TextEncoder().encode(value);
+      let binary = '';
+      bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+      return btoa(binary);
+    };
+
+    const renderRecords = () => {
+      const orders = [...(ledger.orders || [])].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+      if (!orders.length) {
+        els.records.innerHTML = '<div class="empty">Пока нет записей. После первого сохранения здесь появится журнал.</div>';
+        return;
+      }
+      els.records.innerHTML = orders.map((order) => `
+        <article class="record">
+          <div>
+            <h3>${escapeHtml(order.id)}</h3>
+            <p>${escapeHtml(order.buyer || 'Без имени')} · ${escapeHtml(order.contact || 'без контакта')} · EUR ${escapeHtml(String(order.amount || 0))}</p>
+            <p>${escapeHtml(order.note || 'Комментарий не указан')}</p>
+            <p>Обновлено: ${escapeHtml(order.updatedAt || '')}</p>
+          </div>
+          <button class="badge ${escapeHtml(order.status)}" type="button" data-edit="${escapeHtml(order.id)}">${statusLabel(order.status)}</button>
+        </article>
+      `).join('');
+      els.records.querySelectorAll('[data-edit]').forEach((button) => {
+        button.addEventListener('click', () => fillForm(button.dataset.edit));
+      });
+    };
+
+    const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char]));
+
+    const statusLabel = (status) => ({
+      invoice_sent: 'Выставлено',
+      paid_pending_check: 'На сверке',
+      paid_confirmed: 'Подтверждено',
+      cancelled: 'Отменено'
+    }[status] || status);
+
+    const loadLedger = async () => {
+      try {
+        const file = await requestGitHub(`${API_ROOT}?ref=${BRANCH}`);
+        fileSha = file.sha;
+        ledger = JSON.parse(decodeBase64Utf8(file.content));
+      } catch (error) {
+        if (!String(error.message).startsWith('404')) throw error;
+        fileSha = '';
+        ledger = { schemaVersion: 1, updatedAt: null, orders: [] };
+      }
+      renderRecords();
+    };
+
+    const connect = async () => {
+      githubToken = els.tokenInput.value.trim();
+      if (!githubToken) {
+        setStatus('Введите token');
+        return;
+      }
+      els.connectBtn.disabled = true;
+      setStatus('Проверяю GitHub...');
+      try {
+        const user = await requestGitHub('https://api.github.com/user');
+        if (user.login !== OWNER) {
+          githubToken = '';
+          els.saveBtn.disabled = true;
+          throw new Error(`Ожидался GitHub login ${OWNER}, получен ${user.login}`);
+        }
+        els.tokenInput.value = '';
+        els.saveBtn.disabled = false;
+        setStatus(`Подключено: ${user.login}`);
+        await loadLedger();
+      } finally {
+        els.connectBtn.disabled = false;
+      }
+    };
+
+    const collectRecord = () => {
+      const id = els.orderId.value.trim();
+      if (!id) throw new Error('Укажите номер заказа.');
+      return {
+        id,
+        buyer: els.buyer.value.trim(),
+        contact: els.contact.value.trim(),
+        amount: Number(els.amount.value || 0),
+        currency: 'EUR',
+        status: els.paymentStatus.value,
+        note: els.note.value.trim(),
+        updatedAt: new Date().toISOString()
+      };
+    };
+
+    const saveRecord = async () => {
+      const record = collectRecord();
+      els.saveBtn.disabled = true;
+      const existing = ledger.orders || [];
+      const previous = existing.find((item) => item.id === record.id);
+      const nextOrders = [record, ...existing.filter((item) => item.id !== record.id)];
+      ledger = {
+        schemaVersion: 1,
+        updatedAt: new Date().toISOString(),
+        orders: nextOrders
+      };
+      const body = {
+        message: `${previous ? 'Update' : 'Add'} AM book payment ${record.id}`,
+        content: encodeBase64Utf8(`${JSON.stringify(ledger, null, 2)}\n`),
+        branch: BRANCH
+      };
+      if (fileSha) body.sha = fileSha;
+      setStatus('Сохраняю запись...');
+      try {
+        const result = await requestGitHub(API_ROOT, {
+          method: 'PUT',
+          body: JSON.stringify(body)
+        });
+        fileSha = result.content.sha;
+        setStatus(`Сохранено: ${record.id}`);
+        renderRecords();
+      } finally {
+        els.saveBtn.disabled = false;
+      }
+    };
+
+    const fillForm = (id) => {
+      const order = (ledger.orders || []).find((item) => item.id === id);
+      if (!order) return;
+      els.orderId.value = order.id || '';
+      els.buyer.value = order.buyer || '';
+      els.contact.value = order.contact || '';
+      els.amount.value = order.amount || '';
+      els.paymentStatus.value = order.status || 'invoice_sent';
+      els.note.value = order.note || '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const clearForm = () => {
+      els.orderId.value = '';
+      els.buyer.value = '';
+      els.contact.value = '';
+      els.amount.value = '';
+      els.paymentStatus.value = 'invoice_sent';
+      els.note.value = '';
+    };
+
+    els.connectBtn.addEventListener('click', async () => {
+      try {
+        await connect();
+      } catch (error) {
+        setStatus(error.message);
+      }
+    });
+
+    els.saveBtn.addEventListener('click', async () => {
+      try {
+        await saveRecord();
+      } catch (error) {
+        setStatus(error.message);
+      }
+    });
+
+    els.clearBtn.addEventListener('click', clearForm);
+    renderRecords();
+  </script>
+</body>
+</html>
