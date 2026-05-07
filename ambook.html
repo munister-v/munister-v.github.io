@@ -1274,6 +1274,34 @@
       line-height: 1.55;
     }
 
+    .contact-strip {
+      display: grid;
+      gap: 8px;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--deep-line);
+    }
+
+    .contact-strip a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: rgba(255,250,240,.72);
+      font-family: var(--serif);
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .contact-strip small {
+      font-family: var(--sans);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
     @media (max-width: 1020px) {
       .topbar { grid-template-columns: 1fr repeat(4, 64px); }
       .nav { display: none; }
@@ -1582,7 +1610,7 @@
         <div>
           <div class="section-label">Заказать</div>
           <h2>Забрать <em>домой</em></h2>
-          <p class="lead">Малый тираж. Твёрдая обложка. Офсетная печать. Доставка в 59 стран мира от 24 до 120 часов.</p>
+          <p class="lead">Малый тираж. Твёрдая обложка. Офсетная печать. Доставка в 59 стран мира. Оплата в полуручном режиме с подтверждением через Telegram или WhatsApp.</p>
         </div>
         <button class="primary" type="button" id="orderBtn">Оформить заказ</button>
       </div>
@@ -1590,7 +1618,7 @@
         <div class="order-row"><b>01</b><span><strong>Малый тираж</strong> - каждый экземпляр на вес золота. Ограниченный тираж 300-1000 копий.</span></div>
         <div class="order-row"><b>02</b><span><strong>Твёрдая обложка</strong> - офсетная печать, авторский дизайн, качественный переплет.</span></div>
         <div class="order-row"><b>03</b><span><strong>Доставка по миру</strong> - 59 стран. Среднее время 24-120 часов.</span></div>
-        <div class="order-row"><b>04</b><span><strong>Независимое издательство</strong> - AM Publishing существует ради литературы, которая не боится глубины.</span></div>
+        <div class="order-row"><b>04</b><span><strong>Подтверждение оплаты</strong> - отправьте номер заказа в Telegram @vyanetto1 или WhatsApp +380 68 364 2205.</span></div>
       </div>
     </section>
   </main>
@@ -1610,8 +1638,8 @@
         <div class="footer-links"><a href="#about">О книге</a><a href="#excerpt">Отрывок</a><a href="#author">Автор</a><a href="#order">Заказать</a></div>
       </div>
       <div class="footer-cell">
-        <div class="footer-label">Социальный индекс</div>
-        <div class="footer-links"><a href="https://t.me/ampublishingberlin">Telegram</a><a href="https://www.instagram.com/am.publishing?igsh=b2JoMDZqdDJzMXdj">Instagram</a></div>
+        <div class="footer-label">Связь по заказу</div>
+        <div class="footer-links"><a href="https://t.me/vyanetto1">Telegram</a><a href="https://wa.me/380683642205">WhatsApp</a><a href="https://www.instagram.com/am.publishing?igsh=b2JoMDZqdDJzMXdj">Instagram</a></div>
       </div>
     </div>
     <div class="footer-bottom"><span>© 2026 AM Publishing Berlin</span><span>Impressum · Datenschutzerklärung · AGB</span></div>
@@ -1657,10 +1685,14 @@
           <div class="checkout-actions">
             <button class="ghost-action" type="button" id="copyCardBtn">Скопировать карту</button>
             <button class="ghost-action" type="button" id="copyOrderBtn">Скопировать заказ</button>
-            <a class="ghost-action" id="telegramOrderBtn" href="https://t.me/ampublishingberlin" target="_blank" rel="noopener">Отправить в Telegram</a>
-            <a class="ghost-action" id="mailOrderBtn" href="mailto:info@ampublishing.org">Отправить email</a>
+            <a class="ghost-action" id="telegramOrderBtn" href="https://t.me/vyanetto1" target="_blank" rel="noopener">Telegram + копия</a>
+            <a class="ghost-action" id="whatsappOrderBtn" href="https://wa.me/380683642205" target="_blank" rel="noopener">WhatsApp</a>
           </div>
-          <p class="checkout-note">После оплаты отправьте номер заказа и контакт. Подтверждение не автоматическое: администратор сверяет поступление на карту и фиксирует статус в админ-панели.</p>
+          <div class="contact-strip" aria-label="Контакты для подтверждения заказа">
+            <a href="https://t.me/vyanetto1" target="_blank" rel="noopener"><span>@vyanetto1</span><small>Telegram</small></a>
+            <a href="https://wa.me/380683642205" target="_blank" rel="noopener"><span>+380 68 364 2205</span><small>WhatsApp</small></a>
+          </div>
+          <p class="checkout-note">После оплаты отправьте номер заказа, контакт и скрин/подтверждение платежа. Подтверждение не автоматическое: администратор сверяет поступление на карту и фиксирует статус в админ-панели.</p>
         </aside>
       </div>
     </section>
@@ -1696,10 +1728,12 @@
     const copyCardBtn = document.getElementById('copyCardBtn');
     const copyOrderBtn = document.getElementById('copyOrderBtn');
     const telegramOrderBtn = document.getElementById('telegramOrderBtn');
-    const mailOrderBtn = document.getElementById('mailOrderBtn');
+    const whatsappOrderBtn = document.getElementById('whatsappOrderBtn');
 
     const CARD_NUMBER = '4441111028306763';
     const CARD_DISPLAY = CARD_NUMBER.replace(/(\d{4})(?=\d)/g, '$1 ');
+    const TELEGRAM_URL = 'https://t.me/vyanetto1';
+    const WHATSAPP_PHONE = '380683642205';
     let qty = 1;
     let format = 'Твёрдая обложка';
     let price = 24;
@@ -1752,6 +1786,7 @@
       `Сумма: ${order.currency} ${order.amount}`,
       `Карта: ${CARD_DISPLAY}`,
       `Назначение: ${order.id} · Сергей Калинин`,
+      'После оплаты отправлю скрин/подтверждение платежа.',
       order.buyer ? `Имя: ${order.buyer}` : '',
       order.contact ? `Контакт: ${order.contact}` : '',
       order.city ? `Город/страна: ${order.city}` : '',
@@ -1795,8 +1830,9 @@
       paymentCard.textContent = CARD_DISPLAY;
       paymentPurpose.textContent = `Назначение: ${order.id} · Сергей Калинин`;
       const text = orderToText(order);
-      telegramOrderBtn.href = `https://t.me/share/url?url=${encodeURIComponent('https://munister.com.ua/ambook.html')}&text=${encodeURIComponent(text)}`;
-      mailOrderBtn.href = `mailto:info@ampublishing.org?subject=${encodeURIComponent(`Заказ ${order.id}`)}&body=${encodeURIComponent(text)}`;
+      telegramOrderBtn.href = TELEGRAM_URL;
+      telegramOrderBtn.title = `Откройте Telegram и отправьте данные заказа:\n${text}`;
+      whatsappOrderBtn.href = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(text)}`;
       saveLocalOrder(order);
       return order;
     };
@@ -1844,6 +1880,7 @@
     });
     copyCardBtn.addEventListener('click', () => copyText(CARD_NUMBER, 'Номер карты скопирован.'));
     copyOrderBtn.addEventListener('click', () => copyText(orderToText(renderCheckout()), 'Данные заказа скопированы.'));
+    telegramOrderBtn.addEventListener('click', () => copyText(orderToText(renderCheckout()), 'Заказ скопирован. Вставьте его в Telegram.'));
     window.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && checkoutModal.classList.contains('open')) hideCheckout();
     });
