@@ -45,7 +45,13 @@
 
     a { color: inherit; text-decoration: none; }
     button, input { font: inherit; }
+    input, textarea, select { font: inherit; }
     button { cursor: pointer; }
+    button, a { touch-action: manipulation; }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(196, 164, 132, .55);
+      outline-offset: 3px;
+    }
     ::selection { background: var(--ink); color: var(--accent); }
 
     .topbar {
@@ -1048,6 +1054,226 @@
       margin-bottom: 4px;
     }
 
+    .checkout-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(7, 17, 31, 0.68);
+      backdrop-filter: blur(16px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms ease;
+    }
+
+    .checkout-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .checkout-modal {
+      position: relative;
+      width: min(100%, 1040px);
+      max-height: min(92dvh, 900px);
+      overflow: auto;
+      border: 1px solid rgba(255, 250, 240, 0.22);
+      background:
+        linear-gradient(90deg, rgba(15, 15, 15, .035) 0 1px, transparent 1px 100%),
+        var(--paper);
+      background-size: 25% 100%;
+      color: var(--ink);
+      box-shadow: 0 34px 120px rgba(0, 0, 0, 0.38);
+      transform: translateY(16px);
+      transition: transform 220ms ease;
+    }
+
+    .checkout-backdrop.open .checkout-modal { transform: translateY(0); }
+
+    .checkout-close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 2;
+      width: 58px;
+      height: 58px;
+      border: 0;
+      border-left: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: var(--deep);
+      color: var(--white);
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .checkout-head {
+      padding: clamp(28px, 4vw, 46px) clamp(22px, 5vw, 58px) 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .checkout-kicker {
+      display: inline-flex;
+      margin-bottom: 18px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    .checkout-head h2 {
+      max-width: 740px;
+      margin-bottom: 12px;
+      font-size: clamp(36px, 5vw, 64px);
+    }
+
+    .checkout-head p {
+      max-width: 680px;
+      margin: 0;
+      color: var(--ink-soft);
+      font-family: var(--serif);
+      font-size: clamp(18px, 2vw, 25px);
+      line-height: 1.28;
+    }
+
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, .86fr);
+    }
+
+    .checkout-form,
+    .checkout-summary {
+      padding: clamp(22px, 4vw, 42px) clamp(20px, 4vw, 48px);
+    }
+
+    .checkout-form {
+      display: grid;
+      gap: 14px;
+      border-right: 1px solid var(--line);
+    }
+
+    .checkout-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .checkout-field span {
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .checkout-field input,
+    .checkout-field textarea {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 0;
+      background: rgba(255,255,255,.46);
+      color: var(--ink);
+      padding: 14px 15px;
+      outline: 0;
+    }
+
+    .checkout-field textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .checkout-field input:focus,
+    .checkout-field textarea:focus {
+      border-color: var(--accent-strong);
+      box-shadow: 0 0 0 3px rgba(196, 164, 132, .18);
+    }
+
+    .checkout-summary {
+      background: var(--deep);
+      color: var(--white);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--deep-line);
+      color: rgba(255,250,240,.58);
+      font-size: 13px;
+    }
+
+    .summary-row strong {
+      color: var(--white);
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .payment-box {
+      margin-top: 24px;
+      padding: 20px;
+      border: 1px solid rgba(196, 164, 132, .42);
+      background: rgba(255, 250, 240, .08);
+    }
+
+    .payment-box small {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .card-number {
+      font-family: var(--serif);
+      font-size: clamp(28px, 3.2vw, 42px);
+      line-height: 1;
+      letter-spacing: .02em;
+      color: var(--white);
+    }
+
+    .payment-purpose {
+      margin-top: 12px;
+      color: rgba(255,250,240,.62);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .checkout-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .ghost-action {
+      min-height: 48px;
+      border: 1px solid rgba(255,250,240,.22);
+      background: transparent;
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .ghost-action:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .checkout-note {
+      margin: 18px 0 0;
+      color: rgba(255,250,240,.48);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
     @media (max-width: 1020px) {
       .topbar { grid-template-columns: 1fr repeat(4, 64px); }
       .nav { display: none; }
@@ -1116,6 +1342,16 @@
       .footer-links { gap: 9px; }
       .footer-links a { font-size: 20px; line-height: 1.1; }
       .footer-bottom { flex-direction: column; gap: 8px; padding: 16px 20px 22px; font-size: 9px; line-height: 1.5; letter-spacing: .09em; }
+      .checkout-backdrop { padding: 0; align-items: stretch; }
+      .checkout-modal { width: 100%; max-height: 100dvh; min-height: 100dvh; background-size: 50% 100%; }
+      .checkout-close { width: 52px; height: 52px; }
+      .checkout-head { padding: 28px 20px 18px; }
+      .checkout-head h2 { padding-right: 40px; }
+      .checkout-grid { grid-template-columns: 1fr; }
+      .checkout-form { border-right: 0; border-bottom: 1px solid var(--line); }
+      .checkout-actions { grid-template-columns: 1fr; }
+      .summary-row { font-size: 12px; }
+      .card-number { font-size: 30px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1381,6 +1617,55 @@
     <div class="footer-bottom"><span>© 2026 AM Publishing Berlin</span><span>Impressum · Datenschutzerklärung · AGB</span></div>
   </footer>
 
+  <div class="checkout-backdrop" id="checkoutModal" aria-hidden="true">
+    <section class="checkout-modal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+      <button class="checkout-close" type="button" id="closeCheckout" aria-label="Закрыть оформление">×</button>
+      <div class="checkout-head">
+        <span class="checkout-kicker">Оплата · полуручной режим</span>
+        <h2 id="checkoutTitle">Выставление на оплату</h2>
+        <p>Сформируйте заказ, оплатите на карту и отправьте данные в AM Publishing. Администратор вручную сверит поступление и подтвердит платеж.</p>
+      </div>
+      <div class="checkout-grid">
+        <form class="checkout-form" id="checkoutForm">
+          <label class="checkout-field">
+            <span>Имя покупателя</span>
+            <input id="buyerName" type="text" autocomplete="name" placeholder="Как к вам обращаться">
+          </label>
+          <label class="checkout-field">
+            <span>Контакт</span>
+            <input id="buyerContact" type="text" autocomplete="tel" placeholder="Телефон, Telegram или email">
+          </label>
+          <label class="checkout-field">
+            <span>Город и страна доставки</span>
+            <input id="buyerCity" type="text" autocomplete="shipping address-level2" placeholder="Например: Berlin, Germany">
+          </label>
+          <label class="checkout-field">
+            <span>Комментарий</span>
+            <textarea id="buyerNote" placeholder="Адрес, пожелания по доставке или удобный способ связи"></textarea>
+          </label>
+        </form>
+        <aside class="checkout-summary">
+          <div class="summary-row"><span>Номер заказа</span><strong id="checkoutOrderId">AMB-</strong></div>
+          <div class="summary-row"><span>Издание</span><strong id="checkoutFormat">Твёрдая обложка</strong></div>
+          <div class="summary-row"><span>Количество</span><strong id="checkoutQty">1</strong></div>
+          <div class="summary-row"><span>Сумма</span><strong id="checkoutAmount">EUR 24</strong></div>
+          <div class="payment-box">
+            <small>Карта для оплаты</small>
+            <div class="card-number" id="paymentCard">4441 1110 2830 6763</div>
+            <div class="payment-purpose" id="paymentPurpose">Назначение: AMB · Всё, что останется</div>
+          </div>
+          <div class="checkout-actions">
+            <button class="ghost-action" type="button" id="copyCardBtn">Скопировать карту</button>
+            <button class="ghost-action" type="button" id="copyOrderBtn">Скопировать заказ</button>
+            <a class="ghost-action" id="telegramOrderBtn" href="https://t.me/ampublishingberlin" target="_blank" rel="noopener">Отправить в Telegram</a>
+            <a class="ghost-action" id="mailOrderBtn" href="mailto:info@ampublishing.org">Отправить email</a>
+          </div>
+          <p class="checkout-note">После оплаты отправьте номер заказа и контакт. Подтверждение не автоматическое: администратор сверяет поступление на карту и фиксирует статус в админ-панели.</p>
+        </aside>
+      </div>
+    </section>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite"><strong>Добавлено</strong><span id="toastText">Книга добавлена в заказ.</span></div>
 
   <script>
@@ -1395,9 +1680,30 @@
     const formatButtons = Array.from(document.querySelectorAll('.format-btn'));
     const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
     const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+    const checkoutModal = document.getElementById('checkoutModal');
+    const closeCheckout = document.getElementById('closeCheckout');
+    const checkoutForm = document.getElementById('checkoutForm');
+    const buyerName = document.getElementById('buyerName');
+    const buyerContact = document.getElementById('buyerContact');
+    const buyerCity = document.getElementById('buyerCity');
+    const buyerNote = document.getElementById('buyerNote');
+    const checkoutOrderId = document.getElementById('checkoutOrderId');
+    const checkoutFormat = document.getElementById('checkoutFormat');
+    const checkoutQty = document.getElementById('checkoutQty');
+    const checkoutAmount = document.getElementById('checkoutAmount');
+    const paymentCard = document.getElementById('paymentCard');
+    const paymentPurpose = document.getElementById('paymentPurpose');
+    const copyCardBtn = document.getElementById('copyCardBtn');
+    const copyOrderBtn = document.getElementById('copyOrderBtn');
+    const telegramOrderBtn = document.getElementById('telegramOrderBtn');
+    const mailOrderBtn = document.getElementById('mailOrderBtn');
 
+    const CARD_NUMBER = '4441111028306763';
+    const CARD_DISPLAY = CARD_NUMBER.replace(/(\d{4})(?=\d)/g, '$1 ');
     let qty = 1;
     let format = 'Твёрдая обложка';
+    let price = 24;
+    let currentOrderId = '';
     let toastTimer;
 
     const showToast = (text) => {
@@ -1407,26 +1713,149 @@
       toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
     };
 
-    plusBtn.addEventListener('click', () => {
-      qty = Math.min(9, qty + 1);
+    const buildOrderId = () => {
+      const date = new Date();
+      const stamp = [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, '0'),
+        String(date.getDate()).padStart(2, '0'),
+        String(date.getHours()).padStart(2, '0'),
+        String(date.getMinutes()).padStart(2, '0')
+      ].join('');
+      const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
+      return `AMB-${stamp}-${suffix}`;
+    };
+
+    const collectOrder = () => ({
+      id: currentOrderId || buildOrderId(),
+      createdAt: new Date().toISOString(),
+      book: 'Всё, что останется',
+      author: 'Сергей Калинин',
+      format,
+      quantity: qty,
+      unitPrice: price,
+      amount: price * qty,
+      currency: 'EUR',
+      card: CARD_NUMBER,
+      purpose: `${currentOrderId || 'AMB'} · Сергей Калинин · ${format}`,
+      buyer: buyerName.value.trim(),
+      contact: buyerContact.value.trim(),
+      city: buyerCity.value.trim(),
+      note: buyerNote.value.trim()
+    });
+
+    const orderToText = (order) => [
+      `Заказ: ${order.id}`,
+      `Книга: ${order.book} — ${order.author}`,
+      `Формат: ${order.format}`,
+      `Количество: ${order.quantity}`,
+      `Сумма: ${order.currency} ${order.amount}`,
+      `Карта: ${CARD_DISPLAY}`,
+      `Назначение: ${order.id} · Сергей Калинин`,
+      order.buyer ? `Имя: ${order.buyer}` : '',
+      order.contact ? `Контакт: ${order.contact}` : '',
+      order.city ? `Город/страна: ${order.city}` : '',
+      order.note ? `Комментарий: ${order.note}` : ''
+    ].filter(Boolean).join('\n');
+
+    const copyText = async (text, successText) => {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        const area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.left = '-9999px';
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand('copy');
+        area.remove();
+      }
+      showToast(successText);
+    };
+
+    const saveLocalOrder = (order) => {
+      try {
+        localStorage.setItem('ambook:lastOrder', JSON.stringify(order));
+        const orders = JSON.parse(localStorage.getItem('ambook:orders') || '[]');
+        const withoutDuplicate = orders.filter((item) => item.id !== order.id);
+        localStorage.setItem('ambook:orders', JSON.stringify([order, ...withoutDuplicate].slice(0, 12)));
+      } catch (error) {
+        console.warn('Order draft was not stored locally.', error);
+      }
+    };
+
+    const renderCheckout = () => {
+      const order = collectOrder();
+      checkoutOrderId.textContent = order.id;
+      checkoutFormat.textContent = order.format;
+      checkoutQty.textContent = String(order.quantity);
+      checkoutAmount.textContent = `${order.currency} ${order.amount}`;
+      paymentCard.textContent = CARD_DISPLAY;
+      paymentPurpose.textContent = `Назначение: ${order.id} · Сергей Калинин`;
+      const text = orderToText(order);
+      telegramOrderBtn.href = `https://t.me/share/url?url=${encodeURIComponent('https://munister.com.ua/ambook.html')}&text=${encodeURIComponent(text)}`;
+      mailOrderBtn.href = `mailto:info@ampublishing.org?subject=${encodeURIComponent(`Заказ ${order.id}`)}&body=${encodeURIComponent(text)}`;
+      saveLocalOrder(order);
+      return order;
+    };
+
+    const openCheckout = () => {
+      currentOrderId = buildOrderId();
+      renderCheckout();
+      checkoutModal.classList.add('open');
+      checkoutModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => buyerName.focus(), 80);
+    };
+
+    const hideCheckout = () => {
+      checkoutModal.classList.remove('open');
+      checkoutModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+
+    const updateQty = () => {
       qtyOut.value = qty;
       qtyOut.textContent = qty;
+      if (checkoutModal.classList.contains('open')) renderCheckout();
+    };
+
+    plusBtn.addEventListener('click', () => {
+      qty = Math.min(9, qty + 1);
+      updateQty();
     });
 
     minusBtn.addEventListener('click', () => {
       qty = Math.max(1, qty - 1);
-      qtyOut.value = qty;
-      qtyOut.textContent = qty;
+      updateQty();
     });
 
-    addBtn.addEventListener('click', () => showToast(`${format}: ${qty} экз. добавлено в заказ.`));
-    orderBtn.addEventListener('click', () => showToast('Оформление заказа: AM Publishing свяжется с вами для доставки.'));
+    addBtn.addEventListener('click', openCheckout);
+    orderBtn.addEventListener('click', openCheckout);
+    closeCheckout.addEventListener('click', hideCheckout);
+    checkoutModal.addEventListener('click', (event) => {
+      if (event.target === checkoutModal) hideCheckout();
+    });
+    checkoutForm.addEventListener('submit', (event) => event.preventDefault());
+    [buyerName, buyerContact, buyerCity, buyerNote].forEach((field) => {
+      field.addEventListener('input', renderCheckout);
+    });
+    copyCardBtn.addEventListener('click', () => copyText(CARD_NUMBER, 'Номер карты скопирован.'));
+    copyOrderBtn.addEventListener('click', () => copyText(orderToText(renderCheckout()), 'Данные заказа скопированы.'));
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && checkoutModal.classList.contains('open')) hideCheckout();
+    });
 
     formatButtons.forEach((button) => {
       button.addEventListener('click', () => {
         formatButtons.forEach((item) => item.classList.remove('active'));
         button.classList.add('active');
         format = button.dataset.format;
+        price = Number(button.dataset.price || 0);
+        document.querySelector('.price').innerHTML = `<sup>EUR</sup> ${price}`;
+        if (checkoutModal.classList.contains('open')) renderCheckout();
         showToast(`Выбран формат: ${format}.`);
       });
     });
