@@ -1347,6 +1347,45 @@ html,body {
   </div>
 </div>
 
+<!-- TOOLS WINDOW -->
+<div class="win" id="win-tools" style="top:60px;left:80px;width:860px;height:600px;">
+  <div class="win-titlebar" id="tb-tools">
+    <div class="win-controls">
+      <div class="tl close"  onclick="closeWin('tools')"></div>
+      <div class="tl min"    onclick="minWin('tools')"></div>
+      <div class="tl max"></div>
+    </div>
+    <div class="win-title">🪄 Teaching Tools</div>
+  </div>
+  <div class="win-body">
+    <div class="win-sidebar">
+      <div class="sb-section-label">All Skills</div>
+      <div class="sb-item active" id="tg-all" onclick="toolsFilter('all',this)">
+        <span class="sb-item-ic">✦</span> All Tools
+        <span class="sb-item-badge">14</span>
+      </div>
+      <div class="sb-section-label" style="margin-top:6px;">By Skill</div>
+      <div class="sb-item" id="tg-reading"    onclick="toolsFilter('reading',this)">   <span class="sb-item-ic">📖</span> Reading    <span class="sb-item-badge" style="background:rgba(96,165,250,.3);color:#60a5fa;">4</span></div>
+      <div class="sb-item" id="tg-writing"    onclick="toolsFilter('writing',this)">   <span class="sb-item-ic">✏️</span> Writing    <span class="sb-item-badge" style="background:rgba(110,201,138,.3);color:#6ec98a;">2</span></div>
+      <div class="sb-item" id="tg-listening"  onclick="toolsFilter('listening',this)"> <span class="sb-item-ic">🎧</span> Listening  <span class="sb-item-badge" style="background:rgba(245,158,11,.3);color:#f59e0b;">2</span></div>
+      <div class="sb-item" id="tg-speaking"   onclick="toolsFilter('speaking',this)">  <span class="sb-item-ic">💬</span> Speaking   <span class="sb-item-badge" style="background:rgba(167,139,250,.3);color:#a78bfa;">2</span></div>
+      <div class="sb-item" id="tg-vocabulary" onclick="toolsFilter('vocabulary',this)"><span class="sb-item-ic">📝</span> Vocabulary <span class="sb-item-badge">4</span></div>
+      <div class="sb-item" id="tg-grammar"    onclick="toolsFilter('grammar',this)">   <span class="sb-item-ic">🔤</span> Grammar    <span class="sb-item-badge" style="background:rgba(248,113,113,.3);color:#f87171;">3</span></div>
+      <div class="sb-item" id="tg-utility"    onclick="toolsFilter('utility',this)">   <span class="sb-item-ic">⚙️</span> Utility    <span class="sb-item-badge" style="background:rgba(156,163,175,.2);color:#9ca3af;">2</span></div>
+    </div>
+    <div class="win-main" style="padding:20px 20px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+        <div>
+          <div style="font-size:10px;font-family:var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px;">§ Twee-inspired</div>
+          <div style="font-family:var(--font-serif);font-size:22px;font-weight:600;color:var(--text);">Teaching <em style="color:var(--accent);font-style:italic;">Tools</em></div>
+        </div>
+        <div style="margin-left:auto;font-size:11px;font-family:var(--font-mono);color:var(--text-3);" id="tools-count">14 tools</div>
+      </div>
+      <div id="tools-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;"></div>
+    </div>
+  </div>
+</div>
+
 <!-- DOCK -->
 <div id="dock-wrap">
   <div id="dock">
@@ -1378,6 +1417,11 @@ html,body {
     <div class="di" id="di-dictionary" onclick="openApp('dictionary')" title="Dictionary">
       <div class="di-icon dictionary">🌐</div>
       <div class="di-label">Dictionary</div>
+      <div class="di-dot"></div>
+    </div>
+    <div class="di" id="di-tools" onclick="openApp('tools')" title="Teaching Tools">
+      <div class="di-icon" style="background:linear-gradient(145deg,#b87ac4,#7a4a9c);">🪄</div>
+      <div class="di-label">Tools</div>
       <div class="di-dot"></div>
     </div>
     <div class="di-sep"></div>
@@ -1717,6 +1761,108 @@ function dictSave() {
   const btn = document.querySelector('.dict-save-btn');
   if (btn) { btn.textContent = '✓ Saved!'; setTimeout(()=>btn.textContent='🔖 Save to Flashcards',2000); }
 }
+
+/* ══════════════════════ TOOLS ══════════════════════ */
+const TOOLS_DATA = [
+  // READING
+  { id:'r1', name:'Create a Text on Any Topic', desc:'Paste a topic, link, or word list — Twee instantly generates a level-appropriate text. Perfect for reading lessons or homework after a vocabulary lesson.', tags:['Reading','Vocabulary'], badge:null, icon:'📄', group:'reading' },
+  { id:'r2', name:'Create ABCD Questions', desc:'Generates multiple-choice questions for any text with exactly one correct answer. Ideal for comprehension tests and graded assessments.', tags:['Reading'], badge:'Pro', icon:'🔡', group:'reading' },
+  { id:'r3', name:'Create Open Questions', desc:'Produces open-ended comprehension questions that encourage critical thinking and discussion around the text.', tags:['Reading'], badge:null, icon:'❓', group:'reading' },
+  { id:'r4', name:'Create True/False Statements', desc:'Creates a true/false reading exercise to quickly check if students understood the key facts and details of the text.', tags:['Reading'], badge:'Pro', icon:'✅', group:'reading' },
+  // WRITING
+  { id:'w1', name:'Writing Prompts', desc:'Generates creative or structured writing prompts tailored to a specific topic and CEFR level — great for in-class or homework writing tasks.', tags:['Writing'], badge:null, icon:'✍️', group:'writing' },
+  { id:'w2', name:'Dialogue Creator', desc:'Creates a realistic dialogue between two characters on any topic and level. Use for reading, comprehension, or role-play speaking practice.', tags:['Writing','Speaking'], badge:null, icon:'💬', group:'writing' },
+  // LISTENING
+  { id:'l1', name:'Audio & Video Question Creator', desc:'Upload any audio or video file and auto-generate open questions, multiple-choice questions, or true/false statements based on the content.', tags:['Listening'], badge:'Pro', icon:'🎙️', group:'listening' },
+  { id:'l2', name:'Convert Audio & Video to Text', desc:'Transcribes mp3, mp4, or YouTube links into a readable transcript ready for classroom use as a reading or gap-fill activity.', tags:['Listening'], badge:'Pro', icon:'🎬', group:'listening' },
+  // SPEAKING
+  { id:'s1', name:'Find Discussion Questions', desc:'Creates engaging discussion questions on any topic — use as a warm-up, while-lesson discussion, or speaking fluency practice for any level.', tags:['Speaking'], badge:null, icon:'🗣️', group:'speaking' },
+  { id:'s2', name:'Role-Play Scenarios', desc:'Generates role-play cards and scenario prompts for pair or group speaking activities. Set the context, and get ready-to-use speaking tasks.', tags:['Speaking'], badge:null, icon:'🎭', group:'speaking' },
+  // VOCABULARY
+  { id:'v1', name:'Word-Image Matching', desc:'Creates a vocabulary exercise where students match each word to the correct picture. Boosts visual recognition and word retention.', tags:['Vocabulary'], badge:'New', icon:'🖼️', group:'vocabulary' },
+  { id:'v2', name:'Word-Definition Matching', desc:'Automatically creates a word-to-definition matching exercise. For words with multiple meanings, add a synonym in brackets to target the right definition.', tags:['Vocabulary'], badge:null, icon:'🔍', group:'vocabulary' },
+  { id:'v3', name:'Create a List of Sentences', desc:'Generates sentences using your target vocabulary list. Great to use before a Fill-in-the-Gap task or as example sentences for a new word set.', tags:['Vocabulary'], badge:'Pro', icon:'📋', group:'vocabulary' },
+  { id:'v4', name:'Fill in the Gap', desc:'Replaces chosen words in a text with blank gaps and provides the word list separately. Works for vocabulary recall and grammar tense practice.', tags:['Vocabulary','Grammar'], badge:null, icon:'✏️', group:'vocabulary' },
+  // GRAMMAR
+  { id:'g1', name:'Fill in the Gap', desc:'Replaces chosen words in a text with gaps. Add verb forms or tense markers to turn it into a grammar tense or form exercise.', tags:['Grammar','Vocabulary'], badge:null, icon:'✏️', group:'grammar' },
+  { id:'g2', name:'Grammar Worksheets', desc:'Generates structured grammar worksheets with clear explanations, examples, and progressive exercises for any grammar point and CEFR level.', tags:['Grammar'], badge:null, icon:'📑', group:'grammar' },
+  { id:'g3', name:'Error Correction', desc:'Creates sentences with intentional grammar or vocabulary mistakes for students to identify and fix. Great for proofreading and accuracy tasks.', tags:['Grammar'], badge:'Pro', icon:'🔧', group:'grammar' },
+  // UTILITY
+  { id:'u1', name:'CEFR Level Checker', desc:'Paste any text and instantly determine its CEFR proficiency level (A1–C2) according to the Common European Framework of Reference.', tags:['Utility'], badge:'Pro', icon:'📊', group:'utility' },
+  { id:'u2', name:'Lesson Plan Generator', desc:'Input a topic, level, and lesson duration — get a complete, structured lesson plan with objectives, activities, and timing suggestions.', tags:['Utility'], badge:null, icon:'📅', group:'utility' },
+];
+
+const TAG_COLORS = {
+  Reading:    { bg:'rgba(96,165,250,.12)',    color:'#60a5fa' },
+  Writing:    { bg:'rgba(110,201,138,.12)',   color:'#6ec98a' },
+  Listening:  { bg:'rgba(245,158,11,.12)',    color:'#f59e0b' },
+  Speaking:   { bg:'rgba(167,139,250,.12)',   color:'#a78bfa' },
+  Vocabulary: { bg:'rgba(244,167,185,.12)',   color:'#f4a7b9' },
+  Grammar:    { bg:'rgba(248,113,113,.12)',   color:'#f87171' },
+  Utility:    { bg:'rgba(156,163,175,.12)',   color:'#9ca3af' },
+  New:        { bg:'rgba(110,201,138,.18)',   color:'#6ec98a' },
+  Pro:        { bg:'rgba(244,167,185,.18)',   color:'#f4a7b9' },
+};
+
+let activeToolGroup = 'all';
+
+function toolsFilter(group, el) {
+  document.querySelectorAll('#win-tools .sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  activeToolGroup = group;
+  toolsRender();
+}
+
+function toolsRender() {
+  const filtered = activeToolGroup === 'all'
+    ? TOOLS_DATA
+    : TOOLS_DATA.filter(t => t.group === activeToolGroup);
+
+  const seen = new Set();
+  const unique = filtered.filter(t => {
+    if (seen.has(t.id)) return false;
+    seen.add(t.id); return true;
+  });
+
+  document.getElementById('tools-count').textContent = unique.length + ' tool' + (unique.length === 1 ? '' : 's');
+
+  const grid = document.getElementById('tools-grid');
+  grid.innerHTML = unique.map(t => {
+    const tagHtml = t.tags.map(tag => {
+      const c = TAG_COLORS[tag] || {};
+      return `<span style="font-size:9px;font-family:var(--font-mono);padding:2px 8px;border-radius:20px;background:${c.bg};color:${c.color};">${tag}</span>`;
+    }).join('');
+    const badgeHtml = t.badge ? (() => {
+      const c = TAG_COLORS[t.badge] || {};
+      return `<span style="font-size:9px;font-family:var(--font-mono);padding:2px 9px;border-radius:20px;background:${c.bg};color:${c.color};border:1px solid ${c.color}40;font-weight:600;">${t.badge}</span>`;
+    })() : '';
+    return `<div class="tool-card" onclick="toolOpen('${t.id}')" style="background:rgba(244,167,185,0.04);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:background .18s,border-color .18s,transform .15s;position:relative;overflow:hidden;" onmouseenter="this.style.background='rgba(244,167,185,0.09)';this.style.borderColor='rgba(244,167,185,0.22)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.background='rgba(244,167,185,0.04)';this.style.borderColor='var(--border)';this.style.transform=''">
+      <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
+        <div style="font-size:22px;flex-shrink:0;line-height:1;">${t.icon}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:4px;">${t.name}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;">${tagHtml}${badgeHtml}</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text-3);line-height:1.65;">${t.desc}</div>
+      <div style="margin-top:12px;font-size:11px;font-family:var(--font-mono);color:var(--accent);display:flex;align-items:center;gap:4px;">Use tool →</div>
+    </div>`;
+  }).join('');
+}
+
+function toolOpen(id) {
+  const t = TOOLS_DATA.find(x => x.id === id);
+  if (!t) return;
+  // Open notes with a template for this tool
+  const content = `Tool: ${t.name}\n${'—'.repeat(40)}\n\nSkill: ${t.tags.join(', ')}\n\nDescription:\n${t.desc}\n\n${'—'.repeat(40)}\nMy notes:\n\n`;
+  const noteId = Date.now();
+  NOTES.unshift({ id: noteId, title: t.name, preview: t.desc.slice(0,50), content, date: 'Today' });
+  activeNote = noteId;
+  notesRender();
+  openApp('notes');
+}
+
+toolsRender();
 
 /* ══════════════════════ CURRICULUM TABS ══════════════════════ */
 function setTab(el, type) {
