@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TeachedOS — Language Learning Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root {
+  --bg:        #0e080c;
+  --bg-2:      #160d12;
+  --bg-3:      #1e1018;
+  --bg-card:   #271520;
+  --border:    rgba(244,167,185,0.09);
+  --border-2:  rgba(244,167,185,0.18);
+  --text:      #f5e8ec;
+  --text-2:    #d4b4c4;
+  --text-3:    #9a7a8a;
+  --accent:    #F4A7B9;
+  --accent-2:  rgba(244,167,185,0.10);
+  --accent-3:  rgba(244,167,185,0.24);
+  --rose:      #E87898;
+  --deep-rose: #C45472;
+  --blush:     #FFD6E0;
+  --plum:      #8B4060;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-mono:  'JetBrains Mono', 'Fira Code', monospace;
+  --font-ui:    -apple-system, BlinkMacSystemFont, 'SF Pro Text', ui-sans-serif, system-ui, sans-serif;
+  --radius-win: 14px;
+}
+
+html,body {
+  width:100%; height:100%; overflow:hidden;
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+/* ═══════════════════════════ WALLPAPER ═══════════════════════════ */
+#desktop {
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 80%, rgba(196,84,114,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 80% 20%, rgba(244,167,185,0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 80% at 50% 50%, rgba(139,64,96,0.08) 0%, transparent 70%),
+    linear-gradient(160deg, #110b0f 0%, #0e0810 40%, #130a11 70%, #0c0709 100%);
+  overflow:hidden;
+}
+#desktop::before {
+  content:'';
+  position:absolute; inset:0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none; opacity:.5;
+}
+
+/* ═══════════════════════════ MENU BAR ═══════════════════════════ */
+#menubar {
+  position:fixed; top:0; left:0; right:0; height:28px; z-index:1000;
+  background: rgba(20,10,16,0.82);
+  backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  border-bottom: 1px solid rgba(244,167,185,0.10);
+  display:flex; align-items:center; padding:0 16px; gap:0;
+}
+.mb-apple {
+  font-size:14px; color: var(--accent); margin-right:12px; cursor:default;
+  display:flex; align-items:center;
+}
+.mb-app-name {
+  font-size:13px; font-weight:600; color: var(--text); margin-right:4px;
+}
+.mb-menu {
+  display:flex; gap:0; align-items:center;
+}
+.mb-item {
+  font-size:13px; color: var(--text-2); padding:0 10px; height:28px;
+  display:flex; align-items:center; cursor:default; border-radius:4px;
+  transition: background .15s;
+}
+.mb-item:hover { background: rgba(244,167,185,0.12); color: var(--text); }
+.mb-right {
+  margin-left:auto; display:flex; align-items:center; gap:14px;
+}
+.mb-icon { font-size:13px; color: var(--text-2); cursor:default; }
+#mb-clock {
+  font-family: var(--font-ui); font-size:13px; color: var(--text-2);
+}
+
+/* ═══════════════════════════ DESKTOP WIDGETS ═══════════════════════════ */
+.widget {
+  position:absolute;
+  background: rgba(30,14,24,0.72);
+  border: 1px solid var(--border);
+  border-radius:18px;
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  overflow:hidden;
+}
+
+/* Clock widget */
+#wg-clock {
+  top:56px; right:24px;
+  width:172px; padding:20px 20px 18px;
+  text-align:center;
+}
+.wg-clock-time {
+  font-family: var(--font-serif); font-size:52px; font-weight:600;
+  color: var(--text); line-height:1; letter-spacing:-0.02em;
+}
+.wg-clock-time em { color: var(--accent); font-style:normal; }
+.wg-clock-date {
+  font-size:11px; color: var(--text-3); margin-top:6px;
+  font-family: var(--font-mono); letter-spacing:0.06em; text-transform:uppercase;
+}
+.wg-clock-lang {
+  margin-top:10px; font-size:10px; color: var(--accent);
+  font-family: var(--font-mono); letter-spacing:0.1em;
+  background: var(--accent-2); border: 1px solid var(--accent-3);
+  border-radius:20px; padding:3px 10px; display:inline-block;
+}
+
+/* Streak widget */
+#wg-streak {
+  top:56px; right:212px;
+  width:160px; padding:18px;
+}
+.wg-streak-n {
+  font-family: var(--font-serif); font-size:42px; font-weight:600;
+  color: var(--accent); line-height:1;
+}
+.wg-streak-fire { font-size:22px; margin-left:4px; }
+.wg-streak-label {
+  font-size:10px; color: var(--text-3); margin-top:4px;
+  font-family: var(--font-mono); letter-spacing:0.1em; text-transform:uppercase;
+}
+.wg-streak-sub { font-size:11px; color: var(--text-2); margin-top:8px; line-height:1.4; }
+
+/* Today widget */
+#wg-today {
+  top:56px; right:388px;
+  width:220px; padding:18px 20px;
+}
+.wg-today-label {
+  font-size:9px; font-family: var(--font-mono); letter-spacing:0.14em;
+  text-transform:uppercase; color: var(--text-3); margin-bottom:10px;
+}
+.wg-today-title {
+  font-family: var(--font-serif); font-size:19px; font-weight:600;
+  color: var(--text); line-height:1.2; margin-bottom:6px;
+}
+.wg-today-meta {
+  font-size:11px; color: var(--text-3); font-family: var(--font-mono);
+  display:flex; gap:10px; margin-top:6px; flex-wrap:wrap;
+}
+.wg-today-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:10px; font-family: var(--font-mono);
+  color: var(--accent); background: var(--accent-2);
+  border: 1px solid var(--accent-3); border-radius:20px; padding:3px 9px;
+  margin-top:10px; letter-spacing:0.06em;
+}
+.wg-today-prog {
+  margin-top:12px; height:3px; background: rgba(244,167,185,0.12);
+  border-radius:2px; overflow:hidden;
+}
+.wg-today-prog-fill {
+  height:100%; background: linear-gradient(90deg, var(--deep-rose), var(--accent));
+  border-radius:2px; width:68%;
+}
+
+/* Vocab widget */
+#wg-vocab {
+  top:290px; right:24px;
+  width:172px; padding:18px;
+}
+.wg-vocab-label {
+  font-size:9px; font-family: var(--font-mono); letter-spacing:0.14em;
+  text-transform:uppercase; color: var(--text-3); margin-bottom:12px;
+}
+.wg-vocab-word {
+  font-family: var(--font-serif); font-size:24px; font-weight:600;
+  color: var(--text); line-height:1.2; margin-bottom:4px;
+}
+.wg-vocab-lang {
+  font-size:9px; color: var(--text-3); font-family: var(--font-mono);
+  letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;
+}
+.wg-vocab-trans {
+  font-size:13px; color: var(--accent); margin-bottom:6px;
+}
+.wg-vocab-ex {
+  font-size:11px; color: var(--text-3); line-height:1.5; font-style:italic;
+}
+.wg-vocab-next {
+  margin-top:12px; width:100%;
+  background: var(--accent-2); border: 1px solid var(--accent-3);
+  border-radius:8px; padding:7px; font-size:11px; font-family: var(--font-mono);
+  color: var(--accent); cursor:pointer; transition:background .15s;
+  letter-spacing:0.06em; text-align:center;
+}
+.wg-vocab-next:hover { background: rgba(244,167,185,0.18); }
+
+/* ═══════════════════════════ DOCK ═══════════════════════════ */
+#dock-wrap {
+  position:fixed; bottom:16px; left:50%; transform:translateX(-50%);
+  z-index:999;
+}
+#dock {
+  display:flex; align-items:flex-end; gap:10px;
+  background: rgba(22,12,18,0.72);
+  backdrop-filter: blur(28px) saturate(1.3);
+  -webkit-backdrop-filter: blur(28px) saturate(1.3);
+  border: 1px solid rgba(244,167,185,0.14);
+  border-radius:20px; padding:10px 14px 8px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(244,167,185,0.06) inset;
+}
+.di {
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  cursor:pointer; position:relative; transition:transform .2s cubic-bezier(.34,1.56,.64,1);
+}
+.di:hover { transform: translateY(-10px) scale(1.12); }
+.di-icon {
+  width:52px; height:52px; border-radius:13px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px; position:relative; transition:inherit;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.di-label {
+  font-size:10px; color: var(--text-3); font-family: var(--font-ui);
+  transition:color .15s; white-space:nowrap;
+}
+.di:hover .di-label { color: var(--text-2); }
+.di-dot {
+  width:4px; height:4px; border-radius:50%;
+  background: var(--accent); position:absolute; bottom:-6px; left:50%;
+  transform:translateX(-50%); display:none;
+}
+.di.open .di-dot { display:block; }
+.di-sep {
+  width:1px; height:52px; background: rgba(244,167,185,0.14);
+  margin:0 2px; align-self:center;
+}
+/* dock icon colors */
+.di-icon.curriculum { background: linear-gradient(145deg,#c45472,#8b2d50); }
+.di-icon.flashcards  { background: linear-gradient(145deg,#8b6bb1,#5b3a8f); }
+.di-icon.progress    { background: linear-gradient(145deg,#e87898,#c4547a); }
+.di-icon.schedule    { background: linear-gradient(145deg,#d4749a,#a84d70); }
+.di-icon.notes       { background: linear-gradient(145deg,#f4a7b9,#e87898); }
+.di-icon.dictionary  { background: linear-gradient(145deg,#7ca8d4,#4a72a0); }
+.di-icon.settings    { background: linear-gradient(145deg,#5a4550,#3a2d35); }
+.di-icon.finder      { background: linear-gradient(145deg,#4ab0c8,#2a7d96); }
+
+/* ═══════════════════════════ WINDOWS ═══════════════════════════ */
+.win {
+  position:fixed; border-radius:var(--radius-win); overflow:hidden;
+  background: rgba(20,11,17,0.90);
+  border: 1px solid rgba(244,167,185,0.14);
+  backdrop-filter: blur(32px) saturate(1.4);
+  -webkit-backdrop-filter: blur(32px) saturate(1.4);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.7),
+    0 0 0 1px rgba(244,167,185,0.06) inset,
+    0 2px 4px rgba(0,0,0,0.4);
+  display:none; flex-direction:column; z-index:100;
+  min-width:480px; min-height:320px;
+  transition: opacity .18s, transform .18s;
+}
+.win.open { display:flex; }
+.win.appear { animation: winAppear .22s cubic-bezier(.34,1.3,.64,1); }
+@keyframes winAppear {
+  from { opacity:0; transform:scale(0.92); }
+  to   { opacity:1; transform:scale(1); }
+}
+.win-titlebar {
+  height:44px; display:flex; align-items:center; padding:0 16px; gap:0;
+  background: rgba(26,14,21,0.80);
+  border-bottom: 1px solid rgba(244,167,185,0.10);
+  cursor:default; flex-shrink:0; position:relative;
+}
+.win-controls { display:flex; gap:8px; align-items:center; z-index:1; }
+.tl {
+  width:13px; height:13px; border-radius:50%; cursor:pointer;
+  transition:filter .15s; flex-shrink:0;
+}
+.tl.close  { background:#ff5f57; box-shadow:0 0 0 1px rgba(0,0,0,0.2); }
+.tl.min    { background:#febc2e; box-shadow:0 0 0 1px rgba(0,0,0,0.2); }
+.tl.max    { background:#28c840; box-shadow:0 0 0 1px rgba(0,0,0,0.2); }
+.tl:hover  { filter:brightness(1.15); }
+.win-title {
+  position:absolute; left:50%; transform:translateX(-50%);
+  font-size:13px; font-weight:600; color: var(--text-2); white-space:nowrap;
+}
+.win-body { flex:1; overflow:hidden; display:flex; }
+.win-sidebar {
+  width:200px; flex-shrink:0;
+  background: rgba(16,9,13,0.60);
+  border-right: 1px solid rgba(244,167,185,0.08);
+  display:flex; flex-direction:column;
+  overflow-y:auto;
+}
+.win-main {
+  flex:1; overflow-y:auto; overflow-x:hidden;
+}
+
+/* sidebar items */
+.sb-section-label {
+  font-size:10px; font-family: var(--font-mono); letter-spacing:0.12em;
+  text-transform:uppercase; color: var(--text-3);
+  padding:16px 14px 6px; font-weight:500;
+}
+.sb-item {
+  display:flex; align-items:center; gap:10px; padding:8px 14px;
+  font-size:13px; color: var(--text-2); cursor:pointer;
+  border-radius:8px; margin:1px 6px;
+  transition: background .15s, color .15s;
+}
+.sb-item:hover { background: rgba(244,167,185,0.08); color: var(--text); }
+.sb-item.active {
+  background: rgba(244,167,185,0.14); color: var(--text);
+}
+.sb-item-ic { font-size:15px; flex-shrink:0; width:20px; text-align:center; }
+.sb-item-badge {
+  margin-left:auto; font-size:10px; font-family: var(--font-mono);
+  background: var(--deep-rose); color: #fff; border-radius:10px;
+  padding:1px 7px; font-weight:600;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(244,167,185,0.18); border-radius:3px; }
+
+/* ═══════════════════════════ CURRICULUM APP ═══════════════════════════ */
+#win-curriculum { top:60px; left:60px; width:820px; height:580px; }
+.curr-header {
+  padding:20px 24px 0;
+}
+.curr-eyebrow {
+  font-size:10px; font-family: var(--font-mono); letter-spacing:0.12em;
+  text-transform:uppercase; color: var(--text-3); margin-bottom:6px;
+}
+.curr-title {
+  font-family: var(--font-serif); font-size:28px; font-weight:600;
+  color: var(--text); line-height:1.2;
+}
+.curr-title em { font-style:italic; color: var(--accent); }
+.curr-search {
+  margin:16px 24px 0;
+  display:flex; align-items:center; gap:10px;
+  background: rgba(244,167,185,0.06); border: 1px solid var(--border);
+  border-radius:10px; padding:8px 14px;
+}
+.curr-search input {
+  flex:1; background:none; border:none; outline:none;
+  font-size:13px; color: var(--text); font-family: var(--font-ui);
+}
+.curr-search input::placeholder { color: var(--text-3); }
+.curr-search-ic { font-size:14px; color: var(--text-3); }
+.curr-tabs {
+  display:flex; gap:4px; padding:14px 24px 0; flex-shrink:0;
+  border-bottom: 1px solid var(--border);
+}
+.curr-tab {
+  font-size:12px; font-family: var(--font-mono); letter-spacing:0.06em;
+  padding:6px 14px; border-radius:8px; cursor:pointer; color: var(--text-3);
+  transition: background .15s, color .15s;
+}
+.curr-tab:hover { background: rgba(244,167,185,0.08); color: var(--text-2); }
+.curr-tab.active {
+  background: rgba(244,167,185,0.14); color: var(--accent);
+}
+.curr-grid {
+  display:grid; grid-template-columns: repeat(2, 1fr); gap:14px;
+  padding:20px 24px;
+}
+.lesson-card {
+  background: rgba(244,167,185,0.05); border: 1px solid var(--border);
+  border-radius:12px; padding:18px; cursor:pointer;
+  transition: background .18s, border-color .18s, transform .18s;
+  position:relative; overflow:hidden;
+}
+.lesson-card:hover {
+  background: rgba(244,167,185,0.09); border-color: var(--border-2);
+  transform: translateY(-2px);
+}
+.lesson-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, var(--deep-rose), var(--accent));
+  opacity:0; transition:opacity .18s;
+}
+.lesson-card:hover::before { opacity:1; }
+.lc-lang {
+  font-size:10px; font-family: var(--font-mono); letter-spacing:0.1em;
+  text-transform:uppercase; color: var(--accent);
+  background: var(--accent-2); border: 1px solid var(--accent-3);
+  border-radius:20px; padding:3px 9px; display:inline-block; margin-bottom:10px;
+}
+.lc-title {
+  font-family: var(--font-serif); font-size:18px; font-weight:600;
+  color: var(--text); line-height:1.3; margin-bottom:6px;
+}
+.lc-desc {
+  font-size:12px; color: var(--text-3); line-height:1.6; margin-bottom:12px;
+}
+.lc-meta {
+  display:flex; gap:12px; align-items:center;
+}
+.lc-level {
+  font-size:10px; font-family: var(--font-mono); padding:2px 8px;
+  border-radius:4px; font-weight:600;
+}
+.lc-level.a1 { background:rgba(110,201,138,.12); color:#6ec98a; }
+.lc-level.a2 { background:rgba(96,165,250,.12); color:#60a5fa; }
+.lc-level.b1 { background:rgba(245,158,11,.12); color:#f59e0b; }
+.lc-level.b2 { background:rgba(244,167,185,.12); color:#f4a7b9; }
+.lc-level.c1 { background:rgba(196,84,114,.12); color:#c45472; }
+.lc-dur {
+  font-size:10px; color: var(--text-3); font-family: var(--font-mono);
+}
+.lc-prog {
+  margin-top:10px; height:2px; background: rgba(244,167,185,0.10); border-radius:1px;
+}
+.lc-prog-fill {
+  height:100%; background: linear-gradient(90deg, var(--deep-rose), var(--accent));
+  border-radius:1px; transition:width .4s;
+}
+
+/* ═══════════════════════════ FLASHCARDS APP ═══════════════════════════ */
+#win-flashcards { top:80px; left:200px; width:600px; height:500px; }
+.fc-wrap {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; padding:32px; gap:24px; height:100%;
+}
+.fc-progress-bar {
+  width:100%; max-width:420px; height:3px;
+  background: rgba(244,167,185,0.10); border-radius:2px; overflow:hidden;
+}
+.fc-progress-fill {
+  height:100%; background: linear-gradient(90deg, var(--deep-rose), var(--accent));
+  border-radius:2px; transition:width .4s;
+}
+.fc-counter {
+  font-size:11px; font-family: var(--font-mono); color: var(--text-3);
+  letter-spacing:0.06em; align-self:flex-end; margin-top:-14px;
+}
+.fc-scene {
+  perspective:1200px; width:380px; height:220px; cursor:pointer;
+}
+.fc-card {
+  width:100%; height:100%; position:relative;
+  transform-style:preserve-3d; transition:transform .5s cubic-bezier(.4,0,.2,1);
+}
+.fc-card.flipped { transform:rotateY(180deg); }
+.fc-face {
+  position:absolute; inset:0; border-radius:16px;
+  backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:28px; text-align:center;
+}
+.fc-front {
+  background: linear-gradient(145deg, rgba(40,20,32,0.9), rgba(28,14,22,0.9));
+  border: 1px solid rgba(244,167,185,0.18);
+}
+.fc-back {
+  background: linear-gradient(145deg, rgba(196,84,114,0.15), rgba(139,64,96,0.10));
+  border: 1px solid rgba(244,167,185,0.22);
+  transform:rotateY(180deg);
+}
+.fc-card-lang {
+  font-size:9px; font-family: var(--font-mono); letter-spacing:0.12em;
+  text-transform:uppercase; color: var(--text-3); margin-bottom:12px;
+}
+.fc-card-word {
+  font-family: var(--font-serif); font-size:34px; font-weight:600;
+  color: var(--text); line-height:1.1; margin-bottom:8px;
+}
+.fc-card-hint { font-size:12px; color: var(--text-3); font-style:italic; }
+.fc-card-trans {
+  font-family: var(--font-serif); font-size:22px; font-weight:600;
+  color: var(--accent); margin-bottom:10px;
+}
+.fc-card-ex { font-size:12px; color: var(--text-2); line-height:1.6; font-style:italic; }
+.fc-card-tap { font-size:10px; color: var(--text-3); margin-top:12px; font-family: var(--font-mono); }
+.fc-btns {
+  display:flex; gap:12px; align-items:center;
+}
+.fc-btn {
+  display:flex; align-items:center; gap:8px;
+  font-size:12px; font-family: var(--font-mono); letter-spacing:0.06em;
+  padding:9px 20px; border-radius:10px; cursor:pointer;
+  transition: background .15s, transform .1s; border:none;
+  font-weight:500;
+}
+.fc-btn:active { transform:scale(0.96); }
+.fc-btn.again { background:rgba(248,113,113,.12); color:#f87171; }
+.fc-btn.hard  { background:rgba(245,158,11,.12); color:#f59e0b; }
+.fc-btn.good  { background:rgba(110,201,138,.12); color:#6ec98a; }
+.fc-btn.easy  { background:rgba(244,167,185,.12); color:#f4a7b9; }
+.fc-set-picker {
+  display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+  max-width:400px;
+}
+.fc-set {
+  font-size:11px; font-family: var(--font-mono); padding:5px 13px;
+  border-radius:8px; cursor:pointer; border: 1px solid var(--border);
+  color: var(--text-3); background: rgba(244,167,185,0.04);
+  transition: background .15s, border-color .15s, color .15s;
+}
+.fc-set:hover, .fc-set.active {
+  background: rgba(244,167,185,0.12); border-color: var(--border-2); color: var(--accent);
+}
+
+/* ═══════════════════════════ PROGRESS APP ═══════════════════════════ */
+#win-progress { top:70px; left:120px; width:680px; height:520px; }
+.prog-body { padding:24px; display:flex; flex-direction:column; gap:20px; overflow-y:auto; }
+.prog-stats {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+}
+.prog-stat {
+  background: rgba(244,167,185,0.05); border: 1px solid var(--border);
+  border-radius:12px; padding:16px 14px;
+  display:flex; flex-direction:column; gap:4px;
+}
+.prog-stat-n {
+  font-family: var(--font-serif); font-size:32px; font-weight:600;
+  color: var(--text); line-height:1;
+}
+.prog-stat-n em { color: var(--accent); font-style:normal; }
+.prog-stat-l {
+  font-size:9px; font-family: var(--font-mono); letter-spacing:0.1em;
+  text-transform:uppercase; color: var(--text-3); margin-top:2px;
+}
+.prog-section-title {
+  font-family: var(--font-serif); font-size:17px; font-weight:600;
+  color: var(--text); margin-bottom:10px;
+}
+.prog-section-title em { color: var(--accent); font-style:italic; }
+.prog-langs { display:flex; flex-direction:column; gap:10px; }
+.prog-lang-row {
+  display:flex; align-items:center; gap:12px;
+}
+.prog-lang-name {
+  font-size:13px; color: var(--text-2); width:90px; flex-shrink:0;
+}
+.prog-lang-bar {
+  flex:1; height:6px; background: rgba(244,167,185,0.08); border-radius:3px; overflow:hidden;
+}
+.prog-lang-fill {
+  height:100%; border-radius:3px;
+  background: linear-gradient(90deg, var(--deep-rose), var(--accent));
+}
+.prog-lang-pct {
+  font-size:11px; font-family: var(--font-mono); color: var(--text-3); width:36px;
+  text-align:right;
+}
+.prog-activity {
+  display:flex; flex-direction:column; gap:6px;
+}
+.prog-week {
+  display:flex; gap:4px; align-items:flex-end;
+}
+.prog-day-wrap { display:flex; flex-direction:column; align-items:center; gap:4px; flex:1; }
+.prog-bar-wrap {
+  height:80px; display:flex; align-items:flex-end; width:100%;
+}
+.prog-bar {
+  width:100%; border-radius:4px 4px 0 0;
+  background: linear-gradient(180deg, var(--accent), var(--deep-rose));
+  min-height:4px; transition:height .4s;
+}
+.prog-day-label {
+  font-size:9px; font-family: var(--font-mono); color: var(--text-3);
+  letter-spacing:0.06em; text-transform:uppercase;
+}
+.prog-achievements {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+}
+.prog-ach {
+  background: rgba(244,167,185,0.05); border: 1px solid var(--border);
+  border-radius:10px; padding:14px; display:flex; flex-direction:column; align-items:center;
+  gap:6px; text-align:center;
+}
+.prog-ach-ic { font-size:24px; }
+.prog-ach-name { font-size:12px; color: var(--text-2); font-weight:600; }
+.prog-ach-desc { font-size:10px; color: var(--text-3); line-height:1.4; font-family: var(--font-mono); }
+.prog-ach.locked { opacity:0.4; }
+
+/* ═══════════════════════════ SCHEDULE APP ═══════════════════════════ */
+#win-schedule { top:90px; left:80px; width:700px; height:540px; }
+.sch-body { padding:0; display:flex; flex-direction:column; height:100%; }
+.sch-nav {
+  display:flex; align-items:center; padding:16px 20px;
+  border-bottom: 1px solid var(--border); gap:12px;
+}
+.sch-nav-btn {
+  width:28px; height:28px; border-radius:8px;
+  background: rgba(244,167,185,0.08); border: 1px solid var(--border);
+  color: var(--text-2); cursor:pointer; display:flex; align-items:center;
+  justify-content:center; font-size:14px; transition:background .15s;
+}
+.sch-nav-btn:hover { background: rgba(244,167,185,0.16); }
+.sch-month {
+  font-family: var(--font-serif); font-size:18px; font-weight:600; color: var(--text);
+}
+.sch-view-btns {
+  margin-left:auto; display:flex; gap:4px;
+}
+.sch-view {
+  font-size:11px; font-family: var(--font-mono); padding:4px 12px;
+  border-radius:6px; cursor:pointer; color: var(--text-3);
+  transition:background .15s, color .15s;
+}
+.sch-view.active { background: rgba(244,167,185,0.14); color: var(--accent); }
+.sch-grid-wrap { flex:1; overflow:auto; }
+.sch-grid {
+  display:grid; grid-template-columns:repeat(7,1fr);
+  border-left: 1px solid var(--border);
+}
+.sch-dow {
+  text-align:center; padding:8px 0;
+  font-size:10px; font-family: var(--font-mono); letter-spacing:0.08em;
+  text-transform:uppercase; color: var(--text-3);
+  border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.sch-cell {
+  min-height:80px; padding:6px 8px;
+  border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  position:relative;
+}
+.sch-cell.other-month { opacity:0.35; }
+.sch-cell.today { background: rgba(244,167,185,0.06); }
+.sch-cell.today .sch-day-num {
+  background: var(--deep-rose); color:#fff; border-radius:50%;
+  width:22px; height:22px; display:flex; align-items:center; justify-content:center;
+}
+.sch-day-num {
+  font-size:12px; color: var(--text-3); margin-bottom:4px;
+  font-family: var(--font-mono); width:22px; height:22px;
+  display:flex; align-items:center; justify-content:center;
+}
+.sch-event {
+  background: linear-gradient(135deg, rgba(196,84,114,0.22), rgba(244,167,185,0.14));
+  border: 1px solid rgba(244,167,185,0.22); border-radius:5px;
+  font-size:10px; padding:2px 6px; color: var(--accent); margin-bottom:3px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  font-family: var(--font-mono); cursor:pointer;
+}
+.sch-event.green {
+  background: rgba(110,201,138,0.10); border-color: rgba(110,201,138,0.22); color:#6ec98a;
+}
+.sch-event.blue {
+  background: rgba(96,165,250,0.10); border-color: rgba(96,165,250,0.22); color:#60a5fa;
+}
+
+/* ═══════════════════════════ NOTES APP ═══════════════════════════ */
+#win-notes { top:100px; left:160px; width:660px; height:500px; }
+.notes-sidebar { overflow-y:auto; }
+.notes-list { display:flex; flex-direction:column; padding:8px; }
+.note-item {
+  padding:10px 10px; border-radius:8px; cursor:pointer; margin:1px 0;
+  transition: background .15s;
+}
+.note-item:hover { background: rgba(244,167,185,0.07); }
+.note-item.active { background: rgba(244,167,185,0.12); }
+.note-item-title { font-size:13px; color: var(--text); font-weight:500; margin-bottom:3px; }
+.note-item-preview { font-size:11px; color: var(--text-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.note-item-date { font-size:9px; color: var(--text-3); font-family: var(--font-mono); margin-top:4px; }
+.notes-toolbar {
+  height:38px; display:flex; align-items:center; gap:4px; padding:0 12px;
+  border-bottom: 1px solid var(--border); flex-shrink:0;
+}
+.notes-tb-btn {
+  width:28px; height:28px; border-radius:6px; display:flex; align-items:center;
+  justify-content:center; font-size:13px; color: var(--text-3); cursor:pointer;
+  transition:background .15s, color .15s;
+}
+.notes-tb-btn:hover { background: rgba(244,167,185,0.10); color: var(--text-2); }
+.notes-tb-sep { width:1px; height:18px; background: var(--border); margin:0 4px; }
+.notes-editor {
+  flex:1; display:flex; flex-direction:column;
+}
+.notes-editor-area {
+  flex:1; padding:20px 24px; resize:none; border:none; outline:none;
+  background:transparent; color: var(--text); font-family: var(--font-ui);
+  font-size:14px; line-height:1.75; overflow-y:auto;
+}
+.notes-footer {
+  height:28px; display:flex; align-items:center; padding:0 16px;
+  border-top: 1px solid var(--border); flex-shrink:0;
+  font-size:10px; color: var(--text-3); font-family: var(--font-mono); gap:16px;
+}
+.notes-new-btn {
+  display:flex; align-items:center; gap:6px; padding:6px 12px;
+  margin:8px; border-radius:8px; cursor:pointer;
+  background: var(--accent-2); border: 1px solid var(--accent-3);
+  color: var(--accent); font-size:12px; font-family: var(--font-mono);
+  transition:background .15s; letter-spacing:0.04em;
+}
+.notes-new-btn:hover { background: rgba(244,167,185,0.16); }
+
+/* ═══════════════════════════ DICTIONARY APP ═══════════════════════════ */
+#win-dictionary { top:70px; left:180px; width:560px; height:480px; }
+.dict-body { padding:20px; display:flex; flex-direction:column; gap:16px; height:100%; overflow-y:auto; }
+.dict-search-wrap {
+  display:flex; align-items:center; gap:10px;
+  background: rgba(244,167,185,0.06); border: 1px solid var(--border);
+  border-radius:12px; padding:10px 16px;
+}
+.dict-search-wrap input {
+  flex:1; background:none; border:none; outline:none;
+  font-size:15px; color: var(--text); font-family: var(--font-ui);
+}
+.dict-search-wrap input::placeholder { color: var(--text-3); }
+.dict-lang-select {
+  font-size:11px; font-family: var(--font-mono); color: var(--accent);
+  background: var(--accent-2); border: 1px solid var(--accent-3);
+  border-radius:8px; padding:4px 10px; cursor:pointer;
+}
+.dict-result {
+  background: rgba(244,167,185,0.05); border: 1px solid var(--border);
+  border-radius:12px; padding:20px;
+}
+.dict-word {
+  font-family: var(--font-serif); font-size:36px; font-weight:600;
+  color: var(--text); margin-bottom:4px;
+}
+.dict-phonetic {
+  font-size:14px; color: var(--text-3); margin-bottom:12px;
+  font-family: var(--font-mono);
+}
+.dict-pos {
+  display:inline-block; font-size:10px; font-family: var(--font-mono);
+  letter-spacing:0.08em; text-transform:uppercase;
+  color: var(--accent); background: var(--accent-2); border: 1px solid var(--accent-3);
+  border-radius:20px; padding:2px 9px; margin-bottom:12px;
+}
+.dict-def {
+  font-size:14px; color: var(--text-2); line-height:1.7; margin-bottom:8px;
+}
+.dict-example {
+  font-size:13px; color: var(--text-3); font-style:italic; line-height:1.6;
+  border-left: 2px solid var(--accent-3); padding-left:12px; margin-bottom:12px;
+}
+.dict-syns { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+.dict-syn {
+  font-size:12px; font-family: var(--font-mono); padding:4px 11px;
+  border-radius:8px; color: var(--text-3);
+  background: rgba(244,167,185,0.04); border: 1px solid var(--border);
+  cursor:pointer; transition:background .15s, color .15s;
+}
+.dict-syn:hover { background: rgba(244,167,185,0.10); color: var(--accent); }
+.dict-save-btn {
+  display:flex; align-items:center; gap:6px;
+  font-size:12px; font-family: var(--font-mono); padding:8px 16px;
+  border-radius:8px; cursor:pointer; border:none;
+  background: linear-gradient(135deg, var(--deep-rose), var(--rose));
+  color: #fff; transition:opacity .15s; font-weight:500;
+}
+.dict-save-btn:hover { opacity:0.88; }
+.dict-history-label {
+  font-size:10px; font-family: var(--font-mono); letter-spacing:0.1em;
+  text-transform:uppercase; color: var(--text-3); margin-bottom:8px;
+}
+.dict-history { display:flex; flex-wrap:wrap; gap:6px; }
+.dict-hist-item {
+  font-size:12px; font-family: var(--font-mono); padding:4px 11px;
+  border-radius:8px; color: var(--text-3);
+  background: rgba(244,167,185,0.04); border: 1px solid var(--border);
+  cursor:pointer; transition:background .15s, color .15s;
+}
+.dict-hist-item:hover { background: rgba(244,167,185,0.08); color: var(--accent); }
+
+/* ═══════════════════════════ ABOUT / FINDER ═══════════════════════════ */
+#win-about { top:80px; left:340px; width:480px; height:340px; }
+.about-body {
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:12px; padding:40px; text-align:center;
+}
+.about-logo {
+  font-size:64px; margin-bottom:4px;
+  filter:drop-shadow(0 0 20px rgba(244,167,185,0.3));
+}
+.about-name {
+  font-family: var(--font-serif); font-size:28px; font-weight:600; color: var(--text);
+}
+.about-name em { color: var(--accent); font-style:italic; }
+.about-ver {
+  font-size:11px; font-family: var(--font-mono); color: var(--text-3); letter-spacing:0.1em;
+}
+.about-desc {
+  font-size:13px; color: var(--text-2); line-height:1.65; max-width:340px; margin-top:4px;
+}
+.about-tags { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-top:4px; }
+.about-tag {
+  font-size:10px; font-family: var(--font-mono); padding:3px 10px;
+  border-radius:20px; color: var(--accent); background: var(--accent-2);
+  border: 1px solid var(--accent-3);
+}
+.about-credits {
+  font-size:11px; color: var(--text-3); font-family: var(--font-mono); margin-top:4px;
+}
+.about-credits a { color: var(--accent); text-decoration:none; }
+
+/* ═══════════════════════════ UTILS ═══════════════════════════ */
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ DESKTOP ════════════════════ -->
+<div id="desktop">
+
+<!-- MENU BAR -->
+<div id="menubar">
+  <div class="mb-apple">✦</div>
+  <span class="mb-app-name" id="mb-app-name">TeachedOS</span>
+  <nav class="mb-menu">
+    <div class="mb-item">File</div>
+    <div class="mb-item">Edit</div>
+    <div class="mb-item">View</div>
+    <div class="mb-item">Language</div>
+    <div class="mb-item">Help</div>
+  </nav>
+  <div class="mb-right">
+    <span class="mb-icon">🔔</span>
+    <span class="mb-icon">🔍</span>
+    <span id="mb-clock">--:--</span>
+  </div>
+</div>
+
+<!-- WIDGETS -->
+<div class="widget" id="wg-clock">
+  <div class="wg-clock-time" id="wg-time">10<em>:</em>42</div>
+  <div class="wg-clock-date" id="wg-date">wednesday · may 7</div>
+  <div class="wg-clock-lang">🇫🇷 Français</div>
+</div>
+
+<div class="widget" id="wg-streak">
+  <div style="display:flex;align-items:baseline;gap:2px;">
+    <div class="wg-streak-n" id="wg-streak-n">14</div>
+    <span class="wg-streak-fire">🔥</span>
+  </div>
+  <div class="wg-streak-label">Day streak</div>
+  <div class="wg-streak-sub">Keep it up!<br>Best: <span style="color:var(--accent)">31 days</span></div>
+</div>
+
+<div class="widget" id="wg-today">
+  <div class="wg-today-label">Today's lesson</div>
+  <div class="wg-today-title">Le Subjonctif<br>Présent</div>
+  <div class="wg-today-meta">
+    <span>🇫🇷 French</span><span>·</span><span>B2</span>
+  </div>
+  <div class="wg-today-badge">📖 35 min</div>
+  <div class="wg-today-prog">
+    <div class="wg-today-prog-fill"></div>
+  </div>
+</div>
+
+<div class="widget" id="wg-vocab">
+  <div class="wg-vocab-label">Word of the day</div>
+  <div class="wg-vocab-word" id="wgv-word">すごい</div>
+  <div class="wg-vocab-lang" id="wgv-lang">Japanese · Adjective</div>
+  <div class="wg-vocab-trans" id="wgv-trans">Amazing, incredible</div>
+  <div class="wg-vocab-ex" id="wgv-ex">「この景色はすごいですね。」<br><em>"This scenery is amazing."</em></div>
+  <button class="wg-vocab-next" onclick="wgVocabNext()">Next word →</button>
+</div>
+
+<!-- ════ WINDOWS ════ -->
+
+<!-- CURRICULUM -->
+<div class="win open appear" id="win-curriculum" style="top:60px;left:60px;">
+  <div class="win-titlebar" id="tb-curriculum">
+    <div class="win-controls">
+      <div class="tl close"  onclick="closeWin('curriculum')"></div>
+      <div class="tl min"    onclick="minWin('curriculum')"></div>
+      <div class="tl max"></div>
+    </div>
+    <div class="win-title">📚 Curriculum</div>
+  </div>
+  <div class="win-body">
+    <div class="win-sidebar">
+      <div class="sb-section-label">Languages</div>
+      <div class="sb-item active" onclick="currFilter('all')">
+        <span class="sb-item-ic">🌐</span> All Courses
+        <span class="sb-item-badge">12</span>
+      </div>
+      <div class="sb-item" onclick="currFilter('fr')">
+        <span class="sb-item-ic">🇫🇷</span> French
+      </div>
+      <div class="sb-item" onclick="currFilter('it')">
+        <span class="sb-item-ic">🇮🇹</span> Italian
+      </div>
+      <div class="sb-item" onclick="currFilter('de')">
+        <span class="sb-item-ic">🇩🇪</span> German
+      </div>
+      <div class="sb-item" onclick="currFilter('ja')">
+        <span class="sb-item-ic">🇯🇵</span> Japanese
+      </div>
+      <div class="sb-item" onclick="currFilter('es')">
+        <span class="sb-item-ic">🇪🇸</span> Spanish
+      </div>
+      <div class="sb-section-label" style="margin-top:8px;">Library</div>
+      <div class="sb-item" onclick="currFilter('saved')">
+        <span class="sb-item-ic">🔖</span> Saved
+      </div>
+      <div class="sb-item" onclick="currFilter('progress')">
+        <span class="sb-item-ic">⏳</span> In Progress
+        <span class="sb-item-badge">3</span>
+      </div>
+      <div class="sb-item" onclick="currFilter('done')">
+        <span class="sb-item-ic">✅</span> Completed
+      </div>
+    </div>
+    <div class="win-main" style="display:flex;flex-direction:column;">
+      <div class="curr-header">
+        <div class="curr-eyebrow">§ TeachedOS Platform</div>
+        <div class="curr-title">Language <em>Curriculum</em></div>
+      </div>
+      <div class="curr-search">
+        <span class="curr-search-ic">🔍</span>
+        <input type="text" placeholder="Search lessons, topics, levels…" id="curr-search-input">
+      </div>
+      <div class="curr-tabs">
+        <div class="curr-tab active" onclick="setTab(this,'all')">All</div>
+        <div class="curr-tab" onclick="setTab(this,'grammar')">Grammar</div>
+        <div class="curr-tab" onclick="setTab(this,'vocab')">Vocabulary</div>
+        <div class="curr-tab" onclick="setTab(this,'speaking')">Speaking</div>
+        <div class="curr-tab" onclick="setTab(this,'culture')">Culture</div>
+      </div>
+      <div class="curr-grid" id="curr-grid">
+        <div class="lesson-card">
+          <div class="lc-lang">🇫🇷 French</div>
+          <div class="lc-title">Le Subjonctif Présent</div>
+          <div class="lc-desc">Master the subjunctive mood — expressing doubt, emotion, and subjectivity in everyday speech.</div>
+          <div class="lc-meta">
+            <span class="lc-level b2">B2</span>
+            <span class="lc-dur">35 min</span>
+          </div>
+          <div class="lc-prog"><div class="lc-prog-fill" style="width:68%"></div></div>
+        </div>
+        <div class="lesson-card">
+          <div class="lc-lang">🇮🇹 Italian</div>
+          <div class="lc-title">Il Congiuntivo</div>
+          <div class="lc-desc">Learn the Italian subjunctive and unlock complex sentence structures for nuanced expression.</div>
+          <div class="lc-meta">
+            <span class="lc-level b1">B1</span>
+            <span class="lc-dur">40 min</span>
+          </div>
+          <div class="lc-prog"><div class="lc-prog-fill" style="width:32%"></div></div>
+        </div>
+        <div class="lesson-card">
+          <div class="lc-lang">🇯🇵 Japanese</div>
+          <div class="lc-title">て-Form Connections</div>
+          <div class="lc-desc">Chain actions and describe sequences using the versatile て-form in natural conversation.</div>
+          <div class="lc-meta">
+            <span class="lc-level a2">A2</span>
+            <span class="lc-dur">25 min</span>
+          </div>
+          <div class="lc-prog"><div class="lc-prog-fill" style="width:90%"></div></div>
+        </div>
+        <div class="lesson-card">
+          <div class="lc-lang">🇩🇪 German</div>
+          <div class="lc-title">Der Konjunktiv II</div>
+          <div class="lc-desc">Express hypothetical scenarios and polite requests with the German subjunctive mood.</div>
+          <div class="lc-meta">
+            <span class="lc-level b2">B2</span>
+            <span class="lc-dur">45 min</span>
+          </div>
+          <div class="lc-prog"><div class="lc-prog-fill" style="width:0%"></div></div>
+        </div>
+        <div class="lesson-card">
+          <div class="lc-lang">🇫🇷 French</div>
+          <div class="lc-title">Les Faux Amis</div>
+          <div class="lc-desc">Navigate false cognates between French and English — words that look familiar but mean something entirely different.</div>
+          <div class="lc-meta">
+            <span class="lc-level b1">B1</span>
+            <span class="lc-dur">20 min</span>
+          </div>
+          <div class="lc-prog"><div class="lc-prog-fill" style="width:100%"></div></div>
+        </div>
+        <div class="lesson-card">
+          <div class="lc-lang">🇪🇸 Spanish</div>
+          <div class="lc-title">Ser vs. Estar</div>
+          <div class="lc-desc">Finally master the distinction between permanent and temporary states of being in Spanish.</div>
+          <div class="lc-meta">
+            <span class="lc-level a2">A2</span>
+            <span class="lc-dur">30 min</span>
+          </div>
+          <div class="lc-prog"><div class="lc-prog-fill" style="width:55%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLASHCARDS -->
+<div class="win" id="win-flashcards" style="top:80px;left:680px;width:560px;height:480px;">
+  <div class="win-titlebar" id="tb-flashcards">
+    <div class="win-controls">
+      <div class="tl close"  onclick="closeWin('flashcards')"></div>
+      <div class="tl min"    onclick="minWin('flashcards')"></div>
+      <div class="tl max"></div>
+    </div>
+    <div class="win-title">🗂️ Flashcards</div>
+  </div>
+  <div class="win-body">
+    <div class="win-main">
+      <div class="fc-wrap">
+        <div class="fc-set-picker" id="fc-sets">
+          <div class="fc-set active" onclick="fcLoadSet(this,'fr')">🇫🇷 French</div>
+          <div class="fc-set" onclick="fcLoadSet(this,'it')">🇮🇹 Italian</div>
+          <div class="fc-set" onclick="fcLoadSet(this,'ja')">🇯🇵 Japanese</div>
+          <div class="fc-set" onclick="fcLoadSet(this,'de')">🇩🇪 German</div>
+          <div class="fc-set" onclick="fcLoadSet(this,'es')">🇪🇸 Spanish</div>
+        </div>
+        <div class="fc-progress-bar">
+          <div class="fc-progress-fill" id="fc-prog" style="width:20%"></div>
+        </div>
+        <div class="fc-counter" id="fc-counter">1 / 5</div>
+        <div class="fc-scene" onclick="fcFlip()">
+          <div class="fc-card" id="fc-card">
+            <div class="fc-face fc-front">
+              <div class="fc-card-lang" id="fc-lang">🇫🇷 French · Noun</div>
+              <div class="fc-card-word" id="fc-word">la lumière</div>
+              <div class="fc-card-tap">tap to reveal →</div>
+            </div>
+            <div class="fc-face fc-back">
+              <div class="fc-card-lang" id="fc-lang-b">🇫🇷 French · Noun</div>
+              <div class="fc-card-trans" id="fc-trans">light</div>
+              <div class="fc-card-ex" id="fc-ex">La lumière du soleil était magnifique.<br><em>"The sunlight was magnificent."</em></div>
+            </div>
+          </div>
+        </div>
+        <div class="fc-btns" id="fc-rating-btns" style="display:none;">
+          <button class="fc-btn again" onclick="fcRate('again')">↩ Again</button>
+          <button class="fc-btn hard"  onclick="fcRate('hard')">😓 Hard</button>
+          <button class="fc-btn good"  onclick="fcRate('good')">✓ Good</button>
+          <button class="fc-btn easy"  onclick="fcRate('easy')">⚡ Easy</button>
+        </div>
+        <div id="fc-flip-hint" style="font-size:11px;color:var(--text-3);font-family:var(--font-mono);">flip card to rate</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="win" id="win-progress" style="top:70px;left:120px;width:680px;height:520px;">
+  <div class="win-titlebar" id="tb-progress">
+    <div class="win-controls">
+      <div class="tl close"  onclick="closeWin('progress')"></div>
+      <div class="tl min"    onclick="minWin('progress')"></div>
+      <div class="tl max"></div>
+    </div>
+    <div class="win-title">📊 Progress</div>
+  </div>
+  <div class="win-body">
+    <div class="win-main">
+      <div class="prog-body">
+        <div class="prog-stats">
+          <div class="prog-stat">
+            <div class="prog-stat-n">14<em>🔥</em></div>
+            <div class="prog-stat-l">Day Streak</div>
+          </div>
+          <div class="prog-stat">
+            <div class="prog-stat-n">847</div>
+            <div class="prog-stat-l">Words Learned</div>
+          </div>
+          <div class="prog-stat">
+            <div class="prog-stat-n">38<em>h</em></div>
+            <div class="prog-stat-l">Study Time</div>
+          </div>
+          <div class="prog-stat">
+            <div class="prog-stat-n">24</div>
+            <div class="prog-stat-l">Lessons Done</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="prog-section-title">Language <em>Progress</em></div>
+          <div class="prog-langs">
+            <div class="prog-lang-row">
+              <span class="prog-lang-name">🇫🇷 French</span>
+              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:72%"></div></div>
+              <span class="prog-lang-pct">72%</span>
+            </div>
+            <div class="prog-lang-row">
+              <span class="prog-lang-name">🇮🇹 Italian</span>
+              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:48%"></div></div>
+              <span class="prog-lang-pct">48%</span>
+            </div>
+            <div class="prog-lang-row">
+              <span class="prog-lang-name">🇯🇵 Japanese</span>
+              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:35%"></div></div>
+              <span class="prog-lang-pct">35%</span>
+            </div>
+            <div class="prog-lang-row">
+              <span class="prog-lang-name">🇩🇪 German</span>
+              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:18%"></div></div>
+              <span class="prog-lang-pct">18%</span>
+            </div>
+            <div class="prog-lang-row">
+              <span class="prog-lang-name">🇪🇸 Spanish</span>
+              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:55%"></div></div>
+              <span class="prog-lang-pct">55%</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="prog-section-title">Weekly <em>Activity</em></div>
+          <div class="prog-week">
+            <div class="prog-day-wrap">
+              <div class="prog-bar-wrap"><div class="prog-bar" style="height:45%"></div></div>
+              <div class="prog-day-label">Mon</div>
+            </div>
+            <div class="prog-day-wrap">
+              <div class="prog-bar-wrap"><div class="prog-bar" style="height:70%"></div></div>
+              <div class="prog-day-label">Tue</div>
+            </div>
+            <div class="prog-day-wrap">
+              <div class="prog-bar-wrap"><div class="prog-bar" style="height:30%"></div></div>
+              <div class="prog-day-label">Wed</div>
+            </div>
+            <div class="prog-day-wrap">
+              <div class="prog-bar-wrap"><div class="prog-bar" style="height:90%"></div></div>
+              <div class="prog-day-label">Thu</div>
+            </div>
+            <div class="prog-day-wrap">
+              <div class="prog-bar-wrap"><div class="prog-bar" style="height:60%"></div></div>
+              <div class="prog-day-label">Fri</div>
+            </div>
+            <div class="prog-day-wrap">
+              <div class="prog-bar-wrap"><div class="prog-bar" style="height:85%"></div></div>
+              <div class="prog-day-label">Sat</div>
+            </div>
+            <div class="prog-day-wrap">
+              <div class="prog-bar-wrap"><div class="prog-bar" style="height:40%"></div></div>
+              <div class="prog-day-label">Sun</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="prog-section-title"><em>Achievements</em></div>
+          <div class="prog-achievements">
+            <div class="prog-ach">
+              <div class="prog-ach-ic">🔥</div>
+              <div class="prog-ach-name">On Fire</div>
+              <div class="prog-ach-desc">14-day streak maintained</div>
+            </div>
+            <div class="prog-ach">
+              <div class="prog-ach-ic">📚</div>
+              <div class="prog-ach-name">Bibliophile</div>
+              <div class="prog-ach-desc">Completed 24 lessons</div>
+            </div>
+            <div class="prog-ach">
+              <div class="prog-ach-ic">🎯</div>
+              <div class="prog-ach-name">Sharpshooter</div>
+              <div class="prog-ach-desc">95% accuracy in French</div>
+            </div>
+            <div class="prog-ach locked">
+              <div class="prog-ach-ic">🌟</div>
+              <div class="prog-ach-name">Polyglot</div>
+              <div class="prog-ach-desc">Reach B2 in 3 languages</div>
+            </div>
+            <div class="prog-ach locked">
+              <div class="prog-ach-ic">🏆</div>
+              <div class="prog-ach-name">Champion</div>
+              <div class="prog-ach-desc">30-day streak</div>
+            </div>
+            <div class="prog-ach">
+              <div class="prog-ach-ic">💬</div>
+              <div class="prog-ach-name">Conversant</div>
+              <div class="prog-ach-desc">847 words mastered</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="win" id="win-schedule" style="top:90px;left:80px;width:700px;height:540px;">
+  <div class="win-titlebar" id="tb-schedule">
+    <div class="win-controls">
+      <div class="tl close"  onclick="closeWin('schedule')"></div>
+      <div class="tl min"    onclick="minWin('schedule')"></div>
+      <div class="tl max"></div>
+    </div>
+    <div class="win-title">📅 Schedule</div>
+  </div>
+  <div class="win-body">
+    <div class="win-main">
+      <div class="sch-body">
+        <div class="sch-nav">
+          <button class="sch-nav-btn" onclick="schPrev()">‹</button>
+          <button class="sch-nav-btn" onclick="schNext()">›</button>
+          <span class="sch-month" id="sch-month">May 2026</span>
+          <div class="sch-view-btns">
+            <div class="sch-view active">Month</div>
+            <div class="sch-view">Week</div>
+            <div class="sch-view">Day</div>
+          </div>
+        </div>
+        <div class="sch-grid-wrap">
+          <div class="sch-grid" id="sch-grid">
+            <!-- generated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTES -->
+<div class="win" id="win-notes" style="top:100px;left:160px;width:660px;height:500px;">
+  <div class="win-titlebar" id="tb-notes">
+    <div class="win-controls">
+      <div class="tl close"  onclick="closeWin('notes')"></div>
+      <div class="tl min"    onclick="minWin('notes')"></div>
+      <div class="tl max"></div>
+    </div>
+    <div class="win-title">✍️ Notes</div>
+  </div>
+  <div class="win-body">
+    <div class="win-sidebar notes-sidebar">
+      <div class="notes-new-btn" onclick="notesNew()">
+        <span>+</span> New Note
+      </div>
+      <div class="notes-list" id="notes-list"></div>
+    </div>
+    <div class="win-main notes-editor" style="display:flex;flex-direction:column;">
+      <div class="notes-toolbar">
+        <div class="notes-tb-btn" title="Bold">𝐁</div>
+        <div class="notes-tb-btn" title="Italic">𝑰</div>
+        <div class="notes-tb-btn" title="Underline"><u>U</u></div>
+        <div class="notes-tb-sep"></div>
+        <div class="notes-tb-btn">H1</div>
+        <div class="notes-tb-btn">H2</div>
+        <div class="notes-tb-sep"></div>
+        <div class="notes-tb-btn">≡</div>
+        <div class="notes-tb-btn">•</div>
+      </div>
+      <textarea class="notes-editor-area" id="notes-ta" placeholder="Start writing…&#10;&#10;Use this space for lesson notes, vocabulary, grammar rules, or anything you want to remember." oninput="notesAutoSave()"></textarea>
+      <div class="notes-footer">
+        <span id="notes-word-count">0 words</span>
+        <span id="notes-save-status">saved</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DICTIONARY -->
+<div class="win" id="win-dictionary" style="top:70px;left:180px;width:560px;height:480px;">
+  <div class="win-titlebar" id="tb-dictionary">
+    <div class="win-controls">
+      <div class="tl close"  onclick="closeWin('dictionary')"></div>
+      <div class="tl min"    onclick="minWin('dictionary')"></div>
+      <div class="tl max"></div>
+    </div>
+    <div class="win-title">🌐 Dictionary</div>
+  </div>
+  <div class="win-body">
+    <div class="win-main">
+      <div class="dict-body">
+        <div class="dict-search-wrap">
+          <input type="text" placeholder="Search a word…" id="dict-input" onkeydown="if(event.key==='Enter')dictLookup()">
+          <select class="dict-lang-select" id="dict-lang">
+            <option>🇫🇷 FR</option>
+            <option>🇮🇹 IT</option>
+            <option>🇯🇵 JA</option>
+            <option>🇩🇪 DE</option>
+            <option>🇪🇸 ES</option>
+          </select>
+        </div>
+        <div class="dict-result" id="dict-result">
+          <div class="dict-word">lumière</div>
+          <div class="dict-phonetic">/ly.mjɛʁ/</div>
+          <div class="dict-pos">noun · feminine</div>
+          <div class="dict-def">1. Light; the natural agent that stimulates sight and makes things visible.</div>
+          <div class="dict-example">« La lumière du soleil filtre à travers les nuages. »<br><em>"Sunlight filters through the clouds."</em></div>
+          <div class="dict-def">2. (figurative) Enlightenment; intellectual or moral illumination.</div>
+          <div class="dict-example">« La lumière de la raison nous guide. »<br><em>"The light of reason guides us."</em></div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:8px;font-family:var(--font-mono);">Synonyms</div>
+          <div class="dict-syns">
+            <div class="dict-syn">clarté</div>
+            <div class="dict-syn">éclat</div>
+            <div class="dict-syn">lueur</div>
+            <div class="dict-syn">rayonnement</div>
+            <div class="dict-syn">illumination</div>
+          </div>
+          <button class="dict-save-btn" onclick="dictSave()">🔖 Save to Flashcards</button>
+        </div>
+        <div>
+          <div class="dict-history-label">Recent Searches</div>
+          <div class="dict-history" id="dict-history">
+            <div class="dict-hist-item" onclick="dictSetWord('lumière')">lumière</div>
+            <div class="dict-hist-item" onclick="dictSetWord('magnifique')">magnifique</div>
+            <div class="dict-hist-item" onclick="dictSetWord('toujours')">toujours</div>
+            <div class="dict-hist-item" onclick="dictSetWord('belle')">belle</div>
+            <div class="dict-hist-item" onclick="dictSetWord('なるほど')">なるほど</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="win" id="win-about" style="top:80px;left:340px;width:480px;height:340px;">
+  <div class="win-titlebar" id="tb-about">
+    <div class="win-controls">
+      <div class="tl close"  onclick="closeWin('about')"></div>
+      <div class="tl min"    onclick="minWin('about')"></div>
+      <div class="tl max"></div>
+    </div>
+    <div class="win-title">About TeachedOS</div>
+  </div>
+  <div class="win-body">
+    <div class="win-main">
+      <div class="about-body">
+        <div class="about-logo">🌸</div>
+        <div class="about-name">Teached<em>OS</em></div>
+        <div class="about-ver">Version 1.0 · Language Learning Platform</div>
+        <div class="about-desc">
+          A beautiful environment for learning and teaching foreign languages — designed with care for educators and students alike.
+        </div>
+        <div class="about-tags">
+          <div class="about-tag">Curriculum</div>
+          <div class="about-tag">Flashcards</div>
+          <div class="about-tag">Progress</div>
+          <div class="about-tag">Schedule</div>
+          <div class="about-tag">Dictionary</div>
+        </div>
+        <div class="about-credits">
+          Designed &amp; built by <a href="https://munister.com.ua" target="_blank">munister.com.ua</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DOCK -->
+<div id="dock-wrap">
+  <div id="dock">
+    <div class="di open" id="di-curriculum" onclick="openApp('curriculum')" title="Curriculum">
+      <div class="di-icon curriculum">📚</div>
+      <div class="di-label">Curriculum</div>
+      <div class="di-dot"></div>
+    </div>
+    <div class="di" id="di-flashcards" onclick="openApp('flashcards')" title="Flashcards">
+      <div class="di-icon flashcards">🗂️</div>
+      <div class="di-label">Flashcards</div>
+      <div class="di-dot"></div>
+    </div>
+    <div class="di" id="di-progress" onclick="openApp('progress')" title="Progress">
+      <div class="di-icon progress">📊</div>
+      <div class="di-label">Progress</div>
+      <div class="di-dot"></div>
+    </div>
+    <div class="di" id="di-schedule" onclick="openApp('schedule')" title="Schedule">
+      <div class="di-icon schedule">📅</div>
+      <div class="di-label">Schedule</div>
+      <div class="di-dot"></div>
+    </div>
+    <div class="di" id="di-notes" onclick="openApp('notes')" title="Notes">
+      <div class="di-icon notes">✍️</div>
+      <div class="di-label">Notes</div>
+      <div class="di-dot"></div>
+    </div>
+    <div class="di" id="di-dictionary" onclick="openApp('dictionary')" title="Dictionary">
+      <div class="di-icon dictionary">🌐</div>
+      <div class="di-label">Dictionary</div>
+      <div class="di-dot"></div>
+    </div>
+    <div class="di-sep"></div>
+    <div class="di" id="di-about" onclick="openApp('about')" title="About">
+      <div class="di-icon finder">🌸</div>
+      <div class="di-label">About</div>
+      <div class="di-dot"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- #desktop -->
+
+<script>
+/* ══════════════════════ CLOCK ══════════════════════ */
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours().toString().padStart(2,'0');
+  const m = now.getMinutes().toString().padStart(2,'0');
+  document.getElementById('wg-time').innerHTML = h + '<em>:</em>' + m;
+  document.getElementById('mb-clock').textContent = h + ':' + m;
+  const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('wg-date').textContent =
+    days[now.getDay()].toLowerCase() + ' · ' +
+    months[now.getMonth()].toLowerCase() + ' ' + now.getDate();
+}
+updateClock(); setInterval(updateClock, 30000);
+
+/* ══════════════════════ WINDOW MANAGEMENT ══════════════════════ */
+let topZ = 200;
+const zMap = {};
+
+function openApp(id) {
+  const win = document.getElementById('win-' + id);
+  const di  = document.getElementById('di-' + id);
+  if (!win) return;
+  const wasOpen = win.classList.contains('open');
+  win.classList.add('open');
+  if (!wasOpen) win.classList.add('appear');
+  setTimeout(()=>win.classList.remove('appear'), 300);
+  bringToFront(id);
+  if (di) di.classList.add('open');
+}
+
+function closeWin(id) {
+  const win = document.getElementById('win-' + id);
+  const di  = document.getElementById('di-' + id);
+  if (win) win.classList.remove('open');
+  if (di) di.classList.remove('open');
+}
+
+function minWin(id) { closeWin(id); }
+
+function bringToFront(id) {
+  topZ++;
+  const win = document.getElementById('win-' + id);
+  if (win) win.style.zIndex = topZ;
+}
+
+/* Draggable windows */
+(function(){
+  const wins = document.querySelectorAll('.win');
+  wins.forEach(win => {
+    const tb = win.querySelector('.win-titlebar');
+    if (!tb) return;
+    let drag = false, ox=0, oy=0, wx=0, wy=0;
+    tb.addEventListener('mousedown', e => {
+      if (e.target.classList.contains('tl')) return;
+      drag = true;
+      ox = e.clientX; oy = e.clientY;
+      const r = win.getBoundingClientRect();
+      wx = r.left; wy = r.top;
+      const id = win.id.replace('win-','');
+      bringToFront(id);
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', e => {
+      if (!drag) return;
+      win.style.left = (wx + e.clientX - ox) + 'px';
+      win.style.top  = (wy + e.clientY - oy) + 'px';
+    });
+    document.addEventListener('mouseup', () => { drag = false; });
+    win.addEventListener('mousedown', () => {
+      const id = win.id.replace('win-','');
+      bringToFront(id);
+    });
+  });
+})();
+
+/* ══════════════════════ FLASHCARDS ══════════════════════ */
+const FC_DATA = {
+  fr: [
+    { word:'la lumière', lang:'🇫🇷 French · Noun', trans:'light', ex:'La lumière du soleil était magnifique.\n"The sunlight was magnificent."' },
+    { word:'magnifique', lang:'🇫🇷 French · Adjective', trans:'magnificent, wonderful', ex:'C\'est une soirée magnifique.\n"It\'s a wonderful evening."' },
+    { word:'toujours', lang:'🇫🇷 French · Adverb', trans:'always, still', ex:'Elle chante toujours le matin.\n"She always sings in the morning."' },
+    { word:'le souvenir', lang:'🇫🇷 French · Noun', trans:'memory, souvenir', ex:'J\'ai de bons souvenirs de ce voyage.\n"I have good memories of this trip."' },
+    { word:'doucement', lang:'🇫🇷 French · Adverb', trans:'softly, gently', ex:'Parle doucement, s\'il te plaît.\n"Please speak softly."' },
+  ],
+  it: [
+    { word:'la luce', lang:'🇮🇹 Italian · Noun', trans:'light', ex:'La luce del sole è bellissima.\n"The sunlight is beautiful."' },
+    { word:'sempre', lang:'🇮🇹 Italian · Adverb', trans:'always', ex:'Rido sempre con te.\n"I always laugh with you."' },
+    { word:'bellissimo', lang:'🇮🇹 Italian · Adjective', trans:'very beautiful', ex:'Che paesaggio bellissimo!\n"What a beautiful landscape!"' },
+    { word:'il ricordo', lang:'🇮🇹 Italian · Noun', trans:'memory, recollection', ex:'Ho bei ricordi dell\'Italia.\n"I have good memories of Italy."' },
+    { word:'piano', lang:'🇮🇹 Italian · Adverb', trans:'slowly, softly', ex:'Parla più piano, per favore.\n"Please speak more slowly."' },
+  ],
+  ja: [
+    { word:'すごい', lang:'🇯🇵 Japanese · Adjective', trans:'amazing, incredible', ex:'この景色はすごいですね。\n"This scenery is amazing."' },
+    { word:'なるほど', lang:'🇯🇵 Japanese · Interjection', trans:'I see, I understand', ex:'なるほど、そういうことか。\n"Ah, I see, that\'s how it is."' },
+    { word:'丁寧 (ていねい)', lang:'🇯🇵 Japanese · Adjective', trans:'polite, careful', ex:'彼女はとても丁寧です。\n"She is very polite."' },
+    { word:'雰囲気 (ふんいき)', lang:'🇯🇵 Japanese · Noun', trans:'atmosphere, vibe', ex:'このカフェの雰囲気が好き。\n"I love the atmosphere of this café."' },
+    { word:'懐かしい (なつかしい)', lang:'🇯🇵 Japanese · Adjective', trans:'nostalgic, dear to one\'s heart', ex:'この曲は懐かしいな。\n"This song brings back memories."' },
+  ],
+  de: [
+    { word:'das Licht', lang:'🇩🇪 German · Noun', trans:'light', ex:'Das Licht der Sonne scheint hell.\n"The light of the sun shines bright."' },
+    { word:'wunderschön', lang:'🇩🇪 German · Adjective', trans:'wonderfully beautiful', ex:'Der Abend war wunderschön.\n"The evening was wonderfully beautiful."' },
+    { word:'immer', lang:'🇩🇪 German · Adverb', trans:'always', ex:'Sie lacht immer.\n"She always laughs."' },
+    { word:'die Erinnerung', lang:'🇩🇪 German · Noun', trans:'memory, recollection', ex:'Ich habe schöne Erinnerungen.\n"I have beautiful memories."' },
+    { word:'sanft', lang:'🇩🇪 German · Adjective', trans:'soft, gentle', ex:'Er hat eine sanfte Stimme.\n"He has a gentle voice."' },
+  ],
+  es: [
+    { word:'la luz', lang:'🇪🇸 Spanish · Noun', trans:'light', ex:'La luz del sol era preciosa.\n"The sunlight was precious."' },
+    { word:'siempre', lang:'🇪🇸 Spanish · Adverb', trans:'always', ex:'Siempre recuerdo ese día.\n"I always remember that day."' },
+    { word:'precioso', lang:'🇪🇸 Spanish · Adjective', trans:'precious, beautiful', ex:'¡Qué paisaje tan precioso!\n"What a beautiful landscape!"' },
+    { word:'el recuerdo', lang:'🇪🇸 Spanish · Noun', trans:'memory, souvenir', ex:'Tengo buenos recuerdos de aquella época.\n"I have good memories of that time."' },
+    { word:'suave', lang:'🇪🇸 Spanish · Adjective', trans:'soft, gentle', ex:'Habla con voz suave.\n"She speaks in a gentle voice."' },
+  ],
+};
+let fcSet = 'fr', fcIdx = 0, fcFlipped = false;
+
+function fcLoadSet(el, lang) {
+  document.querySelectorAll('.fc-set').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  fcSet = lang; fcIdx = 0; fcFlipped = false;
+  fcShow();
+}
+function fcShow() {
+  const cards = FC_DATA[fcSet];
+  const card = cards[fcIdx];
+  document.getElementById('fc-lang').textContent  = card.lang;
+  document.getElementById('fc-lang-b').textContent = card.lang;
+  document.getElementById('fc-word').textContent   = card.word;
+  document.getElementById('fc-trans').textContent  = card.trans;
+  const exLines = card.ex.split('\n');
+  document.getElementById('fc-ex').innerHTML = exLines[0] + '<br><em>' + (exLines[1]||'') + '</em>';
+  document.getElementById('fc-card').classList.remove('flipped');
+  document.getElementById('fc-rating-btns').style.display = 'none';
+  document.getElementById('fc-flip-hint').style.display = 'block';
+  fcFlipped = false;
+  const pct = ((fcIdx) / cards.length * 100).toFixed(0);
+  document.getElementById('fc-prog').style.width = pct + '%';
+  document.getElementById('fc-counter').textContent = (fcIdx+1) + ' / ' + cards.length;
+}
+function fcFlip() {
+  if (fcFlipped) return;
+  fcFlipped = true;
+  document.getElementById('fc-card').classList.add('flipped');
+  document.getElementById('fc-rating-btns').style.display = 'flex';
+  document.getElementById('fc-flip-hint').style.display = 'none';
+}
+function fcRate(r) {
+  const cards = FC_DATA[fcSet];
+  fcIdx = (fcIdx + 1) % cards.length;
+  fcShow();
+}
+fcShow();
+
+/* ══════════════════════ VOCAB WIDGET ══════════════════════ */
+const WG_VOCAB = [
+  { word:'すごい', lang:'Japanese · Adjective', trans:'Amazing, incredible', ex:'「この景色はすごいですね。」\n"This scenery is amazing."' },
+  { word:'magnifique', lang:'French · Adjective', trans:'Magnificent, wonderful', ex:'C\'est une soirée magnifique.\n"It\'s a wonderful evening."' },
+  { word:'bellissimo', lang:'Italian · Adjective', trans:'Very beautiful', ex:'Che paesaggio bellissimo!\n"What a beautiful landscape!"' },
+  { word:'wunderschön', lang:'German · Adjective', trans:'Wonderfully beautiful', ex:'Der Abend war wunderschön.\n"The evening was beautiful."' },
+  { word:'siempre', lang:'Spanish · Adverb', trans:'Always', ex:'Siempre recuerdo ese día.\n"I always remember that day."' },
+  { word:'なるほど', lang:'Japanese · Interjection', trans:'I see, I understand', ex:'なるほど、そういうことか。\n"Ah, I see."' },
+];
+let wgVocabIdx = 0;
+function wgVocabNext() {
+  wgVocabIdx = (wgVocabIdx + 1) % WG_VOCAB.length;
+  const v = WG_VOCAB[wgVocabIdx];
+  document.getElementById('wgv-word').textContent = v.word;
+  document.getElementById('wgv-lang').textContent = v.lang;
+  document.getElementById('wgv-trans').textContent = v.trans;
+  const lines = v.ex.split('\n');
+  document.getElementById('wgv-ex').innerHTML = '「' + lines[0].replace(/「|」/g,'') + '」<br><em>' + (lines[1]||'') + '</em>';
+}
+
+/* ══════════════════════ SCHEDULE ══════════════════════ */
+let schYear = 2026, schMonth = 4; // 0-indexed, May = 4
+const EVENTS = {
+  '2026-5-7':  [{ text:'French · B2', cls:'' }],
+  '2026-5-8':  [{ text:'Vocab Review', cls:'green' }],
+  '2026-5-10': [{ text:'Italian · B1', cls:'' }, { text:'Flashcards', cls:'blue' }],
+  '2026-5-13': [{ text:'German · B2', cls:'' }],
+  '2026-5-14': [{ text:'Speaking Club', cls:'green' }],
+  '2026-5-15': [{ text:'Japanese N3', cls:'' }],
+  '2026-5-17': [{ text:'Grammar Test', cls:'blue' }],
+  '2026-5-20': [{ text:'French · B2', cls:'' }],
+  '2026-5-21': [{ text:'Vocab Review', cls:'green' }],
+  '2026-5-24': [{ text:'Italian · B1', cls:'' }],
+  '2026-5-27': [{ text:'Spanish · A2', cls:'' }],
+  '2026-5-28': [{ text:'Speaking Club', cls:'green' }],
+};
+const SCH_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function schRender() {
+  document.getElementById('sch-month').textContent = SCH_MONTHS[schMonth] + ' ' + schYear;
+  const grid = document.getElementById('sch-grid');
+  grid.innerHTML = '';
+  const dows = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  dows.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'sch-dow'; el.textContent = d;
+    grid.appendChild(el);
+  });
+  const first = new Date(schYear, schMonth, 1).getDay();
+  const total = new Date(schYear, schMonth+1, 0).getDate();
+  const today = new Date();
+  for (let i = 0; i < first; i++) {
+    const prev = new Date(schYear, schMonth, -first+i+1).getDate();
+    const el = document.createElement('div');
+    el.className = 'sch-cell other-month';
+    el.innerHTML = '<div class="sch-day-num">' + prev + '</div>';
+    grid.appendChild(el);
+  }
+  for (let d = 1; d <= total; d++) {
+    const el = document.createElement('div');
+    const key = schYear + '-' + (schMonth+1) + '-' + d;
+    const isToday = today.getFullYear()===schYear && today.getMonth()===schMonth && today.getDate()===d;
+    el.className = 'sch-cell' + (isToday?' today':'');
+    let html = '<div class="sch-day-num">' + d + '</div>';
+    if (EVENTS[key]) {
+      EVENTS[key].forEach(ev => {
+        html += '<div class="sch-event ' + ev.cls + '">' + ev.text + '</div>';
+      });
+    }
+    el.innerHTML = html;
+    grid.appendChild(el);
+  }
+  const remain = (first + total) % 7;
+  if (remain > 0) {
+    for (let i = 1; i <= 7-remain; i++) {
+      const el = document.createElement('div');
+      el.className = 'sch-cell other-month';
+      el.innerHTML = '<div class="sch-day-num">' + i + '</div>';
+      grid.appendChild(el);
+    }
+  }
+}
+function schPrev() { schMonth--; if(schMonth<0){schMonth=11;schYear--;} schRender(); }
+function schNext() { schMonth++; if(schMonth>11){schMonth=0;schYear++;} schRender(); }
+schRender();
+
+/* ══════════════════════ NOTES ══════════════════════ */
+const NOTES = [
+  { id:1, title:'Subjonctif Notes', preview:'The subjunctive mood expresses…', content:'The subjunctive mood (le subjonctif) is used to express:\n\n• Doubt or uncertainty: «Je doute qu\'il vienne.»\n• Emotion: «Je suis content que tu sois là.»\n• Necessity: «Il faut que tu étudies.»\n• Possibility: «Il est possible qu\'il pleuve.»\n\nKey conjunctions:\n- bien que (although)\n- pour que (so that)\n- avant que (before)\n- à moins que (unless)\n\nFormation: stem from ils/elles present + subjunctive endings:\n-e, -es, -e, -ions, -iez, -ent', date:'May 6' },
+  { id:2, title:'Italian False Friends', preview:'Parenti ≠ parents…', content:'Falsi amici — Italian False Friends:\n\n• parenti = relatives (NOT parents)\n  → genitori = parents\n\n• sensibile = sensitive (NOT sensible)\n  → ragionevole = sensible\n\n• attuale = current (NOT actual)\n  → effettivo / reale = actual\n\n• eventuale = possible (NOT eventual)\n  → finale = eventual\n\n• preservativo = condom (NOT preservative)\n  → conservante = preservative\n\nAlways double-check cognates!', date:'May 4' },
+  { id:3, title:'Japanese て-Form', preview:'Connect actions with て…', content:'て-Form (te-form) Usage:\n\n1. Sequential actions:\n   食べてから寝る → eat, then sleep\n\n2. Simultaneous actions:\n   音楽を聴きながら勉強する → study while listening\n\n3. て + いる (ongoing state):\n   雨が降っている → it is raining\n\n4. て + みる (try doing):\n   食べてみる → try eating\n\n5. て + あげる/もらう/くれる (giving/receiving)\n\nConjugation rules:\n• う/つ/る → って\n• ぬ/ぶ/む → んで\n• く → いて\n• ぐ → いで\n• す → して\n• くる → きて\n• する → して', date:'May 2' },
+];
+let activeNote = NOTES[0].id;
+let saveTimer = null;
+
+function notesRender() {
+  const list = document.getElementById('notes-list');
+  list.innerHTML = '';
+  NOTES.forEach(n => {
+    const el = document.createElement('div');
+    el.className = 'note-item' + (n.id===activeNote?' active':'');
+    el.innerHTML = `<div class="note-item-title">${n.title}</div><div class="note-item-preview">${n.preview}</div><div class="note-item-date">${n.date}</div>`;
+    el.onclick = () => notesOpen(n.id);
+    list.appendChild(el);
+  });
+  const active = NOTES.find(n=>n.id===activeNote);
+  if (active) {
+    document.getElementById('notes-ta').value = active.content;
+    notesUpdateCount();
+  }
+}
+function notesOpen(id) {
+  activeNote = id;
+  notesRender();
+}
+function notesNew() {
+  const id = Date.now();
+  NOTES.unshift({ id, title:'New Note', preview:'', content:'', date:'Today' });
+  activeNote = id;
+  notesRender();
+  document.getElementById('notes-ta').focus();
+}
+function notesAutoSave() {
+  const ta = document.getElementById('notes-ta');
+  const note = NOTES.find(n=>n.id===activeNote);
+  if (!note) return;
+  note.content = ta.value;
+  const lines = ta.value.split('\n');
+  note.title = lines[0] || 'New Note';
+  note.preview = (lines[1] || '').slice(0,50);
+  notesUpdateCount();
+  document.getElementById('notes-save-status').textContent = 'editing…';
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    notesRender();
+    document.getElementById('notes-save-status').textContent = 'saved';
+  }, 800);
+}
+function notesUpdateCount() {
+  const ta = document.getElementById('notes-ta');
+  const words = ta.value.trim().split(/\s+/).filter(Boolean).length;
+  document.getElementById('notes-word-count').textContent = words + ' word' + (words===1?'':'s');
+}
+notesRender();
+
+/* ══════════════════════ DICTIONARY ══════════════════════ */
+const DICT_DB = {
+  'lumière': { word:'lumière', phonetic:'/ly.mjɛʁ/', pos:'noun · feminine', defs:['Light; the natural agent that stimulates sight and makes things visible.','(figurative) Enlightenment; intellectual or moral illumination.'], exs:['« La lumière du soleil filtre à travers les nuages. »\n"Sunlight filters through the clouds."','« La lumière de la raison nous guide. »\n"The light of reason guides us."'], syns:['clarté','éclat','lueur','rayonnement','illumination'] },
+  'magnifique': { word:'magnifique', phonetic:'/ma.ɲi.fik/', pos:'adjective', defs:['Magnificent; impressively beautiful or elaborate.','Wonderful; extremely pleasing.'], exs:['« C\'est une soirée magnifique. »\n"It\'s a wonderful evening."','« Le paysage est magnifique. »\n"The landscape is magnificent."'], syns:['splendide','superbe','grandiose','sublime','merveilleux'] },
+  'toujours': { word:'toujours', phonetic:'/tu.ʒuʁ/', pos:'adverb', defs:['Always; at all times without exception.','Still; continuing to be or do.'], exs:['« Elle chante toujours le matin. »\n"She always sings in the morning."','« Il est toujours là. »\n"He is still there."'], syns:['sans cesse','constamment','perpétuellement','à jamais'] },
+  'belle': { word:'belle', phonetic:'/bɛl/', pos:'adjective · feminine', defs:['Beautiful; having beauty; attractive.','(of weather) Fair, fine, beautiful.'], exs:['« Tu es très belle ce soir. »\n"You are very beautiful tonight."','« Il fait une belle journée. »\n"It\'s a beautiful day."'], syns:['jolie','ravissante','magnifique','splendide','charmante'] },
+};
+function dictLookup() {
+  const q = document.getElementById('dict-input').value.trim().toLowerCase();
+  if (!q) return;
+  const entry = DICT_DB[q];
+  const res = document.getElementById('dict-result');
+  if (entry) {
+    let defs = entry.defs.map((d,i) => `<div class="dict-def">${i+1}. ${d}</div><div class="dict-example">${entry.exs[i] ? entry.exs[i].replace('\n','<br><em>').replace(/^/,'« ').replace(/$/, entry.exs[i].includes('"')? '' : '').replace('« « ','« ') + (entry.exs[i].includes('"')? '»' : '') : ''}</div>`).join('');
+    let syns = entry.syns.map(s=>`<div class="dict-syn" onclick="dictSetWord('${s}')">${s}</div>`).join('');
+    res.innerHTML = `<div class="dict-word">${entry.word}</div><div class="dict-phonetic">${entry.phonetic}</div><div class="dict-pos">${entry.pos}</div>${defs}<div style="font-size:12px;color:var(--text-3);margin-bottom:8px;font-family:var(--font-mono);">Synonyms</div><div class="dict-syns">${syns}</div><button class="dict-save-btn" onclick="dictSave()">🔖 Save to Flashcards</button>`;
+  } else {
+    res.innerHTML = `<div class="dict-word" style="font-size:20px;color:var(--text-3)">${q}</div><div class="dict-def" style="color:var(--text-3);margin-top:12px;">No result found. Try: lumière, magnifique, toujours, belle</div>`;
+  }
+}
+function dictSetWord(w) {
+  document.getElementById('dict-input').value = w;
+  dictLookup();
+}
+function dictSave() {
+  const btn = document.querySelector('.dict-save-btn');
+  if (btn) { btn.textContent = '✓ Saved!'; setTimeout(()=>btn.textContent='🔖 Save to Flashcards',2000); }
+}
+
+/* ══════════════════════ CURRICULUM TABS ══════════════════════ */
+function setTab(el, type) {
+  document.querySelectorAll('.curr-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+function currFilter(type) {
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+</script>
+</body>
+</html>
