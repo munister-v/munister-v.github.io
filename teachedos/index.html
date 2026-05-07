@@ -859,6 +859,135 @@ html,body {
 
 /* ═══════════════════════════ UTILS ═══════════════════════════ */
 .hidden { display:none !important; }
+.mob-win-header { display:none; } /* shown only inside mobile media query */
+
+/* ═══════════════════════════ MOBILE RESPONSIVE ═══════════════════════════ */
+@media (max-width: 768px) {
+  /* Hide desktop-only elements */
+  .widget, .di-sep, .mb-menu, .mb-apple,
+  .mb-icon, .blob1, .blob2, .blob3 { display:none !important; }
+
+  /* Menubar → compact mobile header */
+  #menubar {
+    height:52px; padding:0 16px;
+    background: rgba(255,255,255,0.95);
+    justify-content:space-between;
+  }
+  .mb-app-name {
+    font-size:20px; font-weight:900; color:var(--accent);
+    letter-spacing:-0.02em;
+  }
+  #mb-clock {
+    font-size:14px; font-weight:700; color:var(--text-3);
+  }
+
+  /* Desktop → full-screen panels */
+  #desktop {
+    background: linear-gradient(160deg,#FFF0F5 0%,#FFE8F2 100%);
+  }
+  .win {
+    position:fixed !important;
+    top:52px !important; left:0 !important; right:0 !important;
+    bottom:74px !important;
+    width:100% !important; height:auto !important;
+    min-width:0 !important; border-radius:0 !important;
+    border:none !important; box-shadow:none !important;
+    display:none; flex-direction:column;
+    border-top: 1px solid var(--border) !important;
+    z-index:200 !important;
+  }
+  .win.open { display:flex !important; }
+
+  /* Win titlebar on mobile */
+  .win-titlebar { display:none; }
+  .win-controls { display:none; }
+
+  /* Mobile app header (shown inside each win) */
+  .mob-win-header {
+    display:flex; align-items:center; gap:10px;
+    padding:14px 16px 10px; flex-shrink:0;
+    border-bottom:1px solid var(--border);
+    background: rgba(255,240,248,0.90);
+  }
+  .mob-win-title {
+    font-size:20px; font-weight:900; color:var(--text);
+    letter-spacing:-0.02em;
+  }
+  .mob-sidebar-btn {
+    margin-left:auto; width:34px; height:34px; border-radius:10px;
+    background:rgba(255,75,139,0.09); border:1.5px solid var(--border);
+    color:var(--accent); font-size:16px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+
+  /* Sidebar overlay on mobile */
+  .win-sidebar {
+    display:none; position:absolute; top:0; left:0; bottom:0;
+    z-index:10; width:240px;
+    box-shadow:4px 0 24px rgba(255,75,139,0.12);
+    background:rgba(255,240,248,0.98);
+  }
+  .win-sidebar.mob-open { display:flex !important; }
+
+  /* Dock → bottom tab bar */
+  #dock-wrap {
+    position:fixed; bottom:0; left:0; right:0;
+    transform:none; z-index:999;
+  }
+  #dock {
+    border-radius:0; gap:0;
+    border-left:none; border-right:none; border-bottom:none;
+    padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));
+    width:100%; justify-content:space-around;
+    box-shadow:0 -1px 0 var(--border), 0 -4px 20px rgba(255,75,139,0.08);
+  }
+  .di { flex:1; gap:3px; }
+  .di:hover { transform:none; }
+  .di-icon { width:44px; height:44px; border-radius:14px; font-size:20px; }
+  .di-label { font-size:9px; }
+  .di-dot { bottom:-4px; }
+
+  /* Content tweaks */
+  .curr-grid { grid-template-columns:1fr; }
+  .curr-search { margin:12px 14px 0; }
+  .curr-header { padding:14px 14px 0; }
+  .curr-tabs { padding:10px 14px 0; overflow-x:auto; flex-wrap:nowrap; }
+  .curr-grid { padding:14px; }
+
+  .fc-scene { width:100%; max-width:340px; }
+  .fc-card-word { font-size:26px; }
+  .fc-btns { flex-wrap:wrap; gap:8px; }
+  .fc-btn { flex:1; min-width:80px; justify-content:center; }
+
+  .prog-body { padding:14px; gap:14px; }
+  .prog-stats { grid-template-columns:1fr 1fr; gap:10px; }
+  .prog-achievements { grid-template-columns:1fr 1fr; }
+  .prog-stat-n { font-size:26px; }
+
+  .sch-nav { padding:10px 14px; }
+  .sch-grid-wrap { overflow:auto; -webkit-overflow-scrolling:touch; }
+
+  .notes-editor-area { font-size:15px; padding:14px 16px; }
+  .notes-sidebar { width:180px; }
+
+  .dict-body { padding:14px; }
+  .dict-word { font-size:28px; }
+
+  .about-body { padding:28px 20px; }
+  .about-logo { font-size:52px; }
+
+  /* Tools */
+  #tools-grid { grid-template-columns:1fr !important; }
+}
+
+@media (max-width: 420px) {
+  .fc-scene { height:190px; }
+  .prog-stats { grid-template-columns:1fr 1fr; }
+  .stat-n { font-size:22px; }
+  .di-label { display:none; }
+  .di-icon { width:40px; height:40px; }
+}
 </style>
 </head>
 <body>
@@ -891,7 +1020,7 @@ html,body {
 <div class="widget" id="wg-clock">
   <div class="wg-clock-time" id="wg-time">10<em>:</em>42</div>
   <div class="wg-clock-date" id="wg-date">wednesday · may 7</div>
-  <div class="wg-clock-lang">🇫🇷 Français</div>
+  <div class="wg-clock-lang">🇬🇧 English</div>
 </div>
 
 <div class="widget" id="wg-streak">
@@ -905,11 +1034,11 @@ html,body {
 
 <div class="widget" id="wg-today">
   <div class="wg-today-label">Today's lesson</div>
-  <div class="wg-today-title">Le Subjonctif<br>Présent</div>
+  <div class="wg-today-title">Articles:<br><em style="font-style:normal;color:var(--accent)">a, an, the</em></div>
   <div class="wg-today-meta">
-    <span>🇫🇷 French</span><span>·</span><span>B2</span>
+    <span>🇬🇧 English</span><span>·</span><span>A2</span>
   </div>
-  <div class="wg-today-badge">📖 35 min</div>
+  <div class="wg-today-badge">📖 30 min</div>
   <div class="wg-today-prog">
     <div class="wg-today-prog-fill"></div>
   </div>
@@ -917,10 +1046,10 @@ html,body {
 
 <div class="widget" id="wg-vocab">
   <div class="wg-vocab-label">Word of the day</div>
-  <div class="wg-vocab-word" id="wgv-word">すごい</div>
-  <div class="wg-vocab-lang" id="wgv-lang">Japanese · Adjective</div>
-  <div class="wg-vocab-trans" id="wgv-trans">Amazing, incredible</div>
-  <div class="wg-vocab-ex" id="wgv-ex">「この景色はすごいですね。」<br><em>"This scenery is amazing."</em></div>
+  <div class="wg-vocab-word" id="wgv-word">nevertheless</div>
+  <div class="wg-vocab-lang" id="wgv-lang">English · Adverb  (рос: тем не менее)</div>
+  <div class="wg-vocab-trans" id="wgv-trans">тем не менее / проте / niemniej jednak</div>
+  <div class="wg-vocab-ex" id="wgv-ex">"Nevertheless, she kept trying."<br><em>«Тем не менее, она продолжала пытаться.»</em></div>
   <button class="wg-vocab-next" onclick="wgVocabNext()">Next word →</button>
 </div>
 
@@ -937,43 +1066,51 @@ html,body {
     <div class="win-title">📚 Curriculum</div>
   </div>
   <div class="win-body">
-    <div class="win-sidebar">
-      <div class="sb-section-label">Languages</div>
-      <div class="sb-item active" onclick="currFilter('all')">
-        <span class="sb-item-ic">🌐</span> All Courses
+    <div class="win-sidebar" id="sidebar-curriculum">
+      <div class="sb-section-label">Your Language</div>
+      <div class="sb-item active" onclick="currFilter('all',this)">
+        <span class="sb-item-ic">🌐</span> All Topics
         <span class="sb-item-badge">12</span>
       </div>
-      <div class="sb-item" onclick="currFilter('fr')">
-        <span class="sb-item-ic">🇫🇷</span> French
+      <div class="sb-item" onclick="currFilter('ru',this)">
+        <span class="sb-item-ic">🇷🇺</span> For Russian
       </div>
-      <div class="sb-item" onclick="currFilter('it')">
-        <span class="sb-item-ic">🇮🇹</span> Italian
+      <div class="sb-item" onclick="currFilter('ua',this)">
+        <span class="sb-item-ic">🇺🇦</span> For Ukrainian
       </div>
-      <div class="sb-item" onclick="currFilter('de')">
-        <span class="sb-item-ic">🇩🇪</span> German
+      <div class="sb-item" onclick="currFilter('pl',this)">
+        <span class="sb-item-ic">🇵🇱</span> For Polish
       </div>
-      <div class="sb-item" onclick="currFilter('ja')">
-        <span class="sb-item-ic">🇯🇵</span> Japanese
+      <div class="sb-section-label" style="margin-top:8px;">By Skill</div>
+      <div class="sb-item" onclick="currFilter('grammar',this)">
+        <span class="sb-item-ic">🔤</span> Grammar
+        <span class="sb-item-badge">5</span>
       </div>
-      <div class="sb-item" onclick="currFilter('es')">
-        <span class="sb-item-ic">🇪🇸</span> Spanish
+      <div class="sb-item" onclick="currFilter('vocab',this)">
+        <span class="sb-item-ic">📝</span> Vocabulary
+        <span class="sb-item-badge">4</span>
       </div>
-      <div class="sb-section-label" style="margin-top:8px;">Library</div>
-      <div class="sb-item" onclick="currFilter('saved')">
-        <span class="sb-item-ic">🔖</span> Saved
+      <div class="sb-item" onclick="currFilter('speaking',this)">
+        <span class="sb-item-ic">💬</span> Speaking
       </div>
-      <div class="sb-item" onclick="currFilter('progress')">
+      <div class="sb-section-label" style="margin-top:8px;">Progress</div>
+      <div class="sb-item" onclick="currFilter('inprogress',this)">
         <span class="sb-item-ic">⏳</span> In Progress
         <span class="sb-item-badge">3</span>
       </div>
-      <div class="sb-item" onclick="currFilter('done')">
+      <div class="sb-item" onclick="currFilter('done',this)">
         <span class="sb-item-ic">✅</span> Completed
       </div>
     </div>
     <div class="win-main" style="display:flex;flex-direction:column;">
+      <div class="mob-win-header">
+        <span style="font-size:22px;">📚</span>
+        <div class="mob-win-title">Curriculum</div>
+        <div class="mob-sidebar-btn" onclick="mobToggleSidebar('curriculum')">☰</div>
+      </div>
       <div class="curr-header">
-        <div class="curr-eyebrow">§ TeachedOS Platform</div>
-        <div class="curr-title">Language <em>Curriculum</em></div>
+        <div class="curr-eyebrow">§ English for Slavic Speakers</div>
+        <div class="curr-title">Learn <em>English</em></div>
       </div>
       <div class="curr-search">
         <span class="curr-search-ic">🔍</span>
@@ -984,68 +1121,50 @@ html,body {
         <div class="curr-tab" onclick="setTab(this,'grammar')">Grammar</div>
         <div class="curr-tab" onclick="setTab(this,'vocab')">Vocabulary</div>
         <div class="curr-tab" onclick="setTab(this,'speaking')">Speaking</div>
-        <div class="curr-tab" onclick="setTab(this,'culture')">Culture</div>
+        <div class="curr-tab" onclick="setTab(this,'mistakes')">Common Mistakes</div>
       </div>
       <div class="curr-grid" id="curr-grid">
         <div class="lesson-card">
-          <div class="lc-lang">🇫🇷 French</div>
-          <div class="lc-title">Le Subjonctif Présent</div>
-          <div class="lc-desc">Master the subjunctive mood — expressing doubt, emotion, and subjectivity in everyday speech.</div>
-          <div class="lc-meta">
-            <span class="lc-level b2">B2</span>
-            <span class="lc-dur">35 min</span>
-          </div>
-          <div class="lc-prog"><div class="lc-prog-fill" style="width:68%"></div></div>
+          <div class="lc-lang">🇷🇺🇺🇦🇵🇱 → 🇬🇧 Grammar</div>
+          <div class="lc-title">Articles: a, an, the</div>
+          <div class="lc-desc">The biggest challenge for Slavic speakers — English has three articles where Russian, Ukrainian and Polish have none. Master when to use each one.</div>
+          <div class="lc-meta"><span class="lc-level a2">A2</span><span class="lc-dur">30 min</span></div>
+          <div class="lc-prog"><div class="lc-prog-fill" style="width:72%"></div></div>
         </div>
         <div class="lesson-card">
-          <div class="lc-lang">🇮🇹 Italian</div>
-          <div class="lc-title">Il Congiuntivo</div>
-          <div class="lc-desc">Learn the Italian subjunctive and unlock complex sentence structures for nuanced expression.</div>
-          <div class="lc-meta">
-            <span class="lc-level b1">B1</span>
-            <span class="lc-dur">40 min</span>
-          </div>
-          <div class="lc-prog"><div class="lc-prog-fill" style="width:32%"></div></div>
+          <div class="lc-lang">🇷🇺🇺🇦🇵🇱 → 🇬🇧 Grammar</div>
+          <div class="lc-title">English Tenses vs. Slavic Aspect</div>
+          <div class="lc-desc">Why English has 12 tenses but Slavic languages use aspect (доконаний / недоконаний). Map your intuition to the English tense system.</div>
+          <div class="lc-meta"><span class="lc-level b1">B1</span><span class="lc-dur">45 min</span></div>
+          <div class="lc-prog"><div class="lc-prog-fill" style="width:48%"></div></div>
         </div>
         <div class="lesson-card">
-          <div class="lc-lang">🇯🇵 Japanese</div>
-          <div class="lc-title">て-Form Connections</div>
-          <div class="lc-desc">Chain actions and describe sequences using the versatile て-form in natural conversation.</div>
-          <div class="lc-meta">
-            <span class="lc-level a2">A2</span>
-            <span class="lc-dur">25 min</span>
-          </div>
+          <div class="lc-lang">🇷🇺🇺🇦🇵🇱 → 🇬🇧 Vocabulary</div>
+          <div class="lc-title">Phrasal Verbs: get, make, take, do</div>
+          <div class="lc-desc">The four most essential phrasal verb families in everyday English. Get up, get over, get through — learn them with context, not lists.</div>
+          <div class="lc-meta"><span class="lc-level b1">B1</span><span class="lc-dur">35 min</span></div>
           <div class="lc-prog"><div class="lc-prog-fill" style="width:90%"></div></div>
         </div>
         <div class="lesson-card">
-          <div class="lc-lang">🇩🇪 German</div>
-          <div class="lc-title">Der Konjunktiv II</div>
-          <div class="lc-desc">Express hypothetical scenarios and polite requests with the German subjunctive mood.</div>
-          <div class="lc-meta">
-            <span class="lc-level b2">B2</span>
-            <span class="lc-dur">45 min</span>
-          </div>
-          <div class="lc-prog"><div class="lc-prog-fill" style="width:0%"></div></div>
-        </div>
-        <div class="lesson-card">
-          <div class="lc-lang">🇫🇷 French</div>
-          <div class="lc-title">Les Faux Amis</div>
-          <div class="lc-desc">Navigate false cognates between French and English — words that look familiar but mean something entirely different.</div>
-          <div class="lc-meta">
-            <span class="lc-level b1">B1</span>
-            <span class="lc-dur">20 min</span>
-          </div>
+          <div class="lc-lang">🇷🇺🇺🇦🇵🇱 → 🇬🇧 Grammar</div>
+          <div class="lc-title">Prepositions: at / in / on</div>
+          <div class="lc-desc">English prepositions don't map to Russian «в», Ukrainian «у» or Polish «w/na». Learn the logic of place, time, and manner prepositions.</div>
+          <div class="lc-meta"><span class="lc-level a2">A2</span><span class="lc-dur">25 min</span></div>
           <div class="lc-prog"><div class="lc-prog-fill" style="width:100%"></div></div>
         </div>
         <div class="lesson-card">
-          <div class="lc-lang">🇪🇸 Spanish</div>
-          <div class="lc-title">Ser vs. Estar</div>
-          <div class="lc-desc">Finally master the distinction between permanent and temporary states of being in Spanish.</div>
-          <div class="lc-meta">
-            <span class="lc-level a2">A2</span>
-            <span class="lc-dur">30 min</span>
-          </div>
-          <div class="lc-prog"><div class="lc-prog-fill" style="width:55%"></div></div>
+          <div class="lc-lang">🇷🇺🇺🇦🇵🇱 → 🇬🇧 Mistakes</div>
+          <div class="lc-title">Word Order: No Flexibility</div>
+          <div class="lc-desc">In English, word order is fixed — SVO. Unlike Russian/Ukrainian/Polish where you can move words freely, English requires strict sentence structure.</div>
+          <div class="lc-meta"><span class="lc-level a2">A2</span><span class="lc-dur">20 min</span></div>
+          <div class="lc-prog"><div class="lc-prog-fill" style="width:35%"></div></div>
+        </div>
+        <div class="lesson-card">
+          <div class="lc-lang">🇷🇺🇺🇦🇵🇱 → 🇬🇧 Vocabulary</div>
+          <div class="lc-title">False Friends: RU/UA/PL → EN</div>
+          <div class="lc-desc">«Магазин» is not a magazine. «Фабрика» is not a fabric. «Aktualny» doesn't mean actual. The most dangerous false cognates for Slavic speakers.</div>
+          <div class="lc-meta"><span class="lc-level b1">B1</span><span class="lc-dur">30 min</span></div>
+          <div class="lc-prog"><div class="lc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
     </div>
@@ -1065,12 +1184,15 @@ html,body {
   <div class="win-body">
     <div class="win-main">
       <div class="fc-wrap">
+        <div class="mob-win-header">
+          <span style="font-size:22px;">🗂️</span>
+          <div class="mob-win-title">Flashcards</div>
+        </div>
         <div class="fc-set-picker" id="fc-sets">
-          <div class="fc-set active" onclick="fcLoadSet(this,'fr')">🇫🇷 French</div>
-          <div class="fc-set" onclick="fcLoadSet(this,'it')">🇮🇹 Italian</div>
-          <div class="fc-set" onclick="fcLoadSet(this,'ja')">🇯🇵 Japanese</div>
-          <div class="fc-set" onclick="fcLoadSet(this,'de')">🇩🇪 German</div>
-          <div class="fc-set" onclick="fcLoadSet(this,'es')">🇪🇸 Spanish</div>
+          <div class="fc-set active" onclick="fcLoadSet(this,'ru')">🇷🇺 Russian</div>
+          <div class="fc-set" onclick="fcLoadSet(this,'ua')">🇺🇦 Ukrainian</div>
+          <div class="fc-set" onclick="fcLoadSet(this,'pl')">🇵🇱 Polish</div>
+          <div class="fc-set" onclick="fcLoadSet(this,'mistakes')">⚠️ Mistakes</div>
         </div>
         <div class="fc-progress-bar">
           <div class="fc-progress-fill" id="fc-prog" style="width:20%"></div>
@@ -1113,7 +1235,11 @@ html,body {
     <div class="win-title">📊 Progress</div>
   </div>
   <div class="win-body">
-    <div class="win-main">
+    <div class="win-main" style="flex-direction:column;">
+      <div class="mob-win-header">
+        <span style="font-size:22px;">📊</span>
+        <div class="mob-win-title">Progress</div>
+      </div>
       <div class="prog-body">
         <div class="prog-stats">
           <div class="prog-stat">
@@ -1135,32 +1261,32 @@ html,body {
         </div>
 
         <div>
-          <div class="prog-section-title">Language <em>Progress</em></div>
+          <div class="prog-section-title">English <em>Skills</em></div>
           <div class="prog-langs">
             <div class="prog-lang-row">
-              <span class="prog-lang-name">🇫🇷 French</span>
+              <span class="prog-lang-name">🔤 Grammar</span>
               <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:72%"></div></div>
               <span class="prog-lang-pct">72%</span>
             </div>
             <div class="prog-lang-row">
-              <span class="prog-lang-name">🇮🇹 Italian</span>
-              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:48%"></div></div>
-              <span class="prog-lang-pct">48%</span>
+              <span class="prog-lang-name">📝 Vocabulary</span>
+              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:58%"></div></div>
+              <span class="prog-lang-pct">58%</span>
             </div>
             <div class="prog-lang-row">
-              <span class="prog-lang-name">🇯🇵 Japanese</span>
-              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:35%"></div></div>
-              <span class="prog-lang-pct">35%</span>
+              <span class="prog-lang-name">📖 Reading</span>
+              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:65%"></div></div>
+              <span class="prog-lang-pct">65%</span>
             </div>
             <div class="prog-lang-row">
-              <span class="prog-lang-name">🇩🇪 German</span>
-              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:18%"></div></div>
-              <span class="prog-lang-pct">18%</span>
+              <span class="prog-lang-name">🎧 Listening</span>
+              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:44%"></div></div>
+              <span class="prog-lang-pct">44%</span>
             </div>
             <div class="prog-lang-row">
-              <span class="prog-lang-name">🇪🇸 Spanish</span>
-              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:55%"></div></div>
-              <span class="prog-lang-pct">55%</span>
+              <span class="prog-lang-name">💬 Speaking</span>
+              <div class="prog-lang-bar"><div class="prog-lang-fill" style="width:38%"></div></div>
+              <span class="prog-lang-pct">38%</span>
             </div>
           </div>
         </div>
@@ -1215,7 +1341,7 @@ html,body {
             <div class="prog-ach">
               <div class="prog-ach-ic">🎯</div>
               <div class="prog-ach-name">Sharpshooter</div>
-              <div class="prog-ach-desc">95% accuracy in French</div>
+              <div class="prog-ach-desc">95% accuracy in Grammar</div>
             </div>
             <div class="prog-ach locked">
               <div class="prog-ach-ic">🌟</div>
@@ -1250,7 +1376,11 @@ html,body {
     <div class="win-title">📅 Schedule</div>
   </div>
   <div class="win-body">
-    <div class="win-main">
+    <div class="win-main" style="flex-direction:column;">
+      <div class="mob-win-header">
+        <span style="font-size:22px;">📅</span>
+        <div class="mob-win-title">Schedule</div>
+      </div>
       <div class="sch-body">
         <div class="sch-nav">
           <button class="sch-nav-btn" onclick="schPrev()">‹</button>
@@ -1282,14 +1412,19 @@ html,body {
     </div>
     <div class="win-title">✍️ Notes</div>
   </div>
-  <div class="win-body">
-    <div class="win-sidebar notes-sidebar">
+  <div class="win-body" style="position:relative;">
+    <div class="win-sidebar notes-sidebar" id="sidebar-notes">
       <div class="notes-new-btn" onclick="notesNew()">
         <span>+</span> New Note
       </div>
       <div class="notes-list" id="notes-list"></div>
     </div>
     <div class="win-main notes-editor" style="display:flex;flex-direction:column;">
+      <div class="mob-win-header">
+        <span style="font-size:22px;">✍️</span>
+        <div class="mob-win-title">Notes</div>
+        <div class="mob-sidebar-btn" onclick="mobToggleSidebar('notes')">☰</div>
+      </div>
       <div class="notes-toolbar">
         <div class="notes-tb-btn" title="Bold">𝐁</div>
         <div class="notes-tb-btn" title="Italic">𝑰</div>
@@ -1321,44 +1456,45 @@ html,body {
     <div class="win-title">🌐 Dictionary</div>
   </div>
   <div class="win-body">
-    <div class="win-main">
+    <div class="win-main" style="flex-direction:column;">
+      <div class="mob-win-header">
+        <span style="font-size:22px;">🌐</span>
+        <div class="mob-win-title">Dictionary</div>
+      </div>
       <div class="dict-body">
         <div class="dict-search-wrap">
-          <input type="text" placeholder="Search a word…" id="dict-input" onkeydown="if(event.key==='Enter')dictLookup()">
+          <input type="text" placeholder="Search an English word…" id="dict-input" onkeydown="if(event.key==='Enter')dictLookup()">
           <select class="dict-lang-select" id="dict-lang">
-            <option>🇫🇷 FR</option>
-            <option>🇮🇹 IT</option>
-            <option>🇯🇵 JA</option>
-            <option>🇩🇪 DE</option>
-            <option>🇪🇸 ES</option>
+            <option>🇷🇺 RU</option>
+            <option>🇺🇦 UA</option>
+            <option>🇵🇱 PL</option>
           </select>
         </div>
         <div class="dict-result" id="dict-result">
-          <div class="dict-word">lumière</div>
-          <div class="dict-phonetic">/ly.mjɛʁ/</div>
-          <div class="dict-pos">noun · feminine</div>
-          <div class="dict-def">1. Light; the natural agent that stimulates sight and makes things visible.</div>
-          <div class="dict-example">« La lumière du soleil filtre à travers les nuages. »<br><em>"Sunlight filters through the clouds."</em></div>
-          <div class="dict-def">2. (figurative) Enlightenment; intellectual or moral illumination.</div>
-          <div class="dict-example">« La lumière de la raison nous guide. »<br><em>"The light of reason guides us."</em></div>
+          <div class="dict-word">opportunity</div>
+          <div class="dict-phonetic">/ˌɒp.əˈtʃuː.nɪ.ti/</div>
+          <div class="dict-pos">noun · countable</div>
+          <div class="dict-def">1. A time or set of circumstances that makes it possible to do something.</div>
+          <div class="dict-example">"This is a great opportunity to practise your English."<br><em>«Это отличная возможность попрактиковаться в английском.»</em></div>
+          <div class="dict-def">2. ⚠️ False friend: Polish "okazja" = opportunity (not "occasion"!)</div>
+          <div class="dict-example">"Don't miss this opportunity."<br><em>«Не упускайте эту возможность. / Не пропускайте цю можливість.»</em></div>
           <div style="font-size:12px;color:var(--text-3);margin-bottom:8px;font-family:var(--font-mono);">Synonyms</div>
           <div class="dict-syns">
-            <div class="dict-syn">clarté</div>
-            <div class="dict-syn">éclat</div>
-            <div class="dict-syn">lueur</div>
-            <div class="dict-syn">rayonnement</div>
-            <div class="dict-syn">illumination</div>
+            <div class="dict-syn" onclick="dictSetWord('chance')">chance</div>
+            <div class="dict-syn" onclick="dictSetWord('possibility')">possibility</div>
+            <div class="dict-syn" onclick="dictSetWord('occasion')">occasion</div>
+            <div class="dict-syn" onclick="dictSetWord('prospect')">prospect</div>
           </div>
           <button class="dict-save-btn" onclick="dictSave()">🔖 Save to Flashcards</button>
         </div>
         <div>
           <div class="dict-history-label">Recent Searches</div>
           <div class="dict-history" id="dict-history">
-            <div class="dict-hist-item" onclick="dictSetWord('lumière')">lumière</div>
-            <div class="dict-hist-item" onclick="dictSetWord('magnifique')">magnifique</div>
-            <div class="dict-hist-item" onclick="dictSetWord('toujours')">toujours</div>
-            <div class="dict-hist-item" onclick="dictSetWord('belle')">belle</div>
-            <div class="dict-hist-item" onclick="dictSetWord('なるほど')">なるほど</div>
+            <div class="dict-hist-item" onclick="dictSetWord('opportunity')">opportunity</div>
+            <div class="dict-hist-item" onclick="dictSetWord('nevertheless')">nevertheless</div>
+            <div class="dict-hist-item" onclick="dictSetWord('despite')">despite</div>
+            <div class="dict-hist-item" onclick="dictSetWord('although')">although</div>
+            <div class="dict-hist-item" onclick="dictSetWord('eventually')">eventually</div>
           </div>
         </div>
       </div>
@@ -1377,7 +1513,11 @@ html,body {
     <div class="win-title">About TeachedOS</div>
   </div>
   <div class="win-body">
-    <div class="win-main">
+    <div class="win-main" style="flex-direction:column;">
+      <div class="mob-win-header">
+        <span style="font-size:22px;">🌸</span>
+        <div class="mob-win-title">About</div>
+      </div>
       <div class="about-body">
         <div class="about-logo">🌸</div>
         <div class="about-name">Teached<em>OS</em></div>
@@ -1410,8 +1550,8 @@ html,body {
     </div>
     <div class="win-title">🪄 Teaching Tools</div>
   </div>
-  <div class="win-body">
-    <div class="win-sidebar">
+  <div class="win-body" style="position:relative;">
+    <div class="win-sidebar" id="sidebar-tools">
       <div class="sb-section-label">All Skills</div>
       <div class="sb-item active" id="tg-all" onclick="toolsFilter('all',this)">
         <span class="sb-item-ic">✦</span> All Tools
@@ -1426,15 +1566,20 @@ html,body {
       <div class="sb-item" id="tg-grammar"    onclick="toolsFilter('grammar',this)">   <span class="sb-item-ic">🔤</span> Grammar    <span class="sb-item-badge" style="background:rgba(248,113,113,.3);color:#f87171;">3</span></div>
       <div class="sb-item" id="tg-utility"    onclick="toolsFilter('utility',this)">   <span class="sb-item-ic">⚙️</span> Utility    <span class="sb-item-badge" style="background:rgba(156,163,175,.2);color:#9ca3af;">2</span></div>
     </div>
-    <div class="win-main" style="padding:20px 20px;">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+    <div class="win-main" style="padding:0;flex-direction:column;">
+      <div class="mob-win-header">
+        <span style="font-size:22px;">🪄</span>
+        <div class="mob-win-title">Teaching Tools</div>
+        <div class="mob-sidebar-btn" onclick="mobToggleSidebar('tools')">☰</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:20px 20px 0;">
         <div>
           <div style="font-size:10px;font-family:var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px;">§ Twee-inspired</div>
           <div style="font-family:var(--font-serif);font-size:22px;font-weight:600;color:var(--text);">Teaching <em style="color:var(--accent);font-style:italic;">Tools</em></div>
         </div>
         <div style="margin-left:auto;font-size:11px;font-family:var(--font-mono);color:var(--text-3);" id="tools-count">14 tools</div>
       </div>
-      <div id="tools-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;"></div>
+      <div id="tools-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 20px 20px;"></div>
     </div>
   </div>
 </div>
@@ -1567,43 +1712,40 @@ function bringToFront(id) {
 
 /* ══════════════════════ FLASHCARDS ══════════════════════ */
 const FC_DATA = {
-  fr: [
-    { word:'la lumière', lang:'🇫🇷 French · Noun', trans:'light', ex:'La lumière du soleil était magnifique.\n"The sunlight was magnificent."' },
-    { word:'magnifique', lang:'🇫🇷 French · Adjective', trans:'magnificent, wonderful', ex:'C\'est une soirée magnifique.\n"It\'s a wonderful evening."' },
-    { word:'toujours', lang:'🇫🇷 French · Adverb', trans:'always, still', ex:'Elle chante toujours le matin.\n"She always sings in the morning."' },
-    { word:'le souvenir', lang:'🇫🇷 French · Noun', trans:'memory, souvenir', ex:'J\'ai de bons souvenirs de ce voyage.\n"I have good memories of this trip."' },
-    { word:'doucement', lang:'🇫🇷 French · Adverb', trans:'softly, gently', ex:'Parle doucement, s\'il te plaît.\n"Please speak softly."' },
+  ru: [
+    { word:'свет / light', lang:'🇷🇺 → 🇬🇧  Noun', trans:'light', ex:'"Turn off the light, please."\n«Выключи свет, пожалуйста.»' },
+    { word:'успех / success', lang:'🇷🇺 → 🇬🇧  Noun', trans:'success', ex:'"Hard work leads to success."\n«Тяжёлый труд ведёт к успеху.»' },
+    { word:'запомнить / to remember', lang:'🇷🇺 → 🇬🇧  Verb', trans:'to remember / to memorise', ex:'"I can\'t remember his name."\n«Я не могу вспомнить его имя.»' },
+    { word:'на самом деле', lang:'🇷🇺 → 🇬🇧  Phrase', trans:'actually / in fact', ex:'"Actually, I don\'t agree."\n«На самом деле, я не согласен.»' },
+    { word:'возможность', lang:'🇷🇺 → 🇬🇧  Noun', trans:'opportunity / possibility', ex:'"This is a great opportunity."\n«Это отличная возможность.»' },
+    { word:'несмотря на', lang:'🇷🇺 → 🇬🇧  Preposition', trans:'despite / in spite of', ex:'"Despite the rain, we went out."\n«Несмотря на дождь, мы вышли.»' },
   ],
-  it: [
-    { word:'la luce', lang:'🇮🇹 Italian · Noun', trans:'light', ex:'La luce del sole è bellissima.\n"The sunlight is beautiful."' },
-    { word:'sempre', lang:'🇮🇹 Italian · Adverb', trans:'always', ex:'Rido sempre con te.\n"I always laugh with you."' },
-    { word:'bellissimo', lang:'🇮🇹 Italian · Adjective', trans:'very beautiful', ex:'Che paesaggio bellissimo!\n"What a beautiful landscape!"' },
-    { word:'il ricordo', lang:'🇮🇹 Italian · Noun', trans:'memory, recollection', ex:'Ho bei ricordi dell\'Italia.\n"I have good memories of Italy."' },
-    { word:'piano', lang:'🇮🇹 Italian · Adverb', trans:'slowly, softly', ex:'Parla più piano, per favore.\n"Please speak more slowly."' },
+  ua: [
+    { word:'світло / light', lang:'🇺🇦 → 🇬🇧  Noun', trans:'light', ex:'"The light in this room is great."\n«Світло в цій кімнаті чудове.»' },
+    { word:'насправді', lang:'🇺🇦 → 🇬🇧  Adverb', trans:'actually / in fact', ex:'"Actually, that\'s not right."\n«Насправді, це не правильно.»' },
+    { word:'можливість', lang:'🇺🇦 → 🇬🇧  Noun', trans:'opportunity', ex:'"Don\'t miss this opportunity."\n«Не пропусти цю можливість.»' },
+    { word:'незважаючи на', lang:'🇺🇦 → 🇬🇧  Preposition', trans:'despite / regardless of', ex:'"Despite the cold, she ran."\n«Незважаючи на холод, вона бігла.»' },
+    { word:'поводитися', lang:'🇺🇦 → 🇬🇧  Verb', trans:'to behave', ex:'"Please behave yourself."\n«Будь ласка, поводься добре.»' },
+    { word:'досвід', lang:'🇺🇦 → 🇬🇧  Noun', trans:'experience', ex:'"She has a lot of experience."\n«Вона має великий досвід.»' },
   ],
-  ja: [
-    { word:'すごい', lang:'🇯🇵 Japanese · Adjective', trans:'amazing, incredible', ex:'この景色はすごいですね。\n"This scenery is amazing."' },
-    { word:'なるほど', lang:'🇯🇵 Japanese · Interjection', trans:'I see, I understand', ex:'なるほど、そういうことか。\n"Ah, I see, that\'s how it is."' },
-    { word:'丁寧 (ていねい)', lang:'🇯🇵 Japanese · Adjective', trans:'polite, careful', ex:'彼女はとても丁寧です。\n"She is very polite."' },
-    { word:'雰囲気 (ふんいき)', lang:'🇯🇵 Japanese · Noun', trans:'atmosphere, vibe', ex:'このカフェの雰囲気が好き。\n"I love the atmosphere of this café."' },
-    { word:'懐かしい (なつかしい)', lang:'🇯🇵 Japanese · Adjective', trans:'nostalgic, dear to one\'s heart', ex:'この曲は懐かしいな。\n"This song brings back memories."' },
+  pl: [
+    { word:'światło / light', lang:'🇵🇱 → 🇬🇧  Noun', trans:'light', ex:'"Switch on the light."\n«Włącz światło.»' },
+    { word:'właściwie', lang:'🇵🇱 → 🇬🇧  Adverb', trans:'actually / properly', ex:'"Actually, I changed my mind."\n«Właściwie, zmieniłem zdanie.»' },
+    { word:'mimo że', lang:'🇵🇱 → 🇬🇧  Conjunction', trans:'although / even though', ex:'"Although it was late, he called."\n«Mimo że było późno, zadzwonił.»' },
+    { word:'doświadczenie', lang:'🇵🇱 → 🇬🇧  Noun', trans:'experience', ex:'"Work experience is important."\n«Doświadczenie zawodowe jest ważne.»' },
+    { word:'zachowywać się', lang:'🇵🇱 → 🇬🇧  Verb', trans:'to behave', ex:'"Children, behave yourselves!"\n«Dzieci, zachowujcie się!»' },
+    { word:'okazja', lang:'🇵🇱 → 🇬🇧  Noun', trans:'opportunity (NOT occasion!)', ex:'"This is a great opportunity."\n«To świetna okazja.» ⚠️ False friend!' },
   ],
-  de: [
-    { word:'das Licht', lang:'🇩🇪 German · Noun', trans:'light', ex:'Das Licht der Sonne scheint hell.\n"The light of the sun shines bright."' },
-    { word:'wunderschön', lang:'🇩🇪 German · Adjective', trans:'wonderfully beautiful', ex:'Der Abend war wunderschön.\n"The evening was wonderfully beautiful."' },
-    { word:'immer', lang:'🇩🇪 German · Adverb', trans:'always', ex:'Sie lacht immer.\n"She always laughs."' },
-    { word:'die Erinnerung', lang:'🇩🇪 German · Noun', trans:'memory, recollection', ex:'Ich habe schöne Erinnerungen.\n"I have beautiful memories."' },
-    { word:'sanft', lang:'🇩🇪 German · Adjective', trans:'soft, gentle', ex:'Er hat eine sanfte Stimme.\n"He has a gentle voice."' },
-  ],
-  es: [
-    { word:'la luz', lang:'🇪🇸 Spanish · Noun', trans:'light', ex:'La luz del sol era preciosa.\n"The sunlight was precious."' },
-    { word:'siempre', lang:'🇪🇸 Spanish · Adverb', trans:'always', ex:'Siempre recuerdo ese día.\n"I always remember that day."' },
-    { word:'precioso', lang:'🇪🇸 Spanish · Adjective', trans:'precious, beautiful', ex:'¡Qué paisaje tan precioso!\n"What a beautiful landscape!"' },
-    { word:'el recuerdo', lang:'🇪🇸 Spanish · Noun', trans:'memory, souvenir', ex:'Tengo buenos recuerdos de aquella época.\n"I have good memories of that time."' },
-    { word:'suave', lang:'🇪🇸 Spanish · Adjective', trans:'soft, gentle', ex:'Habla con voz suave.\n"She speaks in a gentle voice."' },
+  mistakes: [
+    { word:'I am agree ❌', lang:'⚠️ Common Mistake · Grammar', trans:'I agree ✓', ex:'"I agree with you completely."\n❌ "I am agree" — agree is a verb, not adjective!' },
+    { word:'магазин → magazine ❌', lang:'⚠️ False Friend · RU/UA', trans:'магазин = shop / store ✓', ex:'"Let\'s go to the shop."\n❌ magazine = журнал, not магазин!' },
+    { word:'он живёт здесь since… ❌', lang:'⚠️ Tense Mistake · RU', trans:'He has lived here since… ✓', ex:'"He has lived here since 2010."\n❌ Use Present Perfect, not Present Simple!' },
+    { word:'make homework ❌', lang:'⚠️ Collocation · RU/UA/PL', trans:'do homework ✓', ex:'"Did you do your homework?"\n❌ "make homework" — it\'s always DO homework!' },
+    { word:'aktualny → actual ❌', lang:'⚠️ False Friend · PL', trans:'aktualny = current / up-to-date ✓', ex:'"The current news is…"\n❌ actual = prawdziwy/rzeczywisty in Polish!' },
+    { word:'very much like ❌', lang:'⚠️ Word Order · RU/UA', trans:'like very much ✓', ex:'"I like it very much."\n❌ "I very much like" — adverb after verb object!' },
   ],
 };
-let fcSet = 'fr', fcIdx = 0, fcFlipped = false;
+let fcSet = 'ru', fcIdx = 0, fcFlipped = false;
 
 function fcLoadSet(el, lang) {
   document.querySelectorAll('.fc-set').forEach(s=>s.classList.remove('active'));
@@ -1644,12 +1786,13 @@ fcShow();
 
 /* ══════════════════════ VOCAB WIDGET ══════════════════════ */
 const WG_VOCAB = [
-  { word:'すごい', lang:'Japanese · Adjective', trans:'Amazing, incredible', ex:'「この景色はすごいですね。」\n"This scenery is amazing."' },
-  { word:'magnifique', lang:'French · Adjective', trans:'Magnificent, wonderful', ex:'C\'est une soirée magnifique.\n"It\'s a wonderful evening."' },
-  { word:'bellissimo', lang:'Italian · Adjective', trans:'Very beautiful', ex:'Che paesaggio bellissimo!\n"What a beautiful landscape!"' },
-  { word:'wunderschön', lang:'German · Adjective', trans:'Wonderfully beautiful', ex:'Der Abend war wunderschön.\n"The evening was beautiful."' },
-  { word:'siempre', lang:'Spanish · Adverb', trans:'Always', ex:'Siempre recuerdo ese día.\n"I always remember that day."' },
-  { word:'なるほど', lang:'Japanese · Interjection', trans:'I see, I understand', ex:'なるほど、そういうことか。\n"Ah, I see."' },
+  { word:'nevertheless', lang:'English · Adverb  (рос: тем не менее)', trans:'тем не менее / проте / niemniej jednak', ex:'"Nevertheless, she kept trying."\n«Тем не менее, она продолжала пытаться.»' },
+  { word:'although', lang:'English · Conjunction  (укр: хоча)', trans:'хотя / хоча / chociaż', ex:'"Although it was hard, she passed."\n«Хоча це було важко, вона склала.»' },
+  { word:'eventually', lang:'English · Adverb  (не "eventually" ≠ "possibly"!)', trans:'в конце концов / врешті-решт / w końcu', ex:'"Eventually, he found a job."\n«В конце концов он нашёл работу.»' },
+  { word:'throughout', lang:'English · Preposition', trans:'на протяжении / протягом / przez cały', ex:'"Throughout the year, she studied hard."\n«Протягом року вона наполегливо вчилась.»' },
+  { word:'opportunity', lang:'English · Noun  (≠ "possibility")', trans:'возможность / можливість / okazja', ex:'"This is a great opportunity."\n«Це чудова можливість.»' },
+  { word:'despite', lang:'English · Preposition  (укр: незважаючи на)', trans:'несмотря на / незважаючи на / mimo', ex:'"Despite the rain, he came."\n«Незважаючи на дощ, він прийшов.»' },
+  { word:'whereas', lang:'English · Conjunction', trans:'тогда как / тоді як / podczas gdy', ex:'"She likes tea, whereas he prefers coffee."\n«Вона любить чай, тоді як він воліє каву.»' },
 ];
 let wgVocabIdx = 0;
 function wgVocabNext() {
@@ -1665,17 +1808,19 @@ function wgVocabNext() {
 /* ══════════════════════ SCHEDULE ══════════════════════ */
 let schYear = 2026, schMonth = 4; // 0-indexed, May = 4
 const EVENTS = {
-  '2026-5-7':  [{ text:'French · B2', cls:'' }],
+  '2026-5-7':  [{ text:'Articles · A2', cls:'' }],
   '2026-5-8':  [{ text:'Vocab Review', cls:'green' }],
-  '2026-5-10': [{ text:'Italian · B1', cls:'' }, { text:'Flashcards', cls:'blue' }],
-  '2026-5-13': [{ text:'German · B2', cls:'' }],
+  '2026-5-10': [{ text:'Tenses · B1', cls:'' }, { text:'Flashcards', cls:'blue' }],
+  '2026-5-12': [{ text:'False Friends', cls:'' }],
+  '2026-5-13': [{ text:'Phrasal Verbs', cls:'' }],
   '2026-5-14': [{ text:'Speaking Club', cls:'green' }],
-  '2026-5-15': [{ text:'Japanese N3', cls:'' }],
+  '2026-5-15': [{ text:'Word Order · B1', cls:'' }],
   '2026-5-17': [{ text:'Grammar Test', cls:'blue' }],
-  '2026-5-20': [{ text:'French · B2', cls:'' }],
+  '2026-5-19': [{ text:'Prepositions · A2', cls:'' }],
+  '2026-5-20': [{ text:'Tenses · B1', cls:'' }],
   '2026-5-21': [{ text:'Vocab Review', cls:'green' }],
-  '2026-5-24': [{ text:'Italian · B1', cls:'' }],
-  '2026-5-27': [{ text:'Spanish · A2', cls:'' }],
+  '2026-5-24': [{ text:'Listening · B1', cls:'' }],
+  '2026-5-27': [{ text:'Speaking · A2', cls:'' }],
   '2026-5-28': [{ text:'Speaking Club', cls:'green' }],
 };
 const SCH_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -1729,9 +1874,9 @@ schRender();
 
 /* ══════════════════════ NOTES ══════════════════════ */
 const NOTES = [
-  { id:1, title:'Subjonctif Notes', preview:'The subjunctive mood expresses…', content:'The subjunctive mood (le subjonctif) is used to express:\n\n• Doubt or uncertainty: «Je doute qu\'il vienne.»\n• Emotion: «Je suis content que tu sois là.»\n• Necessity: «Il faut que tu étudies.»\n• Possibility: «Il est possible qu\'il pleuve.»\n\nKey conjunctions:\n- bien que (although)\n- pour que (so that)\n- avant que (before)\n- à moins que (unless)\n\nFormation: stem from ils/elles present + subjunctive endings:\n-e, -es, -e, -ions, -iez, -ent', date:'May 6' },
-  { id:2, title:'Italian False Friends', preview:'Parenti ≠ parents…', content:'Falsi amici — Italian False Friends:\n\n• parenti = relatives (NOT parents)\n  → genitori = parents\n\n• sensibile = sensitive (NOT sensible)\n  → ragionevole = sensible\n\n• attuale = current (NOT actual)\n  → effettivo / reale = actual\n\n• eventuale = possible (NOT eventual)\n  → finale = eventual\n\n• preservativo = condom (NOT preservative)\n  → conservante = preservative\n\nAlways double-check cognates!', date:'May 4' },
-  { id:3, title:'Japanese て-Form', preview:'Connect actions with て…', content:'て-Form (te-form) Usage:\n\n1. Sequential actions:\n   食べてから寝る → eat, then sleep\n\n2. Simultaneous actions:\n   音楽を聴きながら勉強する → study while listening\n\n3. て + いる (ongoing state):\n   雨が降っている → it is raining\n\n4. て + みる (try doing):\n   食べてみる → try eating\n\n5. て + あげる/もらう/くれる (giving/receiving)\n\nConjugation rules:\n• う/つ/る → って\n• ぬ/ぶ/む → んで\n• く → いて\n• ぐ → いで\n• す → して\n• くる → きて\n• する → して', date:'May 2' },
+  { id:1, title:'Articles: a / an / the', preview:'No articles in RU/UA/PL — the hardest part…', content:'ARTICLES IN ENGLISH\n——————————————————————\nRussian, Ukrainian and Polish have NO articles.\nThis makes them the #1 difficulty for Slavic speakers.\n\nRULES:\n\n① Indefinite article — A / AN\n  Use when mentioning something for the FIRST time\n  or when it\'s ONE of many:\n  "I saw a dog." (any dog, first mention)\n  "She is a teacher." (one of many teachers)\n  → A before consonant sounds: a book, a university\n  → AN before vowel sounds: an apple, an hour\n\n② Definite article — THE\n  Use when both speaker and listener know WHICH one:\n  "The dog I saw was huge." (we both know which dog)\n  "Pass me the salt." (the one on the table)\n  Use with: unique things (the Sun, the President)\n  superlatives (the best, the most)\n\n③ Zero article — Ø (no article)\n  Use with: plural general nouns: "Dogs are loyal."\n  uncountable nouns: "Water is essential."\n  proper names: "Moscow", "Ukraine"\n  languages: "I speak English."\n\nCOMMON MISTAKES:\n  ❌ "I am student" → ✓ "I am a student"\n  ❌ "She went to hospital" (UK) / ✓ "to the hospital" (US)\n  ❌ "The life is beautiful" → ✓ "Life is beautiful"', date:'May 7' },
+  { id:2, title:'False Friends: RU/UA/PL → EN', preview:'Магазин ≠ magazine, актуальний ≠ actual…', content:'FALSE FRIENDS — НЕБЕЗПЕЧНІ СЛОВА\n——————————————————————\nWords that LOOK similar but mean something DIFFERENT:\n\nRUSSIAN / UKRAINIAN:\n• магазин → SHOP (not "magazine" = журнал)\n• фабрика → FACTORY (not "fabric" = ткань/тканина)\n• актуальный/актуальний → CURRENT/RELEVANT\n  (not "actual" = настоящий/справжній)\n• симпатичный → NICE-LOOKING, CUTE\n  (not "sympathetic" = сочувствующий)\n• конспект → LECTURE NOTES\n  (not "conspect" — not an English word!)\n• декада → TEN DAYS (not "decade" = десятилетие)\n• аккуратный → NEAT, TIDY (not "accurate" = точный)\n\nPOLISH:\n• aktualny → CURRENT (not "actual" = rzeczywisty)\n• okazja → OPPORTUNITY (not "occasion" = okazja też!)\n• ewentualnie → POSSIBLY / OR ELSE\n  (not "eventually" = w końcu)\n• konkurs → COMPETITION (not "concourse")\n• sympatyczny → NICE, LIKEABLE (not "sympathetic")\n• recepta → PRESCRIPTION (not "receipt" = paragon)\n\n⚠️ RULE: Never assume a similar-looking word means\nthe same thing. Always check!', date:'May 6' },
+  { id:3, title:'English Tenses vs. Slavic Aspect', preview:'Why English has 12 tenses…', content:'ENGLISH TENSES vs. SLAVIC VERBAL ASPECT\n——————————————————————\nSlavic languages use ASPECT (вид дієслова):\n  доконаний (perfective) = completed action\n  недоконаний (imperfective) = ongoing/repeated\n\nEnglish uses TENSE + ASPECT combinations:\n\nPRESENT:\n  Simple:     "I work" — general truth / habit\n  Continuous: "I am working" — happening RIGHT NOW\n  Perfect:    "I have worked" — past with present effect\n  Perf.Cont.: "I have been working" — started past, still now\n\nPAST:\n  Simple:     "I worked" — finished past action\n  Continuous: "I was working" — was in progress\n  Perfect:    "I had worked" — before another past event\n  Perf.Cont.: "I had been working" — duration before past\n\nFUTURE:\n  Simple:     "I will work"\n  Continuous: "I will be working"\n  Perfect:    "I will have worked"\n  Perf.Cont.: "I will have been working"\n\nKEY MAPPINGS for Slavic speakers:\n  я працюю (impf.) → I work / I am working\n  я попрацював (pf.) → I have worked / I worked\n  я працював (impf.past) → I was working / I used to work\n\nCOMMON ERROR:\n  ❌ "I am living here since 2020"\n  ✓  "I have been living here since 2020"', date:'May 4' },
 ];
 let activeNote = NOTES[0].id;
 let saveTimer = null;
@@ -1788,10 +1933,14 @@ notesRender();
 
 /* ══════════════════════ DICTIONARY ══════════════════════ */
 const DICT_DB = {
-  'lumière': { word:'lumière', phonetic:'/ly.mjɛʁ/', pos:'noun · feminine', defs:['Light; the natural agent that stimulates sight and makes things visible.','(figurative) Enlightenment; intellectual or moral illumination.'], exs:['« La lumière du soleil filtre à travers les nuages. »\n"Sunlight filters through the clouds."','« La lumière de la raison nous guide. »\n"The light of reason guides us."'], syns:['clarté','éclat','lueur','rayonnement','illumination'] },
-  'magnifique': { word:'magnifique', phonetic:'/ma.ɲi.fik/', pos:'adjective', defs:['Magnificent; impressively beautiful or elaborate.','Wonderful; extremely pleasing.'], exs:['« C\'est une soirée magnifique. »\n"It\'s a wonderful evening."','« Le paysage est magnifique. »\n"The landscape is magnificent."'], syns:['splendide','superbe','grandiose','sublime','merveilleux'] },
-  'toujours': { word:'toujours', phonetic:'/tu.ʒuʁ/', pos:'adverb', defs:['Always; at all times without exception.','Still; continuing to be or do.'], exs:['« Elle chante toujours le matin. »\n"She always sings in the morning."','« Il est toujours là. »\n"He is still there."'], syns:['sans cesse','constamment','perpétuellement','à jamais'] },
-  'belle': { word:'belle', phonetic:'/bɛl/', pos:'adjective · feminine', defs:['Beautiful; having beauty; attractive.','(of weather) Fair, fine, beautiful.'], exs:['« Tu es très belle ce soir. »\n"You are very beautiful tonight."','« Il fait une belle journée. »\n"It\'s a beautiful day."'], syns:['jolie','ravissante','magnifique','splendide','charmante'] },
+  'opportunity': { word:'opportunity', phonetic:'/ˌɒp.əˈtʃuː.nɪ.ti/', pos:'noun · countable', defs:['A time or set of circumstances that makes it possible to do something.','⚠️ False friend: Polish "okazja" = opportunity (NOT "occasion"!)'], exs:['"This is a great opportunity to practise your English."\nвозможность / можливість / okazja','"Don\'t miss this opportunity."\n«Не упускайте эту возможность.»'], syns:['chance','possibility','occasion','prospect','opening'] },
+  'nevertheless': { word:'nevertheless', phonetic:'/ˌnev.ə.ðəˈles/', pos:'adverb · conjunction', defs:['In spite of that; notwithstanding; all the same.','Used to add a statement that contrasts with or seems to contradict what has just been said.'], exs:['"Nevertheless, she kept trying."\n«Тем не менее, она продолжала пытаться. / Проте вона продовжувала спробувати.»','"The task was hard; nevertheless, we succeeded."\n«Задание было трудным, тем не менее мы справились.»'], syns:['however','nonetheless','still','yet','even so'] },
+  'despite': { word:'despite', phonetic:'/dɪˈspaɪt/', pos:'preposition', defs:['Without being affected by; in spite of.','⚠️ Do NOT use "despite of" — no "of" after despite!'], exs:['"Despite the rain, he came."\n«Несмотря на дождь, он пришёл. / Незважаючи на дощ, він прийшов.»','"She passed despite not studying much."\n«Она сдала, несмотря на то что мало учила.»'], syns:['in spite of','notwithstanding','regardless of'] },
+  'although': { word:'although', phonetic:'/ɔːlˈðəʊ/', pos:'conjunction', defs:['In spite of the fact that; even though.','However; but (used to introduce a contrasting statement).'], exs:['"Although it was hard, she passed."\n«Хотя это было трудно, она сдала. / Хоча це було важко, вона склала.»','"Although tired, he continued working."\n«Хотя он устал, он продолжал работать.»'], syns:['though','even though','while','whereas','notwithstanding'] },
+  'eventually': { word:'eventually', phonetic:'/ɪˈventʃ.u.ə.li/', pos:'adverb', defs:['In the end, especially after a long time or a lot of effort.','⚠️ False friend: Polish "ewentualnie" = possibly/or else (NOT eventually!)'], exs:['"Eventually, he found a job."\n«В конце концов он нашёл работу. / Врешті-решт він знайшов роботу.»','"She eventually agreed."\nNOT: «в конце концов» ≠ "eventually… possibly"'], syns:['in the end','finally','ultimately','at last','sooner or later'] },
+  'chance': { word:'chance', phonetic:'/tʃɑːns/', pos:'noun · countable/uncountable', defs:['A possibility of something happening.','An opportunity to do something.'], exs:['"There\'s a chance of rain today."\n«Есть вероятность дождя сегодня.»','"Give me a chance to explain."\n«Дайте мне шанс объяснить.»'], syns:['opportunity','possibility','prospect','likelihood'] },
+  'actually': { word:'actually', phonetic:'/ˈæk.tʃu.ə.li/', pos:'adverb', defs:['In truth or in fact; really.','⚠️ False friend: "актуальний/aktualny" = current/relevant (NOT actually!)'], exs:['"Actually, I don\'t agree."\n«На самом деле, я не согласен. / Насправді, я не погоджуюсь.»','"What actually happened?"\nNOT: актуальный ≠ actual — актуальный = current!'], syns:['in fact','really','in reality','as a matter of fact','truly'] },
+  'although': { word:'although', phonetic:'/ɔːlˈðəʊ/', pos:'conjunction', defs:['In spite of the fact that; even though.','However; but.'], exs:['"Although it was hard, she passed."\n«Хоча це було важко, вона склала. / Chociaż to było trudne, zdała.»','"I liked it, although it was expensive."\n«Мне понравилось, хотя это было дорого.»'], syns:['though','even though','while','whereas'] },
 };
 function dictLookup() {
   const q = document.getElementById('dict-input').value.trim().toLowerCase();
@@ -1799,11 +1948,16 @@ function dictLookup() {
   const entry = DICT_DB[q];
   const res = document.getElementById('dict-result');
   if (entry) {
-    let defs = entry.defs.map((d,i) => `<div class="dict-def">${i+1}. ${d}</div><div class="dict-example">${entry.exs[i] ? entry.exs[i].replace('\n','<br><em>').replace(/^/,'« ').replace(/$/, entry.exs[i].includes('"')? '' : '').replace('« « ','« ') + (entry.exs[i].includes('"')? '»' : '') : ''}</div>`).join('');
+    let defs = entry.defs.map((d,i) => {
+      const ex = entry.exs[i] || '';
+      const parts = ex.split('\n');
+      const exHtml = parts[0] + (parts[1] ? '<br><em>' + parts[1] + '</em>' : '');
+      return `<div class="dict-def">${i+1}. ${d}</div><div class="dict-example">${exHtml}</div>`;
+    }).join('');
     let syns = entry.syns.map(s=>`<div class="dict-syn" onclick="dictSetWord('${s}')">${s}</div>`).join('');
     res.innerHTML = `<div class="dict-word">${entry.word}</div><div class="dict-phonetic">${entry.phonetic}</div><div class="dict-pos">${entry.pos}</div>${defs}<div style="font-size:12px;color:var(--text-3);margin-bottom:8px;font-family:var(--font-mono);">Synonyms</div><div class="dict-syns">${syns}</div><button class="dict-save-btn" onclick="dictSave()">🔖 Save to Flashcards</button>`;
   } else {
-    res.innerHTML = `<div class="dict-word" style="font-size:20px;color:var(--text-3)">${q}</div><div class="dict-def" style="color:var(--text-3);margin-top:12px;">No result found. Try: lumière, magnifique, toujours, belle</div>`;
+    res.innerHTML = `<div class="dict-word" style="font-size:20px;color:var(--text-3)">${q}</div><div class="dict-def" style="color:var(--text-3);margin-top:12px;">No result found. Try: opportunity, nevertheless, despite, although, eventually</div>`;
   }
 }
 function dictSetWord(w) {
@@ -1926,6 +2080,37 @@ function currFilter(type) {
   document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
   event.currentTarget.classList.add('active');
 }
+
+/* ══════════════════════ MOBILE ══════════════════════ */
+function mobToggleSidebar(winId) {
+  const sidebar = document.getElementById('sidebar-' + winId)
+    || document.querySelector('#win-' + winId + ' .win-sidebar');
+  if (!sidebar) return;
+  sidebar.classList.toggle('mob-open');
+}
+
+function mobInit() {
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    // Close all windows, then open curriculum as default
+    document.querySelectorAll('.win').forEach(w => w.classList.remove('open'));
+    document.querySelectorAll('.di').forEach(d => d.classList.remove('open'));
+    openApp('curriculum');
+  }
+}
+
+// On mobile, tapping a dock item closes others (single-window mode)
+(function() {
+  const isMob = () => window.matchMedia('(max-width: 768px)').matches;
+  document.querySelectorAll('.di').forEach(di => {
+    di.addEventListener('click', () => {
+      if (!isMob()) return;
+      document.querySelectorAll('.win').forEach(w => w.classList.remove('open'));
+      document.querySelectorAll('.di').forEach(d => d.classList.remove('open'));
+    }, true); // capture phase — fires before openApp
+  });
+})();
+
+mobInit();
 </script>
 </body>
 </html>
