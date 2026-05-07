@@ -1274,6 +1274,33 @@
       line-height: 1.55;
     }
 
+    .payment-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 18px;
+      border-top: 1px solid var(--deep-line);
+      border-left: 1px solid var(--deep-line);
+    }
+
+    .payment-step {
+      min-height: 88px;
+      padding: 14px;
+      border-right: 1px solid var(--deep-line);
+      border-bottom: 1px solid var(--deep-line);
+      color: rgba(255,250,240,.58);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .payment-step b {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent);
+      font-size: 9px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
     .contact-strip {
       display: grid;
       gap: 8px;
@@ -1378,6 +1405,7 @@
       .checkout-grid { grid-template-columns: 1fr; }
       .checkout-form { border-right: 0; border-bottom: 1px solid var(--line); }
       .checkout-actions { grid-template-columns: 1fr; }
+      .payment-steps { grid-template-columns: 1fr; }
       .summary-row { font-size: 12px; }
       .card-number { font-size: 30px; }
     }
@@ -1687,6 +1715,13 @@
             <button class="ghost-action" type="button" id="copyOrderBtn">Скопировать заказ</button>
             <a class="ghost-action" id="telegramOrderBtn" href="https://t.me/vyanetto1" target="_blank" rel="noopener">Telegram + копия</a>
             <a class="ghost-action" id="whatsappOrderBtn" href="https://wa.me/380683642205" target="_blank" rel="noopener">WhatsApp</a>
+            <a class="ghost-action" id="paidTelegramBtn" href="https://t.me/vyanetto1" target="_blank" rel="noopener">Я оплатил · TG</a>
+            <a class="ghost-action" id="paidWhatsappBtn" href="https://wa.me/380683642205" target="_blank" rel="noopener">Я оплатил · WA</a>
+          </div>
+          <div class="payment-steps" aria-label="Автоматизированный порядок оплаты">
+            <div class="payment-step"><b>01 · Заказ</b>Форма генерирует номер, сумму и служебный payload для админки.</div>
+            <div class="payment-step"><b>02 · Оплата</b>Карта и назначение копируются одним кликом.</div>
+            <div class="payment-step"><b>03 · Сверка</b>Сообщение из Telegram/WhatsApp импортируется в админку.</div>
           </div>
           <div class="contact-strip" aria-label="Контакты для подтверждения заказа">
             <a href="https://t.me/vyanetto1" target="_blank" rel="noopener"><span>@vyanetto1</span><small>Telegram</small></a>
@@ -1729,6 +1764,8 @@
     const copyOrderBtn = document.getElementById('copyOrderBtn');
     const telegramOrderBtn = document.getElementById('telegramOrderBtn');
     const whatsappOrderBtn = document.getElementById('whatsappOrderBtn');
+    const paidTelegramBtn = document.getElementById('paidTelegramBtn');
+    const paidWhatsappBtn = document.getElementById('paidWhatsappBtn');
 
     const CARD_NUMBER = '4441111028306763';
     const CARD_DISPLAY = CARD_NUMBER.replace(/(\d{4})(?=\d)/g, '$1 ');
@@ -1745,6 +1782,13 @@
       toast.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+    };
+
+    const encodePayload = (payload) => {
+      const bytes = new TextEncoder().encode(JSON.stringify(payload));
+      let binary = '';
+      bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+      return btoa(binary);
     };
 
     const buildOrderId = () => {
@@ -1775,10 +1819,28 @@
       buyer: buyerName.value.trim(),
       contact: buyerContact.value.trim(),
       city: buyerCity.value.trim(),
-      note: buyerNote.value.trim()
+      note: buyerNote.value.trim(),
+      status: 'invoice_sent',
+      source: 'ambook.html'
     });
 
-    const orderToText = (order) => [
+    const adminPayload = (order, paid = false) => encodePayload({
+      id: order.id,
+      buyer: order.buyer,
+      contact: order.contact,
+      city: order.city,
+      amount: order.amount,
+      currency: order.currency,
+      format: order.format,
+      quantity: order.quantity,
+      note: order.note,
+      status: paid ? 'paid_pending_check' : 'invoice_sent',
+      source: 'ambook_checkout',
+      createdAt: order.createdAt
+    });
+
+    const orderToText = (order, paid = false) => [
+      paid ? 'Оплата отправлена, прошу подтвердить заказ.' : 'Хочу оформить заказ AM Publishing.',
       `Заказ: ${order.id}`,
       `Книга: ${order.book} — ${order.author}`,
       `Формат: ${order.format}`,
@@ -1786,11 +1848,12 @@
       `Сумма: ${order.currency} ${order.amount}`,
       `Карта: ${CARD_DISPLAY}`,
       `Назначение: ${order.id} · Сергей Калинин`,
-      'После оплаты отправлю скрин/подтверждение платежа.',
+      paid ? 'Статус: оплачено, приложу скрин/подтверждение платежа.' : 'После оплаты отправлю скрин/подтверждение платежа.',
       order.buyer ? `Имя: ${order.buyer}` : '',
       order.contact ? `Контакт: ${order.contact}` : '',
       order.city ? `Город/страна: ${order.city}` : '',
-      order.note ? `Комментарий: ${order.note}` : ''
+      order.note ? `Комментарий: ${order.note}` : '',
+      `AMBOOK_PAYLOAD:${adminPayload(order, paid)}`
     ].filter(Boolean).join('\n');
 
     const copyText = async (text, successText) => {
@@ -1830,9 +1893,13 @@
       paymentCard.textContent = CARD_DISPLAY;
       paymentPurpose.textContent = `Назначение: ${order.id} · Сергей Калинин`;
       const text = orderToText(order);
+      const paidText = orderToText(order, true);
       telegramOrderBtn.href = TELEGRAM_URL;
       telegramOrderBtn.title = `Откройте Telegram и отправьте данные заказа:\n${text}`;
       whatsappOrderBtn.href = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(text)}`;
+      paidTelegramBtn.href = TELEGRAM_URL;
+      paidTelegramBtn.title = `Откройте Telegram и отправьте подтверждение:\n${paidText}`;
+      paidWhatsappBtn.href = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(paidText)}`;
       saveLocalOrder(order);
       return order;
     };
@@ -1881,6 +1948,7 @@
     copyCardBtn.addEventListener('click', () => copyText(CARD_NUMBER, 'Номер карты скопирован.'));
     copyOrderBtn.addEventListener('click', () => copyText(orderToText(renderCheckout()), 'Данные заказа скопированы.'));
     telegramOrderBtn.addEventListener('click', () => copyText(orderToText(renderCheckout()), 'Заказ скопирован. Вставьте его в Telegram.'));
+    paidTelegramBtn.addEventListener('click', () => copyText(orderToText(renderCheckout(), true), 'Подтверждение оплаты скопировано для Telegram.'));
     window.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && checkoutModal.classList.contains('open')) hideCheckout();
     });
