@@ -1244,6 +1244,44 @@
     </section>
 
     <script>
+      /* ── Research Map i18n ── */
+      const RESEARCH_MAP_I18N = {
+        en: {
+          eyebrow: '§ Research Map & Technical Scope',
+          titleHtml: 'What I studied<br>and <em>worked with</em>',
+          sub: 'From microcontrollers and embedded systems to financial platforms and scientific publications — a map of technical and research experience by cluster.',
+          ct1: 'Embedded Systems',
+          ct2: 'Control Theory',
+          ct3: 'Languages & Platforms',
+          ct4: 'Interfaces',
+          ct5: 'Server & Data',
+          ct6: 'Research Domains',
+          ct7: 'Machine Learning',
+          ct8: 'Networks & Integrations',
+        },
+        ua: {
+          eyebrow: '§ Карта досліджень і технічний охоплення',
+          titleHtml: 'Що вивчав і з чим <em>працював</em>',
+          sub: 'Від мікроконтролерів і вбудованих систем до фінансових платформ і наукових публікацій — карта технічного та дослідницького досвіду по кластерах.',
+          ct1: 'Вбудовані системи',
+          ct2: 'Теорія керування',
+          ct3: 'Мови та платформи',
+          ct4: 'Інтерфейси',
+          ct5: 'Сервер та дані',
+          ct6: 'Предметні області',
+          ct7: 'Машинне навчання',
+          ct8: 'Мережі та інтеграції',
+        },
+      };
+
+      function applyResearchMapLocale(lang) {
+        const t = RESEARCH_MAP_I18N[lang] || RESEARCH_MAP_I18N.en;
+        setText('rm-eyebrow', t.eyebrow);
+        setHtml('rm-title', t.titleHtml);
+        setText('rm-sub', t.sub);
+        for (let i = 1; i <= 8; i++) setText(`rm-ct-${i}`, t[`ct${i}`]);
+      }
+
       /* ── ARM OS i18n ── */
       const ARMOS_I18N = {
         en: {
@@ -1370,6 +1408,11 @@
       };
 
       function getCurrentPortfolioLang() {
+        // Primary: read the language the React app stored in localStorage
+        const stored = (localStorage.getItem('app-language') || '').toLowerCase();
+        if (stored === 'ua') return 'ua';
+        if (stored === 'en') return 'en';
+        // Fallback: read from the visible language toggle button
         const navButtons = Array.from(document.querySelectorAll('nav button'));
         const langBtn = navButtons.find((btn) => {
           const t = (btn.textContent || '').trim().toUpperCase();
@@ -1497,6 +1540,7 @@
         applyItalySectionLocale(lang);
         applyARMOSSectionLocale(lang);
         applySkillsSectionLocale(lang);
+        applyResearchMapLocale(lang);
         patchHero();
       }
 
@@ -1597,9 +1641,9 @@
 }
 </style>
 <div class="rm-wrap">
-  <div class="rm-eyebrow">§ Research Map &amp; Technical Scope</div>
-  <h2 class="rm-title">Що вивчав і з чим <em>працював</em></h2>
-  <p class="rm-sub">
+  <div class="rm-eyebrow" id="rm-eyebrow">§ Research Map &amp; Technical Scope</div>
+  <h2 class="rm-title" id="rm-title">Що вивчав і з чим <em>працював</em></h2>
+  <p class="rm-sub" id="rm-sub">
     Від мікроконтролерів і вбудованих систем до фінансових платформ і наукових публікацій —
     карта технічного та дослідницького досвіду по кластерах.
   </p>
@@ -1609,7 +1653,7 @@
     <!-- Embedded & Hardware -->
     <div class="rm-cluster">
       <div class="rm-cluster-label">Embedded · IoT · Hardware</div>
-      <div class="rm-cluster-title">Вбудовані системи</div>
+      <div class="rm-cluster-title" id="rm-ct-1">Вбудовані системи</div>
       <div class="rm-nodes">
         <span class="rm-node hi">Arduino</span>
         <span class="rm-node hi">ESP32 / NodeMCU</span>
@@ -1628,7 +1672,7 @@
     <!-- Control Theory & Science -->
     <div class="rm-cluster">
       <div class="rm-cluster-label">Control Theory · Cybernetics · R&D</div>
-      <div class="rm-cluster-title">Теорія керування</div>
+      <div class="rm-cluster-title" id="rm-ct-2">Теорія керування</div>
       <div class="rm-nodes">
         <span class="rm-node hi">Matlab / Simulink</span>
         <span class="rm-node hi">PID controllers</span>
@@ -1646,7 +1690,7 @@
     <!-- Languages -->
     <div class="rm-cluster">
       <div class="rm-cluster-label">Languages · Runtimes</div>
-      <div class="rm-cluster-title">Мови та платформи</div>
+      <div class="rm-cluster-title" id="rm-ct-3">Мови та платформи</div>
       <div class="rm-nodes">
         <span class="rm-node hi">TypeScript</span>
         <span class="rm-node hi">Python 3</span>
@@ -1663,7 +1707,7 @@
     <!-- Frontend & Mobile -->
     <div class="rm-cluster">
       <div class="rm-cluster-label">Frontend · Mobile · PWA</div>
-      <div class="rm-cluster-title">Інтерфейси</div>
+      <div class="rm-cluster-title" id="rm-ct-4">Інтерфейси</div>
       <div class="rm-nodes">
         <span class="rm-node hi">React 18</span>
         <span class="rm-node hi">Vite</span>
@@ -1682,7 +1726,7 @@
     <!-- Backend & Data -->
     <div class="rm-cluster">
       <div class="rm-cluster-label">Backend · Data · Infrastructure</div>
-      <div class="rm-cluster-title">Сервер та дані</div>
+      <div class="rm-cluster-title" id="rm-ct-5">Сервер та дані</div>
       <div class="rm-nodes">
         <span class="rm-node hi">Flask · Python</span>
         <span class="rm-node hi">PostgreSQL</span>
@@ -1701,7 +1745,7 @@
     <!-- Research Domains -->
     <div class="rm-cluster">
       <div class="rm-cluster-label">Research Domains · Applied</div>
-      <div class="rm-cluster-title">Предметні області</div>
+      <div class="rm-cluster-title" id="rm-ct-6">Предметні області</div>
       <div class="rm-nodes">
         <span class="rm-node hi">FinTech architecture</span>
         <span class="rm-node hi">UX research</span>
@@ -1722,7 +1766,7 @@
   <div class="rm-grid-2">
     <div class="rm-cluster">
       <div class="rm-cluster-label">AI · Machine Learning · Data Science</div>
-      <div class="rm-cluster-title">Машинне навчання</div>
+      <div class="rm-cluster-title" id="rm-ct-7">Машинне навчання</div>
       <div class="rm-nodes">
         <span class="rm-node hi">Predictive modeling</span>
         <span class="rm-node">TensorFlow (basic)</span>
@@ -1736,7 +1780,7 @@
     </div>
     <div class="rm-cluster">
       <div class="rm-cluster-label">Network · Integration · Systems</div>
-      <div class="rm-cluster-title">Мережі та інтеграції</div>
+      <div class="rm-cluster-title" id="rm-ct-8">Мережі та інтеграції</div>
       <div class="rm-nodes">
         <span class="rm-node hi">TCP/IP · Wi-Fi · MQTT</span>
         <span class="rm-node">VPN · VLAN</span>
@@ -1887,6 +1931,10 @@
           if (value === 'EN' || value === 'UA') {
             setTimeout(scheduleABLocaleSync, 0);
           }
+        }, { passive: true });
+        // Also react when React's setLanguage writes to localStorage
+        window.addEventListener('storage', (e) => {
+          if (e.key === 'app-language') scheduleABLocaleSync();
         }, { passive: true });
         return true;
       }
