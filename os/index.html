@@ -1441,15 +1441,15 @@ html, body {
   </div>
 
   <div class="leo-chips" id="leo-chips">
-    <span class="leo-chip" onclick="leoChip('Який мій баланс?')">Баланс</span>
-    <span class="leo-chip" onclick="leoChip('Перевір безпеку')">Безпека</span>
-    <span class="leo-chip" onclick="leoChip('Відкрий банк')">Відкрити банк</span>
-    <span class="leo-chip" onclick="leoChip('Мій маршрут дня')">Маршрут</span>
+    <span class="leo-chip" data-uk="Баланс" data-en="Balance" onclick="leoChip(_t('Який мій баланс?','What is my balance?'))">Баланс</span>
+    <span class="leo-chip" data-uk="Безпека" data-en="Security" onclick="leoChip(_t('Перевір безпеку','Check security'))">Безпека</span>
+    <span class="leo-chip" data-uk="Відкрити банк" data-en="Open Bank" onclick="leoChip(_t('Відкрий банк','Open the bank'))">Відкрити банк</span>
+    <span class="leo-chip" data-uk="Маршрут" data-en="My Route" onclick="leoChip(_t('Мій маршрут дня','My day route'))">Маршрут</span>
     <span class="leo-chip" onclick="leoChip('Що таке ARM OS?')">ARM OS</span>
   </div>
 
   <div class="leo-input-row">
-    <textarea class="leo-input" id="leo-input" rows="1" placeholder="Запитайте Leonardo…" onkeydown="leoKeydown(event)" oninput="leoAutoResize(this)"></textarea>
+    <textarea class="leo-input" id="leo-input" rows="1" data-placeholder-uk="Запитайте Leonardo…" data-placeholder-en="Ask Leonardo…" placeholder="Запитайте Leonardo…" onkeydown="leoKeydown(event)" oninput="leoAutoResize(this)"></textarea>
     <button class="leo-send" onclick="leoSend()" title="Надіслати">➔</button>
   </div>
 
@@ -1750,23 +1750,23 @@ function _buildBrowser(id, cfg) {
         onfocus="this.select()">
     </div>
     <button class="nav-btn" onclick="browserNav('${id}','newtab')" title="Нова вкладка">＋</button>
-    <button class="nav-btn" onclick="openExternal('${id}')" title="Відкрити зовні">↗</button>
+    <button class="nav-btn" onclick="openExternal('${id}')" title="${_t('Відкрити зовні','Open externally')}">↗</button>
   </div>
   <div class="window-content" id="wc-${id}">
     <div class="loading-overlay" id="load-${id}">
       <div class="loading-app-icon">${cfg.icon}</div>
       <div class="loading-spinner"></div>
-      <div class="loading-text">Завантаження…</div>
+      <div class="loading-text">${_t('Завантаження…','Loading…')}</div>
     </div>
     <div class="iframe-blocked" id="blocked-${id}">
       <div class="ib-shield">🛡</div>
       <div class="ib-icon">${cfg.icon}</div>
       <div class="ib-title">${cfg.title}</div>
-      <div class="ib-msg">Сайт не дозволяє відображення у вбудованому вікні (X-Frame-Options / CSP).<br>Відкрийте у новій вкладці браузера.</div>
+      <div class="ib-msg">${_t('Сайт не дозволяє відображення у вбудованому вікні (X-Frame-Options / CSP).<br>Відкрийте у новій вкладці браузера.','This site cannot be displayed in an embedded window (X-Frame-Options / CSP).<br>Open it in a new browser tab.')}</div>
       <div class="ib-url" id="blocked-url-${id}">${cfg.defaultUrl}</div>
       <div class="ib-actions">
-        <button class="ib-btn primary" onclick="openExternal('${id}')">↗ Відкрити у браузері</button>
-        <button class="ib-btn secondary" onclick="retryFrame('${id}')">↻ Спробувати знову</button>
+        <button class="ib-btn primary" onclick="openExternal('${id}')">${_t('↗ Відкрити у браузері','↗ Open in browser')}</button>
+        <button class="ib-btn secondary" onclick="retryFrame('${id}')">${_t('↻ Спробувати знову','↻ Try again')}</button>
       </div>
     </div>
     <iframe id="frame-${id}" src="${cfg.defaultUrl}"
@@ -2001,15 +2001,15 @@ function _buildEditor(id) {
   return `
   <div class="editor-root" id="er-${id}">
     <div class="editor-toolbar">
-      <button class="ed-btn" onclick="edNew('${id}')">📄 Новий</button>
-      <button class="ed-btn" onclick="edOpen('${id}')">📂 Відкрити</button>
-      <button class="ed-btn" onclick="edSave('${id}')">💾 Зберегти</button>
-      <button class="ed-btn" onclick="edSaveAs('${id}')">🖫 Зберегти як…</button>
+      <button class="ed-btn" onclick="edNew('${id}')">${_t('📄 Новий','📄 New')}</button>
+      <button class="ed-btn" onclick="edOpen('${id}')">${_t('📂 Відкрити','📂 Open')}</button>
+      <button class="ed-btn" onclick="edSave('${id}')">${_t('💾 Зберегти','💾 Save')}</button>
+      <button class="ed-btn" onclick="edSaveAs('${id}')">${_t('🖫 Зберегти як…','🖫 Save as…')}</button>
       <div class="ed-sep"></div>
-      <button class="ed-btn" onclick="edDownload('${id}')">⬇ Завантажити</button>
+      <button class="ed-btn" onclick="edDownload('${id}')">${_t('⬇ Завантажити','⬇ Download')}</button>
       <div class="ed-sep"></div>
       <select class="ed-select" id="ed-lang-${id}" onchange="edChangeLang('${id}',this.value)">
-        <option value="plain">Текст</option>
+        <option value="plain">${_t('Текст','Text')}</option>
         <option value="js">JavaScript</option>
         <option value="html">HTML</option>
         <option value="css">CSS</option>
@@ -2025,7 +2025,7 @@ function _buildEditor(id) {
       <button class="ed-btn" onclick="edUndo('${id}')" title="Ctrl+Z">↩ Undo</button>
       <button class="ed-btn" onclick="edRedo('${id}')" title="Ctrl+Y">↪ Redo</button>
       <div class="ed-sep"></div>
-      <button class="ed-btn danger" onclick="edClear('${id}')">🗑 Очистити</button>
+      <button class="ed-btn danger" onclick="edClear('${id}')">${_t('🗑 Очистити','🗑 Clear')}</button>
     </div>
     <div class="editor-body">
       <div class="files-sidebar">
@@ -2047,12 +2047,12 @@ function _buildEditor(id) {
       </div>
     </div>
     <div class="editor-statusbar">
-      <span><div class="ed-dot" id="ed-dot-${id}"></div> <span id="ed-status-${id}">Збережено</span></span>
-      <span>Рядок: <b id="ed-ln-cur-${id}">1</b></span>
-      <span>Стовп: <b id="ed-col-${id}">1</b></span>
-      <span>Слів: <b id="ed-wc-${id}">0</b></span>
-      <span>Символів: <b id="ed-cc-${id}">0</b></span>
-      <span id="ed-lang-label-${id}" style="margin-left:auto;opacity:.5">Текст</span>
+      <span><div class="ed-dot" id="ed-dot-${id}"></div> <span id="ed-status-${id}">${_t('Збережено','Saved')}</span></span>
+      <span>${_t('Рядок','Line')}: <b id="ed-ln-cur-${id}">1</b></span>
+      <span>${_t('Стовп','Col')}: <b id="ed-col-${id}">1</b></span>
+      <span>${_t('Слів','Words')}: <b id="ed-wc-${id}">0</b></span>
+      <span>${_t('Символів','Chars')}: <b id="ed-cc-${id}">0</b></span>
+      <span id="ed-lang-label-${id}" style="margin-left:auto;opacity:.5">${_t('Текст','Text')}</span>
     </div>
   </div>`;
 }
@@ -2104,7 +2104,7 @@ function edSave(id) {
   // Persist to localStorage
   try { localStorage.setItem('editor_' + f.fid, JSON.stringify({ name: f.name, content: f.content, lang: f.lang })); } catch(_) {}
   f.modified = false;
-  _setStatus(id, 'Збережено');
+  _setStatus(id, _t('Збережено','Saved'));
   edRefreshSidebar(id);
   showNotif('💾', 'Редактор', `«${f.name}» збережено`);
 }
@@ -2145,7 +2145,7 @@ function edRenameActive(id, name) {
   f.name = name;
   f.lang = _inferLang(name);
   f.modified = true;
-  _setStatus(id, 'Змінено');
+  _setStatus(id, _t('Змінено','Modified'));
   edRefreshSidebar(id);
   document.getElementById(`ed-lang-label-${id}`).textContent = f.lang;
 }
@@ -2185,7 +2185,7 @@ function edInput(id) {
   f.undoStack.push(val);
   if (f.undoStack.length > 200) f.undoStack.shift();
   f.undoIdx = f.undoStack.length - 1;
-  _setStatus(id, 'Змінено');
+  _setStatus(id, _t('Змінено','Modified'));
   edRefreshSidebar(id);
   updateLineNumbers(id);
   updateStats(id);
@@ -2270,7 +2270,7 @@ function _setStatus(id, msg) {
   const d = document.getElementById(`ed-dot-${id}`);
   if (s) s.textContent = msg;
   if (d) {
-    d.classList.toggle('modified', msg !== 'Збережено');
+    d.classList.toggle('modified', msg !== _t('Збережено','Saved'));
   }
 }
 
@@ -2325,14 +2325,14 @@ function _buildFinder(id) {
   return `
   <div style="display:flex;flex:1;overflow:hidden;background:#1a1d2e">
     <div style="width:160px;background:rgba(0,0,0,.25);border-right:1px solid rgba(255,255,255,.07);padding:10px 0;flex-shrink:0">
-      ${['🏠 Дім','📥 Завантаження','📄 Документи','🖥 Робочий стіл'].map(x=>`
+      ${_t(['🏠 Дім','📥 Завантаження','📄 Документи','🖥 Робочий стіл'],['🏠 Home','📥 Downloads','📄 Documents','🖥 Desktop']).map(x=>`
         <div style="padding:6px 14px;font-size:12px;color:rgba(255,255,255,.65);cursor:pointer;border-radius:6px;margin:0 4px;transition:background .12s"
           onmouseover="this.style.background='rgba(255,255,255,.08)'" onmouseout="this.style.background=''" >
           ${x}
         </div>`).join('')}
     </div>
     <div style="flex:1;padding:16px;display:flex;flex-wrap:wrap;gap:12px;align-content:flex-start;overflow-y:auto">
-      ${['📝 Редактор','🏦 Army Bank','💬 Messenger','🛡️ Admin','🛒 Market'].map((x,i)=>`
+      ${_t(['📝 Редактор','🏦 Army Bank','💬 Messenger','🛡️ Admin','🛒 Market'],['📝 Editor','🏦 Army Bank','💬 Messenger','🛡️ Admin','🛒 Market']).map((x,i)=>`
         <div ondblclick="openApp(['editor','bank','messenger','admin','market'][${i}])"
           style="width:80px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 6px;border-radius:10px;transition:background .15s"
           onmouseover="this.style.background='rgba(255,255,255,.08)'" onmouseout="this.style.background=''">
@@ -2351,7 +2351,7 @@ function _initFinder(id) {}
 function _buildCurrency(id) {
   return `<div style="flex:1;display:flex;flex-direction:column;background:linear-gradient(145deg,#0a1628,#0d1f3c);overflow:hidden">
   <div style="padding:20px 20px 10px;border-bottom:1px solid rgba(255,255,255,.07)">
-    <div style="font-size:11px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Сума</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">${_t('Сума','Amount')}</div>
     <div style="display:flex;gap:10px;align-items:center">
       <input id="cv-amount-${id}" type="number" value="100" min="0" step="any"
         style="flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;
@@ -2393,7 +2393,7 @@ function _buildCurrency(id) {
   </div>
   <div style="padding:20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.07)">
     <div id="cv-result-${id}" style="font-size:36px;font-weight:700;color:#10b981;letter-spacing:-.02em">—</div>
-    <div id="cv-rate-${id}" style="font-size:12px;color:rgba(255,255,255,.35);margin-top:6px">Завантаження курсів…</div>
+    <div id="cv-rate-${id}" style="font-size:12px;color:rgba(255,255,255,.35);margin-top:6px">${_t('Завантаження курсів…','Loading rates…')}</div>
     <div id="cv-updated-${id}" style="font-size:10px;color:rgba(255,255,255,.2);margin-top:3px"></div>
   </div>
   <div style="flex:1;overflow-y:auto;padding:12px 16px">
@@ -2478,7 +2478,7 @@ function _buildRates(id) {
   <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between">
     <div>
       <div style="font-size:15px;font-weight:600;color:#fff">Курси валют</div>
-      <div style="font-size:11px;color:rgba(255,255,255,.35);margin-top:2px" id="rates-src-${id}">Завантаження…</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.35);margin-top:2px" id="rates-src-${id}">${_t('Завантаження…','Loading…')}</div>
     </div>
     <button onclick="_initRates('${id}')"
       style="padding:5px 12px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
@@ -2487,7 +2487,7 @@ function _buildRates(id) {
   <div style="flex:1;overflow-y:auto;padding:12px" id="rates-body-${id}">
     <div style="text-align:center;padding:40px;color:rgba(255,255,255,.3)">
       <div style="font-size:32px;margin-bottom:10px">📡</div>
-      <div>Завантаження курсів НБУ…</div>
+      <div>${_t('Завантаження курсів НБУ…','Loading NBU rates…')}</div>
     </div>
   </div>
 </div>`;
@@ -2497,7 +2497,7 @@ async function _initRates(id) {
   const body = document.getElementById(`rates-body-${id}`);
   const src  = document.getElementById(`rates-src-${id}`);
   if (!body) return;
-  body.innerHTML = `<div style="text-align:center;padding:40px;color:rgba(255,255,255,.3)"><div class="loading-spinner" style="margin:0 auto 12px"></div><div>Завантаження…</div></div>`;
+  body.innerHTML = `<div style="text-align:center;padding:40px;color:rgba(255,255,255,.3)"><div class="loading-spinner" style="margin:0 auto 12px"></div><div>${_t('Завантаження…','Loading…')}</div></div>`;
 
   await _cvFetchRates();
 
@@ -4378,8 +4378,43 @@ function stToggleWidget(idx, on) {
   if (widgets[idx]) widgets[idx].style.display = on ? '' : 'none';
 }
 
+// Global language variable — used by template builders
+window._OS_LANG = (() => { try { return localStorage.getItem('os-lang') || 'uk'; } catch(e) { return 'uk'; } })();
+
+// Helper: pick translation by current language
+function _t(uk, en) { return window._OS_LANG === 'en' ? en : uk; }
+
 function stLang(lang) {
-  showNotif('◎','ARM OS', lang === 'uk' ? 'Мова змінена: Українська' : 'Language changed: English');
+  window._OS_LANG = lang;
+  try { localStorage.setItem('os-lang', lang); } catch(e) {}
+  document.documentElement.lang = lang === 'en' ? 'en' : 'uk';
+  document.body.classList.toggle('lang-en', lang === 'en');
+
+  // Update Settings button active states
+  const btnUA = document.querySelector('[onclick*="stLang(\'uk\'"]');
+  const btnEN = document.querySelector('[onclick*="stLang(\'en\'"]');
+  if (btnUA) {
+    btnUA.style.borderColor = lang === 'uk' ? 'var(--line-gold)' : 'var(--line)';
+    btnUA.style.color = lang === 'uk' ? 'var(--bronze)' : 'rgba(238,231,214,.45)';
+    btnUA.style.background = lang === 'uk' ? 'rgba(180,154,114,.1)' : '';
+  }
+  if (btnEN) {
+    btnEN.style.borderColor = lang === 'en' ? 'var(--line-gold)' : 'var(--line)';
+    btnEN.style.color = lang === 'en' ? 'var(--bronze)' : 'rgba(238,231,214,.45)';
+    btnEN.style.background = lang === 'en' ? 'rgba(180,154,114,.1)' : '';
+  }
+
+  // Translate static elements with data-uk / data-en attributes
+  document.querySelectorAll('[data-uk][data-en]').forEach(el => {
+    el.textContent = lang === 'en' ? el.dataset.en : el.dataset.uk;
+  });
+
+  // Translate input placeholders
+  document.querySelectorAll('[data-placeholder-uk][data-placeholder-en]').forEach(el => {
+    el.placeholder = lang === 'en' ? el.dataset.placeholderEn : el.dataset.placeholderUk;
+  });
+
+  showNotif('◎','ARM OS', lang === 'uk' ? 'Мова: Українська' : 'Language: English');
 }
 
 // ─────────────────────────────────────────────
@@ -4902,6 +4937,21 @@ function leoAction(action) {
   };
   if (map[action]) leoSend(map[action]);
 }
+
+// Apply saved language on load
+(function() {
+  const saved = window._OS_LANG;
+  if (saved === 'en') {
+    document.documentElement.lang = 'en';
+    document.body.classList.add('lang-en');
+    document.querySelectorAll('[data-uk][data-en]').forEach(el => {
+      el.textContent = el.dataset.en;
+    });
+    document.querySelectorAll('[data-placeholder-en]').forEach(el => {
+      el.placeholder = el.dataset.placeholderEn;
+    });
+  }
+})();
 
 // Init Leo greeting on first open
 let _leoGreeted = false;
