@@ -1247,6 +1247,7 @@
       /* ── Research Map i18n ── */
       const RESEARCH_MAP_I18N = {
         en: {
+          heroSub: 'I build financial systems, research-grade interfaces, and full-stack products — from embedded hardware to cloud-scale banking platforms.',
           eyebrow: '§ Research Map & Technical Scope',
           titleHtml: 'What I studied<br>and <em>worked with</em>',
           sub: 'From microcontrollers and embedded systems to financial platforms and scientific publications — a map of technical and research experience by cluster.',
@@ -1260,6 +1261,7 @@
           ct8: 'Networks & Integrations',
         },
         ua: {
+          heroSub: 'Будую фінансові системи, дослідницькі інтерфейси та повностекові продукти — від вбудованого обладнання до хмарних банківських платформ.',
           eyebrow: '§ Карта досліджень і технічний охоплення',
           titleHtml: 'Що вивчав і з чим <em>працював</em>',
           sub: 'Від мікроконтролерів і вбудованих систем до фінансових платформ і наукових публікацій — карта технічного та дослідницького досвіду по кластерах.',
@@ -1280,6 +1282,7 @@
         setHtml('rm-title', t.titleHtml);
         setText('rm-sub', t.sub);
         for (let i = 1; i <= 8; i++) setText(`rm-ct-${i}`, t[`ct${i}`]);
+        setText('hero-subtitle-patch', t.heroSub);
       }
 
       /* ── ARM OS i18n ── */
@@ -1343,10 +1346,13 @@
         ];
         while ((node = walker.nextNode())) {
           if (heroSubs.some(s => node.textContent.trim() === s)) {
-            node.textContent = 'I build financial systems, research-grade interfaces, and full-stack products — from embedded hardware to cloud-scale banking platforms.';
+            const span = document.createElement('span');
+            span.id = 'hero-subtitle-patch';
+            node.parentNode.replaceChild(span, node);
             break;
           }
         }
+        // Text set by applyResearchMapLocale via syncABSectionLocale
 
         // Inject Telegram link into hero social area
         if (!document.getElementById('hero-tg-link')) {
