@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WeeGo — Веб-архітектури та HORECA-системи</title>
+<meta name="description" content="WeeGo Studio — сайти під ключ, WeeGo Cloud, HORECA OS та індивідуальні системи. Київ, з 2020."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050505; --s1:#0d0d0d; --s2:#141414;
+  --b1:#1c1c1c; --b2:#2a2a2a; --b3:#383838;
+  --t1:#f0f0f0; --t2:#b8b8b8; --t3:#6e6e6e;
+  --ac:#d4c4b5; --ac2:#c0ae9e; --acg:rgba(212,196,181,.06);
+  --gr:#6a9f74;
+  --serif:"IBM Plex Serif",serif; --sans:"Manrope",sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:17px;line-height:1.68;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(5,5,5,.94);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;height:44px;
+}
+.n-logo{padding:0 24px;font-size:11px;letter-spacing:1.6px;text-transform:uppercase;border-right:1px solid var(--b1);height:100%;display:flex;align-items:center;gap:8px}
+.n-dot{width:5px;height:5px;background:var(--ac);flex-shrink:0}
+.n-links{display:flex;height:100%;list-style:none}
+.n-links li{border-right:1px solid var(--b1);height:100%;display:flex;align-items:center}
+.n-links a{padding:0 18px;font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--t3);transition:color .2s}
+.n-links a:hover,.n-links a.act{color:var(--t1)}
+.n-r{margin-left:auto;border-left:1px solid var(--b1);height:100%;display:flex;align-items:center}
+.n-r a{padding:0 22px;font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--ac);transition:color .2s}
+.n-r a:hover{color:var(--t1)}
+
+/* ══ HERO ══ */
+.hero{
+  min-height:100svh;padding-top:44px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  border-bottom:1px solid var(--b1);position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 30% 60%,rgba(212,196,181,.04),transparent);
+}
+.hero-grid-lines{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 79px,var(--b1) 79px,var(--b1) 80px),
+    repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(28,28,28,.6) 79px,rgba(28,28,28,.6) 80px);
+  opacity:.12;
+}
+.hero-content{padding:0 40px 64px;position:relative;max-width:1240px;width:100%;margin:0 auto}
+.hero-h{
+  font-family:var(--serif);
+  font-size:clamp(52px,9.6vw,120px);
+  font-weight:300;line-height:.95;color:var(--t1);
+  margin-bottom:28px;
+}
+.hero-h em{font-style:italic;color:var(--ac)}
+.hero-row{
+  display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);
+  gap:34px;align-items:center;
+  padding-top:22px;border-top:1px solid var(--b1);
+}
+.hero-copy{max-width:620px}
+.hero-lead{font-size:19px;color:#cecece;line-height:1.85;max-width:640px}
+.hero-lead strong{color:var(--t1);font-weight:400}
+.hero-cta-wrap{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.hero-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:24px;max-width:680px;
+}
+.hero-stat{border:1px solid var(--b1);padding:14px 12px;background:rgba(9,9,9,.74)}
+.hero-stat-v{font-family:var(--serif);font-size:24px;line-height:1;color:var(--t1);margin-bottom:5px}
+.hero-stat-l{font-size:10px;letter-spacing:.9px;text-transform:uppercase;color:var(--t3)}
+.hero-aside{
+  border:1px solid var(--b1);padding:22px 22px 18px;background:rgba(9,9,9,.74);
+  display:flex;flex-direction:column;gap:14px;min-height:300px;
+}
+.aside-k{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ac)}
+.aside-list{list-style:none;display:flex;flex-direction:column;gap:10px;flex:1}
+.aside-list li{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  border-top:1px solid var(--b1);padding-top:10px;
+  font-size:13px;color:var(--t2);
+}
+.aside-list li:first-child{border-top:none;padding-top:0}
+.aside-name{font-family:var(--serif);font-size:15px;color:var(--t1)}
+.aside-price{font-size:12px;color:var(--ac);font-family:var(--sans);letter-spacing:.4px;white-space:nowrap}
+.aside-status{font-size:10px;color:var(--gr);letter-spacing:1.2px;text-transform:uppercase;display:flex;align-items:center;gap:6px;margin-top:auto;border-top:1px solid var(--b1);padding-top:12px}
+.aside-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gr);box-shadow:0 0 6px var(--gr)}
+
+.btn{
+  padding:13px 28px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  font-family:var(--sans);cursor:pointer;border:none;transition:all .22s;
+  display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+}
+.btn-ac{background:var(--ac);color:#050505}
+.btn-ac:hover{background:var(--ac2)}
+.btn-gh{background:transparent;color:var(--t2);border:1px solid var(--b1)}
+.btn-gh:hover{color:var(--t1);border-color:var(--b2)}
+
+/* ── QUICK NAV ── */
+.quick-nav{
+  border-bottom:1px solid var(--b1);padding:14px 40px;background:var(--s1);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+}
+.quick-nav-links{display:flex;gap:8px;flex-wrap:wrap}
+.q-link{
+  font-size:11px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--t2);border:1px solid var(--b1);padding:8px 12px;border-radius:6px;
+}
+.q-link:hover{border-color:var(--ac);color:var(--t1)}
+.quick-note{font-size:12px;color:var(--t3);line-height:1.6}
+.quick-note strong{color:var(--t2);font-weight:600}
+
+/* ══ SERVICES (4 main pillars) ══ */
+.svc{border-bottom:1px solid var(--b1);background:var(--s1)}
+.svc-head{padding:72px 40px 36px;border-bottom:1px solid var(--b1);display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end}
+.svc-h{font-family:var(--serif);font-size:clamp(36px,5vw,62px);font-weight:300;line-height:1.05;color:var(--t1)}
+.svc-h em{font-style:italic;color:var(--ac)}
+.svc-note{max-width:420px;font-size:15px;color:var(--t2);line-height:1.85;text-align:right}
+.svc-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.svc-card{
+  padding:40px 32px 36px;border-right:1px solid var(--b1);
+  display:flex;flex-direction:column;transition:background .3s;position:relative;
+}
+.svc-card:last-child{border-right:none}
+.svc-card:hover{background:rgba(212,196,181,.025)}
+.svc-num{font-size:9px;letter-spacing:2px;color:var(--t3);font-family:'IBM Plex Mono',ui-monospace,monospace;margin-bottom:24px}
+.svc-name{font-family:var(--serif);font-size:24px;line-height:1.18;color:var(--t1);margin-bottom:10px;letter-spacing:-.01em}
+.svc-tag{font-size:13px;color:var(--ac);margin-bottom:16px;line-height:1.5}
+.svc-desc{font-size:14px;color:#c0c0c0;line-height:1.78;margin-bottom:24px;flex:1}
+.svc-foot{display:flex;align-items:baseline;justify-content:space-between;border-top:1px solid var(--b1);padding-top:16px}
+.svc-from{font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:var(--t3)}
+.svc-price{font-family:var(--serif);font-size:21px;color:var(--t1);font-weight:300}
+
+/* ══ PLANS — per service ══ */
+.plans{border-bottom:1px solid var(--b1)}
+.plans-head{
+  padding:64px 40px 28px;border-bottom:1px solid var(--b1);
+  display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end;
+}
+.plans-h{font-family:var(--serif);font-size:clamp(30px,4.2vw,52px);font-weight:300;line-height:1.05;color:var(--t1)}
+.plans-h em{font-style:italic;color:var(--ac)}
+.plans-h .num{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:2px;color:var(--t3);font-weight:400;display:block;margin-bottom:14px}
+.plans-note{max-width:420px;font-size:14px;color:var(--t2);line-height:1.78;text-align:right}
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.plan{
+  padding:42px 32px;border-right:1px solid var(--b1);
+  display:flex;flex-direction:column;position:relative;transition:background .3s;
+}
+.plan:last-child{border-right:none}
+.plan:hover{background:rgba(212,196,181,.02)}
+.plan-tier{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:14px}
+.plan-price-wrap{display:flex;align-items:baseline;gap:6px;margin-bottom:8px}
+.plan-price{font-family:var(--serif);font-size:36px;font-weight:300;color:var(--t1);line-height:1;letter-spacing:-.01em}
+.plan-time{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ac);margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--b1)}
+.plan-desc{font-size:14.5px;color:var(--t2);line-height:1.78;flex:1;margin-bottom:24px}
+.plan-cta{margin-top:auto}
+.plan-btn{
+  display:block;width:100%;padding:12px;text-align:center;
+  font-size:10px;letter-spacing:1.4px;text-transform:uppercase;
+  border:1px solid var(--b1);color:var(--t2);transition:all .22s;
+}
+.plan-btn:hover{color:var(--t1);border-color:var(--b2)}
+.plan-btn.ac{background:var(--ac);color:#050505;border-color:var(--ac)}
+.plan-btn.ac:hover{background:var(--ac2);border-color:var(--ac2)}
+
+/* ══ CASES (industries) ══ */
+.cases{border-bottom:1px solid var(--b1);background:var(--s1)}
+.cases-head{padding:64px 40px 28px;border-bottom:1px solid var(--b1)}
+.cases-h{font-family:var(--serif);font-size:clamp(32px,4.6vw,54px);font-weight:300;line-height:1.05;color:var(--t1)}
+.cases-h em{font-style:italic;color:var(--ac)}
+.cases-sub{max-width:760px;margin-top:12px;font-size:16px;color:#c2c2c2;line-height:1.82}
+.cases-grid{display:grid;grid-template-columns:repeat(5,1fr)}
+.case{padding:36px 26px 32px;border-right:1px solid var(--b1);display:flex;flex-direction:column;gap:14px;min-height:260px;transition:background .3s}
+.case:last-child{border-right:none}
+.case:hover{background:rgba(212,196,181,.025)}
+.case-num{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:9px;letter-spacing:1.6px;color:var(--t3)}
+.case-tag{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ac)}
+.case-name{font-family:var(--serif);font-size:20px;line-height:1.22;color:var(--t1)}
+.case-body{font-size:13.5px;color:#bababa;line-height:1.72;flex:1}
+.case-metric{font-size:11px;color:var(--gr);border-top:1px solid var(--b1);padding-top:12px;letter-spacing:.4px}
+
+/* ══ FAQ ══ */
+.faq{border-bottom:1px solid var(--b1)}
+.faq-head{padding:64px 40px 28px;border-bottom:1px solid var(--b1)}
+.faq-h{font-family:var(--serif);font-size:clamp(32px,4.6vw,54px);font-weight:300;line-height:1.05;color:var(--t1)}
+.faq-h em{font-style:italic;color:var(--ac)}
+.faq-list{display:grid;grid-template-columns:1fr 1fr}
+.faq-item{
+  border-right:1px solid var(--b1);border-bottom:1px solid var(--b1);
+  padding:28px 36px;cursor:pointer;transition:background .25s;
+}
+.faq-item:nth-child(2n){border-right:none}
+.faq-item:hover{background:rgba(212,196,181,.02)}
+.faq-q{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:18px;
+  font-family:var(--serif);font-size:18px;font-weight:400;color:var(--t1);
+  line-height:1.32;
+}
+.faq-q::after{content:'+';font-family:var(--sans);font-size:18px;color:var(--ac);font-weight:300;flex-shrink:0;transition:transform .25s}
+.faq-item.open .faq-q::after{transform:rotate(45deg)}
+.faq-a{
+  font-size:14.5px;color:#bababa;line-height:1.78;
+  max-height:0;overflow:hidden;transition:max-height .35s ease,margin-top .25s ease;
+}
+.faq-item.open .faq-a{max-height:600px;margin-top:14px}
+
+/* ══ CTA ══ */
+.cta{padding:88px 40px;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.cta-h{font-family:var(--serif);font-size:clamp(36px,5vw,64px);font-weight:300;line-height:1.05;color:var(--t1)}
+.cta-h em{font-style:italic;color:var(--ac)}
+.cta-sub{font-size:16px;color:var(--t2);line-height:1.8;margin-top:16px}
+.cta-links{display:flex;flex-direction:column;gap:8px}
+.cta-lnk{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 20px;border:1px solid var(--b1);background:var(--s1);
+  transition:all .22s;
+}
+.cta-lnk:hover{border-color:var(--b2);background:var(--acg)}
+.cta-lnk-ico{width:32px;height:32px;border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;color:var(--ac);flex-shrink:0;font-size:14px}
+.cta-lnk-lbl{font-size:9px;color:var(--ac);letter-spacing:.9px;text-transform:uppercase;margin-bottom:2px}
+.cta-lnk-v{font-size:14px;color:var(--t1)}
+.cta-lnk-arr{color:var(--t3);margin-left:auto}
+
+/* ══ FOOTER ══ */
+footer{
+  padding:24px 40px;border-top:1px solid var(--b1);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;
+}
+footer a{color:var(--t3);transition:color .2s}
+footer a:hover{color:var(--t1)}
+
+.m-dock{display:none}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+  .hero-row{grid-template-columns:1fr;gap:28px}
+  .hero-aside{min-height:auto}
+  .svc-grid{grid-template-columns:1fr 1fr}
+  .svc-card:nth-child(2){border-right:none}
+  .svc-card:nth-child(-n+2){border-bottom:1px solid var(--b1)}
+  .cases-grid{grid-template-columns:1fr 1fr 1fr}
+  .case:nth-child(3){border-right:none}
+  .case:nth-child(-n+3){border-bottom:1px solid var(--b1)}
+  .svc-head,.plans-head{grid-template-columns:1fr}
+  .svc-note,.plans-note{text-align:left}
+  .plans-grid{grid-template-columns:1fr 1fr}
+  .plan:nth-child(2){border-right:none}
+  .plan:nth-child(-n+2){border-bottom:1px solid var(--b1)}
+  .cta{grid-template-columns:1fr;gap:40px;padding:64px 40px}
+}
+@media(max-width:900px){
+  .hero{min-height:auto;padding-top:44px}
+  .hero-content{padding:32px 28px 48px}
+  .hero-h{font-size:clamp(48px,8.4vw,86px);line-height:1.0;margin-bottom:22px}
+  .hero-h em{white-space:normal}
+  .hero-stats{grid-template-columns:repeat(4,1fr);gap:6px;margin-top:20px}
+  .hero-stat{padding:11px 9px}
+  .hero-stat-v{font-size:22px}
+  .hero-row{gap:24px}
+  .faq-list{grid-template-columns:1fr}
+  .faq-item{border-right:none}
+  .case{min-height:auto}
+}
+@media(max-width:760px){
+  nav{height:48px}
+  .hero{padding-top:48px}
+  .hero-content{padding:24px 20px 40px}
+  .hero-h{font-size:clamp(40px,12vw,62px);line-height:1.0;margin-bottom:22px;letter-spacing:-.01em}
+  .hero-h em{white-space:normal;display:inline}
+  .hero-row{gap:18px;padding-top:16px}
+  .hero-lead{font-size:15px;line-height:1.7}
+  .hero-aside{padding:18px 18px 16px}
+  .hero-stats{grid-template-columns:repeat(2,1fr);max-width:none;gap:6px;margin-top:18px}
+  .hero-stat{padding:10px 9px}
+  .hero-stat-v{font-size:20px;margin-bottom:3px}
+  .hero-stat-l{font-size:9px;letter-spacing:.7px}
+  .hero-cta-wrap{gap:8px;margin-top:20px}
+  .btn{font-size:11px;padding:12px 18px;letter-spacing:1.2px}
+  .quick-nav{padding:14px 20px}
+  .quick-nav-links{width:100%}
+  .quick-note{width:100%;font-size:11px}
+  .q-link{font-size:10px;padding:8px 10px}
+  .svc-head,.plans-head,.cases-head,.faq-head{padding:48px 20px 24px}
+  .svc-grid{grid-template-columns:1fr}
+  .svc-card{border-right:none;border-bottom:1px solid var(--b1);padding:32px 22px 28px}
+  .svc-card:last-child{border-bottom:none}
+  .plans-grid{grid-template-columns:1fr}
+  .plan{border-right:none;border-bottom:1px solid var(--b1);padding:32px 22px 28px}
+  .plan:last-child{border-bottom:none}
+  .cases-grid{grid-template-columns:1fr}
+  .case{border-right:none;border-bottom:1px solid var(--b1);padding:28px 20px 24px}
+  .case:last-child{border-bottom:none}
+  .faq-item{padding:22px 22px}
+  .faq-q{font-size:16px}
+  .cta{padding:48px 20px}
+  footer{flex-direction:column;gap:10px;text-align:center;padding:20px}
+  .n-links{display:none}
+  .n-r a{padding:0 16px}
+  .m-dock{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:6px;
+    position:fixed;left:10px;right:10px;bottom:10px;z-index:220;
+    background:rgba(8,8,8,.95);border:1px solid var(--b1);padding:8px;border-radius:8px;
+  }
+  .m-dock a{
+    border:1px solid var(--b1);border-radius:6px;padding:8px 6px;
+    text-align:center;font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--t2);
+  }
+  .m-dock a:hover{border-color:var(--ac);color:var(--t1)}
+  body{padding-bottom:88px}
+}
+@media(max-width:480px){
+  .hero-content{padding:20px 16px 32px}
+  .hero-h{font-size:clamp(36px,11vw,52px);line-height:1.02;margin-bottom:18px}
+  .hero-lead{font-size:14px;line-height:1.65}
+  .hero-cta-wrap .btn{flex:1;justify-content:center;min-width:0}
+  .hero-stats{gap:5px;margin-top:16px}
+  .hero-stat{padding:9px 7px}
+  .hero-stat-v{font-size:18px}
+  .hero-stat-l{font-size:8px;letter-spacing:.5px}
+  .svc-card,.plan{padding:26px 18px 22px}
+  .svc-name{font-size:22px}
+  .plan-price{font-size:32px}
+}
+@media(max-width:380px){
+  .hero-content{padding:18px 14px 28px}
+  .hero-h{font-size:clamp(32px,10vw,46px);margin-bottom:16px}
+  .hero-lead{font-size:13.5px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="n-logo" href="/"><span class="n-dot"></span>WeeGo</a>
+  <ul class="n-links">
+    <li><a href="#services" class="act">Послуги</a></li>
+    <li><a href="#sites">Сайти</a></li>
+    <li><a href="#cloud">Cloud</a></li>
+    <li><a href="#horeca">HoReCa</a></li>
+    <li><a href="#custom">Custom</a></li>
+    <li><a href="#cases">Кейси</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="n-r"><a href="mailto:hello@munister.com.ua">Написати ↗</a></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-lines"></div>
+  <div class="hero-content">
+    <h1 class="hero-h">
+      Веб-архітектури<br>
+      <em>та HORECA-системи</em>
+    </h1>
+    <div class="hero-row">
+      <div class="hero-copy">
+        <p class="hero-lead">
+          <strong>WeeGo Studio</strong> — інженерія для складних цифрових середовищ.
+          Сайти під ключ, власний хостинг-екосистема, операційні системи для готельно-ресторанного бізнесу
+          та індивідуальні рішення для підприємств.
+        </p>
+        <div class="hero-cta-wrap">
+          <a href="#services" class="btn btn-ac">Дослідити послуги ↓</a>
+          <a href="mailto:hello@munister.com.ua" class="btn btn-gh">Описати проєкт</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="hero-stat-v">2020</div><div class="hero-stat-l">Київ_Україна</div></div>
+          <div class="hero-stat"><div class="hero-stat-v">24h</div><div class="hero-stat-l">Час відповіді</div></div>
+          <div class="hero-stat"><div class="hero-stat-v">99.9%</div><div class="hero-stat-l">SLA uptime</div></div>
+          <div class="hero-stat"><div class="hero-stat-v">€1M+</div><div class="hero-stat-l">Оброблено</div></div>
+        </div>
+      </div>
+      <aside class="hero-aside">
+        <div class="aside-k">Основні напрями</div>
+        <ul class="aside-list">
+          <li><span class="aside-name">Сайти під ключ</span><span class="aside-price">від €300</span></li>
+          <li><span class="aside-name">WeeGo Cloud</span><span class="aside-price">від €1,000</span></li>
+          <li><span class="aside-name">HORECA OS</span><span class="aside-price">від €1,000</span></li>
+          <li><span class="aside-name">Індивідуальні системи</span><span class="aside-price">За кошторисом</span></li>
+        </ul>
+        <div class="aside-status">Система · Працює</div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK NAV -->
+<section class="quick-nav">
+  <div class="quick-nav-links">
+    <a class="q-link" href="#sites">Сайти</a>
+    <a class="q-link" href="#cloud">Cloud</a>
+    <a class="q-link" href="#horeca">HoReCa OS</a>
+    <a class="q-link" href="#custom">Custom</a>
+    <a class="q-link" href="#cases">Кейси</a>
+    <a class="q-link" href="#faq">Q&A</a>
+  </div>
+  <div class="quick-note">Інженерія від <strong>WEEGO</strong> · з 2020, Київ.</div>
+</section>
+
+<!-- SERVICES -->
+<section class="svc" id="services">
+  <div class="svc-head">
+    <h2 class="svc-h">Чотири напрями <em>цифрової архітектури</em></h2>
+    <p class="svc-note">Від простого сайту до операційної системи для мережі ресторанів. Працюємо вертикально: дизайн, фронт, бек, інфраструктура.</p>
+  </div>
+  <div class="svc-grid">
+    <article class="svc-card">
+      <div class="svc-num">01 / SITES</div>
+      <h3 class="svc-name">САЙТИ ПІД КЛЮЧ</h3>
+      <div class="svc-tag">Цифрова архітектура від А до Я.</div>
+      <p class="svc-desc">Створюємо високопродуктивні цифрові активи з нуля, оптимізовані під конверсію та масштаб.</p>
+      <div class="svc-foot">
+        <span class="svc-from">від</span>
+        <span class="svc-price">€300</span>
+      </div>
+    </article>
+    <article class="svc-card">
+      <div class="svc-num">02 / CLOUD</div>
+      <h3 class="svc-name">WEEGO CLOUD</h3>
+      <div class="svc-tag">Інфраструктура корпоративного рівня.</div>
+      <p class="svc-desc">Власний хостинг-екосистема для швидкості, безпеки та 99.9% uptime. Виділені ресурси, моніторинг, бекапи.</p>
+      <div class="svc-foot">
+        <span class="svc-from">від</span>
+        <span class="svc-price">€1,000</span>
+      </div>
+    </article>
+    <article class="svc-card">
+      <div class="svc-num">03 / HORECA</div>
+      <h3 class="svc-name">HORECA OS</h3>
+      <div class="svc-tag">Системи для готельно-ресторанного бізнесу.</div>
+      <p class="svc-desc">Цифрова основа для сучасних ресторанів та готелів. Бронювання, меню, склад, POS-інтеграція, аналітика гостей.</p>
+      <div class="svc-foot">
+        <span class="svc-from">від</span>
+        <span class="svc-price">€1,000</span>
+      </div>
+    </article>
+    <article class="svc-card">
+      <div class="svc-num">04 / CUSTOM</div>
+      <h3 class="svc-name">ІНДИВІДУАЛЬНІ СИСТЕМИ</h3>
+      <div class="svc-tag">Розробка під ваш бізнес.</div>
+      <p class="svc-desc">Складна логіка. Масштабовані бекенди. Унікальний досвід. Вирішуємо складні задачі — від MVP до Enterprise.</p>
+      <div class="svc-foot">
+        <span class="svc-from">старт</span>
+        <span class="svc-price">за кошторисом</span>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- PLANS: SITES -->
+<section class="plans" id="sites">
+  <div class="plans-head">
+    <h2 class="plans-h"><span class="num">01 / САЙТИ</span>Сайти <em>під ключ</em></h2>
+    <p class="plans-note">Швидкий запуск з чітким стартовим бюджетом. Простий сайт під ваш бренд — швидко, акуратно, з запуском. Адаптив, базова SEO, аналітика.</p>
+  </div>
+  <div class="plans-grid">
+    <article class="plan">
+      <div class="plan-tier">STARTER</div>
+      <div class="plan-price-wrap"><span class="plan-price">€300</span><span class="plan-time" style="margin:0 0 0 4px;padding:0;border:none">·  3–7 днів</span></div>
+      <div class="plan-time">Ідеально для нових проєктів</div>
+      <p class="plan-desc">1 сторінка або невеликий сайт, адаптив, форма зворотного зв’язку, деплой, базова SEO-структура та аналітика. Чистий UI та структура.</p>
+      <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Замовити</a></div>
+    </article>
+    <article class="plan">
+      <div class="plan-tier">STANDARD</div>
+      <div class="plan-price-wrap"><span class="plan-price">€600</span><span class="plan-time" style="margin:0 0 0 4px;padding:0;border:none">·  1–2 тижні</span></div>
+      <div class="plan-time">Для малого бізнесу</div>
+      <p class="plan-desc">5–10 сторінок, повторно-використовувані блоки, базова аналітика, деплой, форми та базові інтеграції. SEO-структура, schema.org, мета.</p>
+      <div class="plan-cta"><a class="plan-btn ac" href="mailto:hello@munister.com.ua">Замовити</a></div>
+    </article>
+    <article class="plan">
+      <div class="plan-tier">PRO</div>
+      <div class="plan-price-wrap"><span class="plan-price">€900</span><span class="plan-time" style="margin:0 0 0 4px;padding:0;border:none">·  2–4 тижні</span></div>
+      <div class="plan-time">Для стартапів та брендів</div>
+      <p class="plan-desc">Індивідуальний UI, 1–2 інтеграції (CRM/оплати/бронювання), розширені події аналітики, перевірка продуктивності, A/B-готовність.</p>
+      <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Замовити</a></div>
+    </article>
+  </div>
+</section>
+
+<!-- PLANS: CLOUD -->
+<section class="plans" id="cloud">
+  <div class="plans-head">
+    <h2 class="plans-h"><span class="num">02 / CLOUD</span>WeeGo <em>Cloud</em></h2>
+    <p class="plans-note">Власний хостинг — швидкість, безпека, 99.9% uptime. Деплой того ж дня. Моніторинг, бекапи, виділені ресурси за потреби.</p>
+  </div>
+  <div class="plans-grid">
+    <article class="plan">
+      <div class="plan-tier">STARTER</div>
+      <div class="plan-price-wrap"><span class="plan-price" style="font-size:24px">За запитом</span></div>
+      <div class="plan-time">Того ж дня</div>
+      <p class="plan-desc">Один додаток, спільна інфраструктура, базовий моніторинг, безпечне TLS-підключення та щоденні бекапи.</p>
+      <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Дізнатись</a></div>
+    </article>
+    <article class="plan">
+      <div class="plan-tier">PRO</div>
+      <div class="plan-price-wrap"><span class="plan-price" style="font-size:24px">За запитом</span></div>
+      <div class="plan-time">Того ж дня</div>
+      <p class="plan-desc">Виділені ресурси, staging-середовище, розширена аналітика, пріоритетна підтримка та автоскейл.</p>
+      <div class="plan-cta"><a class="plan-btn ac" href="mailto:hello@munister.com.ua">Дізнатись</a></div>
+    </article>
+    <article class="plan">
+      <div class="plan-tier">ENTERPRISE</div>
+      <div class="plan-price-wrap"><span class="plan-price" style="font-size:24px">За запитом</span></div>
+      <div class="plan-time">1–2 тижні</div>
+      <p class="plan-desc">Мультирегіон, індивідуальне SLA, виділена підтримка 24/7, аудит інфраструктури, монiторинг безпеки.</p>
+      <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Дізнатись</a></div>
+    </article>
+  </div>
+</section>
+
+<!-- PLANS: HORECA -->
+<section class="plans" id="horeca">
+  <div class="plans-head">
+    <h2 class="plans-h"><span class="num">03 / HORECA OS</span>Системи для <em>ресторанів та готелів</em></h2>
+    <p class="plans-note">Цифрова основа для закладів: бронювання, цифрові меню, склад, POS, аналітика гостей, управління змінами. Інтеграція з більшістю POS через API.</p>
+  </div>
+  <div class="plans-grid">
+    <article class="plan">
+      <div class="plan-tier">CORE</div>
+      <div class="plan-price-wrap"><span class="plan-price">€1,000</span><span class="plan-time" style="margin:0 0 0 4px;padding:0;border:none">·  2–4 тижні</span></div>
+      <div class="plan-time">Заклади з бронюванням та меню</div>
+      <p class="plan-desc">Бронювання, цифрове меню (QR / в закладі), базові звіти, лендінг закладу, віджет резерву та онлайн-оплата.</p>
+      <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Замовити</a></div>
+    </article>
+    <article class="plan">
+      <div class="plan-tier">PRO</div>
+      <div class="plan-price-wrap"><span class="plan-price">€3,000</span><span class="plan-time" style="margin:0 0 0 4px;padding:0;border:none">·  4–8 тижнів</span></div>
+      <div class="plan-time">Ресторани, що переходять у цифру</div>
+      <p class="plan-desc">Інтеграція POS, облік складу, аналітика гостей, управління столиками, бронюваннями та змінами персоналу. Звіти в реальному часі.</p>
+      <div class="plan-cta"><a class="plan-btn ac" href="mailto:hello@munister.com.ua">Замовити</a></div>
+    </article>
+    <article class="plan">
+      <div class="plan-tier">ENTERPRISE</div>
+      <div class="plan-price-wrap"><span class="plan-price" style="font-size:24px">За кошторисом</span></div>
+      <div class="plan-time">8+ тижнів</div>
+      <p class="plan-desc">Мультилокація, кастомні модулі, відкритий API, синхронізація між закладами, виділена підтримка. Для мереж.</p>
+      <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Замовити</a></div>
+    </article>
+  </div>
+</section>
+
+<!-- PLANS: CUSTOM -->
+<section class="plans" id="custom">
+  <div class="plans-head">
+    <h2 class="plans-h"><span class="num">04 / CUSTOM</span>Індивідуальні <em>системи</em></h2>
+    <p class="plans-note">Складна логіка, унікальні процеси, високі SLA. Працюємо спринтами: дослідження → архітектура → MVP → масштаб. Фіксований або обмежений кошторис після scope-сесії.</p>
+  </div>
+  <div class="plans-grid">
+    <article class="plan">
+      <div class="plan-tier">MVP</div>
+      <div class="plan-price-wrap"><span class="plan-price" style="font-size:24px">Кошторис</span></div>
+      <div class="plan-time">6–12 тижнів</div>
+      <p class="plan-desc">Ключові функції, один продукт, чіткий обсяг. Фокус на основній цінності та швидкій ітерації. Готовність до реальних користувачів.</p>
+      <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Описати</a></div>
+    </article>
+    <article class="plan">
+      <div class="plan-tier">FULL BUILD</div>
+      <div class="plan-price-wrap"><span class="plan-price" style="font-size:24px">Кошторис</span></div>
+      <div class="plan-time">3–6 місяців</div>
+      <p class="plan-desc">Повний продукт, інтеграції, готовність до масштабу. Архітектура та проєктування API, моніторинг, документація, передача.</p>
+      <div class="plan-cta"><a class="plan-btn ac" href="mailto:hello@munister.com.ua">Описати</a></div>
+    </article>
+    <article class="plan">
+      <div class="plan-tier">ENTERPRISE</div>
+      <div class="plan-price-wrap"><span class="plan-price" style="font-size:24px">Кошторис</span></div>
+      <div class="plan-time">6+ місяців</div>
+      <p class="plan-desc">Кілька систем, відповідність нормативам (GDPR/PCI), виділена команда, інтеграції з legacy. SLA 99.9%+ uptime, audit-ready.</p>
+      <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Описати</a></div>
+    </article>
+  </div>
+</section>
+
+<!-- CASES -->
+<section class="cases" id="cases">
+  <div class="cases-head">
+    <h2 class="cases-h">Галузі та <em>досвід</em></h2>
+    <p class="cases-sub">Проєктували та запускали у різних доменах — від мистецьких маркетплейсів до критичної гуманітарної інфраструктури.</p>
+  </div>
+  <div class="cases-grid">
+    <article class="case">
+      <div class="case-num">CASE / 01</div>
+      <div class="case-tag">Арт-тех платформа</div>
+      <h3 class="case-name">Цифровий канал для галерей</h3>
+      <p class="case-body">Платформа, що з’єднує фізичні галереї з цифровими відвідувачами. Об’єднано 40+ галерей в єдиний арт-маркетплейс.</p>
+      <div class="case-metric">40+ галерей</div>
+    </article>
+    <article class="case">
+      <div class="case-num">CASE / 02</div>
+      <div class="case-tag">Гуманітарна платформа</div>
+      <h3 class="case-name">Donate &amp; Logistics</h3>
+      <p class="case-body">Критична інфраструктура для гуманітарної допомоги: система донатів, трекінг логістики, мультивалютні платежі.</p>
+      <div class="case-metric">€1M+ донатів, 0 простоїв</div>
+    </article>
+    <article class="case">
+      <div class="case-num">CASE / 03</div>
+      <div class="case-tag">Видавництво / E-commerce</div>
+      <h3 class="case-name">Книжковий магазин</h3>
+      <p class="case-body">Повноцінний онлайн-магазин книг з безпечною оплатою та доставкою в 59 країн. Каталог, кошик, мультимова.</p>
+      <div class="case-metric">59 країн доставки</div>
+    </article>
+    <article class="case">
+      <div class="case-num">CASE / 04</div>
+      <div class="case-tag">Освітній інтерфейс</div>
+      <h3 class="case-name">Imersive learning</h3>
+      <p class="case-body">Імерсивний освітній стенд для естетичної декомпозиції. Інтерактивне навчання замість статичного контенту.</p>
+      <div class="case-metric">×3 залученість</div>
+    </article>
+    <article class="case">
+      <div class="case-num">CASE / 05</div>
+      <div class="case-tag">Охорона здоров’я</div>
+      <h3 class="case-name">Healthcare backbone</h3>
+      <p class="case-body">Модернізація застарілих систем медичної інфраструктури. Безпека, відповідність нормам, інтеграція з обладнанням.</p>
+      <div class="case-metric">HIPAA-ready</div>
+    </article>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="faq-head">
+    <h2 class="faq-h">Питання та <em>відповіді</em></h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Скільки часу займає запуск сайту?</div>
+      <div class="faq-a">Залежить від обсягу. Типово: лендінг — до тижня, корпоративний сайт — до місяця, складніші проєкти з інтеграціями — 4–8 тижнів. Після короткого брифу даємо реальний план по датах.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Скільки це коштує і як формується ціна?</div>
+      <div class="faq-a">Ціна залежить від структури сторінок, дизайну, контенту та інтеграцій. Робимо короткий бриф, визначаємо обсяг, даємо фіксований кошторис або погодинну модель — коли потрібна гнучкість.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Що входить у пакет «під ключ»?</div>
+      <div class="faq-a">Зазвичай: структура сторінок, дизайн, розробка, адаптація під мобільні, базова SEO-підготовка, підключення аналітики та адмін-панелі, тестування та запуск.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Як виглядає процес роботи?</div>
+      <div class="faq-a">Бриф → коротка зустріч → прототип/структура → дизайн → розробка → тестування → запуск. Бачите прогрес по етапах та отримуєте проміжні версії — щоб коригувати курс на ходу, а не «вкінці».</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Що потрібно від вас на старті?</div>
+      <div class="faq-a">Мінімум: приклади сайтів, які подобаються/не подобаються, список послуг, контакти, логотип/бренд-матеріали (якщо є). Якщо цього нема — допоможемо зібрати базу і сформувати структуру.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Чи зможу я сам(а) змінювати тексти, ціни та фото?</div>
+      <div class="faq-a">Так. Налаштовуємо зручне редагування контенту без ризику зламати дизайн і даємо коротку інструкцію.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Що з доменом, хостингом і поштою?</div>
+      <div class="faq-a">Допомагаємо підключити домен, налаштувати хостинг і корпоративну пошту. Якщо вже є поточний домен/хостинг — підхоплюємо і переносимо без хаосу, з мінімальним простоєм.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Чи інтегруєтеся з існуючим POS?</div>
+      <div class="faq-a">Так. HORECA OS інтегрується з більшістю сучасних POS через API або проміжне ПЗ. Перед стартом робимо аудит сумісності та узгоджуємо синхронізацію.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Чи є SLA та підтримка після запуску?</div>
+      <div class="faq-a">Так — SLA 99.9% uptime на рівні Pro та вище. Пропонуємо щомісячну підтримку та абонементи з фіксованим обсягом годин. Виділена підтримка 24/7 на Enterprise.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Чи можна перенести існуючий сайт або код?</div>
+      <div class="faq-a">Так. Робимо аудит, модернізацію та міграцію з мінімальним простоєм. Можемо також підхопити чужий код і продовжити розробку.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div>
+    <h2 class="cta-h">Готові <em>побудувати</em>?</h2>
+    <p class="cta-sub">Опишіть проєкт у двох реченнях. Відповімо протягом 24 годин з планом, термінами та орієнтиром по бюджету.</p>
+  </div>
+  <div class="cta-links">
+    <a class="cta-lnk" href="mailto:hello@munister.com.ua">
+      <span class="cta-lnk-ico">@</span>
+      <div>
+        <div class="cta-lnk-lbl">Email</div>
+        <div class="cta-lnk-v">hello@munister.com.ua</div>
+      </div>
+      <span class="cta-lnk-arr">↗</span>
+    </a>
+    <a class="cta-lnk" href="https://t.me/munister" target="_blank" rel="noopener">
+      <span class="cta-lnk-ico">✈</span>
+      <div>
+        <div class="cta-lnk-lbl">Telegram</div>
+        <div class="cta-lnk-v">@munister</div>
+      </div>
+      <span class="cta-lnk-arr">↗</span>
+    </a>
+    <a class="cta-lnk" href="/offer">
+      <span class="cta-lnk-ico">₴</span>
+      <div>
+        <div class="cta-lnk-lbl">Альтернатива</div>
+        <div class="cta-lnk-v">Продукт за підпискою — від ₴900/міс</div>
+      </div>
+      <span class="cta-lnk-arr">↗</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div>© WeeGo Studio · з 2020, Київ</div>
+  <div><a href="/">munister.com.ua</a> · <a href="mailto:hello@munister.com.ua">hello@munister.com.ua</a></div>
+</footer>
+
+<div class="m-dock">
+  <a href="#services">Послуги</a>
+  <a href="#sites">Сайти</a>
+  <a href="#horeca">HoReCa</a>
+  <a href="#faq">FAQ</a>
+</div>
+
+</body>
+</html>
