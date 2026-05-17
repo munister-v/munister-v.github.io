@@ -569,6 +569,9 @@ footer a:hover{color:var(--t2)}
 /* ══ RESPONSIVE ══ */
 @media(max-width:1100px){
   .hero-photo{inset:40px 0 0 0;opacity:.22}
+  /* photo gradient was horizontal (designed for right-aligned photo);
+     switch to top-down on tablet/mobile when photo fills full width */
+  .hero-photo::after{background:linear-gradient(180deg,rgba(5,5,5,.55) 0%,rgba(5,5,5,.30) 35%,rgba(5,5,5,.78) 100%)}
   .hero-row{grid-template-columns:1fr}
   .hero-show{min-height:320px}
   .plans-grid{grid-template-columns:1fr 1fr}
@@ -593,26 +596,41 @@ footer a:hover{color:var(--t2)}
   .plans-head{grid-template-columns:1fr}
   .plans-note{text-align:left}
 }
+@media(max-width:900px){
+  .hero{min-height:auto;padding-top:44px}
+  .hero-content{padding:32px 28px 48px}
+  .hero-h{font-size:clamp(48px,8.4vw,86px);line-height:1.0;margin-bottom:22px}
+  .hero-h em{white-space:normal}
+  .hero-show{min-height:280px;aspect-ratio:16/10}
+  .hero-stats{grid-template-columns:repeat(3,1fr);gap:6px;margin-top:20px}
+  .hero-stat{padding:11px 9px}
+  .hero-stat-v{font-size:22px}
+  .hero-row{gap:24px}
+}
 @media(max-width:760px){
   nav{height:48px}
   .hero{padding-top:48px}
-  .hero-photo{inset:48px 0 0 0}
-  .hero-content{padding:0 20px 48px}
-  .hero-h{font-size:clamp(44px,17vw,74px);line-height:.98;margin-bottom:28px}
+  .hero-photo{inset:48px 0 0 0;opacity:.18}
+  .hero-content{padding:24px 20px 40px}
+  /* Cap hero-h with explicit max so Ukrainian "за підпискою" stays inside the viewport */
+  .hero-h{font-size:clamp(40px,12vw,62px);line-height:1.0;margin-bottom:22px;letter-spacing:-.01em}
+  .hero-h em{white-space:normal;display:inline}
   .hero-row{gap:18px;padding-top:16px}
-  .hero-lead{font-size:16px;line-height:1.75}
-  .hero-show{min-height:270px}
-  .hero-show-ui{width:140px;right:10px;top:10px;padding:8px}
-  .hero-phone{padding:6px}
-  .hero-phone-row,.hero-phone-bank,.hero-phone-bal{font-size:7px}
+  .hero-lead{font-size:15px;line-height:1.7}
+  /* Use aspect-ratio for predictable height instead of fixed min-height */
+  .hero-show{min-height:auto;aspect-ratio:4/3}
   .hero-show-ui{display:none}
   .quick-nav{padding:14px 20px}
   .quick-nav-links{width:100%}
   .quick-note{width:100%;font-size:11px}
   .q-link{font-size:10px;padding:8px 10px}
-  .hero-stats{grid-template-columns:1fr;max-width:none}
-  .hero-stat-v{font-size:22px}
+  /* 3 stats fit nicely in a row on phones — keep them grouped */
+  .hero-stats{grid-template-columns:repeat(3,1fr);max-width:none;gap:6px;margin-top:18px}
+  .hero-stat{padding:10px 8px}
+  .hero-stat-v{font-size:20px;margin-bottom:3px}
+  .hero-stat-l{font-size:9px;letter-spacing:.7px}
   .hero-modes .mode-link{padding:5px 8px;font-size:9px}
+  .hero-cta-wrap{gap:8px;margin-top:20px}
   .btn{font-size:11px;padding:12px 18px;letter-spacing:1.2px}
   .plan-media{margin:0 -20px 20px;height:144px}
   .ops-head{padding:48px 20px 24px}
@@ -651,6 +669,30 @@ footer a:hover{color:var(--t2)}
   }
   .m-dock a:hover{border-color:var(--ac);color:var(--t1)}
   body{padding-bottom:88px}
+}
+@media(max-width:480px){
+  .hero{padding-top:44px}
+  .hero-content{padding:20px 16px 32px}
+  .hero-h{font-size:clamp(36px,11vw,52px);line-height:1.02;margin-bottom:18px}
+  .hero-lead{font-size:14px;line-height:1.65}
+  .hero-show{aspect-ratio:5/4}
+  .hero-cta-wrap .btn{flex:1;justify-content:center;min-width:0}
+  .hero-stats{gap:5px;margin-top:16px}
+  .hero-stat{padding:9px 6px}
+  .hero-stat-v{font-size:18px}
+  .hero-stat-l{font-size:8px;letter-spacing:.5px}
+  .hero-modes{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+  .hero-modes .mode-link{padding:4px 7px;font-size:8.5px;letter-spacing:.6px}
+  .quick-nav{padding:12px 16px;gap:10px}
+  .q-link{font-size:9.5px;padding:7px 9px;letter-spacing:.6px}
+}
+@media(max-width:380px){
+  .hero-content{padding:18px 14px 28px}
+  .hero-h{font-size:clamp(32px,10vw,46px);margin-bottom:16px}
+  .hero-lead{font-size:13.5px}
+  .hero-show{aspect-ratio:5/4}
+  .hero-stats{grid-template-columns:repeat(3,1fr)}
+  .hero-stat-v{font-size:16px}
 }
 </style>
 </head>
