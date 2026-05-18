@@ -773,6 +773,11 @@ footer a:hover{color:var(--t2)}
 .plan-btn.ac:hover{background:linear-gradient(135deg,var(--ac2),#b09a88);box-shadow:0 6px 20px rgba(212,196,181,.25);transform:translateY(-1px)}
 .sum-btn{background:linear-gradient(135deg,var(--ac),var(--ac2));box-shadow:0 4px 16px rgba(212,196,181,.15)}
 .sum-btn:hover{background:linear-gradient(135deg,var(--ac2),#b09a88);box-shadow:0 6px 20px rgba(212,196,181,.25);transform:translateY(-1px)}
+.sum-extra-btns{display:flex;gap:8px;margin-top:8px}
+.sum-wa-btn,.sum-tg-btn{flex:1;text-align:center;padding:10px;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;border:1px solid var(--b1);color:var(--t2);border-radius:10px;transition:all .22s;cursor:pointer;text-decoration:none}
+.sum-wa-btn:hover,.sum-tg-btn:hover{border-color:var(--ac);color:var(--t1);background:rgba(212,196,181,.06)}
+.sum-wa-btn{border-color:#25d366;color:#25d366}
+.sum-wa-btn:hover{background:rgba(37,211,102,.08);color:#25d366}
 
 /* ══ POPULAR PLAN HIGHLIGHT ══ */
 .plan.popular{background:rgba(212,196,181,.04);border-left:2px solid var(--ac);border-right:2px solid var(--ac)}
@@ -1496,6 +1501,10 @@ footer a:hover{color:var(--t2)}
           <div class="sum-total-v" id="sum-total">₴600/міс</div>
         </div>
         <a href="#" class="sum-btn" onclick="openEmail(event)">Написати з деталями ↗</a>
+        <div class="sum-extra-btns">
+          <a href="#" class="sum-wa-btn" onclick="openWhatsApp(event)">WhatsApp ↗</a>
+          <a href="https://t.me/vyanetto1" target="_blank" rel="noopener noreferrer" class="sum-tg-btn">Telegram ↗</a>
+        </div>
         <div class="sum-foot">Орієнтовна ціна · фінальну обговоримо особисто</div>
       </div>
     </div>
@@ -1712,8 +1721,7 @@ function render2(b){
   document.getElementById('sum-total').innerHTML=`${fmt(total)}`;
   syncStateUrl();
 }
-function openEmail(e){
-  e.preventDefault();
+function buildSummaryText(){
   const b=B[curB];
   let total=b.p;
   let flist=[];
@@ -1723,9 +1731,20 @@ function openEmail(e){
     total+=parseInt(el.dataset.p);
     flist.push('— '+el.dataset.n);
   });
+  return {b,total,flist};
+}
+function openEmail(e){
+  e.preventDefault();
+  const {b,total,flist}=buildSummaryText();
   const subj=encodeURIComponent(`${b.name} — ${fmt(total)}`);
   const body=encodeURIComponent(`Привіт!\n\nЗібрав рішення у калькуляторі:\nОснова: ${b.name}${flist.length?'\n\nФункції:\n'+flist.join('\n'):''}\n\nОрієнтовна вартість: ${fmt(total)}\n\n---\nРозкажіть про свій проєкт:`);
   window.location.href=`mailto:munister@outlook.com?subject=${subj}&body=${body}`;
+}
+function openWhatsApp(e){
+  e.preventDefault();
+  const {b,total,flist}=buildSummaryText();
+  const text=encodeURIComponent(`Привіт! Зібрав рішення у калькуляторі:\nОснова: ${b.name}${flist.length?'\nФункції:\n'+flist.join('\n'):''}\nОрієнтовна вартість: ${fmt(total)}`);
+  window.open(`https://wa.me/380683642205?text=${text}`,'_blank');
 }
 function openPackageEmail(e,a){
   e.preventDefault();
