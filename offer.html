@@ -1737,11 +1737,13 @@ document.querySelectorAll('.feat').forEach(el=>{
 });
 render();
 
-// Scroll reveal animation
+// Scroll reveal animation — lower threshold + rootMargin for mobile reliability
 const revealObs=new IntersectionObserver((entries)=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revealObs.unobserve(e.target);}});
-},{threshold:0.15});
+},{threshold:0.02, rootMargin:'0px 0px 80px 0px'});
 document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+// Fallback: reveal all sections after 1.5s if observer didn't fire (e.g. iOS Safari edge cases)
+setTimeout(()=>{document.querySelectorAll('.reveal:not(.visible)').forEach(el=>el.classList.add('visible'));},1500);
 </script>
 </body>
 </html>
