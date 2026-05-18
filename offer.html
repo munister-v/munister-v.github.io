@@ -18,6 +18,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300&family=Manrope:wght@400;500;600;700;800&display=swap"/>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -31,6 +32,39 @@
 }
 html{scroll-behavior:smooth;overflow-x:hidden}
 body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:17px;line-height:1.68;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ══ PAGE LOAD ANIMATION ══ */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+body{animation:fadeIn .5s ease}
+nav{animation:fadeIn .4s ease .1s both}
+.hero-h{animation:fadeInUp .7s ease .2s both}
+.hero-lead{animation:fadeInUp .6s ease .35s both}
+.hero-cta-wrap{animation:fadeInUp .6s ease .45s both}
+.hero-stats{animation:fadeInUp .5s ease .55s both}
+.hero-show{animation:fadeIn .8s ease .4s both}
+.hero-modes{animation:fadeInUp .4s ease .3s both}
+
+/* ══ SMOOTH SECTION TRANSITIONS ══ */
+.s-fade{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}
+.s-fade.s-in{opacity:1;transform:translateY(0)}
+.s-slide-l{opacity:0;transform:translateX(-20px);transition:opacity .5s ease,transform .5s ease}
+.s-slide-l.s-in{opacity:1;transform:translateX(0)}
+.s-slide-r{opacity:0;transform:translateX(20px);transition:opacity .5s ease,transform .5s ease}
+.s-slide-r.s-in{opacity:1;transform:translateX(0)}
+.s-scale{opacity:0;transform:scale(.97);transition:opacity .5s ease,transform .5s ease}
+.s-scale.s-in{opacity:1;transform:scale(1)}
+@media(max-width:760px){.s-fade,.s-slide-l,.s-slide-r,.s-scale{opacity:1;transform:none}}
+
+/* ══ STAGGER CHILDREN ══ */
+.stagger>*{opacity:0;transform:translateY(12px);transition:opacity .4s ease,transform .4s ease}
+.stagger.s-in>*{opacity:1;transform:translateY(0)}
+.stagger.s-in>*:nth-child(1){transition-delay:.05s}
+.stagger.s-in>*:nth-child(2){transition-delay:.1s}
+.stagger.s-in>*:nth-child(3){transition-delay:.12s}
+.stagger.s-in>*:nth-child(4){transition-delay:.16s}
+@media(max-width:760px){.stagger>*{opacity:1;transform:none}}
 a{color:inherit;text-decoration:none}
 
 /* ── NAV ── */
@@ -861,7 +895,7 @@ footer a:hover{color:var(--t2)}
         </div>
       </div>
       <div class="hero-show">
-        <img src="/images/cafe-interior-2.jpg" alt="Інтер'єр закладу з живою атмосферою"/>
+        <img src="/images/cafe-interior-2.jpg" alt="Інтер'єр закладу з живою атмосферою" loading="eager" fetchpriority="high" decoding="async"/>
         <div class="hero-show-ui">
           <div class="hero-phone">
             <div class="hero-phone-top">
@@ -924,7 +958,7 @@ footer a:hover{color:var(--t2)}
 </section>
 
 <!-- PLANS -->
-<section class="plans reveal" id="plans" data-mode-target="all,services,horeca,shop">
+<section class="plans reveal s-fade" id="plans" data-mode-target="all,services,horeca,shop">
   <div class="plans-head">
     <h2 class="plans-h">Оберіть<br><em>свій пакет</em></h2>
     <p class="plans-note">
@@ -932,7 +966,7 @@ footer a:hover{color:var(--t2)}
     </p>
   </div>
 
-  <div class="plans-grid">
+  <div class="plans-grid stagger">
 
     <!-- Старт -->
     <div class="plan" data-mode-target="all,services">
@@ -1044,7 +1078,7 @@ footer a:hover{color:var(--t2)}
     </div>
 
     <div class="plan" data-mode-target="all,horeca">
-      <div class="plan-media"><img src="/images/cafe-interior-1.jpg" alt="Кухня ресторану і команда"/></div>
+      <div class="plan-media"><img src="/images/cafe-interior-1.jpg" alt="Кухня ресторану і команда" loading="lazy" decoding="async"/></div>
       <div class="plan-tier">HoReCa</div>
       <div class="plan-name">Система для кафе</div>
       <div class="plan-tagline">Замовлення, меню, доставка і контроль кухні</div>
@@ -1068,7 +1102,7 @@ footer a:hover{color:var(--t2)}
     </div>
 
     <div class="plan" data-mode-target="all,shop">
-      <div class="plan-media"><img src="/images/cafe-interior-3.jpg" alt="Склад та логістика"/></div>
+      <div class="plan-media"><img src="/images/cafe-interior-3.jpg" alt="Склад та логістика" loading="lazy" decoding="async"/></div>
       <div class="plan-tier">Магазин</div>
       <div class="plan-name">Інтернет-магазин</div>
       <div class="plan-tagline">Продавайте онлайн: каталог, кошик, оплата, доставка</div>
@@ -1119,7 +1153,7 @@ footer a:hover{color:var(--t2)}
   </div>
   <div class="ops-grid">
     <article class="ops-card">
-      <div class="ops-img"><img src="/images/cafe-interior-1.jpg" alt="Інтер'єр ресторану"/></div>
+      <div class="ops-img"><img src="/images/cafe-interior-1.jpg" alt="Інтер'єр ресторану" loading="lazy" decoding="async"/></div>
       <div class="ops-body">
         <div class="ops-k">Ресторани</div>
         <h3 class="ops-t">Зал + кухня + доставка</h3>
@@ -1128,7 +1162,7 @@ footer a:hover{color:var(--t2)}
       </div>
     </article>
     <article class="ops-card">
-      <div class="ops-img"><img src="/images/cafe-interior-2.jpg" alt="Інтер'єр кав'ярні"/></div>
+      <div class="ops-img"><img src="/images/cafe-interior-2.jpg" alt="Інтер'єр кав'ярні" loading="lazy" decoding="async"/></div>
       <div class="ops-body">
         <div class="ops-k">Кав'ярні і мережі</div>
         <h3 class="ops-t">Єдиний кабінет для точок</h3>
@@ -1137,7 +1171,7 @@ footer a:hover{color:var(--t2)}
       </div>
     </article>
     <article class="ops-card">
-      <div class="ops-img"><img src="/images/cafe-interior-3.jpg" alt="Команда працює з дашбордами"/></div>
+      <div class="ops-img"><img src="/images/cafe-interior-3.jpg" alt="Команда працює з дашбордами" loading="lazy" decoding="async"/></div>
       <div class="ops-body">
         <div class="ops-k">Сервісні компанії</div>
         <h3 class="ops-t">Заявки і звіти</h3>
@@ -1148,12 +1182,12 @@ footer a:hover{color:var(--t2)}
   </div>
 </section>
 
-<section class="showcase reveal" id="services" data-mode-target="all,services,shop,horeca">
+<section class="showcase reveal s-fade" id="services" data-mode-target="all,services,shop,horeca">
   <div class="showcase-head">
     <h2 class="showcase-h">Що ще можемо<br><em>зробити для вас</em></h2>
     <p class="showcase-sub">Не лише сайт. Робимо інструменти, які економлять час вашій команді: автоматизуємо замовлення, спілкування з клієнтами і внутрішні процеси.</p>
   </div>
-  <div class="showcase-grid">
+  <div class="showcase-grid stagger">
     <article class="svc">
       <div class="svc-top">
         <div class="svc-k">Замовлення</div>
@@ -1259,12 +1293,12 @@ footer a:hover{color:var(--t2)}
   </div>
 </section>
 
-<section class="shops reveal" id="shop-packs" data-mode-target="all,shop">
+<section class="shops reveal s-fade" id="shop-packs" data-mode-target="all,shop">
   <div class="shops-head">
     <h2 class="shops-h">Інтернет-магазин<br><em>під ключ</em></h2>
     <p class="shops-sub">Запустіть продажі онлайн: каталог товарів, кошик, оплата, доставка — все готове до роботи.</p>
   </div>
-  <div class="shops-grid">
+  <div class="shops-grid stagger">
     <article class="shop">
       <div class="shop-lvl">Старт</div>
       <h3 class="shop-name">Міні-магазин</h3>
@@ -1512,8 +1546,8 @@ footer a:hover{color:var(--t2)}
 </section>
 
 <!-- TRUST / SOCIAL PROOF -->
-<section class="trust reveal">
-  <div class="trust-grid">
+<section class="trust reveal s-scale">
+  <div class="trust-grid stagger">
     <div class="trust-item">
       <div class="trust-num">50+</div>
       <div class="trust-lbl">Проєктів реалізовано</div>
@@ -1816,14 +1850,20 @@ document.querySelectorAll('.feat').forEach(el=>{
 });
 render();
 
-// Scroll reveal animation — instant on mobile, observed on desktop
+// Scroll reveal + section transition animations
 if(window.innerWidth>760){
   const revealObs=new IntersectionObserver((entries)=>{
     entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revealObs.unobserve(e.target);}});
   },{threshold:0.02, rootMargin:'0px 0px 120px 0px'});
   document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+  // Section transition observer
+  const sectionObs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('s-in');sectionObs.unobserve(e.target);}});
+  },{threshold:0.05, rootMargin:'0px 0px 60px 0px'});
+  document.querySelectorAll('.s-fade,.s-slide-l,.s-slide-r,.s-scale,.stagger').forEach(el=>sectionObs.observe(el));
 } else {
   document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));
+  document.querySelectorAll('.s-fade,.s-slide-l,.s-slide-r,.s-scale,.stagger').forEach(el=>el.classList.add('s-in'));
 }
 </script>
 </body>
