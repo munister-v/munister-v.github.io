@@ -47,54 +47,100 @@ nav{
 }
 .hero-bg{
   position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse 80% 60% at 30% 60%,rgba(212,196,181,.04),transparent);
+  background:
+    radial-gradient(ellipse 65% 55% at 15% 85%,rgba(205,242,79,.055),transparent 60%),
+    radial-gradient(ellipse 55% 45% at 85% 15%,rgba(212,196,181,.06),transparent 60%),
+    radial-gradient(ellipse 40% 35% at 50% 50%,rgba(236,45,140,.025),transparent);
 }
 .hero-grid-lines{
   position:absolute;inset:0;pointer-events:none;
   background-image:
     repeating-linear-gradient(0deg,transparent,transparent 79px,var(--b1) 79px,var(--b1) 80px),
     repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(28,28,28,.6) 79px,rgba(28,28,28,.6) 80px);
-  opacity:.12;
+  opacity:.16;
 }
+/* glowing corner accent */
+.hero::before{
+  content:'';position:absolute;bottom:0;left:0;
+  width:420px;height:3px;
+  background:linear-gradient(90deg,#CDF24F 0%,rgba(205,242,79,0) 100%);
+  pointer-events:none;z-index:1;
+}
+.hero-eyebrow{
+  padding:0 40px;margin-bottom:44px;position:relative;
+  display:flex;align-items:center;gap:12px;
+}
+.hero-eyebrow-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:#CDF24F;box-shadow:0 0 12px rgba(205,242,79,.7);
+  flex-shrink:0;animation:pulse-dot 2.4s ease-in-out infinite;
+}
+@keyframes pulse-dot{
+  0%,100%{box-shadow:0 0 8px rgba(205,242,79,.5)}
+  50%{box-shadow:0 0 18px rgba(205,242,79,.9),0 0 30px rgba(205,242,79,.3)}
+}
+.hero-eyebrow-text{
+  font-size:9px;letter-spacing:2.2px;text-transform:uppercase;color:var(--t3);
+}
+.hero-eyebrow-text span{color:var(--t2)}
 .hero-content{padding:0 40px 64px;position:relative;max-width:1240px;width:100%;margin:0 auto}
 .hero-h{
   font-family:var(--serif);
-  font-size:clamp(52px,9.6vw,120px);
-  font-weight:300;line-height:.95;color:var(--t1);
-  margin-bottom:28px;
+  font-size:clamp(54px,10.2vw,128px);
+  font-weight:300;line-height:.93;color:var(--t1);
+  letter-spacing:-.02em;
+  margin-bottom:32px;
 }
 .hero-h em{font-style:italic;color:var(--ac)}
+.hero-h .lime{color:#CDF24F;font-style:normal}
 .hero-row{
   display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);
   gap:34px;align-items:center;
-  padding-top:22px;border-top:1px solid var(--b1);
+  padding-top:24px;border-top:1px solid var(--b1);
 }
 .hero-copy{max-width:620px}
-.hero-lead{font-size:19px;color:#cecece;line-height:1.85;max-width:640px}
+.hero-lead{font-size:18px;color:#c8c8c8;line-height:1.88;max-width:620px}
 .hero-lead strong{color:var(--t1);font-weight:400}
-.hero-cta-wrap{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.hero-cta-wrap{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
 .hero-stats{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:24px;max-width:680px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:26px;max-width:680px;
 }
-.hero-stat{border:1px solid var(--b1);padding:14px 12px;background:rgba(9,9,9,.74)}
+.hero-stat{
+  border:1px solid var(--b1);padding:14px 12px;background:rgba(9,9,9,.74);
+  position:relative;overflow:hidden;transition:border-color .3s;
+}
+.hero-stat:hover{border-color:var(--b2)}
+.hero-stat:first-child{border-color:rgba(205,242,79,.2)}
+.hero-stat:first-child .hero-stat-v{color:#CDF24F}
 .hero-stat-v{font-family:var(--serif);font-size:24px;line-height:1;color:var(--t1);margin-bottom:5px}
-.hero-stat-l{font-size:10px;letter-spacing:.9px;text-transform:uppercase;color:var(--t3)}
+.hero-stat-l{font-size:9px;letter-spacing:.9px;text-transform:uppercase;color:var(--t3)}
 .hero-aside{
-  border:1px solid var(--b1);padding:22px 22px 18px;background:rgba(9,9,9,.74);
+  border:1px solid var(--b1);border-left:2px solid rgba(205,242,79,.25);
+  padding:22px 22px 18px;background:rgba(9,9,9,.82);
   display:flex;flex-direction:column;gap:14px;min-height:300px;
+  backdrop-filter:blur(6px);
 }
-.aside-k{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ac)}
+.aside-k{font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3)}
 .aside-list{list-style:none;display:flex;flex-direction:column;gap:10px;flex:1}
 .aside-list li{
   display:flex;justify-content:space-between;align-items:baseline;gap:12px;
   border-top:1px solid var(--b1);padding-top:10px;
-  font-size:13px;color:var(--t2);
+  font-size:13px;color:var(--t2);transition:color .2s;
 }
 .aside-list li:first-child{border-top:none;padding-top:0}
+.aside-list li:hover{color:var(--t1)}
 .aside-name{font-family:var(--serif);font-size:15px;color:var(--t1)}
-.aside-price{font-size:12px;color:var(--ac);font-family:var(--sans);letter-spacing:.4px;white-space:nowrap}
-.aside-status{font-size:10px;color:var(--gr);letter-spacing:1.2px;text-transform:uppercase;display:flex;align-items:center;gap:6px;margin-top:auto;border-top:1px solid var(--b1);padding-top:12px}
-.aside-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gr);box-shadow:0 0 6px var(--gr)}
+.aside-price{font-size:11px;color:#CDF24F;font-family:var(--sans);letter-spacing:.4px;white-space:nowrap;opacity:.85}
+.aside-status{
+  font-size:9px;color:var(--gr);letter-spacing:1.4px;text-transform:uppercase;
+  display:flex;align-items:center;gap:7px;
+  margin-top:auto;border-top:1px solid var(--b1);padding-top:12px;
+}
+.aside-status::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--gr);box-shadow:0 0 8px var(--gr);
+  animation:pulse-dot 2s ease-in-out infinite;
+}
 
 .btn{
   padding:13px 28px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
@@ -338,8 +384,9 @@ footer a:hover{color:var(--t1)}
 }
 @media(max-width:900px){
   .hero{min-height:auto;padding-top:44px}
+  .hero-eyebrow{padding:0 28px;margin-bottom:32px}
   .hero-content{padding:32px 28px 48px}
-  .hero-h{font-size:clamp(48px,8.4vw,86px);line-height:1.0;margin-bottom:22px}
+  .hero-h{font-size:clamp(48px,8.4vw,86px);line-height:.96;margin-bottom:24px}
   .hero-h em{white-space:normal}
   .hero-stats{grid-template-columns:repeat(4,1fr);gap:6px;margin-top:20px}
   .hero-stat{padding:11px 9px}
@@ -352,8 +399,10 @@ footer a:hover{color:var(--t1)}
 @media(max-width:760px){
   nav{height:48px}
   .hero{padding-top:48px}
+  .hero-eyebrow{padding:0 20px;margin-bottom:24px}
+  .hero-eyebrow-text{font-size:8.5px;letter-spacing:1.6px}
   .hero-content{padding:24px 20px 40px}
-  .hero-h{font-size:clamp(40px,12vw,62px);line-height:1.0;margin-bottom:22px;letter-spacing:-.01em}
+  .hero-h{font-size:clamp(38px,11vw,60px);line-height:.97;margin-bottom:22px;letter-spacing:-.02em}
   .hero-h em{white-space:normal;display:inline}
   .hero-row{gap:18px;padding-top:16px}
   .hero-lead{font-size:15px;line-height:1.7}
@@ -442,38 +491,42 @@ footer a:hover{color:var(--t1)}
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-grid-lines"></div>
+  <div class="hero-eyebrow" style="position:relative;z-index:1">
+    <span class="hero-eyebrow-dot"></span>
+    <span class="hero-eyebrow-text">WeeGo Studio · <span>Київ</span> · з 2020 · Цифрова студія повного циклу</span>
+  </div>
   <div class="hero-content">
     <h1 class="hero-h">
-      Веб-архітектури<br>
-      <em>та HORECA-системи</em>
+      Робимо цифровий<br>
+      бізнес — <em>швидко</em><br>
+      і <span class="lime">серйозно.</span>
     </h1>
     <div class="hero-row">
       <div class="hero-copy">
         <p class="hero-lead">
-          <strong>WeeGo Studio</strong> — інженерія для складних цифрових середовищ.
-          Сайти під ключ, власний хостинг-екосистема, операційні системи для готельно-ресторанного бізнесу
-          та індивідуальні рішення для підприємств.
+          Сайти під ключ, власна хостинг-інфраструктура та операційні системи для ресторанів і готелів.
+          <strong>Від лендінгу до Enterprise</strong> — з чіткими термінами та бюджетом.
         </p>
         <div class="hero-cta-wrap">
-          <a href="#services" class="btn btn-ac">Дослідити послуги ↓</a>
-          <a href="mailto:hello@munister.com.ua" class="btn btn-gh">Описати проєкт</a>
+          <a href="#sites" class="btn btn-ac">Дивитись тарифи ↓</a>
+          <a href="https://t.me/vyanetto1" target="_blank" rel="noopener" class="btn btn-gh">✈ Написати в Telegram</a>
         </div>
         <div class="hero-stats">
-          <div class="hero-stat"><div class="hero-stat-v">2020</div><div class="hero-stat-l">Київ_Україна</div></div>
-          <div class="hero-stat"><div class="hero-stat-v">24h</div><div class="hero-stat-l">Час відповіді</div></div>
+          <div class="hero-stat"><div class="hero-stat-v">€100</div><div class="hero-stat-l">Старт сайту</div></div>
+          <div class="hero-stat"><div class="hero-stat-v">24h</div><div class="hero-stat-l">Відповідь</div></div>
           <div class="hero-stat"><div class="hero-stat-v">99.9%</div><div class="hero-stat-l">SLA uptime</div></div>
           <div class="hero-stat"><div class="hero-stat-v">€1M+</div><div class="hero-stat-l">Оброблено</div></div>
         </div>
       </div>
       <aside class="hero-aside">
-        <div class="aside-k">Основні напрями</div>
+        <div class="aside-k">Напрями роботи</div>
         <ul class="aside-list">
           <li><span class="aside-name">Сайти під ключ</span><span class="aside-price">від €100</span></li>
           <li><span class="aside-name">WeeGo Cloud</span><span class="aside-price">від €500</span></li>
           <li><span class="aside-name">HORECA OS</span><span class="aside-price">від €1,000</span></li>
           <li><span class="aside-name">Індивідуальні системи</span><span class="aside-price">За кошторисом</span></li>
         </ul>
-        <div class="aside-status">Система · Працює</div>
+        <div class="aside-status">Система активна · Приймаємо проєкти</div>
       </aside>
     </div>
   </div>
