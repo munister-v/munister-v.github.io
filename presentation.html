@@ -1741,21 +1741,43 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
       const naturalW = slide.scrollWidth;
       const naturalH = slide.scrollHeight;
       const scale    = targetW / naturalW;
-      return html2canvas(slide, {
-        scale,
-        width:       naturalW,
-        height:      naturalH,
-        windowWidth: naturalW,
-        useCORS:     true,
-        allowTaint:  true,
-        logging:     false,
-        backgroundColor: '#07150f',
-        // Remove scroll offset so the element renders at its own coords
-        x: 0,
-        y: 0,
-        scrollX: 0,
-        scrollY: 0,
-      });
+
+      // Temporarily clone the slide into a fixed off-screen container so
+      // html2canvas always renders it at (0,0) regardless of scroll position.
+      const container = document.createElement('div');
+      container.style.cssText = [
+        'position:fixed', 'top:0', 'left:0',
+        `width:${naturalW}px`, `height:${naturalH}px`,
+        'z-index:-9999', 'overflow:hidden', 'pointer-events:none',
+        'opacity:0.01',   // nearly invisible but still rendered
+      ].join(';');
+
+      const clone = slide.cloneNode(true);
+      clone.style.cssText = [
+        `width:${naturalW}px`, `min-height:${naturalH}px`,
+        'margin:0', 'position:static',
+      ].join(';');
+      container.appendChild(clone);
+      document.body.appendChild(container);
+
+      try {
+        return await html2canvas(clone, {
+          scale,
+          width:       naturalW,
+          height:      naturalH,
+          windowWidth: naturalW,
+          useCORS:     true,
+          allowTaint:  true,
+          logging:     false,
+          backgroundColor: '#07150f',
+          x: 0,
+          y: 0,
+          scrollX: 0,
+          scrollY: 0,
+        });
+      } finally {
+        document.body.removeChild(container);
+      }
     }
 
     function setBtnState(btn, label) {
