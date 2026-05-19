@@ -1804,6 +1804,23 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
       }
     }
 
+    function frameSlideCanvas(canvas, outW = 1920, outH = 1080) {
+      const out = document.createElement('canvas');
+      out.width = outW;
+      out.height = outH;
+      const ctx = out.getContext('2d');
+      ctx.fillStyle = '#07150f';
+      ctx.fillRect(0, 0, outW, outH);
+
+      const scale = Math.min(outW / canvas.width, outH / canvas.height);
+      const dw = canvas.width * scale;
+      const dh = canvas.height * scale;
+      const dx = (outW - dw) / 2;
+      const dy = (outH - dh) / 2;
+      ctx.drawImage(canvas, dx, dy, dw, dh);
+      return out;
+    }
+
     function setBtnState(btn, label) {
       btn.disabled = !!label;
       btn.querySelector('svg + *') && (btn.querySelector('svg + *') ? null : null);
@@ -1824,8 +1841,9 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
 
         const { jsPDF } = window.jspdf;
         const slides    = Array.from(document.querySelectorAll('section.slide'));
-        const CAPTURE_W = 2560; // high-res capture width
-        const MM_W      = 297;  // A4 landscape width in mm
+        const CAPTURE_W = 1920; // fixed widescreen capture width
+        const PDF_W     = 338.667; // 16:9 widescreen page in mm
+        const PDF_H     = 190.5;
         let   pdf       = null;
 
         for (let i = 0; i < slides.length; i++) {
@@ -1833,15 +1851,15 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
             .forEach(n => (n.textContent = ` ${i + 1}/${slides.length}`));
 
           const canvas  = await captureSlide(slides[i], CAPTURE_W);
-          const mmH     = MM_W * (canvas.height / canvas.width); // proportional page height
-          const imgData = canvas.toDataURL('image/jpeg', 0.94);
+          const framed  = frameSlideCanvas(canvas, 1920, 1080);
+          const imgData = framed.toDataURL('image/jpeg', 0.94);
 
           if (!pdf) {
-            pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [MM_W, mmH] });
+            pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [PDF_W, PDF_H] });
           } else {
-            pdf.addPage([MM_W, mmH], 'landscape');
+            pdf.addPage([PDF_W, PDF_H], 'landscape');
           }
-          pdf.addImage(imgData, 'JPEG', 0, 0, MM_W, mmH);
+          pdf.addImage(imgData, 'JPEG', 0, 0, PDF_W, PDF_H);
         }
 
         pdf.save('evolutionary-computation-ARM-Bank.pdf');
@@ -1878,23 +1896,8 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
 
           const canvas  = await captureSlide(slides[i], CAPTURE_W);
 
-          // Fit entire slide content into 16:9 frame:
-          // create a 1920×1080 canvas and draw the captured slide centred/scaled inside.
-          const out    = document.createElement('canvas');
-          out.width    = 1920;
-          out.height   = 1080;
-          const ctx    = out.getContext('2d');
-          ctx.fillStyle = '#07150f';
-          ctx.fillRect(0, 0, 1920, 1080);
-
-          // Scale to fit (letterbox if taller than 16:9)
-          const scale  = Math.min(1920 / canvas.width, 1080 / canvas.height);
-          const dw     = canvas.width  * scale;
-          const dh     = canvas.height * scale;
-          const dx     = (1920 - dw) / 2;
-          const dy     = (1080 - dh) / 2;
-          ctx.drawImage(canvas, dx, dy, dw, dh);
-
+          // Fit entire slide content into a fixed 16:9 frame.
+          const out = frameSlideCanvas(canvas, 1920, 1080);
           const imgData = out.toDataURL('image/jpeg', 0.94).split(',')[1];
 
           const slide = pptx.addSlide();
