@@ -1812,11 +1812,27 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
       ctx.fillStyle = '#07150f';
       ctx.fillRect(0, 0, outW, outH);
 
-      // Use cover-style scaling so every exported page has the same 16:9
-      // proportions and no empty side/top fields. This matches slide 01.
-      const scale = Math.max(outW / canvas.width, outH / canvas.height);
-      const dw = canvas.width * scale;
-      const dh = canvas.height * scale;
+      // Layer 1: cover-fill the frame with the same slide as a soft backdrop.
+      // This removes blank export fields without sacrificing readable content.
+      const bgScale = Math.max(outW / canvas.width, outH / canvas.height);
+      const bgW = canvas.width * bgScale;
+      const bgH = canvas.height * bgScale;
+      const bgX = (outW - bgW) / 2;
+      const bgY = (outH - bgH) / 2;
+      ctx.save();
+      ctx.globalAlpha = 0.58;
+      ctx.filter = 'blur(18px) saturate(1.08) brightness(0.72)';
+      ctx.drawImage(canvas, bgX, bgY, bgW, bgH);
+      ctx.restore();
+
+      // Layer 2: contain-fit the actual slide so no text or bottom/top
+      // content is cropped. The tiny inset protects PDF viewer edges.
+      const inset = 8;
+      const fgW = outW - inset * 2;
+      const fgH = outH - inset * 2;
+      const fgScale = Math.min(fgW / canvas.width, fgH / canvas.height);
+      const dw = canvas.width * fgScale;
+      const dh = canvas.height * fgScale;
       const dx = (outW - dw) / 2;
       const dy = (outH - dh) / 2;
       ctx.drawImage(canvas, dx, dy, dw, dh);
