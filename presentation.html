@@ -1812,7 +1812,9 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
       ctx.fillStyle = '#07150f';
       ctx.fillRect(0, 0, outW, outH);
 
-      const scale = Math.min(outW / canvas.width, outH / canvas.height);
+      // Use cover-style scaling so every exported page has the same 16:9
+      // proportions and no empty side/top fields. This matches slide 01.
+      const scale = Math.max(outW / canvas.width, outH / canvas.height);
       const dw = canvas.width * scale;
       const dh = canvas.height * scale;
       const dx = (outW - dw) / 2;
