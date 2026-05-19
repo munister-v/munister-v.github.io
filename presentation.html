@@ -1744,24 +1744,36 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
         await document.fonts.ready;
       }
       const naturalW = slide.scrollWidth;
-      const naturalH = slide.scrollHeight;
-      const scale    = targetW / naturalW;
+      const exportW  = naturalW;
+      const exportH  = Math.round(exportW * 9 / 16);
+      const scale    = targetW / exportW;
 
       // Temporarily clone the slide into a fixed off-screen container so
       // html2canvas always renders it at (0,0) regardless of scroll position.
       const container = document.createElement('div');
       container.style.cssText = [
         'position:fixed', 'top:0', 'left:0',
-        `width:${naturalW}px`, `height:${naturalH}px`,
+        `width:${exportW}px`, `height:${exportH}px`,
         'z-index:2147483647', 'overflow:hidden', 'pointer-events:none',
         'opacity:1', 'background:#07150f',
       ].join(';');
 
       const clone = slide.cloneNode(true);
       clone.style.cssText = [
-        `width:${naturalW}px`, `min-height:${naturalH}px`,
-        'margin:0', 'position:static', 'transform:none',
+        `width:${exportW}px`, `height:${exportH}px`, `min-height:${exportH}px`,
+        'max-width:none', 'margin:0', 'position:relative', 'transform:none',
+        'overflow:hidden', 'box-sizing:border-box',
       ].join(';');
+
+      const content = document.createElement('div');
+      content.className = 'export-slide-content';
+      content.style.cssText = [
+        'position:relative', 'z-index:1', 'width:100%',
+        'transform-origin:top left',
+      ].join(';');
+      while (clone.firstChild) content.appendChild(clone.firstChild);
+      clone.appendChild(content);
+
       clone.querySelectorAll('.reveal').forEach((el) => {
         el.classList.add('in');
         el.style.opacity = '1';
@@ -1777,11 +1789,23 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
 
       try {
         await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        const cs = getComputedStyle(clone);
+        const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+        const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+        const availableW = Math.max(1, exportW - padX);
+        const availableH = Math.max(1, exportH - padY);
+        const fit = Math.min(1, availableW / Math.max(1, content.scrollWidth), availableH / Math.max(1, content.scrollHeight));
+        if (fit < 1) {
+          content.style.transform = `scale(${fit})`;
+          content.style.width = `${100 / fit}%`;
+        }
+        await new Promise((resolve) => requestAnimationFrame(resolve));
         return await html2canvas(clone, {
           scale,
-          width:       naturalW,
-          height:      naturalH,
-          windowWidth: naturalW,
+          width:       exportW,
+          height:      exportH,
+          windowWidth: exportW,
+          windowHeight: exportH,
           useCORS:     true,
           allowTaint:  true,
           logging:     false,
@@ -1811,6 +1835,11 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
       const ctx = out.getContext('2d');
       ctx.fillStyle = '#07150f';
       ctx.fillRect(0, 0, outW, outH);
+
+      if (Math.abs((canvas.width / canvas.height) - (outW / outH)) < 0.002) {
+        ctx.drawImage(canvas, 0, 0, outW, outH);
+        return out;
+      }
 
       // Layer 1: cover-fill the frame with the same slide as a soft backdrop.
       // This removes blank export fields without sacrificing readable content.
