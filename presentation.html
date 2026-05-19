@@ -1735,9 +1735,14 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
       });
     }
 
-    // Capture one .slide element → HTMLCanvasElement at target width SLIDE_PX wide
-    // Height is the slide's natural height scaled proportionally (full content, nothing cut).
+    // Capture one .slide element → HTMLCanvasElement at target width SLIDE_PX wide.
+    // Export must not depend on scroll position: hidden reveal animations are
+    // forced visible on the clone so slides that were never scrolled into view
+    // do not export as empty PDF/PPTX pages.
     async function captureSlide(slide, targetW) {
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
       const naturalW = slide.scrollWidth;
       const naturalH = slide.scrollHeight;
       const scale    = targetW / naturalW;
@@ -1748,19 +1753,30 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
       container.style.cssText = [
         'position:fixed', 'top:0', 'left:0',
         `width:${naturalW}px`, `height:${naturalH}px`,
-        'z-index:-9999', 'overflow:hidden', 'pointer-events:none',
-        'opacity:0.01',   // nearly invisible but still rendered
+        'z-index:2147483647', 'overflow:hidden', 'pointer-events:none',
+        'opacity:1', 'background:#07150f',
       ].join(';');
 
       const clone = slide.cloneNode(true);
       clone.style.cssText = [
         `width:${naturalW}px`, `min-height:${naturalH}px`,
-        'margin:0', 'position:static',
+        'margin:0', 'position:static', 'transform:none',
       ].join(';');
+      clone.querySelectorAll('.reveal').forEach((el) => {
+        el.classList.add('in');
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+        el.style.transition = 'none';
+      });
+      clone.querySelectorAll('*').forEach((el) => {
+        el.style.animationDelay = '0s';
+        el.style.transitionDelay = '0s';
+      });
       container.appendChild(clone);
       document.body.appendChild(container);
 
       try {
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
         return await html2canvas(clone, {
           scale,
           width:       naturalW,
@@ -1770,6 +1786,14 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
           allowTaint:  true,
           logging:     false,
           backgroundColor: '#07150f',
+          onclone: (doc) => {
+            doc.querySelectorAll('.reveal').forEach((el) => {
+              el.classList.add('in');
+              el.style.opacity = '1';
+              el.style.transform = 'none';
+              el.style.transition = 'none';
+            });
+          },
           x: 0,
           y: 0,
           scrollX: 0,
@@ -1877,7 +1901,7 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
           slide.addImage({
             data:   'image/jpeg;base64,' + imgData,
             x: 0, y: 0,
-            w: '100%', h: '100%',
+            w: 13.333, h: 7.5,
           });
         }
 
