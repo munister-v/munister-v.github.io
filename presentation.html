@@ -600,36 +600,39 @@
     /* ─── Population dots SVG (decorative) ────────────────────────────── */
     .pop-svg circle { transition: opacity .4s, fill .4s; }
 
-    /* ─── Print / PDF export ──────────────────────────────────────────── */
-    @page { size: A4 landscape; margin: 0; }
+    /* ─── Print / PDF export (native fallback) ─────────────────────── */
+    /* Primary export: use the PDF / PPTX buttons above (html2canvas).  */
+    /* This @media print is a fallback for Ctrl+P / browser print.      */
+    @page { size: 338.67mm 190.5mm; margin: 0; } /* 16:9 widescreen */
     @media print {
-      :root { --slide-pad: 22mm 24mm; }
       html, body {
         background: var(--bg-base) !important;
         color: var(--txt) !important;
-        font-size: 11pt !important;
-        line-height: 1.45 !important;
+        font-size: 10.5pt !important;
+        line-height: 1.42 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        width: 338.67mm;
       }
       body::before { background: none !important; }
       .topbar, .scroll-cue, #progress, .demo-actions, .no-print { display: none !important; }
-      main { display: block; }
+      main { display: block; padding: 0 !important; }
       .slide {
         page-break-after: always;
         break-after: page;
         page-break-inside: avoid;
         break-inside: avoid;
-        min-height: 188mm;
-        width: 100%;
-        max-width: 100%;
+        height: 190.5mm;
+        max-height: 190.5mm;
+        width: 338.67mm;
+        max-width: 338.67mm;
         margin: 0;
-        padding: 16mm 18mm;
+        padding: 14mm 18mm;
         position: relative;
-        overflow: visible;
+        overflow: hidden;
         border: 0 !important;
         border-radius: 0 !important;
-        background: transparent !important;
+        background: var(--bg-base) !important;
         box-shadow: none !important;
       }
       .slide::before { display: none !important; }
@@ -673,11 +676,20 @@
       </div>
     </div>
     <div class="actions">
-      <button class="btn sm" onclick="downloadPdf()" id="pdfBtn" title="Download landscape PDF">
+      <button class="btn sm" onclick="downloadPdf()" id="pdfBtn" title="Download PDF (image-accurate)">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
           <path d="M12 4v12m0 0l-5-5m5 5l5-5M4 20h16" stroke="#1a2820" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        Download PDF
+        PDF
+      </button>
+      <button class="btn sm" onclick="downloadPptx()" id="pptxBtn" title="Download PPTX for PowerPoint / Keynote"
+        style="background:rgba(201,169,100,0.18);color:#c9a964;border:1px solid rgba(201,169,100,0.32);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="18" height="18" rx="3" stroke="#c9a964" stroke-width="1.8"/>
+          <path d="M7 8h5a2.5 2.5 0 0 1 0 5H7V8z" stroke="#c9a964" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M7 13v4" stroke="#c9a964" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        PPTX
       </button>
     </div>
   </header>
@@ -1713,11 +1725,148 @@ f(x) <span class="op">=</span> w<span class="sym">₁</span><span class="op">·<
       prog.style.width = pct + '%';
     }, { passive: true });
 
-    // ═══ PDF download ═════════════════════════════════════════════════
-    function downloadPdf() {
-      // Trigger native print dialog. CSS @page sets A4 landscape; user
-      // chooses "Save as PDF" in the print dialog destination.
-      window.print();
+    // ═══ Library loader ═══════════════════════════════════════════════
+    function loadScript(src) {
+      return new Promise((res, rej) => {
+        if (document.querySelector(`script[src="${src}"]`)) { res(); return; }
+        const s = document.createElement('script');
+        s.src = src; s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+
+    // Capture one .slide element → HTMLCanvasElement at target width SLIDE_PX wide
+    // Height is the slide's natural height scaled proportionally (full content, nothing cut).
+    async function captureSlide(slide, targetW) {
+      const naturalW = slide.scrollWidth;
+      const naturalH = slide.scrollHeight;
+      const scale    = targetW / naturalW;
+      return html2canvas(slide, {
+        scale,
+        width:       naturalW,
+        height:      naturalH,
+        windowWidth: naturalW,
+        useCORS:     true,
+        allowTaint:  true,
+        logging:     false,
+        backgroundColor: '#07150f',
+        // Remove scroll offset so the element renders at its own coords
+        x: 0,
+        y: 0,
+        scrollX: 0,
+        scrollY: 0,
+      });
+    }
+
+    function setBtnState(btn, label) {
+      btn.disabled = !!label;
+      btn.querySelector('svg + *') && (btn.querySelector('svg + *') ? null : null);
+      // update last text node
+      [...btn.childNodes].filter(n => n.nodeType === 3).forEach(n => (n.textContent = ' ' + label));
+    }
+
+    // ═══ PDF download (html2canvas + jsPDF) ═══════════════════════════
+    async function downloadPdf() {
+      const btn = document.getElementById('pdfBtn');
+      const origText = btn.textContent.trim();
+      btn.disabled = true;
+      try {
+        // Lazy-load libs (~310 KB total)
+        [...btn.childNodes].filter(n => n.nodeType === 3).forEach(n => (n.textContent = ' Loading…'));
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+
+        const { jsPDF } = window.jspdf;
+        const slides    = Array.from(document.querySelectorAll('section.slide'));
+        const CAPTURE_W = 2560; // high-res capture width
+        const MM_W      = 297;  // A4 landscape width in mm
+        let   pdf       = null;
+
+        for (let i = 0; i < slides.length; i++) {
+          [...btn.childNodes].filter(n => n.nodeType === 3)
+            .forEach(n => (n.textContent = ` ${i + 1}/${slides.length}`));
+
+          const canvas  = await captureSlide(slides[i], CAPTURE_W);
+          const mmH     = MM_W * (canvas.height / canvas.width); // proportional page height
+          const imgData = canvas.toDataURL('image/jpeg', 0.94);
+
+          if (!pdf) {
+            pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [MM_W, mmH] });
+          } else {
+            pdf.addPage([MM_W, mmH], 'landscape');
+          }
+          pdf.addImage(imgData, 'JPEG', 0, 0, MM_W, mmH);
+        }
+
+        pdf.save('evolutionary-computation-ARM-Bank.pdf');
+      } catch (e) {
+        console.error(e);
+        alert('PDF generation failed: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        [...btn.childNodes].filter(n => n.nodeType === 3).forEach(n => (n.textContent = ' ' + origText));
+      }
+    }
+
+    // ═══ PPTX download (html2canvas + pptxgenjs) ══════════════════════
+    // Each slide is screenshotted, then placed as a full-bleed image on
+    // a 16:9 PowerPoint slide (standard 10" × 5.625").
+    async function downloadPptx() {
+      const btn = document.getElementById('pptxBtn');
+      const origText = btn.textContent.trim();
+      btn.disabled = true;
+      try {
+        [...btn.childNodes].filter(n => n.nodeType === 3).forEach(n => (n.textContent = ' Loading…'));
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+        await loadScript('https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js');
+
+        const pptx   = new PptxGenJS();
+        pptx.layout = 'LAYOUT_WIDE'; // 13.33" × 7.5" (16:9)
+
+        const slides   = Array.from(document.querySelectorAll('section.slide'));
+        const CAPTURE_W = 1920; // px
+
+        for (let i = 0; i < slides.length; i++) {
+          [...btn.childNodes].filter(n => n.nodeType === 3)
+            .forEach(n => (n.textContent = ` ${i + 1}/${slides.length}`));
+
+          const canvas  = await captureSlide(slides[i], CAPTURE_W);
+
+          // Fit entire slide content into 16:9 frame:
+          // create a 1920×1080 canvas and draw the captured slide centred/scaled inside.
+          const out    = document.createElement('canvas');
+          out.width    = 1920;
+          out.height   = 1080;
+          const ctx    = out.getContext('2d');
+          ctx.fillStyle = '#07150f';
+          ctx.fillRect(0, 0, 1920, 1080);
+
+          // Scale to fit (letterbox if taller than 16:9)
+          const scale  = Math.min(1920 / canvas.width, 1080 / canvas.height);
+          const dw     = canvas.width  * scale;
+          const dh     = canvas.height * scale;
+          const dx     = (1920 - dw) / 2;
+          const dy     = (1080 - dh) / 2;
+          ctx.drawImage(canvas, dx, dy, dw, dh);
+
+          const imgData = out.toDataURL('image/jpeg', 0.94).split(',')[1];
+
+          const slide = pptx.addSlide();
+          slide.addImage({
+            data:   'image/jpeg;base64,' + imgData,
+            x: 0, y: 0,
+            w: '100%', h: '100%',
+          });
+        }
+
+        await pptx.writeFile({ fileName: 'evolutionary-computation-ARM-Bank.pptx' });
+      } catch (e) {
+        console.error(e);
+        alert('PPTX generation failed: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        [...btn.childNodes].filter(n => n.nodeType === 3).forEach(n => (n.textContent = ' ' + origText));
+      }
     }
 
     // ═══ GA demo ══════════════════════════════════════════════════════
