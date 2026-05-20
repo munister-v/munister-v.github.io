@@ -1685,6 +1685,20 @@ function setLayer(id,on,cls=''){
   if(cls){el.classList.toggle(cls,on);}
 }
 function fmt(n){return '₴'+n.toLocaleString('uk-UA')+'/міс';}
+const TELEGRAM_USERNAME='vyanetto1';
+
+function openTelegramOrder(message){
+  const text=encodeURIComponent(message);
+  const appLink=`tg://resolve?domain=${TELEGRAM_USERNAME}&text=${text}`;
+  const webLink=`https://t.me/${TELEGRAM_USERNAME}?text=${text}`;
+  const isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||'');
+  if(isMobile){
+    window.location.href=appLink;
+    setTimeout(()=>{ window.location.href=webLink; }, 700);
+    return;
+  }
+  window.open(webLink,'_blank','noopener,noreferrer');
+}
 
 function render(){
   const b=B[curB];
@@ -1741,9 +1755,23 @@ function buildSummaryText(){
 function openEmail(e){
   e.preventDefault();
   const {b,total,flist}=buildSummaryText();
-  const subj=encodeURIComponent(`${b.name} — ${fmt(total)}`);
-  const body=encodeURIComponent(`Привіт!\n\nЗібрав рішення у калькуляторі:\nОснова: ${b.name}${flist.length?'\n\nФункції:\n'+flist.join('\n'):''}\n\nОрієнтовна вартість: ${fmt(total)}\n\n---\nРозкажіть про свій проєкт:`);
-  window.location.href=`mailto:munister@outlook.com?subject=${subj}&body=${body}`;
+  const modeMap={all:'Усі режими',services:'Service',shop:'Shop',horeca:'HoReCa'};
+  const modeLabel=modeMap[curMode]||'Усі режими';
+  const message=`Привіт! Хочу обговорити рішення.
+
+Основа: ${b.name}
+${flist.length?`Функції:
+${flist.join('\n')}
+
+`:''}Орієнтовна вартість: ${fmt(total)}
+Режим сторінки: ${modeLabel}
+Посилання: ${window.location.href}
+
+Коротко про мій проект:
+- Ніша:
+- Що потрібно запустити:
+- Бажаний термін:`;
+  openTelegramOrder(message);
 }
 function openWhatsApp(e){
   e.preventDefault();
@@ -1758,24 +1786,19 @@ function openPackageEmail(e,a){
   const price=a.dataset.packagePrice||'уточнити';
   const modeMap={all:'Усі режими',services:'Service',shop:'Shop',horeca:'HoReCa'};
   const modeLabel=modeMap[curMode]||'Усі режими';
-  const subj=encodeURIComponent(`${type}: ${name} (${price})`);
-  const body=encodeURIComponent(
-`Привіт!
+  const message=`Привіт! Хочу обрати пакет.
 
-Хочу обрати пакет:
 ${type}: ${name}
 Бюджет: ${price}
-Режим на сторінці: ${modeLabel}
-
-Посилання на сторінку:
-${window.location.href}
+Режим сторінки: ${modeLabel}
+Посилання: ${window.location.href}
 
 Коротко про мій бізнес і задачу:
 - Ніша:
-- Кількість точок/відділів:
+- Кількість точок / відділів:
 - Що важливо автоматизувати в першу чергу:
-`);
-  window.location.href=`mailto:munister@outlook.com?subject=${subj}&body=${body}`;
+- Бажаний старт:`;
+  openTelegramOrder(message);
 }
 document.addEventListener('click',(e)=>{
   const a=e.target.closest('[data-mode-link]');
