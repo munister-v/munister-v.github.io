@@ -187,58 +187,87 @@ nav{
 .svc-from{font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:var(--t3)}
 .svc-price{font-family:var(--serif);font-size:21px;color:var(--t1);font-weight:300}
 
-/* ══ REVEAL ON SCROLL ══ */
-.rv{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s cubic-bezier(.2,.7,.2,1)}
-.rv.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){
-  .rv{opacity:1;transform:none;transition:none}
-  .marq-track{animation:none}
-  .hero-eyebrow-dot,.aside-status::before{animation:none}
+/* ══ STABS — unified service tabs ══ */
+.stabs{border-bottom:1px solid var(--b1);background:var(--s1)}
+.stabs-head{
+  padding:64px 40px 28px;border-bottom:1px solid var(--b1);
+  display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end;
+}
+.stabs-h{font-family:var(--serif);font-size:clamp(30px,4.2vw,52px);font-weight:300;line-height:1.05;color:var(--t1)}
+.stabs-h em{font-style:italic;color:var(--ac)}
+.stabs-note{max-width:380px;font-size:14px;color:var(--t2);line-height:1.78;text-align:right}
+.stabs-bar{
+  display:flex;border-bottom:1px solid var(--b1);
+  overflow-x:auto;scrollbar-width:none;background:var(--bg);
+}
+.stabs-bar::-webkit-scrollbar{display:none}
+.stab-btn{
+  padding:18px 30px;font-size:9px;letter-spacing:1.9px;text-transform:uppercase;
+  font-family:var(--sans);background:none;border:none;color:var(--t3);
+  cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;
+  transition:all .2s;flex-shrink:0;
+}
+.stab-btn:hover{color:var(--t2);background:rgba(212,196,181,.03)}
+.stab-btn.act{color:var(--t1);border-bottom-color:#CDF24F;background:rgba(205,242,79,.04)}
+.stab-panel{display:none}
+.stab-panel.act{display:block}
+.stab-note{
+  padding:22px 40px;border-bottom:1px solid var(--b1);
+  font-size:13.5px;color:var(--t2);line-height:1.78;max-width:880px;
 }
 
-/* ══ MARQUEE — tech stack ticker ══ */
-.marq{
-  border-bottom:1px solid var(--b1);background:var(--bg);overflow:hidden;
-  display:flex;align-items:center;height:54px;position:relative;
-  mask-image:linear-gradient(90deg,transparent 0,#000 6%,#000 94%,transparent 100%);
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 6%,#000 94%,transparent 100%);
+/* ══ PLAN CARDS (enriched) ══ */
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.plan{
+  padding:42px 32px;border-right:1px solid var(--b1);
+  display:flex;flex-direction:column;position:relative;transition:background .3s;
 }
-.marq-track{
-  display:flex;gap:48px;animation:marq 42s linear infinite;
-  flex-shrink:0;padding-right:48px;
+.plan:last-child{border-right:none}
+.plan:hover{background:rgba(212,196,181,.025)}
+.plan.hi{
+  background:rgba(205,242,79,.03);
+  border-right:1px solid rgba(205,242,79,.18);
 }
-.marq-item{
-  font-size:11px;letter-spacing:2.4px;text-transform:uppercase;
-  color:var(--t3);white-space:nowrap;display:flex;align-items:center;gap:14px;
-  font-family:'IBM Plex Mono',ui-monospace,monospace;
+.plan.hi:hover{background:rgba(205,242,79,.06)}
+.plan-badge{
+  position:absolute;top:22px;right:22px;
+  font-size:8px;letter-spacing:1.6px;text-transform:uppercase;
+  padding:4px 10px;background:#CDF24F;color:#050505;font-weight:700;border-radius:4px;
+  font-family:var(--sans);
 }
-.marq-item::after{content:'·';color:var(--ac);font-size:18px;opacity:.5}
-.marq-item:last-child::after{content:''}
-.marq-item b{color:var(--t1);font-weight:500}
-@keyframes marq{
-  0%{transform:translateX(0)}
-  100%{transform:translateX(-50%)}
+.plan-tier{
+  font-size:9px;letter-spacing:2.2px;text-transform:uppercase;color:var(--t3);
+  margin-bottom:18px;font-family:'IBM Plex Mono',ui-monospace,monospace;
 }
-
-/* svc card hover glow */
-.svc-card{cursor:default}
-.svc-card::after{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(205,242,79,.06),transparent 55%);
-  opacity:0;transition:opacity .35s;
+.plan-price-wrap{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.plan-price{font-family:var(--serif);font-size:36px;font-weight:300;color:var(--t1);line-height:1;letter-spacing:-.01em}
+.plan-dur{
+  font-size:10px;color:var(--ac);letter-spacing:.7px;
+  padding-left:10px;border-left:1px solid var(--b2);
 }
-.svc-card:hover::after{opacity:1}
-.svc-card-inc{
-  list-style:none;margin:14px 0 18px;display:flex;flex-direction:column;gap:7px;
+.plan-sub{
+  font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:var(--t3);
+  margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid var(--b1);
 }
-.svc-card-inc li{
-  font-size:12.5px;color:var(--t2);line-height:1.5;
-  display:flex;gap:9px;align-items:flex-start;
+.plan-features{
+  list-style:none;flex:1;display:flex;flex-direction:column;gap:10px;margin-bottom:28px;
 }
-.svc-card-inc li::before{
-  content:'';width:4px;height:4px;border-radius:50%;background:var(--ac);
-  flex-shrink:0;margin-top:8px;
+.plan-features li{
+  font-size:13.5px;color:var(--t2);line-height:1.45;
+  display:flex;gap:10px;align-items:flex-start;
 }
+.plan-features li::before{
+  content:'✓';color:#CDF24F;flex-shrink:0;font-size:11px;font-weight:700;margin-top:2px;
+}
+.plan-cta{margin-top:auto}
+.plan-btn{
+  display:block;width:100%;padding:13px;text-align:center;
+  font-size:9px;letter-spacing:1.6px;text-transform:uppercase;
+  border:1px solid var(--b1);color:var(--t2);transition:all .22s;font-family:var(--sans);
+}
+.plan-btn:hover{color:var(--t1);border-color:var(--b2)}
+.plan-btn.ac{background:#CDF24F;color:#050505;border-color:#CDF24F}
+.plan-btn.ac:hover{background:#b8db3a;border-color:#b8db3a}
 
 /* ══ CASES (industries) ══ */
 .cases{border-bottom:1px solid var(--b1);background:var(--s1)}
@@ -247,14 +276,9 @@ nav{
 .cases-h em{font-style:italic;color:var(--ac)}
 .cases-sub{max-width:760px;margin-top:12px;font-size:16px;color:#c2c2c2;line-height:1.82}
 .cases-grid{display:grid;grid-template-columns:repeat(5,1fr)}
-.case{padding:36px 26px 32px;border-right:1px solid var(--b1);display:flex;flex-direction:column;gap:14px;min-height:260px;transition:background .3s,transform .3s;position:relative;overflow:hidden}
+.case{padding:36px 26px 32px;border-right:1px solid var(--b1);display:flex;flex-direction:column;gap:14px;min-height:260px;transition:background .3s}
 .case:last-child{border-right:none}
-.case:hover{background:rgba(212,196,181,.03)}
-.case::before{
-  content:'';position:absolute;left:0;top:0;width:2px;height:0;
-  background:linear-gradient(180deg,#CDF24F,transparent);transition:height .45s ease;
-}
-.case:hover::before{height:100%}
+.case:hover{background:rgba(212,196,181,.025)}
 .case-num{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:9px;letter-spacing:1.6px;color:var(--t3)}
 .case-tag{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ac)}
 .case-name{font-family:var(--serif);font-size:20px;line-height:1.22;color:var(--t1)}
@@ -350,8 +374,11 @@ footer a:hover{color:var(--t1)}
   .cases-grid{grid-template-columns:1fr 1fr 1fr}
   .case:nth-child(3){border-right:none}
   .case:nth-child(-n+3){border-bottom:1px solid var(--b1)}
-  .svc-head{grid-template-columns:1fr}
-  .svc-note{text-align:left}
+  .svc-head,.stabs-head{grid-template-columns:1fr}
+  .svc-note,.stabs-note{text-align:left}
+  .plans-grid{grid-template-columns:1fr 1fr}
+  .plan:nth-child(2){border-right:none}
+  .plan:nth-child(-n+2){border-bottom:1px solid var(--b1)}
   .cta{grid-template-columns:1fr;gap:40px;padding:64px 40px}
   .qc{padding:40px 40px}
 }
@@ -394,12 +421,15 @@ footer a:hover{color:var(--t1)}
   .quick-nav-links{width:100%}
   .quick-note{width:100%;font-size:11px}
   .q-link{font-size:10px;padding:8px 10px}
-  .svc-head,.cases-head,.faq-head{padding:48px 20px 24px}
+  .svc-head,.stabs-head,.cases-head,.faq-head{padding:48px 20px 24px}
+  .stab-note{padding:18px 20px}
+  .stab-btn{padding:14px 20px;font-size:9px;letter-spacing:1.4px}
   .svc-grid{grid-template-columns:1fr}
   .svc-card{border-right:none;border-bottom:1px solid var(--b1);padding:32px 22px 28px}
   .svc-card:last-child{border-bottom:none}
-  .marq{height:46px}
-  .marq-item{font-size:10px;letter-spacing:1.8px}
+  .plans-grid{grid-template-columns:1fr}
+  .plan{border-right:none;border-bottom:1px solid var(--b1);padding:32px 22px 28px}
+  .plan:last-child{border-bottom:none}
   .cases-grid{grid-template-columns:1fr}
   .case{border-right:none;border-bottom:1px solid var(--b1);padding:28px 20px 24px}
   .case:last-child{border-bottom:none}
@@ -430,8 +460,9 @@ footer a:hover{color:var(--t1)}
   .hero-stat{padding:9px 7px}
   .hero-stat-v{font-size:18px}
   .hero-stat-l{font-size:8px;letter-spacing:.5px}
-  .svc-card{padding:26px 18px 22px}
+  .svc-card,.plan{padding:26px 18px 22px}
   .svc-name{font-size:22px}
+  .plan-price{font-size:32px}
 }
 @media(max-width:380px){
   .hero-content{padding:18px 14px 28px}
@@ -477,7 +508,7 @@ footer a:hover{color:var(--t1)}
           <strong>Від лендінгу до Enterprise</strong> — з чіткими термінами та бюджетом.
         </p>
         <div class="hero-cta-wrap">
-          <a href="#services" class="btn btn-ac">Дивитись послуги ↓</a>
+          <a href="#sites" class="btn btn-ac">Дивитись тарифи ↓</a>
           <a href="https://t.me/vyanetto1" target="_blank" rel="noopener" class="btn btn-gh">✈ Написати в Telegram</a>
         </div>
         <div class="hero-stats">
@@ -518,83 +549,280 @@ footer a:hover{color:var(--t1)}
 <section class="svc" id="services">
   <div class="svc-head">
     <h2 class="svc-h">Чотири напрями <em>цифрової архітектури</em></h2>
-    <p class="svc-note">Від лендінгу до операційної системи для мережі ресторанів. Працюємо вертикально: дизайн, фронт, бек, інфраструктура.</p>
+    <p class="svc-note">Від простого сайту до операційної системи для мережі ресторанів. Працюємо вертикально: дизайн, фронт, бек, інфраструктура.</p>
   </div>
   <div class="svc-grid">
-    <article class="svc-card" id="sites">
+    <article class="svc-card">
       <div class="svc-num">01 / SITES</div>
-      <h3 class="svc-name">Сайти під ключ</h3>
-      <div class="svc-tag">Лендінги, корпоративні, e-commerce.</div>
-      <p class="svc-desc">Високопродуктивні цифрові активи — оптимізовані під конверсію та масштаб.</p>
-      <ul class="svc-card-inc">
-        <li>Адаптивний дизайн</li>
-        <li>SEO + аналітика</li>
-        <li>CMS для редагування</li>
-        <li>Деплой та підтримка</li>
-      </ul>
+      <h3 class="svc-name">САЙТИ ПІД КЛЮЧ</h3>
+      <div class="svc-tag">Цифрова архітектура від А до Я.</div>
+      <p class="svc-desc">Створюємо високопродуктивні цифрові активи з нуля, оптимізовані під конверсію та масштаб.</p>
       <div class="svc-foot">
         <span class="svc-from">від</span>
         <span class="svc-price">€100</span>
       </div>
     </article>
-    <article class="svc-card" id="cloud">
+    <article class="svc-card">
       <div class="svc-num">02 / CLOUD</div>
-      <h3 class="svc-name">WeeGo Cloud</h3>
+      <h3 class="svc-name">WEEGO CLOUD</h3>
       <div class="svc-tag">Інфраструктура корпоративного рівня.</div>
-      <p class="svc-desc">Власна хостинг-екосистема для швидкості, безпеки та 99.9% uptime.</p>
-      <ul class="svc-card-inc">
-        <li>Виділені ресурси</li>
-        <li>TLS + щоденні бекапи</li>
-        <li>Моніторинг 24/7</li>
-        <li>Staging-середовище</li>
-      </ul>
+      <p class="svc-desc">Власний хостинг-екосистема для швидкості, безпеки та 99.9% uptime. Виділені ресурси, моніторинг, бекапи.</p>
       <div class="svc-foot">
         <span class="svc-from">від</span>
         <span class="svc-price">€500</span>
       </div>
     </article>
-    <article class="svc-card" id="horeca">
+    <article class="svc-card">
       <div class="svc-num">03 / HORECA</div>
-      <h3 class="svc-name">HoReCa OS</h3>
+      <h3 class="svc-name">HORECA OS</h3>
       <div class="svc-tag">Системи для готельно-ресторанного бізнесу.</div>
-      <p class="svc-desc">Цифрова основа закладу: бронювання, меню, склад, POS-інтеграція, аналітика гостей.</p>
-      <ul class="svc-card-inc">
-        <li>Бронювання + QR-меню</li>
-        <li>Інтеграція з POS</li>
-        <li>Облік складу та змін</li>
-        <li>Звіти в реальному часі</li>
-      </ul>
+      <p class="svc-desc">Цифрова основа для сучасних ресторанів та готелів. Бронювання, меню, склад, POS-інтеграція, аналітика гостей.</p>
       <div class="svc-foot">
         <span class="svc-from">від</span>
-        <span class="svc-price">€500</span>
+        <span class="svc-price">€1,000</span>
       </div>
     </article>
-    <article class="svc-card" id="custom">
+    <article class="svc-card">
       <div class="svc-num">04 / CUSTOM</div>
-      <h3 class="svc-name">Custom Dev</h3>
+      <h3 class="svc-name">ІНДИВІДУАЛЬНІ СИСТЕМИ</h3>
       <div class="svc-tag">Розробка під ваш бізнес.</div>
-      <p class="svc-desc">Складна логіка, масштабовані бекенди, унікальний UX. Від MVP до Enterprise.</p>
-      <ul class="svc-card-inc">
-        <li>Архітектура та API</li>
-        <li>Інтеграції з legacy</li>
-        <li>SLA 99.9% + GDPR</li>
-        <li>Передача команді</li>
-      </ul>
+      <p class="svc-desc">Складна логіка. Масштабовані бекенди. Унікальний досвід. Вирішуємо складні задачі — від MVP до Enterprise.</p>
       <div class="svc-foot">
         <span class="svc-from">старт</span>
-        <span class="svc-price">кошторис</span>
+        <span class="svc-price">за кошторисом</span>
       </div>
     </article>
   </div>
 </section>
 
-<!-- TECH MARQUEE -->
-<div class="marq" aria-hidden="true">
-  <div class="marq-track">
-    <span class="marq-item"><b>React</b></span><span class="marq-item"><b>Next.js</b></span><span class="marq-item"><b>TypeScript</b></span><span class="marq-item"><b>Node</b></span><span class="marq-item"><b>Python</b></span><span class="marq-item"><b>PostgreSQL</b></span><span class="marq-item"><b>Docker</b></span><span class="marq-item"><b>AWS</b></span><span class="marq-item"><b>Cloudflare</b></span><span class="marq-item"><b>Stripe</b></span><span class="marq-item"><b>Figma</b></span><span class="marq-item"><b>POS API</b></span>
-    <span class="marq-item"><b>React</b></span><span class="marq-item"><b>Next.js</b></span><span class="marq-item"><b>TypeScript</b></span><span class="marq-item"><b>Node</b></span><span class="marq-item"><b>Python</b></span><span class="marq-item"><b>PostgreSQL</b></span><span class="marq-item"><b>Docker</b></span><span class="marq-item"><b>AWS</b></span><span class="marq-item"><b>Cloudflare</b></span><span class="marq-item"><b>Stripe</b></span><span class="marq-item"><b>Figma</b></span><span class="marq-item"><b>POS API</b></span>
+<!-- SERVICES: DETAIL (tabbed) -->
+<section class="stabs" id="sites">
+  <div class="stabs-head">
+    <h2 class="stabs-h">Послуги та <em>тарифи</em></h2>
+    <p class="stabs-note">Оберіть напрям — побачите пакети та точні ціни.</p>
   </div>
-</div>
+  <div class="stabs-bar" role="tablist">
+    <button class="stab-btn act" data-tab="tab-sites">01 · Сайти під ключ</button>
+    <button class="stab-btn" data-tab="tab-cloud">02 · WeeGo Cloud</button>
+    <button class="stab-btn" data-tab="tab-horeca">03 · HoReCa OS</button>
+    <button class="stab-btn" data-tab="tab-custom">04 · Custom Dev</button>
+  </div>
+
+  <!-- TAB: SITES -->
+  <div id="tab-sites" class="stab-panel act">
+    <p class="stab-note">Швидкий запуск з чітким бюджетом. Адаптивний дизайн, SEO-структура, аналітика. Від лендінгу до корпоративного сайту.</p>
+    <div class="plans-grid">
+      <article class="plan">
+        <div class="plan-tier">STARTER</div>
+        <div class="plan-price-wrap">
+          <span class="plan-price">€100</span>
+          <span class="plan-dur">3–7 днів</span>
+        </div>
+        <div class="plan-sub">Нові проєкти та лендінги</div>
+        <ul class="plan-features">
+          <li>1 сторінка або невеликий сайт</li>
+          <li>Адаптивний дизайн</li>
+          <li>Форма зворотного зв’язку</li>
+          <li>Базова SEO-структура</li>
+          <li>Деплой та аналітика</li>
+        </ul>
+        <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Замовити</a></div>
+      </article>
+      <article class="plan hi">
+        <div class="plan-badge">↑ ТОП</div>
+        <div class="plan-tier">STANDARD</div>
+        <div class="plan-price-wrap">
+          <span class="plan-price">€600</span>
+          <span class="plan-dur">1–2 тижні</span>
+        </div>
+        <div class="plan-sub">Малий бізнес та стартапи</div>
+        <ul class="plan-features">
+          <li>5–10 сторінок з блоковою системою</li>
+          <li>SEO + schema.org + мета-теги</li>
+          <li>Форми та базові інтеграції</li>
+          <li>CMS для редагування контенту</li>
+          <li>Аналітика та деплой</li>
+        </ul>
+        <div class="plan-cta"><a class="plan-btn ac" href="mailto:hello@munister.com.ua">Замовити</a></div>
+      </article>
+      <article class="plan">
+        <div class="plan-tier">PRO</div>
+        <div class="plan-price-wrap">
+          <span class="plan-price">€900</span>
+          <span class="plan-dur">2–4 тижні</span>
+        </div>
+        <div class="plan-sub">Бренди та масштабні проєкти</div>
+        <ul class="plan-features">
+          <li>Індивідуальний UI дизайн</li>
+          <li>1–2 інтеграції (CRM / оплати)</li>
+          <li>Розширена аналітика та події</li>
+          <li>A/B-готовність</li>
+          <li>Перевірка продуктивності</li>
+        </ul>
+        <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Замовити</a></div>
+      </article>
+    </div>
+  </div>
+
+  <!-- TAB: CLOUD -->
+  <div id="tab-cloud" class="stab-panel">
+    <p class="stab-note">Власний хостинг — швидкість, безпека, 99.9% uptime. Деплой того ж дня. Виділені ресурси, моніторинг, щоденні бекапи.</p>
+    <div class="plans-grid">
+      <article class="plan">
+        <div class="plan-tier">STARTER</div>
+        <div class="plan-price-wrap">
+          <span class="plan-price" style="font-size:24px">За запитом</span>
+        </div>
+        <div class="plan-sub">Того ж дня</div>
+        <ul class="plan-features">
+          <li>Один додаток</li>
+          <li>Спільна інфраструктура</li>
+          <li>TLS + щоденні бекапи</li>
+          <li>Базовий моніторинг</li>
+        </ul>
+        <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Дізнатись</a></div>
+      </article>
+      <article class="plan hi">
+        <div class="plan-badge">↑ ТОП</div>
+        <div class="plan-tier">PRO</div>
+        <div class="plan-price-wrap">
+          <span class="plan-price" style="font-size:24px">За запитом</span>
+        </div>
+        <div class="plan-sub">Того ж дня</div>
+        <ul class="plan-features">
+          <li>Виділені ресурси</li>
+          <li>Staging-середовище</li>
+          <li>Розширена аналітика</li>
+          <li>Автоскейл</li>
+          <li>Пріоритетна підтримка</li>
+        </ul>
+        <div class="plan-cta"><a class="plan-btn ac" href="mailto:hello@munister.com.ua">Дізнатись</a></div>
+      </article>
+      <article class="plan">
+        <div class="plan-tier">ENTERPRISE</div>
+        <div class="plan-price-wrap">
+          <span class="plan-price" style="font-size:24px">За запитом</span>
+        </div>
+        <div class="plan-sub">1–2 тижні</div>
+        <ul class="plan-features">
+          <li>Мультирегіон</li>
+          <li>Виділена підтримка 24/7</li>
+          <li>Індивідуальне SLA</li>
+          <li>Аудит безпеки</li>
+          <li>Моніторинг загроз</li>
+        </ul>
+        <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Дізнатись</a></div>
+      </article>
+    </div>
+  </div>
+
+  <!-- TAB: HORECA -->
+  <div id="tab-horeca" class="stab-panel">
+    <p class="stab-note">Цифрова основа для закладів: бронювання, меню, склад, POS, аналітика гостей, управління змінами. Інтеграція з більшістю POS через API.</p>
+    <div class="plans-grid">
+      <article class="plan">
+        <div class="plan-tier">CORE</div>
+        <div class="plan-price-wrap">
+          <span class="plan-price">€500</span>
+          <span class="plan-dur">2–4 тижні</span>
+        </div>
+        <div class="plan-sub">Заклади з бронюванням та меню</div>
+        <ul class="plan-features">
+          <li>Бронювання столиків</li>
+          <li>Цифрове меню (QR / в закладі)</li>
+          <li>Лендінг закладу</li>
+          <li>Онлайн-оплата</li>
+          <li>Базові звіти</li>
+        </ul>
+        <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Замовити</a></div>
+      </article>
+      <article class="plan hi">
+        <div class="plan-badge">↑ ТОП</div>
+        <div class="plan-tier">PRO</div>
+        <div class="plan-price-wrap">
+          <span class="plan-price">€3,000</span>
+          <span class="plan-dur">4–8 тижнів</span>
+        </div>
+        <div class="plan-sub">Ресторани, що переходять у цифру</div>
+        <ul class="plan-features">
+          <li>Інтеграція POS</li>
+          <li>Облік складу</li>
+          <li>Аналітика гостей</li>
+          <li>Управління столиками та змінами</li>
+          <li>Звіти в реальному часі</li>
+        </ul>
+        <div class="plan-cta"><a class="plan-btn ac" href="mailto:hello@munister.com.ua">Замовити</a></div>
+      </article>
+      <article class="plan">
+        <div class="plan-tier">ENTERPRISE</div>
+        <div class="plan-price-wrap">
+          <span class="plan-price" style="font-size:22px">За кошторисом</span>
+        </div>
+        <div class="plan-sub">8+ тижнів · Мережі закладів</div>
+        <ul class="plan-features">
+          <li>Мультилокація</li>
+          <li>Кастомні модулі</li>
+          <li>Відкритий API</li>
+          <li>Синхронізація між закладами</li>
+          <li>Виділена підтримка</li>
+        </ul>
+        <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Замовити</a></div>
+      </article>
+    </div>
+  </div>
+
+  <!-- TAB: CUSTOM -->
+  <div id="tab-custom" class="stab-panel">
+    <p class="stab-note">Складна логіка, унікальні процеси, високі SLA. Спринти: дослідження → архітектура → MVP → масштаб. Кошторис після scope-сесії.</p>
+    <div class="plans-grid">
+      <article class="plan">
+        <div class="plan-tier">MVP</div>
+        <div class="plan-price-wrap">
+          <span class="plan-price" style="font-size:24px">Кошторис</span>
+        </div>
+        <div class="plan-sub">6–12 тижнів</div>
+        <ul class="plan-features">
+          <li>Ключові функції продукту</li>
+          <li>Чіткий обсяг та терміни</li>
+          <li>Швидка ітерація</li>
+          <li>Готовність до реальних користувачів</li>
+        </ul>
+        <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Описати</a></div>
+      </article>
+      <article class="plan hi">
+        <div class="plan-badge">↑ ТОП</div>
+        <div class="plan-tier">FULL BUILD</div>
+        <div class="plan-price-wrap">
+          <span class="plan-price" style="font-size:24px">Кошторис</span>
+        </div>
+        <div class="plan-sub">3–6 місяців</div>
+        <ul class="plan-features">
+          <li>Повний продукт та інтеграції</li>
+          <li>Архітектура та API-проєктування</li>
+          <li>Моніторинг та документація</li>
+          <li>Готовність до масштабу</li>
+          <li>Передача команді</li>
+        </ul>
+        <div class="plan-cta"><a class="plan-btn ac" href="mailto:hello@munister.com.ua">Описати</a></div>
+      </article>
+      <article class="plan">
+        <div class="plan-tier">ENTERPRISE</div>
+        <div class="plan-price-wrap">
+          <span class="plan-price" style="font-size:24px">Кошторис</span>
+        </div>
+        <div class="plan-sub">6+ місяців</div>
+        <ul class="plan-features">
+          <li>Кілька систем / мультирегіон</li>
+          <li>GDPR / PCI комплаєнс</li>
+          <li>Виділена команда</li>
+          <li>Інтеграції з legacy</li>
+          <li>SLA 99.9%+ uptime</li>
+        </ul>
+        <div class="plan-cta"><a class="plan-btn" href="mailto:hello@munister.com.ua">Описати</a></div>
+      </article>
+    </div>
+  </div>
+</section>
 
 <!-- CASES -->
 <section class="cases" id="cases">
@@ -648,28 +876,44 @@ footer a:hover{color:var(--t1)}
   </div>
   <div class="faq-list">
     <div class="faq-item" onclick="this.classList.toggle('open')">
-      <div class="faq-q">Скільки часу займає запуск?</div>
-      <div class="faq-a">Лендінг — до тижня, корпоративний сайт — до місяця, складніші проєкти з інтеграціями — 4–8 тижнів. HoReCa OS — 2–8 тижнів. Після короткого брифу даємо реальний план по датах.</div>
+      <div class="faq-q">Скільки часу займає запуск сайту?</div>
+      <div class="faq-a">Залежить від обсягу. Типово: лендінг — до тижня, корпоративний сайт — до місяця, складніші проєкти з інтеграціями — 4–8 тижнів. Після короткого брифу даємо реальний план по датах.</div>
     </div>
     <div class="faq-item" onclick="this.classList.toggle('open')">
-      <div class="faq-q">Як формується ціна?</div>
-      <div class="faq-a">Робимо короткий бриф, визначаємо обсяг, даємо фіксований кошторис або погодинну модель — коли потрібна гнучкість. Ціни в картках вище — це стартова точка для типових пакетів.</div>
+      <div class="faq-q">Скільки це коштує і як формується ціна?</div>
+      <div class="faq-a">Ціна залежить від структури сторінок, дизайну, контенту та інтеграцій. Робимо короткий бриф, визначаємо обсяг, даємо фіксований кошторис або погодинну модель — коли потрібна гнучкість.</div>
     </div>
     <div class="faq-item" onclick="this.classList.toggle('open')">
-      <div class="faq-q">Що входить «під ключ»?</div>
-      <div class="faq-a">Структура, дизайн, розробка, адаптив, базова SEO, аналітика, адмін-панель, тестування та запуск. Можемо підключити CRM, оплати, інтеграції з POS — по запиту.</div>
+      <div class="faq-q">Що входить у пакет «під ключ»?</div>
+      <div class="faq-a">Зазвичай: структура сторінок, дизайн, розробка, адаптація під мобільні, базова SEO-підготовка, підключення аналітики та адмін-панелі, тестування та запуск.</div>
     </div>
     <div class="faq-item" onclick="this.classList.toggle('open')">
-      <div class="faq-q">Як виглядає процес?</div>
-      <div class="faq-a">Бриф → структура → дизайн → розробка → тестування → запуск. Бачите прогрес по етапах та отримуєте проміжні версії — щоб коригувати курс на ходу.</div>
+      <div class="faq-q">Як виглядає процес роботи?</div>
+      <div class="faq-a">Бриф → коротка зустріч → прототип/структура → дизайн → розробка → тестування → запуск. Бачите прогрес по етапах та отримуєте проміжні версії — щоб коригувати курс на ходу, а не «вкінці».</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Що потрібно від вас на старті?</div>
+      <div class="faq-a">Мінімум: приклади сайтів, які подобаються/не подобаються, список послуг, контакти, логотип/бренд-матеріали (якщо є). Якщо цього нема — допоможемо зібрати базу і сформувати структуру.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Чи зможу я сам(а) змінювати тексти, ціни та фото?</div>
+      <div class="faq-a">Так. Налаштовуємо зручне редагування контенту без ризику зламати дизайн і даємо коротку інструкцію.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Що з доменом, хостингом і поштою?</div>
+      <div class="faq-a">Допомагаємо підключити домен, налаштувати хостинг і корпоративну пошту. Якщо вже є поточний домен/хостинг — підхоплюємо і переносимо без хаосу, з мінімальним простоєм.</div>
     </div>
     <div class="faq-item" onclick="this.classList.toggle('open')">
       <div class="faq-q">Чи інтегруєтеся з існуючим POS?</div>
-      <div class="faq-a">Так. HoReCa OS інтегрується з більшістю сучасних POS через API або проміжне ПЗ. Перед стартом робимо аудит сумісності.</div>
+      <div class="faq-a">Так. HORECA OS інтегрується з більшістю сучасних POS через API або проміжне ПЗ. Перед стартом робимо аудит сумісності та узгоджуємо синхронізацію.</div>
     </div>
     <div class="faq-item" onclick="this.classList.toggle('open')">
-      <div class="faq-q">Що з SLA та підтримкою?</div>
-      <div class="faq-a">SLA 99.9% uptime на рівні Pro та вище. Щомісячна підтримка з фіксованим обсягом годин. Виділена 24/7-підтримка на Enterprise.</div>
+      <div class="faq-q">Чи є SLA та підтримка після запуску?</div>
+      <div class="faq-a">Так — SLA 99.9% uptime на рівні Pro та вище. Пропонуємо щомісячну підтримку та абонементи з фіксованим обсягом годин. Виділена підтримка 24/7 на Enterprise.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Чи можна перенести існуючий сайт або код?</div>
+      <div class="faq-a">Так. Робимо аудит, модернізацію та міграцію з мінімальним простоєм. Можемо також підхопити чужий код і продовжити розробку.</div>
     </div>
   </div>
 </section>
@@ -722,62 +966,59 @@ footer a:hover{color:var(--t1)}
 
 <div class="m-dock">
   <a href="#services">Послуги</a>
-  <a href="#cases">Кейси</a>
+  <a href="#sites" data-stab="tab-sites">Сайти</a>
+  <a href="#sites" data-stab="tab-horeca">HoReCa</a>
   <a href="#faq">FAQ</a>
-  <a href="mailto:hello@munister.com.ua">✉ Контакт</a>
 </div>
 
 <script>
 (function(){
-  // Smooth scroll for in-page anchors
-  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  var hashMap={sites:'tab-sites',cloud:'tab-cloud',horeca:'tab-horeca',custom:'tab-custom'};
+
+  function activateTab(tabId){
+    document.querySelectorAll('.stab-btn').forEach(function(b){b.classList.remove('act');});
+    document.querySelectorAll('.stab-panel').forEach(function(p){p.classList.remove('act');});
+    var btn=document.querySelector('[data-tab="'+tabId+'"]');
+    var panel=document.getElementById(tabId);
+    if(btn)btn.classList.add('act');
+    if(panel)panel.classList.add('act');
+  }
+
+  // Tab button clicks
+  document.querySelectorAll('.stab-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){activateTab(btn.dataset.tab);});
+  });
+
+  // Nav & dock links that map to tabs
+  document.querySelectorAll('a[data-stab]').forEach(function(a){
     a.addEventListener('click',function(e){
-      var id=a.getAttribute('href').slice(1);
-      if(!id) return;
-      var target=document.getElementById(id);
-      if(!target) return;
-      e.preventDefault();
-      target.scrollIntoView({behavior:'smooth',block:'start'});
-      history.replaceState(null,'','#'+id);
+      var section=document.querySelector('.stabs');
+      if(section){
+        e.preventDefault();
+        section.scrollIntoView({behavior:'smooth'});
+        setTimeout(function(){activateTab(a.dataset.stab);},80);
+      }
     });
   });
 
-  // Cursor-follow glow on service cards
-  document.querySelectorAll('.svc-card').forEach(function(c){
-    c.addEventListener('mousemove',function(e){
-      var r=c.getBoundingClientRect();
-      c.style.setProperty('--mx',(e.clientX-r.left)+'px');
-      c.style.setProperty('--my',(e.clientY-r.top)+'px');
-    });
-  });
-
-  // Active nav link on scroll
-  var navLinks=document.querySelectorAll('.n-links a[href^="#"]');
-  var sections=Array.from(navLinks).map(function(a){
-    return document.getElementById(a.getAttribute('href').slice(1));
-  }).filter(Boolean);
-  if('IntersectionObserver' in window && sections.length){
-    var io=new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        if(en.isIntersecting){
-          navLinks.forEach(function(a){a.classList.toggle('act',a.getAttribute('href')==='#'+en.target.id);});
+  // Hash-based nav links (#sites, #cloud, #horeca, #custom)
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    var hash=a.getAttribute('href').slice(1);
+    if(hashMap[hash]){
+      a.addEventListener('click',function(e){
+        var section=document.querySelector('.stabs');
+        if(section){
+          e.preventDefault();
+          section.scrollIntoView({behavior:'smooth'});
+          setTimeout(function(){activateTab(hashMap[hash]);},80);
         }
       });
-    },{rootMargin:'-40% 0px -50% 0px'});
-    sections.forEach(function(s){io.observe(s);});
-  }
+    }
+  });
 
-  // Reveal-on-scroll
-  if('IntersectionObserver' in window){
-    var reveal=new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        if(en.isIntersecting){en.target.classList.add('in');reveal.unobserve(en.target);}
-      });
-    },{rootMargin:'0px 0px -8% 0px',threshold:.08});
-    document.querySelectorAll('.svc-card,.case,.faq-item,.cta,.qc,.hero-aside').forEach(function(el){
-      el.classList.add('rv');reveal.observe(el);
-    });
-  }
+  // Auto-activate on page load from URL hash
+  var initHash=location.hash.slice(1);
+  if(hashMap[initHash])activateTab(hashMap[initHash]);
 })();
 </script>
 
