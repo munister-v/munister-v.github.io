@@ -9,932 +9,750 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --c-bg:      #fffbf7;
-      --c-surface: #ffffff;
-      --c-dark:    #140600;
-      --c-brown:   #3d1c02;
-      --c-mid:     #7c3f10;
-      --c-amber:   #d4941f;
-      --c-amber2:  #f0c060;
-      --c-cream:   #f5e6c8;
-      --c-cream2:  #eedcaa;
-      --c-disc:    #d93025;
-      --c-green:   #1e7e34;
-      --c-text:    #1a0700;
-      --c-muted:   rgba(26,7,0,0.52);
-      --c-border:  rgba(61,28,2,0.1);
-      --r-card:    20px;
-      --r-pill:    100px;
-      --shadow-sm: 0 2px 8px rgba(61,28,2,0.08);
-      --shadow-md: 0 8px 32px rgba(61,28,2,0.12);
-      --shadow-lg: 0 24px 64px rgba(61,28,2,0.18);
-      --sans:      'Open Sans', sans-serif;
-      --head:      'Montserrat', sans-serif;
+      --brown:   #2a0f00;
+      --brown2:  #3d1c02;
+      --brown3:  #5c2a08;
+      --gold:    #c9a84c;
+      --gold2:   #e8c96e;
+      --amber:   #d4941f;
+      --cream:   #fdf6e8;
+      --cream2:  #f5e6c8;
+      --disc:    #c0392b;
+      --white:   #fff;
+      --text:    #1a0700;
+      --muted:   rgba(26,7,0,0.55);
+      --border:  rgba(201,168,76,0.18);
+      --sans:    'Open Sans', sans-serif;
+      --head:    'Montserrat', sans-serif;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--sans);
-      background: var(--c-bg);
-      color: var(--c-text);
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-    }
+    body { font-family: var(--sans); background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
 
-    /* ── STICKY HEADER ── */
-    .nav {
-      position: sticky; top: 0; z-index: 50;
-      background: rgba(20,6,0,0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      padding: 0.875rem 2rem;
-      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    /* ══════════════════ HEADER ══════════════════ */
+    .hdr {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--brown);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.4);
     }
-    .nav-logo { display: flex; align-items: center; gap: 0.875rem; cursor: pointer; user-select: none; }
-    .nav-logo-mark {
-      width: 44px; height: 44px; border-radius: 50%;
-      background: linear-gradient(145deg, #5c2a08, #1a0700);
-      border: 1.5px solid var(--c-amber);
+    .hdr-inner {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 72px; gap: 1.5rem;
+    }
+    .hdr-logo { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; user-select: none; flex-shrink: 0; }
+    .hdr-logo img { height: 48px; width: 48px; border-radius: 50%; object-fit: cover; }
+    .hdr-logo-text { line-height: 1; }
+    .hdr-brand { font-family: var(--head); font-weight: 900; font-size: 1.1875rem; color: var(--gold2); letter-spacing: 0.16em; }
+    .hdr-sub   { font-family: var(--head); font-size: 0.375rem; letter-spacing: 0.28em; color: rgba(255,255,255,0.35); margin-top: 3px; }
+
+    .hdr-nav { display: flex; align-items: center; gap: 0.25rem; }
+    .hdr-nav a {
+      font-family: var(--head); font-size: 0.625rem; font-weight: 600; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.6); text-decoration: none;
+      padding: 0.45rem 0.875rem; border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .hdr-nav a:hover { color: var(--gold2); background: rgba(255,255,255,0.06); }
+
+    .hdr-right { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
+    .hdr-phone { font-family: var(--head); font-weight: 800; font-size: 0.9375rem; color: var(--gold2); text-decoration: none; letter-spacing: 0.04em; white-space: nowrap; }
+    .hdr-phone:hover { color: #fff; }
+    .hdr-cart {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.3);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.25rem; flex-shrink: 0;
+      cursor: pointer; transition: background 0.15s; font-size: 1rem;
     }
-    .nav-brand { font-family: var(--head); font-weight: 900; font-size: 1.125rem; color: var(--c-amber2); letter-spacing: 0.14em; line-height: 1; }
-    .nav-sub { font-family: var(--head); font-size: 0.4rem; letter-spacing: 0.24em; color: rgba(255,255,255,0.35); margin-top: 3px; }
-    .nav-right { display: flex; align-items: center; gap: 1.5rem; }
-    .nav-city { font-family: var(--head); font-size: 0.5625rem; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); }
-    .nav-phone { font-family: var(--head); font-weight: 800; font-size: 1.0625rem; color: var(--c-amber2); letter-spacing: 0.06em; text-decoration: none; white-space: nowrap; }
-    .nav-phone:hover { color: #fff; }
+    .hdr-cart:hover { background: rgba(201,168,76,0.28); }
 
-    /* ── HERO ── */
+    /* ══════════════════ HERO ══════════════════ */
     .hero {
-      background: linear-gradient(160deg, #0d0300 0%, #2a0e00 50%, #3d1c02 100%);
-      padding: clamp(4rem,10vw,8rem) clamp(1.5rem,5vw,4rem) clamp(3rem,8vw,6rem);
-      position: relative; overflow: hidden;
+      position: relative; min-height: 82vh;
+      display: flex; align-items: center;
+      overflow: hidden;
     }
-    .hero::before {
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('assets/castle.jpg');
+      background-size: cover; background-position: center 30%;
+    }
+    .hero-bg::after {
       content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(212,148,31,0.12), transparent);
-      pointer-events: none;
+      background: linear-gradient(100deg,
+        rgba(20,6,0,0.88) 0%,
+        rgba(30,10,0,0.72) 45%,
+        rgba(30,10,0,0.28) 100%);
     }
-    .hero-inner { position: relative; max-width: 760px; }
+    .hero-inner {
+      position: relative; z-index: 2;
+      max-width: 1280px; margin: 0 auto; width: 100%;
+      padding: 4rem 2rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+    }
+    .hero-content {}
     .hero-tag {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      background: rgba(212,148,31,0.15); border: 1px solid rgba(212,148,31,0.3);
-      color: var(--c-amber2);
-      font-family: var(--head); font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.16em;
-      padding: 0.35rem 1rem; border-radius: var(--r-pill); margin-bottom: 1.5rem;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(201,168,76,0.18); border: 1px solid rgba(201,168,76,0.35);
+      color: var(--gold2);
+      font-family: var(--head); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.18em;
+      padding: 0.3rem 0.875rem; border-radius: 100px; margin-bottom: 1.25rem;
     }
-    .hero-title {
-      font-family: var(--head);
-      font-size: clamp(2.75rem, 8vw, 5.5rem);
-      font-weight: 900;
-      color: #fff;
-      line-height: 1.0;
-      letter-spacing: -0.01em;
-      margin-bottom: 1.5rem;
+    .hero-h {
+      font-family: var(--head); font-weight: 900;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: #fff; line-height: 1.1; letter-spacing: -0.01em;
+      margin-bottom: 1rem;
     }
-    .hero-title span { color: var(--c-amber); }
-    .hero-desc {
-      font-size: clamp(0.9375rem, 2vw, 1.125rem);
-      color: rgba(255,255,255,0.58);
-      line-height: 1.7;
-      max-width: 52ch;
-      margin-bottom: 2.5rem;
+    .hero-h span { color: var(--gold); }
+    .hero-p {
+      font-size: clamp(0.875rem, 1.5vw, 1rem);
+      color: rgba(255,255,255,0.62); line-height: 1.7;
+      max-width: 44ch; margin-bottom: 2rem;
     }
-    .hero-pills { display: flex; gap: 0.625rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
-    .hero-pill {
-      display: flex; align-items: center; gap: 0.4rem;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.65);
-      font-family: var(--head); font-size: 0.5625rem; font-weight: 600; letter-spacing: 0.08em;
-      padding: 0.4rem 0.875rem; border-radius: var(--r-pill);
+    .hero-features { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 2rem; }
+    .hero-feat {
+      display: flex; align-items: center; gap: 0.625rem;
+      font-family: var(--head); font-size: 0.5625rem; font-weight: 600; letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.72);
     }
-    .hero-cta { display: flex; gap: 0.875rem; flex-wrap: wrap; }
-    .btn-hero-pri {
-      font-family: var(--head); font-weight: 800; font-size: 0.75rem; letter-spacing: 0.1em;
-      background: var(--c-amber); color: var(--c-dark);
-      border: none; padding: 0.875rem 2rem; border-radius: var(--r-pill);
-      cursor: pointer; text-decoration: none;
-      transition: transform 0.18s, box-shadow 0.18s;
-      box-shadow: 0 4px 20px rgba(212,148,31,0.4);
+    .hero-feat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+    .hero-cta { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .btn-pri {
+      font-family: var(--head); font-weight: 800; font-size: 0.6875rem; letter-spacing: 0.1em;
+      background: var(--gold); color: var(--brown);
+      border: none; padding: 0.875rem 1.875rem; border-radius: 8px;
+      cursor: pointer; text-decoration: none; display: inline-block;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 20px rgba(201,168,76,0.4);
     }
-    .btn-hero-pri:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(212,148,31,0.5); }
-    .btn-hero-sec {
-      font-family: var(--head); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.1em;
-      background: none; color: rgba(255,255,255,0.65);
-      border: 1px solid rgba(255,255,255,0.2); padding: 0.875rem 2rem; border-radius: var(--r-pill);
-      cursor: pointer; text-decoration: none;
-      transition: border-color 0.18s, color 0.18s;
+    .btn-pri:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,0.5); }
+    .btn-out {
+      font-family: var(--head); font-weight: 700; font-size: 0.6875rem; letter-spacing: 0.1em;
+      background: none; color: rgba(255,255,255,0.75);
+      border: 1px solid rgba(255,255,255,0.28); padding: 0.875rem 1.875rem; border-radius: 8px;
+      cursor: pointer; text-decoration: none; display: inline-block;
+      transition: border-color 0.15s, color 0.15s;
     }
-    .btn-hero-sec:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+    .btn-out:hover { border-color: var(--gold); color: var(--gold2); }
 
-    /* ── SECTION ── */
-    .section { max-width: 1280px; margin: 0 auto; padding: clamp(3rem,6vw,5rem) clamp(1.25rem,4vw,2.5rem); }
-    .section-header { margin-bottom: 2.5rem; }
-    .section-eyebrow {
-      font-family: var(--head); font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.2em;
-      color: var(--c-amber); text-transform: uppercase; margin-bottom: 0.5rem;
+    /* hero product visual */
+    .hero-visual { display: flex; align-items: center; justify-content: center; }
+    .hero-bag {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(201,168,76,0.2);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      max-width: 320px; width: 100%;
     }
-    .section-title {
-      font-family: var(--head); font-size: clamp(1.5rem,3.5vw,2.25rem); font-weight: 900;
-      color: var(--c-brown); letter-spacing: -0.01em;
+    .hero-bag-img {
+      width: 180px; height: 220px; object-fit: cover;
+      border-radius: 12px; display: block; margin: 0 auto 1rem;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
     }
+    .hero-bag-name { font-family: var(--head); font-weight: 800; font-size: 0.875rem; color: var(--gold2); letter-spacing: 0.08em; margin-bottom: 0.25rem; }
+    .hero-bag-sub  { font-family: var(--head); font-size: 0.5rem; letter-spacing: 0.12em; color: rgba(255,255,255,0.4); margin-bottom: 1rem; }
+    .hero-bag-price { font-family: var(--head); font-weight: 900; font-size: 1.625rem; color: var(--gold); }
+    .hero-bag-old   { font-family: var(--head); font-size: 0.75rem; color: rgba(255,255,255,0.3); text-decoration: line-through; margin-left: 0.4rem; }
 
-    /* ── PRODUCT GRID ── */
-    .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 1.5rem; }
+    /* ══════════════════ STRIP ══════════════════ */
+    .strip {
+      background: var(--brown2);
+      border-top: 1px solid rgba(201,168,76,0.15);
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+      padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: center;
+      gap: 3rem; flex-wrap: wrap;
+    }
+    .strip-item { display: flex; align-items: center; gap: 0.625rem; }
+    .strip-icon { font-size: 1.25rem; }
+    .strip-text { font-family: var(--head); font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.06em; color: rgba(255,255,255,0.7); }
 
-    /* ── PRODUCT CARD ── */
+    /* ══════════════════ CATALOG ══════════════════ */
+    .section { max-width: 1280px; margin: 0 auto; padding: clamp(2.5rem,5vw,4rem) clamp(1.25rem,3vw,2rem); }
+    .sec-hdr { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap; }
+    .sec-eye  { font-family: var(--head); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.22em; color: var(--amber); text-transform: uppercase; margin-bottom: 0.35rem; }
+    .sec-title{ font-family: var(--head); font-weight: 900; font-size: clamp(1.375rem,3vw,2rem); color: var(--brown); letter-spacing: -0.01em; }
+    .sec-link { font-family: var(--head); font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.1em; color: var(--amber); text-decoration: none; white-space: nowrap; }
+    .sec-link:hover { text-decoration: underline; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px,1fr)); gap: 1.375rem; }
+
+    /* ══════════════════ CARD ══════════════════ */
     .card {
-      background: var(--c-surface); border-radius: var(--r-card);
-      box-shadow: var(--shadow-md);
-      overflow: hidden; display: flex; flex-direction: column;
-      transition: transform 0.22s cubic-bezier(.2,.8,.2,1), box-shadow 0.22s;
+      background: var(--brown);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.22);
+      display: flex; flex-direction: column;
+      transition: transform 0.2s cubic-bezier(.2,.8,.2,1), box-shadow 0.2s;
       cursor: pointer;
     }
-    .card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 16px 48px rgba(0,0,0,0.32); }
 
-    .card-media {
-      position: relative; height: 280px;
-      background: linear-gradient(160deg, #1a0700 0%, #4a2005 100%);
-      overflow: hidden;
+    .card-img {
+      position: relative; height: 260px; overflow: hidden;
+      background: linear-gradient(160deg, #1a0700, #4a2005);
     }
-    .card-media img {
+    .card-img img {
       width: 100%; height: 100%; object-fit: cover; object-position: center;
       display: block;
-      transition: transform 0.35s cubic-bezier(.2,.8,.2,1);
+      transition: transform 0.3s cubic-bezier(.2,.8,.2,1);
     }
-    .card:hover .card-media img { transform: scale(1.06); }
-    .card-media-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(20,6,0,0.55) 0%, transparent 45%);
+    .card:hover .card-img img { transform: scale(1.05); }
+    .card-img-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,6,0,0.6) 0%, transparent 50%); }
+
+    .badges { position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 5px; z-index: 2; }
+    .b-disc { font-family: var(--head); font-size: 0.625rem; font-weight: 900; background: var(--disc); color: #fff; padding: 0.25rem 0.625rem; border-radius: 100px; }
+    .b-new  { font-family: var(--head); font-size: 0.5625rem; font-weight: 800; background: var(--gold); color: var(--brown); padding: 0.25rem 0.625rem; border-radius: 100px; }
+    .b-hit  { font-family: var(--head); font-size: 0.5625rem; font-weight: 800; background: var(--brown2); color: var(--gold2); border: 1px solid var(--gold); padding: 0.2rem 0.625rem; border-radius: 100px; }
+    .wt-chip {
+      position: absolute; bottom: 10px; right: 10px; z-index: 2;
+      background: rgba(20,6,0,0.7); backdrop-filter: blur(4px);
+      color: rgba(255,255,255,0.75); font-family: var(--head); font-size: 0.4375rem; font-weight: 700; letter-spacing: 0.08em;
+      padding: 0.2rem 0.5rem; border-radius: 100px;
     }
 
-    /* badges */
-    .badge-wrap { position: absolute; top: 14px; left: 14px; display: flex; flex-direction: column; gap: 6px; z-index: 2; }
-    .badge {
-      font-family: var(--head); font-weight: 800; font-size: 0.625rem; letter-spacing: 0.06em;
-      padding: 0.28rem 0.75rem; border-radius: var(--r-pill);
-      display: inline-block; white-space: nowrap;
-    }
-    .badge-disc  { background: var(--c-disc);  color: #fff; }
-    .badge-new   { background: var(--c-amber); color: var(--c-dark); }
-    .badge-hit   { background: var(--c-brown); color: var(--c-amber2); border: 1px solid var(--c-amber); }
+    .card-body { padding: 1.125rem 1.25rem 0.75rem; flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
+    .card-brand { font-family: var(--head); font-size: 0.4375rem; font-weight: 600; letter-spacing: 0.18em; color: var(--gold); }
+    .card-name  { font-family: var(--head); font-weight: 800; font-size: 1rem; color: #fff; line-height: 1.2; }
+    .card-desc  { font-size: 0.75rem; color: rgba(255,255,255,0.52); line-height: 1.55; }
 
-    /* weight chip on image */
-    .card-weight-chip {
-      position: absolute; bottom: 14px; right: 14px; z-index: 2;
-      background: rgba(20,6,0,0.72); backdrop-filter: blur(6px);
-      color: rgba(255,255,255,0.8);
-      font-family: var(--head); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.1em;
-      padding: 0.25rem 0.625rem; border-radius: var(--r-pill);
+    .tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+    .tag {
+      font-family: var(--head); font-size: 0.4rem; font-weight: 600; letter-spacing: 0.07em;
+      background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.22);
+      color: rgba(201,168,76,0.8); padding: 0.18rem 0.45rem; border-radius: 100px;
     }
 
-    .card-body { padding: 1.25rem 1.25rem 0.75rem; flex: 1; display: flex; flex-direction: column; gap: 0.625rem; }
-    .card-brand {
-      font-family: var(--head); font-size: 0.4375rem; font-weight: 700;
-      letter-spacing: 0.18em; color: var(--c-amber); text-transform: uppercase;
-    }
-    .card-name {
-      font-family: var(--head); font-size: 1.0625rem; font-weight: 800;
-      color: var(--c-brown); line-height: 1.2; letter-spacing: 0.01em;
-    }
-    .card-blend {
-      font-size: 0.75rem; color: var(--c-muted); line-height: 1.5;
-    }
+    .roast { display: flex; align-items: center; gap: 0.5rem; }
+    .roast-lbl { font-family: var(--head); font-size: 0.4rem; font-weight: 600; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); white-space: nowrap; }
+    .roast-track { flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; }
+    .roast-fill  { height: 100%; background: linear-gradient(90deg, var(--gold2), var(--gold)); border-radius: 2px; }
+    .roast-name  { font-family: var(--head); font-size: 0.4rem; font-weight: 700; color: var(--gold); white-space: nowrap; }
 
-    /* flavor tags */
-    .card-flavors { display: flex; flex-wrap: wrap; gap: 0.375rem; }
-    .flavor-tag {
-      font-family: var(--head); font-size: 0.4375rem; font-weight: 600; letter-spacing: 0.08em;
-      background: rgba(212,148,31,0.1); border: 1px solid rgba(212,148,31,0.25);
-      color: var(--c-mid); padding: 0.2rem 0.5rem; border-radius: var(--r-pill);
-    }
+    .brews { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+    .brew { font-family: var(--head); font-size: 0.375rem; font-weight: 600; letter-spacing: 0.06em; background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.4); padding: 0.18rem 0.4rem; border-radius: 4px; }
 
-    /* roast bar */
-    .roast-row { display: flex; align-items: center; gap: 0.625rem; }
-    .roast-label {
-      font-family: var(--head); font-size: 0.4375rem; font-weight: 600; letter-spacing: 0.1em;
-      color: var(--c-muted); white-space: nowrap;
+    .card-foot {
+      padding: 0.875rem 1.25rem 1.125rem;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
     }
-    .roast-bar { flex: 1; height: 4px; background: var(--c-border); border-radius: 2px; overflow: hidden; }
-    .roast-fill { height: 100%; background: linear-gradient(90deg, var(--c-amber2), var(--c-amber)); border-radius: 2px; }
-    .roast-val {
-      font-family: var(--head); font-size: 0.4375rem; font-weight: 700;
-      color: var(--c-amber); white-space: nowrap;
-    }
-
-    /* brewing icons */
-    .brew-row { display: flex; gap: 0.375rem; flex-wrap: wrap; }
-    .brew-chip {
-      font-family: var(--head); font-size: 0.4375rem; font-weight: 600; letter-spacing: 0.06em;
-      background: rgba(61,28,2,0.06); color: var(--c-muted);
-      padding: 0.2rem 0.5rem; border-radius: 4px;
-    }
-
-    .card-footer { padding: 1rem 1.25rem 1.25rem; border-top: 1px solid var(--c-border); display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
-    .card-price-block { display: flex; flex-direction: column; }
-    .card-price-old {
-      font-family: var(--head); font-size: 0.75rem; font-weight: 500;
-      color: rgba(26,7,0,0.3); text-decoration: line-through; line-height: 1;
-    }
-    .card-price {
-      font-family: var(--head); font-size: 1.625rem; font-weight: 900;
-      color: var(--c-amber); line-height: 1;
-    }
-    .card-price sup { font-size: 0.875rem; vertical-align: super; line-height: 0; }
-    .card-price-uah { font-size: 0.9375rem; font-weight: 600; color: rgba(212,148,31,0.6); margin-left: 1px; }
+    .price-wrap {}
+    .p-old { font-family: var(--head); font-size: 0.6875rem; color: rgba(255,255,255,0.25); text-decoration: line-through; line-height: 1; }
+    .p-new { font-family: var(--head); font-weight: 900; font-size: 1.5rem; color: var(--gold); line-height: 1; }
+    .p-new sup { font-size: 0.8rem; vertical-align: super; line-height: 0; font-weight: 700; }
+    .p-uah { font-size: 0.875rem; font-weight: 600; color: rgba(201,168,76,0.55); }
 
     .btn-buy {
-      font-family: var(--head); font-weight: 800; font-size: 0.625rem; letter-spacing: 0.1em;
-      background: var(--c-brown); color: var(--c-amber2);
-      border: none; padding: 0.7rem 1.25rem; border-radius: var(--r-pill);
+      font-family: var(--head); font-weight: 800; font-size: 0.5625rem; letter-spacing: 0.1em;
+      background: linear-gradient(135deg, var(--gold2), var(--gold));
+      color: var(--brown); border: none;
+      padding: 0.65rem 1.125rem; border-radius: 8px;
       cursor: pointer; white-space: nowrap;
-      transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
-      box-shadow: 0 3px 12px rgba(61,28,2,0.25);
-    }
-    .btn-buy:hover { background: var(--c-dark); transform: scale(1.03); box-shadow: 0 6px 20px rgba(61,28,2,0.35); }
-    .btn-buy:active { transform: scale(0.98); }
-
-    /* ── TRUST BAR ── */
-    .trust {
-      background: linear-gradient(135deg, var(--c-dark), var(--c-brown));
-      padding: 2rem clamp(1.5rem,4vw,4rem);
-      display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center; align-items: stretch;
-    }
-    .trust-item { display: flex; align-items: center; gap: 0.875rem; }
-    .trust-icon { font-size: 1.625rem; flex-shrink: 0; }
-    .trust-title { font-family: var(--head); font-weight: 800; font-size: 0.875rem; color: var(--c-amber2); line-height: 1; }
-    .trust-desc { font-size: 0.6875rem; color: rgba(255,255,255,0.45); margin-top: 3px; line-height: 1.4; }
-    .trust-sep { width: 1px; background: rgba(255,255,255,0.1); align-self: stretch; }
-
-    /* ── FOOTER ── */
-    .footer {
-      background: var(--c-dark); color: rgba(255,255,255,0.35);
-      text-align: center; padding: 1.5rem;
-      font-family: var(--head); font-size: 0.5rem; letter-spacing: 0.1em;
-    }
-    .footer a { color: var(--c-amber2); text-decoration: none; }
-
-    /* ── ORDER MODAL ── */
-    .overlay {
-      position: fixed; inset: 0;
-      background: rgba(10,3,0,0.75);
-      backdrop-filter: blur(8px);
-      z-index: 100; display: none;
-      align-items: center; justify-content: center; padding: 1rem;
-      animation: fadeIn 0.2s ease;
-    }
-    .overlay.open { display: flex; }
-    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-
-    .dialog {
-      background: var(--c-surface);
-      border-radius: 28px;
-      max-width: 520px; width: 100%;
-      box-shadow: 0 32px 96px rgba(0,0,0,0.45);
-      overflow: hidden;
-      animation: slideUp 0.25s cubic-bezier(.2,.8,.2,1);
-    }
-    @keyframes slideUp {
-      from { opacity:0; transform: translateY(32px) scale(0.97); }
-      to   { opacity:1; transform: translateY(0)   scale(1); }
-    }
-    .dialog-hdr {
-      background: linear-gradient(135deg, var(--c-dark), var(--c-brown));
-      padding: 1.5rem 1.75rem 1.25rem;
-      position: relative;
-    }
-    .dialog-eyebrow {
-      font-family: var(--head); font-size: 0.4375rem; font-weight: 700; letter-spacing: 0.18em;
-      color: rgba(255,255,255,0.4); margin-bottom: 0.25rem;
-    }
-    .dialog-title {
-      font-family: var(--head); font-weight: 900; font-size: 1.125rem; color: var(--c-amber2); letter-spacing: 0.02em;
-    }
-    .dialog-product {
-      font-family: var(--head); font-size: 0.625rem; font-weight: 500; letter-spacing: 0.06em;
-      color: rgba(255,255,255,0.45); margin-top: 4px;
-    }
-    .dialog-close {
-      position: absolute; top: 1rem; right: 1.25rem;
-      background: rgba(255,255,255,0.08); border: none; cursor: pointer;
-      color: rgba(255,255,255,0.5); font-size: 1rem; line-height: 1;
-      width: 32px; height: 32px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s, color 0.15s;
-    }
-    .dialog-close:hover { background: rgba(255,255,255,0.16); color: #fff; }
-
-    .dialog-body { padding: 1.75rem; }
-    .field { margin-bottom: 1.125rem; }
-    .field label {
-      display: block; font-family: var(--head); font-size: 0.5rem; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-mid); margin-bottom: 0.4rem;
-    }
-    .field input, .field textarea {
-      width: 100%; font-family: var(--sans); font-size: 0.9375rem; color: var(--c-text);
-      background: var(--c-bg); border: 1.5px solid var(--c-border); border-radius: 12px;
-      padding: 0.75rem 1rem; outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s; resize: none;
-    }
-    .field input:focus, .field textarea:focus {
-      border-color: var(--c-amber); box-shadow: 0 0 0 3px rgba(212,148,31,0.15);
-    }
-    .field input::placeholder, .field textarea::placeholder { color: rgba(26,7,0,0.28); }
-    .field textarea { height: 80px; }
-    .field-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; }
-    @media (max-width: 400px) { .field-2 { grid-template-columns: 1fr; } }
-    .field-err { font-size: 0.6875rem; color: var(--c-disc); margin-top: 0.5rem; display: none; }
-
-    .btn-submit {
-      width: 100%; font-family: var(--head); font-weight: 900; font-size: 0.8125rem;
-      letter-spacing: 0.1em; color: var(--c-dark);
-      background: linear-gradient(135deg, var(--c-amber2), var(--c-amber));
-      border: none; padding: 1rem; border-radius: var(--r-pill);
-      cursor: pointer; margin-top: 0.25rem;
-      box-shadow: 0 4px 20px rgba(212,148,31,0.35);
+      box-shadow: 0 3px 12px rgba(201,168,76,0.3);
       transition: transform 0.15s, box-shadow 0.15s;
     }
-    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(212,148,31,0.45); }
+    .btn-buy:hover { transform: scale(1.04); box-shadow: 0 6px 20px rgba(201,168,76,0.45); }
 
-    /* success screen */
-    .dialog-success { display: none; text-align: center; padding: 2.5rem 2rem; }
-    .dialog-success.show { display: block; }
-    .success-lottie { font-size: 4rem; margin-bottom: 1rem; animation: popIn 0.4s cubic-bezier(.2,1.4,.3,1); }
-    @keyframes popIn { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .success-h { font-family: var(--head); font-weight: 900; font-size: 1.375rem; color: var(--c-brown); margin-bottom: 0.75rem; }
-    .success-p { font-size: 0.9375rem; color: var(--c-muted); line-height: 1.65; }
-    .success-phone {
-      display: inline-block; margin-top: 1rem;
-      background: var(--c-cream); border-radius: 12px; padding: 0.75rem 1.5rem;
-      font-family: var(--head); font-weight: 800; font-size: 1.0625rem; color: var(--c-brown);
-      letter-spacing: 0.06em;
+    /* ══════════════════ DELIVERY SECTION ══════════════════ */
+    .delivery {
+      background: var(--brown);
+      padding: clamp(2.5rem,5vw,4rem) clamp(1.25rem,3vw,2rem);
     }
-    .btn-success-close {
-      display: inline-block; margin-top: 1.5rem;
-      font-family: var(--head); font-weight: 800; font-size: 0.6875rem; letter-spacing: 0.1em;
-      color: var(--c-amber2); background: var(--c-brown);
-      border: none; padding: 0.75rem 2.25rem; border-radius: var(--r-pill);
-      cursor: pointer; box-shadow: var(--shadow-md);
+    .delivery-inner { max-width: 1280px; margin: 0 auto; }
+    .delivery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+    .del-img { border-radius: 16px; overflow: hidden; height: 340px; }
+    .del-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .del-content {}
+    .del-eye   { font-family: var(--head); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.22em; color: var(--gold); margin-bottom: 0.5rem; }
+    .del-title { font-family: var(--head); font-weight: 900; font-size: clamp(1.375rem,3vw,1.875rem); color: #fff; margin-bottom: 1rem; line-height: 1.15; }
+    .del-feats { display: flex; flex-direction: column; gap: 0.875rem; margin-bottom: 1.75rem; }
+    .del-feat  { display: flex; align-items: flex-start; gap: 0.875rem; }
+    .del-feat-icon {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.2);
+      display: flex; align-items: center; justify-content: center; font-size: 1.125rem;
+    }
+    .del-feat-h { font-family: var(--head); font-size: 0.6875rem; font-weight: 700; color: var(--gold2); margin-bottom: 2px; }
+    .del-feat-p { font-size: 0.75rem; color: rgba(255,255,255,0.45); line-height: 1.5; }
+    .del-phone { font-family: var(--head); font-weight: 900; font-size: 1.75rem; color: var(--gold); letter-spacing: 0.04em; }
+    .del-phone a { color: inherit; text-decoration: none; }
+    .del-phone a:hover { color: #fff; }
+    .del-hours { font-family: var(--head); font-size: 0.5rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); margin-top: 4px; }
+
+    /* ══════════════════ FOOTER ══════════════════ */
+    .footer {
+      background: var(--brown2); border-top: 1px solid rgba(201,168,76,0.12);
+      padding: 1.25rem 2rem;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .foot-left { display: flex; align-items: center; gap: 0.625rem; }
+    .foot-left img { height: 36px; width: 36px; border-radius: 50%; object-fit: cover; }
+    .foot-brand { font-family: var(--head); font-weight: 800; font-size: 0.875rem; color: var(--gold2); letter-spacing: 0.12em; }
+    .foot-copy { font-family: var(--head); font-size: 0.4375rem; letter-spacing: 0.08em; color: rgba(255,255,255,0.25); }
+    .foot-phone { font-family: var(--head); font-weight: 800; font-size: 1rem; color: var(--gold2); text-decoration: none; letter-spacing: 0.04em; }
+
+    /* ══════════════════ ORDER MODAL ══════════════════ */
+    .ov {
+      position: fixed; inset: 0; background: rgba(10,3,0,0.8);
+      backdrop-filter: blur(10px); z-index: 200;
+      display: none; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .ov.open { display: flex; animation: fadeIn .2s ease; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    .dlg {
+      background: var(--cream); border-radius: 20px;
+      max-width: 500px; width: 100%;
+      box-shadow: 0 32px 96px rgba(0,0,0,0.5);
+      overflow: hidden;
+      animation: up .25s cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes up { from{opacity:0;transform:translateY(28px)scale(.97)} to{opacity:1;transform:none} }
+
+    .dlg-hdr {
+      background: linear-gradient(135deg, var(--brown), var(--brown2));
+      padding: 1.375rem 1.625rem; position: relative;
+    }
+    .dlg-eye   { font-family: var(--head); font-size: 0.4rem; font-weight: 700; letter-spacing: 0.2em; color: rgba(255,255,255,0.35); margin-bottom: 3px; }
+    .dlg-title { font-family: var(--head); font-weight: 900; font-size: 1rem; color: var(--gold2); }
+    .dlg-prod  { font-family: var(--head); font-size: 0.5625rem; color: rgba(255,255,255,0.4); margin-top: 3px; }
+    .dlg-x {
+      position: absolute; top: 1rem; right: 1.25rem;
+      background: rgba(255,255,255,0.08); border: none; cursor: pointer;
+      color: rgba(255,255,255,0.5); font-size: 1rem;
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, color .15s;
+    }
+    .dlg-x:hover { background: rgba(255,255,255,0.16); color: #fff; }
+
+    .dlg-body { padding: 1.625rem; }
+    .f { margin-bottom: 1rem; }
+    .f label { display: block; font-family: var(--head); font-size: 0.4375rem; font-weight: 700; letter-spacing: 0.14em; color: var(--brown3); margin-bottom: 0.35rem; }
+    .f input, .f textarea {
+      width: 100%; font-family: var(--sans); font-size: 0.9375rem; color: var(--text);
+      background: #fff; border: 1.5px solid rgba(61,28,2,0.15); border-radius: 10px;
+      padding: 0.7rem 0.9375rem; outline: none; resize: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .f input:focus, .f textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.14); }
+    .f textarea { height: 76px; }
+    .f2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    @media(max-width:400px){.f2{grid-template-columns:1fr}}
+    .ferr { font-size: .6875rem; color: var(--disc); margin-top: .5rem; display: none; }
+    .btn-sub {
+      width: 100%; font-family: var(--head); font-weight: 900; font-size: .75rem; letter-spacing: .1em;
+      color: var(--brown); background: linear-gradient(135deg, var(--gold2), var(--gold));
+      border: none; padding: .9375rem; border-radius: 10px; cursor: pointer; margin-top: .25rem;
+      box-shadow: 0 4px 20px rgba(201,168,76,.35); transition: transform .15s, box-shadow .15s;
+    }
+    .btn-sub:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(201,168,76,.45); }
+
+    .dlg-ok { display: none; text-align: center; padding: 2.5rem 1.75rem; }
+    .dlg-ok.show { display: block; }
+    .ok-ico { font-size: 3.5rem; animation: pop .4s cubic-bezier(.2,1.4,.3,1); }
+    @keyframes pop { from{transform:scale(.3);opacity:0} to{transform:scale(1);opacity:1} }
+    .ok-h { font-family: var(--head); font-weight: 900; font-size: 1.25rem; color: var(--brown); margin: .875rem 0 .5rem; }
+    .ok-p { font-size: .9375rem; color: var(--muted); line-height: 1.65; }
+    .ok-phone {
+      display: inline-block; margin-top: .875rem;
+      background: var(--cream2); border-radius: 10px; padding: .65rem 1.5rem;
+      font-family: var(--head); font-weight: 800; font-size: 1rem; color: var(--brown); letter-spacing: .04em;
+    }
+    .btn-ok-close {
+      display: inline-block; margin-top: 1.25rem;
+      font-family: var(--head); font-weight: 800; font-size: .625rem; letter-spacing: .1em;
+      color: var(--gold2); background: var(--brown);
+      border: none; padding: .7rem 2rem; border-radius: 8px; cursor: pointer;
     }
 
-    /* ── ADMIN PANEL ── */
-    .admin-overlay { position: fixed; inset: 0; background: #0d0500; z-index: 200; display: none; flex-direction: column; }
-    .admin-overlay.open { display: flex; }
-
-    .admin-topbar {
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;
-      padding: 1rem 1.5rem;
-      background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(212,148,31,0.15);
-      flex-shrink: 0;
+    /* ══════════════════ ADMIN ══════════════════ */
+    .adm-ov { position: fixed; inset: 0; background: #0d0500; z-index: 300; display: none; flex-direction: column; }
+    .adm-ov.open { display: flex; }
+    .adm-bar {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem;
+      padding: 1rem 1.5rem; background: rgba(255,255,255,.03);
+      border-bottom: 1px solid rgba(201,168,76,.15); flex-shrink: 0;
     }
-    .admin-topbar-title { font-family: var(--head); font-weight: 900; font-size: 0.875rem; color: var(--c-amber2); letter-spacing: 0.1em; }
-    .admin-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .abtn {
-      font-family: var(--head); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.1em;
-      border-radius: 6px; padding: 0.4rem 0.875rem; cursor: pointer; border: 1px solid; background: none;
-      transition: all 0.15s;
-    }
-    .abtn-g { color: var(--c-amber2); border-color: rgba(212,148,31,0.4); }
-    .abtn-g:hover { background: var(--c-amber); color: var(--c-dark); border-color: var(--c-amber); }
-    .abtn-r { color: #ff6b6b; border-color: rgba(255,107,107,0.35); }
-    .abtn-r:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
-    .abtn-x { color: rgba(255,255,255,0.35); border-color: rgba(255,255,255,0.12); }
-    .abtn-x:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
-
-    .admin-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
-
-    .admin-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-    .kpi {
-      background: rgba(212,148,31,0.07); border: 1px solid rgba(212,148,31,0.15);
-      border-radius: 16px; padding: 1.125rem 1.25rem;
-    }
-    .kpi-v { font-family: var(--head); font-weight: 900; font-size: 1.625rem; color: var(--c-amber2); line-height: 1; }
-    .kpi-l { font-family: var(--head); font-size: 0.4375rem; font-weight: 600; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); margin-top: 0.3rem; text-transform: uppercase; }
-
-    .admin-toolbar {
-      display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem;
-    }
-    .admin-toolbar label { font-family: var(--head); font-size: 0.5rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.35); }
-    .admin-toolbar input[type="date"] {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(212,148,31,0.25);
-      border-radius: 8px; color: var(--c-amber2); font-family: var(--head); font-size: 0.75rem;
-      padding: 0.375rem 0.75rem; outline: none; cursor: pointer;
-    }
-    .admin-count { font-family: var(--head); font-size: 0.5rem; letter-spacing: 0.08em; color: rgba(255,255,255,0.25); }
-
-    .tbl-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid rgba(212,148,31,0.12); }
-    .tbl { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
-    .tbl th {
-      background: rgba(212,148,31,0.1); padding: 0.7rem 1rem;
-      text-align: left; font-family: var(--head); font-size: 0.4375rem; font-weight: 700;
-      letter-spacing: 0.14em; color: var(--c-amber); border-bottom: 1px solid rgba(212,148,31,0.15);
-      white-space: nowrap;
-    }
-    .tbl td {
-      padding: 0.75rem 1rem; color: rgba(255,255,255,0.75);
-      border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top;
-    }
+    .adm-title { font-family: var(--head); font-weight: 900; font-size: .875rem; color: var(--gold2); letter-spacing: .1em; }
+    .adm-btns { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .ab { font-family: var(--head); font-size: .5rem; font-weight: 700; letter-spacing: .1em; border-radius: 6px; padding: .4rem .875rem; cursor: pointer; border: 1px solid; background: none; transition: all .15s; }
+    .ab-g { color: var(--gold2); border-color: rgba(201,168,76,.35); } .ab-g:hover { background: var(--gold); color: var(--brown); border-color: var(--gold); }
+    .ab-r { color: #ff6b6b; border-color: rgba(255,107,107,.3); } .ab-r:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
+    .ab-x { color: rgba(255,255,255,.35); border-color: rgba(255,255,255,.12); } .ab-x:hover { color: #fff; border-color: rgba(255,255,255,.5); }
+    .adm-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .kpi { background: rgba(201,168,76,.07); border: 1px solid rgba(201,168,76,.15); border-radius: 14px; padding: 1rem 1.25rem; }
+    .kpi-v { font-family: var(--head); font-weight: 900; font-size: 1.5rem; color: var(--gold2); line-height: 1; }
+    .kpi-l { font-family: var(--head); font-size: .4rem; font-weight: 600; letter-spacing: .1em; color: rgba(255,255,255,.3); margin-top: .25rem; text-transform: uppercase; }
+    .adm-tools { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    .adm-tools label { font-family: var(--head); font-size: .5rem; letter-spacing: .1em; color: rgba(255,255,255,.35); }
+    .adm-tools input[type=date] { background: rgba(255,255,255,.05); border: 1px solid rgba(201,168,76,.25); border-radius: 8px; color: var(--gold2); font-family: var(--head); font-size: .75rem; padding: .35rem .75rem; outline: none; cursor: pointer; }
+    .adm-cnt { font-family: var(--head); font-size: .5rem; letter-spacing: .08em; color: rgba(255,255,255,.2); }
+    .tbl-w { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(201,168,76,.12); }
+    .tbl { width: 100%; border-collapse: collapse; font-size: .8125rem; }
+    .tbl th { background: rgba(201,168,76,.1); padding: .65rem 1rem; text-align: left; font-family: var(--head); font-size: .4rem; font-weight: 700; letter-spacing: .14em; color: var(--gold); border-bottom: 1px solid rgba(201,168,76,.15); white-space: nowrap; }
+    .tbl td { padding: .7rem 1rem; color: rgba(255,255,255,.72); border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: top; }
     .tbl tr:last-child td { border-bottom: none; }
-    .tbl tr:hover td { background: rgba(212,148,31,0.04); }
-    .tbl .mono { font-family: 'Courier New',monospace; font-size: 0.6875rem; color: rgba(255,255,255,0.35); white-space: nowrap; }
-    .tbl .hi { color: var(--c-amber2); font-weight: 700; }
-    .tbl-empty { text-align: center; padding: 3rem; font-family: var(--head); font-size: 0.625rem; letter-spacing: 0.12em; color: rgba(255,255,255,0.15); display: none; }
+    .tbl tr:hover td { background: rgba(201,168,76,.04); }
+    .tbl .mo { font-family: 'Courier New',monospace; font-size: .6875rem; color: rgba(255,255,255,.3); white-space: nowrap; }
+    .tbl .hi { color: var(--gold2); font-weight: 700; }
+    .tbl-empty { text-align: center; padding: 3rem; font-family: var(--head); font-size: .625rem; letter-spacing: .12em; color: rgba(255,255,255,.15); display: none; }
 
-    /* admin login */
-    .admin-gate {
-      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 1rem; padding: 2rem;
-    }
-    .admin-gate-icon { font-size: 2.5rem; opacity: 0.4; }
-    .admin-gate-title { font-family: var(--head); font-weight: 900; font-size: 0.875rem; color: var(--c-amber2); letter-spacing: 0.1em; text-align: center; }
-    .admin-gate input {
-      font-family: var(--head); font-size: 1rem; letter-spacing: 0.2em;
-      background: rgba(255,255,255,0.05); border: 1.5px solid rgba(212,148,31,0.3);
-      border-radius: 12px; color: var(--c-amber2); text-align: center;
-      padding: 0.875rem 1.5rem; outline: none; width: 100%; max-width: 280px;
-      transition: border-color 0.15s;
-    }
-    .admin-gate input:focus { border-color: var(--c-amber); }
-    .admin-gate-btn {
-      font-family: var(--head); font-weight: 900; font-size: 0.75rem; letter-spacing: 0.12em;
-      background: var(--c-amber); color: var(--c-dark);
-      border: none; padding: 0.875rem 2.5rem; border-radius: var(--r-pill); cursor: pointer;
-      box-shadow: 0 4px 20px rgba(212,148,31,0.4);
-    }
-    .admin-gate-err { font-family: var(--head); font-size: 0.5625rem; letter-spacing: 0.08em; color: #ff6b6b; min-height: 1rem; text-align: center; }
-    .admin-gate-cancel { background: none; border: none; cursor: pointer; font-family: var(--head); font-size: 0.4375rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.2); }
+    .adm-gate { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 2rem; }
+    .gate-ico { font-size: 2.5rem; opacity: .35; }
+    .gate-h { font-family: var(--head); font-weight: 900; font-size: .875rem; color: var(--gold2); letter-spacing: .1em; text-align: center; }
+    .gate-inp { font-family: var(--head); font-size: 1rem; letter-spacing: .2em; background: rgba(255,255,255,.05); border: 1.5px solid rgba(201,168,76,.3); border-radius: 10px; color: var(--gold2); text-align: center; padding: .75rem 1.25rem; outline: none; width: 100%; max-width: 260px; transition: border-color .15s; }
+    .gate-inp:focus { border-color: var(--gold); }
+    .gate-btn { font-family: var(--head); font-weight: 900; font-size: .6875rem; letter-spacing: .12em; background: var(--gold); color: var(--brown); border: none; padding: .75rem 2.25rem; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 20px rgba(201,168,76,.35); }
+    .gate-err { font-family: var(--head); font-size: .5rem; color: #ff6b6b; min-height: 1rem; text-align: center; }
+    .gate-cancel { background: none; border: none; cursor: pointer; font-family: var(--head); font-size: .4375rem; letter-spacing: .1em; color: rgba(255,255,255,.2); }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      .nav { padding: 0.875rem 1.25rem; }
-      .nav-city { display: none; }
-      .trust-sep { display: none; }
-      .trust { gap: 1.25rem; }
-      .products { grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); }
+    /* ══════════════════ RESPONSIVE ══════════════════ */
+    @media(max-width:1024px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .delivery-grid { grid-template-columns: 1fr; }
+      .del-img { height: 240px; }
     }
-    @media (max-width: 520px) {
-      .products { grid-template-columns: 1fr 1fr; gap: 0.875rem; }
-      .card-media { height: 200px; }
-      .card-body { padding: 0.875rem 0.875rem 0.5rem; }
-      .card-footer { padding: 0.75rem 0.875rem 0.875rem; }
-      .card-price { font-size: 1.25rem; }
-      .btn-buy { font-size: 0.5rem; padding: 0.55rem 0.875rem; }
-      .card-blend, .brew-row { display: none; }
+    @media(max-width:768px) {
+      .hdr-nav { display: none; }
+      .hdr-inner { padding: 0 1.25rem; }
+      .strip { gap: 1.25rem; padding: 1rem; }
+      .grid { grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); }
     }
-    @media (max-width: 380px) {
-      .products { grid-template-columns: 1fr; }
-      .card-media { height: 240px; }
-      .card-blend, .brew-row { display: flex; }
+    @media(max-width:520px) {
+      .grid { grid-template-columns: 1fr 1fr; gap: .875rem; }
+      .card-img { height: 180px; }
+      .card-desc, .brews { display: none; }
+      .card-body { padding: .75rem .875rem .5rem; gap: .35rem; }
+      .card-foot { padding: .625rem .875rem .875rem; }
+      .p-new { font-size: 1.125rem; }
+      .btn-buy { font-size: .4375rem; padding: .5rem .75rem; }
+    }
+    @media(max-width:380px) {
+      .grid { grid-template-columns: 1fr; }
+      .card-img { height: 220px; }
+      .card-desc, .brews { display: flex; }
     }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
-<header class="nav">
-  <div class="nav-logo" id="logoBtn">
-    <div class="nav-logo-mark">☕</div>
-    <div>
-      <div class="nav-brand">PROFIT</div>
-      <div class="nav-sub">COFFEE DELIVERY</div>
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-logo" id="logoBtn">
+      <img src="assets/logo.png" alt="PROFIT">
+      <div class="hdr-logo-text">
+        <div class="hdr-brand">PROFIT</div>
+        <div class="hdr-sub">COFFEE DELIVERY</div>
+      </div>
     </div>
-  </div>
-  <div class="nav-right">
-    <div class="nav-city">📍 Мукачево · доставка від 1 кг безкоштовно</div>
-    <a href="tel:+380505556115" class="nav-phone">050 555 61 15</a>
+    <nav class="hdr-nav">
+      <a href="#catalog">Каталог</a>
+      <a href="#delivery">Доставка</a>
+      <a href="#delivery">Про нас</a>
+      <a href="tel:+380505556115">Контакти</a>
+    </nav>
+    <div class="hdr-right">
+      <a href="tel:+380505556115" class="hdr-phone">050 555 61 15</a>
+      <div class="hdr-cart">🛒</div>
+    </div>
   </div>
 </header>
 
 <!-- HERO -->
 <section class="hero">
+  <div class="hero-bg"></div>
   <div class="hero-inner">
-    <div class="hero-tag">☕ Свіжообсмажені зерна · Щоденна доставка</div>
-    <h1 class="hero-title">Кава,<br>яка <span>прокидається</span><br>разом з вами</h1>
-    <p class="hero-desc">
-      Nero Caffè — преміальні зерна прямо з обсмажування до вашого порогу.
-      Без магазинів. Без черг. Свіжо — щодня.
-    </p>
-    <div class="hero-pills">
-      <div class="hero-pill">🌍 Бразилія · Індонезія · Ефіопія</div>
-      <div class="hero-pill">🔥 Середнє та темне обсмаження</div>
-      <div class="hero-pill">⚡ Доставка в день замовлення</div>
+    <div class="hero-content">
+      <div class="hero-tag">☕ Nero Caffè · офіційний постачальник</div>
+      <h1 class="hero-h">Кава, що <span>приїжджає</span><br>до вас свіжою</h1>
+      <p class="hero-p">Преміальна кава в зернах з доставкою по Мукачеву. Щоденне обсмаження — щоденна свіжість.</p>
+      <div class="hero-features">
+        <div class="hero-feat"><div class="hero-feat-dot"></div>Безкоштовна доставка від 1 кг</div>
+        <div class="hero-feat"><div class="hero-feat-dot"></div>100% натуральні зерна без замінників</div>
+        <div class="hero-feat"><div class="hero-feat-dot"></div>Доставка в день замовлення</div>
+      </div>
+      <div class="hero-cta">
+        <a href="#catalog" class="btn-pri">ОБРАТИ КАВУ ↓</a>
+        <a href="tel:+380505556115" class="btn-out">📞 ЗАТЕЛЕФОНУВАТИ</a>
+      </div>
     </div>
-    <div class="hero-cta">
-      <a href="#catalog" class="btn-hero-pri">ОБРАТИ КАВУ ↓</a>
-      <a href="tel:+380505556115" class="btn-hero-sec">📞 ЗАТЕЛЕФОНУВАТИ</a>
+    <div class="hero-visual">
+      <div class="hero-bag">
+        <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400&h=480&fit=crop&q=85"
+          alt="Nero Caffè Crema Aroma" class="hero-bag-img">
+        <div class="hero-bag-name">NERO CAFFÈ CREMA AROMA</div>
+        <div class="hero-bag-sub">1000 Г · СЕРЕДНЄ ОБСМАЖЕННЯ</div>
+        <div>
+          <span class="hero-bag-price">625₴</span>
+          <span class="hero-bag-old">835₴</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- TRUST BAR -->
-<div class="trust">
-  <div class="trust-item">
-    <div class="trust-icon">🚚</div>
-    <div><div class="trust-title">Безкоштовна доставка</div><div class="trust-desc">від 1 кг по Мукачеву</div></div>
-  </div>
-  <div class="trust-sep"></div>
-  <div class="trust-item">
-    <div class="trust-icon">🌿</div>
-    <div><div class="trust-title">100% натуральна</div><div class="trust-desc">без замінників і ароматизаторів</div></div>
-  </div>
-  <div class="trust-sep"></div>
-  <div class="trust-item">
-    <div class="trust-icon">⚡</div>
-    <div><div class="trust-title">Швидко</div><div class="trust-desc">замовлення — дзвінок — доставка</div></div>
-  </div>
-  <div class="trust-sep"></div>
-  <div class="trust-item">
-    <div class="trust-icon">☎️</div>
-    <div><div class="trust-title">050 555 61 15</div><div class="trust-desc">пн–нд, з 8:00 до 20:00</div></div>
-  </div>
+<!-- STRIP -->
+<div class="strip">
+  <div class="strip-item"><div class="strip-icon">🚚</div><div class="strip-text">БЕЗКОШТОВНА ДОСТАВКА ВІД 1 КГ</div></div>
+  <div class="strip-item"><div class="strip-icon">🌿</div><div class="strip-text">100% НАТУРАЛЬНА КАВА</div></div>
+  <div class="strip-item"><div class="strip-icon">⚡</div><div class="strip-text">ДОСТАВКА В ДЕНЬ ЗАМОВЛЕННЯ</div></div>
+  <div class="strip-item"><div class="strip-icon">☎️</div><div class="strip-text">ПН–НД · 8:00–20:00</div></div>
 </div>
 
 <!-- CATALOG -->
 <div class="section" id="catalog">
-  <div class="section-header">
-    <div class="section-eyebrow">☕ Nero Caffè · офіційний постачальник</div>
-    <div class="section-title">Каталог кави в зернах</div>
+  <div class="sec-hdr">
+    <div>
+      <div class="sec-eye">Nero Caffè · офіційний постачальник</div>
+      <div class="sec-title">Популярна кава</div>
+    </div>
+    <a href="#catalog" class="sec-link">Переглянути все →</a>
   </div>
-  <div class="products" id="products"></div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- DELIVERY -->
+<div class="delivery" id="delivery">
+  <div class="delivery-inner">
+    <div class="delivery-grid">
+      <div class="del-img">
+        <img src="assets/interior.jpg" alt="PROFIT Coffee — інтер'єр">
+      </div>
+      <div class="del-content">
+        <div class="del-eye">МУКАЧЕВО · ДОСТАВКА КАВИ</div>
+        <div class="del-title">Доставка кави<br>по Мукачеву</div>
+        <div class="del-feats">
+          <div class="del-feat">
+            <div class="del-feat-icon">🚚</div>
+            <div>
+              <div class="del-feat-h">Безкоштовна доставка</div>
+              <div class="del-feat-p">При замовленні від 1 кг зернової кави доставка по Мукачеву безкоштовна</div>
+            </div>
+          </div>
+          <div class="del-feat">
+            <div class="del-feat-icon">⏱</div>
+            <div>
+              <div class="del-feat-h">Швидко і зручно</div>
+              <div class="del-feat-p">Оформте замовлення зараз — кур'єр зв'яжеться з вами та доставить у зручний час</div>
+            </div>
+          </div>
+          <div class="del-feat">
+            <div class="del-feat-icon">🌿</div>
+            <div>
+              <div class="del-feat-h">Тільки свіжа кава</div>
+              <div class="del-feat-p">Кожна партія обсмажується під замовлення. Ніяких залежалих зерен з полиць</div>
+            </div>
+          </div>
+        </div>
+        <div class="del-phone"><a href="tel:+380505556115">050 555 61 15</a></div>
+        <div class="del-hours">☎ пн–нд, з 8:00 до 20:00</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- FOOTER -->
 <footer class="footer">
-  © PROFIT Coffee Delivery · Мукачево ·
-  <a href="tel:+380505556115">050 555 61 15</a> ·
-  Замовлення приймаються щодня з 8:00 до 20:00
+  <div class="foot-left">
+    <img src="assets/logo.png" alt="PROFIT">
+    <div>
+      <div class="foot-brand">PROFIT COFFEE</div>
+      <div class="foot-copy">© 2025 · Мукачево</div>
+    </div>
+  </div>
+  <a href="tel:+380505556115" class="foot-phone">050 555 61 15</a>
 </footer>
 
-<!-- ORDER OVERLAY -->
-<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
-  <div class="dialog">
-    <div class="dialog-hdr">
-      <div class="dialog-eyebrow">PROFIT COFFEE DELIVERY</div>
-      <div class="dialog-title">Оформити замовлення</div>
-      <div class="dialog-product" id="dlgProduct"></div>
-      <button class="dialog-close" onclick="closeModal()">✕</button>
+<!-- ORDER MODAL -->
+<div class="ov" id="ov" onclick="if(event.target===this)closeM()">
+  <div class="dlg">
+    <div class="dlg-hdr">
+      <div class="dlg-eye">PROFIT COFFEE DELIVERY</div>
+      <div class="dlg-title">Оформити замовлення</div>
+      <div class="dlg-prod" id="dlgProd"></div>
+      <button class="dlg-x" onclick="closeM()">✕</button>
     </div>
-
-    <div class="dialog-body" id="dlgForm">
-      <div class="field-2">
-        <div class="field">
-          <label>Ваше ім'я *</label>
-          <input id="fName" type="text" placeholder="Іван Петренко">
-        </div>
-        <div class="field">
-          <label>Телефон *</label>
-          <input id="fPhone" type="tel" placeholder="+380 50 000 00 00">
-        </div>
+    <div class="dlg-body" id="dlgForm">
+      <div class="f2">
+        <div class="f"><label>Ваше ім'я *</label><input id="fN" placeholder="Іван Петренко"></div>
+        <div class="f"><label>Телефон *</label><input id="fP" type="tel" placeholder="+380 50 …"></div>
       </div>
-      <div class="field">
-        <label>Адреса доставки *</label>
-        <input id="fAddr" type="text" placeholder="вул. Незалежності, 12, кв. 5">
-      </div>
-      <div class="field">
-        <label>Коментар</label>
-        <textarea id="fNote" placeholder="Побажання щодо часу доставки, особливості адреси..."></textarea>
-      </div>
-      <div class="field-err" id="fErr"></div>
-      <button class="btn-submit" onclick="submitOrder()">✔ ПІДТВЕРДИТИ ЗАМОВЛЕННЯ</button>
+      <div class="f"><label>Адреса доставки *</label><input id="fA" placeholder="вул. Незалежності, 12, кв. 5"></div>
+      <div class="f"><label>Коментар</label><textarea id="fC" placeholder="Побажання щодо часу доставки, особливості входу…"></textarea></div>
+      <div class="ferr" id="ferr"></div>
+      <button class="btn-sub" onclick="send()">✔ ПІДТВЕРДИТИ ЗАМОВЛЕННЯ</button>
     </div>
-
-    <div class="dialog-success" id="dlgSuccess">
-      <div class="success-lottie">☕</div>
-      <div class="success-h">Замовлення прийнято!</div>
-      <p class="success-p">Дякуємо! Ваше замовлення успішно зареєстровано.<br>
-        <strong>Очікуйте на дзвінок кур'єра</strong> — ми зв'яжемося<br>з вами найближчим часом для підтвердження деталей доставки.</p>
-      <div class="success-phone">📞 050 555 61 15</div><br>
-      <button class="btn-success-close" onclick="closeModal()">ЗАКРИТИ</button>
+    <div class="dlg-ok" id="dlgOk">
+      <div class="ok-ico">☕</div>
+      <div class="ok-h">Замовлення прийнято!</div>
+      <p class="ok-p">Дякуємо! <strong>Очікуйте на дзвінок кур'єра</strong> —<br>ми зв'яжемося з вами найближчим часом.</p>
+      <div class="ok-phone">📞 050 555 61 15</div><br>
+      <button class="btn-ok-close" onclick="closeM()">ЗАКРИТИ</button>
     </div>
   </div>
 </div>
 
-<!-- ADMIN OVERLAY -->
-<div class="admin-overlay" id="adminOv">
-  <!-- gate -->
-  <div class="admin-gate" id="adminGate">
-    <div class="admin-gate-icon">🔐</div>
-    <div class="admin-gate-title">PROFIT · Кабінет менеджера</div>
-    <input type="password" id="adminPwd" placeholder="Пароль" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="admin-gate-btn" onclick="doLogin()">УВІЙТИ</button>
-    <div class="admin-gate-err" id="adminErr"></div>
-    <button class="admin-gate-cancel" onclick="document.getElementById('adminOv').classList.remove('open');document.body.style.overflow=''">Скасувати</button>
+<!-- ADMIN -->
+<div class="adm-ov" id="admOv">
+  <div class="adm-gate" id="admGate">
+    <div class="gate-ico">🔐</div>
+    <div class="gate-h">PROFIT · Кабінет менеджера</div>
+    <input class="gate-inp" type="password" id="admPwd" placeholder="Пароль" onkeydown="if(event.key==='Enter')login()">
+    <button class="gate-btn" onclick="login()">УВІЙТИ</button>
+    <div class="gate-err" id="admErr"></div>
+    <button class="gate-cancel" onclick="closeAdm()">Скасувати</button>
   </div>
-
-  <!-- dashboard -->
-  <div id="adminDash" style="display:none;flex-direction:column;height:100%;">
-    <div class="admin-topbar">
-      <div class="admin-topbar-title">☕ PROFIT · Менеджер замовлень</div>
-      <div class="admin-btns">
-        <button class="abtn abtn-g" onclick="showToday()">📅 Сьогодні</button>
-        <button class="abtn abtn-g" onclick="showAll()">📋 Усі</button>
-        <button class="abtn abtn-g" onclick="printRep()">🖨 Звіт</button>
-        <button class="abtn abtn-r" onclick="wipeAll()">🗑 Очистити</button>
-        <button class="abtn abtn-x" onclick="closeAdmin()">✕ Вийти</button>
+  <div id="admDash" style="display:none;flex-direction:column;height:100%">
+    <div class="adm-bar">
+      <div class="adm-title">☕ PROFIT · Менеджер замовлень</div>
+      <div class="adm-btns">
+        <button class="ab ab-g" onclick="showToday()">📅 Сьогодні</button>
+        <button class="ab ab-g" onclick="showAll()">📋 Усі</button>
+        <button class="ab ab-g" onclick="printR()">🖨 Звіт</button>
+        <button class="ab ab-r" onclick="wipe()">🗑 Очистити</button>
+        <button class="ab ab-x" onclick="closeAdm()">✕ Вийти</button>
       </div>
     </div>
-    <div class="admin-body">
-      <div class="admin-kpis" id="kpis"></div>
-      <div class="admin-toolbar">
+    <div class="adm-body">
+      <div class="kpis" id="kpis"></div>
+      <div class="adm-tools">
         <label>ДАТА:</label>
-        <input type="date" id="datePick" onchange="filterDate()">
-        <span class="admin-count" id="cntLbl"></span>
+        <input type="date" id="dp" onchange="byDate()">
+        <span class="adm-cnt" id="cnt"></span>
       </div>
-      <div class="tbl-wrap">
+      <div class="tbl-w">
         <table class="tbl">
-          <thead>
-            <tr>
-              <th>#</th><th>Дата й час</th><th>Ім'я</th><th>Телефон</th>
-              <th>Товар</th><th>Адреса</th><th>Коментар</th>
-            </tr>
-          </thead>
-          <tbody id="tblBody"></tbody>
+          <thead><tr><th>#</th><th>Дата й час</th><th>Ім'я</th><th>Телефон</th><th>Товар</th><th>Адреса</th><th>Коментар</th></tr></thead>
+          <tbody id="tb"></tbody>
         </table>
-        <div class="tbl-empty" id="tblEmpty">Замовлень не знайдено</div>
+        <div class="tbl-empty" id="te">Замовлень не знайдено</div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-/* ── PRODUCTS DATA ─────────────────────── */
-const P = [
-  {
-    id: 1,
-    brand: 'Nero Caffè',
-    name: 'Crema Aroma',
-    weight: '1000 г',
-    blend: '60% Арабіка (Бразилія, Колумбія) + 40% Робуста (Індонезія). Обсмаження середнє.',
-    flavor: ['Вершки', 'Карамель', 'Лісовий горіх'],
-    brew: ['Еспресо', 'Капучино', 'Американо', 'Латте'],
-    roast: 65,
-    roastLabel: 'Середнє',
-    price: 625, oldPrice: 835, disc: 25,
-    img: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&h=560&fit=crop&q=85',
-  },
-  {
-    id: 2,
-    brand: 'Nero Caffè',
-    name: 'Espresso Forte',
-    weight: '1000 г',
-    blend: '40% Арабіка (Ефіопія) + 60% Робуста (В\'єтнам). Обсмаження темне.',
-    flavor: ['Темний шоколад', 'Тютюн', 'Кедр'],
-    brew: ['Подвійний еспресо', 'Маккіато', 'Рістретто'],
-    roast: 85,
-    roastLabel: 'Темне',
-    price: 580, oldPrice: null, disc: null, isNew: true,
-    img: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&h=560&fit=crop&q=85',
-  },
-  {
-    id: 3,
-    brand: 'Nero Caffè',
-    name: 'Lungo Classico',
-    weight: '500 г',
-    blend: '100% Арабіка (Ефіопія Єргачеффе + Колумбія Supremo). Обсмаження легке.',
-    flavor: ['Квіткові ноти', 'Цитрус', 'Мед', 'Чорна смородина'],
-    brew: ['Пуровер', 'Фільтр', 'Аеропрес', 'Кемекс'],
-    roast: 42,
-    roastLabel: 'Легке',
-    price: 345, oldPrice: null, disc: null,
-    img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=560&fit=crop&q=85',
-  },
-  {
-    id: 4,
-    brand: 'Nero Caffè',
-    name: 'Oro Premium',
-    weight: '1000 г',
-    blend: '70% Арабіка Colombia Supremo + 30% Робуста. Обсмаження середнє-темне.',
-    flavor: ['Шоколад', 'Мигдаль', 'Ваніль Бурбон'],
-    brew: ['Будь-який метод', 'Турка', 'Гейзер', 'Еспресо'],
-    roast: 72,
-    roastLabel: 'Середнє-темне',
-    price: 720, oldPrice: 890, disc: 19, isHit: true,
-    img: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=600&h=560&fit=crop&q=85',
-  },
-  {
-    id: 5,
-    brand: 'Nero Caffè',
-    name: 'Arabica Selection',
-    weight: '250 г',
-    blend: '100% Arabica Single Origin (Ефіопія, мита обробка). Спешелті сорт.',
-    flavor: ['Чорниця', 'Жасмин', 'Персик', 'Чорна смородина'],
-    brew: ['Пуровер', 'Cold Brew', 'Аеропрес'],
-    roast: 35,
-    roastLabel: 'Світле',
-    price: 185, oldPrice: null, disc: null,
-    img: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=600&h=560&fit=crop&q=85',
-  },
+const PRODUCTS = [
+  { id:1, brand:'Nero Caffè', name:'Crema Aroma',     weight:'1000 г', desc:'60% Арабіка (Бразилія, Колумбія) + 40% Робуста (Індонезія). Вершкова карамель, лісовий горіх. Ідеально для еспресо та капучино.', flavors:['Вершки','Карамель','Горіх'], brew:['Еспресо','Капучино','Латте'], roast:65, roastName:'Середнє', price:625, oldPrice:835, disc:25, img:'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&h=520&fit=crop&q=85' },
+  { id:2, brand:'Nero Caffè', name:'Espresso Forte',  weight:'1000 г', desc:'40% Арабіка (Ефіопія) + 60% Робуста (В\'єтнам). Насичений, щільний смак із легкою гіркотою. Для справжніх цінителів міцної кави.', flavors:['Шоколад','Тютюн','Кедр'], brew:['Подвійний еспресо','Рістретто'], roast:85, roastName:'Темне', price:580, isNew:true, img:'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&h=520&fit=crop&q=85' },
+  { id:3, brand:'Nero Caffè', name:'Lungo Classico',  weight:'500 г',  desc:'100% Арабіка (Ефіопія Єргачеффе + Колумбія). Легкий, ароматний бленд для довгого приготування. Квіткові ноти, цитрус, мед.', flavors:['Цитрус','Мед','Квіти'], brew:['Пуровер','Фільтр','Аеропрес'], roast:42, roastName:'Легке', price:345, img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=520&fit=crop&q=85' },
+  { id:4, brand:'Nero Caffè', name:'Oro Premium',     weight:'1000 г', desc:'70% Арабіка Colombia Supremo + 30% Робуста. Преміальний бленд — солодкий, збалансований смак із нотками шоколаду та мигдалю.', flavors:['Шоколад','Мигдаль','Ваніль'], brew:['Будь-який метод','Турка'], roast:72, roastName:'Середнє-темне', price:720, oldPrice:890, disc:19, isHit:true, img:'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=600&h=520&fit=crop&q=85' },
+  { id:5, brand:'Nero Caffè', name:'Arabica Selection',weight:'250 г', desc:'100% Arabica Single Origin Ефіопія. Спешелті сорт, мита обробка. Яскравий фруктовий профіль: чорниця, жасмин, персик.', flavors:['Чорниця','Жасмин','Персик'], brew:['Пуровер','Cold Brew','Аеропрес'], roast:35, roastName:'Світле', price:185, img:'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=600&h=520&fit=crop&q=85' },
 ];
 
-/* ── RENDER ─────────────────────────────── */
+/* render */
 function render() {
-  document.getElementById('products').innerHTML = P.map(p => `
-    <div class="card" onclick="openModal(${p.id})">
-      <div class="card-media">
+  document.getElementById('grid').innerHTML = PRODUCTS.map(p => `
+    <div class="card" onclick="openM(${p.id})">
+      <div class="card-img">
         <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">
-        <div class="card-media-overlay"></div>
-        <div class="badge-wrap">
-          ${p.disc  ? `<span class="badge badge-disc">-${p.disc}%</span>` : ''}
-          ${p.isNew ? `<span class="badge badge-new">НОВИНКА</span>`      : ''}
-          ${p.isHit ? `<span class="badge badge-hit">ХІТ</span>`          : ''}
+        <div class="card-img-overlay"></div>
+        <div class="badges">
+          ${p.disc  ? `<span class="b-disc">-${p.disc}%</span>` : ''}
+          ${p.isNew ? `<span class="b-new">НОВИНКА</span>` : ''}
+          ${p.isHit ? `<span class="b-hit">ХІТ</span>` : ''}
         </div>
-        <div class="card-weight-chip">${p.weight}</div>
+        <div class="wt-chip">${p.weight}</div>
       </div>
       <div class="card-body">
         <div class="card-brand">${p.brand}</div>
         <div class="card-name">${p.name}</div>
-        <div class="card-blend">${p.blend}</div>
-        <div class="card-flavors">${p.flavor.map(f=>`<span class="flavor-tag">${f}</span>`).join('')}</div>
-        <div class="roast-row">
-          <span class="roast-label">ОБСМАЖЕННЯ</span>
-          <div class="roast-bar"><div class="roast-fill" style="width:${p.roast}%"></div></div>
-          <span class="roast-val">${p.roastLabel}</span>
+        <div class="card-desc">${p.desc}</div>
+        <div class="tags">${p.flavors.map(f=>`<span class="tag">${f}</span>`).join('')}</div>
+        <div class="roast">
+          <span class="roast-lbl">ОБСМАЖЕННЯ</span>
+          <div class="roast-track"><div class="roast-fill" style="width:${p.roast}%"></div></div>
+          <span class="roast-name">${p.roastName}</span>
         </div>
-        <div class="brew-row">${p.brew.map(b=>`<span class="brew-chip">${b}</span>`).join('')}</div>
+        <div class="brews">${p.brew.map(b=>`<span class="brew">${b}</span>`).join('')}</div>
       </div>
-      <div class="card-footer">
-        <div class="card-price-block">
-          ${p.oldPrice ? `<div class="card-price-old">${p.oldPrice}<sup>00</sup> ₴</div>` : ''}
-          <div class="card-price">${p.price}<sup>00</sup><span class="card-price-uah">₴</span></div>
+      <div class="card-foot">
+        <div class="price-wrap">
+          ${p.oldPrice ? `<div class="p-old">${p.oldPrice}<sup>00</sup> ₴</div>` : ''}
+          <div class="p-new">${p.price}<sup>00</sup><span class="p-uah">₴</span></div>
         </div>
-        <button class="btn-buy" onclick="event.stopPropagation();openModal(${p.id})">КУПИТИ →</button>
+        <button class="btn-buy" onclick="event.stopPropagation();openM(${p.id})">КУПИТИ →</button>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-/* ── MODAL ──────────────────────────────── */
-let curId = null;
-function openModal(id) {
-  curId = id;
-  const p = P.find(x=>x.id===id);
-  document.getElementById('dlgProduct').textContent = p.brand+' '+p.name+' · '+p.weight+' · '+p.price+'₴';
-  document.getElementById('dlgForm').style.display = 'block';
-  document.getElementById('dlgSuccess').classList.remove('show');
-  document.getElementById('fErr').style.display = 'none';
-  ['fName','fPhone','fAddr','fNote'].forEach(i=>document.getElementById(i).value='');
-  document.getElementById('overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  setTimeout(()=>document.getElementById('fName').focus(), 120);
+/* modal */
+let cid=null;
+function openM(id){
+  cid=id;
+  const p=PRODUCTS.find(x=>x.id===id);
+  document.getElementById('dlgProd').textContent=p.brand+' '+p.name+' · '+p.weight+' · '+p.price+'₴';
+  document.getElementById('dlgForm').style.display='block';
+  document.getElementById('dlgOk').classList.remove('show');
+  document.getElementById('ferr').style.display='none';
+  ['fN','fP','fA','fC'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('ov').classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('fN').focus(),120);
 }
-function closeModal() {
-  document.getElementById('overlay').classList.remove('open');
-  document.body.style.overflow = '';
+function closeM(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';}
+function send(){
+  const n=document.getElementById('fN').value.trim();
+  const p=document.getElementById('fP').value.trim();
+  const a=document.getElementById('fA').value.trim();
+  const c=document.getElementById('fC').value.trim();
+  const err=document.getElementById('ferr');
+  if(!n){err.textContent="Введіть ваше ім'я";err.style.display='block';document.getElementById('fN').focus();return;}
+  if(!p){err.textContent='Введіть номер телефону';err.style.display='block';document.getElementById('fP').focus();return;}
+  if(!a){err.textContent='Введіть адресу доставки';err.style.display='block';document.getElementById('fA').focus();return;}
+  const pr=PRODUCTS.find(x=>x.id===cid);
+  const now=new Date();
+  const ord={id:Date.now(),date:now.toLocaleDateString('uk-UA'),time:now.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'}),product:pr?pr.brand+' '+pr.name+' '+pr.weight:'—',price:pr?pr.price:0,name:n,phone:p,addr:a,note:c};
+  const arr=JSON.parse(localStorage.getItem('profit_orders')||'[]');arr.unshift(ord);
+  localStorage.setItem('profit_orders',JSON.stringify(arr));
+  document.getElementById('dlgForm').style.display='none';
+  document.getElementById('dlgOk').classList.add('show');
 }
-function showErr(m) {
-  const el = document.getElementById('fErr');
-  el.textContent = m; el.style.display = 'block';
-}
-function submitOrder() {
-  const name  = document.getElementById('fName').value.trim();
-  const phone = document.getElementById('fPhone').value.trim();
-  const addr  = document.getElementById('fAddr').value.trim();
-  const note  = document.getElementById('fNote').value.trim();
-  if (!name)  { showErr("Введіть ваше ім'я"); document.getElementById('fName').focus(); return; }
-  if (!phone) { showErr('Введіть номер телефону'); document.getElementById('fPhone').focus(); return; }
-  if (!addr)  { showErr('Введіть адресу доставки'); document.getElementById('fAddr').focus(); return; }
-  const p = P.find(x=>x.id===curId);
-  const now = new Date();
-  const order = {
-    id: Date.now(),
-    date: now.toLocaleDateString('uk-UA'),
-    time: now.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'}),
-    product: p ? p.brand+' '+p.name+' '+p.weight : '—',
-    price:   p ? p.price : 0,
-    name, phone, addr, note,
-  };
-  const arr = JSON.parse(localStorage.getItem('profit_orders')||'[]');
-  arr.unshift(order);
-  localStorage.setItem('profit_orders', JSON.stringify(arr));
-  document.getElementById('dlgForm').style.display = 'none';
-  document.getElementById('dlgSuccess').classList.add('show');
-}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM();});
 
-document.addEventListener('keydown', e => { if (e.key==='Escape') { closeModal(); } });
-
-/* ── ADMIN ───────────────────────────────── */
-const PWD = 'profit2025';
-let authed = false;
-let logoN = 0, logoT = null;
-document.getElementById('logoBtn').addEventListener('click', () => {
-  if (++logoN >= 5) { logoN=0; clearTimeout(logoT); openAdminPanel(); return; }
-  clearTimeout(logoT); logoT = setTimeout(()=>logoN=0, 3000);
-});
-function openAdminPanel() {
-  document.getElementById('adminOv').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  if (authed) { showDash(); }
-  else {
-    document.getElementById('adminGate').style.display = 'flex';
-    document.getElementById('adminDash').style.display = 'none';
-    setTimeout(()=>document.getElementById('adminPwd').focus(),100);
-  }
+/* admin */
+const PWD='profit2025';let auth=false,lc=0,lt=null;
+document.getElementById('logoBtn').addEventListener('click',()=>{if(++lc>=5){lc=0;clearTimeout(lt);openAdm();}else{clearTimeout(lt);lt=setTimeout(()=>lc=0,3000);}});
+function openAdm(){document.getElementById('admOv').classList.add('open');document.body.style.overflow='hidden';auth?dash():null;}
+function closeAdm(){document.getElementById('admOv').classList.remove('open');document.body.style.overflow='';}
+function login(){
+  if(document.getElementById('admPwd').value===PWD){auth=true;document.getElementById('admErr').textContent='';dash();}
+  else{document.getElementById('admErr').textContent='❌ Невірний пароль';document.getElementById('admPwd').value='';}
 }
-function doLogin() {
-  if (document.getElementById('adminPwd').value === PWD) {
-    authed = true; document.getElementById('adminErr').textContent = '';
-    showDash();
-  } else {
-    document.getElementById('adminErr').textContent = '❌ Невірний пароль';
-    document.getElementById('adminPwd').value = '';
-    document.getElementById('adminPwd').focus();
-  }
+function dash(){document.getElementById('admGate').style.display='none';const d=document.getElementById('admDash');d.style.display='flex';showAll();}
+function orders(){return JSON.parse(localStorage.getItem('profit_orders')||'[]');}
+function kpis(){
+  const all=orders(),tod=new Date().toLocaleDateString('uk-UA');
+  const t=all.filter(o=>o.date===tod);
+  document.getElementById('kpis').innerHTML=[[all.length,'Усього'],[t.length,'Сьогодні'],[t.reduce((s,o)=>s+(+o.price||0),0)+'₴','Виторг сьогодні'],[all.reduce((s,o)=>s+(+o.price||0),0)+'₴','Загальний']].map(([v,l])=>`<div class="kpi"><div class="kpi-v">${v}</div><div class="kpi-l">${l}</div></div>`).join('');
 }
-function closeAdmin() {
-  document.getElementById('adminOv').classList.remove('open');
-  document.body.style.overflow = '';
+function tbl(arr){
+  const tb=document.getElementById('tb'),te=document.getElementById('te');
+  if(!arr.length){tb.innerHTML='';te.style.display='block';return;}
+  te.style.display='none';
+  tb.innerHTML=arr.map((o,i)=>`<tr><td class="mo">${arr.length-i}</td><td class="mo">${o.date}<br>${o.time}</td><td><span class="hi">${o.name}</span></td><td style="white-space:nowrap">${o.phone}</td><td style="font-size:.75rem">${o.product}<br><span style="color:var(--gold);font-weight:700">${o.price}₴</span></td><td>${o.addr}</td><td style="font-size:.75rem;color:rgba(255,255,255,.45)">${o.note||'—'}</td></tr>`).join('');
 }
-function orders() { return JSON.parse(localStorage.getItem('profit_orders')||'[]'); }
-function showDash() {
-  document.getElementById('adminGate').style.display = 'none';
-  const d = document.getElementById('adminDash');
-  d.style.display = 'flex'; showAll();
-}
-function renderKPIs() {
-  const all = orders();
-  const today = new Date().toLocaleDateString('uk-UA');
-  const tod = all.filter(o=>o.date===today);
-  const rev = all.reduce((s,o)=>s+(+o.price||0),0);
-  const todRev = tod.reduce((s,o)=>s+(+o.price||0),0);
-  document.getElementById('kpis').innerHTML = [
-    [all.length,'Усього замовлень'],
-    [tod.length,'Сьогодні'],
-    [todRev+'₴','Виторг сьогодні'],
-    [rev+'₴','Загальний виторг'],
-  ].map(([v,l])=>`<div class="kpi"><div class="kpi-v">${v}</div><div class="kpi-l">${l}</div></div>`).join('');
-}
-function renderTable(arr) {
-  const tbody = document.getElementById('tblBody');
-  const empty = document.getElementById('tblEmpty');
-  if (!arr.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display = 'none';
-  tbody.innerHTML = arr.map((o,i)=>`<tr>
-    <td class="mono">${arr.length-i}</td>
-    <td class="mono">${o.date}<br>${o.time}</td>
-    <td><span class="hi">${o.name}</span></td>
-    <td style="white-space:nowrap">${o.phone}</td>
-    <td style="font-size:0.75rem">${o.product}<br><span style="color:var(--c-amber);font-weight:700">${o.price}₴</span></td>
-    <td>${o.addr}</td>
-    <td style="font-size:0.75rem;color:rgba(255,255,255,0.45)">${o.note||'—'}</td>
-  </tr>`).join('');
-}
-function showAll() {
-  const arr = orders(); renderKPIs(); renderTable(arr);
-  document.getElementById('datePick').value='';
-  document.getElementById('cntLbl').textContent='Усього: '+arr.length;
-}
-function showToday() {
-  const today = new Date().toLocaleDateString('uk-UA');
-  const arr = orders().filter(o=>o.date===today);
-  renderKPIs(); renderTable(arr);
-  document.getElementById('datePick').value = new Date().toISOString().slice(0,10);
-  document.getElementById('cntLbl').textContent='Сьогодні: '+arr.length;
-}
-function filterDate() {
-  const raw = document.getElementById('datePick').value;
-  if (!raw) { showAll(); return; }
-  const [y,m,d] = raw.split('-');
-  const uk = `${d}.${m}.${y}`;
-  const arr = orders().filter(o=>o.date===uk);
-  renderKPIs(); renderTable(arr);
-  document.getElementById('cntLbl').textContent=`За ${uk}: ${arr.length}`;
-}
-function printRep() {
-  const raw = document.getElementById('datePick').value;
-  let arr, label;
-  if (raw) {
-    const [y,m,d]=raw.split('-'); const uk=`${d}.${m}.${y}`;
-    arr=orders().filter(o=>o.date===uk); label=uk;
-  } else { arr=orders(); label='Усі замовлення'; }
-  const w = window.open('','_blank');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>Звіт PROFIT Coffee · ${label}</title>
-  <style>
-    body{font-family:Arial,sans-serif;font-size:13px;padding:24px;color:#1a0700}
-    h2{margin:0 0 4px;font-size:18px}p{color:#888;font-size:11px;margin:0 0 16px}
-    table{width:100%;border-collapse:collapse}
-    th{background:#3d1c02;color:#f0c060;padding:8px 10px;text-align:left;font-size:11px;letter-spacing:.08em}
-    td{padding:8px 10px;border-bottom:1px solid #f0e0c0;vertical-align:top}
-    tr:nth-child(even)td{background:#fdf7ee}
-    .sum{margin-top:12px;text-align:right;font-weight:700;font-size:14px}
-    @media print{button{display:none}}
-  </style></head><body>
-  <h2>☕ PROFIT Coffee Delivery · Звіт</h2>
-  <p>${label} · Сформовано: ${new Date().toLocaleString('uk-UA')} · Замовлень: ${arr.length}</p>
-  <button onclick="window.print()" style="margin-bottom:12px;padding:6px 16px;cursor:pointer;background:#3d1c02;color:#f0c060;border:none;border-radius:4px">🖨 Друк</button>
-  <table><thead><tr><th>#</th><th>Дата й час</th><th>Ім'я</th><th>Телефон</th><th>Товар</th><th>Адреса</th><th>Коментар</th></tr></thead>
-  <tbody>${arr.map((o,i)=>`<tr><td>${i+1}</td><td>${o.date} ${o.time}</td><td>${o.name}</td><td>${o.phone}</td><td>${o.product} · ${o.price}₴</td><td>${o.addr}</td><td>${o.note||'—'}</td></tr>`).join('')}</tbody></table>
-  <div class="sum">Загальна сума: ${arr.reduce((s,o)=>s+(+o.price||0),0)} ₴</div>
-  </body></html>`);
+function showAll(){const arr=orders();kpis();tbl(arr);document.getElementById('dp').value='';document.getElementById('cnt').textContent='Усього: '+arr.length;}
+function showToday(){const t=new Date().toLocaleDateString('uk-UA');const arr=orders().filter(o=>o.date===t);kpis();tbl(arr);document.getElementById('dp').value=new Date().toISOString().slice(0,10);document.getElementById('cnt').textContent='Сьогодні: '+arr.length;}
+function byDate(){const r=document.getElementById('dp').value;if(!r){showAll();return;}const[y,m,d]=r.split('-'),uk=`${d}.${m}.${y}`,arr=orders().filter(o=>o.date===uk);kpis();tbl(arr);document.getElementById('cnt').textContent=`За ${uk}: ${arr.length}`;}
+function printR(){
+  const r=document.getElementById('dp').value;let arr,label;
+  if(r){const[y,m,d]=r.split('-'),uk=`${d}.${m}.${y}`;arr=orders().filter(o=>o.date===uk);label=uk;}
+  else{arr=orders();label='Усі замовлення';}
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Звіт PROFIT · ${label}</title><style>body{font-family:Arial,sans-serif;font-size:13px;padding:24px}h2{margin:0 0 4px}p{color:#888;font-size:11px;margin:0 0 16px}table{width:100%;border-collapse:collapse}th{background:#2a0f00;color:#e8c96e;padding:8px 10px;text-align:left;font-size:11px;letter-spacing:.08em}td{padding:8px 10px;border-bottom:1px solid #f0e0c0;vertical-align:top}tr:nth-child(even)td{background:#fdf7ee}.sum{margin-top:12px;text-align:right;font-weight:700}@media print{button{display:none}}</style></head><body><h2>☕ PROFIT Coffee Delivery · Звіт</h2><p>${label} · ${new Date().toLocaleString('uk-UA')} · ${arr.length} замовлень</p><button onclick="window.print()" style="margin-bottom:12px;padding:6px 16px;cursor:pointer;background:#2a0f00;color:#e8c96e;border:none;border-radius:4px">🖨 Друк</button><table><thead><tr><th>#</th><th>Дата й час</th><th>Ім'я</th><th>Телефон</th><th>Товар</th><th>Адреса</th><th>Коментар</th></tr></thead><tbody>${arr.map((o,i)=>`<tr><td>${i+1}</td><td>${o.date} ${o.time}</td><td>${o.name}</td><td>${o.phone}</td><td>${o.product} · ${o.price}₴</td><td>${o.addr}</td><td>${o.note||'—'}</td></tr>`).join('')}</tbody></table><div class="sum">Загальна сума: ${arr.reduce((s,o)=>s+(+o.price||0),0)} ₴</div></body></html>`);
   w.document.close();
 }
-function wipeAll() {
-  if (confirm('Видалити ВСІ замовлення? Це незворотна дія.')) {
-    localStorage.removeItem('profit_orders'); showAll();
-  }
-}
+function wipe(){if(confirm('Видалити ВСІ замовлення?')){localStorage.removeItem('profit_orders');showAll();}}
 
 render();
 </script>
