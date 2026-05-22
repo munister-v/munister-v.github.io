@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROFIT Coffee Delivery — Мукачево</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brown:  #2a0f00;
+      --brown2: #3d1c02;
+      --brown3: #5c2a08;
+      --gold:   #c9a84c;
+      --gold2:  #e8c96e;
+      --amber:  #d4941f;
+      --cream:  #fdf6e8;
+      --cream2: #f5e6c8;
+      --disc:   #c0392b;
+      --text:   #1a0700;
+      --muted:  rgba(26,7,0,.55);
+      --border: rgba(201,168,76,.18);
+      --sans:   'Open Sans', sans-serif;
+      --head:   'Montserrat', sans-serif;
+      --viber:  #7360f2;
+      --wa:     #25D366;
+      --tg:     #0088cc;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; font-size: 16px; line-height: 1.6; }
+
+    /* ══ ICON HELPERS ══ */
+    .ico { width: 1em; height: 1em; fill: currentColor; display: inline-block; vertical-align: middle; flex-shrink: 0; }
+    .ico-sm { width: 14px; height: 14px; }
+    .ico-md { width: 16px; height: 16px; }
+    .ico-lg { width: 20px; height: 20px; }
+
+    /* ══ MESSENGER BUTTONS — reusable pill ══ */
+    .mb {
+      display: inline-flex; align-items: center; gap: .45rem;
+      font-family: var(--head); font-weight: 700; font-size: .75rem; letter-spacing: .04em;
+      padding: .625rem 1.125rem; border-radius: 100px;
+      text-decoration: none; border: none; cursor: pointer; white-space: nowrap;
+      transition: transform .15s, box-shadow .15s, filter .15s;
+    }
+    .mb:hover  { transform: translateY(-2px); filter: brightness(1.08); }
+    .mb:active { transform: scale(.97); }
+    .mb .ico   { width: 15px; height: 15px; }
+
+    .mb-phone { background: var(--gold);  color: var(--brown); box-shadow: 0 3px 14px rgba(201,168,76,.35); }
+    .mb-viber { background: var(--viber); color: #fff;         box-shadow: 0 3px 14px rgba(115,96,242,.35); }
+    .mb-wa    { background: var(--wa);    color: #fff;         box-shadow: 0 3px 14px rgba(37,211,102,.35); }
+    .mb-tg    { background: var(--tg);    color: #fff;         box-shadow: 0 3px 14px rgba(0,136,204,.35); }
+
+    /* ghost variant (on dark bg, no background) */
+    .mb-ghost-phone { background: rgba(255,255,255,.1);  color: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.22); box-shadow: none; }
+    .mb-ghost-viber { background: rgba(115,96,242,.8);   color: #fff; backdrop-filter: blur(4px); }
+    .mb-ghost-wa    { background: rgba(37,211,102,.8);   color: #fff; backdrop-filter: blur(4px); }
+    .mb-ghost-tg    { background: rgba(0,136,204,.8);    color: #fff; backdrop-filter: blur(4px); }
+    .mb-ghost-phone:hover { background: rgba(255,255,255,.18); }
+    .mb-ghost-viber:hover { background: rgba(115,96,242,1);  box-shadow: 0 4px 18px rgba(115,96,242,.45); }
+    .mb-ghost-wa:hover    { background: rgba(37,211,102,1);  box-shadow: 0 4px 18px rgba(37,211,102,.45); }
+    .mb-ghost-tg:hover    { background: rgba(0,136,204,1);   box-shadow: 0 4px 18px rgba(0,136,204,.45); }
+
+    /* small circle icon button */
+    .ib {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      text-decoration: none; border: none; cursor: pointer; flex-shrink: 0;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .ib:hover  { transform: scale(1.12); }
+    .ib .ico   { width: 16px; height: 16px; fill: #fff; }
+    .ib-phone  { background: var(--gold);  }  .ib-phone .ico { fill: var(--brown); }
+    .ib-viber  { background: var(--viber); }
+    .ib-wa     { background: var(--wa);    }
+    .ib-tg     { background: var(--tg);    }
+
+    /* ══ HEADER ══ */
+    .hdr {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--brown);
+      box-shadow: 0 2px 28px rgba(0,0,0,.5);
+    }
+    .hdr-in {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 72px; gap: 1.25rem;
+    }
+    .hdr-logo {
+      display: flex; align-items: center; gap: .75rem;
+      cursor: pointer; user-select: none; flex-shrink: 0;
+    }
+    .hdr-logo img     { height: 46px; width: 46px; border-radius: 50%; object-fit: cover; }
+    .hdr-brand        { font-family: var(--head); font-weight: 900; font-size: 1.25rem; color: var(--gold2); letter-spacing: .14em; line-height: 1; }
+    .hdr-sub          { font-family: var(--head); font-size: .375rem; letter-spacing: .26em; color: rgba(255,255,255,.3); margin-top: 3px; }
+    .hdr-nav          { display: flex; align-items: center; gap: .125rem; }
+    .hdr-nav a        { font-family: var(--head); font-size: .6875rem; font-weight: 600; letter-spacing: .07em; color: rgba(255,255,255,.55); text-decoration: none; padding: .45rem .8rem; border-radius: 6px; transition: color .15s, background .15s; }
+    .hdr-nav a:hover  { color: var(--gold2); background: rgba(255,255,255,.06); }
+    .hdr-right        { display: flex; align-items: center; gap: .5rem; flex-shrink: 0; }
+    .hdr-tel          { font-family: var(--head); font-weight: 800; font-size: 1rem; color: var(--gold2); text-decoration: none; letter-spacing: .03em; white-space: nowrap; margin-right: .25rem; transition: color .15s; }
+    .hdr-tel:hover    { color: #fff; }
+    .hdr-cart { width: 36px; height: 36px; border-radius: 50%; background: rgba(201,168,76,.14); border: 1px solid rgba(201,168,76,.28); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; transition: background .15s; }
+    .hdr-cart:hover   { background: rgba(201,168,76,.28); }
+
+    /* ══ HERO ══ */
+    .hero { position: relative; min-height: 88vh; display: flex; align-items: center; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; background: url('../profit/assets/castle.jpg') center 30% / cover; }
+    .hero-bg::after { content:''; position: absolute; inset: 0; background: linear-gradient(108deg, rgba(20,6,0,.92) 0%, rgba(30,10,0,.76) 48%, rgba(30,10,0,.22) 100%); }
+    .hero-in {
+      position: relative; z-index: 2;
+      max-width: 1280px; margin: 0 auto; width: 100%;
+      padding: 5rem 2rem 4.5rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(201,168,76,.14); border: 1px solid rgba(201,168,76,.3);
+      color: var(--gold2); font-family: var(--head); font-size: .625rem; font-weight: 700; letter-spacing: .16em;
+      padding: .35rem 1rem; border-radius: 100px; margin-bottom: 1.5rem;
+    }
+    .hero-h {
+      font-family: var(--head); font-weight: 900;
+      font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+      color: #fff; line-height: 1.06; letter-spacing: -.02em;
+      margin-bottom: 1.25rem;
+    }
+    .hero-h em { font-style: normal; color: var(--gold); }
+    .hero-p {
+      font-size: clamp(1rem, 1.5vw, 1.0625rem);
+      color: rgba(255,255,255,.66); line-height: 1.72;
+      max-width: 42ch; margin-bottom: 2rem;
+    }
+    .hero-feats { display: flex; flex-direction: column; gap: .625rem; margin-bottom: 2.25rem; }
+    .hero-feat  { display: flex; align-items: center; gap: .625rem; font-family: var(--head); font-size: .75rem; font-weight: 600; letter-spacing: .03em; color: rgba(255,255,255,.78); }
+    .hero-dot   { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+    /* CTA cluster */
+    .hero-cta   { display: flex; flex-direction: column; gap: 1rem; }
+    .hero-cta-r1 { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+    .hero-cta-r2 { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .hero-cta-sep { font-family: var(--head); font-size: .4375rem; font-weight: 600; letter-spacing: .14em; color: rgba(255,255,255,.3); }
+    .btn-pri {
+      font-family: var(--head); font-weight: 800; font-size: .75rem; letter-spacing: .09em;
+      background: var(--gold); color: var(--brown); border: none;
+      padding: 1rem 2.25rem; border-radius: 10px; cursor: pointer; text-decoration: none;
+      box-shadow: 0 4px 22px rgba(201,168,76,.42);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-pri:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(201,168,76,.56); }
+    /* hero visual panel */
+    .hero-vis { display: flex; align-items: center; justify-content: center; }
+    .hero-card {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(201,168,76,.2);
+      backdrop-filter: blur(14px); border-radius: 24px;
+      padding: 2rem 1.75rem; text-align: center;
+      max-width: 300px; width: 100%;
+      box-shadow: 0 28px 72px rgba(0,0,0,.45);
+    }
+    .hc-brand  { font-family: var(--head); font-weight: 900; font-size: 1.0625rem; color: var(--gold2); letter-spacing: .08em; margin-bottom: .2rem; }
+    .hc-sub    { font-family: var(--head); font-size: .5625rem; letter-spacing: .1em; color: rgba(255,255,255,.38); margin-bottom: 1.25rem; }
+    .hc-from   { font-family: var(--head); font-size: .5625rem; letter-spacing: .14em; color: rgba(255,255,255,.28); margin-bottom: .2rem; }
+    .hc-price  { font-family: var(--head); font-weight: 900; font-size: 2.25rem; color: var(--gold); line-height: 1; }
+    .hc-price sup { font-size: 1rem; vertical-align: super; line-height: 0; }
+    .hc-cta    { margin-top: 1.25rem; }
+
+    /* ══ STRIP ══ */
+    .strip {
+      background: var(--brown2);
+      border-top: 1px solid rgba(201,168,76,.1); border-bottom: 1px solid rgba(201,168,76,.1);
+      padding: 1.25rem 2rem;
+      display: flex; align-items: center; justify-content: center; gap: 2.5rem; flex-wrap: wrap;
+    }
+    .strip-i { display: flex; align-items: center; gap: .625rem; }
+    .strip-e { font-size: 1.25rem; }
+    .strip-t { font-family: var(--head); font-size: .6875rem; font-weight: 700; letter-spacing: .05em; color: rgba(255,255,255,.72); }
+
+    /* ══ CATALOG ══ */
+    .sec { max-width: 1280px; margin: 0 auto; padding: clamp(3rem,5vw,5rem) clamp(1.25rem,3vw,2rem); }
+    .sec-hdr   { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2.5rem; gap: 1rem; flex-wrap: wrap; }
+    .sec-eye   { font-family: var(--head); font-size: .625rem; font-weight: 700; letter-spacing: .2em; color: var(--amber); text-transform: uppercase; margin-bottom: .4rem; }
+    .sec-title { font-family: var(--head); font-weight: 900; font-size: clamp(1.625rem,3vw,2.375rem); color: var(--brown); letter-spacing: -.02em; }
+    .sec-lnk   { font-family: var(--head); font-size: .6875rem; font-weight: 700; letter-spacing: .09em; color: var(--amber); text-decoration: none; }
+    .sec-lnk:hover { text-decoration: underline; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(288px, 1fr)); gap: 1.5rem; }
+
+    /* ══ CARD ══ */
+    .card {
+      background: var(--brown); border-radius: 20px; overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,.2);
+      display: flex; flex-direction: column;
+      transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s; cursor: pointer;
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 22px 56px rgba(0,0,0,.3); }
+    .card-img  { position: relative; height: 268px; overflow: hidden; background: linear-gradient(160deg,#1a0700,#4a2005); }
+    .card-img img { width:100%; height:100%; object-fit:cover; display:block; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+    .card:hover .card-img img { transform: scale(1.06); }
+    .card-ov   { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,6,0,.55) 0%, transparent 55%); }
+    .badges    { position: absolute; top: 13px; left: 13px; display: flex; flex-direction: column; gap: 5px; z-index: 2; }
+    .b-disc    { font-family: var(--head); font-size: .6875rem; font-weight: 900; background: var(--disc); color: #fff; padding: .25rem .625rem; border-radius: 100px; }
+    .b-new     { font-family: var(--head); font-size: .625rem; font-weight: 800; background: var(--gold); color: var(--brown); padding: .25rem .625rem; border-radius: 100px; }
+    .b-hit     { font-family: var(--head); font-size: .625rem; font-weight: 800; background: var(--brown2); color: var(--gold2); border: 1px solid var(--gold); padding: .2rem .625rem; border-radius: 100px; }
+    .wt-chip   { position: absolute; bottom: 11px; right: 11px; z-index: 2; background: rgba(20,6,0,.68); backdrop-filter: blur(6px); color: rgba(255,255,255,.8); font-family: var(--head); font-size: .5625rem; font-weight: 700; letter-spacing: .08em; padding: .2rem .5625rem; border-radius: 100px; border: 1px solid rgba(255,255,255,.1); }
+    .card-body { padding: 1.25rem 1.375rem .875rem; flex: 1; display: flex; flex-direction: column; gap: .625rem; }
+    .card-brand { font-family: var(--head); font-size: .5625rem; font-weight: 700; letter-spacing: .18em; color: var(--gold); text-transform: uppercase; }
+    .card-name  { font-family: var(--head); font-weight: 800; font-size: 1.1875rem; color: #fff; line-height: 1.18; }
+    .card-desc  { font-size: .8125rem; color: rgba(255,255,255,.54); line-height: 1.62; }
+    .tags  { display: flex; flex-wrap: wrap; gap: .3rem; }
+    .tag   { font-family: var(--head); font-size: .5rem; font-weight: 600; letter-spacing: .06em; background: rgba(201,168,76,.12); border: 1px solid rgba(201,168,76,.22); color: rgba(201,168,76,.85); padding: .2rem .5rem; border-radius: 100px; }
+    .roast { display: flex; align-items: center; gap: .5rem; }
+    .roast-l { font-family: var(--head); font-size: .4375rem; font-weight: 700; letter-spacing: .1em; color: rgba(255,255,255,.28); white-space: nowrap; text-transform: uppercase; }
+    .roast-t { flex: 1; height: 3px; background: rgba(255,255,255,.1); border-radius: 2px; }
+    .roast-f { height: 100%; background: linear-gradient(90deg, var(--gold2), var(--amber)); border-radius: 2px; }
+    .roast-n { font-family: var(--head); font-size: .5rem; font-weight: 700; color: var(--gold2); white-space: nowrap; }
+    .brews { display: flex; gap: .3rem; flex-wrap: wrap; }
+    .brew  { font-family: var(--head); font-size: .4375rem; font-weight: 600; letter-spacing: .05em; background: rgba(255,255,255,.07); color: rgba(255,255,255,.42); padding: .2rem .475rem; border-radius: 4px; }
+    .card-foot { padding: 1rem 1.375rem 1.25rem; border-top: 1px solid rgba(255,255,255,.07); display: flex; align-items: center; justify-content: space-between; gap: .875rem; }
+    .p-old { font-family: var(--head); font-size: .75rem; color: rgba(255,255,255,.22); text-decoration: line-through; line-height: 1; margin-bottom: .15rem; }
+    .p-new { font-family: var(--head); font-weight: 900; font-size: 1.625rem; color: var(--gold); line-height: 1; }
+    .p-new sup { font-size: .875rem; vertical-align: super; line-height: 0; font-weight: 700; }
+    .p-uah { font-size: 1rem; font-weight: 600; color: rgba(201,168,76,.5); }
+    .btn-buy {
+      font-family: var(--head); font-weight: 800; font-size: .625rem; letter-spacing: .1em;
+      background: linear-gradient(135deg, var(--gold2), var(--gold)); color: var(--brown); border: none;
+      padding: .7rem 1.25rem; border-radius: 10px; cursor: pointer; white-space: nowrap;
+      box-shadow: 0 3px 14px rgba(201,168,76,.28); transition: transform .15s, box-shadow .15s;
+    }
+    .btn-buy:hover { transform: scale(1.05); box-shadow: 0 6px 22px rgba(201,168,76,.45); }
+
+    /* ══ DELIVERY / CONTACT ══ */
+    .delivery { background: var(--brown); padding: clamp(3rem,5vw,5.5rem) clamp(1.25rem,3vw,2rem); }
+    .del-in   { max-width: 1280px; margin: 0 auto; }
+    .del-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .del-photo { border-radius: 24px; overflow: hidden; height: 400px; box-shadow: 0 28px 72px rgba(0,0,0,.55); }
+    .del-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+    .del-eye   { font-family: var(--head); font-size: .625rem; font-weight: 700; letter-spacing: .2em; color: var(--gold); text-transform: uppercase; margin-bottom: .625rem; }
+    .del-title { font-family: var(--head); font-weight: 900; font-size: clamp(1.625rem,3vw,2.125rem); color: #fff; line-height: 1.15; margin-bottom: 1.5rem; }
+    .del-feats { display: flex; flex-direction: column; gap: 1.125rem; margin-bottom: 2.25rem; }
+    .del-feat  { display: flex; align-items: flex-start; gap: 1rem; }
+    .del-icon  { width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0; background: rgba(201,168,76,.12); border: 1px solid rgba(201,168,76,.2); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+    .del-ft    { font-family: var(--head); font-weight: 700; font-size: .9375rem; color: #fff; margin-bottom: .2rem; }
+    .del-fd    { font-size: .8125rem; color: rgba(255,255,255,.5); line-height: 1.58; }
+
+    /* Contact block */
+    .del-contacts { border-top: 1px solid rgba(255,255,255,.08); padding-top: 2rem; }
+    .del-phone   {
+      font-family: var(--head); font-weight: 900;
+      font-size: clamp(2rem,4.5vw,2.875rem);
+      color: var(--gold2); letter-spacing: .02em;
+      display: block; text-decoration: none; line-height: 1;
+      margin-bottom: .4rem; transition: color .15s;
+    }
+    .del-phone:hover { color: #fff; }
+    .del-hours { font-family: var(--head); font-size: .6875rem; font-weight: 600; color: rgba(255,255,255,.36); letter-spacing: .05em; margin-bottom: 1.25rem; }
+    .del-msg-row { display: flex; gap: .625rem; flex-wrap: wrap; }
+
+    /* ══ FAB — mobile floating contact ══ */
+    .fab-wrap { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 200; }
+    .fab-btn {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--gold); color: var(--brown);
+      border: none; cursor: pointer; font-size: 1.5rem;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 28px rgba(201,168,76,.52);
+      transition: transform .2s cubic-bezier(.2,.8,.2,1), background .2s;
+      position: relative; z-index: 2;
+    }
+    .fab-btn.is-open { transform: rotate(45deg); background: #fff; }
+    .fab-btn:hover   { box-shadow: 0 10px 36px rgba(201,168,76,.62); }
+    .fab-menu {
+      position: absolute; bottom: 70px; right: 0;
+      display: flex; flex-direction: column; align-items: flex-end; gap: .625rem;
+      opacity: 0; transform: translateY(10px); pointer-events: none;
+      transition: opacity .2s, transform .22s cubic-bezier(.2,.8,.2,1);
+    }
+    .fab-menu.is-open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .fab-row  { display: flex; align-items: center; gap: .625rem; text-decoration: none; }
+    .fab-lbl  { font-family: var(--head); font-size: .6875rem; font-weight: 700; letter-spacing: .05em; background: rgba(20,6,0,.88); backdrop-filter: blur(10px); color: #fff; padding: .35rem .875rem; border-radius: 100px; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,.28); }
+    .fab-ci   { width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 18px rgba(0,0,0,.28); transition: transform .15s; }
+    .fab-row:hover .fab-ci { transform: scale(1.1); }
+    .fab-ci .ico { width: 21px; height: 21px; fill: #fff; }
+    .fci-phone { background: var(--gold); }  .fci-phone .ico { fill: var(--brown); }
+    .fci-viber { background: var(--viber); }
+    .fci-wa    { background: var(--wa); }
+    .fci-tg    { background: var(--tg); }
+
+    /* ══ FOOTER ══ */
+    .footer { background: var(--brown); border-top: 1px solid rgba(201,168,76,.1); padding: 2rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
+    .foot-l   { display: flex; align-items: center; gap: .875rem; }
+    .foot-l img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+    .foot-brand { font-family: var(--head); font-weight: 900; font-size: .9375rem; color: var(--gold2); letter-spacing: .12em; }
+    .foot-copy  { font-family: var(--head); font-size: .4375rem; letter-spacing: .12em; color: rgba(255,255,255,.28); margin-top: 2px; }
+    .foot-tel   { font-family: var(--head); font-weight: 800; font-size: 1.125rem; color: var(--gold2); text-decoration: none; letter-spacing: .03em; transition: color .15s; }
+    .foot-tel:hover { color: #fff; }
+    .foot-msg { display: flex; gap: .375rem; }
+
+    /* ══ ORDER MODAL ══ */
+    .ov {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(10,3,0,.78); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+      opacity: 0; pointer-events: none; transition: opacity .22s;
+    }
+    .ov.open { opacity: 1; pointer-events: auto; }
+    .dlg {
+      background: var(--cream); border-radius: 20px;
+      max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 36px 90px rgba(0,0,0,.55);
+      transform: scale(.96) translateY(14px); transition: transform .22s cubic-bezier(.2,.8,.2,1);
+    }
+    .ov.open .dlg { transform: scale(1) translateY(0); }
+    .dlg-hdr { background: var(--brown); border-radius: 20px 20px 0 0; padding: 1.5rem 1.625rem 1.375rem; position: relative; }
+    .dlg-eye   { font-family: var(--head); font-size: .5625rem; font-weight: 700; letter-spacing: .2em; color: var(--gold); margin-bottom: .3rem; }
+    .dlg-title { font-family: var(--head); font-weight: 900; font-size: 1.3125rem; color: #fff; margin-bottom: .2rem; }
+    .dlg-prod  { font-family: var(--head); font-size: .6875rem; color: rgba(255,255,255,.42); }
+    .dlg-x { position: absolute; top: 1.125rem; right: 1.125rem; background: rgba(255,255,255,.1); border: none; color: rgba(255,255,255,.6); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: .875rem; display: flex; align-items: center; justify-content: center; transition: background .15s, color .15s; }
+    .dlg-x:hover { background: rgba(255,255,255,.2); color: #fff; }
+    .dlg-body  { padding: 1.625rem; display: flex; flex-direction: column; gap: 1.125rem; }
+    .f2        { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .f         { display: flex; flex-direction: column; gap: .35rem; }
+    .f label   { font-family: var(--head); font-size: .5625rem; font-weight: 700; letter-spacing: .09em; color: var(--muted); text-transform: uppercase; }
+    .f input, .f textarea { font-family: var(--sans); font-size: 1rem; color: var(--text); background: #fff; border: 1.5px solid var(--cream2); border-radius: 10px; padding: .75rem 1rem; outline: none; transition: border-color .15s; }
+    .f input:focus, .f textarea:focus { border-color: var(--gold); }
+    .f textarea { min-height: 80px; resize: vertical; }
+    .ferr { font-family: var(--head); font-size: .625rem; font-weight: 600; color: var(--disc); display: none; }
+    .btn-sub { font-family: var(--head); font-weight: 800; font-size: .75rem; letter-spacing: .1em; background: var(--brown); color: var(--gold2); border: none; padding: 1.0625rem; border-radius: 12px; cursor: pointer; transition: background .15s, transform .15s; }
+    .btn-sub:hover { background: var(--brown2); transform: translateY(-1px); }
+    .dlg-ok  { display: flex; flex-direction: column; align-items: center; padding: 2.75rem 1.625rem; text-align: center; gap: .625rem; }
+    .ok-ico  { font-size: 2.75rem; margin-bottom: .25rem; }
+    .ok-h    { font-family: var(--head); font-weight: 900; font-size: 1.4375rem; color: var(--brown); }
+    .ok-p    { font-size: .9375rem; color: var(--muted); line-height: 1.68; max-width: 32ch; }
+    .ok-tel  { font-family: var(--head); font-weight: 800; font-size: 1.3125rem; color: var(--amber); }
+    .btn-ok  { font-family: var(--head); font-weight: 700; font-size: .6875rem; letter-spacing: .1em; background: var(--brown); color: var(--gold2); border: none; padding: .8125rem 2rem; border-radius: 100px; cursor: pointer; margin-top: .5rem; transition: background .15s; }
+    .btn-ok:hover { background: var(--brown2); }
+
+    /* ══ ADMIN ══ */
+    .adm-ov { position: fixed; inset: 0; z-index: 400; background: var(--brown); opacity: 0; pointer-events: none; transition: opacity .2s; display: flex; align-items: center; justify-content: center; }
+    .adm-ov.open { opacity: 1; pointer-events: auto; }
+    .adm-gate { background: var(--cream); border-radius: 20px; padding: 2.5rem; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,.5); }
+    .gate-ico { font-size: 2.25rem; margin-bottom: .75rem; }
+    .gate-h   { font-family: var(--head); font-weight: 900; font-size: 1.0625rem; color: var(--brown); letter-spacing: .04em; margin-bottom: 1.5rem; }
+    .gate-inp { width: 100%; font-family: var(--sans); font-size: 1rem; color: var(--text); background: #fff; border: 1.5px solid var(--cream2); border-radius: 10px; padding: .8125rem 1rem; outline: none; text-align: center; letter-spacing: .1em; transition: border-color .15s; margin-bottom: .875rem; }
+    .gate-inp:focus { border-color: var(--gold); }
+    .gate-btn { font-family: var(--head); font-weight: 800; font-size: .6875rem; letter-spacing: .1em; background: var(--brown); color: var(--gold2); border: none; padding: .875rem 2rem; border-radius: 100px; cursor: pointer; width: 100%; transition: background .15s; }
+    .gate-btn:hover { background: var(--brown2); }
+    .gate-err { font-family: var(--head); font-size: .625rem; font-weight: 600; color: var(--disc); min-height: 1.25rem; margin-top: .5rem; }
+    .gate-cancel { font-family: var(--head); font-size: .5625rem; font-weight: 600; color: var(--muted); background: none; border: none; cursor: pointer; margin-top: .875rem; text-decoration: underline; }
+    .adm-bar  { background: var(--brown2); padding: .875rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-bottom: 1px solid rgba(201,168,76,.12); }
+    .adm-ttl  { font-family: var(--head); font-weight: 800; font-size: .875rem; color: var(--gold2); letter-spacing: .06em; }
+    .adm-btns { display: flex; gap: .375rem; flex-wrap: wrap; }
+    .ab { font-family: var(--head); font-size: .5625rem; font-weight: 700; letter-spacing: .06em; border: none; cursor: pointer; padding: .45rem .875rem; border-radius: 100px; transition: opacity .15s; }
+    .ab:hover { opacity: .85; }
+    .ab-g { background: rgba(201,168,76,.15); color: var(--gold2); border: 1px solid rgba(201,168,76,.2); }
+    .ab-r { background: rgba(192,57,43,.18); color: #e74c3c; border: 1px solid rgba(192,57,43,.25); }
+    .ab-x { background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); }
+    .adm-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
+    .kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .kpi  { background: rgba(255,255,255,.05); border: 1px solid rgba(201,168,76,.15); border-radius: 12px; padding: 1rem; text-align: center; }
+    .kpi-v { font-family: var(--head); font-weight: 900; font-size: 1.5rem; color: var(--gold2); }
+    .kpi-l { font-family: var(--head); font-size: .5rem; letter-spacing: .1em; color: rgba(255,255,255,.4); margin-top: .25rem; text-transform: uppercase; }
+    .adm-tools { display: flex; align-items: center; gap: .875rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .adm-tools label { font-family: var(--head); font-size: .5625rem; font-weight: 700; letter-spacing: .1em; color: rgba(255,255,255,.45); }
+    .adm-tools input[type=date] { font-family: var(--head); font-size: .6875rem; background: rgba(255,255,255,.06); border: 1px solid rgba(201,168,76,.2); color: var(--gold2); border-radius: 8px; padding: .4rem .75rem; outline: none; cursor: pointer; }
+    .adm-cnt { font-family: var(--head); font-size: .5625rem; color: rgba(255,255,255,.45); }
+    .tbl-w { overflow-x: auto; }
+    .tbl   { width: 100%; border-collapse: collapse; font-size: .8125rem; }
+    .tbl thead th { font-family: var(--head); font-size: .5rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); padding: .625rem .875rem; text-align: left; border-bottom: 1px solid rgba(201,168,76,.15); white-space: nowrap; }
+    .tbl tbody td { padding: .75rem .875rem; border-bottom: 1px solid rgba(255,255,255,.05); color: rgba(255,255,255,.75); vertical-align: top; }
+    .tbl tbody tr:hover td { background: rgba(255,255,255,.04); }
+    .mo { color: rgba(255,255,255,.35)!important; font-family: var(--head); font-size: .6875rem; }
+    .hi { font-family: var(--head); font-weight: 700; color: #fff!important; }
+    .tbl-empty { text-align: center; padding: 2.5rem; font-family: var(--head); font-size: .6875rem; color: rgba(255,255,255,.25); display: none; }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 1060px) { .hdr-nav { display: none; } }
+    @media (max-width: 800px) {
+      .hero-in { grid-template-columns: 1fr; padding: 3.5rem 1.5rem 3rem; }
+      .hero-vis { display: none; }
+      .del-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .del-photo { height: 280px; }
+      .kpis { grid-template-columns: repeat(2,1fr); }
+      .f2   { grid-template-columns: 1fr; }
+      .hdr-tel { display: none; }
+    }
+    @media (max-width: 560px) {
+      .hdr-in { padding: 0 1.125rem; }
+      .hero-in { padding: 3rem 1.25rem 2.5rem; }
+      .sec { padding: 2.5rem 1.25rem; }
+      .delivery { padding: 2.75rem 1.25rem; }
+      .del-phone { font-size: 2rem; }
+      .footer { padding: 1.5rem 1.25rem; flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .adm-body { padding: 1rem; }
+      .strip { gap: 1.25rem; padding: 1.125rem 1.25rem; }
+    }
+    @media (min-width: 801px) { .fab-wrap { display: none; } }
+  </style>
+</head>
+<body>
+
+<!-- SVG ICON SPRITE -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <defs>
+    <symbol id="i-phone" viewBox="0 0 24 24">
+      <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.58.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.01L6.6 10.8z"/>
+    </symbol>
+    <symbol id="i-viber" viewBox="0 0 24 24">
+      <path d="M11.4 0C7.3.1 3.8 1.5 1.4 4.3-.5 6.5-.4 9.3.9 12.8c.7 1.9 2 3.7 3.6 5.1L3.6 21c-.1.5.3.9.8.8l3.3-.9c2 1.1 4.2 1.6 6.4 1.5 5.3-.3 9.9-4.1 10.7-9.3.9-6.2-3.4-12.5-9.8-13.1H11.4zm.1 1.8h.3c5.3.4 9 5.8 8.3 11.1-.7 4.4-4.6 7.7-9.1 7.9-2 .1-4-.4-5.8-1.4l-.3-.2-2.7.8.8-2.6-.2-.3C1.7 15.6.6 13.5.3 11.5-.3 7.2 2.4 3.1 6.5 1.9c1.6-.5 3.3-.3 5 0zm.1 3.6c-.4 0-.7.3-.7.7v.1c.1 1.7.8 3.3 2 4.5 1.2 1.2 2.8 1.9 4.5 2l.1.1c.4 0 .7-.3.7-.7v-.1c-.1-.4-.4-.6-.8-.6-1.3-.1-2.6-.7-3.5-1.6-.9-.9-1.5-2.1-1.6-3.5-.1-.5-.4-.9-.7-.9zm-1.6.2c-1 .5-1.8 1.3-2.1 2.3-.3 1 .1 2.2.9 3.3.8 1 1.9 2.1 3.3 2.9 1.4.8 2.9 1.2 4.2 1.1.7-.1 1.3-.5 1.7-1.1l.1-.3c.1-.4-.1-.8-.4-.9l-1.8-.8c-.3-.1-.7 0-.9.2l-.5.5c-.3.2-.7.2-1 0-1.8-.9-2.9-2.7-2.7-4.6.1-.4-.1-.8-.4-.9l-1.8-.8c-.2-.1-.5-.1-.6.1z"/>
+    </symbol>
+    <symbol id="i-wa" viewBox="0 0 24 24">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </symbol>
+    <symbol id="i-tg" viewBox="0 0 24 24">
+      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-in">
+    <!-- Logo (click ×5 → admin) -->
+    <div class="hdr-logo" id="logoBtn">
+      <img src="../profit/assets/logo.png" alt="PROFIT">
+      <div>
+        <div class="hdr-brand">PROFIT</div>
+        <div class="hdr-sub">COFFEE DELIVERY</div>
+      </div>
+    </div>
+
+    <!-- Desktop nav -->
+    <nav class="hdr-nav">
+      <a href="#catalog">Каталог</a>
+      <a href="#delivery">Доставка</a>
+      <a href="#delivery">Про нас</a>
+      <a href="#delivery">Контакти</a>
+    </nav>
+
+    <!-- Right: phone + messenger icons + cart -->
+    <div class="hdr-right">
+      <a href="tel:+380505556115" class="hdr-tel">050 555 61 15</a>
+      <!-- Messenger icon buttons -->
+      <a href="tel:+380505556115" class="ib ib-phone" title="Подзвонити">
+        <svg class="ico ico-md"><use href="#i-phone"/></svg>
+      </a>
+      <a href="viber://chat?number=%2B380505556115" class="ib ib-viber" title="Viber">
+        <svg class="ico ico-md"><use href="#i-viber"/></svg>
+      </a>
+      <a href="https://wa.me/380505556115" class="ib ib-wa" title="WhatsApp" target="_blank" rel="noopener">
+        <svg class="ico ico-md"><use href="#i-wa"/></svg>
+      </a>
+      <a href="https://t.me/+380505556115" class="ib ib-tg" title="Telegram" target="_blank" rel="noopener">
+        <svg class="ico ico-md"><use href="#i-tg"/></svg>
+      </a>
+      <!-- Cart -->
+      <div class="hdr-cart" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">🛒</div>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-in">
+    <div class="hero-content">
+      <div class="hero-tag">☕ Nero Caffè · офіційний постачальник</div>
+      <h1 class="hero-h">Кава, що<br><em>приїжджає</em><br>до вас свіжою</h1>
+      <p class="hero-p">Преміальна кава в зернах з доставкою по Мукачеву. Щоденне обсмаження — щоденна свіжість.</p>
+      <div class="hero-feats">
+        <div class="hero-feat"><div class="hero-dot"></div>Безкоштовна доставка від 1 кг</div>
+        <div class="hero-feat"><div class="hero-dot"></div>100% натуральні зерна без замінників</div>
+        <div class="hero-feat"><div class="hero-dot"></div>Доставка в день замовлення</div>
+      </div>
+      <div class="hero-cta">
+        <!-- Row 1: main CTA -->
+        <div class="hero-cta-r1">
+          <a href="#catalog" class="btn-pri">ОБРАТИ КАВУ ↓</a>
+        </div>
+        <!-- Row 2: messenger links -->
+        <div class="hero-cta-r2">
+          <span class="hero-cta-sep">ЗВ'ЯЗАТИСЬ ·</span>
+          <a href="tel:+380505556115" class="mb mb-ghost-phone">
+            <svg class="ico ico-sm"><use href="#i-phone"/></svg>Дзвінок
+          </a>
+          <a href="viber://chat?number=%2B380505556115" class="mb mb-ghost-viber">
+            <svg class="ico ico-sm"><use href="#i-viber"/></svg>Viber
+          </a>
+          <a href="https://wa.me/380505556115" class="mb mb-ghost-wa" target="_blank" rel="noopener">
+            <svg class="ico ico-sm"><use href="#i-wa"/></svg>WhatsApp
+          </a>
+          <a href="https://t.me/+380505556115" class="mb mb-ghost-tg" target="_blank" rel="noopener">
+            <svg class="ico ico-sm"><use href="#i-tg"/></svg>Telegram
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Visual panel (desktop) -->
+    <div class="hero-vis">
+      <div class="hero-card">
+        <div class="hc-brand">NERO CAFFÈ</div>
+        <div class="hc-sub">ORO PREMIUM · ХІТ ПРОДАЖІВ</div>
+        <div class="hc-from">ВІД</div>
+        <div class="hc-price">720<sup>₴</sup></div>
+        <div class="hc-cta">
+          <button class="btn-buy" style="width:100%;justify-content:center" onclick="openM(4)">ЗАМОВИТИ ЗАРАЗ →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="strip">
+  <div class="strip-i"><span class="strip-e">🚚</span><span class="strip-t">БЕЗКОШТОВНА ДОСТАВКА ВІД 1 КГ</span></div>
+  <div class="strip-i"><span class="strip-e">☕</span><span class="strip-t">ЩОДЕННЕ ОБСМАЖЕННЯ</span></div>
+  <div class="strip-i"><span class="strip-e">🌿</span><span class="strip-t">100% НАТУРАЛЬНІ ЗЕРНА</span></div>
+  <div class="strip-i"><span class="strip-e">⚡</span><span class="strip-t">ДОСТАВКА В ДЕНЬ ЗАМОВЛЕННЯ</span></div>
+</div>
+
+<!-- CATALOG -->
+<section id="catalog">
+  <div class="sec">
+    <div class="sec-hdr">
+      <div>
+        <div class="sec-eye">КАТАЛОГ · NERO CAFFÈ</div>
+        <div class="sec-title">Популярна кава</div>
+      </div>
+      <a href="#delivery" class="sec-lnk">Умови доставки →</a>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<!-- DELIVERY + CONTACTS -->
+<section id="delivery" class="delivery">
+  <div class="del-in">
+    <div class="del-grid">
+      <div class="del-photo">
+        <img src="../profit/assets/interior.jpg" alt="PROFIT Coffee">
+      </div>
+      <div class="del-content">
+        <div class="del-eye">МУКАЧЕВО · ДОСТАВКА КАВИ</div>
+        <div class="del-title">Доставка кави<br>по Мукачеву</div>
+        <div class="del-feats">
+          <div class="del-feat">
+            <div class="del-icon">🚚</div>
+            <div>
+              <div class="del-ft">Безкоштовна доставка</div>
+              <div class="del-fd">При замовленні від 1 кг зернової кави — доставка по Мукачеву безкоштовна</div>
+            </div>
+          </div>
+          <div class="del-feat">
+            <div class="del-icon">⏱</div>
+            <div>
+              <div class="del-ft">Швидко і зручно</div>
+              <div class="del-fd">Оформте замовлення — кур'єр зв'яжеться та доставить у зручний час</div>
+            </div>
+          </div>
+          <div class="del-feat">
+            <div class="del-icon">🌿</div>
+            <div>
+              <div class="del-ft">Тільки свіжа кава</div>
+              <div class="del-fd">Кожна партія обсмажується під замовлення. Ніяких залежалих зерен</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact block -->
+        <div class="del-contacts">
+          <a href="tel:+380505556115" class="del-phone">050 555 61 15</a>
+          <div class="del-hours">📅 пн–нд, з 8:00 до 20:00</div>
+          <div class="del-msg-row">
+            <a href="tel:+380505556115" class="mb mb-phone">
+              <svg class="ico ico-sm"><use href="#i-phone"/></svg>Подзвонити
+            </a>
+            <a href="viber://chat?number=%2B380505556115" class="mb mb-viber">
+              <svg class="ico ico-sm"><use href="#i-viber"/></svg>Viber
+            </a>
+            <a href="https://wa.me/380505556115" class="mb mb-wa" target="_blank" rel="noopener">
+              <svg class="ico ico-sm"><use href="#i-wa"/></svg>WhatsApp
+            </a>
+            <a href="https://t.me/+380505556115" class="mb mb-tg" target="_blank" rel="noopener">
+              <svg class="ico ico-sm"><use href="#i-tg"/></svg>Telegram
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="foot-l">
+    <img src="../profit/assets/logo.png" alt="PROFIT">
+    <div>
+      <div class="foot-brand">PROFIT COFFEE</div>
+      <div class="foot-copy">© 2025 · Мукачево</div>
+    </div>
+  </div>
+  <a href="tel:+380505556115" class="foot-tel">050 555 61 15</a>
+  <div class="foot-msg">
+    <a href="tel:+380505556115" class="ib ib-phone" style="width:32px;height:32px" title="Дзвінок">
+      <svg class="ico" style="width:13px;height:13px;fill:var(--brown)"><use href="#i-phone"/></svg>
+    </a>
+    <a href="viber://chat?number=%2B380505556115" class="ib ib-viber" style="width:32px;height:32px" title="Viber">
+      <svg class="ico" style="width:13px;height:13px"><use href="#i-viber"/></svg>
+    </a>
+    <a href="https://wa.me/380505556115" class="ib ib-wa" style="width:32px;height:32px" title="WhatsApp" target="_blank" rel="noopener">
+      <svg class="ico" style="width:13px;height:13px"><use href="#i-wa"/></svg>
+    </a>
+    <a href="https://t.me/+380505556115" class="ib ib-tg" style="width:32px;height:32px" title="Telegram" target="_blank" rel="noopener">
+      <svg class="ico" style="width:13px;height:13px"><use href="#i-tg"/></svg>
+    </a>
+  </div>
+</footer>
+
+<!-- FLOATING CONTACT FAB (mobile only) -->
+<div class="fab-wrap">
+  <div class="fab-menu" id="fabMenu">
+    <a href="tel:+380505556115" class="fab-row">
+      <span class="fab-lbl">050 555 61 15</span>
+      <div class="fab-ci fci-phone"><svg class="ico ico-lg"><use href="#i-phone"/></svg></div>
+    </a>
+    <a href="viber://chat?number=%2B380505556115" class="fab-row">
+      <span class="fab-lbl">Viber</span>
+      <div class="fab-ci fci-viber"><svg class="ico ico-lg"><use href="#i-viber"/></svg></div>
+    </a>
+    <a href="https://wa.me/380505556115" class="fab-row" target="_blank" rel="noopener">
+      <span class="fab-lbl">WhatsApp</span>
+      <div class="fab-ci fci-wa"><svg class="ico ico-lg"><use href="#i-wa"/></svg></div>
+    </a>
+    <a href="https://t.me/+380505556115" class="fab-row" target="_blank" rel="noopener">
+      <span class="fab-lbl">Telegram</span>
+      <div class="fab-ci fci-tg"><svg class="ico ico-lg"><use href="#i-tg"/></svg></div>
+    </a>
+  </div>
+  <button class="fab-btn" id="fabBtn" onclick="toggleFab()" aria-label="Зв'язатись">☕</button>
+</div>
+
+<!-- ORDER MODAL -->
+<div class="ov" id="ov" onclick="if(event.target===this)closeM()">
+  <div class="dlg">
+    <div class="dlg-hdr">
+      <div class="dlg-eye">PROFIT COFFEE DELIVERY</div>
+      <div class="dlg-title">Оформити замовлення</div>
+      <div class="dlg-prod" id="dlgProd"></div>
+      <button class="dlg-x" onclick="closeM()">✕</button>
+    </div>
+    <div class="dlg-body" id="dlgForm">
+      <div class="f2">
+        <div class="f"><label>Ваше ім'я *</label><input id="fN" placeholder="Іван Петренко"></div>
+        <div class="f"><label>Телефон *</label><input id="fP" type="tel" placeholder="+380 50 …"></div>
+      </div>
+      <div class="f"><label>Адреса доставки *</label><input id="fA" placeholder="вул. Незалежності, 12, кв. 5"></div>
+      <div class="f"><label>Коментар</label><textarea id="fC" placeholder="Побажання щодо часу доставки, особливості входу…"></textarea></div>
+      <div class="ferr" id="ferr"></div>
+      <button class="btn-sub" onclick="send()">✔ ПІДТВЕРДИТИ ЗАМОВЛЕННЯ</button>
+    </div>
+    <div class="dlg-ok" id="dlgOk">
+      <div class="ok-ico">☕</div>
+      <div class="ok-h">Замовлення прийнято!</div>
+      <p class="ok-p">Дякуємо! <strong>Очікуйте на дзвінок кур'єра</strong> — ми зв'яжемося найближчим часом.</p>
+      <div class="ok-tel">📞 050 555 61 15</div><br>
+      <button class="btn-ok" onclick="closeM()">ЗАКРИТИ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="adm-ov" id="admOv">
+  <div class="adm-gate" id="admGate">
+    <div class="gate-ico">🔐</div>
+    <div class="gate-h">PROFIT · Кабінет менеджера</div>
+    <input class="gate-inp" type="password" id="admPwd" placeholder="Пароль" onkeydown="if(event.key==='Enter')login()">
+    <button class="gate-btn" onclick="login()">УВІЙТИ</button>
+    <div class="gate-err" id="admErr"></div>
+    <button class="gate-cancel" onclick="closeAdm()">Скасувати</button>
+  </div>
+  <div id="admDash" style="display:none;flex-direction:column;height:100%">
+    <div class="adm-bar">
+      <div class="adm-ttl">☕ PROFIT · Менеджер замовлень</div>
+      <div class="adm-btns">
+        <button class="ab ab-g" onclick="showToday()">📅 Сьогодні</button>
+        <button class="ab ab-g" onclick="showAll()">📋 Усі</button>
+        <button class="ab ab-g" onclick="printR()">🖨 Звіт</button>
+        <button class="ab ab-r" onclick="wipe()">🗑 Очистити</button>
+        <button class="ab ab-x" onclick="closeAdm()">✕ Вийти</button>
+      </div>
+    </div>
+    <div class="adm-body">
+      <div class="kpis" id="kpis"></div>
+      <div class="adm-tools">
+        <label>ДАТА:</label>
+        <input type="date" id="dp" onchange="byDate()">
+        <span class="adm-cnt" id="cnt"></span>
+      </div>
+      <div class="tbl-w">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Дата й час</th><th>Ім'я</th><th>Телефон</th><th>Товар</th><th>Адреса</th><th>Коментар</th></tr></thead>
+          <tbody id="tb"></tbody>
+        </table>
+        <div class="tbl-empty" id="te">Замовлень не знайдено</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Products ── */
+const PRODUCTS = [
+  { id:1, brand:'Nero Caffè', name:'Crema Aroma',      weight:'1000 г', desc:'60% Арабіка (Бразилія, Колумбія) + 40% Робуста (Індонезія). Вершкова карамель, лісовий горіх. Ідеально для еспресо та капучино.', flavors:['Вершки','Карамель','Горіх'], brew:['Еспресо','Капучино','Латте'], roast:65, roastName:'Середнє',       price:625, oldPrice:835, disc:25, img:'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&h=520&fit=crop&q=85' },
+  { id:2, brand:'Nero Caffè', name:'Espresso Forte',   weight:'1000 г', desc:'40% Арабіка (Ефіопія) + 60% Робуста (В\'єтнам). Насичений, щільний смак із легкою гіркотою. Для справжніх цінителів міцної кави.', flavors:['Шоколад','Тютюн','Кедр'], brew:['Подвійний еспресо','Рістретто'], roast:85, roastName:'Темне',         price:580, isNew:true, img:'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&h=520&fit=crop&q=85' },
+  { id:3, brand:'Nero Caffè', name:'Lungo Classico',   weight:'500 г',  desc:'100% Арабіка (Ефіопія Єргачеффе + Колумбія). Легкий, ароматний бленд. Квіткові ноти, цитрус, мед.', flavors:['Цитрус','Мед','Квіти'], brew:['Пуровер','Фільтр','Аеропрес'], roast:42, roastName:'Легке',         price:345, img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=520&fit=crop&q=85' },
+  { id:4, brand:'Nero Caffè', name:'Oro Premium',      weight:'1000 г', desc:'70% Arabica Colombia Supremo + 30% Робуста. Преміальний бленд — солодкий, збалансований смак із нотками шоколаду та мигдалю.', flavors:['Шоколад','Мигдаль','Ваніль'], brew:['Будь-який метод','Турка'], roast:72, roastName:'Середнє-темне', price:720, oldPrice:890, disc:19, isHit:true, img:'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=600&h=520&fit=crop&q=85' },
+  { id:5, brand:'Nero Caffè', name:'Arabica Selection',weight:'250 г',  desc:'100% Arabica Single Origin Ефіопія. Спешелті сорт, мита обробка. Яскравий фруктовий профіль: чорниця, жасмин, персик.', flavors:['Чорниця','Жасмин','Персик'], brew:['Пуровер','Cold Brew','Аеропрес'], roast:35, roastName:'Світле',        price:185, img:'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=600&h=520&fit=crop&q=85' },
+];
+
+/* ── Render catalog ── */
+function render() {
+  document.getElementById('grid').innerHTML = PRODUCTS.map(p => `
+    <div class="card" onclick="openM(${p.id})">
+      <div class="card-img">
+        <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">
+        <div class="card-ov"></div>
+        <div class="badges">
+          ${p.disc  ? `<span class="b-disc">-${p.disc}%</span>` : ''}
+          ${p.isNew ? `<span class="b-new">НОВИНКА</span>` : ''}
+          ${p.isHit ? `<span class="b-hit">ХІТ</span>` : ''}
+        </div>
+        <div class="wt-chip">${p.weight}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-brand">${p.brand}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc}</div>
+        <div class="tags">${p.flavors.map(f=>`<span class="tag">${f}</span>`).join('')}</div>
+        <div class="roast">
+          <span class="roast-l">ОБСМАЖЕННЯ</span>
+          <div class="roast-t"><div class="roast-f" style="width:${p.roast}%"></div></div>
+          <span class="roast-n">${p.roastName}</span>
+        </div>
+        <div class="brews">${p.brew.map(b=>`<span class="brew">${b}</span>`).join('')}</div>
+      </div>
+      <div class="card-foot">
+        <div>
+          ${p.oldPrice ? `<div class="p-old">${p.oldPrice}<sup>00</sup> ₴</div>` : ''}
+          <div class="p-new">${p.price}<sup>00</sup><span class="p-uah">₴</span></div>
+        </div>
+        <button class="btn-buy" onclick="event.stopPropagation();openM(${p.id})">КУПИТИ →</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ── Order modal ── */
+let cid = null;
+function openM(id) {
+  cid = id;
+  const p = PRODUCTS.find(x => x.id === id);
+  document.getElementById('dlgProd').textContent = p.brand + ' ' + p.name + ' · ' + p.weight + ' · ' + p.price + '₴';
+  document.getElementById('dlgForm').style.display = 'block';
+  document.getElementById('dlgOk').style.display = 'none';
+  document.getElementById('dlgOk').classList.remove('show');
+  document.getElementById('ferr').style.display = 'none';
+  ['fN','fP','fA','fC'].forEach(i => document.getElementById(i).value = '');
+  document.getElementById('ov').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('fN').focus(), 120);
+}
+function closeM() {
+  document.getElementById('ov').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function send() {
+  const n = document.getElementById('fN').value.trim();
+  const p = document.getElementById('fP').value.trim();
+  const a = document.getElementById('fA').value.trim();
+  const c = document.getElementById('fC').value.trim();
+  const err = document.getElementById('ferr');
+  if (!n) { err.textContent = "Введіть ваше ім'я"; err.style.display='block'; document.getElementById('fN').focus(); return; }
+  if (!p) { err.textContent = 'Введіть номер телефону'; err.style.display='block'; document.getElementById('fP').focus(); return; }
+  if (!a) { err.textContent = 'Введіть адресу доставки'; err.style.display='block'; document.getElementById('fA').focus(); return; }
+  const pr = PRODUCTS.find(x => x.id === cid);
+  const now = new Date();
+  const ord = { id:Date.now(), date:now.toLocaleDateString('uk-UA'), time:now.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'}), product:pr?pr.brand+' '+pr.name+' '+pr.weight:'—', price:pr?pr.price:0, name:n, phone:p, addr:a, note:c };
+  const arr = JSON.parse(localStorage.getItem('profit_orders') || '[]');
+  arr.unshift(ord);
+  localStorage.setItem('profit_orders', JSON.stringify(arr));
+  document.getElementById('dlgForm').style.display = 'none';
+  document.getElementById('dlgOk').style.display = 'flex';
+  document.getElementById('dlgOk').style.flexDirection = 'column';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeM(); closeAdm(); closeFab(); } });
+
+/* ── FAB ── */
+let fabOpen = false;
+function toggleFab() {
+  fabOpen = !fabOpen;
+  document.getElementById('fabBtn').classList.toggle('is-open', fabOpen);
+  document.getElementById('fabMenu').classList.toggle('is-open', fabOpen);
+}
+function closeFab() { fabOpen = false; document.getElementById('fabBtn').classList.remove('is-open'); document.getElementById('fabMenu').classList.remove('is-open'); }
+document.addEventListener('click', e => { if (fabOpen && !e.target.closest('.fab-wrap')) closeFab(); });
+
+/* ── Admin ── */
+const PWD = 'profit2025'; let auth = false, lc = 0, lt = null;
+document.getElementById('logoBtn').addEventListener('click', () => {
+  if (++lc >= 5) { lc = 0; clearTimeout(lt); openAdm(); }
+  else { clearTimeout(lt); lt = setTimeout(() => lc = 0, 3000); }
+});
+function openAdm() { document.getElementById('admOv').classList.add('open'); document.body.style.overflow='hidden'; if (auth) dash(); }
+function closeAdm() { document.getElementById('admOv').classList.remove('open'); document.body.style.overflow=''; }
+function login() {
+  if (document.getElementById('admPwd').value === PWD) { auth = true; document.getElementById('admErr').textContent = ''; dash(); }
+  else { document.getElementById('admErr').textContent = '❌ Невірний пароль'; document.getElementById('admPwd').value = ''; }
+}
+function dash() { document.getElementById('admGate').style.display='none'; const d=document.getElementById('admDash'); d.style.display='flex'; showAll(); }
+function orders() { return JSON.parse(localStorage.getItem('profit_orders') || '[]'); }
+function renderKpis() {
+  const all = orders(), tod = new Date().toLocaleDateString('uk-UA'), t = all.filter(o => o.date === tod);
+  document.getElementById('kpis').innerHTML = [[all.length,'Усього'],[t.length,'Сьогодні'],[t.reduce((s,o)=>s+(+o.price||0),0)+'₴','Виторг сьогодні'],[all.reduce((s,o)=>s+(+o.price||0),0)+'₴','Загальний']].map(([v,l])=>`<div class="kpi"><div class="kpi-v">${v}</div><div class="kpi-l">${l}</div></div>`).join('');
+}
+function renderTbl(arr) {
+  const tb = document.getElementById('tb'), te = document.getElementById('te');
+  if (!arr.length) { tb.innerHTML=''; te.style.display='block'; return; }
+  te.style.display='none';
+  tb.innerHTML = arr.map((o,i) => `<tr><td class="mo">${arr.length-i}</td><td class="mo">${o.date}<br>${o.time}</td><td><span class="hi">${o.name}</span></td><td style="white-space:nowrap">${o.phone}</td><td style="font-size:.75rem">${o.product}<br><span style="color:var(--gold);font-weight:700">${o.price}₴</span></td><td>${o.addr}</td><td style="font-size:.75rem;color:rgba(255,255,255,.45)">${o.note||'—'}</td></tr>`).join('');
+}
+function showAll() { const arr=orders(); renderKpis(); renderTbl(arr); document.getElementById('dp').value=''; document.getElementById('cnt').textContent='Усього: '+arr.length; }
+function showToday() { const t=new Date().toLocaleDateString('uk-UA'), arr=orders().filter(o=>o.date===t); renderKpis(); renderTbl(arr); document.getElementById('dp').value=new Date().toISOString().slice(0,10); document.getElementById('cnt').textContent='Сьогодні: '+arr.length; }
+function byDate() { const r=document.getElementById('dp').value; if(!r){showAll();return;} const[y,m,d]=r.split('-'),uk=`${d}.${m}.${y}`,arr=orders().filter(o=>o.date===uk); renderKpis(); renderTbl(arr); document.getElementById('cnt').textContent=`За ${uk}: ${arr.length}`; }
+function printR() {
+  const r=document.getElementById('dp').value; let arr,label;
+  if(r){const[y,m,d]=r.split('-'),uk=`${d}.${m}.${y}`;arr=orders().filter(o=>o.date===uk);label=uk;}
+  else{arr=orders();label='Усі замовлення';}
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Звіт PROFIT · ${label}</title><style>body{font-family:Arial,sans-serif;font-size:13px;padding:24px}h2{margin:0 0 4px}p{color:#888;font-size:11px;margin:0 0 16px}table{width:100%;border-collapse:collapse}th{background:#2a0f00;color:#e8c96e;padding:8px 10px;text-align:left;font-size:11px;letter-spacing:.08em}td{padding:8px 10px;border-bottom:1px solid #f0e0c0;vertical-align:top}tr:nth-child(even)td{background:#fdf7ee}.sum{margin-top:12px;text-align:right;font-weight:700}@media print{button{display:none}}</style></head><body><h2>☕ PROFIT Coffee Delivery · Звіт</h2><p>${label} · ${new Date().toLocaleString('uk-UA')} · ${arr.length} замовлень</p><button onclick="window.print()" style="margin-bottom:12px;padding:6px 16px;cursor:pointer;background:#2a0f00;color:#e8c96e;border:none;border-radius:4px">🖨 Друк</button><table><thead><tr><th>#</th><th>Дата й час</th><th>Ім'я</th><th>Телефон</th><th>Товар</th><th>Адреса</th><th>Коментар</th></tr></thead><tbody>${arr.map((o,i)=>`<tr><td>${i+1}</td><td>${o.date} ${o.time}</td><td>${o.name}</td><td>${o.phone}</td><td>${o.product} · ${o.price}₴</td><td>${o.addr}</td><td>${o.note||'—'}</td></tr>`).join('')}</tbody></table><div class="sum">Загальна сума: ${arr.reduce((s,o)=>s+(+o.price||0),0)} ₴</div></body></html>`);
+  w.document.close();
+}
+function wipe() { if (confirm('Видалити ВСІ замовлення?')) { localStorage.removeItem('profit_orders'); showAll(); } }
+
+render();
+</script>
+</body>
+</html>
