@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ваш веб-продукт · munister studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:  #005ab8;
+      --navy:  #0a2a5c;
+      --pink:  #f48ba2;
+      --sand:  #f5f0e8;
+      --teal:  #6ecacf;
+      --amber: #f26522;
+      --white: #ffffff;
+      --t1:    #1a1a1a;
+      --t2:    rgba(255,255,255,0.72);
+      --mono:  'IBM Plex Mono', 'Courier New', monospace;
+      --sans:  'Open Sans', system-ui, sans-serif;
+      --serif: 'Playfair Display', Georgia, serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--navy);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── BENTO GRID ── */
+    .bento {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 56vh 44vh;
+      min-height: 100vh;
+      max-height: 100vh;
+    }
+
+    /* CELL 1 — blue, main message */
+    .cell-main {
+      grid-column: 1; grid-row: 1;
+      background: var(--blue);
+      padding: clamp(2rem, 5vw, 4rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .cell-main-tag {
+      font-family: var(--mono);
+      font-size: clamp(0.45rem, 1vw, 0.5625rem);
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+    }
+
+    .cell-main-title {
+      font-family: var(--serif);
+      font-size: clamp(1.75rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.15;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .cell-main-title em {
+      font-style: italic;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .cell-main-body {
+      font-size: clamp(0.8125rem, 1.4vw, 0.9375rem);
+      color: rgba(255,255,255,0.72);
+      line-height: 1.7;
+      max-width: 44ch;
+    }
+
+    .cell-main-body + .cell-main-body { margin-top: 0.875rem; }
+
+    .cell-main-cta {
+      display: flex;
+      gap: 0.625rem;
+      flex-wrap: wrap;
+      margin-top: auto;
+      padding-top: 2rem;
+    }
+
+    .btn {
+      font-family: var(--mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      padding: 0.6rem 1.25rem;
+      border-radius: 2px;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-primary {
+      background: var(--amber);
+      color: #fff;
+    }
+    .btn-outline {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.75);
+    }
+
+    /* CELL 2 — pink */
+    .cell-pink {
+      grid-column: 2; grid-row: 1;
+      background: var(--pink);
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .cell-pink-text {
+      font-size: clamp(0.875rem, 1.5vw, 1.0625rem);
+      color: var(--t1);
+      line-height: 1.65;
+      font-weight: 400;
+    }
+    .cell-pink-text + .cell-pink-text { margin-top: 1rem; }
+
+    /* CELL 3 — photo */
+    .cell-photo {
+      grid-column: 3; grid-row: 1;
+      background: #1a3a6b;
+      overflow: hidden;
+      position: relative;
+    }
+    .cell-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.85);
+    }
+    .cell-photo-placeholder {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.75rem;
+      background: linear-gradient(135deg, #1a3a6b 0%, #0d2347 100%);
+    }
+    .cell-photo-placeholder-icon {
+      font-size: 2.5rem;
+      opacity: 0.15;
+    }
+    .cell-photo-placeholder-lbl {
+      font-family: var(--mono);
+      font-size: 0.4375rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* CELL 4 — dark navy with stats */
+    .cell-stats {
+      grid-column: 1; grid-row: 2;
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .cell-stats-row {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item { display: flex; flex-direction: column; gap: 0.25rem; }
+    .stat-v {
+      font-family: var(--mono);
+      font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+      font-weight: 700;
+      color: var(--amber);
+      line-height: 1;
+    }
+    .stat-l {
+      font-family: var(--mono);
+      font-size: 0.4375rem;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.35);
+    }
+
+    .cell-stats-note {
+      font-family: var(--sans);
+      font-size: clamp(0.75rem, 1.2vw, 0.875rem);
+      color: rgba(255,255,255,0.5);
+      line-height: 1.6;
+      max-width: 50ch;
+    }
+
+    /* CELL 5 — teal/illustration */
+    .cell-teal {
+      grid-column: 2; grid-row: 2;
+      background: var(--teal);
+      overflow: hidden;
+      position: relative;
+    }
+    .cell-teal img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      mix-blend-mode: multiply;
+      opacity: 0.6;
+    }
+    .cell-teal-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(110,202,207,0.9) 0%, rgba(40,150,160,0.85) 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 1.5rem;
+    }
+    .cell-teal-tag {
+      font-family: var(--mono);
+      font-size: 0.4375rem;
+      letter-spacing: 0.1em;
+      color: rgba(0,30,40,0.6);
+    }
+    .cell-teal-placeholder {
+      width: 100%; height: 100%;
+      background: var(--teal);
+      display: flex;
+      align-items: flex-end;
+      padding: 1.5rem;
+    }
+
+    /* CELL 6 — quote */
+    .cell-quote {
+      grid-column: 3; grid-row: 2;
+      background: #b0dde0;
+      padding: clamp(1.25rem, 2.5vw, 2rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .quote-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: rgba(0,90,184,0.25);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .quote-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .quote-name {
+      font-family: var(--sans);
+      font-size: clamp(0.875rem, 1.4vw, 1rem);
+      font-weight: 700;
+      color: var(--t1);
+      margin-top: 0.5rem;
+    }
+    .quote-role {
+      font-family: var(--mono);
+      font-size: 0.4375rem;
+      letter-spacing: 0.07em;
+      color: rgba(0,0,0,0.45);
+    }
+    .quote-text {
+      font-family: var(--sans);
+      font-size: clamp(0.75rem, 1.2vw, 0.875rem);
+      color: rgba(0,0,0,0.65);
+      line-height: 1.6;
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .bento {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        max-height: none;
+        min-height: 100vh;
+      }
+      .cell-main  { grid-column: 1 / -1; grid-row: 1; min-height: 55vw; }
+      .cell-pink  { grid-column: 1;      grid-row: 2; min-height: 48vw; }
+      .cell-photo { grid-column: 2;      grid-row: 2; min-height: 48vw; }
+      .cell-stats { grid-column: 1 / -1; grid-row: 3; }
+      .cell-teal  { display: none; }
+      .cell-quote { grid-column: 1 / -1; grid-row: 4; }
+    }
+
+    @media (max-width: 560px) {
+      .bento {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+      .cell-main  { grid-column: 1; grid-row: 1; min-height: auto; padding: 2.5rem 1.5rem; }
+      .cell-pink  { grid-column: 1; grid-row: 2; min-height: 60vw; }
+      .cell-photo { grid-column: 1; grid-row: 3; min-height: 60vw; }
+      .cell-stats { grid-column: 1; grid-row: 4; }
+      .cell-quote { grid-column: 1; grid-row: 5; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bento">
+
+    <!-- CELL 1 — MAIN MESSAGE -->
+    <div class="cell-main">
+      <div class="cell-main-tag">MUNISTER STUDIO · WEBPRODUCT</div>
+      <div>
+        <h1 class="cell-main-title">
+          Тут буде<br/>
+          <em>ваш сайт</em>
+        </h1>
+        <p class="cell-main-body">
+          Ця сторінка — заглушка для вашого майбутнього веб-продукту.
+          Щойно ми визначимо тему, структуру й контент —
+          тут з'явиться повноцінний сайт.
+        </p>
+        <p class="cell-main-body">
+          Сучасний дизайн, адаптивна верстка, швидке завантаження —
+          все буде зроблено за нашим стандартом.
+        </p>
+      </div>
+      <div class="cell-main-cta">
+        <a href="mailto:hello@munister.com.ua" class="btn btn-primary">НАПИСАТИ НАМ →</a>
+        <a href="https://munister.com.ua" class="btn btn-outline">MUNISTER.COM.UA</a>
+      </div>
+    </div>
+
+    <!-- CELL 2 — PINK INFO -->
+    <div class="cell-pink">
+      <p class="cell-pink-text">
+        Ваш майбутній проєкт — унікальний.
+        Ми підберемо стиль, кольори та структуру,
+        що найкраще передають суть вашого продукту.
+      </p>
+      <p class="cell-pink-text">
+        Від концепції до запуску —
+        без зайвих узгоджень,
+        з повагою до вашого часу.
+      </p>
+    </div>
+
+    <!-- CELL 3 — PHOTO PLACEHOLDER -->
+    <div class="cell-photo">
+      <div class="cell-photo-placeholder">
+        <div class="cell-photo-placeholder-icon">⊡</div>
+        <div class="cell-photo-placeholder-lbl">ФОТО ВАШОГО ПРОДУКТУ</div>
+      </div>
+    </div>
+
+    <!-- CELL 4 — STATS / DARK -->
+    <div class="cell-stats">
+      <div class="cell-stats-row">
+        <div class="stat-item">
+          <div class="stat-v">14</div>
+          <div class="stat-l">ПРОЄКТІВ ЗАПУЩЕНО</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-v">2–4</div>
+          <div class="stat-l">ТИЖНІ НА РОЗРОБКУ</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-v">100%</div>
+          <div class="stat-l">АДАПТИВНА ВЕРСТКА</div>
+        </div>
+      </div>
+      <p class="cell-stats-note">
+        Ми створюємо сайти, що виглядають однаково добре на телефоні,
+        планшеті й великому моніторі. Жодних компромісів із дизайном.
+      </p>
+    </div>
+
+    <!-- CELL 5 — TEAL -->
+    <div class="cell-teal">
+      <div class="cell-teal-placeholder">
+        <span class="cell-teal-tag">ІЛЮСТРАЦІЯ · СКОРО</span>
+      </div>
+    </div>
+
+    <!-- CELL 6 — QUOTE -->
+    <div class="cell-quote">
+      <div class="quote-avatar">
+        <img src="https://munister.com.ua/images/avatar.jpg"
+          onerror="this.style.display='none'"
+          alt="V. Munister" />
+      </div>
+      <div class="quote-name">В'ячеслав Муністер</div>
+      <div class="quote-role">MUNISTER STUDIO · ЗАСНОВНИК</div>
+      <p class="quote-text">
+        «Хороший сайт — це не шаблон.
+        Це рішення, яке точно відповідає вашій задачі.»
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
