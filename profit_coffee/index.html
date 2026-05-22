@@ -375,37 +375,52 @@
     /* ══ CARD ══ */
     .card {
       background: var(--brown); border-radius: 22px; overflow: hidden;
-      box-shadow: 0 8px 32px rgba(0,0,0,.2);
+      box-shadow: 0 8px 32px rgba(0,0,0,.2), 0 1px 3px rgba(0,0,0,.15);
       display: flex; flex-direction: column;
+      -webkit-transition: transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s, border-color .3s;
       transition: transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s, border-color .3s;
       cursor: pointer; position: relative;
-      border: 1px solid transparent;
+      border: 1px solid rgba(201,168,76,.06);
     }
     .card:hover {
-      transform: translateY(-10px) scale(1.015);
-      box-shadow: 0 28px 72px rgba(0,0,0,.4), 0 0 40px rgba(201,168,76,.08);
-      border-color: rgba(201,168,76,.2);
+      -webkit-transform: translateY(-10px) scale(1.015); transform: translateY(-10px) scale(1.015);
+      box-shadow: 0 28px 72px rgba(0,0,0,.4), 0 0 40px rgba(201,168,76,.12);
+      border-color: rgba(201,168,76,.25);
     }
     .card::after {
       content: ''; position: absolute; inset: -1px; border-radius: 22px;
-      background: linear-gradient(135deg, rgba(201,168,76,.15), transparent 40%, transparent 60%, rgba(201,168,76,.1));
+      background: linear-gradient(135deg, rgba(201,168,76,.18), transparent 40%, transparent 60%, rgba(201,168,76,.12));
       opacity: 0; transition: opacity .4s; pointer-events: none; z-index: 0;
     }
     .card:hover::after { opacity: 1; }
-    .card-img  { position: relative; height: 268px; overflow: hidden; background: linear-gradient(160deg,#f5e6c8,#fdf6e8); }
-    .card-img img { width:100%; height:100%; object-fit:contain; display:block; transition: transform .5s cubic-bezier(.2,.8,.2,1), filter .4s; opacity: 0; padding: 12px; }
+    .card-img  {
+      position: relative; height: 280px; overflow: hidden;
+      background: linear-gradient(160deg, #faf3e3 0%, #fdf6e8 40%, #f8ecd5 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-img img {
+      width: 100%; height: 100%; object-fit: contain; display: block;
+      -webkit-transition: transform .5s cubic-bezier(.2,.8,.2,1), filter .4s;
+      transition: transform .5s cubic-bezier(.2,.8,.2,1), filter .4s;
+      opacity: 0; padding: 20px 16px;
+      -webkit-filter: drop-shadow(0 8px 16px rgba(42,15,0,.12));
+      filter: drop-shadow(0 8px 16px rgba(42,15,0,.12));
+    }
     .card-img img.loaded { opacity: 1; }
-    .card:hover .card-img img { transform: scale(1.08); filter: brightness(1.05); }
-    .card-ov   { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,6,0,.08) 0%, transparent 40%); }
-    .badges    { position: absolute; top: 13px; left: 13px; display: flex; flex-direction: column; gap: 5px; z-index: 2; }
-    .b-disc    { font-family: var(--head); font-size: .6875rem; font-weight: 900; background: var(--disc); color: #fff; padding: .25rem .625rem; border-radius: 100px; }
-    .b-new     { font-family: var(--head); font-size: .625rem; font-weight: 800; background: var(--gold); color: var(--brown); padding: .25rem .625rem; border-radius: 100px; }
-    .b-hit     { font-family: var(--head); font-size: .625rem; font-weight: 800; background: var(--brown2); color: var(--gold2); border: 1px solid var(--gold); padding: .2rem .625rem; border-radius: 100px; }
+    .card:hover .card-img img {
+      -webkit-transform: scale(1.06) translateY(-4px); transform: scale(1.06) translateY(-4px);
+      -webkit-filter: drop-shadow(0 14px 28px rgba(42,15,0,.2)); filter: drop-shadow(0 14px 28px rgba(42,15,0,.2));
+    }
+    .card-ov   { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 60%, rgba(42,15,0,.04) 100%); }
+    .badges    { position: absolute; top: 14px; left: 14px; display: flex; flex-direction: column; gap: 6px; z-index: 2; }
+    .b-disc    { font-family: var(--head); font-size: .6875rem; font-weight: 900; background: var(--disc); color: #fff; padding: .3rem .75rem; border-radius: 100px; box-shadow: 0 2px 8px rgba(192,57,43,.3); }
+    .b-new     { font-family: var(--head); font-size: .625rem; font-weight: 800; background: var(--gold); color: var(--brown); padding: .3rem .75rem; border-radius: 100px; box-shadow: 0 2px 8px rgba(201,168,76,.3); }
+    .b-hit     { font-family: var(--head); font-size: .625rem; font-weight: 800; background: var(--brown2); color: var(--gold2); border: 1px solid var(--gold); padding: .25rem .75rem; border-radius: 100px; box-shadow: 0 2px 8px rgba(42,15,0,.3); }
     .wt-chip   { position: absolute; bottom: 11px; right: 11px; z-index: 2; background: rgba(20,6,0,.68); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(255,255,255,.8); font-family: var(--head); font-size: .5625rem; font-weight: 700; letter-spacing: .08em; padding: .2rem .5625rem; border-radius: 100px; border: 1px solid rgba(255,255,255,.1); }
-    .card-body { padding: 1.25rem 1.375rem .875rem; flex: 1; display: flex; flex-direction: column; gap: .625rem; }
+    .card-body { padding: 1.375rem 1.5rem 1rem; flex: 1; display: flex; flex-direction: column; gap: .625rem; }
     .card-brand { font-family: var(--head); font-size: .5625rem; font-weight: 700; letter-spacing: .18em; color: var(--gold); text-transform: uppercase; }
-    .card-name  { font-family: var(--head); font-weight: 800; font-size: 1.1875rem; color: #fff; line-height: 1.18; }
-    .card-desc  { font-size: .8125rem; color: rgba(255,255,255,.54); line-height: 1.62; }
+    .card-name  { font-family: var(--head); font-weight: 800; font-size: 1.25rem; color: #fff; line-height: 1.18; }
+    .card-desc  { font-size: .8125rem; color: rgba(255,255,255,.54); line-height: 1.62; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .tags  { display: flex; flex-wrap: wrap; gap: .3rem; }
     .tag   { font-family: var(--head); font-size: .5rem; font-weight: 600; letter-spacing: .06em; background: rgba(201,168,76,.12); border: 1px solid rgba(201,168,76,.22); color: rgba(201,168,76,.85); padding: .2rem .5rem; border-radius: 100px; }
     .roast { display: flex; align-items: center; gap: .5rem; }
@@ -415,20 +430,29 @@
     .roast-n { font-family: var(--head); font-size: .5rem; font-weight: 700; color: var(--gold2); white-space: nowrap; }
     .brews { display: flex; gap: .3rem; flex-wrap: wrap; }
     .brew  { font-family: var(--head); font-size: .4375rem; font-weight: 600; letter-spacing: .05em; background: rgba(255,255,255,.07); color: rgba(255,255,255,.42); padding: .2rem .475rem; border-radius: 4px; }
-    .card-foot { padding: 1rem 1.375rem 1.25rem; border-top: 1px solid rgba(255,255,255,.07); display: flex; align-items: center; justify-content: space-between; gap: .875rem; }
+    .card-foot { padding: 1.125rem 1.5rem 1.375rem; border-top: 1px solid rgba(255,255,255,.07); display: flex; align-items: center; justify-content: space-between; gap: .875rem; }
     .p-old { font-family: var(--head); font-size: .75rem; color: rgba(255,255,255,.22); text-decoration: line-through; line-height: 1; margin-bottom: .15rem; }
     .p-new { font-family: var(--head); font-weight: 900; font-size: 1.625rem; color: var(--gold); line-height: 1; }
     .p-new sup { font-size: .875rem; vertical-align: super; line-height: 0; font-weight: 700; }
     .p-uah { font-size: 1rem; font-weight: 600; color: rgba(201,168,76,.5); }
     .btn-buy {
-      font-family: var(--head); font-weight: 800; font-size: .625rem; letter-spacing: .1em;
+      font-family: var(--head); font-weight: 800; font-size: .6875rem; letter-spacing: .1em;
       background: linear-gradient(135deg, var(--gold2), var(--gold)); color: var(--brown); border: none;
-      padding: .7rem 1.25rem; border-radius: 10px; cursor: pointer; white-space: nowrap;
-      box-shadow: 0 3px 14px rgba(201,168,76,.28); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s, background .2s;
+      padding: .75rem 1.375rem; border-radius: 12px; cursor: pointer; white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(201,168,76,.3);
+      -webkit-transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s;
+      transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s;
       position: relative; overflow: hidden;
     }
-    .btn-buy:hover { transform: scale(1.07); box-shadow: 0 8px 26px rgba(201,168,76,.5); }
-    .btn-buy:active { transform: scale(.95); }
+    .btn-buy::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+      -webkit-transform: translateX(-100%); transform: translateX(-100%);
+      -webkit-transition: transform .5s; transition: transform .5s;
+    }
+    .btn-buy:hover { -webkit-transform: scale(1.05); transform: scale(1.05); box-shadow: 0 8px 28px rgba(201,168,76,.5); }
+    .btn-buy:hover::before { -webkit-transform: translateX(100%); transform: translateX(100%); }
+    .btn-buy:active { -webkit-transform: scale(.95); transform: scale(.95); }
 
     /* ══ DELIVERY / CONTACT ══ */
     .delivery { background: var(--brown); padding: clamp(3rem,5vw,5.5rem) clamp(1.25rem,3vw,2rem); }
@@ -628,43 +652,7 @@
     .btn-ok  { font-family: var(--head); font-weight: 700; font-size: .6875rem; letter-spacing: .1em; background: var(--brown); color: var(--gold2); border: none; padding: .8125rem 2rem; border-radius: 100px; cursor: pointer; margin-top: .5rem; transition: background .15s; }
     .btn-ok:hover { background: var(--brown2); }
 
-    /* ══ ADMIN ══ */
-    .adm-ov { position: fixed; inset: 0; z-index: 400; background: var(--brown); opacity: 0; pointer-events: none; transition: opacity .2s; display: flex; align-items: center; justify-content: center; }
-    .adm-ov.open { opacity: 1; pointer-events: auto; }
-    .adm-gate { background: var(--cream); border-radius: 20px; padding: 2.5rem; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,.5); }
-    .gate-ico { font-size: 2.25rem; margin-bottom: .75rem; }
-    .gate-h   { font-family: var(--head); font-weight: 900; font-size: 1.0625rem; color: var(--brown); letter-spacing: .04em; margin-bottom: 1.5rem; }
-    .gate-inp { width: 100%; font-family: var(--sans); font-size: 1rem; color: var(--text); background: #fff; border: 1.5px solid var(--cream2); border-radius: 10px; padding: .8125rem 1rem; outline: none; text-align: center; letter-spacing: .1em; transition: border-color .15s; margin-bottom: .875rem; }
-    .gate-inp:focus { border-color: var(--gold); }
-    .gate-btn { font-family: var(--head); font-weight: 800; font-size: .6875rem; letter-spacing: .1em; background: var(--brown); color: var(--gold2); border: none; padding: .875rem 2rem; border-radius: 100px; cursor: pointer; width: 100%; transition: background .15s; }
-    .gate-btn:hover { background: var(--brown2); }
-    .gate-err { font-family: var(--head); font-size: .625rem; font-weight: 600; color: var(--disc); min-height: 1.25rem; margin-top: .5rem; }
-    .gate-cancel { font-family: var(--head); font-size: .5625rem; font-weight: 600; color: var(--muted); background: none; border: none; cursor: pointer; margin-top: .875rem; text-decoration: underline; }
-    .adm-bar  { background: var(--brown2); padding: .875rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-bottom: 1px solid rgba(201,168,76,.12); }
-    .adm-ttl  { font-family: var(--head); font-weight: 800; font-size: .875rem; color: var(--gold2); letter-spacing: .06em; }
-    .adm-btns { display: flex; gap: .375rem; flex-wrap: wrap; }
-    .ab { font-family: var(--head); font-size: .5625rem; font-weight: 700; letter-spacing: .06em; border: none; cursor: pointer; padding: .45rem .875rem; border-radius: 100px; transition: opacity .15s; }
-    .ab:hover { opacity: .85; }
-    .ab-g { background: rgba(201,168,76,.15); color: var(--gold2); border: 1px solid rgba(201,168,76,.2); }
-    .ab-r { background: rgba(192,57,43,.18); color: #e74c3c; border: 1px solid rgba(192,57,43,.25); }
-    .ab-x { background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); }
-    .adm-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
-    .kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 1.5rem; }
-    .kpi  { background: rgba(255,255,255,.05); border: 1px solid rgba(201,168,76,.15); border-radius: 12px; padding: 1rem; text-align: center; }
-    .kpi-v { font-family: var(--head); font-weight: 900; font-size: 1.5rem; color: var(--gold2); }
-    .kpi-l { font-family: var(--head); font-size: .5rem; letter-spacing: .1em; color: rgba(255,255,255,.4); margin-top: .25rem; text-transform: uppercase; }
-    .adm-tools { display: flex; align-items: center; gap: .875rem; margin-bottom: 1rem; flex-wrap: wrap; }
-    .adm-tools label { font-family: var(--head); font-size: .5625rem; font-weight: 700; letter-spacing: .1em; color: rgba(255,255,255,.45); }
-    .adm-tools input[type=date] { font-family: var(--head); font-size: .6875rem; background: rgba(255,255,255,.06); border: 1px solid rgba(201,168,76,.2); color: var(--gold2); border-radius: 8px; padding: .4rem .75rem; outline: none; cursor: pointer; }
-    .adm-cnt { font-family: var(--head); font-size: .5625rem; color: rgba(255,255,255,.45); }
-    .tbl-w { overflow-x: auto; }
-    .tbl   { width: 100%; border-collapse: collapse; font-size: .8125rem; }
-    .tbl thead th { font-family: var(--head); font-size: .5rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); padding: .625rem .875rem; text-align: left; border-bottom: 1px solid rgba(201,168,76,.15); white-space: nowrap; }
-    .tbl tbody td { padding: .75rem .875rem; border-bottom: 1px solid rgba(255,255,255,.05); color: rgba(255,255,255,.75); vertical-align: top; }
-    .tbl tbody tr:hover td { background: rgba(255,255,255,.04); }
-    .mo { color: rgba(255,255,255,.35)!important; font-family: var(--head); font-size: .6875rem; }
-    .hi { font-family: var(--head); font-weight: 700; color: #fff!important; }
-    .tbl-empty { text-align: center; padding: 2.5rem; font-family: var(--head); font-size: .6875rem; color: rgba(255,255,255,.25); display: none; }
+    /* Admin panel moved to admin.html */
 
     /* ══ RESPONSIVE ══ */
     @media (max-width: 1060px) {
@@ -689,7 +677,6 @@
       .del-msg-row { gap: .5rem; }
       .mb { font-size: .6875rem; padding: .55rem .9rem; }
 
-      .kpis { grid-template-columns: repeat(2,1fr); }
       .f2   { grid-template-columns: 1fr; }
 
       /* Header — clean: logo + cart only */
@@ -707,28 +694,16 @@
       .foot-nav { align-items: center; flex-direction: row; gap: .75rem; flex-wrap: wrap; justify-content: center; }
       .btt { left: auto; right: 4.5rem; bottom: 1.25rem; width: 40px; height: 40px; font-size: 1rem; }
 
-      /* Admin panel — fully responsive */
-      .adm-bar { flex-direction: column; align-items: flex-start; gap: .625rem; padding: .75rem 1rem; }
-      .adm-btns { width: 100%; flex-wrap: wrap; }
-      .ab { flex: 1 1 auto; text-align: center; min-width: 0; padding: .5rem .625rem; font-size: .5rem; }
-      .kpis { grid-template-columns: repeat(2,1fr); gap: .75rem; }
-      .kpi { padding: .75rem .5rem; }
-      .kpi-v { font-size: 1.25rem; }
-      .tbl { font-size: .75rem; }
-      .tbl thead th { font-size: .4375rem; padding: .5rem .5rem; }
-      .tbl tbody td { padding: .5rem .5rem; font-size: .75rem; }
-      .adm-tools { flex-direction: column; align-items: flex-start; gap: .5rem; }
     }
     @media (max-width: 560px) {
       .hero-in  { padding: 2.75rem 1.125rem 2.25rem; }
       .sec      { padding: 2.5rem 1.125rem; }
       .delivery { padding: 2.75rem 1.125rem; }
       .del-phone { font-size: 2.125rem; }
-      .adm-body { padding: .75rem; }
       .strip { gap: 1.125rem; padding: 1.125rem 1.125rem; }
       .strip-t { font-size: .625rem; }
       .grid { gap: 1.125rem; }
-      .card-img { height: 220px; }
+      .card-img { height: 240px; }
 
       /* Modal — compact on small screens */
       .ov { padding: .75rem; }
@@ -741,21 +716,6 @@
       .fab-wrap { bottom: 1.125rem; right: 1.125rem; }
       .fab-btn  { width: 54px; height: 54px; }
 
-      /* Admin panel — very small screens */
-      .adm-bar { padding: .625rem .75rem; }
-      .adm-ttl { font-size: .75rem; }
-      .adm-btns { gap: .25rem; }
-      .ab { font-size: .4375rem; padding: .4rem .5rem; }
-      .kpis { grid-template-columns: repeat(2,1fr); gap: .5rem; }
-      .kpi { padding: .5rem .375rem; }
-      .kpi-v { font-size: 1.0625rem; }
-      .kpi-l { font-size: .4375rem; }
-      .tbl thead th { font-size: .375rem; padding: .4rem .375rem; letter-spacing: .06em; }
-      .tbl tbody td { padding: .4rem .375rem; font-size: .6875rem; }
-      .adm-tools label { font-size: .5rem; }
-      .adm-tools input[type=date] { font-size: .625rem; padding: .35rem .5rem; }
-      .adm-cnt { font-size: .5rem; }
-
       /* del-msg-row stacked on narrow */
       .del-msg-row { flex-direction: column; gap: .5rem; }
       .del-msg-row .mb { width: 100%; justify-content: center; }
@@ -766,7 +726,6 @@
       .hero { min-height: -webkit-fill-available; }
       .ov .dlg { max-height: -webkit-fill-available; }
       .dlg { -webkit-overflow-scrolling: touch; }
-      .tbl-w { -webkit-overflow-scrolling: touch; }
       a, button { -webkit-tap-highlight-color: transparent; }
     }
     /* Reduce motion for users who prefer it */
@@ -792,9 +751,6 @@
       .card-desc { font-size: .75rem; }
       .p-new { font-size: 1.375rem; }
 
-      .kpis { grid-template-columns: 1fr 1fr; gap: .375rem; }
-      .kpi-v { font-size: .9375rem; }
-      .adm-ttl { font-size: .6875rem; letter-spacing: .04em; }
     }
     @media (min-width: 801px) { .fab-wrap { display: none; } }
 
@@ -1056,9 +1012,9 @@
         усе працює без перезавантаження сторінки.
       </p>
     </div>
-    <button class="btn-demo" onclick="openDemo()">
+    <a href="admin.html" class="btn-demo">
       🔐 ВІДКРИТИ ДЕМО-АДМІНКУ →
-    </button>
+    </a>
   </div>
 </section>
 
@@ -1138,45 +1094,6 @@
       <p class="ok-p">Дякуємо! <strong>Очікуйте на дзвінок кур'єра</strong> — ми зв'яжемося найближчим часом.</p>
       <div class="ok-tel">📞 050 555 61 15</div><br>
       <button class="btn-ok" onclick="closeM()">ЗАКРИТИ</button>
-    </div>
-  </div>
-</div>
-
-<!-- ADMIN PANEL -->
-<div class="adm-ov" id="admOv">
-  <div class="adm-gate" id="admGate">
-    <div class="gate-ico">🔐</div>
-    <div class="gate-h">PROFIT · Кабінет менеджера</div>
-    <input class="gate-inp" type="password" id="admPwd" placeholder="Пароль" onkeydown="if(event.key==='Enter')login()">
-    <button class="gate-btn" onclick="login()">УВІЙТИ</button>
-    <div class="gate-err" id="admErr"></div>
-    <button class="gate-cancel" onclick="closeAdm()">Скасувати</button>
-  </div>
-  <div id="admDash" style="display:none;flex-direction:column;height:100%">
-    <div class="adm-bar">
-      <div class="adm-ttl">☕ PROFIT · Менеджер замовлень</div>
-      <div class="adm-btns">
-        <button class="ab ab-g" onclick="showToday()">📅 Сьогодні</button>
-        <button class="ab ab-g" onclick="showAll()">📋 Усі</button>
-        <button class="ab ab-g" onclick="printR()">🖨 Звіт</button>
-        <button class="ab ab-r" onclick="wipe()">🗑 Очистити</button>
-        <button class="ab ab-x" onclick="closeAdm()">✕ Вийти</button>
-      </div>
-    </div>
-    <div class="adm-body">
-      <div class="kpis" id="kpis"></div>
-      <div class="adm-tools">
-        <label>ДАТА:</label>
-        <input type="date" id="dp" onchange="byDate()">
-        <span class="adm-cnt" id="cnt"></span>
-      </div>
-      <div class="tbl-w">
-        <table class="tbl">
-          <thead><tr><th>#</th><th>Дата й час</th><th>Ім'я</th><th>Телефон</th><th>Товар</th><th>Адреса</th><th>Коментар</th></tr></thead>
-          <tbody id="tb"></tbody>
-        </table>
-        <div class="tbl-empty" id="te">Замовлень не знайдено</div>
-      </div>
     </div>
   </div>
 </div>
@@ -1265,7 +1182,7 @@ function send() {
   document.getElementById('dlgOk').style.display = 'flex';
   document.getElementById('dlgOk').style.flexDirection = 'column';
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeM(); closeAdm(); closeFab(); closeMob(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeM(); closeFab(); closeMob(); } });
 
 /* ── FAB ── */
 let fabOpen = false;
@@ -1277,100 +1194,7 @@ function toggleFab() {
 function closeFab() { fabOpen = false; document.getElementById('fabBtn').classList.remove('is-open'); document.getElementById('fabMenu').classList.remove('is-open'); }
 document.addEventListener('click', e => { if (fabOpen && !e.target.closest('.fab-wrap')) closeFab(); });
 
-/* ── Admin ── */
-const PWD = 'profit2025'; let auth = false, lc = 0, lt = null;
-document.getElementById('logoBtn').addEventListener('click', () => {
-  if (++lc >= 5) { lc = 0; clearTimeout(lt); openAdm(); }
-  else { clearTimeout(lt); lt = setTimeout(() => lc = 0, 3000); }
-});
-function openAdm() { document.getElementById('admOv').classList.add('open'); document.body.style.overflow='hidden'; if (auth) dash(); }
-function closeAdm() { document.getElementById('admOv').classList.remove('open'); document.body.style.overflow=''; }
-function login() {
-  if (document.getElementById('admPwd').value === PWD) { auth = true; document.getElementById('admErr').textContent = ''; dash(); }
-  else { document.getElementById('admErr').textContent = '❌ Невірний пароль'; document.getElementById('admPwd').value = ''; }
-}
-function dash() { document.getElementById('admGate').style.display='none'; const d=document.getElementById('admDash'); d.style.display='flex'; showAll(); }
-function orders() { return JSON.parse(localStorage.getItem('profit_orders') || '[]'); }
-function renderKpis() {
-  const all = orders(), tod = new Date().toLocaleDateString('uk-UA'), t = all.filter(o => o.date === tod);
-  document.getElementById('kpis').innerHTML = [[all.length,'Усього'],[t.length,'Сьогодні'],[t.reduce((s,o)=>s+(+o.price||0),0)+'₴','Виторг сьогодні'],[all.reduce((s,o)=>s+(+o.price||0),0)+'₴','Загальний']].map(([v,l])=>`<div class="kpi"><div class="kpi-v">${v}</div><div class="kpi-l">${l}</div></div>`).join('');
-}
-function renderTbl(arr) {
-  const tb = document.getElementById('tb'), te = document.getElementById('te');
-  if (!arr.length) { tb.innerHTML=''; te.style.display='block'; return; }
-  te.style.display='none';
-  tb.innerHTML = arr.map((o,i) => `<tr><td class="mo">${arr.length-i}</td><td class="mo">${o.date}<br>${o.time}</td><td><span class="hi">${o.name}</span></td><td style="white-space:nowrap">${o.phone}</td><td style="font-size:.75rem">${o.product}<br><span style="color:var(--gold);font-weight:700">${o.price}₴</span></td><td>${o.addr}</td><td style="font-size:.75rem;color:rgba(255,255,255,.45)">${o.note||'—'}</td></tr>`).join('');
-}
-function showAll() { const arr=orders(); renderKpis(); renderTbl(arr); document.getElementById('dp').value=''; document.getElementById('cnt').textContent='Усього: '+arr.length; }
-function showToday() { const t=new Date().toLocaleDateString('uk-UA'), arr=orders().filter(o=>o.date===t); renderKpis(); renderTbl(arr); document.getElementById('dp').value=new Date().toISOString().slice(0,10); document.getElementById('cnt').textContent='Сьогодні: '+arr.length; }
-function byDate() { const r=document.getElementById('dp').value; if(!r){showAll();return;} const[y,m,d]=r.split('-'),uk=`${d}.${m}.${y}`,arr=orders().filter(o=>o.date===uk); renderKpis(); renderTbl(arr); document.getElementById('cnt').textContent=`За ${uk}: ${arr.length}`; }
-function printR() {
-  const r=document.getElementById('dp').value; let arr,label;
-  if(r){const[y,m,d]=r.split('-'),uk=`${d}.${m}.${y}`;arr=orders().filter(o=>o.date===uk);label=uk;}
-  else{arr=orders();label='Усі замовлення';}
-  const w=window.open('','_blank');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Звіт PROFIT · ${label}</title><style>body{font-family:Arial,sans-serif;font-size:13px;padding:24px}h2{margin:0 0 4px}p{color:#888;font-size:11px;margin:0 0 16px}table{width:100%;border-collapse:collapse}th{background:#2a0f00;color:#e8c96e;padding:8px 10px;text-align:left;font-size:11px;letter-spacing:.08em}td{padding:8px 10px;border-bottom:1px solid #f0e0c0;vertical-align:top}tr:nth-child(even)td{background:#fdf7ee}.sum{margin-top:12px;text-align:right;font-weight:700}@media print{button{display:none}}</style></head><body><h2>☕ PROFIT Coffee Delivery · Звіт</h2><p>${label} · ${new Date().toLocaleString('uk-UA')} · ${arr.length} замовлень</p><button onclick="window.print()" style="margin-bottom:12px;padding:6px 16px;cursor:pointer;background:#2a0f00;color:#e8c96e;border:none;border-radius:4px">🖨 Друк</button><table><thead><tr><th>#</th><th>Дата й час</th><th>Ім'я</th><th>Телефон</th><th>Товар</th><th>Адреса</th><th>Коментар</th></tr></thead><tbody>${arr.map((o,i)=>`<tr><td>${i+1}</td><td>${o.date} ${o.time}</td><td>${o.name}</td><td>${o.phone}</td><td>${o.product} · ${o.price}₴</td><td>${o.addr}</td><td>${o.note||'—'}</td></tr>`).join('')}</tbody></table><div class="sum">Загальна сума: ${arr.reduce((s,o)=>s+(+o.price||0),0)} ₴</div></body></html>`);
-  w.document.close();
-}
-function wipe() { if (confirm('Видалити ВСІ замовлення?')) { localStorage.removeItem('profit_orders'); showAll(); } }
-
-/* ── Demo data + open demo admin ── */
-const DEMO_NAMES = [
-  ['Олена Ковальчук',   '+380 67 234 56 78', 'вул. Духновича, 14, кв. 7',           'Залишити у консьєржа'],
-  ['Андрій Петренко',    '+380 50 123 45 67', 'вул. Миру, 23',                       ''],
-  ['Марія Сидоренко',    '+380 93 456 78 90', 'пл. Кирила і Мефодія, 5, кв. 12',     'Передзвонити перед доставкою'],
-  ['Олег Ткачук',        '+380 96 789 01 23', 'вул. Пушкіна, 8',                     'Без дзвінка, залишити на порозі'],
-  ['Юлія Гриценко',      '+380 63 345 67 89', 'вул. Ярослава Мудрого, 41/2',         ''],
-  ['Володимир Литвин',   '+380 68 901 23 45', 'вул. Ужгородська, 67',                'Зателефонувати за 15 хвилин'],
-  ['Наталія Бойко',      '+380 95 567 89 01', 'вул. Грушевського, 12, оф. 3',        'Це офіс, з 9 до 17'],
-  ['Сергій Дмитрів',     '+380 99 234 56 78', 'вул. Лесі Українки, 28',              ''],
-  ['Ірина Шевченко',     '+380 67 678 90 12', 'вул. Зріні Ілони, 15',                'Доставити після 18:00'],
-  ['Михайло Кучер',      '+380 50 890 12 34', 'вул. Берег, 9',                       ''],
-  ['Анна Левченко',      '+380 73 456 78 90', 'вул. Свободи, 17, кв. 22',            "У під'їзді №2"],
-  ['Тарас Бондар',       '+380 96 123 45 67', 'вул. Перемоги, 31',                   'Окремо подзвонити завтра вранці'],
-  ['Катерина Романюк',   '+380 67 555 11 22', 'вул. Робітнича, 4/А, кв. 9',          ''],
-  ['Богдан Стельмах',    '+380 50 777 33 44', 'вул. Корятовича, 19',                 'Без здачі'],
-];
-const DEMO_PRODS = [
-  ['Nero Caffe Super Aroma 1000 г',     580],
-  ['Nero Caffe Expert 1000 г',           535],
-  ['Nero Caffe Buon Aroma 1000 г',      560],
-  ['Nero Caffe Crema Aroma 1000 г',     440],
-  ['Nero Caffe Dolce Aroma 1000 г',     650],
-];
-function buildDemo() {
-  const arr = [];
-  const today = new Date();
-  // Spread 14 orders across last 7 days, more today, less older
-  const distribution = [4, 3, 2, 2, 1, 1, 1]; // today, -1, -2, ...
-  let idx = 0;
-  distribution.forEach((count, dayOffset) => {
-    for (let j = 0; j < count && idx < DEMO_NAMES.length; j++, idx++) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - dayOffset);
-      d.setHours(8 + Math.floor(Math.random() * 11), Math.floor(Math.random() * 60));
-      const n = DEMO_NAMES[idx];
-      const p = DEMO_PRODS[Math.floor(Math.random() * DEMO_PRODS.length)];
-      arr.push({
-        id: d.getTime() - idx,
-        date: d.toLocaleDateString('uk-UA'),
-        time: d.toLocaleTimeString('uk-UA', {hour:'2-digit', minute:'2-digit'}),
-        name: n[0], phone: n[1], addr: n[2], note: n[3],
-        product: p[0], price: p[1],
-      });
-    }
-  });
-  // newest first
-  return arr.sort((a,b) => b.id - a.id);
-}
-function openDemo() {
-  const cur = orders();
-  if (cur.length === 0 || confirm('Завантажити демо-замовлення (≈14 шт.)?\nПоточні дані буде перезаписано.')) {
-    localStorage.setItem('profit_orders', JSON.stringify(buildDemo()));
-  }
-  auth = true;
-  openAdm();
-}
+/* ── Admin — moved to admin.html ── */
 
 render();
 
