@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROFIT Coffee Delivery — Кава у Мукачеві</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream:   #f5e6c8;
+      --cream2:  #eedcaa;
+      --brown:   #3d1c02;
+      --dark:    #2a0f00;
+      --gold:    #c9a84c;
+      --gold2:   #e8c96e;
+      --disc:    #c0392b;
+      --white:   #ffffff;
+      --shadow:  rgba(61,28,2,0.13);
+      --mono:    'Courier New', monospace;
+      --head:    'Montserrat', sans-serif;
+      --body:    'Open Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--body);
+      background: var(--cream);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .hdr {
+      background: linear-gradient(135deg, var(--dark) 0%, var(--brown) 100%);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+    }
+    .hdr-logo {
+      display: flex; align-items: center; gap: 1rem;
+      cursor: pointer; user-select: none;
+    }
+    .hdr-logo-circle {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #5a2e08, var(--dark));
+      border: 2px solid var(--gold);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1px; flex-shrink: 0;
+    }
+    .hdr-logo-circle span { font-size: 1.25rem; line-height: 1; }
+    .hdr-logo-text { display: flex; flex-direction: column; }
+    .hdr-logo-name {
+      font-family: var(--head);
+      font-size: 1.375rem;
+      font-weight: 900;
+      color: var(--gold2);
+      letter-spacing: 0.12em;
+      line-height: 1;
+    }
+    .hdr-logo-sub {
+      font-family: var(--head);
+      font-size: 0.5rem;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+    .hdr-city {
+      font-family: var(--head);
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.5);
+      text-align: right;
+    }
+    .hdr-phone {
+      font-family: var(--head);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gold2);
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* ── HERO BANNER ── */
+    .hero {
+      background: linear-gradient(160deg, #eedcaa 0%, #f5e6c8 60%, #ecddb5 100%);
+      border-bottom: 3px solid var(--gold);
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c9a84c' fill-opacity='0.06'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/svg%3E") repeat;
+      pointer-events: none;
+    }
+    .hero-tag {
+      font-family: var(--head);
+      font-size: 0.625rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .hero-title {
+      font-family: var(--head);
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 900;
+      color: var(--brown);
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      text-transform: uppercase;
+    }
+    .hero-sub {
+      font-family: var(--head);
+      font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+      font-weight: 600;
+      color: var(--dark);
+      margin-top: 0.5rem;
+      letter-spacing: 0.06em;
+    }
+    .hero-delivery {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--brown);
+      color: var(--gold2);
+      font-family: var(--head);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 0.4rem 1.25rem;
+      border-radius: 2rem;
+      margin-top: 1rem;
+    }
+
+    /* ── PRODUCTS GRID ── */
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 3rem;
+    }
+    .section-title {
+      font-family: var(--head);
+      font-size: clamp(1.25rem, 3vw, 1.75rem);
+      font-weight: 800;
+      color: var(--brown);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* ── PRODUCT CARD ── */
+    .card {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 4px 24px var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px var(--shadow);
+    }
+
+    .card-img {
+      position: relative;
+      height: 240px;
+      overflow: hidden;
+      background: linear-gradient(160deg, #2a0f00 0%, #5a2e08 100%);
+    }
+    .card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform 0.35s;
+    }
+    .card:hover .card-img img { transform: scale(1.04); }
+
+    /* discount badge */
+    .badge-disc {
+      position: absolute;
+      top: 12px; left: 12px;
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #e74c3c, #c0392b);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      box-shadow: 0 3px 12px rgba(192,57,43,0.5);
+      z-index: 2;
+    }
+    .badge-disc-pct {
+      font-family: var(--head);
+      font-size: 0.875rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+
+    /* "new" badge */
+    .badge-new {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: var(--gold);
+      color: var(--dark);
+      font-family: var(--head);
+      font-size: 0.5rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+
+    .card-body {
+      padding: 1.25rem 1.25rem 0.75rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-weight {
+      font-family: var(--head);
+      font-size: 0.5rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+    .card-name {
+      font-family: var(--head);
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--brown);
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .card-desc {
+      font-size: 0.8125rem;
+      color: rgba(42,15,0,0.65);
+      line-height: 1.55;
+      flex: 1;
+    }
+
+    .card-footer {
+      padding: 0.875rem 1.25rem 1.25rem;
+      border-top: 1px solid rgba(201,168,76,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .price-block { display: flex; flex-direction: column; }
+    .price-old {
+      font-family: var(--head);
+      font-size: 0.75rem;
+      color: #999;
+      text-decoration: line-through;
+      line-height: 1;
+    }
+    .price-new {
+      font-family: var(--head);
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .price-new sup {
+      font-size: 0.875rem;
+      font-weight: 700;
+      vertical-align: super;
+      line-height: 0;
+    }
+    .price-currency {
+      font-size: 1rem;
+      font-weight: 600;
+      color: rgba(201,168,76,0.7);
+      margin-left: 2px;
+    }
+
+    .btn-buy {
+      font-family: var(--head);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold2);
+      background: linear-gradient(135deg, var(--dark) 0%, var(--brown) 100%);
+      border: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.15s, transform 0.15s;
+      box-shadow: 0 3px 12px rgba(61,28,2,0.3);
+    }
+    .btn-buy:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-buy:active { transform: translateY(0); }
+
+    /* ── ORDER MODAL ── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(42,15,0,0.72);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 16px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+      overflow: hidden;
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-hdr {
+      background: linear-gradient(135deg, var(--dark), var(--brown));
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .modal-hdr-title {
+      font-family: var(--head);
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--gold2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .modal-hdr-product {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.55);
+      margin-top: 2px;
+      font-family: var(--head);
+    }
+    .modal-close {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.5); font-size: 1.25rem; line-height: 1;
+      padding: 0.25rem;
+      transition: color 0.15s;
+    }
+    .modal-close:hover { color: #fff; }
+
+    .modal-body { padding: 1.5rem; }
+
+    .field { margin-bottom: 1rem; }
+    .field label {
+      display: block;
+      font-family: var(--head);
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--brown);
+      margin-bottom: 0.35rem;
+    }
+    .field input, .field textarea {
+      width: 100%;
+      font-family: var(--body);
+      font-size: 0.9375rem;
+      color: var(--dark);
+      background: #fdf7ee;
+      border: 1.5px solid #e0cca0;
+      border-radius: 8px;
+      padding: 0.65rem 0.875rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      resize: none;
+    }
+    .field input:focus, .field textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.18);
+    }
+    .field input::placeholder, .field textarea::placeholder {
+      color: rgba(42,15,0,0.3);
+    }
+    .field textarea { height: 72px; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    @media (max-width: 420px) { .field-row { grid-template-columns: 1fr; } }
+
+    .btn-submit {
+      width: 100%;
+      font-family: var(--head);
+      font-size: 0.875rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold2);
+      background: linear-gradient(135deg, var(--dark) 0%, var(--brown) 100%);
+      border: none;
+      padding: 0.9rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      box-shadow: 0 4px 16px rgba(61,28,2,0.3);
+      transition: opacity 0.15s;
+    }
+    .btn-submit:hover { opacity: 0.88; }
+
+    /* ── SUCCESS MESSAGE ── */
+    .success-wrap {
+      text-align: center;
+      padding: 2.5rem 2rem;
+      display: none;
+    }
+    .success-wrap.show { display: block; }
+    .success-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+    .success-title {
+      font-family: var(--head);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--brown);
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.04em;
+    }
+    .success-text {
+      font-size: 0.9375rem;
+      color: rgba(42,15,0,0.7);
+      line-height: 1.6;
+    }
+    .success-close {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-family: var(--head);
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold2);
+      background: linear-gradient(135deg, var(--dark), var(--brown));
+      border: none;
+      padding: 0.65rem 2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 3px 12px rgba(61,28,2,0.25);
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: linear-gradient(135deg, var(--dark), var(--brown));
+      color: rgba(255,255,255,0.55);
+      text-align: center;
+      padding: 1.5rem;
+      font-family: var(--head);
+      font-size: 0.5625rem;
+      letter-spacing: 0.1em;
+    }
+    .footer a { color: var(--gold2); text-decoration: none; }
+
+    /* ── ADMIN PANEL ── */
+    .admin-overlay {
+      position: fixed; inset: 0;
+      background: #1a0a00;
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+    .admin-overlay.open { display: flex; }
+
+    .admin-hdr {
+      background: linear-gradient(135deg, #000, var(--dark));
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--gold);
+      flex-shrink: 0;
+    }
+    .admin-hdr-title {
+      font-family: var(--head);
+      font-weight: 800;
+      font-size: 0.875rem;
+      color: var(--gold2);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .admin-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .btn-admin {
+      font-family: var(--head);
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid;
+      border-radius: 4px;
+      padding: 0.4rem 0.875rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: none;
+    }
+    .btn-admin-gold { color: var(--gold2); border-color: var(--gold); }
+    .btn-admin-gold:hover { background: var(--gold); color: var(--dark); }
+    .btn-admin-red  { color: #e74c3c; border-color: #c0392b; }
+    .btn-admin-red:hover  { background: #c0392b; color: #fff; }
+    .btn-admin-close { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.2); }
+    .btn-admin-close:hover { color: #fff; border-color: #fff; }
+
+    .admin-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .admin-stat {
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+    }
+    .admin-stat-v {
+      font-family: var(--head);
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--gold2);
+      line-height: 1;
+    }
+    .admin-stat-l {
+      font-family: var(--head);
+      font-size: 0.4375rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.35);
+      margin-top: 0.25rem;
+      text-transform: uppercase;
+    }
+
+    .admin-filter {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .admin-filter-label {
+      font-family: var(--head);
+      font-size: 0.5625rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+    }
+    .admin-filter input[type="date"] {
+      font-family: var(--head);
+      font-size: 0.75rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 4px;
+      color: var(--gold2);
+      padding: 0.35rem 0.75rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .admin-table-wrap {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid rgba(201,168,76,0.15);
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+    .admin-table th {
+      background: rgba(201,168,76,0.12);
+      padding: 0.65rem 1rem;
+      text-align: left;
+      font-family: var(--head);
+      font-size: 0.4375rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    .admin-table td {
+      padding: 0.7rem 1rem;
+      color: rgba(255,255,255,0.8);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      vertical-align: top;
+    }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tr:hover td { background: rgba(201,168,76,0.05); }
+    .admin-table .td-dt {
+      font-family: var(--mono);
+      font-size: 0.6875rem;
+      color: rgba(255,255,255,0.45);
+      white-space: nowrap;
+    }
+    .admin-empty {
+      text-align: center;
+      padding: 3rem;
+      font-family: var(--head);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.2);
+      text-transform: uppercase;
+    }
+
+    /* admin login screen */
+    .admin-login {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 1rem;
+      padding: 2rem;
+    }
+    .admin-login-title {
+      font-family: var(--head);
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--gold2);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+    .admin-login input {
+      font-family: var(--head);
+      font-size: 0.9375rem;
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(201,168,76,0.35);
+      border-radius: 8px;
+      color: var(--gold2);
+      padding: 0.75rem 1.25rem;
+      outline: none;
+      text-align: center;
+      letter-spacing: 0.15em;
+      width: 100%;
+      max-width: 280px;
+    }
+    .admin-login-btn {
+      font-family: var(--head);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dark);
+      background: var(--gold);
+      border: none;
+      padding: 0.75rem 2.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .admin-login-btn:hover { opacity: 0.85; }
+    .admin-login-err {
+      font-family: var(--head);
+      font-size: 0.5625rem;
+      letter-spacing: 0.1em;
+      color: #e74c3c;
+      text-align: center;
+      min-height: 1rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .hdr { padding: 1rem; }
+      .hdr-logo-name { font-size: 1.1rem; }
+      .hero { padding: 1.75rem 1rem 1.5rem; }
+      .section { padding: 1.5rem 1rem 2.5rem; }
+      .products { grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .card-img { height: 180px; }
+      .price-new { font-size: 1.375rem; }
+      .btn-buy { font-size: 0.5625rem; padding: 0.55rem 0.875rem; }
+    }
+    @media (max-width: 400px) {
+      .products { grid-template-columns: 1fr; }
+      .card-img { height: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="hdr">
+  <div class="hdr-logo" id="logoClick" title="Клікніть 5 разів для адмін-панелі">
+    <div class="hdr-logo-circle"><span>☕</span></div>
+    <div class="hdr-logo-text">
+      <div class="hdr-logo-name">PROFIT</div>
+      <div class="hdr-logo-sub">COFFEE DELIVERY</div>
+    </div>
+  </div>
+  <div style="text-align:right">
+    <div class="hdr-city">☎ МУКАЧЕВО · ДОСТАВКА ВІД 1 КГ БЕЗКОШТОВНО</div>
+    <a href="tel:+380505556115" class="hdr-phone">050 555 61 15</a>
+  </div>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-tag">☕ Свіжообсмажена · 100% натуральна · Щоденна доставка</div>
+  <div class="hero-title">КАВА<br>СМАЖЕНА В ЗЕРНАХ</div>
+  <div class="hero-sub">Зерна преміум-класу прямо до вашого порогу</div>
+  <div class="hero-delivery">🚚 Безкоштовна доставка від 1 кг по Мукачеву</div>
+</div>
+
+<!-- ═══ PRODUCTS ═══ -->
+<div class="section">
+  <div class="section-title">☕ Каталог товарів</div>
+  <div class="products" id="products"></div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  © PROFIT Coffee Delivery · Мукачево · <a href="tel:+380505556115">050 555 61 15</a>
+  &nbsp;·&nbsp; Замовлення приймаються щодня
+</footer>
+
+<!-- ═══ ORDER MODAL ═══ -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-hdr-title">Оформити замовлення</div>
+        <div class="modal-hdr-product" id="modalProductName"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <!-- Form -->
+    <div class="modal-body" id="modalForm">
+      <div class="field-row">
+        <div class="field">
+          <label>Ваше ім'я *</label>
+          <input type="text" id="fName" placeholder="Іван Петренко" required>
+        </div>
+        <div class="field">
+          <label>Номер телефону *</label>
+          <input type="tel" id="fPhone" placeholder="+380 50 000 00 00" required>
+        </div>
+      </div>
+      <div class="field">
+        <label>Адреса доставки *</label>
+        <input type="text" id="fAddress" placeholder="вул. Незалежності, 12, кв. 5">
+      </div>
+      <div class="field">
+        <label>Коментар до замовлення</label>
+        <textarea id="fComment" placeholder="Наприклад: подзвоніть за 30 хвилин, домофон не працює..."></textarea>
+      </div>
+      <div class="field" id="errMsg" style="color:#c0392b; font-size:0.75rem; display:none;"></div>
+      <button class="btn-submit" onclick="submitOrder()">✔ ПІДТВЕРДИТИ ЗАМОВЛЕННЯ</button>
+    </div>
+
+    <!-- Success -->
+    <div class="success-wrap" id="successMsg">
+      <div class="success-icon">✅</div>
+      <div class="success-title">Замовлення прийнято!</div>
+      <p class="success-text">
+        Дякуємо за ваше замовлення.<br>
+        <strong>Очікуйте на дзвінок кур'єра</strong> —<br>
+        ми зв'яжемося з вами найближчим часом для підтвердження деталей доставки.
+      </p>
+      <button class="success-close" onclick="closeModal()">ЗАКРИТИ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ADMIN PANEL ═══ -->
+<div class="admin-overlay" id="adminOverlay">
+
+  <!-- Login screen -->
+  <div class="admin-login" id="adminLogin">
+    <div class="admin-login-title">☕ PROFIT · Адмін-панель</div>
+    <input type="password" id="adminPass" placeholder="Пароль" onkeydown="if(event.key==='Enter')checkPass()">
+    <button class="admin-login-btn" onclick="checkPass()">УВІЙТИ</button>
+    <div class="admin-login-err" id="adminErr"></div>
+    <button style="margin-top:0.5rem;background:none;border:none;cursor:pointer;font-family:var(--head);font-size:0.5rem;letter-spacing:0.1em;color:rgba(255,255,255,0.2);text-transform:uppercase" onclick="closeAdmin()">СКАСУВАТИ</button>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="adminDash" style="display:none;flex-direction:column;height:100%">
+    <div class="admin-hdr">
+      <div>
+        <div class="admin-hdr-title">☕ PROFIT · Замовлення</div>
+      </div>
+      <div class="admin-actions">
+        <button class="btn-admin btn-admin-gold" onclick="filterToday()">📅 Сьогодні</button>
+        <button class="btn-admin btn-admin-gold" onclick="filterAll()">📋 Усі</button>
+        <button class="btn-admin btn-admin-gold" onclick="printReport()">🖨 Звіт</button>
+        <button class="btn-admin btn-admin-red" onclick="clearOrders()">🗑 Очистити</button>
+        <button class="btn-admin btn-admin-close" onclick="closeAdmin()">✕ Вийти</button>
+      </div>
+    </div>
+    <div class="admin-body">
+      <div class="admin-stats" id="adminStats"></div>
+      <div class="admin-filter">
+        <span class="admin-filter-label">Фільтр за датою:</span>
+        <input type="date" id="filterDate" onchange="filterByDate()">
+        <span class="admin-filter-label" id="filterInfo"></span>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Дата й час</th>
+              <th>Ім'я</th>
+              <th>Телефон</th>
+              <th>Товар</th>
+              <th>Адреса</th>
+              <th>Коментар</th>
+            </tr>
+          </thead>
+          <tbody id="adminTbody"></tbody>
+        </table>
+        <div class="admin-empty" id="adminEmpty" style="display:none">Замовлень поки немає</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ──────────────────────────────────────────
+   PRODUCTS DATA
+────────────────────────────────────────── */
+const PRODUCTS = [
+  {
+    id: 1,
+    name: 'Nero Caffè Crema Aroma',
+    weight: '1000 г',
+    desc: 'М\'який вершковий смак, ніжна кремова пінка. Суміш 60% Арабіки та 40% Робусти. Ідеально для еспресо, капучино та американо.',
+    price: 625,
+    oldPrice: 835,
+    discount: 25,
+    img: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=500&h=400&fit=crop&q=80',
+  },
+  {
+    id: 2,
+    name: 'Nero Caffè Espresso',
+    weight: '1000 г',
+    desc: 'Насичений, щільний смак із легкою гіркотою. Класична еспресо-суміш із Арабіки та Робусти для любителів міцної кави.',
+    price: 580,
+    oldPrice: null,
+    discount: null,
+    img: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=500&h=400&fit=crop&q=80',
+    isNew: true,
+  },
+  {
+    id: 3,
+    name: 'Nero Caffè Lungo',
+    weight: '500 г',
+    desc: 'Легкий, ароматний бленд для довгого приготування. Ідеальний варіант для фільтра та пуровера. 100% Арабіка.',
+    price: 345,
+    oldPrice: null,
+    discount: null,
+    img: 'https://images.unsplash.com/photo-1504630083234-14187a9df0f5?w=500&h=400&fit=crop&q=80',
+  },
+  {
+    id: 4,
+    name: 'Nero Caffè Gold',
+    weight: '1000 г',
+    desc: 'Преміальний бленд для справжніх цінителів. Солодкий, збалансований смак із нотками шоколаду та горіха.',
+    price: 720,
+    oldPrice: 890,
+    discount: 19,
+    img: 'https://images.unsplash.com/photo-1497515114629-f71d768fd07c?w=500&h=400&fit=crop&q=80',
+  },
+  {
+    id: 5,
+    name: 'Кава мелена Арабіка',
+    weight: '250 г',
+    desc: 'Свіжомелена 100% Арабіка середнього обсмаження. Готова до заварювання в турці, фільтрі або гейзерній кавоварці.',
+    price: 185,
+    oldPrice: null,
+    discount: null,
+    img: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=500&h=400&fit=crop&q=80',
+  },
+];
+
+/* ──────────────────────────────────────────
+   RENDER PRODUCTS
+────────────────────────────────────────── */
+function renderProducts() {
+  const container = document.getElementById('products');
+  container.innerHTML = PRODUCTS.map(p => `
+    <div class="card">
+      <div class="card-img">
+        <img src="${p.img}" alt="${p.name}" loading="lazy"
+          onerror="this.style.display='none'">
+        ${p.discount ? `<div class="badge-disc"><div class="badge-disc-pct">-${p.discount}%</div></div>` : ''}
+        ${p.isNew ? `<div class="badge-new">НОВИНКА</div>` : ''}
+      </div>
+      <div class="card-body">
+        <div class="card-weight">${p.weight}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc}</div>
+      </div>
+      <div class="card-footer">
+        <div class="price-block">
+          ${p.oldPrice ? `<div class="price-old">${p.oldPrice}<sup>00</sup> ₴</div>` : ''}
+          <div class="price-new">${p.price}<sup>00</sup><span class="price-currency">₴</span></div>
+        </div>
+        <button class="btn-buy" onclick="openModal(${p.id})">КУПИТИ →</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ──────────────────────────────────────────
+   ORDER MODAL
+────────────────────────────────────────── */
+let currentProductId = null;
+
+function openModal(productId) {
+  currentProductId = productId;
+  const p = PRODUCTS.find(x => x.id === productId);
+  document.getElementById('modalProductName').textContent =
+    p.name + ' · ' + p.weight + ' · ' + p.price + '₴';
+  document.getElementById('modalForm').style.display = 'block';
+  document.getElementById('successMsg').classList.remove('show');
+  document.getElementById('errMsg').style.display = 'none';
+  ['fName','fPhone','fAddress','fComment'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('fName').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function overlayClick(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeModal();
+    if (!adminAuthed) closeAdmin();
+  }
+});
+
+function showErr(msg) {
+  const el = document.getElementById('errMsg');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function submitOrder() {
+  const name    = document.getElementById('fName').value.trim();
+  const phone   = document.getElementById('fPhone').value.trim();
+  const address = document.getElementById('fAddress').value.trim();
+  const comment = document.getElementById('fComment').value.trim();
+
+  if (!name)    { showErr('Будь ласка, введіть ваше ім\'я'); document.getElementById('fName').focus(); return; }
+  if (!phone)   { showErr('Будь ласка, введіть номер телефону'); document.getElementById('fPhone').focus(); return; }
+  if (!address) { showErr('Будь ласка, введіть адресу доставки'); document.getElementById('fAddress').focus(); return; }
+
+  const p = PRODUCTS.find(x => x.id === currentProductId);
+  const now = new Date();
+  const order = {
+    id:      Date.now(),
+    date:    now.toLocaleDateString('uk-UA'),
+    time:    now.toLocaleTimeString('uk-UA', {hour:'2-digit', minute:'2-digit'}),
+    product: p ? (p.name + ' · ' + p.weight) : '—',
+    price:   p ? p.price : '—',
+    name, phone, address, comment,
+  };
+
+  const orders = JSON.parse(localStorage.getItem('profit_orders') || '[]');
+  orders.unshift(order);
+  localStorage.setItem('profit_orders', JSON.stringify(orders));
+
+  document.getElementById('modalForm').style.display = 'none';
+  document.getElementById('successMsg').classList.add('show');
+}
+
+/* ──────────────────────────────────────────
+   ADMIN PANEL
+────────────────────────────────────────── */
+const ADMIN_PASS = 'profit2025';
+let adminAuthed = false;
+
+// Secret: click logo 5 times
+let logoClicks = 0, logoTimer = null;
+document.getElementById('logoClick').addEventListener('click', () => {
+  logoClicks++;
+  clearTimeout(logoTimer);
+  if (logoClicks >= 5) { logoClicks = 0; openAdmin(); return; }
+  logoTimer = setTimeout(() => { logoClicks = 0; }, 3000);
+});
+
+function openAdmin() {
+  document.getElementById('adminOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (adminAuthed) {
+    showDash();
+  } else {
+    document.getElementById('adminLogin').style.display = 'flex';
+    document.getElementById('adminDash').style.display = 'none';
+    setTimeout(() => document.getElementById('adminPass').focus(), 100);
+  }
+}
+
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function checkPass() {
+  const val = document.getElementById('adminPass').value;
+  if (val === ADMIN_PASS) {
+    adminAuthed = true;
+    document.getElementById('adminErr').textContent = '';
+    showDash();
+  } else {
+    document.getElementById('adminErr').textContent = 'Невірний пароль';
+    document.getElementById('adminPass').value = '';
+    document.getElementById('adminPass').focus();
+  }
+}
+
+function showDash() {
+  document.getElementById('adminLogin').style.display = 'none';
+  const dash = document.getElementById('adminDash');
+  dash.style.display = 'flex';
+  filterAll();
+}
+
+function getOrders() {
+  return JSON.parse(localStorage.getItem('profit_orders') || '[]');
+}
+
+function renderOrders(orders) {
+  const tbody = document.getElementById('adminTbody');
+  const empty = document.getElementById('adminEmpty');
+
+  if (!orders.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  tbody.innerHTML = orders.map((o, i) => `
+    <tr>
+      <td class="td-dt">${orders.length - i}</td>
+      <td class="td-dt">${o.date}<br>${o.time}</td>
+      <td><strong style="color:#e8c96e">${o.name}</strong></td>
+      <td style="white-space:nowrap">${o.phone}</td>
+      <td style="font-size:0.75rem">${o.product || '—'}<br>
+        <span style="color:var(--gold);font-weight:700">${o.price ? o.price+'₴' : ''}</span>
+      </td>
+      <td>${o.address}</td>
+      <td style="color:rgba(255,255,255,0.55);font-size:0.75rem">${o.comment || '—'}</td>
+    </tr>
+  `).join('');
+}
+
+function renderStats(orders) {
+  const today = new Date().toLocaleDateString('uk-UA');
+  const todayOrders = orders.filter(o => o.date === today);
+  const totalRevenue = orders.reduce((s, o) => s + (Number(o.price) || 0), 0);
+  const todayRevenue = todayOrders.reduce((s, o) => s + (Number(o.price) || 0), 0);
+  document.getElementById('adminStats').innerHTML = `
+    <div class="admin-stat">
+      <div class="admin-stat-v">${orders.length}</div>
+      <div class="admin-stat-l">Усього замовлень</div>
+    </div>
+    <div class="admin-stat">
+      <div class="admin-stat-v">${todayOrders.length}</div>
+      <div class="admin-stat-l">Сьогодні</div>
+    </div>
+    <div class="admin-stat">
+      <div class="admin-stat-v">${todayRevenue}₴</div>
+      <div class="admin-stat-l">Виторг сьогодні</div>
+    </div>
+    <div class="admin-stat">
+      <div class="admin-stat-v">${totalRevenue}₴</div>
+      <div class="admin-stat-l">Загальний виторг</div>
+    </div>
+  `;
+}
+
+function filterAll() {
+  const orders = getOrders();
+  renderStats(orders);
+  renderOrders(orders);
+  document.getElementById('filterDate').value = '';
+  document.getElementById('filterInfo').textContent = `Усього: ${orders.length} замовлень`;
+}
+
+function filterToday() {
+  const today = new Date().toLocaleDateString('uk-UA');
+  const orders = getOrders().filter(o => o.date === today);
+  renderStats(getOrders());
+  renderOrders(orders);
+  document.getElementById('filterDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('filterInfo').textContent = `Сьогодні: ${orders.length} замовлень`;
+}
+
+function filterByDate() {
+  const raw = document.getElementById('filterDate').value;
+  if (!raw) { filterAll(); return; }
+  const [y, m, d] = raw.split('-');
+  const ukDate = `${d}.${m}.${y}`;
+  const orders = getOrders().filter(o => o.date === ukDate);
+  renderStats(getOrders());
+  renderOrders(orders);
+  document.getElementById('filterInfo').textContent = `За ${ukDate}: ${orders.length} замовлень`;
+}
+
+function printReport() {
+  const raw = document.getElementById('filterDate').value;
+  let orders, dateLabel;
+  if (raw) {
+    const [y, m, d] = raw.split('-');
+    const ukDate = `${d}.${m}.${y}`;
+    orders = getOrders().filter(o => o.date === ukDate);
+    dateLabel = ukDate;
+  } else {
+    orders = getOrders();
+    dateLabel = 'Усі замовлення';
+  }
+
+  const rows = orders.map((o, i) =>
+    `<tr>
+      <td>${i+1}</td>
+      <td>${o.date} ${o.time}</td>
+      <td>${o.name}</td>
+      <td>${o.phone}</td>
+      <td>${o.product || '—'} · ${o.price ? o.price+'₴' : ''}</td>
+      <td>${o.address}</td>
+      <td>${o.comment || '—'}</td>
+    </tr>`
+  ).join('');
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>Звіт PROFIT Coffee · ${dateLabel}</title>
+    <style>
+      body { font-family: Arial, sans-serif; font-size: 13px; padding: 20px; }
+      h2 { margin-bottom: 6px; }
+      p { color: #666; margin-bottom: 16px; font-size: 12px; }
+      table { width: 100%; border-collapse: collapse; }
+      th { background: #3d1c02; color: #e8c96e; padding: 8px; text-align: left; font-size: 11px; letter-spacing: 0.08em; }
+      td { padding: 7px 8px; border-bottom: 1px solid #eee; vertical-align: top; }
+      tr:nth-child(even) td { background: #fdf7ee; }
+      .total { margin-top: 12px; font-weight: bold; text-align: right; }
+      @media print { button { display: none; } }
+    </style>
+  </head><body>
+    <h2>☕ PROFIT Coffee Delivery · Звіт</h2>
+    <p>${dateLabel} · Сформовано: ${new Date().toLocaleString('uk-UA')} · Замовлень: ${orders.length}</p>
+    <button onclick="window.print()" style="margin-bottom:12px;padding:6px 16px;cursor:pointer;background:#3d1c02;color:#e8c96e;border:none;border-radius:4px;font-size:12px">🖨 Друк</button>
+    <table>
+      <thead><tr><th>#</th><th>Дата й час</th><th>Ім'я</th><th>Телефон</th><th>Товар</th><th>Адреса</th><th>Коментар</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="total">Загальна сума: ${orders.reduce((s,o)=>s+(Number(o.price)||0),0)} ₴</div>
+  </body></html>`);
+  win.document.close();
+}
+
+function clearOrders() {
+  if (confirm('Видалити ВСІ замовлення? Цю дію неможливо скасувати.')) {
+    localStorage.removeItem('profit_orders');
+    filterAll();
+  }
+}
+
+/* ──────────────────────────────────────────
+   INIT
+────────────────────────────────────────── */
+renderProducts();
+</script>
+</body>
+</html>
