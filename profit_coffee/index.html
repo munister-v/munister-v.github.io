@@ -424,6 +424,47 @@
       .fab-btn  { width: 54px; height: 54px; }
     }
     @media (min-width: 801px) { .fab-wrap { display: none; } }
+
+    /* ══ DEMO ADMIN BANNER ══ */
+    .demo-bar {
+      background: linear-gradient(135deg, var(--cream2) 0%, var(--cream) 100%);
+      border-top: 1px solid rgba(201,168,76,.25);
+      border-bottom: 1px solid rgba(201,168,76,.25);
+      padding: clamp(2rem,4vw,3rem) clamp(1.25rem,3vw,2rem);
+      position: relative; overflow: hidden;
+    }
+    .demo-bar::before {
+      content: ''; position: absolute; top: -40px; right: -40px;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,.18), transparent 60%);
+      pointer-events: none;
+    }
+    .demo-in {
+      max-width: 1280px; margin: 0 auto; position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1fr auto; gap: 2.5rem; align-items: center;
+    }
+    .demo-eye { font-family: var(--head); font-size: .625rem; font-weight: 700; letter-spacing: .2em; color: var(--amber); margin-bottom: .625rem; text-transform: uppercase; display: inline-flex; align-items: center; gap: .5rem; }
+    .demo-eye::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); animation: blink 1.6s ease infinite; }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+    .demo-h { font-family: var(--head); font-weight: 900; font-size: clamp(1.375rem,2.6vw,1.875rem); color: var(--brown); letter-spacing: -.015em; line-height: 1.18; margin-bottom: .625rem; }
+    .demo-p { font-size: .9375rem; color: var(--muted); line-height: 1.65; max-width: 56ch; }
+    .demo-p strong { color: var(--brown); font-weight: 700; }
+    .btn-demo {
+      font-family: var(--head); font-weight: 800; font-size: .75rem; letter-spacing: .09em;
+      background: var(--brown); color: var(--gold2); border: none;
+      padding: 1.0625rem 2rem; border-radius: 12px;
+      cursor: pointer; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: .5rem;
+      box-shadow: 0 6px 24px rgba(42,15,0,.32);
+      transition: transform .15s, box-shadow .15s, background .15s;
+    }
+    .btn-demo:hover  { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(42,15,0,.42); background: var(--brown2); }
+    .btn-demo:active { transform: scale(.97); }
+    @media (max-width: 800px) {
+      .demo-in { grid-template-columns: 1fr; gap: 1.25rem; }
+      .demo-p  { font-size: .875rem; }
+      .btn-demo { width: 100%; justify-content: center; padding: 1rem 1.5rem; }
+    }
   </style>
 </head>
 <body>
@@ -616,6 +657,24 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- DEMO ADMIN BANNER -->
+<section class="demo-bar">
+  <div class="demo-in">
+    <div>
+      <div class="demo-eye">ДЕМОНСТРАЦІЯ · КАБІНЕТ МЕНЕДЖЕРА</div>
+      <div class="demo-h">Подивіться, як виглядає панель замовлень зсередини</div>
+      <p class="demo-p">
+        Кожне замовлення з сайту автоматично потрапляє у <strong>зручний дашборд</strong>:
+        фільтри по даті, KPI продажів за день, друковані звіти для бухгалтерії —
+        усе працює без перезавантаження сторінки.
+      </p>
+    </div>
+    <button class="btn-demo" onclick="openDemo()">
+      🔐 ВІДКРИТИ ДЕМО-АДМІНКУ →
+    </button>
   </div>
 </section>
 
@@ -868,6 +927,64 @@ function printR() {
   w.document.close();
 }
 function wipe() { if (confirm('Видалити ВСІ замовлення?')) { localStorage.removeItem('profit_orders'); showAll(); } }
+
+/* ── Demo data + open demo admin ── */
+const DEMO_NAMES = [
+  ['Олена Ковальчук',   '+380 67 234 56 78', 'вул. Духновича, 14, кв. 7',           'Залишити у консьєржа'],
+  ['Андрій Петренко',    '+380 50 123 45 67', 'вул. Миру, 23',                       ''],
+  ['Марія Сидоренко',    '+380 93 456 78 90', 'пл. Кирила і Мефодія, 5, кв. 12',     'Передзвонити перед доставкою'],
+  ['Олег Ткачук',        '+380 96 789 01 23', 'вул. Пушкіна, 8',                     'Без дзвінка, залишити на порозі'],
+  ['Юлія Гриценко',      '+380 63 345 67 89', 'вул. Ярослава Мудрого, 41/2',         ''],
+  ['Володимир Литвин',   '+380 68 901 23 45', 'вул. Ужгородська, 67',                'Зателефонувати за 15 хвилин'],
+  ['Наталія Бойко',      '+380 95 567 89 01', 'вул. Грушевського, 12, оф. 3',        'Це офіс, з 9 до 17'],
+  ['Сергій Дмитрів',     '+380 99 234 56 78', 'вул. Лесі Українки, 28',              ''],
+  ['Ірина Шевченко',     '+380 67 678 90 12', 'вул. Зріні Ілони, 15',                'Доставити після 18:00'],
+  ['Михайло Кучер',      '+380 50 890 12 34', 'вул. Берег, 9',                       ''],
+  ['Анна Левченко',      '+380 73 456 78 90', 'вул. Свободи, 17, кв. 22',            "У під'їзді №2"],
+  ['Тарас Бондар',       '+380 96 123 45 67', 'вул. Перемоги, 31',                   'Окремо подзвонити завтра вранці'],
+  ['Катерина Романюк',   '+380 67 555 11 22', 'вул. Робітнича, 4/А, кв. 9',          ''],
+  ['Богдан Стельмах',    '+380 50 777 33 44', 'вул. Корятовича, 19',                 'Без здачі'],
+];
+const DEMO_PRODS = [
+  ['Nero Caffè Crema Aroma 1000 г',     625],
+  ['Nero Caffè Espresso Forte 1000 г',  580],
+  ['Nero Caffè Lungo Classico 500 г',   345],
+  ['Nero Caffè Oro Premium 1000 г',     720],
+  ['Nero Caffè Arabica Selection 250 г', 185],
+];
+function buildDemo() {
+  const arr = [];
+  const today = new Date();
+  // Spread 14 orders across last 7 days, more today, less older
+  const distribution = [4, 3, 2, 2, 1, 1, 1]; // today, -1, -2, ...
+  let idx = 0;
+  distribution.forEach((count, dayOffset) => {
+    for (let j = 0; j < count && idx < DEMO_NAMES.length; j++, idx++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - dayOffset);
+      d.setHours(8 + Math.floor(Math.random() * 11), Math.floor(Math.random() * 60));
+      const n = DEMO_NAMES[idx];
+      const p = DEMO_PRODS[Math.floor(Math.random() * DEMO_PRODS.length)];
+      arr.push({
+        id: d.getTime() - idx,
+        date: d.toLocaleDateString('uk-UA'),
+        time: d.toLocaleTimeString('uk-UA', {hour:'2-digit', minute:'2-digit'}),
+        name: n[0], phone: n[1], addr: n[2], note: n[3],
+        product: p[0], price: p[1],
+      });
+    }
+  });
+  // newest first
+  return arr.sort((a,b) => b.id - a.id);
+}
+function openDemo() {
+  const cur = orders();
+  if (cur.length === 0 || confirm('Завантажити демо-замовлення (≈14 шт.)?\nПоточні дані буде перезаписано.')) {
+    localStorage.setItem('profit_orders', JSON.stringify(buildDemo()));
+  }
+  auth = true;
+  openAdm();
+}
 
 render();
 </script>
