@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>PROFIT Coffee Delivery — Мукачево</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>window.__v = Date.now();</script>
   <style>
     :root {
       --brown:  #2a0f00;
@@ -168,7 +172,7 @@
     .reveal-scale.is-visible { opacity: 1; transform: scale(1); }
 
     .hero { position: relative; min-height: 88vh; display: flex; align-items: center; overflow: hidden; }
-    .hero-bg { position: absolute; inset: 0; background: url('../profit/assets/castle.jpg') center 30% / cover; will-change: transform; }
+    .hero-bg { position: absolute; inset: 0; will-change: transform; }
     .hero-bg::after { content:''; position: absolute; inset: 0; background: linear-gradient(108deg, rgba(20,6,0,.92) 0%, rgba(30,10,0,.76) 48%, rgba(30,10,0,.22) 100%); }
     .hero-in {
       position: relative; z-index: 2;
@@ -1232,6 +1236,22 @@ document.querySelectorAll('.card-img img').forEach(img => {
   else { img.addEventListener('load', () => img.classList.add('loaded')); }
   img.addEventListener('error', () => { img.classList.add('loaded'); img.style.display='none'; });
 });
+
+/* ── Cache-bust local assets ── */
+const v = window.__v || Date.now();
+document.querySelectorAll('img[src*="profit/assets"]').forEach(img => {
+  const sep = img.src.includes('?') ? '&' : '?';
+  img.src = img.src + sep + 'v=' + v;
+});
+document.querySelector('.hero-bg').style.background =
+  "url('../profit/assets/castle.jpg?v=" + v + "') center 30% / cover";
+
+/* ── Unregister stale service workers ── */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
+  });
+}
 
 /* ── Init ── */
 updateProgress();
