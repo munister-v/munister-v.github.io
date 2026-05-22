@@ -84,6 +84,11 @@
       background: var(--brown);
       box-shadow: 0 2px 28px rgba(0,0,0,.5);
     }
+    .hdr-progress {
+      position: absolute; bottom: 0; left: 0; height: 2px; width: 0;
+      background: linear-gradient(90deg, var(--gold), var(--amber));
+      transition: width .1s linear; z-index: 101;
+    }
     .hdr-in {
       max-width: 1280px; margin: 0 auto;
       display: flex; align-items: center; justify-content: space-between;
@@ -99,6 +104,47 @@
     .hdr-nav          { display: flex; align-items: center; gap: .125rem; }
     .hdr-nav a        { font-family: var(--head); font-size: .6875rem; font-weight: 600; letter-spacing: .07em; color: rgba(255,255,255,.55); text-decoration: none; padding: .45rem .8rem; border-radius: 6px; transition: color .15s, background .15s; }
     .hdr-nav a:hover  { color: var(--gold2); background: rgba(255,255,255,.06); }
+    .hdr-nav a.active { color: var(--gold2); background: rgba(201,168,76,.12); }
+
+    /* ══ HAMBURGER MENU ══ */
+    .hdr-burger {
+      display: none; width: 40px; height: 40px; border-radius: 8px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      transition: background .15s;
+    }
+    .hdr-burger:hover { background: rgba(255,255,255,.12); }
+    .hdr-burger span {
+      display: block; width: 18px; height: 2px; background: var(--gold2); border-radius: 2px;
+      transition: transform .25s cubic-bezier(.4,.0,.2,1), opacity .2s;
+    }
+    .hdr-burger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hdr-burger.is-open span:nth-child(2) { opacity: 0; }
+    .hdr-burger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mob-nav {
+      display: none; position: fixed; top: 72px; left: 0; right: 0;
+      background: var(--brown); border-bottom: 1px solid rgba(201,168,76,.12);
+      padding: 1rem 1.5rem 1.25rem;
+      flex-direction: column; gap: .25rem;
+      box-shadow: 0 12px 36px rgba(0,0,0,.4);
+      transform: translateY(-10px); opacity: 0;
+      transition: transform .25s cubic-bezier(.4,.0,.2,1), opacity .2s;
+      z-index: 99;
+    }
+    .mob-nav.is-open { display: flex; transform: translateY(0); opacity: 1; }
+    .mob-nav a {
+      font-family: var(--head); font-size: .875rem; font-weight: 600; letter-spacing: .05em;
+      color: rgba(255,255,255,.65); text-decoration: none;
+      padding: .75rem 1rem; border-radius: 10px;
+      transition: color .15s, background .15s;
+    }
+    .mob-nav a:hover, .mob-nav a.active { color: var(--gold2); background: rgba(201,168,76,.1); }
+    .mob-nav .mob-tel {
+      display: flex; align-items: center; gap: .5rem;
+      font-family: var(--head); font-weight: 800; font-size: 1rem; color: var(--gold2);
+      text-decoration: none; padding: .75rem 1rem; margin-top: .5rem;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
     .hdr-right        { display: flex; align-items: center; gap: .5rem; flex-shrink: 0; }
     .hdr-tel          { font-family: var(--head); font-weight: 800; font-size: 1rem; color: var(--gold2); text-decoration: none; letter-spacing: .03em; white-space: nowrap; margin-right: .25rem; transition: color .15s; }
     .hdr-tel:hover    { color: #fff; }
@@ -106,8 +152,23 @@
     .hdr-cart:hover   { background: rgba(201,168,76,.28); }
 
     /* ══ HERO ══ */
+    /* ══ REVEAL ANIMATIONS ══ */
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity .7s cubic-bezier(.4,.0,.2,1), transform .7s cubic-bezier(.4,.0,.2,1);
+    }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .reveal-left  { opacity: 0; transform: translateX(-40px); transition: opacity .7s cubic-bezier(.4,.0,.2,1), transform .7s cubic-bezier(.4,.0,.2,1); }
+    .reveal-right { opacity: 0; transform: translateX(40px);  transition: opacity .7s cubic-bezier(.4,.0,.2,1), transform .7s cubic-bezier(.4,.0,.2,1); }
+    .reveal-left.is-visible, .reveal-right.is-visible { opacity: 1; transform: translateX(0); }
+    .reveal-scale {
+      opacity: 0; transform: scale(.92);
+      transition: opacity .6s cubic-bezier(.4,.0,.2,1), transform .6s cubic-bezier(.4,.0,.2,1);
+    }
+    .reveal-scale.is-visible { opacity: 1; transform: scale(1); }
+
     .hero { position: relative; min-height: 88vh; display: flex; align-items: center; overflow: hidden; }
-    .hero-bg { position: absolute; inset: 0; background: url('../profit/assets/castle.jpg') center 30% / cover; }
+    .hero-bg { position: absolute; inset: 0; background: url('../profit/assets/castle.jpg') center 30% / cover; will-change: transform; }
     .hero-bg::after { content:''; position: absolute; inset: 0; background: linear-gradient(108deg, rgba(20,6,0,.92) 0%, rgba(30,10,0,.76) 48%, rgba(30,10,0,.22) 100%); }
     .hero-in {
       position: relative; z-index: 2;
@@ -188,12 +249,13 @@
       background: var(--brown); border-radius: 20px; overflow: hidden;
       box-shadow: 0 8px 32px rgba(0,0,0,.2);
       display: flex; flex-direction: column;
-      transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s; cursor: pointer;
+      transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s; cursor: pointer;
     }
-    .card:hover { transform: translateY(-6px); box-shadow: 0 22px 56px rgba(0,0,0,.3); }
+    .card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 24px 64px rgba(0,0,0,.35); }
     .card-img  { position: relative; height: 268px; overflow: hidden; background: linear-gradient(160deg,#1a0700,#4a2005); }
-    .card-img img { width:100%; height:100%; object-fit:cover; display:block; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
-    .card:hover .card-img img { transform: scale(1.06); }
+    .card-img img { width:100%; height:100%; object-fit:cover; display:block; transition: transform .5s cubic-bezier(.2,.8,.2,1), filter .4s; opacity: 0; }
+    .card-img img.loaded { opacity: 1; }
+    .card:hover .card-img img { transform: scale(1.08); filter: brightness(1.05); }
     .card-ov   { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,6,0,.55) 0%, transparent 55%); }
     .badges    { position: absolute; top: 13px; left: 13px; display: flex; flex-direction: column; gap: 5px; z-index: 2; }
     .b-disc    { font-family: var(--head); font-size: .6875rem; font-weight: 900; background: var(--disc); color: #fff; padding: .25rem .625rem; border-radius: 100px; }
@@ -222,9 +284,11 @@
       font-family: var(--head); font-weight: 800; font-size: .625rem; letter-spacing: .1em;
       background: linear-gradient(135deg, var(--gold2), var(--gold)); color: var(--brown); border: none;
       padding: .7rem 1.25rem; border-radius: 10px; cursor: pointer; white-space: nowrap;
-      box-shadow: 0 3px 14px rgba(201,168,76,.28); transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 3px 14px rgba(201,168,76,.28); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s, background .2s;
+      position: relative; overflow: hidden;
     }
-    .btn-buy:hover { transform: scale(1.05); box-shadow: 0 6px 22px rgba(201,168,76,.45); }
+    .btn-buy:hover { transform: scale(1.07); box-shadow: 0 8px 26px rgba(201,168,76,.5); }
+    .btn-buy:active { transform: scale(.95); }
 
     /* ══ DELIVERY / CONTACT ══ */
     .delivery { background: var(--brown); padding: clamp(3rem,5vw,5.5rem) clamp(1.25rem,3vw,2rem); }
@@ -284,13 +348,54 @@
     .fci-tg    { background: var(--tg); }
 
     /* ══ FOOTER ══ */
-    .footer { background: var(--brown); border-top: 1px solid rgba(201,168,76,.1); padding: 2rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
+    .footer {
+      background: var(--brown); border-top: 1px solid rgba(201,168,76,.1);
+      padding: 3rem 2rem 2rem;
+    }
+    .foot-in {
+      max-width: 1280px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; align-items: start;
+    }
     .foot-l   { display: flex; align-items: center; gap: .875rem; }
     .foot-l img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
     .foot-brand { font-family: var(--head); font-weight: 900; font-size: .9375rem; color: var(--gold2); letter-spacing: .12em; }
     .foot-copy  { font-family: var(--head); font-size: .4375rem; letter-spacing: .12em; color: rgba(255,255,255,.28); margin-top: 2px; }
-    .foot-tel   { font-family: var(--head); font-weight: 800; font-size: 1.125rem; color: var(--gold2); text-decoration: none; letter-spacing: .03em; transition: color .15s; }
+    .foot-center { text-align: center; }
+    .foot-tel   { font-family: var(--head); font-weight: 800; font-size: 1.125rem; color: var(--gold2); text-decoration: none; letter-spacing: .03em; transition: color .15s; display: block; margin-bottom: .375rem; }
     .foot-tel:hover { color: #fff; }
+    .foot-hours { font-family: var(--head); font-size: .5rem; letter-spacing: .1em; color: rgba(255,255,255,.3); }
+    .foot-nav {
+      display: flex; flex-direction: column; gap: .25rem; align-items: flex-end;
+    }
+    .foot-nav a {
+      font-family: var(--head); font-size: .625rem; font-weight: 600; letter-spacing: .06em;
+      color: rgba(255,255,255,.4); text-decoration: none; transition: color .15s;
+    }
+    .foot-nav a:hover { color: var(--gold2); }
+    .foot-bottom {
+      max-width: 1280px; margin: 1.5rem auto 0;
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding-top: 1rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .foot-made {
+      font-family: var(--head); font-size: .4375rem; letter-spacing: .12em; color: rgba(255,255,255,.2);
+    }
+
+    /* ══ BACK TO TOP ══ */
+    .btt {
+      position: fixed; bottom: 2rem; left: 2rem; z-index: 150;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--brown); border: 1px solid rgba(201,168,76,.25);
+      color: var(--gold2); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 18px rgba(0,0,0,.3);
+      opacity: 0; transform: translateY(12px); pointer-events: none;
+      transition: opacity .3s, transform .3s, background .15s;
+      font-size: 1.125rem;
+    }
+    .btt.is-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .btt:hover { background: var(--brown2); }
 
     /* ══ ORDER MODAL ══ */
     .ov {
@@ -370,7 +475,12 @@
     .tbl-empty { text-align: center; padding: 2.5rem; font-family: var(--head); font-size: .6875rem; color: rgba(255,255,255,.25); display: none; }
 
     /* ══ RESPONSIVE ══ */
-    @media (max-width: 1060px) { .hdr-nav { display: none; } }
+    @media (max-width: 1060px) {
+      .hdr-nav { display: none; }
+      .hdr-burger { display: flex; }
+      .hdr-in { height: 64px; }
+      .mob-nav { top: 64px; }
+    }
     @media (max-width: 800px) {
       /* On mobile, FAB is the primary contact widget — hide header/footer extras */
       .hdr-tel { display: none !important; }
@@ -398,9 +508,12 @@
       .hdr-cart { width: 38px; height: 38px; }
 
       /* Footer — center stacked */
-      .footer { padding: 1.5rem 1.25rem; flex-direction: column; gap: .875rem; text-align: center; justify-content: center; }
+      .footer { padding: 2rem 1.25rem 1.5rem; }
+      .foot-in { grid-template-columns: 1fr; gap: 1.25rem; text-align: center; justify-items: center; }
       .foot-l { justify-content: center; }
       .foot-tel { font-size: 1.25rem; }
+      .foot-nav { align-items: center; flex-direction: row; gap: .75rem; flex-wrap: wrap; justify-content: center; }
+      .btt { left: auto; right: 4.5rem; bottom: 1.25rem; width: 40px; height: 40px; font-size: 1rem; }
 
       /* Admin panel — fully responsive */
       .adm-bar { flex-direction: column; align-items: flex-start; gap: .625rem; padding: .75rem 1rem; }
@@ -536,6 +649,7 @@
 
 <!-- HEADER -->
 <header class="hdr">
+  <div class="hdr-progress" id="hdrProgress"></div>
   <div class="hdr-in">
     <!-- Logo (click ×5 → admin) -->
     <div class="hdr-logo" id="logoBtn">
@@ -554,6 +668,11 @@
       <a href="#delivery">Контакти</a>
     </nav>
 
+    <!-- Hamburger (mobile) -->
+    <button class="hdr-burger" id="burgerBtn" onclick="toggleMob()" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+
     <!-- Right: phone + cart -->
     <div class="hdr-right">
       <a href="tel:+380505556115" class="hdr-tel">050 555 61 15</a>
@@ -561,6 +680,15 @@
     </div>
   </div>
 </header>
+
+<!-- MOBILE NAV -->
+<nav class="mob-nav" id="mobNav">
+  <a href="#catalog" onclick="closeMob()">Каталог</a>
+  <a href="#delivery" onclick="closeMob()">Доставка</a>
+  <a href="#delivery" onclick="closeMob()">Про нас</a>
+  <a href="#delivery" onclick="closeMob()">Контакти</a>
+  <a href="tel:+380505556115" class="mob-tel">📞 050 555 61 15</a>
+</nav>
 
 <!-- HERO -->
 <section class="hero">
@@ -599,7 +727,7 @@
 </section>
 
 <!-- TRUST STRIP -->
-<div class="strip">
+<div class="strip reveal">
   <div class="strip-i"><span class="strip-e">🚚</span><span class="strip-t">БЕЗКОШТОВНА ДОСТАВКА ВІД 1 КГ</span></div>
   <div class="strip-i"><span class="strip-e">☕</span><span class="strip-t">ЩОДЕННЕ ОБСМАЖЕННЯ</span></div>
   <div class="strip-i"><span class="strip-e">🌿</span><span class="strip-t">100% НАТУРАЛЬНІ ЗЕРНА</span></div>
@@ -609,7 +737,7 @@
 <!-- CATALOG -->
 <section id="catalog">
   <div class="sec">
-    <div class="sec-hdr">
+    <div class="sec-hdr reveal">
       <div>
         <div class="sec-eye">КАТАЛОГ · NERO CAFFÈ</div>
         <div class="sec-title">Популярна кава</div>
@@ -624,10 +752,10 @@
 <section id="delivery" class="delivery">
   <div class="del-in">
     <div class="del-grid">
-      <div class="del-photo">
+      <div class="del-photo reveal-left">
         <img src="../profit/assets/interior.jpg" alt="PROFIT Coffee">
       </div>
-      <div class="del-content">
+      <div class="del-content reveal-right">
         <div class="del-eye">МУКАЧЕВО · ДОСТАВКА КАВИ</div>
         <div class="del-title">Доставка кави<br>по Мукачеву</div>
         <div class="del-feats">
@@ -680,7 +808,7 @@
 
 <!-- DEMO ADMIN BANNER -->
 <section class="demo-bar">
-  <div class="demo-in">
+  <div class="demo-in reveal">
     <div>
       <div class="demo-eye">ДЕМОНСТРАЦІЯ · КАБІНЕТ МЕНЕДЖЕРА</div>
       <div class="demo-h">Подивіться, як виглядає панель замовлень зсередини</div>
@@ -698,15 +826,31 @@
 
 <!-- FOOTER -->
 <footer class="footer">
-  <div class="foot-l">
-    <img src="../profit/assets/logo.png" alt="PROFIT">
-    <div>
-      <div class="foot-brand">PROFIT COFFEE</div>
-      <div class="foot-copy">© 2025 · Мукачево</div>
+  <div class="foot-in">
+    <div class="foot-l">
+      <img src="../profit/assets/logo.png" alt="PROFIT">
+      <div>
+        <div class="foot-brand">PROFIT COFFEE</div>
+        <div class="foot-copy">© 2025 · Мукачево</div>
+      </div>
     </div>
+    <div class="foot-center">
+      <a href="tel:+380505556115" class="foot-tel">050 555 61 15</a>
+      <div class="foot-hours">ПН–НД · 8:00 – 20:00</div>
+    </div>
+    <nav class="foot-nav">
+      <a href="#catalog">Каталог</a>
+      <a href="#delivery">Доставка</a>
+      <a href="#delivery">Контакти</a>
+    </nav>
   </div>
-  <a href="tel:+380505556115" class="foot-tel">050 555 61 15</a>
+  <div class="foot-bottom">
+    <div class="foot-made">PROFIT COFFEE DELIVERY · МУКАЧЕВО</div>
+  </div>
 </footer>
+
+<!-- BACK TO TOP -->
+<button class="btt" id="bttBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Нагору">↑</button>
 
 <!-- FLOATING CONTACT FAB (mobile only) -->
 <div class="fab-wrap">
@@ -883,7 +1027,7 @@ function send() {
   document.getElementById('dlgOk').style.display = 'flex';
   document.getElementById('dlgOk').style.flexDirection = 'column';
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeM(); closeAdm(); closeFab(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeM(); closeAdm(); closeFab(); closeMob(); } });
 
 /* ── FAB ── */
 let fabOpen = false;
@@ -991,6 +1135,108 @@ function openDemo() {
 }
 
 render();
+
+/* ── Mobile hamburger menu ── */
+let mobOpen = false;
+function toggleMob() {
+  mobOpen = !mobOpen;
+  document.getElementById('burgerBtn').classList.toggle('is-open', mobOpen);
+  document.getElementById('mobNav').classList.toggle('is-open', mobOpen);
+  document.body.style.overflow = mobOpen ? 'hidden' : '';
+}
+function closeMob() {
+  mobOpen = false;
+  document.getElementById('burgerBtn').classList.remove('is-open');
+  document.getElementById('mobNav').classList.remove('is-open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('click', e => {
+  if (mobOpen && !e.target.closest('.mob-nav') && !e.target.closest('.hdr-burger')) closeMob();
+});
+
+/* ── Scroll progress bar ── */
+function updateProgress() {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+  document.getElementById('hdrProgress').style.width = pct + '%';
+}
+
+/* ── Back to top button ── */
+function updateBtt() {
+  document.getElementById('bttBtn').classList.toggle('is-visible', window.scrollY > 600);
+}
+
+/* ── Active nav link highlighting ── */
+function updateActiveNav() {
+  const sections = ['catalog', 'delivery'];
+  const scrollPos = window.scrollY + 120;
+  let active = '';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.offsetTop <= scrollPos) active = id;
+  });
+  document.querySelectorAll('.hdr-nav a, .mob-nav a:not(.mob-tel)').forEach(a => {
+    const href = a.getAttribute('href');
+    a.classList.toggle('active', href === '#' + active);
+  });
+}
+
+/* ── Hero parallax ── */
+function updateParallax() {
+  const bg = document.querySelector('.hero-bg');
+  if (bg && window.scrollY < window.innerHeight) {
+    bg.style.transform = 'translateY(' + (window.scrollY * 0.3) + 'px)';
+  }
+}
+
+/* ── Scroll handler (batched) ── */
+let ticking = false;
+window.addEventListener('scroll', () => {
+  if (!ticking) {
+    requestAnimationFrame(() => {
+      updateProgress();
+      updateBtt();
+      updateActiveNav();
+      updateParallax();
+      ticking = false;
+    });
+    ticking = true;
+  }
+}, { passive: true });
+
+/* ── Reveal animations (IntersectionObserver) ── */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('is-visible'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => revealObs.observe(el));
+
+/* ── Card reveal (staggered) ── */
+const cardObs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('is-visible'), i * 80);
+      cardObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.card').forEach(c => {
+  c.classList.add('reveal-scale');
+  cardObs.observe(c);
+});
+
+/* ── Image lazy-load fade-in ── */
+document.querySelectorAll('.card-img img').forEach(img => {
+  if (img.complete) { img.classList.add('loaded'); }
+  else { img.addEventListener('load', () => img.classList.add('loaded')); }
+  img.addEventListener('error', () => { img.classList.add('loaded'); img.style.display='none'; });
+});
+
+/* ── Init ── */
+updateProgress();
+updateBtt();
+updateActiveNav();
 </script>
 </body>
 </html>
