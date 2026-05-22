@@ -248,7 +248,7 @@
       position: relative; z-index: 2;
       max-width: 1280px; margin: 0 auto; width: 100%;
       padding: 5rem 2rem 4.5rem;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+      display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center;
     }
     .hero-tag {
       display: inline-flex; align-items: center; gap: .4rem;
@@ -311,37 +311,6 @@
     }
     .btn-pri:hover::before { transform: translateX(100%); }
     .btn-pri:active { transform: scale(.96); }
-    /* hero visual panel */
-    .hero-vis { display: flex; align-items: center; justify-content: center; }
-    .hero-card {
-      background: rgba(255,255,255,.04); border: 1px solid rgba(201,168,76,.2);
-      -webkit-backdrop-filter: blur(18px) saturate(1.3); backdrop-filter: blur(18px) saturate(1.3); border-radius: 28px;
-      padding: 2rem 2rem 2.25rem; text-align: center;
-      max-width: 320px; width: 100%;
-      box-shadow: 0 28px 72px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06);
-      position: relative; overflow: hidden;
-      -webkit-animation: card-float 6s ease-in-out infinite; animation: card-float 6s ease-in-out infinite;
-    }
-    .hero-card::before {
-      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-      background: conic-gradient(from 0deg, transparent, rgba(201,168,76,.08), transparent, rgba(201,168,76,.05), transparent);
-      -webkit-animation: rotate-glow 8s linear infinite; animation: rotate-glow 8s linear infinite;
-    }
-    @keyframes card-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-    @keyframes rotate-glow { 100%{transform:rotate(360deg)} }
-    .hc-img {
-      width: 160px; height: 200px; margin: 0 auto 1.25rem; position: relative; z-index: 1;
-    }
-    .hc-img img {
-      width: 100%; height: 100%; object-fit: contain;
-      -webkit-filter: drop-shadow(0 12px 24px rgba(0,0,0,.4)); filter: drop-shadow(0 12px 24px rgba(0,0,0,.4));
-    }
-    .hc-brand  { font-family: var(--head); font-weight: 900; font-size: 1.0625rem; color: var(--gold2); letter-spacing: .08em; margin-bottom: .2rem; position: relative; z-index: 1; }
-    .hc-sub    { font-family: var(--head); font-size: .5625rem; letter-spacing: .1em; color: rgba(255,255,255,.38); margin-bottom: 1rem; position: relative; z-index: 1; }
-    .hc-from   { font-family: var(--head); font-size: .5625rem; letter-spacing: .14em; color: rgba(255,255,255,.28); margin-bottom: .2rem; position: relative; z-index: 1; }
-    .hc-price  { font-family: var(--head); font-weight: 900; font-size: 2.25rem; color: var(--gold); line-height: 1; position: relative; z-index: 1; }
-    .hc-price sup { font-size: 1rem; vertical-align: super; line-height: 0; }
-    .hc-cta    { margin-top: 1.25rem; position: relative; z-index: 1; }
     .hero-stats {
       display: flex; gap: 2rem; margin-top: .5rem;
     }
@@ -425,7 +394,7 @@
     .card:hover::after { opacity: 1; }
     .card-img  {
       position: relative; height: 280px; overflow: hidden;
-      background: linear-gradient(160deg, #faf3e3 0%, #fdf6e8 40%, #f8ecd5 100%);
+      background: var(--cream);
       display: flex; align-items: center; justify-content: center;
     }
     .card-img img {
@@ -809,7 +778,6 @@
       .hdr-tel { display: none !important; }
 
       .hero-in { grid-template-columns: 1fr; padding: 3.25rem 1.5rem 4rem; gap: 2rem; }
-      .hero-vis { display: none; }
       .hero-scroll { display: none; }
       .hero-stats { gap: 1.5rem; }
       .hero-h   { font-size: clamp(2.125rem, 8vw, 2.875rem); }
@@ -898,6 +866,90 @@
 
     }
     @media (min-width: 801px) { .fab-wrap { display: none; } }
+
+    /* ══ TOAST NOTIFICATIONS ══ */
+    .toast-container {
+      position: fixed; top: 84px; right: 1.5rem; z-index: 600;
+      display: flex; flex-direction: column; gap: .5rem; pointer-events: none;
+    }
+    .toast {
+      pointer-events: auto;
+      background: var(--brown); color: #fff;
+      border: 1px solid rgba(201,168,76,.25); border-radius: 14px;
+      padding: .75rem 1.125rem;
+      font-family: var(--head); font-size: .8125rem; font-weight: 600;
+      display: flex; align-items: center; gap: .625rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,.35);
+      transform: translateX(120%); opacity: 0;
+      animation: toast-in .35s cubic-bezier(.2,.8,.2,1) forwards;
+      max-width: 320px;
+    }
+    .toast.out { animation: toast-out .25s ease forwards; }
+    .toast-ico { font-size: 1.125rem; flex-shrink: 0; }
+    .toast-msg { flex: 1; line-height: 1.3; }
+    .toast-msg small { display: block; font-size: .5625rem; font-weight: 500; color: rgba(255,255,255,.4); margin-top: .1rem; }
+    @keyframes toast-in { to { transform: translateX(0); opacity: 1; } }
+    @keyframes toast-out { to { transform: translateX(120%); opacity: 0; } }
+    @media (max-width: 560px) {
+      .toast-container { top: 72px; right: .75rem; left: .75rem; }
+      .toast { max-width: 100%; font-size: .75rem; padding: .625rem .875rem; }
+    }
+
+    /* ══ MUKACHEVO SECTION ══ */
+    .city {
+      background: var(--brown); position: relative; overflow: hidden;
+      padding: clamp(3rem,5vw,4.5rem) clamp(1.25rem,3vw,2rem);
+    }
+    .city::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(42,15,0,.92), rgba(42,15,0,.7));
+      z-index: 1;
+    }
+    .city-bg {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      filter: saturate(.6) brightness(.7); z-index: 0;
+    }
+    .city-in {
+      max-width: 1280px; margin: 0 auto; position: relative; z-index: 2;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+    }
+    .city-eye {
+      font-family: var(--head); font-size: .5625rem; font-weight: 700;
+      letter-spacing: .2em; color: var(--gold2); text-transform: uppercase;
+      margin-bottom: .75rem; display: flex; align-items: center; gap: .5rem;
+    }
+    .city-eye::before { content: '🏰'; font-size: .75rem; }
+    .city-h {
+      font-family: var(--head); font-weight: 900; font-size: clamp(1.5rem,3vw,2.25rem);
+      color: #fff; line-height: 1.15; margin-bottom: 1rem; letter-spacing: -.015em;
+    }
+    .city-h em { color: var(--gold2); font-style: normal; }
+    .city-p {
+      font-size: .9375rem; color: rgba(255,255,255,.6); line-height: 1.7; margin-bottom: 1.5rem;
+    }
+    .city-facts {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+    }
+    .city-fact {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(201,168,76,.12);
+      border-radius: 14px; padding: 1rem; text-align: center;
+    }
+    .city-fact-ico { font-size: 1.5rem; margin-bottom: .375rem; }
+    .city-fact-v { font-family: var(--head); font-weight: 800; font-size: .6875rem; color: var(--gold2); letter-spacing: .04em; }
+    .city-photo {
+      border-radius: 20px; overflow: hidden; aspect-ratio: 4/3;
+      border: 2px solid rgba(201,168,76,.15);
+      box-shadow: 0 16px 48px rgba(0,0,0,.4);
+    }
+    .city-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    @media (max-width: 800px) {
+      .city-in { grid-template-columns: 1fr; gap: 2rem; }
+      .city-photo { max-width: 480px; margin: 0 auto; }
+      .city-facts { grid-template-columns: repeat(3, 1fr); gap: .625rem; }
+      .city-fact { padding: .75rem .5rem; }
+      .city-fact-ico { font-size: 1.25rem; }
+      .city-fact-v { font-size: .5625rem; }
+    }
 
     /* ══ DEMO ADMIN BANNER ══ */
     .demo-bar {
@@ -1024,9 +1076,9 @@
   <div class="hero-glow"></div>
   <div class="hero-in">
     <div class="hero-content">
-      <div class="hero-tag">☕ Nero Caffè · офіційний постачальник</div>
+      <div class="hero-tag">☕ Nero Caffè · Мукачево, Закарпаття</div>
       <h1 class="hero-h">Кава, що<br><em>приїжджає</em><br>до вас свіжою</h1>
-      <p class="hero-p">Преміальна кава в зернах з доставкою по Мукачеву. Щоденне обсмаження — щоденна свіжість.</p>
+      <p class="hero-p">Свіжообсмажена кава в зернах з доставкою по Мукачеву. Закарпатська якість — від зерна до чашки.</p>
       <div class="hero-feats">
         <div class="hero-feat"><div class="hero-dot"></div>Безкоштовна доставка від 1 кг</div>
         <div class="hero-feat"><div class="hero-dot"></div>100% натуральні зерна без замінників</div>
@@ -1043,19 +1095,7 @@
         </div>
       </div>
     </div>
-    <!-- Visual panel (desktop) -->
-    <div class="hero-vis">
-      <div class="hero-card">
-        <div class="hc-img"><img src="assets/nero-crema-aroma.jpg" alt="Nero Caffe Crema Aroma"></div>
-        <div class="hc-brand">NERO CAFFÈ</div>
-        <div class="hc-sub">CREMA AROMA · ХІТ ПРОДАЖІВ</div>
-        <div class="hc-from">ВІД</div>
-        <div class="hc-price">440<sup>₴</sup></div>
-        <div class="hc-cta">
-          <button class="btn-buy" style="width:100%;justify-content:center" onclick="addToCart(4)">🛒 У КОШИК →</button>
-        </div>
-      </div>
-    </div>
+
   </div>
   <div class="hero-scroll">
     <span>ПРОКРУТІТЬ ВНИЗ</span>
@@ -1071,13 +1111,13 @@
     <div class="strip-i"><span class="strip-e">🌿</span><span class="strip-t">100% НАТУРАЛЬНІ ЗЕРНА</span></div>
     <div class="strip-i"><span class="strip-e">⚡</span><span class="strip-t">ДОСТАВКА В ДЕНЬ ЗАМОВЛЕННЯ</span></div>
     <div class="strip-i"><span class="strip-e">⭐</span><span class="strip-t">ПРЕМІАЛЬНА ЯКІСТЬ</span></div>
-    <div class="strip-i"><span class="strip-e">📍</span><span class="strip-t">МУКАЧЕВО</span></div>
+    <div class="strip-i"><span class="strip-e">📍</span><span class="strip-t">МУКАЧЕВО · ЗАКАРПАТТЯ</span></div>
     <div class="strip-i"><span class="strip-e">🚚</span><span class="strip-t">БЕЗКОШТОВНА ДОСТАВКА ВІД 1 КГ</span></div>
     <div class="strip-i"><span class="strip-e">☕</span><span class="strip-t">ЩОДЕННЕ ОБСМАЖЕННЯ</span></div>
-    <div class="strip-i"><span class="strip-e">🌿</span><span class="strip-t">100% НАТУРАЛЬНІ ЗЕРНА</span></div>
+    <div class="strip-i"><span class="strip-e">🏰</span><span class="strip-t">МІСТО ЗАМКУ ПАЛАНОК</span></div>
     <div class="strip-i"><span class="strip-e">⚡</span><span class="strip-t">ДОСТАВКА В ДЕНЬ ЗАМОВЛЕННЯ</span></div>
     <div class="strip-i"><span class="strip-e">⭐</span><span class="strip-t">ПРЕМІАЛЬНА ЯКІСТЬ</span></div>
-    <div class="strip-i"><span class="strip-e">📍</span><span class="strip-t">МУКАЧЕВО</span></div>
+    <div class="strip-i"><span class="strip-e">📍</span><span class="strip-t">МУКАЧЕВО · ЗАКАРПАТТЯ</span></div>
   </div>
 </div>
 
@@ -1153,6 +1193,30 @@
   </div>
 </section>
 
+<!-- MUKACHEVO SECTION -->
+<section class="city">
+  <img class="city-bg" src="../profit/assets/castle.jpg" alt="">
+  <div class="city-in reveal">
+    <div>
+      <div class="city-eye">MUKACHEVO · ZAKARPATTIA</div>
+      <div class="city-h">Кава з душею<br><em>Закарпаття</em></div>
+      <p class="city-p">
+        Мукачево — місто замку Паланок, виноградників та справжньої кавової
+        культури. Ми обсмажуємо каву щодня, щоб ви відчували смак
+        свіжості — як ранковий туман над Латорицею.
+      </p>
+      <div class="city-facts">
+        <div class="city-fact"><div class="city-fact-ico">🏰</div><div class="city-fact-v">ЗАМОК<br>ПАЛАНОК</div></div>
+        <div class="city-fact"><div class="city-fact-ico">🍷</div><div class="city-fact-v">ВИННИЙ<br>КРАЙ</div></div>
+        <div class="city-fact"><div class="city-fact-ico">☕</div><div class="city-fact-v">КАВОВА<br>СТОЛИЦЯ</div></div>
+      </div>
+    </div>
+    <div class="city-photo">
+      <img src="../profit/assets/castle.jpg" alt="Замок Паланок, Мукачево">
+    </div>
+  </div>
+</section>
+
 <!-- DEMO ADMIN BANNER -->
 <section class="demo-bar">
   <div class="demo-in reveal">
@@ -1178,7 +1242,7 @@
       <img src="../profit/assets/logo.png" alt="PROFIT">
       <div>
         <div class="foot-brand">PROFIT COFFEE</div>
-        <div class="foot-copy">© 2025 · Мукачево</div>
+        <div class="foot-copy">© 2025 · Мукачево, Закарпаття</div>
       </div>
     </div>
     <div class="foot-center">
@@ -1192,7 +1256,7 @@
     </nav>
   </div>
   <div class="foot-bottom">
-    <div class="foot-made">PROFIT COFFEE DELIVERY · МУКАЧЕВО</div>
+    <div class="foot-made">PROFIT COFFEE DELIVERY · МУКАЧЕВО · ЗАКАРПАТТЯ 🏰</div>
   </div>
 </footer>
 
@@ -1221,6 +1285,9 @@
   </div>
   <button class="fab-btn" id="fabBtn" onclick="toggleFab()" aria-label="Зв'язатись">☕</button>
 </div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
 
 <!-- ORDER MODAL -->
 <div class="ov" id="ov" onclick="if(event.target===this)closeM()">
@@ -1391,6 +1458,16 @@ function addToCart(id) {
   if (existing) { existing.qty++; }
   else { cart.push({ id: id, qty: 1 }); }
   saveCart(); updateCartBadge(); renderCart(); openCart();
+  var p = PRODUCTS.find(function(x){ return x.id === id; });
+  if (p) showToast(p.brand + ' ' + p.name, p.price + '₴');
+}
+function showToast(name, price) {
+  var c = document.getElementById('toastContainer');
+  var t = document.createElement('div'); t.className = 'toast';
+  t.innerHTML = '<span class="toast-ico">☕</span><span class="toast-msg">' + name + '<small>Додано в кошик · ' + price + '</small></span>';
+  c.appendChild(t);
+  setTimeout(function(){ t.classList.add('out'); }, 2200);
+  setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 2500);
 }
 function removeFromCart(id) {
   cart = cart.filter(function(c){ return c.id !== id; });

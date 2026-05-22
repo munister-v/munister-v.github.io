@@ -181,16 +181,34 @@
     .cell-note { font-size: .75rem; color: rgba(255,255,255,.4); }
     .tbl-empty { text-align: center; padding: 3rem; font-family: var(--head); font-size: .8125rem; color: rgba(255,255,255,.25); }
 
+    /* ══ MOBILE CARD VIEW ══ */
+    .mob-cards { display: none; }
+    .mob-card {
+      background: rgba(255,255,255,.04); border: 1px solid rgba(201,168,76,.12);
+      border-radius: 14px; padding: 1rem; margin-bottom: .75rem;
+      transition: border-color .2s;
+    }
+    .mob-card:hover { border-color: rgba(201,168,76,.25); }
+    .mob-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: .625rem; }
+    .mob-card-name { font-family: var(--head); font-weight: 700; font-size: .875rem; color: #fff; }
+    .mob-card-id { font-family: var(--head); font-size: .625rem; color: rgba(255,255,255,.25); }
+    .mob-card-row { display: flex; align-items: flex-start; gap: .5rem; margin-bottom: .375rem; }
+    .mob-card-label { font-family: var(--head); font-size: .5rem; font-weight: 700; letter-spacing: .08em; color: rgba(255,255,255,.3); min-width: 56px; text-transform: uppercase; padding-top: .1rem; flex-shrink: 0; }
+    .mob-card-val { font-size: .8125rem; color: rgba(255,255,255,.7); line-height: 1.4; }
+    .mob-card-price { color: var(--gold); font-family: var(--head); font-weight: 700; }
+    .mob-card-note { font-size: .75rem; color: rgba(255,255,255,.35); font-style: italic; margin-top: .375rem; padding-top: .375rem; border-top: 1px solid rgba(255,255,255,.05); }
+    .mob-card-dt { font-family: var(--head); font-size: .625rem; color: rgba(255,255,255,.35); }
+
     /* ══ RESPONSIVE ══ */
     @media (max-width: 1024px) {
       .kpis { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 768px) {
-      .top { padding: .875rem 1.125rem; }
+      .top { padding: .875rem 1rem; }
       .top-ttl { font-size: .8125rem; }
       .top-btns { width: 100%; }
       .tb { flex: 1; justify-content: center; font-size: .5625rem; padding: .45rem .625rem; }
-      .content { padding: 1.125rem; }
+      .content { padding: 1rem; }
       .kpis { grid-template-columns: repeat(2, 1fr); gap: .75rem; }
       .kpi { padding: 1rem .75rem; border-radius: 12px; }
       .kpi-v { font-size: 1.375rem; }
@@ -198,29 +216,31 @@
       .tools { gap: .625rem; }
       .tools-search { max-width: none; min-width: 0; }
       .tbl { font-size: .75rem; }
-      .tbl thead th { font-size: .5rem; padding: .625rem .625rem; }
-      .tbl tbody td { padding: .625rem .625rem; }
+      .tbl thead th { font-size: .5rem; padding: .625rem .5rem; }
+      .tbl tbody td { padding: .625rem .5rem; }
       .gate-card { padding: 2.5rem 2rem; }
     }
-    @media (max-width: 480px) {
-      .top { padding: .75rem 1rem; }
+    @media (max-width: 600px) {
+      .top { padding: .75rem .875rem; flex-direction: column; gap: .625rem; align-items: stretch; }
       .top-left { gap: .5rem; }
       .top-logo { width: 28px; height: 28px; }
-      .top-ttl { font-size: .75rem; }
+      .top-ttl { font-size: .8125rem; }
       .top-sub { display: none; }
-      .top-btns { gap: .25rem; }
-      .tb { font-size: .5rem; padding: .4rem .5rem; }
+      .top-btns { gap: .25rem; justify-content: stretch; }
+      .tb { flex: 1; justify-content: center; font-size: .5625rem; padding: .5rem .5rem; border-radius: 8px; }
       .content { padding: .875rem; }
       .kpis { gap: .5rem; }
-      .kpi { padding: .75rem .5rem; }
-      .kpi-v { font-size: 1.125rem; }
+      .kpi { padding: .875rem .625rem; border-radius: 12px; }
+      .kpi-v { font-size: 1.25rem; }
       .kpi-l { font-size: .4375rem; }
       .tools { flex-direction: column; align-items: stretch; gap: .5rem; }
       .tools label { font-size: .5625rem; }
-      .tools input[type=date] { font-size: .6875rem; }
-      .tools-search { max-width: none; }
-      .tbl thead th { font-size: .4375rem; padding: .5rem .4rem; letter-spacing: .06em; }
-      .tbl tbody td { padding: .5rem .4rem; font-size: .6875rem; }
+      .tools input[type=date] { font-size: .75rem; width: 100%; }
+      .tools-search { max-width: none; font-size: .8125rem; }
+      .tools-cnt { font-size: .6875rem; text-align: center; }
+      /* hide desktop table, show card view */
+      .tbl-w { display: none; }
+      .mob-cards { display: block; }
       .gate-card { padding: 2rem 1.5rem; border-radius: 18px; margin: 0 .5rem; }
       .gate-h { font-size: 1rem; }
       .gate-sub { font-size: .75rem; }
@@ -228,9 +248,11 @@
     }
     @media (max-width: 360px) {
       .kpis { grid-template-columns: 1fr 1fr; gap: .375rem; }
-      .kpi-v { font-size: 1rem; }
+      .kpi-v { font-size: 1.0625rem; }
       .kpi-l { font-size: .375rem; }
-      .tb { font-size: .4375rem; letter-spacing: .03em; }
+      .tb { font-size: .5rem; padding: .375rem .375rem; }
+      .mob-card { padding: .875rem; }
+      .mob-card-name { font-size: .8125rem; }
     }
 
     /* iOS Safari fix */
@@ -299,6 +321,7 @@
       </table>
       <div class="tbl-empty" id="te" style="display:none">Замовлень не знайдено</div>
     </div>
+    <div class="mob-cards" id="mobCards"></div>
   </div>
 </div>
 
@@ -345,8 +368,8 @@ function renderKpis() {
 }
 
 function renderTbl(arr) {
-  var tb = document.getElementById('tb'), te = document.getElementById('te');
-  if (!arr.length) { tb.innerHTML = ''; te.style.display = 'block'; return; }
+  var tb = document.getElementById('tb'), te = document.getElementById('te'), mc = document.getElementById('mobCards');
+  if (!arr.length) { tb.innerHTML = ''; mc.innerHTML = '<div class="tbl-empty">Замовлень не знайдено</div>'; te.style.display = 'block'; return; }
   te.style.display = 'none';
   tb.innerHTML = arr.map(function(o, i) {
     return '<tr>' +
@@ -358,6 +381,18 @@ function renderTbl(arr) {
       '<td>' + o.addr + '</td>' +
       '<td class="cell-note">' + (o.note || '—') + '</td>' +
     '</tr>';
+  }).join('');
+  mc.innerHTML = arr.map(function(o, i) {
+    return '<div class="mob-card">' +
+      '<div class="mob-card-top">' +
+        '<span class="mob-card-name">' + o.name + '</span>' +
+        '<span class="mob-card-dt">' + o.date + ' ' + o.time + '</span>' +
+      '</div>' +
+      '<div class="mob-card-row"><span class="mob-card-label">Тел</span><span class="mob-card-val">' + o.phone + '</span></div>' +
+      '<div class="mob-card-row"><span class="mob-card-label">Товар</span><span class="mob-card-val">' + o.product + ' · <span class="mob-card-price">' + o.price + '₴</span></span></div>' +
+      '<div class="mob-card-row"><span class="mob-card-label">Адреса</span><span class="mob-card-val">' + o.addr + '</span></div>' +
+      (o.note ? '<div class="mob-card-note">💬 ' + o.note + '</div>' : '') +
+    '</div>';
   }).join('');
 }
 
