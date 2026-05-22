@@ -3,9 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
   <title>PROFIT Coffee Delivery — Мукачево</title>
 
   <!-- OG / Social preview -->
@@ -29,10 +26,14 @@
   <meta name="theme-color" content="#2a0f00">
   <link rel="icon" type="image/png" href="../profit/assets/logo.png">
 
+  <!-- Preload hero image for fast LCP -->
+  <link rel="preload" as="image" href="../profit/assets/castle.jpg" fetchpriority="high">
+  <!-- DNS + connection warmup -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;0,9..144,900;1,9..144,700&display=swap" rel="stylesheet">
-  <script>window.__v = Date.now();</script>
+  <link rel="dns-prefetch" href="https://munister.com.ua">
+  <!-- Fonts: trimmed to only used weights -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;0,9..144,900;1,9..144,800&display=swap" rel="stylesheet">
   <style>
     :root {
       --brown:  #2a0f00;
@@ -219,7 +220,7 @@
     .reveal-scale.is-visible { opacity: 1; -webkit-transform: scale(1); transform: scale(1); }
 
     .hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; overflow: hidden; }
-    .hero-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; will-change: transform; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+    .hero-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; will-change: transform; -webkit-backface-visibility: hidden; backface-visibility: hidden; background: url('../profit/assets/castle.jpg') center 30% / cover; }
     .hero-bg::after {
       content:''; position: absolute; inset: 0;
       background: linear-gradient(108deg, rgba(20,6,0,.94) 0%, rgba(30,10,0,.78) 48%, rgba(30,10,0,.18) 100%);
@@ -1149,7 +1150,7 @@
   <div class="del-in">
     <div class="del-grid">
       <div class="del-photo reveal-left">
-        <img src="../profit/assets/interior.jpg" alt="PROFIT Coffee">
+        <img src="../profit/assets/interior.jpg" alt="PROFIT Coffee" loading="lazy" decoding="async">
       </div>
       <div class="del-content reveal-right">
         <div class="del-eye">МУКАЧЕВО · ДОСТАВКА КАВИ</div>
@@ -1204,7 +1205,7 @@
 
 <!-- MUKACHEVO SECTION -->
 <section class="city">
-  <img class="city-bg" src="../profit/assets/castle.jpg" alt="">
+  <img class="city-bg" src="../profit/assets/castle.jpg" alt="" loading="lazy" decoding="async">
   <div class="city-in reveal">
     <div>
       <div class="city-eye">MUKACHEVO · ZAKARPATTIA</div>
@@ -1221,7 +1222,7 @@
       </div>
     </div>
     <div class="city-photo">
-      <img src="../profit/assets/castle.jpg" alt="Замок Паланок, Мукачево">
+      <img src="../profit/assets/castle.jpg" alt="Замок Паланок, Мукачево" loading="lazy" decoding="async">
     </div>
   </div>
 </section>
@@ -1691,15 +1692,6 @@ document.querySelectorAll('.card-img img').forEach(img => {
 function updateHeaderState() {
   document.querySelector('.hdr').classList.toggle('scrolled', window.scrollY > 50);
 }
-
-/* ── Cache-bust local assets ── */
-const v = window.__v || Date.now();
-document.querySelectorAll('img[src*="profit/assets"], img[src*="assets/nero"]').forEach(img => {
-  const sep = img.src.includes('?') ? '&' : '?';
-  img.src = img.src + sep + 'v=' + v;
-});
-document.querySelector('.hero-bg').style.background =
-  "url('../profit/assets/castle.jpg?v=" + v + "') center 30% / cover";
 
 /* ── Unregister stale service workers ── */
 if ('serviceWorker' in navigator) {
