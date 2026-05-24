@@ -55,7 +55,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; overflow-x: clip; }
     body { background: var(--bg); color: var(--text-body); font-family: var(--serif); font-weight: 300; line-height: 1.65; overflow-x: hidden; }
-    section { scroll-margin-top: 78px; }
+    section { scroll-margin-top: 72px; }
     img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; border: none; background: none; font: inherit; }
@@ -121,10 +121,44 @@
       transition: color var(--t) var(--ease);
     }
     .nav-links a:hover { color: var(--rust); }
-    @media (max-width: 1100px) { .nav-links { display: none; } }
+    /* ── Mobile burger ── */
+    .nav-burger {
+      display: none; width: 36px; height: 36px;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 5px; margin-left: auto; cursor: pointer; z-index: 201;
+      position: relative;
+    }
+    .nav-burger span {
+      display: block; width: 22px; height: 2px; background: var(--coal);
+      border-radius: 1px; transition: transform .3s var(--ease), opacity .3s var(--ease);
+    }
+    .nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-burger.open span:nth-child(2) { opacity: 0; }
+    .nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-overlay {
+      position: fixed; inset: 0; z-index: 99;
+      background: rgba(240,235,228,0.97);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; opacity: 0; pointer-events: none;
+      transition: opacity .35s var(--ease);
+    }
+    .mobile-overlay.open { opacity: 1; pointer-events: auto; }
+    .mobile-overlay a {
+      font-family: var(--sans); font-size: 13px; font-weight: 400;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--coal);
+      padding: 8px 16px; transition: color .2s;
+    }
+    .mobile-overlay a:hover { color: var(--rust); }
+
+    @media (max-width: 1100px) {
+      .nav-links { display: none; }
+      .nav-burger { display: flex; }
+    }
     @media (max-width: 900px) {
       .nav { padding: 0 24px; height: 56px; }
-      .lang-switch { right: 24px; top: 20px; }
+      .lang-switch { right: 64px; top: 18px; }
     }
 
     /* ═══════════════════════════════════════
@@ -229,7 +263,7 @@
       gap: 48px; align-items: center;
     }
     .intro-aside {
-      font-family: var(--sans); font-size: 8.5px; letter-spacing: 0.3em;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.3em;
       text-transform: uppercase; color: var(--text-light);
     }
     .intro-aside.right { text-align: right; }
@@ -335,14 +369,14 @@
       min-width: 190px;
     }
     .atlante-hud-kicker {
-      font-family: var(--sans); font-size: 7px; letter-spacing: 0.24em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.24em;
       text-transform: uppercase; color: rgba(136,120,104,0.75); margin-bottom: 5px;
     }
     .atlante-hud-title {
       font-family: var(--serif); font-size: 22px; line-height: 1; color: var(--coal); margin-bottom: 4px;
     }
     .atlante-hud-meta {
-      font-family: var(--sans); font-size: 7px; letter-spacing: 0.18em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.18em;
       text-transform: uppercase; color: rgba(88,72,58,0.68);
     }
     .atlante-caption {
@@ -354,7 +388,7 @@
       text-shadow: 0 2px 12px rgba(0,0,0,0.5);
     }
     .atlante-caption-sub {
-      font-family: var(--sans); font-size: 8px; letter-spacing: 0.2em;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.2em;
       text-transform: uppercase; color: rgba(220,210,198,0.7); margin-top: 6px;
     }
 
@@ -381,7 +415,7 @@
       z-index: 2;
     }
     .atlante-card-label {
-      font-family: var(--sans); font-size: 7px; letter-spacing: 0.2em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.2em;
       text-transform: uppercase; color: rgba(210,200,188,0.65); margin-bottom: 4px;
     }
     .atlante-card-name {
@@ -432,7 +466,7 @@
       position: relative; z-index: 1;
     }
     .mb-desc {
-      font-family: var(--sans); font-size: 7.5px; letter-spacing: 0.18em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.18em;
       text-transform: uppercase; color: rgba(220,210,198,0.56);
       margin-top: 5px; display: block; position: relative; z-index: 1;
     }
@@ -476,7 +510,7 @@
     }
     .arch-card:hover .arch-card-info { opacity: 1; transform: none; }
     .arch-card-label {
-      font-family: var(--sans); font-size: 7px; letter-spacing: 0.22em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.22em;
       text-transform: uppercase; color: rgba(180,96,48,0.85); margin-bottom: 4px;
     }
     .arch-card-title {
@@ -487,7 +521,7 @@
       display: flex; flex-wrap: wrap; gap: 6px; margin-top: 32px;
     }
     .arch-tag {
-      font-family: var(--sans); font-size: 8px; letter-spacing: 0.16em;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.16em;
       text-transform: uppercase; color: var(--text-mid);
       border: 1px solid var(--line); padding: 5px 12px;
       transition: border-color .2s, color .2s;
@@ -511,7 +545,7 @@
     }
     .mat-item:hover { background: var(--stone-pale); }
     .mat-num {
-      font-family: var(--sans); font-size: 8px; letter-spacing: 0.3em;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.3em;
       text-transform: uppercase; color: var(--rust); margin-bottom: 24px; display: block;
     }
     .mat-title {
@@ -568,7 +602,7 @@
       color: var(--rust); display: block;
     }
     .rhythm-stat-l {
-      font-family: var(--sans); font-size: 7.5px; letter-spacing: 0.16em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.16em;
       text-transform: uppercase; color: var(--text-light); margin-top: 4px; display: block;
     }
     @media (max-width: 768px) {
@@ -604,7 +638,7 @@
       position: absolute; bottom: 0; left: 0; right: 0;
       padding: 8px 12px;
       background: linear-gradient(to top, rgba(30,34,40,0.82), transparent);
-      font-family: var(--sans); font-size: 7px; letter-spacing: 0.18em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.18em;
       text-transform: uppercase; color: rgba(220,210,198,0.75);
       opacity: 0; transform: translateY(6px);
       transition: opacity .3s, transform .3s;
@@ -662,7 +696,7 @@
       position: absolute; bottom: 0; left: 0; right: 0;
       padding: 14px 16px;
       background: linear-gradient(to top, rgba(30,34,40,0.78), transparent);
-      font-family: var(--sans); font-size: 7px; letter-spacing: 0.18em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.18em;
       text-transform: uppercase; color: rgba(220,210,198,0.72);
     }
     @media (max-width: 768px) {
@@ -693,7 +727,7 @@
       color: var(--rust-lt); line-height: 1; margin-bottom: 8px; display: block;
     }
     .donbas-fact-l {
-      font-family: var(--sans); font-size: 7.5px; letter-spacing: 0.18em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.18em;
       text-transform: uppercase; color: rgba(200,190,178,0.55);
     }
     @media (max-width: 768px) {
@@ -722,8 +756,8 @@
       text-align: right; padding-right: 20px; flex-shrink: 0;
     }
     .crono-item::after {
-      content: ''; position: absolute; left: 85px; top: 34px;
-      width: 7px; height: 7px; border-radius: 50%;
+      content: ''; position: absolute; left: 84.5px; top: 34px;
+      width: 8px; height: 8px; border-radius: 50%;
       background: var(--stone); border: 1px solid var(--line);
       transition: background .2s, border-color .2s;
     }
@@ -774,7 +808,7 @@
       padding: 12px 0; border-bottom: 1px solid var(--line);
     }
     .manifesto-meta-label {
-      font-family: var(--sans); font-size: 8px; letter-spacing: 0.2em;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.2em;
       text-transform: uppercase; color: var(--text-light);
     }
     .manifesto-meta-val {
@@ -807,7 +841,7 @@
     .photo-lightbox-close:hover { color: rgba(220,210,198,1); }
     .photo-lightbox-caption {
       position: absolute; bottom: 24px; left: 0; right: 0; text-align: center;
-      font-family: var(--sans); font-size: 8px; letter-spacing: 0.2em;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.2em;
       text-transform: uppercase; color: rgba(200,190,178,0.6);
     }
 
@@ -827,11 +861,11 @@
     }
     .footer-logo em { font-style: italic; color: var(--rust-lt); }
     .footer-meta {
-      font-family: var(--sans); font-size: 8px; letter-spacing: 0.22em;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.22em;
       text-transform: uppercase; color: rgba(180,170,158,0.5);
     }
     .footer-back {
-      font-family: var(--sans); font-size: 8px; letter-spacing: 0.22em;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.22em;
       text-transform: uppercase; color: rgba(180,170,158,0.5);
       transition: color .2s;
     }
@@ -858,14 +892,14 @@
     .ard-visual:hover img { filter: grayscale(6%) contrast(1.08); transform: scale(1.03); }
     .ard-badge {
       position: absolute; top: 14px; left: 14px;
-      font-family: var(--sans); font-size: 7px; letter-spacing: 0.22em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.22em;
       text-transform: uppercase; color: rgba(220,210,198,0.82);
       background: rgba(30,34,40,0.72); backdrop-filter: blur(4px);
       padding: 5px 10px; border: 1px solid rgba(180,96,48,0.4);
     }
     .ard-text {}
     .ard-num {
-      font-family: var(--sans); font-size: 8px; letter-spacing: 0.3em;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.3em;
       text-transform: uppercase; color: var(--rust); margin-bottom: 10px; display: block;
     }
     .ard-title {
@@ -889,7 +923,7 @@
     }
     .ard-spec:nth-child(2n) { border-right: none; padding-right: 0; margin-right: 0; }
     .ard-spec-l {
-      font-family: var(--sans); font-size: 7px; letter-spacing: 0.2em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.2em;
       text-transform: uppercase; color: var(--text-light); display: block; margin-bottom: 4px;
     }
     .ard-spec-v {
@@ -920,7 +954,7 @@
     @media (max-width: 900px) { .vol-wrap { padding: 0 24px; } }
 
     .vol-eyebrow {
-      font-family: var(--sans); font-size: 8px; letter-spacing: 0.32em;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.32em;
       text-transform: uppercase; color: rgba(180,96,48,0.7);
       margin-bottom: 16px; display: block;
     }
@@ -975,7 +1009,7 @@
       mix-blend-mode: overlay;
     }
     .vol-cover-trilogy {
-      font-family: var(--sans); font-size: 7px; letter-spacing: 0.32em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.32em;
       text-transform: uppercase; color: rgba(140,160,200,0.55);
       margin-bottom: 28px; position: relative; z-index: 1;
     }
@@ -1000,13 +1034,13 @@
       margin: 16px auto;
     }
     .vol-cover-author {
-      font-family: var(--sans); font-size: 8px; letter-spacing: 0.26em;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.26em;
       text-transform: uppercase; color: rgba(160,178,210,0.5);
       position: relative; z-index: 1;
     }
     .vol-cover-year {
       position: absolute; bottom: 18px; right: 20px; z-index: 1;
-      font-family: var(--sans); font-size: 7px; letter-spacing: 0.18em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.18em;
       color: rgba(140,160,200,0.35); text-transform: uppercase;
     }
 
@@ -1040,7 +1074,7 @@
       margin-bottom: 0;
     }
     .vol-excerpt cite {
-      font-family: var(--sans); font-size: 7.5px; letter-spacing: 0.2em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.2em;
       text-transform: uppercase; color: rgba(160,178,210,0.4);
       margin-top: 12px; display: block; font-style: normal;
     }
@@ -1054,7 +1088,7 @@
     }
     .vol-chapter:hover { background: rgba(255,255,255,0.05); }
     .vol-ch-num {
-      font-family: var(--sans); font-size: 7px; letter-spacing: 0.28em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.28em;
       text-transform: uppercase; color: rgba(180,96,48,0.55); margin-bottom: 8px; display: block;
     }
     .vol-ch-title {
@@ -1076,7 +1110,7 @@
     .vol-trilogy-book.current { border-top-color: rgba(140,160,200,0.5); }
     .vol-trilogy-book:hover { background: rgba(255,255,255,0.04); }
     .vol-tr-n {
-      font-family: var(--sans); font-size: 7px; letter-spacing: 0.28em;
+      font-family: var(--sans); font-size: 9px; letter-spacing: 0.28em;
       text-transform: uppercase; color: rgba(160,178,210,0.4); margin-bottom: 8px; display: block;
     }
     .vol-tr-title {
@@ -1084,7 +1118,7 @@
       color: rgba(220,215,208,0.75); line-height: 1.2; margin-bottom: 4px;
     }
     .vol-tr-sub {
-      font-family: var(--sans); font-size: 8px; letter-spacing: 0.16em;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.16em;
       text-transform: uppercase; color: rgba(160,170,158,0.38);
     }
     @media (max-width: 640px) {
@@ -1157,10 +1191,6 @@
         <span class="ua">Будівлі</span>
         <span class="en">Buildings</span>
       </a></li>
-      <li><a href="#cronologia">
-        <span class="ua">Хронологія</span>
-        <span class="en">Timeline</span>
-      </a></li>
       <li><a href="#voloshkove">
         <span class="ua">Волошкове поле</span>
         <span class="en">Cornflower Field</span>
@@ -1170,7 +1200,50 @@
         <span class="en">Manifesto</span>
       </a></li>
     </ul>
+    <button class="nav-burger" id="nav-burger" aria-label="Меню" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+
+  <!-- Mobile overlay menu -->
+  <div class="mobile-overlay" id="mobile-overlay">
+    <a href="#atlante-city" onclick="closeMobileMenu()">
+      <span class="ua">Панорама</span><span class="en">Panorama</span>
+    </a>
+    <a href="#kod" onclick="closeMobileMenu()">
+      <span class="ua">Код</span><span class="en">Code</span>
+    </a>
+    <a href="#arkhitektura" onclick="closeMobileMenu()">
+      <span class="ua">Архітектура</span><span class="en">Architecture</span>
+    </a>
+    <a href="#materialy" onclick="closeMobileMenu()">
+      <span class="ua">Матеріали</span><span class="en">Materials</span>
+    </a>
+    <a href="#rytm" onclick="closeMobileMenu()">
+      <span class="ua">Ритм</span><span class="en">Rhythm</span>
+    </a>
+    <a href="#obrazy" onclick="closeMobileMenu()">
+      <span class="ua">Образи</span><span class="en">Images</span>
+    </a>
+    <a href="#pamyat" onclick="closeMobileMenu()">
+      <span class="ua">Пам'ять</span><span class="en">Memory</span>
+    </a>
+    <a href="#donbas" onclick="closeMobileMenu()">
+      <span class="ua">Донбас</span><span class="en">Donbas</span>
+    </a>
+    <a href="#cronologia" onclick="closeMobileMenu()">
+      <span class="ua">Хронологія</span><span class="en">Timeline</span>
+    </a>
+    <a href="#arkhitektura-deep" onclick="closeMobileMenu()">
+      <span class="ua">Будівлі</span><span class="en">Buildings</span>
+    </a>
+    <a href="#voloshkove" onclick="closeMobileMenu()">
+      <span class="ua">Волошкове поле</span><span class="en">Cornflower Field</span>
+    </a>
+    <a href="#manifesto" onclick="closeMobileMenu()">
+      <span class="ua">Маніфест</span><span class="en">Manifesto</span>
+    </a>
+  </div>
 
   <!-- ════════════════════════
        HERO
@@ -1263,9 +1336,9 @@
           </div>
           <div class="atlante-caption">
             <div class="atlante-caption-title ua" id="atlante-cap-title">Донецьк</div>
-            <div class="atlante-caption-title en" id="atlante-cap-title-en" style="display:none">Donetsk</div>
+            <div class="atlante-caption-title en" id="atlante-cap-title-en">Donetsk</div>
             <div class="atlante-caption-sub ua" id="atlante-cap-sub">Засновано 1869 · Місто мільйону троянд</div>
-            <div class="atlante-caption-sub en" id="atlante-cap-sub-en" style="display:none">Founded 1869 · City of a Million Roses</div>
+            <div class="atlante-caption-sub en" id="atlante-cap-sub-en">Founded 1869 · City of a Million Roses</div>
           </div>
         </div>
 
@@ -1566,44 +1639,44 @@
 
       <div class="gallery-grid fu">
         <div class="gallery-item gi-1" onclick="openLightbox(this)">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Donetsk_City.jpg/1280px-Donetsk_City.jpg" alt="Донецьк, вид зверху" loading="lazy">
-          <div class="gallery-item-cap ua">Панорама · вид зверху</div>
-          <div class="gallery-item-cap en">Panorama · aerial view</div>
+          <img src="images/Донецк_2012_-_panoramio.jpg" alt="Донецьк 2012, панорама" loading="lazy">
+          <div class="gallery-item-cap ua">Панорама · 2012</div>
+          <div class="gallery-item-cap en">Panorama · 2012</div>
         </div>
         <div class="gallery-item gi-2" onclick="openLightbox(this)">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Donbass_Arena_Donetsk.jpg/1280px-Donbass_Arena_Donetsk.jpg" alt="Донбас Арена" loading="lazy">
-          <div class="gallery-item-cap ua">Донбас Арена</div>
-          <div class="gallery-item-cap en">Donbas Arena</div>
+          <img src="images/Парк_у_Донбасс_Арены_-_panoramio.jpg" alt="Парк у Донбас Арени" loading="lazy">
+          <div class="gallery-item-cap ua">Парк у Донбас Арени</div>
+          <div class="gallery-item-cap en">Donbas Arena Park</div>
         </div>
         <div class="gallery-item gi-3" onclick="openLightbox(this)">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Donetsk_Drama_Theatre.jpg/1280px-Donetsk_Drama_Theatre.jpg" alt="Драматичний театр" loading="lazy">
-          <div class="gallery-item-cap ua">Театр</div>
-          <div class="gallery-item-cap en">Theatre</div>
+          <img src="images/2012-11-20_-_panoramio.jpg" alt="Донецьк, листопад 2012" loading="lazy">
+          <div class="gallery-item-cap ua">Листопад 2012</div>
+          <div class="gallery-item-cap en">November 2012</div>
         </div>
         <div class="gallery-item gi-4" onclick="openLightbox(this)">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Donetsk_railway_station.jpg/1280px-Donetsk_railway_station.jpg" alt="Залізничний вокзал" loading="lazy">
-          <div class="gallery-item-cap ua">Залізничний вокзал</div>
-          <div class="gallery-item-cap en">Railway Station</div>
+          <img src="images/После_реконструкции_2012_-_panoramio.jpg" alt="Після реконструкції" loading="lazy">
+          <div class="gallery-item-cap ua">Після реконструкції · 2012</div>
+          <div class="gallery-item-cap en">After reconstruction · 2012</div>
         </div>
         <div class="gallery-item gi-5" onclick="openLightbox(this)">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Donetsk_panorama.jpg/1280px-Donetsk_panorama.jpg" alt="Донецьк панорама" loading="lazy">
-          <div class="gallery-item-cap ua">Міський горизонт</div>
-          <div class="gallery-item-cap en">City skyline</div>
+          <img src="images/Panoramio_-_V&amp;A_Dudush_-_вот_и_Донецк_на_горизонте.jpg" alt="Донецьк на горизонті" loading="lazy">
+          <div class="gallery-item-cap ua">Донецьк на горизонті</div>
+          <div class="gallery-item-cap en">Donetsk on the horizon</div>
         </div>
         <div class="gallery-item gi-6" onclick="openLightbox(this)">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Donetsk_City.jpg/800px-Donetsk_City.jpg" alt="Донецьк місто" loading="lazy">
-          <div class="gallery-item-cap ua">Центральний проспект</div>
-          <div class="gallery-item-cap en">Central Avenue</div>
+          <img src="images/Солнечная_беседка_-_panoramio.jpg" alt="Сонячна бесідка" loading="lazy">
+          <div class="gallery-item-cap ua">Сонячна бесідка</div>
+          <div class="gallery-item-cap en">Sunny gazebo</div>
         </div>
         <div class="gallery-item gi-7" onclick="openLightbox(this)">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Donbass_Arena_Donetsk.jpg/800px-Donbass_Arena_Donetsk.jpg" alt="Арена ніч" loading="lazy">
-          <div class="gallery-item-cap ua">Арена вночі</div>
-          <div class="gallery-item-cap en">Arena at night</div>
+          <img src="images/Новинка_Авапарк_-_panoramio.jpg" alt="Аквапарк" loading="lazy">
+          <div class="gallery-item-cap ua">Аквапарк</div>
+          <div class="gallery-item-cap en">Aquapark</div>
         </div>
         <div class="gallery-item gi-8" onclick="openLightbox(this)">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Donetsk_Drama_Theatre.jpg/800px-Donetsk_Drama_Theatre.jpg" alt="Архітектура" loading="lazy">
-          <div class="gallery-item-cap ua">Радянська архітектура</div>
-          <div class="gallery-item-cap en">Soviet architecture</div>
+          <img src="images/Дзержинского_-_Розенкова_-_panoramio_(cropped).jpg" alt="Вулиця Дзержинського" loading="lazy">
+          <div class="gallery-item-cap ua">Міська архітектура</div>
+          <div class="gallery-item-cap en">Urban architecture</div>
         </div>
       </div>
     </div>
@@ -1789,6 +1862,9 @@
   ════════════════════════ -->
   <section id="manifesto">
     <div class="wrap">
+      <header class="sec-head fu" style="margin-bottom:48px">
+        <span class="sec-num">09</span>
+      </header>
       <div class="manifesto-inner fu">
         <div class="manifesto-text">
           <h2 class="ua">Навіщо<br><em>цей портал</em></h2>
@@ -2037,8 +2113,8 @@
           <div class="vol-excerpt">
             <p class="ua">«Він стояв на балконі і дивився, як над дитячим майданчиком здіймається дим. Дим був звичайний - сірий, побутовий. Хтось палив сміття. Але він стояв і дивився довго, ніби в цьому димі було щось важливе, що треба запам'ятати.»</p>
             <p class="en">"He stood on the balcony watching smoke rise above the playground. The smoke was ordinary - grey, domestic. Someone was burning rubbish. But he stood and watched for a long time, as if in that smoke there was something important that needed to be remembered."</p>
-            <cite ua>з рукопису · розділ III · «Lipень»</cite>
-            <cite en>from the manuscript · chapter III · "Lypen"</cite>
+            <cite class="ua">з рукопису · розділ III · «Lipень»</cite>
+            <cite class="en">from the manuscript · chapter III · "Lypen"</cite>
           </div>
 
           <div class="vol-chapters">
@@ -2108,6 +2184,17 @@
 
     </div>
   </section>
+
+  <!-- Back to top -->
+  <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Нагору" style="
+    position:fixed;bottom:28px;right:28px;z-index:90;
+    width:44px;height:44px;border-radius:50%;
+    background:var(--coal);color:rgba(240,235,228,0.8);
+    font-size:18px;display:none;align-items:center;justify-content:center;
+    box-shadow:0 4px 16px rgba(0,0,0,0.25);
+    transition:opacity .3s,transform .3s;
+    border:1px solid rgba(255,255,255,0.08);cursor:pointer;
+  ">↑</button>
 
   <!-- Footer -->
   <footer class="site-footer">
@@ -2186,7 +2273,8 @@
     /* ── Lightbox ── */
     function openLightbox(el) {
       const img = el.querySelector('img');
-      const cap = el.querySelector('.gallery-item-cap');
+      const isEn = document.body.classList.contains('lang-en');
+      const cap = el.querySelector('.gallery-item-cap.' + (isEn ? 'en' : 'ua'));
       document.getElementById('lightbox-img').src = img.src;
       document.getElementById('lightbox-img').alt = img.alt;
       document.getElementById('lightbox-cap').textContent = cap ? cap.textContent.trim() : '';
@@ -2199,6 +2287,26 @@
       document.body.style.overflow = '';
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox({}); });
+
+    /* ── Mobile menu ── */
+    function toggleMobileMenu() {
+      const burger = document.getElementById('nav-burger');
+      const overlay = document.getElementById('mobile-overlay');
+      burger.classList.toggle('open');
+      overlay.classList.toggle('open');
+      document.body.style.overflow = overlay.classList.contains('open') ? 'hidden' : '';
+    }
+    function closeMobileMenu() {
+      document.getElementById('nav-burger').classList.remove('open');
+      document.getElementById('mobile-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    /* ── Back to top ── */
+    const btt = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+      btt.style.display = window.scrollY > 600 ? 'flex' : 'none';
+    }, { passive: true });
   </script>
 </body>
 </html>
