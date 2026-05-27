@@ -1205,74 +1205,57 @@
     .vol-cover {
       position: sticky; top: 96px;
     }
+    .vol-cover-link {
+      display: block; text-decoration: none;
+    }
     .vol-cover-img {
       width: 100%; aspect-ratio: 3/4;
-      background:
-        linear-gradient(145deg, #1a2235 0%, #0e1520 50%, #12181f 100%);
-      border: 1px solid rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
       box-shadow:
         0 0 0 1px rgba(100,130,180,0.12),
         0 48px 100px rgba(0,0,0,0.7),
         0 0 80px rgba(100,130,180,0.06);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; padding: 40px 32px;
       position: relative; overflow: hidden;
-      transition: box-shadow .5s ease;
+      transition: box-shadow .5s ease, transform .4s ease;
     }
     .vol-cover-img:hover {
+      transform: translateY(-4px);
       box-shadow:
         0 0 0 1px rgba(100,130,180,0.22),
-        0 60px 120px rgba(0,0,0,0.8),
+        0 64px 120px rgba(0,0,0,0.8),
         0 0 120px rgba(100,130,180,0.1);
     }
-    .vol-cover-img::before {
-      content: '';
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(100,130,200,0.12), transparent 60%),
-        repeating-linear-gradient(0deg, transparent, transparent 44px, rgba(255,255,255,0.018) 44px, rgba(255,255,255,0.018) 45px);
-      pointer-events: none;
+    .vol-cover-img img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: contrast(1.04) brightness(0.96);
+      transition: filter .4s ease;
     }
-    .vol-cover-grain {
-      position: absolute; inset: 0; pointer-events: none; opacity: 0.04;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      mix-blend-mode: overlay;
+    .vol-cover-img:hover img { filter: contrast(1.06) brightness(1.02); }
+    .vol-cover-badge {
+      position: absolute; top: 14px; left: 14px; z-index: 2;
+      font-family: var(--mono); font-size: 0.5625rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.85);
+      background: rgba(17,18,20,0.78); backdrop-filter: blur(6px);
+      padding: 5px 10px; border: 1px solid rgba(242,101,34,0.45); border-radius: 2px;
     }
-    .vol-cover-trilogy {
-      font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.12em;
-      text-transform: uppercase; color: rgba(140,160,200,0.55);
-      margin-bottom: 28px; position: relative; z-index: 1;
+    .vol-cover-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+      padding: 28px 20px 20px;
+      background: linear-gradient(to top, rgba(10,12,16,0.94) 0%, rgba(10,12,16,0.6) 55%, transparent 100%);
     }
-    .vol-cover-flowers {
-      font-size: 48px; margin-bottom: 20px; position: relative; z-index: 1;
-      filter: grayscale(60%) brightness(0.7);
-      line-height: 1;
+    .vol-cover-overlay-title {
+      font-family: var(--sans); font-size: 1.25rem; font-weight: 700;
+      color: rgba(220,228,240,0.92); line-height: 1.1; margin-bottom: 4px;
     }
-    .vol-cover-title {
-      font-family: var(--sans); font-size: clamp(1.5rem, 3vw, 2.25rem);
-      font-weight: 700; line-height: 1.05; letter-spacing: 0.02em;
-      color: rgba(220,228,240,0.88); margin-bottom: 12px;
-      position: relative; z-index: 1;
+    .vol-cover-overlay-sub {
+      font-family: var(--mono); font-size: 0.5625rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(160,178,210,0.6);
     }
-    .vol-cover-title em {
-      font-style: italic; color: rgba(160,185,230,0.7); display: block;
-      font-size: 0.7em; letter-spacing: 0.06em;
-    }
-    .vol-cover-rule {
-      width: 40px; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(140,160,200,0.4), transparent);
-      margin: 16px auto;
-    }
-    .vol-cover-author {
-      font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.12em;
-      text-transform: uppercase; color: rgba(160,178,210,0.5);
-      position: relative; z-index: 1;
-    }
-    .vol-cover-year {
-      position: absolute; bottom: 18px; right: 20px; z-index: 1;
-      font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.12em;
-      color: rgba(140,160,200,0.35); text-transform: uppercase;
+    .vol-cover-price {
+      position: absolute; bottom: 18px; right: 16px; z-index: 3;
+      font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.08em;
+      color: var(--rust); background: rgba(10,12,16,0.82);
+      padding: 4px 8px; border-radius: 2px;
     }
 
     /* content side */
@@ -2490,23 +2473,21 @@
 
         <!-- Book cover -->
         <div class="vol-cover fu">
-          <div class="vol-cover-img">
-            <div class="vol-cover-grain"></div>
-            <span class="vol-cover-trilogy ua">Трилогія «Донецьк 2014» · Книга I</span>
-            <span class="vol-cover-trilogy en">Trilogy "Donetsk 2014" · Book I</span>
-            <div class="vol-cover-flowers">❀</div>
-            <h2 class="vol-cover-title ua">
-              Волошкове<br>поле
-              <em>cornflower field</em>
-            </h2>
-            <h2 class="vol-cover-title en">
-              Cornflower<br>Field
-              <em>волошкове поле</em>
-            </h2>
-            <div class="vol-cover-rule"></div>
-            <span class="vol-cover-author">Vyacheslav Munister</span>
-            <span class="vol-cover-year">2026</span>
-          </div>
+          <a href="https://donetsk2014.github.io/" target="_blank" rel="noopener" class="vol-cover-link">
+            <div class="vol-cover-img">
+              <img
+                src="https://raw.githubusercontent.com/munister-v/munister-v.github.io/refs/heads/main/donetsk/photo_2026-03-02_16-36-39.jpg"
+                alt="Волошкове поле — обкладинка книги · Vyacheslav Munister"
+                loading="lazy"
+              >
+              <div class="vol-cover-badge">Noir Edition</div>
+              <div class="vol-cover-overlay">
+                <div class="vol-cover-overlay-title">Волошкове поле</div>
+                <div class="vol-cover-overlay-sub">Vyacheslav Munister · 2026</div>
+              </div>
+              <div class="vol-cover-price">200 грн</div>
+            </div>
+          </a>
         </div>
 
         <!-- Content -->
@@ -2517,68 +2498,68 @@
           <h2 class="vol-title en">
             Cornflower<br><em>Field</em>
           </h2>
-          <span class="vol-subtitle ua">Перша книга трилогії «Донецьк 2014» · Художня проза</span>
-          <span class="vol-subtitle en">First book of the trilogy "Donetsk 2014" · Literary fiction</span>
+          <span class="vol-subtitle ua">Трилогія «Донецьк 2014» · Книга I · Noir Edition · 128 стор.</span>
+          <span class="vol-subtitle en">Trilogy "Donetsk 2014" · Book I · Noir Edition · 128 pages</span>
 
           <div class="vol-text">
-            <p class="ua">Літо 2014 року. Донецьк. Місто, яке ще недавно жило звичайним життям - шахти, базари, футбол, троянди на проспектах - раптово опиняється в центрі катастрофи. По вулицях їздять вантажівки з бойовиками. У небі гудять гелікоптери. Люди стоять у чергах за хлібом і слухають далекі вибухи, намагаючись визначити - ближче чи далі, ніж вчора.</p>
-            <p class="en">Summer 2014. Donetsk. A city that only recently lived an ordinary life - mines, markets, football, roses on the boulevards - suddenly finds itself at the centre of catastrophe. Trucks carrying fighters drive through the streets. Helicopters drone in the sky. People queue for bread and listen to distant explosions, trying to determine whether they are closer or further away than yesterday.</p>
-            <p class="ua"><strong>«Волошкове поле»</strong> - це не хронологія подій і не політичний аналіз. Це проза пам'яті: роман про те, як звичайні люди проживають неможливе. Головний герой - молодий чоловік, який народився і виріс у Донецьку, і якому доводиться вирішувати: залишитись чи поїхати, і що взяти з собою, якщо можна взяти тільки одне.</p>
-            <p class="en"><strong>"Cornflower Field"</strong> is not a chronology of events, nor a political analysis. It is the prose of memory: a novel about how ordinary people live through the impossible. The protagonist is a young man born and raised in Donetsk, who must decide: to stay or to leave, and what to take with him if he can take only one thing.</p>
-            <p class="ua">Волошки - це квіти, що ростуть на порушених землях. На занедбаних полях, на узбіччях доріг, на місцях, де щось зламалось або зникло. Синій колір серед руйнувань. Назва - не метафора, а точний образ: щось крихке і яскраве, що продовжує рости там, де, здавалось би, вже нічого не може рости.</p>
-            <p class="en">Cornflowers are flowers that grow on disturbed ground. On abandoned fields, on roadsides, in places where something broke or disappeared. Blue against destruction. The title is not a metaphor but a precise image: something fragile and bright that continues to grow where, it seemed, nothing could grow anymore.</p>
+            <p class="ua"><strong>Хроніка деприватизації.</strong> Приватне стає публічним. Мовчання голосніше вибухів.</p>
+            <p class="en"><strong>Chronicle of Deprivatization.</strong> The private becomes public. Silence louder than explosions.</p>
+            <p class="ua">Весна 2014 року. Донецьк. Збройні формування опановують вулиці. Під удар потрапляють усі — політики, священики, банкіри, звичайні люди. Приватне життя перестає існувати: чужі люди з автоматами вирішують, хто залишиться у своєму домі, а хто — ні.</p>
+            <p class="en">Spring 2014. Donetsk. Armed formations take the streets. Everyone becomes a target — politicians, clergy, bankers, ordinary people. Private life ceases to exist: strangers with guns decide who stays in their home and who does not.</p>
+            <p class="ua"><strong>«Волошкове поле»</strong> — це не хронологія і не аналіз. Це архівна проза: уламки щоденника, дорожні нотатки, сцени з вулиць. Маршрут Н-20 між Маріуполем і Донецьком. Понівечені банкомати. Дачний масив Хорошово. Кінотеатр Шевченка. Епілог датований 26 травня 2014 року.</p>
+            <p class="en"><strong>"Cornflower Field"</strong> is not a chronology nor an analysis. It is archival prose: diary fragments, road notes, street scenes. Route H-20 between Mariupol and Donetsk. Vandalised ATMs. Khoroshovo cottage settlement. Shevchenko Cinema. The epilogue is dated May 26, 2014.</p>
           </div>
 
           <div class="vol-excerpt">
-            <p class="ua">«Він стояв на балконі і дивився, як над дитячим майданчиком здіймається дим. Дим був звичайний - сірий, побутовий. Хтось палив сміття. Але він стояв і дивився довго, ніби в цьому димі було щось важливе, що треба запам'ятати.»</p>
-            <p class="en">"He stood on the balcony watching smoke rise above the playground. The smoke was ordinary - grey, domestic. Someone was burning rubbish. But he stood and watched for a long time, as if in that smoke there was something important that needed to be remembered."</p>
-            <cite class="ua">з рукопису · розділ III · «Lipень»</cite>
-            <cite class="en">from the manuscript · chapter III · "Lypen"</cite>
+            <p class="ua">«Зло торжествує лише тоді, коли добрі люди не роблять нічого.»</p>
+            <p class="en">"Evil triumphs only when good people do nothing."</p>
+            <cite class="ua">епіграф · «Волошкове поле»</cite>
+            <cite class="en">epigraph · "Cornflower Field"</cite>
           </div>
 
           <div class="vol-chapters">
             <div class="vol-chapter">
-              <span class="vol-ch-num ua">Розділ I</span>
-              <span class="vol-ch-num en">Chapter I</span>
-              <div class="vol-ch-title ua">Червень. Ще звичайний</div>
-              <div class="vol-ch-title en">June. Still ordinary</div>
-              <div class="vol-ch-desc ua">Місто до. Ринок, сусіди, запах тютюну у дворі. Все на своїх місцях - поки що.</div>
-              <div class="vol-ch-desc en">The city before. The market, neighbours, the smell of tobacco in the yard. Everything in its place - for now.</div>
+              <span class="vol-ch-num ua">Акт I</span>
+              <span class="vol-ch-num en">Act I</span>
+              <div class="vol-ch-title ua">Маршрут Н-20</div>
+              <div class="vol-ch-title en">Route H-20</div>
+              <div class="vol-ch-desc ua">Маріуполь — Донецьк. Дорога між двома містами весни 2014-го.</div>
+              <div class="vol-ch-desc en">Mariupol — Donetsk. The road between two cities in spring 2014.</div>
             </div>
             <div class="vol-chapter">
-              <span class="vol-ch-num ua">Розділ II</span>
-              <span class="vol-ch-num en">Chapter II</span>
-              <div class="vol-ch-title ua">Липень. Вибухи вдалині</div>
-              <div class="vol-ch-title en">July. Distant explosions</div>
-              <div class="vol-ch-desc ua">Звуки, що не мають назви. Нові маршрути. Перші від'їзди сусідів.</div>
-              <div class="vol-ch-desc en">Sounds without names. New routes. The first departures of neighbours.</div>
+              <span class="vol-ch-num ua">Акт II</span>
+              <span class="vol-ch-num en">Act II</span>
+              <div class="vol-ch-title ua">Банкомати</div>
+              <div class="vol-ch-title en">ATMs</div>
+              <div class="vol-ch-desc ua">Хроніка вандалізму. Як руйнується інфраструктура довіри.</div>
+              <div class="vol-ch-desc en">A chronicle of vandalism. How the infrastructure of trust collapses.</div>
             </div>
             <div class="vol-chapter">
-              <span class="vol-ch-num ua">Розділ III</span>
-              <span class="vol-ch-num en">Chapter III</span>
-              <div class="vol-ch-title ua">Серпень. Рішення</div>
-              <div class="vol-ch-title en">August. The decision</div>
-              <div class="vol-ch-desc ua">Що береш із собою, коли берeш тільки одне. Остання прогулянка проспектом.</div>
-              <div class="vol-ch-desc en">What you take when you take only one thing. The last walk along the boulevard.</div>
+              <span class="vol-ch-num ua">Акт III</span>
+              <span class="vol-ch-num en">Act III</span>
+              <div class="vol-ch-title ua">Хорошово</div>
+              <div class="vol-ch-title en">Khoroshovo</div>
+              <div class="vol-ch-desc ua">Дачний масив на краю міста. Приватне — останнє, що залишилось.</div>
+              <div class="vol-ch-desc en">A cottage settlement at the city's edge. The private — the last thing remaining.</div>
             </div>
             <div class="vol-chapter">
-              <span class="vol-ch-num ua">Розділ IV</span>
-              <span class="vol-ch-num en">Chapter IV</span>
-              <div class="vol-ch-title ua">Вересень. Після</div>
-              <div class="vol-ch-title en">September. After</div>
-              <div class="vol-ch-desc ua">Нове місто. Чужа квартира. Телефон, що мовчить. Пам'ять як єдиний дім.</div>
-              <div class="vol-ch-desc en">New city. Someone else's apartment. A phone that is silent. Memory as the only home.</div>
+              <span class="vol-ch-num ua">Епілог</span>
+              <span class="vol-ch-num en">Epilogue</span>
+              <div class="vol-ch-title ua">Кінотеатр Шевченка · 26.05.2014</div>
+              <div class="vol-ch-title en">Shevchenko Cinema · 26.05.2014</div>
+              <div class="vol-ch-desc ua">Останній кадр. Місто, яке ще не знає, що воно вже інше.</div>
+              <div class="vol-ch-desc en">The last frame. A city that does not yet know it has already changed.</div>
             </div>
           </div>
 
           <div class="vol-trilogy-strip">
             <div class="vol-trilogy-book current">
-              <span class="vol-tr-n ua">Книга I · Зараз</span>
-              <span class="vol-tr-n en">Book I · Now</span>
+              <span class="vol-tr-n ua">Книга I · Доступна</span>
+              <span class="vol-tr-n en">Book I · Available</span>
               <div class="vol-tr-title ua">Волошкове поле</div>
               <div class="vol-tr-title en">Cornflower Field</div>
-              <div class="vol-tr-sub ua">Літо 2014 · Донецьк</div>
-              <div class="vol-tr-sub en">Summer 2014 · Donetsk</div>
+              <div class="vol-tr-sub ua">Весна 2014 · Донецьк · 200 грн</div>
+              <div class="vol-tr-sub en">Spring 2014 · Donetsk · 200 UAH</div>
             </div>
             <div class="vol-trilogy-book">
               <span class="vol-tr-n ua">Книга II · Незабаром</span>
@@ -2597,6 +2578,19 @@
               <div class="vol-tr-sub en">2015–2022 · Return</div>
             </div>
           </div>
+
+          <a href="https://donetsk2014.github.io/" target="_blank" rel="noopener" style="
+            display: inline-flex; align-items: center; gap: 10px;
+            margin-top: 40px; padding: 14px 28px;
+            background: var(--rust); color: #fff;
+            font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.14em;
+            text-transform: uppercase; text-decoration: none;
+            border-radius: 2px; transition: background .2s, transform .2s;
+          " onmouseover="this.style.background='#d4541a';this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.background='#f26522';this.style.transform='none'">
+            <span class="ua">Замовити книгу · 200 грн →</span>
+            <span class="en">Order the book · 200 UAH →</span>
+          </a>
 
         </div>
       </div>
