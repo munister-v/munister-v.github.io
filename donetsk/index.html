@@ -686,31 +686,46 @@
        03 - MATERIALS
     ═══════════════════════════════════════ */
     .mat-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
-      background: rgba(0,0,0,0.08); margin-top: 48px;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: 300px; gap: 6px; margin-top: 48px;
     }
     .mat-item {
-      background: var(--milk); padding: 36px 28px; position: relative; overflow: hidden;
-      transition: background .25s var(--ease);
+      position: relative; overflow: hidden; background: #111;
     }
-    .mat-item:hover { background: var(--stone-pale); }
+    .mat-item img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; transition: transform .65s ease;
+    }
+    .mat-item:hover img { transform: scale(1.05); }
+    .mat-overlay {
+      position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(to top, rgba(0,0,0,.90) 0%, rgba(0,0,0,.30) 55%, rgba(0,0,0,.04) 100%);
+    }
+    .mat-body {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 22px 26px; z-index: 2;
+    }
     .mat-num {
-      font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--rust); margin-bottom: 24px; display: block;
+      font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--rust); margin-bottom: 6px; display: block;
     }
     .mat-title {
-      font-family: var(--sans); font-size: 1.5rem;
-      font-weight: 600; color: var(--coal); line-height: 1.3; margin-bottom: 12px;
+      font-family: var(--font-serif, Georgia, serif); font-size: 1.35rem;
+      font-weight: 700; color: #fff; line-height: 1.25; margin-bottom: 8px;
     }
     .mat-desc {
-      font-family: var(--sans); font-size: 0.875rem; color: var(--text-mid);
-      line-height: 1.65;
+      font-family: var(--sans); font-size: 0.78rem; color: rgba(255,255,255,.72);
+      line-height: 1.55;
     }
-    .mat-swatch {
-      width: 32px; height: 4px; margin-top: 20px; border-radius: 2px;
+    .mi-wide { grid-column: span 2; }
+    @media (max-width: 900px) {
+      .mat-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 260px; }
+      .mi-wide { grid-column: span 2; }
     }
-    @media (max-width: 900px) { .mat-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 560px) { .mat-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) {
+      .mat-grid { grid-template-columns: 1fr; grid-auto-rows: 240px; }
+      .mi-wide { grid-column: span 1; }
+    }
 
     /* ═══════════════════════════════════════
        04 - URBAN RHYTHM
@@ -1778,38 +1793,85 @@
       </header>
 
       <div class="mat-grid fu">
-        <div class="mat-item">
-          <span class="mat-num">I</span>
-          <div class="mat-title ua">Вугілля</div>
-          <div class="mat-title en">Coal</div>
-          <p class="mat-desc ua">Антрацит Донбасу - основа цього міста. Не лише паливо, але й матерія ідентичності: чорний блиск, тверда порода, прихована енергія.</p>
-          <p class="mat-desc en">Donbas anthracite - the foundation of this city. Not only fuel but the matter of identity: black lustre, hard rock, hidden energy.</p>
-          <div class="mat-swatch" style="background: #1E2228;"></div>
+
+        <!-- I — Вугілля (wide) -->
+        <div class="mat-item mi-wide">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Anthracite_chunk.JPG/1280px-Anthracite_chunk.JPG" alt="Антрацит Донбасу" loading="lazy">
+          <div class="mat-overlay"></div>
+          <div class="mat-body">
+            <span class="mat-num">I</span>
+            <div class="mat-title ua">Вугілля</div>
+            <div class="mat-title en">Coal</div>
+            <p class="mat-desc ua">Антрацит Донбасу — основа цього міста. Не лише паливо, але й матерія ідентичності: чорний блиск, тверда порода, прихована енергія.</p>
+            <p class="mat-desc en">Donbas anthracite — the foundation of this city. Not only fuel but the matter of identity: black lustre, hard rock, hidden energy.</p>
+          </div>
         </div>
+
+        <!-- II — Троянда -->
         <div class="mat-item">
-          <span class="mat-num">II</span>
-          <div class="mat-title ua">Сталь</div>
-          <div class="mat-title en">Steel</div>
-          <p class="mat-desc ua">Металургійні заводи Донецька давали сталь на весь СРСР. Гарячий прокат, холодна поверхня, іржавий відтінок часу.</p>
-          <p class="mat-desc en">Donetsk metallurgical plants supplied steel across the USSR. Hot rolling, cold surface, rust-tinged with time.</p>
-          <div class="mat-swatch" style="background: #4A6278;"></div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Rosa_Precious_platinum.jpg/1280px-Rosa_Precious_platinum.jpg" alt="Троянда" loading="lazy">
+          <div class="mat-overlay"></div>
+          <div class="mat-body">
+            <span class="mat-num">II</span>
+            <div class="mat-title ua">Троянда</div>
+            <div class="mat-title en">Rose</div>
+            <p class="mat-desc ua">Мільйон троянд — міф і реальність. Місто з найбруднішим повітрям садило квіти. Контраст, який і є Донецьком.</p>
+            <p class="mat-desc en">A million roses — myth and reality. A city with the dirtiest air planted flowers. That contrast is Donetsk.</p>
+          </div>
         </div>
+
+        <!-- III — Чорнозем -->
         <div class="mat-item">
-          <span class="mat-num">III</span>
-          <div class="mat-title ua">Бетон</div>
-          <div class="mat-title en">Concrete</div>
-          <p class="mat-desc ua">Радянська архітектура говорила мовою бетону. Масштаб, вага, горизонтальна впевненість - ось граматика міських кварталів.</p>
-          <p class="mat-desc en">Soviet architecture spoke the language of concrete. Scale, weight, horizontal confidence - the grammar of urban blocks.</p>
-          <div class="mat-swatch" style="background: #908880;"></div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Chernozem.JPG/1280px-Chernozem.JPG" alt="Чорнозем" loading="lazy">
+          <div class="mat-overlay"></div>
+          <div class="mat-body">
+            <span class="mat-num">III</span>
+            <div class="mat-title ua">Чорнозем</div>
+            <div class="mat-title en">Chernozem</div>
+            <p class="mat-desc ua">Найродючіший ґрунт планети. Донбаський чорнозем — той, на якому ростуть пшениця і ковіль. Земля, за яку вмирають.</p>
+            <p class="mat-desc en">The most fertile soil on Earth. Donbas chernozem — where wheat and feather grass grow. Land that people die for.</p>
+          </div>
         </div>
+
+        <!-- IV — Ковіль (wide) -->
+        <div class="mat-item mi-wide">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/%D0%9A%D0%BE%D0%B2%D1%8B%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F_%D1%81%D1%82%D0%B5%D0%BF%D1%8C_%D0%B2_%D0%BF%D0%BE%D1%80%D1%83_%D1%86%D0%B2%D0%B5%D1%82%D0%B5%D0%BD%D1%8C%D1%8F_-_panoramio.jpg/1280px-%D0%9A%D0%BE%D0%B2%D1%8B%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F_%D1%81%D1%82%D0%B5%D0%BF%D1%8C_%D0%B2_%D0%BF%D0%BE%D1%80%D1%83_%D1%86%D0%B2%D0%B5%D1%82%D0%B5%D0%BD%D1%8C%D1%8F_-_panoramio.jpg" alt="Ковіль у степу" loading="lazy">
+          <div class="mat-overlay"></div>
+          <div class="mat-body">
+            <span class="mat-num">IV</span>
+            <div class="mat-title ua">Ковіль</div>
+            <div class="mat-title en">Feather Grass</div>
+            <p class="mat-desc ua">Срібний океан степу. До шахт і заводів тут хвилювався ковіль. Він і зараз хвилюється — просто ми більше не дивимось.</p>
+            <p class="mat-desc en">Silver ocean of the steppe. Before the mines and factories, feather grass rippled here. It still does — we just stopped looking.</p>
+          </div>
+        </div>
+
+        <!-- V — Сталь -->
         <div class="mat-item">
-          <span class="mat-num">IV</span>
-          <div class="mat-title ua">Троянда</div>
-          <div class="mat-title en">Rose</div>
-          <p class="mat-desc ua">Мільйон троянд - міф і реальність одночасно. Місто з найбруднішим повітрям садило квіти. Контраст, який і є Донецьком.</p>
-          <p class="mat-desc en">A million roses - myth and reality simultaneously. A city with the dirtiest air planted flowers. That contrast is Donetsk.</p>
-          <div class="mat-swatch" style="background: #B46030;"></div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Allegheny_Ludlum_steel_furnace.jpg/1280px-Allegheny_Ludlum_steel_furnace.jpg" alt="Сталеплавильна піч" loading="lazy">
+          <div class="mat-overlay"></div>
+          <div class="mat-body">
+            <span class="mat-num">V</span>
+            <div class="mat-title ua">Сталь</div>
+            <div class="mat-title en">Steel</div>
+            <p class="mat-desc ua">Металургійні заводи Донецька давали сталь на весь СРСР. Гарячий прокат, холодна поверхня, іржавий відтінок часу.</p>
+            <p class="mat-desc en">Donetsk metallurgical plants supplied steel across the USSR. Hot rolling, cold surface, rust-tinged with time.</p>
+          </div>
         </div>
+
+        <!-- VI — Бетон (wide) -->
+        <div class="mat-item mi-wide">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Concrete_texture.jpg/1280px-Concrete_texture.jpg" alt="Бетон" loading="lazy">
+          <div class="mat-overlay"></div>
+          <div class="mat-body">
+            <span class="mat-num">VI</span>
+            <div class="mat-title ua">Бетон</div>
+            <div class="mat-title en">Concrete</div>
+            <p class="mat-desc ua">Радянська архітектура говорила мовою бетону. Масштаб, вага, горизонтальна впевненість — ось граматика міських кварталів.</p>
+            <p class="mat-desc en">Soviet architecture spoke the language of concrete. Scale, weight, horizontal confidence — the grammar of urban blocks.</p>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
