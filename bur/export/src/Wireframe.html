@@ -1,0 +1,2386 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<title>БУР Київ · вайрфрейм</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Patrick+Hand&family=Caveat:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #1c1b18;
+    --paper: #fbf9f4;
+    --paper-2: #f3efe4;
+    --rule: #1c1b18;
+    --muted: #8a857a;
+    --accent: #ff7a1a;          /* hi-liter orange */
+    --accent-2: #2a6fdb;
+    --hi: #fff39a;              /* highlighter yellow */
+    --grid: rgba(28,27,24,.06);
+    --shadow: 4px 4px 0 var(--ink);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body {
+    font-family: "Patrick Hand", "Kalam", cursive;
+    font-size: 17px;
+    line-height: 1.35;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: .02em; }
+  .hand { font-family: "Kalam", cursive; }
+  .scrawl { font-family: "Caveat", cursive; font-weight: 700; }
+
+  /* —— Top toolbar (tab control) —— */
+  .toolbar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--paper);
+    border-bottom: 2px solid var(--ink);
+    padding: 8px 14px;
+    display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center;
+    row-gap: 6px;
+  }
+  .toolbar .brand {
+    font-family: "Caveat", cursive; font-weight: 700; font-size: 20px;
+    margin-right: 10px; display: flex; align-items: center; gap: 7px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .toolbar .brand .dot { width: 12px; height: 12px; background: var(--accent); border: 2px solid var(--ink); border-radius: 50%; }
+  .tab {
+    font-family: "Patrick Hand", cursive;
+    font-size: 14px;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: transform .08s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .tab:hover { transform: translate(-1px,-1px); box-shadow: 2px 2px 0 var(--ink); }
+  .tab.is-active { background: var(--ink); color: var(--paper); }
+  .tab-group-label { font-family: "JetBrains Mono", monospace; font-size: 9px; opacity: .55; margin: 0 4px 0 8px; text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; flex-shrink: 0; }
+  .toolbar .spacer { flex: 1; min-width: 8px; }
+  .toolbar .meta { font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+
+  /* —— Frame around each variant —— */
+  .stage { padding: 28px 32px 80px; }
+  .frame {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow);
+    max-width: 1180px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .frame::before {
+    content: attr(data-label);
+    position: absolute; top: -14px; left: 16px;
+    background: var(--paper);
+    padding: 0 8px;
+    font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .variant { display: none !important; }
+  .variant.is-active { display: block !important; }
+
+  /* —— Common wireframe primitives —— */
+  .ph {
+    background:
+      repeating-linear-gradient(135deg, var(--ink) 0 1px, transparent 1px 8px),
+      var(--paper-2);
+    border: 1.5px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink);
+    font-family: "JetBrains Mono", monospace; font-size: 11px;
+    text-align: center;
+    padding: 6px;
+  }
+  .ph.empty { background: var(--paper-2); }
+  .ph.dark { background:
+    repeating-linear-gradient(135deg, var(--ink) 0 1px, transparent 1px 6px),
+    #2a2925; color: var(--paper); border-color: var(--ink);
+  }
+  .box { border: 2px solid var(--ink); padding: 12px; background: var(--paper); }
+  .box.dashed { border-style: dashed; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 14px;
+    background: var(--paper);
+  }
+  .pill.solid { background: var(--ink); color: var(--paper); }
+  .pill.accent { background: var(--accent); color: var(--ink); }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 2px solid var(--ink);
+    padding: 8px 16px;
+    font-family: "Patrick Hand", cursive;
+    font-size: 16px;
+    background: var(--paper);
+    box-shadow: 3px 3px 0 var(--ink);
+    cursor: default;
+  }
+  .btn.primary { background: var(--accent); }
+  .btn.dark { background: var(--ink); color: var(--paper); }
+  .lines { display: block; }
+  .lines span {
+    display: block;
+    height: 8px;
+    background: var(--ink);
+    opacity: .15;
+    margin-bottom: 8px;
+    border-radius: 3px;
+  }
+  .lines span:nth-child(1) { width: 100%; }
+  .lines span:nth-child(2) { width: 96%; }
+  .lines span:nth-child(3) { width: 88%; }
+  .lines span:nth-child(4) { width: 72%; }
+  .lines span:nth-child(5) { width: 60%; }
+  .marker {
+    background: linear-gradient(transparent 55%, var(--hi) 55% 95%, transparent 95%);
+    padding: 0 4px;
+  }
+  .note {
+    position: absolute;
+    font-family: "Caveat", cursive;
+    font-size: 18px;
+    color: var(--accent);
+    transform: rotate(-3deg);
+    pointer-events: none;
+  }
+  .note::before {
+    content: "↳ ";
+    color: var(--accent);
+  }
+  .arrow-right::after { content: " →"; }
+  .stamp {
+    display: inline-block;
+    border: 2px solid var(--ink);
+    padding: 2px 8px;
+    transform: rotate(-2deg);
+    font-family: "Caveat", cursive;
+    font-size: 18px;
+    background: var(--paper);
+  }
+  hr.rule { border: 0; border-top: 2px solid var(--ink); margin: 0; }
+  hr.dashed { border: 0; border-top: 2px dashed var(--ink); margin: 0; }
+
+  /* —— Site header (shared) —— */
+  .site-head {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 22px;
+    border-bottom: 2px solid var(--ink);
+    background: var(--paper);
+  }
+  .site-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: "Caveat", cursive; font-weight: 700; font-size: 26px;
+  }
+  .site-logo .ring {
+    width: 30px; height: 30px; border: 3px solid var(--ink); border-radius: 50%;
+    display: grid; place-items: center; font-family: "Kalam"; font-size: 14px;
+    background: var(--accent);
+  }
+  .site-nav { display: flex; gap: 18px; flex-wrap: wrap; margin-left: auto; align-items: center; font-size: 16px; }
+  .site-nav a { color: var(--ink); text-decoration: none; border-bottom: 1.5px dashed transparent; }
+  .site-nav a.active { border-bottom-color: var(--ink); }
+  .site-nav .sep { color: var(--muted); }
+  .lang-toggle { border: 2px solid var(--ink); padding: 2px 8px; font-size: 13px; }
+
+  /* —— Site footer (shared) —— */
+  .site-foot {
+    border-top: 2px solid var(--ink);
+    background: #2a2925; color: var(--paper);
+    padding: 28px 24px 18px;
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 24px;
+  }
+  .site-foot h5 { font-family: "Caveat", cursive; font-size: 22px; margin: 0 0 10px; color: var(--accent); }
+  .site-foot ul { list-style: none; padding: 0; margin: 0; font-size: 15px; }
+  .site-foot ul li { margin-bottom: 4px; opacity: .9; }
+  .site-foot .legal {
+    grid-column: 1 / -1; border-top: 1px dashed rgba(255,255,255,.25); padding-top: 12px;
+    display: flex; justify-content: space-between; font-family: "JetBrains Mono", monospace; font-size: 11px; color: rgba(255,255,255,.6);
+  }
+
+  /* —— Variant A: Classic vertical —— */
+  .v-classic .hero {
+    display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px;
+    padding: 28px 28px 44px;
+    border-bottom: 2px solid var(--ink);
+    position: relative;
+  }
+  .v-classic h1 {
+    font-family: "Kalam", cursive; font-weight: 700;
+    font-size: 64px; line-height: .95; margin: 8px 0 14px;
+  }
+  .v-classic .kicker { font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: .15em; text-transform: uppercase; }
+  .v-classic .sub { font-size: 20px; max-width: 36ch; margin-bottom: 22px; }
+  .v-classic .cta-row { display: flex; gap: 12px; align-items: center; }
+  .v-classic .hero-art {
+    aspect-ratio: 4/3; min-height: 280px;
+  }
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    border-bottom: 2px solid var(--ink);
+  }
+  .stats .cell { padding: 18px 20px; border-right: 2px dashed var(--ink); }
+  .stats .cell:last-child { border-right: 0; }
+  .stats .num { font-family: "Kalam", cursive; font-size: 42px; line-height: 1; }
+  .stats .lbl { font-family: "JetBrains Mono", monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+
+  .section { padding: 26px 28px; border-bottom: 2px solid var(--ink); position: relative; }
+  .section h2 {
+    font-family: "Kalam", cursive; font-weight: 700;
+    font-size: 36px; margin: 0 0 6px;
+  }
+  .section .eyebrow { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); }
+  .section .lead { font-size: 18px; max-width: 70ch; margin: 10px 0 18px; }
+
+  .cards-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .cards-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .card {
+    border: 2px solid var(--ink); background: var(--paper);
+    display: flex; flex-direction: column;
+  }
+  .card .ph { height: 150px; border: 0; border-bottom: 2px solid var(--ink); }
+  .card .body { padding: 12px 14px 14px; }
+  .card .tag { font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .card h3 { font-family: "Kalam", cursive; font-weight: 700; font-size: 20px; margin: 4px 0 8px; }
+  .card .meta { display: flex; justify-content: space-between; font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+  .events-list { display: flex; flex-direction: column; }
+  .event-row {
+    display: grid; grid-template-columns: 110px 1.6fr 1fr auto; gap: 16px;
+    padding: 14px 0; border-bottom: 1.5px dashed var(--ink);
+    align-items: center;
+  }
+  .event-row:last-child { border-bottom: 0; }
+  .event-date { font-family: "Caveat", cursive; font-weight: 700; font-size: 28px; line-height: 1; }
+  .event-date small { display: block; font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+  .event-title h4 { margin: 0 0 4px; font-family: "Kalam", cursive; font-size: 19px; }
+  .event-loc { font-size: 14px; color: var(--muted); font-family: "JetBrains Mono", monospace; }
+
+  .team-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .team-card .ph { aspect-ratio: 1; height: auto; border: 0; }
+  .team-card .body { padding: 8px 10px 10px; }
+  .team-card .role { font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--muted); }
+  .team-card .name { font-family: "Kalam", cursive; font-size: 17px; }
+
+  .partners {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 0;
+    border-top: 2px dashed var(--ink); border-bottom: 2px dashed var(--ink);
+  }
+  .partners .logo {
+    height: 64px; border-right: 1.5px dashed var(--ink);
+    display: grid; place-items: center;
+    font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--muted);
+  }
+  .partners .logo:last-child { border-right: 0; }
+
+  .donate-strip {
+    background: var(--accent);
+    border-bottom: 2px solid var(--ink);
+    padding: 20px 28px;
+    display: flex; justify-content: space-between; align-items: center; gap: 18px;
+  }
+  .donate-strip h3 { font-family: "Kalam"; font-size: 30px; margin: 0; }
+
+  /* —— Variant B: Magazine grid —— */
+  .v-mag .mag-hero {
+    display: grid; grid-template-columns: 1.3fr 1fr 1fr; grid-template-rows: auto auto;
+    gap: 0; border-bottom: 2px solid var(--ink);
+  }
+  .v-mag .feature {
+    grid-row: 1 / 3;
+    padding: 24px;
+    border-right: 2px solid var(--ink);
+    display: flex; flex-direction: column; justify-content: space-between;
+    background: var(--paper-2);
+  }
+  .v-mag .feature h1 { font-family: "Kalam"; font-weight: 700; font-size: 52px; line-height: .98; margin: 12px 0; }
+  .v-mag .mag-cell {
+    padding: 16px;
+    border-bottom: 1.5px dashed var(--ink);
+    border-right: 1.5px dashed var(--ink);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .v-mag .mag-cell:nth-child(3), .v-mag .mag-cell:nth-child(5) { border-right: 0; }
+  .v-mag .mag-cell:nth-child(4), .v-mag .mag-cell:nth-child(5) { border-bottom: 0; }
+  .v-mag .mag-cell .ph { height: 110px; }
+  .v-mag .mag-cell h3 { font-family: "Kalam"; font-size: 18px; margin: 4px 0; }
+
+  .ticker {
+    background: var(--ink); color: var(--paper);
+    padding: 8px 16px;
+    font-family: "JetBrains Mono", monospace; font-size: 12px;
+    display: flex; gap: 28px; overflow: hidden; white-space: nowrap;
+  }
+  .ticker span::before { content: "● "; color: var(--accent); }
+
+  .v-mag .cols-2 { display: grid; grid-template-columns: 1.4fr 1fr; }
+  .v-mag .cols-2 > div { padding: 24px 26px; }
+  .v-mag .cols-2 > div + div { border-left: 2px solid var(--ink); background: var(--paper-2); }
+
+  /* —— Variant C: Story-scroll narrative —— */
+  .v-story .story-hero {
+    padding: 60px 40px 40px;
+    text-align: center;
+    border-bottom: 2px solid var(--ink);
+    position: relative;
+  }
+  .v-story .story-hero h1 {
+    font-family: "Kalam"; font-weight: 700;
+    font-size: 88px; line-height: .9; margin: 0;
+    letter-spacing: -.02em;
+  }
+  .v-story .story-hero h1 .stroke {
+    -webkit-text-stroke: 2px var(--ink); color: transparent;
+  }
+  .v-story .story-hero .sub { max-width: 50ch; margin: 16px auto 22px; font-size: 22px; }
+  .v-story .chapter {
+    display: grid; grid-template-columns: 110px 1fr 1fr; gap: 28px;
+    padding: 36px 32px;
+    border-bottom: 2px dashed var(--ink);
+    align-items: start;
+  }
+  .v-story .chapter .ix {
+    font-family: "Caveat"; font-weight: 700; font-size: 64px; line-height: .8;
+    color: var(--accent);
+  }
+  .v-story .chapter h2 { font-family: "Kalam"; font-size: 34px; margin: 0 0 10px; }
+  .v-story .chapter .ph { aspect-ratio: 4/3; }
+  .v-story .quote {
+    padding: 36px 60px;
+    background: var(--ink); color: var(--paper);
+    font-family: "Caveat"; font-size: 32px;
+    text-align: center;
+  }
+  .v-story .quote small { display: block; font-family: "JetBrains Mono", monospace; font-size: 11px; opacity: .7; margin-top: 10px; letter-spacing: .15em; }
+
+  /* —— Variant D: Sidebar dashboard —— */
+  .v-side { display: grid; grid-template-columns: 220px 1fr; min-width: 0; }
+  .v-side .main { min-width: 0; overflow: hidden; }
+  .v-side .side {
+    border-right: 2px solid var(--ink);
+    padding: 18px 16px 28px;
+    background: var(--paper-2);
+    min-height: 760px;
+  }
+  .v-side .side .logo { font-family: "Caveat"; font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
+  .v-side .side .logo .ring { width: 28px; height: 28px; border: 3px solid var(--ink); border-radius: 50%; background: var(--accent); }
+  .v-side .side nav { display: flex; flex-direction: column; gap: 4px; }
+  .v-side .side nav a {
+    text-decoration: none; color: var(--ink);
+    padding: 6px 10px;
+    border: 1.5px dashed transparent;
+    font-size: 16px;
+  }
+  .v-side .side nav a.active { border-color: var(--ink); background: var(--paper); }
+  .v-side .side .pinned {
+    margin-top: 22px; padding-top: 14px; border-top: 1.5px dashed var(--ink);
+  }
+  .v-side .side .pinned h6 { font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+  .v-side .main { padding: 22px 26px; }
+  .v-side .hello { display: flex; justify-content: space-between; align-items: end; margin-bottom: 18px; }
+  .v-side .hello h1 { font-family: "Kalam"; font-size: 38px; margin: 0; }
+  .v-side .grid-dash { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 16px; }
+  .v-side .tile { border: 2px solid var(--ink); padding: 14px; background: var(--paper); min-width: 0; overflow: hidden; }
+  .v-side .tile h3 { font-family: "Kalam"; font-size: 22px; margin: 0 0 10px; }
+  .v-side .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .v-side .kpi { border: 2px solid var(--ink); padding: 12px; background: var(--paper); }
+  .v-side .kpi .num { font-family: "Kalam"; font-size: 30px; line-height: 1; }
+  .v-side .kpi .lbl { font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+  /* —— Subpage helpers —— */
+  .breadcrumbs { font-family: "JetBrains Mono", monospace; font-size: 11px; padding: 12px 28px; border-bottom: 1.5px dashed var(--ink); color: var(--muted); }
+  .breadcrumbs a { color: var(--ink); text-decoration: underline; text-decoration-style: dotted; }
+
+  .page-head {
+    padding: 28px; border-bottom: 2px solid var(--ink);
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; align-items: end;
+  }
+  .page-head h1 { font-family: "Kalam"; font-size: 56px; margin: 6px 0 0; line-height: 1; }
+  .page-head .lead { font-size: 19px; max-width: 56ch; margin: 12px 0 0; }
+
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; padding: 28px; }
+  .timeline { padding: 6px 28px 28px; }
+  .timeline-item { display: grid; grid-template-columns: 90px 1fr; gap: 14px; padding: 12px 0; border-bottom: 1.5px dashed var(--ink); }
+  .timeline-item .yr { font-family: "Caveat"; font-weight: 700; font-size: 28px; color: var(--accent); }
+  .timeline-item h4 { font-family: "Kalam"; font-size: 19px; margin: 0 0 4px; }
+
+  .filter-bar {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    padding: 14px 28px;
+    border-bottom: 1.5px dashed var(--ink);
+    align-items: center;
+  }
+  .filter-bar .lbl { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-right: 6px; }
+
+  .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 22px 28px; }
+  .map-block { display: grid; grid-template-columns: 1fr 320px; gap: 0; border-top: 2px solid var(--ink); }
+  .map-block .map { min-height: 380px; }
+  .map-block .map-side { padding: 22px; border-left: 2px solid var(--ink); background: var(--paper-2); }
+
+  .contact-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    border-top: 2px solid var(--ink);
+  }
+  .contact-grid > div { padding: 24px 26px; }
+  .contact-grid > div + div { border-left: 2px solid var(--ink); }
+  .form-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+  .form-field label { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .form-field .input {
+    border: 2px solid var(--ink); padding: 8px 10px; min-height: 36px; background: var(--paper);
+    font-family: "Patrick Hand"; font-size: 15px; color: var(--muted);
+  }
+  .form-field .input.tall { min-height: 90px; }
+
+  /* —— Annotation callouts on the side —— */
+  .annot {
+    position: absolute;
+    font-family: "Caveat"; font-size: 18px;
+    color: var(--accent-2);
+    max-width: 180px;
+    line-height: 1.15;
+  }
+  .annot::before {
+    content: ""; display: inline-block; width: 22px; height: 22px;
+    border-left: 2px solid var(--accent-2); border-bottom: 2px solid var(--accent-2);
+    margin-right: 6px; transform: translateY(2px);
+  }
+
+  /* Tweaks panel (lightweight, native) */
+  .tweaks {
+    position: fixed; bottom: 18px; right: 18px; z-index: 80;
+    background: var(--paper); border: 2px solid var(--ink); box-shadow: var(--shadow);
+    padding: 12px 14px; min-width: 220px;
+    display: none;
+    font-family: "Patrick Hand", cursive;
+  }
+  .tweaks.is-on { display: block; }
+  .tweaks h6 { margin: 0 0 8px; font-family: "Caveat", cursive; font-size: 20px; display:flex; justify-content: space-between; align-items: center; }
+  .tweaks h6 button { border: 2px solid var(--ink); background: var(--paper); cursor: pointer; font-family: "JetBrains Mono", monospace; font-size: 10px; padding: 2px 6px; }
+  .tweaks .row { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; gap: 10px; }
+  .tweaks .swatches { display: flex; gap: 6px; }
+  .tweaks .sw { width: 22px; height: 22px; border: 2px solid var(--ink); cursor: pointer; border-radius: 50%; }
+  .tweaks .sw.active { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .tweaks select, .tweaks input[type="range"] { font-family: "Patrick Hand"; }
+
+  /* —— Sitemap / IA —— */
+  .sitemap-wrap { padding: 28px; }
+  .ia-legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 14px 0 24px; }
+  .ia-legend .item { display: flex; gap: 8px; align-items: center; font-family: "JetBrains Mono", monospace; font-size: 11px; }
+  .ia-legend .swatch { width: 22px; height: 14px; border: 2px solid var(--ink); }
+  .ia-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .ia-col h4 {
+    font-family: "Caveat", cursive; font-weight: 700; font-size: 22px;
+    margin: 0 0 10px; padding-bottom: 4px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .ia-node {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    box-shadow: 3px 3px 0 var(--ink);
+    position: relative;
+  }
+  .ia-node.root { background: var(--accent); }
+  .ia-node.home { background: var(--hi); }
+  .ia-node.action { border-style: dashed; box-shadow: none; background: var(--paper-2); }
+  .ia-node .meta { font-family: "JetBrains Mono", monospace; font-size: 10px; opacity: .65; display: block; margin-top: 2px; letter-spacing: .05em; }
+  .ia-sub { margin-left: 16px; padding-left: 12px; border-left: 2px dashed var(--ink); }
+  .ia-flow {
+    margin-top: 36px;
+    border-top: 2px dashed var(--ink); padding-top: 24px;
+  }
+  .ia-flow h3 { font-family: "Kalam"; font-size: 26px; margin: 0 0 14px; }
+  .flow-row {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
+    align-items: stretch;
+    margin-bottom: 16px;
+  }
+  .flow-step {
+    border: 2px solid var(--ink); padding: 10px 12px;
+    background: var(--paper); box-shadow: 3px 3px 0 var(--ink);
+    display: flex; flex-direction: column; gap: 4px;
+    position: relative;
+  }
+  .flow-step .ix-pill {
+    font-family: "Caveat"; font-weight: 700; font-size: 20px;
+    color: var(--accent); line-height: 1;
+  }
+  .flow-step h5 { font-family: "Kalam"; font-size: 16px; margin: 0; }
+  .flow-step .what { font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--muted); }
+  .flow-step.start { background: var(--hi); }
+  .flow-step.end { background: var(--accent); }
+  .flow-arrow {
+    position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
+    font-family: "Caveat"; font-size: 28px; color: var(--ink); z-index: 2;
+    background: var(--paper); padding: 0 2px;
+  }
+  .flow-step:last-child .flow-arrow { display: none; }
+
+  /* —— Mobile mockups —— */
+  .mob-wrap { padding: 28px; }
+  .mob-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; align-items: start; }
+  .phone {
+    border: 3px solid var(--ink);
+    border-radius: 28px;
+    padding: 8px;
+    background: var(--ink);
+    box-shadow: 5px 5px 0 var(--ink);
+    aspect-ratio: 9 / 18.5;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .phone::before {
+    content: ""; position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 6px; background: #555; border-radius: 4px; z-index: 5;
+  }
+  .phone .screen {
+    flex: 1; background: var(--paper); border-radius: 22px;
+    overflow: hidden; display: flex; flex-direction: column;
+    font-size: 12px;
+  }
+  .phone .status {
+    display: flex; justify-content: space-between; padding: 8px 14px 4px;
+    font-family: "JetBrains Mono", monospace; font-size: 9px;
+    color: var(--ink); padding-top: 18px;
+  }
+  .phone .mhead {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 12px 8px; border-bottom: 1.5px solid var(--ink);
+  }
+  .phone .mhead .l { font-family: "Caveat"; font-weight: 700; font-size: 16px; display: flex; gap: 4px; align-items: center; }
+  .phone .mhead .l .ring { width: 16px; height: 16px; background: var(--accent); border: 2px solid var(--ink); border-radius: 50%; }
+  .phone .mhead .r { font-size: 11px; }
+  .phone .mbody { flex: 1; overflow: hidden; padding: 8px 10px; display: flex; flex-direction: column; gap: 7px; }
+  .phone .mbody h2 {
+    font-family: "Kalam"; font-weight: 700; font-size: 22px;
+    margin: 4px 0 2px; line-height: .98;
+  }
+  .phone .mbody .lbl { font-family: "JetBrains Mono", monospace; font-size: 8px; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; }
+  .phone .ph-img { background:
+    repeating-linear-gradient(135deg, var(--ink) 0 1px, transparent 1px 5px),
+    var(--paper-2);
+    border: 1.5px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "JetBrains Mono", monospace; font-size: 8px;
+    color: var(--ink);
+    padding: 4px;
+    text-align: center;
+  }
+  .phone .mcard { border: 1.5px solid var(--ink); padding: 6px 8px; }
+  .phone .mbtn { border: 1.5px solid var(--ink); padding: 5px 8px; text-align: center; font-size: 11px; box-shadow: 2px 2px 0 var(--ink); }
+  .phone .mbtn.primary { background: var(--accent); }
+  .phone .mtab {
+    margin-top: auto; display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1.5px solid var(--ink); padding: 6px 0; gap: 0;
+    background: var(--paper-2);
+  }
+  .phone .mtab .t { text-align: center; font-size: 9px; font-family: "JetBrains Mono", monospace; padding: 2px 0; }
+  .phone .mtab .t.active { color: var(--accent); font-weight: 700; }
+  .phone-label {
+    font-family: "Caveat"; font-weight: 700; font-size: 20px; text-align: center;
+    margin-top: 10px;
+  }
+  .phone-label .meta { display: block; font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--muted); margin-top: 2px; letter-spacing: .08em; }
+
+  /* sketch ribbons */
+  .ribbon {
+    border-left: 4px solid var(--accent);
+    padding-left: 12px;
+    font-family: "Caveat"; font-size: 22px;
+    margin: 8px 0;
+  }
+  .row { display: flex; gap: 12px; align-items: center; }
+  .gap-8 { gap: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-18 { margin-top: 18px; }
+  .mt-24 { margin-top: 24px; }
+  .center { text-align: center; }
+  .muted { color: var(--muted); }
+  .small { font-size: 14px; }
+
+  /* ═══════════════════════════════════════════════════════════════
+     RESPONSIVE — wireframe adapts down to phones
+     ═══════════════════════════════════════════════════════════════ */
+
+  /* Tablet landscape ≤ 1100 */
+  @media (max-width: 1100px) {
+    .stage { padding: 20px 16px 60px; }
+    .v-classic h1 { font-size: 54px; }
+    .v-story .story-hero h1 { font-size: 68px; }
+    .site-logo { font-size: 22px; white-space: nowrap; }
+    .site-nav { gap: 12px; font-size: 14px; }
+    .site-nav a { font-size: 14px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stats .cell { border-bottom: 2px dashed var(--ink); }
+    .stats .cell:nth-child(2) { border-right: 0; }
+    .stats .cell:nth-child(3), .stats .cell:nth-child(4) { border-bottom: 0; }
+    .partners { grid-template-columns: repeat(3, 1fr); }
+    .partners .logo:nth-child(3n) { border-right: 0; }
+    .partners .logo:nth-child(n+4) { border-top: 1.5px dashed var(--ink); }
+    .team-row { grid-template-columns: repeat(4, 1fr); }
+    .ia-grid { grid-template-columns: 1fr 1fr; }
+    .flow-row { grid-template-columns: repeat(3, 1fr); row-gap: 14px; }
+    .mob-row { grid-template-columns: repeat(2, 1fr); }
+    .v-mag .mag-hero { grid-template-columns: 1fr 1fr; }
+    .v-mag .feature { grid-row: auto; grid-column: 1 / -1; border-right: 0; border-bottom: 2px solid var(--ink); }
+    .v-mag .mag-cell { border-right: 1.5px dashed var(--ink) !important; }
+    .v-mag .mag-cell:nth-child(2n+1) { border-right: 0 !important; }
+    .v-mag .mag-cell:last-child { border-bottom: 0; }
+  }
+
+  /* Tablet portrait ≤ 880 */
+  @media (max-width: 880px) {
+    body { font-size: 16px; }
+    .site-head { flex-wrap: wrap; padding: 12px 16px; gap: 10px; }
+    .site-nav { width: 100%; gap: 12px; font-size: 15px; }
+    .site-nav a { font-size: 15px; }
+    .site-nav .btn { margin-left: auto; }
+
+    .v-classic .hero { grid-template-columns: 1fr; gap: 18px; padding: 22px 18px 32px; }
+    .v-classic h1 { font-size: 46px; }
+    .v-classic .sub { font-size: 18px; }
+    .v-classic .hero-art { min-height: 200px; }
+
+    .section { padding: 22px 18px; }
+    .section h2 { font-size: 28px; }
+    .section .lead { font-size: 16px; }
+
+    .cards-3 { grid-template-columns: repeat(2, 1fr); }
+    .cards-4 { grid-template-columns: repeat(2, 1fr); }
+    .team-row { grid-template-columns: repeat(3, 1fr); }
+
+    .event-row { grid-template-columns: 80px 1fr auto; }
+    .event-row .ph { display: none; }
+    .event-date { font-size: 24px; }
+
+    .donate-strip { flex-direction: column; align-items: stretch; gap: 14px; padding: 18px 18px; }
+
+    .site-foot { grid-template-columns: 1fr 1fr; padding: 22px 18px 14px; }
+
+    .v-story .story-hero { padding: 36px 20px 24px; }
+    .v-story .story-hero h1 { font-size: 54px; }
+    .v-story .story-hero .sub { font-size: 18px; }
+    .v-story .chapter { grid-template-columns: 70px 1fr; gap: 18px; padding: 26px 18px; }
+    .v-story .chapter > div:last-child:not(.ix) { grid-column: 1 / -1; }
+    .v-story .chapter .ix { font-size: 48px; }
+    .v-story .chapter h2 { font-size: 26px; }
+    .v-story .quote { padding: 24px 22px; font-size: 22px; }
+
+    /* Dashboard — collapse sidebar to top row */
+    .v-side { grid-template-columns: 1fr !important; }
+    .v-side .side { min-height: 0; border-right: 0; border-bottom: 2px solid var(--ink); padding: 14px 16px; }
+    .v-side .side nav { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+    .v-side .side nav a { padding: 4px 8px; font-size: 14px; border: 1.5px solid var(--ink); background: var(--paper); }
+    .v-side .side .pinned { display: none; }
+    .v-side .main { padding: 18px 16px; }
+    .v-side .hello { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .v-side .grid-dash { grid-template-columns: 1fr; }
+    .v-side .kpi-row { grid-template-columns: repeat(3, 1fr); }
+
+    .page-head { grid-template-columns: 1fr; padding: 22px 18px; gap: 14px; }
+    .page-head h1 { font-size: 42px; }
+    .about-grid { grid-template-columns: 1fr; padding: 22px 18px; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .contact-grid > div + div { border-left: 0; border-top: 2px solid var(--ink); }
+    .breadcrumbs { padding: 10px 18px; }
+    .projects-grid { grid-template-columns: repeat(2, 1fr); padding: 18px 18px; }
+    .map-block { grid-template-columns: 1fr; }
+    .map-block .map-side { border-left: 0; border-top: 2px solid var(--ink); }
+    .filter-bar { padding: 12px 18px; gap: 6px; }
+
+    .frame::before { font-size: 10px; }
+
+    .v-mag .cols-2 { grid-template-columns: 1fr; }
+    .v-mag .cols-2 > div + div { border-left: 0; border-top: 2px solid var(--ink); }
+    .ticker { font-size: 11px; }
+
+    /* IA / sitemap */
+    .ia-grid { grid-template-columns: 1fr; gap: 14px; }
+    .flow-row { grid-template-columns: repeat(2, 1fr); }
+    .flow-arrow { display: none; }
+    .ia-flow h3 { font-size: 22px; }
+
+    /* Mobile mockups */
+    .mob-row { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .mob-wrap { padding: 22px 18px; }
+
+    /* Sitemap header */
+    .sitemap-wrap { padding: 22px 18px; }
+    .sitemap-wrap > .row:first-child { flex-direction: column; align-items: flex-start; gap: 14px; }
+  }
+
+  /* Phone ≤ 540 */
+  @media (max-width: 540px) {
+    body { font-size: 15px; }
+    .toolbar { padding: 8px 10px; gap: 4px 6px; }
+    .tab { font-size: 12px; padding: 3px 8px; }
+    .tab-group-label { display: none; }
+    .toolbar .brand { font-size: 17px; }
+    .toolbar .meta { display: none; }
+
+    .frame { box-shadow: 3px 3px 0 var(--ink); }
+    .stage { padding: 16px 8px 40px; }
+
+    .site-head { padding: 10px 14px; }
+    .site-logo { font-size: 21px; }
+    .site-logo .ring { width: 26px; height: 26px; font-size: 12px; }
+    .site-nav { gap: 8px 12px; font-size: 14px; }
+    .site-nav a { font-size: 14px; }
+    .site-nav .lang-toggle { font-size: 12px; }
+
+    .v-classic h1 { font-size: 38px; }
+    .v-classic .sub { font-size: 16px; }
+    .v-classic .cta-row { flex-wrap: wrap; gap: 8px; }
+    .btn { font-size: 14px; padding: 6px 12px; }
+
+    .section { padding: 18px 14px; }
+    .section h2 { font-size: 24px; }
+
+    .stats { grid-template-columns: 1fr; }
+    .stats .cell { border-right: 0; border-bottom: 2px dashed var(--ink); padding: 14px 16px; }
+    .stats .cell:last-child { border-bottom: 0; }
+    .stats .num { font-size: 34px; }
+
+    .cards-3, .cards-4 { grid-template-columns: 1fr; }
+    .team-row { grid-template-columns: repeat(2, 1fr); }
+    .partners { grid-template-columns: repeat(2, 1fr); }
+    .partners .logo:nth-child(2n) { border-right: 0; }
+
+    .event-row { grid-template-columns: 60px 1fr; row-gap: 8px; }
+    .event-row .btn { grid-column: 1 / -1; justify-self: start; }
+    .event-row .ph { display: none; }
+
+    .donate-strip h3 { font-size: 22px; }
+    .donate-strip .row { flex-wrap: wrap; gap: 8px; }
+
+    .site-foot { grid-template-columns: 1fr; padding: 20px 16px 14px; }
+    .site-foot .legal { flex-direction: column; gap: 6px; }
+
+    .v-story .story-hero h1 { font-size: 42px; }
+    .v-story .story-hero .sub { font-size: 16px; }
+    .v-story .chapter { grid-template-columns: 50px 1fr; padding: 22px 14px; }
+    .v-story .chapter .ix { font-size: 40px; }
+    .v-story .chapter h2 { font-size: 22px; }
+    .v-story .quote { padding: 20px 14px; font-size: 18px; }
+
+    .v-side .kpi-row { grid-template-columns: 1fr; }
+    .v-side .side nav a { font-size: 13px; padding: 3px 7px; }
+
+    .page-head h1 { font-size: 34px; }
+
+    .v-mag .mag-hero { grid-template-columns: 1fr; }
+    .v-mag .feature h1 { font-size: 36px; }
+    .v-mag .mag-cell { border-right: 0 !important; }
+
+    .projects-grid { grid-template-columns: 1fr; padding: 16px 14px; }
+    .filter-bar { padding: 10px 14px; gap: 5px; }
+    .filter-bar .pill { font-size: 12px; padding: 2px 8px; }
+    .filter-bar .lbl { font-size: 10px; }
+
+    /* IA */
+    .ia-legend { padding: 10px 0 14px; }
+    .flow-row { grid-template-columns: 1fr; }
+    .flow-step { padding: 8px 10px; }
+
+    /* Mobile mockups → stack with smaller phones */
+    .mob-row { grid-template-columns: 1fr; }
+    .phone { max-width: 280px; margin: 0 auto; }
+    .phone-label { font-size: 17px; }
+
+    .ribbon { font-size: 18px; }
+
+    /* Tweaks panel — small */
+    .tweaks { right: 10px; bottom: 10px; min-width: 180px; padding: 10px 12px; font-size: 14px; }
+  }
+</style>
+</head>
+
+<template id="__bundler_thumbnail" data-bg-color="#fbf9f4">
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#fbf9f4"/>
+    <g transform="translate(60,60)">
+      <rect x="0" y="0" width="80" height="80" fill="none" stroke="#1c1b18" stroke-width="4"/>
+      <rect x="6" y="6" width="80" height="80" fill="none" stroke="#ff7a1a" stroke-width="4"/>
+      <text x="40" y="56" font-family="Kalam, Caveat, cursive" font-size="36" font-weight="700" text-anchor="middle" fill="#1c1b18">БУР</text>
+    </g>
+    <text x="100" y="170" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="2" text-anchor="middle" fill="#1c1b18">WIREFRAME · KYIV</text>
+  </svg>
+</template>
+<body>
+
+<!-- ─────────────────────────────  Top tab toolbar  ───────────────────────────── -->
+<div class="toolbar" role="tablist" aria-label="Wireframe variants">
+  <div class="brand"><span class="dot"></span> БУР·Київ wireframe</div>
+
+  <span class="tab-group-label">мапа</span>
+  <button class="tab is-active" data-tab="sitemap">0 · IA</button>
+
+  <span class="tab-group-label">головна</span>
+  <button class="tab" data-tab="v-classic">A · Класика</button>
+  <button class="tab" data-tab="v-mag">B · Журнал</button>
+  <button class="tab" data-tab="v-story">C · Історія</button>
+  <button class="tab" data-tab="v-side">D · Дашборд</button>
+
+  <span class="tab-group-label">підсторінки</span>
+  <button class="tab" data-tab="p-about">Про нас</button>
+  <button class="tab" data-tab="p-projects">БУРчики</button>
+  <button class="tab" data-tab="p-team">Команда</button>
+  <button class="tab" data-tab="p-contacts">Контакти</button>
+
+  <span class="tab-group-label">моб.</span>
+  <button class="tab" data-tab="p-mobile">📱 Mobile</button>
+
+  <div class="spacer"></div>
+  <span class="meta">v0.2 · low-fi · 1–9 клавіші</span>
+</div>
+
+<div class="stage">
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     VARIANT A · Classic vertical scroll
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="variant v-classic" data-variant="v-classic">
+  <div class="frame" data-label="A · Класика — вертикальна стрічка секцій">
+
+    <!-- header -->
+    <header class="site-head">
+      <div class="site-logo"><span class="ring">Б</span> БУР · Київ</div>
+      <nav class="site-nav">
+        <a href="#" class="active">Головна</a>
+        <a href="#">Про нас</a>
+        <a href="#">БУРчики</a>
+        <a href="#">Події</a>
+        <a href="#">Команда</a>
+        <a href="#">Новини</a>
+        <a href="#">Контакти</a>
+        <span class="sep">·</span>
+        <span class="lang-toggle">UA / EN</span>
+        <span class="btn primary small">Підтримати ❤</span>
+      </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div>
+        <div class="kicker">Регіональне відділення · Київ та область</div>
+        <h1>Будуємо <span class="marker">столицю</span><br/>разом.</h1>
+        <p class="sub">Київське відділення БУР — це молодіжна команда, яка організовує волонтерські БУРчики й табори у Києві та області. Долучайся.</p>
+        <div class="cta-row">
+          <span class="btn primary">Стати волонтером →</span>
+          <span class="btn">Подати об'єкт</span>
+          <span class="btn dark">Підтримати ❤</span>
+        </div>
+        <div class="row mt-18">
+          <span class="pill">📍 Київ</span>
+          <span class="pill">📍 Бородянка</span>
+          <span class="pill">📍 Ірпінь</span>
+          <span class="pill">📍 Бучанський р-н</span>
+          <span class="pill">+ 12 громад</span>
+        </div>
+      </div>
+      <div>
+        <div class="ph hero-art">[ Hero shot · команда на БУРчику · 4:3 ]</div>
+        <div class="row mt-12 small muted mono">img · /hero/kyiv-team-2025.jpg</div>
+      </div>
+      <div class="note" style="right: 32px; bottom: 12px;">міксуємо ілюстрацію + фото</div>
+    </section>
+
+    <!-- KPI strip -->
+    <section class="stats">
+      <div class="cell"><div class="num">1 250+</div><div class="lbl">волонтерів з 2014</div></div>
+      <div class="cell"><div class="num">38</div><div class="lbl">БУРчиків в регіоні</div></div>
+      <div class="cell"><div class="num">14</div><div class="lbl">громад охоплено</div></div>
+      <div class="cell"><div class="num">7</div><div class="lbl">активних об'єктів</div></div>
+    </section>
+
+    <!-- About short -->
+    <section class="section">
+      <div class="eyebrow">Хто ми</div>
+      <h2>Київ — про сусідство і відбудову.</h2>
+      <p class="lead">Регіональне відділення координує волонтерські акції у Київській області: відновлення громадських просторів, школи й укриття, прибирання та благоустрій. Допомагаємо громадам після обстрілів і організовуємо БУРчики для нової молоді.</p>
+      <div class="row">
+        <span class="btn">Дізнатись більше</span>
+        <span class="muted small mono">→ /pro-nas</span>
+      </div>
+    </section>
+
+    <!-- Current projects -->
+    <section class="section">
+      <div class="eyebrow">Що зараз</div>
+      <h2>Поточні проєкти регіону</h2>
+      <div class="cards-3 mt-18">
+        <div class="card">
+          <div class="ph">[ project img 1 ]</div>
+          <div class="body">
+            <span class="tag">БУР-табір · травень</span>
+            <h3>Молодіжний центр у Бородянці</h3>
+            <span class="lines"><span></span><span></span><span></span></span>
+            <div class="meta"><span>тривалість 10 днів</span><span>15/20 ✋</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ph">[ project img 2 ]</div>
+          <div class="body">
+            <span class="tag">БУРчик · вихідні</span>
+            <h3>Укриття школи №194</h3>
+            <span class="lines"><span></span><span></span><span></span></span>
+            <div class="meta"><span>сб–нд</span><span>8/12 ✋</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ph">[ project img 3 ]</div>
+          <div class="body">
+            <span class="tag">Довгий · мережа</span>
+            <h3>Хаб для ВПО, Святошинський р-н</h3>
+            <span class="lines"><span></span><span></span><span></span></span>
+            <div class="meta"><span>постійно</span><span>open call</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upcoming events -->
+    <section class="section">
+      <div class="row" style="justify-content: space-between; align-items: end;">
+        <div>
+          <div class="eyebrow">Календар</div>
+          <h2>Найближчі активності</h2>
+        </div>
+        <div class="row">
+          <span class="pill">Усі</span>
+          <span class="pill solid">БУРчики</span>
+          <span class="pill">Школи</span>
+          <span class="pill">Зустрічі</span>
+        </div>
+      </div>
+      <div class="events-list mt-18">
+        <div class="event-row">
+          <div class="event-date">14<small>чер · сб</small></div>
+          <div class="event-title"><h4>БУРчик · прибирання Совських ставків</h4><span class="event-loc">Голосіївський р-н · 09:00–14:00</span></div>
+          <div class="ph" style="height: 32px;">[ міні-мапа ]</div>
+          <span class="btn primary">Доєднатись</span>
+        </div>
+        <div class="event-row">
+          <div class="event-date">21<small>чер · сб</small></div>
+          <div class="event-title"><h4>Зустріч координаторів осередку</h4><span class="event-loc">Хаб БУР · вул. Прорізна 8 · 18:00</span></div>
+          <div class="ph" style="height: 32px;">[ міні-мапа ]</div>
+          <span class="btn">RSVP</span>
+        </div>
+        <div class="event-row">
+          <div class="event-date">28<small>чер · сб</small></div>
+          <div class="event-title"><h4>БУР-табір · заїзд I, Бородянка</h4><span class="event-loc">с. Мирча, Бородянська ТГ · 7 днів</span></div>
+          <div class="ph" style="height: 32px;">[ міні-мапа ]</div>
+          <span class="btn primary">Подати заявку</span>
+        </div>
+        <div class="event-row">
+          <div class="event-date">05<small>лип · сб</small></div>
+          <div class="event-title"><h4>Школа місцевих координаторів — модуль 2</h4><span class="event-loc">онлайн · 11:00–16:00</span></div>
+          <div class="ph" style="height: 32px;">[ ZOOM ]</div>
+          <span class="btn">Реєстрація</span>
+        </div>
+      </div>
+      <div class="row mt-18 muted small mono">→ /podii (повний календар, фільтри, .ics)</div>
+    </section>
+
+    <!-- Story / mid CTA -->
+    <section class="donate-strip">
+      <div>
+        <h3>Один БУРчик у Київській області — це ~7 500 ₴</h3>
+        <div class="mono small">матеріали, харчування, логістика волонтерів</div>
+      </div>
+      <div class="row">
+        <span class="btn dark">300 ₴</span>
+        <span class="btn dark">700 ₴</span>
+        <span class="btn dark">2 000 ₴</span>
+        <span class="btn">своя сума</span>
+      </div>
+    </section>
+
+    <!-- News -->
+    <section class="section">
+      <div class="eyebrow">Хроніка</div>
+      <h2>Останні новини</h2>
+      <div class="cards-3 mt-18">
+        <div class="card">
+          <div class="ph">[ news img ]</div>
+          <div class="body">
+            <span class="tag">12 травня · репортаж</span>
+            <h3>Як ми відновили дитячий простір у Гостомелі</h3>
+            <span class="lines"><span></span><span></span></span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ph">[ news img ]</div>
+          <div class="body">
+            <span class="tag">02 травня · оголошення</span>
+            <h3>Відкритий набір на літні табори 2026</h3>
+            <span class="lines"><span></span><span></span></span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ph">[ news img ]</div>
+          <div class="body">
+            <span class="tag">28 квітня · історія</span>
+            <h3>«Прийшов, щоб допомогти — лишився, щоб дружити»</h3>
+            <span class="lines"><span></span><span></span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team preview -->
+    <section class="section">
+      <div class="eyebrow">Хто за цим стоїть</div>
+      <h2>Команда осередку</h2>
+      <div class="team-row mt-18">
+        <div class="card team-card"><div class="ph">[ avatar ]</div><div class="body"><div class="role">координаторка</div><div class="name">Ім'я Прізвище</div></div></div>
+        <div class="card team-card"><div class="ph">[ avatar ]</div><div class="body"><div class="role">логістика</div><div class="name">Ім'я Прізвище</div></div></div>
+        <div class="card team-card"><div class="ph">[ avatar ]</div><div class="body"><div class="role">комуніки</div><div class="name">Ім'я Прізвище</div></div></div>
+        <div class="card team-card"><div class="ph">[ avatar ]</div><div class="body"><div class="role">майстер</div><div class="name">Ім'я Прізвище</div></div></div>
+        <div class="card team-card"><div class="ph">[ avatar ]</div><div class="body"><div class="role">воркшопи</div><div class="name">Ім'я Прізвище</div></div></div>
+        <div class="card team-card"><div class="ph">[ avatar ]</div><div class="body"><div class="role">фінансист</div><div class="name">Ім'я Прізвище</div></div></div>
+      </div>
+    </section>
+
+    <!-- Partners -->
+    <section class="section" style="padding-top: 18px;">
+      <div class="eyebrow">Партнери осередку</div>
+      <div class="partners mt-12">
+        <div class="logo">[ logo ]</div>
+        <div class="logo">[ logo ]</div>
+        <div class="logo">[ logo ]</div>
+        <div class="logo">[ logo ]</div>
+        <div class="logo">[ logo ]</div>
+        <div class="logo">[ logo ]</div>
+      </div>
+    </section>
+
+    <!-- Newsletter / CTA strip -->
+    <section class="section" style="background: var(--paper-2);">
+      <div class="row" style="justify-content: space-between; align-items: end;">
+        <div>
+          <div class="eyebrow">Розсилка</div>
+          <h2>Будь у курсі київських БУРчиків</h2>
+          <p class="lead">Раз на 2 тижні — анонси, набори, історії з полів. Без спаму.</p>
+        </div>
+        <div class="row" style="min-width: 360px;">
+          <div class="box dashed" style="flex:1;">your.name@email.ua</div>
+          <span class="btn primary">Підписатись</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-foot">
+      <div>
+        <h5>БУР · Київ</h5>
+        <p class="small">Регіональне відділення громадської організації «Будуємо Україну Разом» у Київській області.</p>
+        <p class="small mono" style="opacity:.7;">kyiv@bur.org.ua · +380 ── ─── ── ──</p>
+      </div>
+      <div>
+        <h5>Сайт</h5>
+        <ul>
+          <li>Про нас</li>
+          <li>БУРчики</li>
+          <li>Події</li>
+          <li>Команда</li>
+          <li>Новини</li>
+          <li>Контакти</li>
+        </ul>
+      </div>
+      <div>
+        <h5>Долучитися</h5>
+        <ul>
+          <li>Стати волонтером</li>
+          <li>Подати об'єкт</li>
+          <li>Стати партнером</li>
+          <li>Підтримати ❤</li>
+        </ul>
+      </div>
+      <div>
+        <h5>Соцмережі</h5>
+        <ul>
+          <li>Instagram @bur.kyiv</li>
+          <li>Facebook /bur.kyiv</li>
+          <li>Telegram</li>
+          <li>YouTube</li>
+        </ul>
+      </div>
+      <div class="legal">
+        <span>© 2026 ГО «БУР» · ЄДРПОУ ──────</span>
+        <span>← головний сайт bur.org.ua</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Side annotations -->
+  <div class="frame" data-label="нотатки до A" style="margin-top: 24px; padding: 18px 22px; font-size: 15px;">
+    <strong>Чому такий порядок?</strong> hero → довіра (KPI) → що зараз (поточні проєкти) → коли (календар) → донат → історії (новини) → люди (команда) → партнери → підписка. Класична NGO-вирва "побачив → довіряю → знаю коли → дію".
+    <ul style="margin: 8px 0 0 18px;">
+      <li>Header sticky, лого + 6 пунктів + UA/EN + донат-кнопка</li>
+      <li>Hero має <span class="marker">2 рівні CTA</span>: первинний (волонтерити), вторинний (подати об'єкт), й окремо донат</li>
+      <li>KPI-смуга — це довіра в 4 цифрах. Цифри можна тягнути з CRM</li>
+      <li>Календар — головна цінність регіонального осередку, тому йде вгору сторінки</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     VARIANT B · Magazine / index grid
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="variant v-mag" data-variant="v-mag">
+  <div class="frame" data-label="B · Журнал — щільна сітка змісту">
+
+    <header class="site-head">
+      <div class="site-logo"><span class="ring">Б</span> БУР · Київ</div>
+      <nav class="site-nav">
+        <a href="#" class="active">Стрічка</a>
+        <a href="#">Проєкти</a>
+        <a href="#">Календар</a>
+        <a href="#">Хто ми</a>
+        <a href="#">Контакти</a>
+        <span class="sep">·</span>
+        <span class="lang-toggle">UA / EN</span>
+        <span class="btn primary small">Підтримати ❤</span>
+      </nav>
+    </header>
+
+    <div class="ticker">
+      <span>відкритий набір на БУР-табір Бородянка 28.06</span>
+      <span>школа коорд. модуль 2 · 05.07</span>
+      <span>зібрано 47 230 ₴ з 120 000 ₴ на укриття школи 194</span>
+      <span>—  тиждень БУР, 14–21 червня  —</span>
+    </div>
+
+    <!-- Magazine hero grid -->
+    <section class="mag-hero">
+      <div class="feature">
+        <div>
+          <div class="mono small muted">ГОЛОВНА · ЧИСЛО #12 · ЧЕРВЕНЬ 2026</div>
+          <h1>Київ виходить на БУРчик.</h1>
+          <p class="small">Третій сезон поспіль — київський осередок відкриває літо серією волонтерських акцій в області. 38 БУРчиків заплановано, 14 громад на мапі.</p>
+        </div>
+        <div class="ph" style="height: 240px;">[ FEATURE PHOTO ]</div>
+        <div class="row" style="justify-content: space-between;">
+          <span class="btn primary">Стати волонтером</span>
+          <span class="mono small muted">→ /pro-nas</span>
+        </div>
+      </div>
+
+      <div class="mag-cell">
+        <div class="ph">[ img ]</div>
+        <span class="tag mono small muted">ПРОЄКТ</span>
+        <h3>Молодіжний центр у Бородянці</h3>
+        <span class="lines"><span></span><span></span></span>
+      </div>
+      <div class="mag-cell">
+        <div class="ph">[ img ]</div>
+        <span class="tag mono small muted">РЕПОРТАЖ</span>
+        <h3>Як ми відновили двір у Гостомелі</h3>
+        <span class="lines"><span></span><span></span></span>
+      </div>
+      <div class="mag-cell">
+        <div class="ph">[ img ]</div>
+        <span class="tag mono small muted">ІСТОРІЯ</span>
+        <h3>«Прийшов на день — лишився на сезон»</h3>
+        <span class="lines"><span></span><span></span></span>
+      </div>
+      <div class="mag-cell">
+        <div class="ph">[ img ]</div>
+        <span class="tag mono small muted">АНОНС</span>
+        <h3>Літні табори 2026 — відкритий набір</h3>
+        <span class="lines"><span></span><span></span></span>
+      </div>
+    </section>
+
+    <!-- Two-column zone -->
+    <section class="cols-2">
+      <div>
+        <div class="eyebrow mono">📅 НАЙБЛИЖЧЕ</div>
+        <h2 style="font-family: Kalam; font-size: 32px; margin: 6px 0 14px;">7 днів у Києві</h2>
+        <div class="events-list">
+          <div class="event-row">
+            <div class="event-date">14<small>чер · сб</small></div>
+            <div class="event-title"><h4>Прибирання Совських ставків</h4><span class="event-loc">Голосіївський · 09:00</span></div>
+            <span class="btn primary small">+</span>
+          </div>
+          <div class="event-row">
+            <div class="event-date">16<small>чер · пн</small></div>
+            <div class="event-title"><h4>Open call: майстер-клас з дерев'яних меблів</h4><span class="event-loc">Хаб · Прорізна 8</span></div>
+            <span class="btn small">+</span>
+          </div>
+          <div class="event-row">
+            <div class="event-date">19<small>чер · чт</small></div>
+            <div class="event-title"><h4>Кіновечір «БУР · 10 років»</h4><span class="event-loc">Хаб · 19:30</span></div>
+            <span class="btn small">+</span>
+          </div>
+          <div class="event-row">
+            <div class="event-date">21<small>чер · сб</small></div>
+            <div class="event-title"><h4>Зустріч координаторів</h4><span class="event-loc">Хаб · 18:00</span></div>
+            <span class="btn small">+</span>
+          </div>
+        </div>
+        <div class="mt-12 mono small muted">→ повний календар з фільтрами</div>
+      </div>
+
+      <div>
+        <div class="eyebrow mono">📍 МАПА</div>
+        <h2 style="font-family: Kalam; font-size: 32px; margin: 6px 0 14px;">Де ми зараз</h2>
+        <div class="ph" style="height: 240px;">[ MAP · Київ + область · 14 громад · пінами позначені поточні об'єкти ]</div>
+        <div class="row mt-12 small">
+          <span class="pill">🟠 поточний</span>
+          <span class="pill">⚫ завершений</span>
+          <span class="pill">🔵 планується</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tag cloud + stats -->
+    <section class="section">
+      <div class="row" style="justify-content: space-between; align-items: end;">
+        <div>
+          <div class="eyebrow">Архів проєктів</div>
+          <h2>Сортуй по тому, що цікавить</h2>
+        </div>
+        <div class="row">
+          <span class="pill">все</span>
+          <span class="pill accent">укриття</span>
+          <span class="pill">школи</span>
+          <span class="pill">молодіжні центри</span>
+          <span class="pill">хаби</span>
+          <span class="pill">паркові зони</span>
+          <span class="pill">оселі</span>
+        </div>
+      </div>
+      <div class="cards-4 mt-18">
+        <div class="card"><div class="ph">[img]</div><div class="body"><span class="tag">2025 · Ірпінь</span><h3>Школа №3 · укриття</h3></div></div>
+        <div class="card"><div class="ph">[img]</div><div class="body"><span class="tag">2025 · Гостомель</span><h3>Дитячий простір</h3></div></div>
+        <div class="card"><div class="ph">[img]</div><div class="body"><span class="tag">2024 · Бородянка</span><h3>Молодіжний центр</h3></div></div>
+        <div class="card"><div class="ph">[img]</div><div class="body"><span class="tag">2024 · Буча</span><h3>Реабіл. простір ветеранів</h3></div></div>
+      </div>
+      <div class="row mt-18">
+        <span class="btn">Усі 38 проєктів →</span>
+      </div>
+    </section>
+
+    <footer class="site-foot">
+      <div><h5>БУР · Київ</h5><p class="small">Регіональне відділення громадської організації БУР.</p></div>
+      <div><h5>Розділи</h5><ul><li>Стрічка</li><li>Проєкти</li><li>Календар</li><li>Хто ми</li></ul></div>
+      <div><h5>Долучитися</h5><ul><li>Волонтер</li><li>Подати об'єкт</li><li>Партнер</li><li>Підтримати</li></ul></div>
+      <div><h5>Соцмережі</h5><ul><li>Instagram</li><li>Facebook</li><li>Telegram</li></ul></div>
+      <div class="legal"><span>© 2026 БУР Київ</span><span>головний сайт bur.org.ua</span></div>
+    </footer>
+  </div>
+
+  <div class="frame" data-label="нотатки до B" style="margin-top: 24px; padding: 18px 22px; font-size: 15px;">
+    <strong>Журнальний підхід:</strong> щільно, новинно, для аудиторії яка повертається. Великий «featured» матеріал + 4 коротких карток зверху, ticker з оперативними фактами, далі — календар + мапа поруч, тегований архів проєктів.
+    <ul style="margin: 8px 0 0 18px;">
+      <li>Підходить, якщо контенту багато і команда його реально виробляє щомісяця</li>
+      <li>Ticker з лічильниками — гарно демонструє «організація живе»</li>
+      <li>Менше CTA на головній — донат у footer-смужці й хедері</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     VARIANT C · Story-scroll narrative
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="variant v-story" data-variant="v-story">
+  <div class="frame" data-label="C · Історія — наративний скрол">
+
+    <header class="site-head">
+      <div class="site-logo"><span class="ring">Б</span> БУР · Київ</div>
+      <nav class="site-nav">
+        <a href="#" class="active">/</a>
+        <a href="#">розділ I · хто</a>
+        <a href="#">розділ II · що</a>
+        <a href="#">розділ III · як</a>
+        <a href="#">розділ IV · долучитись</a>
+        <span class="sep">·</span>
+        <span class="btn primary small">Підтримати ❤</span>
+      </nav>
+    </header>
+
+    <section class="story-hero">
+      <div class="mono small muted">КИЇВСЬКЕ ВІДДІЛЕННЯ · з 2015 року</div>
+      <h1><span class="stroke">Будуємо</span><br/>столицю разом</h1>
+      <p class="sub">Це не сайт. Це історія київського осередку БУР у чотирьох розділах. Прокручуй.</p>
+      <div class="row" style="justify-content: center; gap: 14px;">
+        <span class="btn primary">↓ почати читати</span>
+        <span class="btn">пропустити до дії</span>
+      </div>
+      <div class="note" style="bottom: -10px; left: 50%; transform: translateX(-50%) rotate(0);">scroll ↓</div>
+    </section>
+
+    <section class="chapter">
+      <div class="ix">I</div>
+      <div>
+        <div class="eyebrow mono">ХТО МИ</div>
+        <h2>11 років, одна столиця, тисячі рук.</h2>
+        <p>Київський осередок БУР з'явився ще у 2015-му як логічне продовження роботи в Краматорську. Сьогодні — це команда з ~25 координаторів, кілька сотень активних волонтерів і десятки громад-партнерів у Київській області.</p>
+        <span class="lines mt-12"><span></span><span></span><span></span></span>
+      </div>
+      <div class="ph">[ photo · команда осередку · group portrait ]</div>
+    </section>
+
+    <section class="quote">
+      «БУРчик — це найкоротший шлях зробити щось руками й нарешті відчути,<br/>
+      що твоє місто — це ти.»
+      <small>— цитата координатора, заглушка</small>
+    </section>
+
+    <section class="chapter">
+      <div class="ix">II</div>
+      <div>
+        <div class="eyebrow mono">ЩО МИ РОБИМО</div>
+        <h2>Дві форми: БУР-табір і БУРчик.</h2>
+        <p><strong>БУР-табір</strong> — 7–10 днів спільної роботи, з усієї країни. <strong>БУРчик</strong> — 1–2-денна локальна акція у Києві чи області. І те й те — будівля + молодь + сусіди.</p>
+        <div class="row mt-12">
+          <span class="pill solid">38 БУРчиків</span>
+          <span class="pill">12 таборів</span>
+          <span class="pill">14 громад</span>
+        </div>
+      </div>
+      <div>
+        <div class="cards-3" style="grid-template-columns: 1fr 1fr;">
+          <div class="card"><div class="ph">[ табір ]</div><div class="body"><h3>Табір</h3><span class="small muted">7–10 днів · 15–25 осіб</span></div></div>
+          <div class="card"><div class="ph">[ БУРчик ]</div><div class="body"><h3>БУРчик</h3><span class="small muted">1–2 дні · open</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <div class="ix">III</div>
+      <div>
+        <div class="eyebrow mono">ЯК ЦЕ ПРАЦЮЄ</div>
+        <h2>Громада — заявка — підготовка — БУРчик — підсумок.</h2>
+        <p>П'ять кроків від ідеї громади до завершеного об'єкту. Ми супроводжуємо команду на кожному з них — від навчання координаторів до фінзвітності.</p>
+      </div>
+      <div>
+        <div class="box dashed">
+          <div class="row" style="justify-content: space-between;">
+            <span class="stamp">1 · заявка</span>
+            <span class="muted mono small">↓</span>
+          </div>
+          <div class="row mt-12" style="justify-content: space-between;">
+            <span class="stamp">2 · школа</span>
+            <span class="muted mono small">↓</span>
+          </div>
+          <div class="row mt-12" style="justify-content: space-between;">
+            <span class="stamp">3 · підготовка</span>
+            <span class="muted mono small">↓</span>
+          </div>
+          <div class="row mt-12" style="justify-content: space-between;">
+            <span class="stamp">4 · БУРчик / табір</span>
+            <span class="muted mono small">↓</span>
+          </div>
+          <div class="row mt-12" style="justify-content: space-between;">
+            <span class="stamp">5 · підсумки + звіт</span>
+            <span class="muted mono small">✓</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" style="background: var(--paper-2);">
+      <div class="ix">IV</div>
+      <div>
+        <div class="eyebrow mono">ЯК ДОЛУЧИТИСЬ</div>
+        <h2>Три двері. Заходь.</h2>
+        <p>Не обовʼязково мати досвід. Не обовʼязково жити в Києві. Не обовʼязково мати багато часу. Обовʼязково — мати бажання.</p>
+      </div>
+      <div class="cards-3" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="card"><div class="ph dark">волонтер</div><div class="body"><h3>Поїхати</h3><span class="small">на БУРчик або табір</span><div class="mt-12"><span class="btn primary small">→</span></div></div></div>
+        <div class="card"><div class="ph dark">громада</div><div class="body"><h3>Подати</h3><span class="small">обʼєкт від громади</span><div class="mt-12"><span class="btn small">→</span></div></div></div>
+        <div class="card"><div class="ph dark">донор</div><div class="body"><h3>Підтримати</h3><span class="small">фінансово / партнерство</span><div class="mt-12"><span class="btn small">❤</span></div></div></div>
+      </div>
+    </section>
+
+    <footer class="site-foot">
+      <div><h5>БУР · Київ</h5><p class="small">Кінець історії. Початок дії.</p></div>
+      <div><h5>Розділи</h5><ul><li>I · Хто</li><li>II · Що</li><li>III · Як</li><li>IV · Долучитись</li></ul></div>
+      <div><h5>Контакт</h5><ul><li>kyiv@bur.org.ua</li><li>+380 — — —</li><li>Хаб · Прорізна 8</li></ul></div>
+      <div><h5>Соцмережі</h5><ul><li>Instagram</li><li>Facebook</li><li>Telegram</li></ul></div>
+      <div class="legal"><span>© 2026 БУР Київ</span><span>bur.org.ua</span></div>
+    </footer>
+  </div>
+
+  <div class="frame" data-label="нотатки до C" style="margin-top: 24px; padding: 18px 22px; font-size: 15px;">
+    <strong>Підходить якщо:</strong> ви хочете щоб новачок прочитав весь сайт як коротку розповідь і вийшов з рішенням. Менше функцій (нема календаря зверху), більше емоції й тону. Календар, мапа й новини — на окремих сторінках.
+    <ul style="margin: 8px 0 0 18px;">
+      <li>Великий hero з «прозорим» текстом — багато повітря</li>
+      <li>Чотири розділи з римськими цифрами — ритм скролу</li>
+      <li>Quote-blok чорний — графічний ритм у середині</li>
+      <li>Менше CTA на головній: дві в hero + три картки в кінці</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     VARIANT D · Sidebar / dashboard
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="variant v-side" data-variant="v-side">
+  <div class="frame" data-label="D · Дашборд — для спільноти волонтерів">
+    <div class="v-side">
+      <aside class="side">
+        <div class="logo"><span class="ring"></span> БУР · Київ</div>
+        <nav>
+          <a href="#" class="active">⌂  Огляд</a>
+          <a href="#">⚒  БУРчики</a>
+          <a href="#">📅  Календар</a>
+          <a href="#">🗺  Мапа громад</a>
+          <a href="#">👥  Команда</a>
+          <a href="#">📰  Новини</a>
+          <a href="#">📚  База знань</a>
+          <a href="#">💬  Чат осередку</a>
+          <a href="#">❤  Підтримати</a>
+        </nav>
+        <div class="pinned">
+          <h6>Закріплено</h6>
+          <span class="lines"><span></span><span></span><span></span></span>
+          <span class="pill small mt-12">📌 БУР-табір Бородянка</span>
+        </div>
+        <div class="pinned">
+          <h6>Швидкі дії</h6>
+          <span class="btn primary small" style="display:block; margin-bottom: 6px;">+ Подати об'єкт</span>
+          <span class="btn small" style="display:block;">+ Зголоситись</span>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="hello">
+          <div>
+            <div class="mono small muted">14 червня · субота · Київ</div>
+            <h1>Привіт 👋 Що сьогодні робимо?</h1>
+          </div>
+          <div class="row">
+            <span class="pill">🔔 3</span>
+            <span class="pill">UA / EN</span>
+            <span class="ph" style="width: 36px; height: 36px; border-radius: 50%;">[me]</span>
+          </div>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi"><div class="num">1 250+</div><div class="lbl">волонтерів осередку</div></div>
+          <div class="kpi"><div class="num">38</div><div class="lbl">БУРчиків в регіоні</div></div>
+          <div class="kpi"><div class="num">47 230 ₴</div><div class="lbl">зібрано в червні</div></div>
+        </div>
+
+        <div class="grid-dash">
+          <div class="tile">
+            <div class="row" style="justify-content: space-between;">
+              <h3>Сьогодні / цього тижня</h3>
+              <span class="mono small muted">→ календар</span>
+            </div>
+            <div class="events-list">
+              <div class="event-row">
+                <div class="event-date">14<small>чер</small></div>
+                <div class="event-title"><h4>Совські ставки · прибирання</h4><span class="event-loc">09:00 · Голосіївський</span></div>
+                <span class="btn primary small">→</span>
+              </div>
+              <div class="event-row">
+                <div class="event-date">16<small>чер</small></div>
+                <div class="event-title"><h4>Майстерня дерев'яних меблів</h4><span class="event-loc">18:00 · Хаб</span></div>
+                <span class="btn small">→</span>
+              </div>
+              <div class="event-row">
+                <div class="event-date">21<small>чер</small></div>
+                <div class="event-title"><h4>Зустріч координаторів</h4><span class="event-loc">18:00 · Хаб</span></div>
+                <span class="btn small">→</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tile">
+            <h3>Активні набори</h3>
+            <div class="lines"><span></span><span></span></div>
+            <hr class="dashed" />
+            <div class="mt-12 small">
+              <strong>БУР-табір · Бородянка</strong><br/>
+              <span class="muted mono small">15/20 ✋ · до 20.06</span>
+            </div>
+            <div class="mt-12 small">
+              <strong>Укриття · школа №194</strong><br/>
+              <span class="muted mono small">8/12 ✋ · сб–нд</span>
+            </div>
+            <div class="mt-12 small">
+              <strong>Хаб ВПО · Святошин</strong><br/>
+              <span class="muted mono small">open call</span>
+            </div>
+            <hr class="dashed mt-12" />
+            <div class="row mt-12"><span class="btn primary small">Усі набори</span></div>
+          </div>
+
+          <div class="tile" style="grid-column: 1 / -1;">
+            <div class="row" style="justify-content: space-between;">
+              <h3>Мапа Київського регіону</h3>
+              <div class="row">
+                <span class="pill">🟠 зараз</span>
+                <span class="pill">⚫ завершено</span>
+                <span class="pill">🔵 план</span>
+              </div>
+            </div>
+            <div class="ph" style="height: 260px;">[ INTERACTIVE MAP · Київ + область · громади з кліком → деталі обʼєкту ]</div>
+          </div>
+
+          <div class="tile">
+            <h3>Свіже в стрічці</h3>
+            <div class="lines"><span></span><span></span><span></span></div>
+            <hr class="dashed mt-12" />
+            <div class="mt-12 small"><strong>📷 Фото-звіт</strong> Гостомель · 12.05 · 18 фото</div>
+            <div class="mt-12 small"><strong>📰 Оголошення</strong> Літні табори 2026</div>
+            <div class="mt-12 small"><strong>📖 Історія</strong> «Прийшов на день…»</div>
+          </div>
+
+          <div class="tile">
+            <h3>База знань осередку</h3>
+            <div class="row mt-12 small">
+              <span class="pill">координаторам</span>
+              <span class="pill">майстрам</span>
+              <span class="pill">фінзвіт</span>
+            </div>
+            <ul class="mt-12 small" style="padding-left: 18px; margin: 0;">
+              <li>Як подати обʼєкт від громади</li>
+              <li>Гайд координатора БУРчика v2.1</li>
+              <li>Шаблон фінансового звіту</li>
+              <li>Бренд-кит осередку</li>
+            </ul>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="frame" data-label="нотатки до D" style="margin-top: 24px; padding: 18px 22px; font-size: 15px;">
+    <strong>Гібрид сайту і дашборду спільноти.</strong> Працює, якщо є реальна спільнота волонтерів які повертаються (логінятся, бачать свої набори, координатори керують своїми обʼєктами). Публічна частина — лише headline-блоки; «глибина» — за логіном.
+    <ul style="margin: 8px 0 0 18px;">
+      <li>Sidebar — основна навігація замість горизонтальної</li>
+      <li>«Привіт» з контекстом часу й місця — як в продуктовому застосунку</li>
+      <li>Мапа займає окремий тайл — фокус на регіональність</li>
+      <li>База знань — окремий тайл (для координаторів)</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     SUBPAGE · About / Про нас
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="variant" data-variant="p-about">
+  <div class="frame" data-label="підсторінка · Про нас">
+    <header class="site-head">
+      <div class="site-logo"><span class="ring">Б</span> БУР · Київ</div>
+      <nav class="site-nav">
+        <a href="#">Головна</a>
+        <a href="#" class="active">Про нас</a>
+        <a href="#">БУРчики</a>
+        <a href="#">Команда</a>
+        <a href="#">Контакти</a>
+        <span class="btn primary small">Підтримати ❤</span>
+      </nav>
+    </header>
+    <div class="breadcrumbs"><a href="#">Головна</a> / Про нас</div>
+    <div class="page-head">
+      <div>
+        <div class="mono small muted">ХТО МИ · ЩО МИ · ЦІННОСТІ</div>
+        <h1>Київський осередок<br/><span class="marker">з 2015 року</span></h1>
+      </div>
+      <div>
+        <p class="lead">Київське регіональне відділення громадської організації «Будуємо Україну Разом». Ми — команда координаторів і волонтерів, що організовує локальні відбудовчі активності в Києві та області.</p>
+      </div>
+    </div>
+
+    <div class="about-grid">
+      <div>
+        <div class="eyebrow">Місія регіону</div>
+        <h2 style="font-family: Kalam; font-size: 30px; margin: 6px 0 10px;">Зробити Київську область простором добросусідства.</h2>
+        <span class="lines"><span></span><span></span><span></span><span></span></span>
+      </div>
+      <div>
+        <div class="eyebrow">Цінності</div>
+        <div class="row mt-12" style="flex-wrap: wrap;">
+          <span class="pill">довіра</span>
+          <span class="pill">відповідальність</span>
+          <span class="pill">сусідство</span>
+          <span class="pill">волонтерство</span>
+          <span class="pill">молодь</span>
+          <span class="pill">відкритість</span>
+        </div>
+        <div class="eyebrow mt-18">Чим займаємось у регіоні</div>
+        <ul style="margin: 8px 0 0 18px;">
+          <li>БУРчики (1–2 дні) у Києві та області</li>
+          <li>БУР-табори (7–10 днів) у Бородянському, Бучанському та Вишгородському районах</li>
+          <li>Школа місцевих координаторів</li>
+          <li>Підтримка громадських просторів і хабів для ВПО</li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="eyebrow">Хронологія</div>
+      <h2>11 років у Києві</h2>
+    </section>
+    <div class="timeline">
+      <div class="timeline-item"><div class="yr">2015</div><div><h4>Перші БУРчики у Києві</h4><span class="lines"><span></span><span></span></span></div></div>
+      <div class="timeline-item"><div class="yr">2018</div><div><h4>Офіційне регіональне відділення</h4><span class="lines"><span></span><span></span></span></div></div>
+      <div class="timeline-item"><div class="yr">2022</div><div><h4>Деокупація — перші виїзди в область</h4><span class="lines"><span></span><span></span></span></div></div>
+      <div class="timeline-item"><div class="yr">2023</div><div><h4>Власний хаб на Прорізній</h4><span class="lines"><span></span><span></span></span></div></div>
+      <div class="timeline-item"><div class="yr">2025</div><div><h4>Школа коорд. + 14 громад-партнерів</h4><span class="lines"><span></span><span></span></span></div></div>
+      <div class="timeline-item"><div class="yr">2026</div><div><h4>Ти тут.</h4><span class="muted small">← наша поточна ціль: 50 БУРчиків за сезон</span></div></div>
+    </div>
+
+    <section class="section" style="background: var(--paper-2);">
+      <div class="eyebrow">Прозорість</div>
+      <h2>Звіти й документи</h2>
+      <div class="cards-4 mt-18">
+        <div class="card"><div class="ph" style="height: 80px;">PDF</div><div class="body"><h3>Звіт 2024</h3><span class="mono small muted">12 стор. · 2.4 MB</span></div></div>
+        <div class="card"><div class="ph" style="height: 80px;">PDF</div><div class="body"><h3>Звіт 2023</h3><span class="mono small muted">10 стор.</span></div></div>
+        <div class="card"><div class="ph" style="height: 80px;">PDF</div><div class="body"><h3>Статут</h3><span class="mono small muted">8 стор.</span></div></div>
+        <div class="card"><div class="ph" style="height: 80px;">PDF</div><div class="body"><h3>Брендбук осередку</h3><span class="mono small muted">2026</span></div></div>
+      </div>
+    </section>
+
+    <footer class="site-foot">
+      <div><h5>БУР · Київ</h5><p class="small">kyiv@bur.org.ua</p></div>
+      <div><h5>Сайт</h5><ul><li>Головна</li><li>БУРчики</li><li>Контакти</li></ul></div>
+      <div><h5>Долучитися</h5><ul><li>Волонтер</li><li>Об'єкт</li><li>Партнер</li></ul></div>
+      <div><h5>Соцмережі</h5><ul><li>Instagram</li><li>Facebook</li></ul></div>
+      <div class="legal"><span>© 2026 БУР Київ</span><span>bur.org.ua</span></div>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     SUBPAGE · Projects / БУРчики
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="variant" data-variant="p-projects">
+  <div class="frame" data-label="підсторінка · БУРчики й табори (каталог)">
+    <header class="site-head">
+      <div class="site-logo"><span class="ring">Б</span> БУР · Київ</div>
+      <nav class="site-nav">
+        <a href="#">Головна</a>
+        <a href="#">Про нас</a>
+        <a href="#" class="active">БУРчики</a>
+        <a href="#">Команда</a>
+        <a href="#">Контакти</a>
+        <span class="btn primary small">Підтримати ❤</span>
+      </nav>
+    </header>
+    <div class="breadcrumbs"><a href="#">Головна</a> / БУРчики та табори</div>
+    <div class="page-head">
+      <div>
+        <div class="mono small muted">38 АКТИВНИХ + АРХІВ · КИЇВ + ОБЛАСТЬ</div>
+        <h1>Каталог<br/>проєктів</h1>
+      </div>
+      <div>
+        <p class="lead">Усі поточні, заплановані й завершені волонтерські акції київського осередку. Фільтруй за форматом, типом обʼєкту й громадою.</p>
+        <div class="row mt-12">
+          <span class="btn primary">+ Подати свій обʼєкт</span>
+          <span class="btn">+ Зголоситись волонтером</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <span class="lbl">формат</span>
+      <span class="pill accent">всі</span>
+      <span class="pill">БУРчик</span>
+      <span class="pill">БУР-табір</span>
+      <span class="lbl" style="margin-left: 14px;">тип</span>
+      <span class="pill">укриття</span>
+      <span class="pill">школа</span>
+      <span class="pill">мол. центр</span>
+      <span class="pill">парк</span>
+      <span class="pill">хаб ВПО</span>
+      <span class="pill">оселя</span>
+      <span class="lbl" style="margin-left: 14px;">статус</span>
+      <span class="pill">зараз</span>
+      <span class="pill">план</span>
+      <span class="pill">архів</span>
+      <span class="lbl" style="margin-left: 14px;">громада</span>
+      <span class="box dashed" style="padding: 2px 8px;">пошук ▾</span>
+    </div>
+
+    <div class="projects-grid">
+      <div class="card"><div class="ph">[img]</div><div class="body"><span class="tag">БУР-табір · план · 28.06</span><h3>Молодіжний центр у Бородянці</h3><span class="lines"><span></span><span></span></span><div class="meta"><span>10 днів</span><span>15/20 ✋</span></div></div></div>
+      <div class="card"><div class="ph">[img]</div><div class="body"><span class="tag">БУРчик · 14–15.06</span><h3>Укриття школи №194</h3><span class="lines"><span></span><span></span></span><div class="meta"><span>сб–нд</span><span>8/12 ✋</span></div></div></div>
+      <div class="card"><div class="ph">[img]</div><div class="body"><span class="tag">довгий · open</span><h3>Хаб для ВПО, Святошин</h3><span class="lines"><span></span><span></span></span><div class="meta"><span>постійно</span><span>open</span></div></div></div>
+      <div class="card"><div class="ph">[img]</div><div class="body"><span class="tag">архів · 2025</span><h3>Школа №3 · Ірпінь</h3><span class="lines"><span></span><span></span></span><div class="meta"><span>✓ завершено</span><span>22 особи</span></div></div></div>
+      <div class="card"><div class="ph">[img]</div><div class="body"><span class="tag">архів · 2025</span><h3>Дитячий простір · Гостомель</h3><span class="lines"><span></span><span></span></span><div class="meta"><span>✓ завершено</span><span>14 осіб</span></div></div></div>
+      <div class="card"><div class="ph">[img]</div><div class="body"><span class="tag">архів · 2024</span><h3>Реабіл. простір · Буча</h3><span class="lines"><span></span><span></span></span><div class="meta"><span>✓ завершено</span><span>30 осіб</span></div></div></div>
+    </div>
+
+    <div class="map-block">
+      <div class="ph map">[ MAP · Київська область · усі обʼєкти · клік → картка проєкту ]</div>
+      <div class="map-side">
+        <div class="eyebrow">Громади-партнери</div>
+        <ul class="mt-12" style="padding-left: 18px;">
+          <li>Бородянська ТГ</li>
+          <li>Бучанський р-н</li>
+          <li>Ірпінська ТГ</li>
+          <li>Гостомельська ТГ</li>
+          <li>Вишгородський р-н</li>
+          <li>Святошинський р-н Києва</li>
+          <li>Голосіївський р-н Києва</li>
+          <li>... <span class="muted">+ 7</span></li>
+        </ul>
+        <hr class="dashed mt-18" />
+        <div class="mt-18">
+          <span class="btn primary small">Я з громади →</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="eyebrow">Як подати об'єкт</div>
+      <h2>5 кроків від заявки до БУРчика</h2>
+      <div class="cards-4 mt-18">
+        <div class="card"><div class="body"><span class="stamp">крок 1</span><h3 class="mt-12">Заявка</h3><span class="small muted">форма на 10 хв · опис обʼєкту, команда, бенефіціари</span></div></div>
+        <div class="card"><div class="body"><span class="stamp">крок 2</span><h3 class="mt-12">Дзвінок</h3><span class="small muted">оцінюємо разом — реалістично волонтерами чи ні</span></div></div>
+        <div class="card"><div class="body"><span class="stamp">крок 3</span><h3 class="mt-12">Школа коорд.</h3><span class="small muted">2 модулі — комунікації, фінзвіт, безпека</span></div></div>
+        <div class="card"><div class="body"><span class="stamp">крок 4</span><h3 class="mt-12">БУРчик</h3><span class="small muted">проводимо акцію разом · 1–10 днів</span></div></div>
+      </div>
+    </section>
+
+    <footer class="site-foot">
+      <div><h5>БУР · Київ</h5><p class="small">kyiv@bur.org.ua</p></div>
+      <div><h5>Сайт</h5><ul><li>Головна</li><li>Про нас</li><li>Контакти</li></ul></div>
+      <div><h5>Долучитися</h5><ul><li>Волонтер</li><li>Подати об'єкт</li><li>Партнер</li></ul></div>
+      <div><h5>Соцмережі</h5><ul><li>Instagram</li><li>Facebook</li></ul></div>
+      <div class="legal"><span>© 2026 БУР Київ</span><span>bur.org.ua</span></div>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     SUBPAGE · Team / Команда
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="variant" data-variant="p-team">
+  <div class="frame" data-label="підсторінка · Команда осередку">
+    <header class="site-head">
+      <div class="site-logo"><span class="ring">Б</span> БУР · Київ</div>
+      <nav class="site-nav">
+        <a href="#">Головна</a>
+        <a href="#">Про нас</a>
+        <a href="#">БУРчики</a>
+        <a href="#" class="active">Команда</a>
+        <a href="#">Контакти</a>
+        <span class="btn primary small">Підтримати ❤</span>
+      </nav>
+    </header>
+    <div class="breadcrumbs"><a href="#">Головна</a> / Команда осередку</div>
+    <div class="page-head">
+      <div>
+        <div class="mono small muted">КООРДИНАЦІЯ · 25 ОСІБ</div>
+        <h1>Хто за цим стоїть</h1>
+      </div>
+      <div>
+        <p class="lead">Команда координаторів і активних волонтерів київського осередку. Поруч з кожним — роль, контакт і дотичність до напрямів роботи.</p>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="eyebrow">Координаційне ядро</div>
+      <h2>5 людей, які тримають все докупи</h2>
+      <div class="cards-3 mt-18" style="grid-template-columns: repeat(5, 1fr);">
+        <div class="card team-card"><div class="ph">[ avatar ]</div><div class="body"><div class="role">координаторка осередку</div><div class="name">Ім'я Прізвище</div><span class="lines mt-12"><span></span><span></span></span></div></div>
+        <div class="card team-card"><div class="ph">[ avatar ]</div><div class="body"><div class="role">проєктний менеджер</div><div class="name">Ім'я Прізвище</div><span class="lines mt-12"><span></span><span></span></span></div></div>
+        <div class="card team-card"><div class="ph">[ avatar ]</div><div class="body"><div class="role">фінанси</div><div class="name">Ім'я Прізвище</div><span class="lines mt-12"><span></span><span></span></span></div></div>
+        <div class="card team-card"><div class="ph">[ avatar ]</div><div class="body"><div class="role">комунікації</div><div class="name">Ім'я Прізвище</div><span class="lines mt-12"><span></span><span></span></span></div></div>
+        <div class="card team-card"><div class="ph">[ avatar ]</div><div class="body"><div class="role">безпека</div><div class="name">Ім'я Прізвище</div><span class="lines mt-12"><span></span><span></span></span></div></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="row" style="justify-content: space-between; align-items: end;">
+        <div>
+          <div class="eyebrow">Активні координатори</div>
+          <h2>20+ людей у напрямах</h2>
+        </div>
+        <div class="row">
+          <span class="pill">усі</span>
+          <span class="pill">майстри</span>
+          <span class="pill">воркшопи</span>
+          <span class="pill">волонт. менеджмент</span>
+          <span class="pill">логістика</span>
+        </div>
+      </div>
+      <div class="team-row mt-18">
+        <div class="card team-card"><div class="ph">[ ava ]</div><div class="body"><div class="role">майстер</div><div class="name">І.П.</div></div></div>
+        <div class="card team-card"><div class="ph">[ ava ]</div><div class="body"><div class="role">майстер</div><div class="name">І.П.</div></div></div>
+        <div class="card team-card"><div class="ph">[ ava ]</div><div class="body"><div class="role">воркшопи</div><div class="name">І.П.</div></div></div>
+        <div class="card team-card"><div class="ph">[ ava ]</div><div class="body"><div class="role">воркшопи</div><div class="name">І.П.</div></div></div>
+        <div class="card team-card"><div class="ph">[ ava ]</div><div class="body"><div class="role">волонт.менедж.</div><div class="name">І.П.</div></div></div>
+        <div class="card team-card"><div class="ph">[ ava ]</div><div class="body"><div class="role">логістика</div><div class="name">І.П.</div></div></div>
+        <div class="card team-card"><div class="ph">[ ava ]</div><div class="body"><div class="role">майстер</div><div class="name">І.П.</div></div></div>
+        <div class="card team-card"><div class="ph">[ ava ]</div><div class="body"><div class="role">воркшопи</div><div class="name">І.П.</div></div></div>
+        <div class="card team-card"><div class="ph">[ ava ]</div><div class="body"><div class="role">логістика</div><div class="name">І.П.</div></div></div>
+        <div class="card team-card"><div class="ph">[ ava ]</div><div class="body"><div class="role">волонт.менедж.</div><div class="name">І.П.</div></div></div>
+        <div class="card team-card"><div class="ph">[ ava ]</div><div class="body"><div class="role">воркшопи</div><div class="name">І.П.</div></div></div>
+        <div class="card team-card"><div class="ph">[ ava ]</div><div class="body"><div class="role">майстер</div><div class="name">І.П.</div></div></div>
+      </div>
+    </section>
+
+    <section class="section" style="background: var(--paper-2);">
+      <div class="eyebrow">Стати координатором</div>
+      <h2>Йдемо на школу коорд.?</h2>
+      <p class="lead">Два модулі по 2 дні. Безкоштовно. Раз на півроку. Після — ти можеш координувати власний БУРчик у Києві чи області.</p>
+      <div class="row">
+        <span class="btn primary">Заповнити форму →</span>
+        <span class="btn">програма школи</span>
+      </div>
+    </section>
+
+    <footer class="site-foot">
+      <div><h5>БУР · Київ</h5><p class="small">kyiv@bur.org.ua</p></div>
+      <div><h5>Сайт</h5><ul><li>Головна</li><li>Про нас</li><li>БУРчики</li><li>Контакти</li></ul></div>
+      <div><h5>Долучитися</h5><ul><li>Волонтер</li><li>Координатор</li><li>Партнер</li></ul></div>
+      <div><h5>Соцмережі</h5><ul><li>Instagram</li><li>Facebook</li></ul></div>
+      <div class="legal"><span>© 2026 БУР Київ</span><span>bur.org.ua</span></div>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     SUBPAGE · Contacts / Контакти
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="variant" data-variant="p-contacts">
+  <div class="frame" data-label="підсторінка · Контакти й приєднання">
+    <header class="site-head">
+      <div class="site-logo"><span class="ring">Б</span> БУР · Київ</div>
+      <nav class="site-nav">
+        <a href="#">Головна</a>
+        <a href="#">Про нас</a>
+        <a href="#">БУРчики</a>
+        <a href="#">Команда</a>
+        <a href="#" class="active">Контакти</a>
+        <span class="btn primary small">Підтримати ❤</span>
+      </nav>
+    </header>
+    <div class="breadcrumbs"><a href="#">Головна</a> / Контакти</div>
+    <div class="page-head">
+      <div>
+        <div class="mono small muted">ЯК НАС ЗНАЙТИ Й ДОЛУЧИТИСЬ</div>
+        <h1>Поговорімо.</h1>
+      </div>
+      <div>
+        <p class="lead">Обери, що тобі ближче — і пиши прямо людині, яка цим займається. Усі контакти осередку нижче.</p>
+      </div>
+    </div>
+
+    <div class="contact-grid">
+      <div>
+        <div class="eyebrow">Хаб · фізична адреса</div>
+        <h2 style="font-family: Kalam; font-size: 30px; margin: 8px 0 12px;">вул. Прорізна, 8 · Київ</h2>
+        <p>Працюємо вт–сб, 12:00–20:00. Заходь — є кава, дошка з планами на сезон і Wi-Fi.</p>
+        <div class="ph mt-12" style="height: 240px;">[ MAP · pin: Прорізна 8 ]</div>
+        <div class="row mt-12">
+          <span class="pill">🚇 Хрещатик · 5 хв</span>
+          <span class="pill">🚲 веломісце · так</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="eyebrow">Прямі контакти</div>
+        <h2 style="font-family: Kalam; font-size: 30px; margin: 8px 0 12px;">Кому й куди писати</h2>
+        <div class="box mt-12">
+          <strong>Загальне:</strong> kyiv@bur.org.ua<br/>
+          <span class="muted small mono">відповідаємо до 2 робочих днів</span>
+        </div>
+        <div class="box mt-12">
+          <strong>Хочу волонтерити:</strong> volunteers@kyiv.bur<br/>
+          <span class="muted small mono">→ Ім'я, координатор. волонт. менеджменту</span>
+        </div>
+        <div class="box mt-12">
+          <strong>Громада / обʼєкт:</strong> communities@kyiv.bur<br/>
+          <span class="muted small mono">→ Ім'я, проєктний менеджер</span>
+        </div>
+        <div class="box mt-12">
+          <strong>Преса й партнерства:</strong> press@kyiv.bur<br/>
+          <span class="muted small mono">→ Ім'я, комунікаційний менеджер</span>
+        </div>
+        <div class="row mt-18">
+          <span class="pill">Instagram @bur.kyiv</span>
+          <span class="pill">Facebook</span>
+          <span class="pill">Telegram</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="eyebrow">Швидка форма</div>
+      <h2>Не знаєш кому писати — напиши сюди</h2>
+      <div class="cards-3 mt-18" style="grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div>
+          <div class="form-field"><label>я звертаюсь як</label><div class="row"><span class="pill accent">волонтер</span><span class="pill">громада</span><span class="pill">донор</span><span class="pill">медіа</span></div></div>
+          <div class="form-field"><label>ім'я</label><div class="input">Ім'я Прізвище</div></div>
+          <div class="form-field"><label>контакт</label><div class="input">email або телефон</div></div>
+          <div class="form-field"><label>повідомлення</label><div class="input tall">коротко про що...</div></div>
+          <span class="btn primary">Відправити →</span>
+        </div>
+        <div>
+          <div class="eyebrow">Часті питання</div>
+          <ul style="margin: 8px 0 0 18px;">
+            <li>Скільки коштує участь у БУРчику? — <span class="muted">безкоштовно для волонтера</span></li>
+            <li>Чи потрібен досвід? — <span class="muted">ні, ми навчаємо</span></li>
+            <li>Чи можу приїхати з іншого регіону? — <span class="muted">так, на табори — особливо ❤</span></li>
+            <li>З якого віку беруть? — <span class="muted">14+ за згодою батьків, 18+ самостійно</span></li>
+            <li>Чи є житло на табори? — <span class="muted">так, базове розміщення</span></li>
+            <li>Як подати об'єкт від громади? — <span class="muted">розділ БУРчики → форма</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-foot">
+      <div><h5>БУР · Київ</h5><p class="small">Регіональне відділення громадської організації БУР.</p></div>
+      <div><h5>Сайт</h5><ul><li>Головна</li><li>Про нас</li><li>БУРчики</li><li>Команда</li></ul></div>
+      <div><h5>Долучитися</h5><ul><li>Волонтер</li><li>Об'єкт</li><li>Партнер</li><li>Підтримати ❤</li></ul></div>
+      <div><h5>Соцмережі</h5><ul><li>Instagram</li><li>Facebook</li><li>Telegram</li></ul></div>
+      <div class="legal"><span>© 2026 БУР Київ · регіональне відділення</span><span>← bur.org.ua</span></div>
+    </footer>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     SITEMAP · IA · карта сайту (default tab)
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="variant is-active" data-variant="sitemap">
+  <div class="frame" data-label="0 · IA · карта сайту + ключові юзер-флоу">
+    <div class="sitemap-wrap">
+      <div class="row" style="justify-content: space-between; align-items: end;">
+        <div>
+          <div class="mono small muted">ARCHITECTURE · LOW-FI</div>
+          <h1 style="font-family: Kalam; font-size: 44px; margin: 4px 0 0;">Карта сайту БУР · Київ</h1>
+          <p class="small muted" style="max-width: 70ch; margin: 8px 0 0;">Один файл, 4 варіанти головної + 4 підсторінки + мобільний. Нижче — інформаційна архітектура й три ключові юзер-флоу.</p>
+        </div>
+        <div class="ia-legend">
+          <div class="item"><span class="swatch" style="background: var(--accent);"></span> root</div>
+          <div class="item"><span class="swatch" style="background: var(--hi);"></span> головна</div>
+          <div class="item"><span class="swatch" style="background: var(--paper);"></span> сторінка</div>
+          <div class="item"><span class="swatch" style="background: var(--paper-2); border-style: dashed;"></span> дія / форма</div>
+        </div>
+      </div>
+
+      <div class="ia-grid mt-18">
+        <!-- Column 1 -->
+        <div class="ia-col">
+          <h4>I · знайомство</h4>
+          <div class="ia-node root">/ Київський осередок<span class="meta">root · landing</span></div>
+          <div class="ia-sub">
+            <div class="ia-node home">Головна (A/B/C/D)<span class="meta">обираємо 1 варіант</span></div>
+            <div class="ia-node">Про нас<span class="meta">/pro-nas</span></div>
+            <div class="ia-sub">
+              <div class="ia-node">Місія регіону</div>
+              <div class="ia-node">Хронологія 2015→</div>
+              <div class="ia-node">Звіти й документи</div>
+            </div>
+          </div>
+        </div>
+        <!-- Column 2 -->
+        <div class="ia-col">
+          <h4>II · що ми робимо</h4>
+          <div class="ia-node">БУРчики й табори<span class="meta">/burchyky</span></div>
+          <div class="ia-sub">
+            <div class="ia-node">Каталог · фільтри</div>
+            <div class="ia-node">Картка проєкту<span class="meta">/burchyky/&lt;slug&gt;</span></div>
+            <div class="ia-node action">Подати об'єкт</div>
+            <div class="ia-node action">Зголоситись на БУРчик</div>
+          </div>
+          <div class="ia-node mt-12">Календар подій<span class="meta">/podii · фільтри · .ics</span></div>
+          <div class="ia-sub">
+            <div class="ia-node">Картка події</div>
+            <div class="ia-node action">RSVP / реєстрація</div>
+          </div>
+        </div>
+        <!-- Column 3 -->
+        <div class="ia-col">
+          <h4>III · люди й історія</h4>
+          <div class="ia-node">Команда осередку<span class="meta">/komanda</span></div>
+          <div class="ia-sub">
+            <div class="ia-node">Координаційне ядро</div>
+            <div class="ia-node">Активні координатори</div>
+            <div class="ia-node action">Стати координатором</div>
+          </div>
+          <div class="ia-node mt-12">Новини й стрічка<span class="meta">/novyny</span></div>
+          <div class="ia-sub">
+            <div class="ia-node">Репортажі</div>
+            <div class="ia-node">Історії волонтерів</div>
+            <div class="ia-node">Оголошення</div>
+          </div>
+        </div>
+        <!-- Column 4 -->
+        <div class="ia-col">
+          <h4>IV · контакт + дія</h4>
+          <div class="ia-node">Контакти<span class="meta">/kontakty</span></div>
+          <div class="ia-sub">
+            <div class="ia-node">Хаб (мапа · Прорізна 8)</div>
+            <div class="ia-node">Прямі контакти</div>
+            <div class="ia-node action">Швидка форма</div>
+            <div class="ia-node">FAQ</div>
+          </div>
+          <div class="ia-node mt-12" style="background: var(--accent);">Підтримати ❤<span class="meta">/pidtrymaty · донат</span></div>
+          <div class="ia-sub">
+            <div class="ia-node action">Разова</div>
+            <div class="ia-node action">Регулярна</div>
+            <div class="ia-node action">Партнерство</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flows -->
+      <div class="ia-flow">
+        <h3>🛣 Юзер-флоу №1 — новий волонтер</h3>
+        <div class="ribbon">від «вперше чую» до «їду на БУРчик» — найважливіший шлях сайту</div>
+        <div class="flow-row">
+          <div class="flow-step start"><span class="ix-pill">01</span><h5>Зайшов з Instagram</h5><span class="what">utm · stories</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step"><span class="ix-pill">02</span><h5>Головна</h5><span class="what">hero · "Стати волонтером"</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step"><span class="ix-pill">03</span><h5>Каталог БУРчиків</h5><span class="what">фільтри: формат, дата</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step"><span class="ix-pill">04</span><h5>Картка проєкту</h5><span class="what">опис · команда · фото</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step"><span class="ix-pill">05</span><h5>Форма «зголоситись»</h5><span class="what">ім'я · контакт · мотивація</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step end"><span class="ix-pill">06</span><h5>Лист підтвердження</h5><span class="what">наступні кроки · чат</span></div>
+        </div>
+
+        <h3 class="mt-24">🛠 Юзер-флоу №2 — громада подає об'єкт</h3>
+        <div class="ribbon">координатор громади хоче, щоб БУР приїхав у його село</div>
+        <div class="flow-row">
+          <div class="flow-step start"><span class="ix-pill">01</span><h5>Пошук «волонтери ремонт»</h5><span class="what">SEO · регіон Київ</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step"><span class="ix-pill">02</span><h5>Сторінка БУРчики</h5><span class="what">блок «Як подати об'єкт»</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step"><span class="ix-pill">03</span><h5>5 кроків + критерії</h5><span class="what">пояснюємо умови</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step"><span class="ix-pill">04</span><h5>Велика форма заявки</h5><span class="what">обʼєкт · команда · бюджет</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step"><span class="ix-pill">05</span><h5>Дзвінок з ПМ</h5><span class="what">оцінка реалістичності</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step end"><span class="ix-pill">06</span><h5>Школа координаторів</h5><span class="what">2 модулі · далі робота</span></div>
+        </div>
+
+        <h3 class="mt-24">❤ Юзер-флоу №3 — донор</h3>
+        <div class="ribbon">читач новин чи журналіст хоче підтримати</div>
+        <div class="flow-row">
+          <div class="flow-step start"><span class="ix-pill">01</span><h5>Стаття в медіа</h5><span class="what">backlink</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step"><span class="ix-pill">02</span><h5>Головна / новини</h5><span class="what">страйп «один БУРчик =»</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step"><span class="ix-pill">03</span><h5>Сторінка донату</h5><span class="what">3 кнопки сум</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step"><span class="ix-pill">04</span><h5>Реквізити / monobank</h5><span class="what">+ підписка-розсилка</span><span class="flow-arrow">→</span></div>
+          <div class="flow-step end" style="grid-column: span 2;"><span class="ix-pill">05</span><h5>Лист подяки + звіт за квартал</h5><span class="what">прозорість · повертає донора</span></div>
+        </div>
+      </div>
+
+      <!-- Decisions to make -->
+      <div class="ia-flow">
+        <h3>🤔 Що тут обираємо разом</h3>
+        <div class="cards-3">
+          <div class="card"><div class="body"><span class="tag">decision · 1</span><h3>Який варіант головної?</h3><span class="small">A класика / B журнал / C історія / D дашборд. Залежить від того, чи є контент-команда й чи є зареєстровані волонтери.</span></div></div>
+          <div class="card"><div class="body"><span class="tag">decision · 2</span><h3>Окремий донат-розділ чи фокус-стрипа?</h3><span class="small">У Класиці є помаранчева смуга «один БУРчик = 7500₴». Чи цього достатньо, чи потрібна окрема /pidtrymaty.</span></div></div>
+          <div class="card"><div class="body"><span class="tag">decision · 3</span><h3>Логін чи відкритий сайт?</h3><span class="small">D-Дашборд має сенс лише з логіном. A/B/C — повністю публічні. Можна стартувати без, додати пізніше.</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     MOBILE · key screens, side-by-side
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="variant" data-variant="p-mobile">
+  <div class="frame" data-label="📱 мобільне — ключові екрани">
+    <div class="mob-wrap">
+      <div class="row" style="justify-content: space-between; align-items: end;">
+        <div>
+          <div class="mono small muted">390 × 844 · iPhone-ish · low-fi</div>
+          <h1 style="font-family: Kalam; font-size: 36px; margin: 4px 0 0;">Мобільні екрани</h1>
+          <p class="small muted" style="max-width: 60ch;">4 ключові екрани мобілки. Базуються на варіанті A (Класика). Нижня таб-бара для повторних заходів.</p>
+        </div>
+        <div class="row">
+          <span class="pill">A — головна</span>
+          <span class="pill">B — каталог</span>
+          <span class="pill">C — деталі</span>
+          <span class="pill">D — донат</span>
+        </div>
+      </div>
+
+      <div class="mob-row mt-18">
+
+        <!-- Mobile 1: Home -->
+        <div>
+          <div class="phone"><div class="screen">
+            <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+            <div class="mhead">
+              <div class="l"><span class="ring"></span> БУР·Київ</div>
+              <div class="r">☰</div>
+            </div>
+            <div class="mbody">
+              <span class="lbl">Регіональне відділення</span>
+              <h2>Будуємо столицю разом.</h2>
+              <div class="ph-img" style="height: 110px;">[ hero ]</div>
+              <div class="mbtn primary">Стати волонтером →</div>
+              <div class="mbtn">Подати об'єкт</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 4px;">
+                <div class="mcard"><div style="font-family: Kalam; font-size: 18px;">1 250+</div><div style="font-size: 8px; color: var(--muted);">волонтерів</div></div>
+                <div class="mcard"><div style="font-family: Kalam; font-size: 18px;">38</div><div style="font-size: 8px; color: var(--muted);">БУРчиків</div></div>
+              </div>
+              <span class="lbl mt-12">Найближче</span>
+              <div class="mcard"><strong>14.06</strong> · Совські ставки</div>
+              <div class="mcard"><strong>21.06</strong> · Зустріч координаторів</div>
+            </div>
+            <div class="mtab">
+              <div class="t active">⌂ Home</div>
+              <div class="t">⚒ Дії</div>
+              <div class="t">📅 Кал.</div>
+              <div class="t">❤ Донат</div>
+            </div>
+          </div></div>
+          <div class="phone-label">A · головна<span class="meta">/ — landing</span></div>
+        </div>
+
+        <!-- Mobile 2: Projects list -->
+        <div>
+          <div class="phone"><div class="screen">
+            <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+            <div class="mhead">
+              <div class="l">← БУРчики</div>
+              <div class="r">⚙</div>
+            </div>
+            <div class="mbody">
+              <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                <span class="pill" style="font-size: 10px; padding: 1px 6px;">все</span>
+                <span class="pill" style="font-size: 10px; padding: 1px 6px; background: var(--accent);">БУРчик</span>
+                <span class="pill" style="font-size: 10px; padding: 1px 6px;">табір</span>
+                <span class="pill" style="font-size: 10px; padding: 1px 6px;">укриття</span>
+              </div>
+              <div class="mcard">
+                <div class="ph-img" style="height: 50px;">[img]</div>
+                <div style="font-family: Kalam; font-size: 14px; margin-top: 4px;">Молод. центр · Бородянка</div>
+                <div style="font-size: 9px; color: var(--muted);">табір · 10 днів · 15/20 ✋</div>
+              </div>
+              <div class="mcard">
+                <div class="ph-img" style="height: 50px;">[img]</div>
+                <div style="font-family: Kalam; font-size: 14px; margin-top: 4px;">Укриття · школа 194</div>
+                <div style="font-size: 9px; color: var(--muted);">сб–нд · 8/12 ✋</div>
+              </div>
+              <div class="mcard">
+                <div class="ph-img" style="height: 50px;">[img]</div>
+                <div style="font-family: Kalam; font-size: 14px; margin-top: 4px;">Хаб ВПО · Святошин</div>
+                <div style="font-size: 9px; color: var(--muted);">постійно · open</div>
+              </div>
+              <div class="mcard">
+                <div class="ph-img" style="height: 50px;">[img]</div>
+                <div style="font-family: Kalam; font-size: 14px; margin-top: 4px;">Дитячий простір · ✓</div>
+                <div style="font-size: 9px; color: var(--muted);">архів · Гостомель 2025</div>
+              </div>
+            </div>
+            <div class="mtab">
+              <div class="t">⌂ Home</div>
+              <div class="t active">⚒ Дії</div>
+              <div class="t">📅 Кал.</div>
+              <div class="t">❤ Донат</div>
+            </div>
+          </div></div>
+          <div class="phone-label">B · каталог<span class="meta">/burchyky · filters</span></div>
+        </div>
+
+        <!-- Mobile 3: Project detail -->
+        <div>
+          <div class="phone"><div class="screen">
+            <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+            <div class="mhead">
+              <div class="l">← Бородянка</div>
+              <div class="r">⤴</div>
+            </div>
+            <div class="mbody">
+              <div class="ph-img" style="height: 100px;">[ project hero ]</div>
+              <span class="lbl">БУР-табір · 28.06–07.07</span>
+              <h2>Молодіжний центр у Бородянці</h2>
+              <div style="display: flex; gap: 4px;">
+                <span class="pill" style="font-size: 9px; padding: 1px 6px;">10 днів</span>
+                <span class="pill" style="font-size: 9px; padding: 1px 6px; background: var(--hi);">15/20 ✋</span>
+              </div>
+              <div style="font-size: 10px; line-height: 1.4;">Будуємо молодіжний простір у центрі Бородянки. Шукаємо 5 волонтерів — потрібні руки, не досвід.</div>
+              <div class="mcard">
+                <div style="font-family: JetBrains Mono; font-size: 9px;">КООРДИНАТОР</div>
+                <div style="font-family: Kalam; font-size: 13px;">Ім'я Прізвище</div>
+              </div>
+              <div class="mbtn primary">Зголоситись →</div>
+              <div class="mbtn">Поділитись</div>
+              <span class="lbl mt-12">Що робитимемо</span>
+              <span class="lines"><span></span><span></span></span>
+            </div>
+            <div class="mtab">
+              <div class="t">⌂ Home</div>
+              <div class="t active">⚒ Дії</div>
+              <div class="t">📅 Кал.</div>
+              <div class="t">❤ Донат</div>
+            </div>
+          </div></div>
+          <div class="phone-label">C · картка проєкту<span class="meta">/burchyky/&lt;slug&gt;</span></div>
+        </div>
+
+        <!-- Mobile 4: Donate -->
+        <div>
+          <div class="phone"><div class="screen">
+            <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+            <div class="mhead">
+              <div class="l">← Підтримати</div>
+              <div class="r">×</div>
+            </div>
+            <div class="mbody">
+              <span class="lbl">Один БУРчик у регіоні</span>
+              <h2>= ~7 500 ₴</h2>
+              <div style="font-size: 10px; line-height: 1.4;">матеріали · харчування · логістика волонтерів</div>
+              <div class="ph-img" style="height: 80px;">[ ілюстр. · хто за цим = молодь ]</div>
+              <span class="lbl">Сума</span>
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px;">
+                <div class="mbtn">300</div>
+                <div class="mbtn" style="background: var(--accent);">700</div>
+                <div class="mbtn">2 000</div>
+              </div>
+              <div class="mcard" style="text-align: center;">своя сума ₴</div>
+              <span class="lbl mt-12">Регулярно?</span>
+              <div class="mcard" style="display: flex; justify-content: space-between;"><span>щомісяця</span><span>○</span></div>
+              <div class="mbtn primary">Перейти до оплати →</div>
+              <div style="font-size: 8px; color: var(--muted); text-align: center;">monobank · liqpay · картка</div>
+            </div>
+            <div class="mtab">
+              <div class="t">⌂ Home</div>
+              <div class="t">⚒ Дії</div>
+              <div class="t">📅 Кал.</div>
+              <div class="t active">❤ Донат</div>
+            </div>
+          </div></div>
+          <div class="phone-label">D · донат<span class="meta">/pidtrymaty</span></div>
+        </div>
+
+      </div>
+
+      <div class="ia-flow">
+        <h3>📝 Нотатки до мобільної версії</h3>
+        <ul style="margin: 8px 0 0 18px;">
+          <li>Нижня таб-бара — 4 пункти максимум. Календар винесений окремо бо в мобілці шукають саме «коли».</li>
+          <li>Каталог-карточки великі, з фото — у мобільному більше скролу, менше тексту на картку.</li>
+          <li>Кнопки сум на донаті — фікс. 3 + «своя». Дрібний шрифт реквізитів внизу.</li>
+          <li>Hero без двох CTA на iOS-екрані — один основний, другорядні нижче.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div><!-- /stage -->
+
+
+<!-- ─────────────────────────────  Tweaks panel  ───────────────────────────── -->
+<div class="tweaks" id="tweaks">
+  <h6>Tweaks <button id="close-tweaks">×</button></h6>
+  <div class="row"><span>акцент</span>
+    <div class="swatches">
+      <button class="sw active" data-accent="#ff7a1a" style="background:#ff7a1a"></button>
+      <button class="sw" data-accent="#2a6fdb" style="background:#2a6fdb"></button>
+      <button class="sw" data-accent="#1f8a5b" style="background:#1f8a5b"></button>
+      <button class="sw" data-accent="#d23a3a" style="background:#d23a3a"></button>
+    </div>
+  </div>
+  <div class="row"><span>хайлайтер</span>
+    <div class="swatches">
+      <button class="sw active" data-hi="#fff39a" style="background:#fff39a"></button>
+      <button class="sw" data-hi="#cfe9ff" style="background:#cfe9ff"></button>
+      <button class="sw" data-hi="#ffd7e8" style="background:#ffd7e8"></button>
+    </div>
+  </div>
+  <div class="row"><span>щільність сітки</span>
+    <input type="range" id="grid-size" min="0" max="40" step="4" value="24" />
+  </div>
+  <div class="row"><span>сітка</span>
+    <input type="checkbox" id="grid-on" checked />
+  </div>
+  <div class="row"><span>колір паперу</span>
+    <div class="swatches">
+      <button class="sw active" data-paper="#fbf9f4" style="background:#fbf9f4"></button>
+      <button class="sw" data-paper="#ffffff" style="background:#ffffff"></button>
+      <button class="sw" data-paper="#f0ece0" style="background:#f0ece0"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // —— Tab switching ——
+  const tabs = document.querySelectorAll('.tab[data-tab]');
+  const variants = document.querySelectorAll('.variant[data-variant]');
+  function showVariant(name) {
+    tabs.forEach(t => t.classList.toggle('is-active', t.dataset.tab === name));
+    variants.forEach(v => v.classList.toggle('is-active', v.dataset.variant === name));
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  tabs.forEach(t => t.addEventListener('click', () => showVariant(t.dataset.tab)));
+
+  // Keyboard: 1..8 for tabs
+  document.addEventListener('keydown', (e) => {
+    if (e.target.matches('input,textarea')) return;
+    const idx = parseInt(e.key, 10);
+    if (idx >= 1 && idx <= tabs.length) {
+      showVariant(tabs[idx-1].dataset.tab);
+    }
+  });
+
+  // —— Tweaks panel + Edit Mode protocol ——
+  const tweaks = document.getElementById('tweaks');
+  let editOn = false;
+
+  window.addEventListener('message', (e) => {
+    const d = e.data || {};
+    if (d.type === '__activate_edit_mode') { editOn = true; tweaks.classList.add('is-on'); }
+    if (d.type === '__deactivate_edit_mode') { editOn = false; tweaks.classList.remove('is-on'); }
+  });
+  try { window.parent.postMessage({ type: '__edit_mode_available' }, '*'); } catch (_) {}
+
+  document.getElementById('close-tweaks').addEventListener('click', () => {
+    tweaks.classList.remove('is-on');
+    try { window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*'); } catch (_) {}
+  });
+
+  function setSwatch(group, value, cssVar) {
+    document.documentElement.style.setProperty(cssVar, value);
+    document.querySelectorAll(`.sw[data-${group}]`).forEach(b => {
+      b.classList.toggle('active', b.dataset[group] === value);
+    });
+  }
+  document.querySelectorAll('.sw[data-accent]').forEach(b => b.addEventListener('click', () => setSwatch('accent', b.dataset.accent, '--accent')));
+  document.querySelectorAll('.sw[data-hi]').forEach(b => b.addEventListener('click', () => setSwatch('hi', b.dataset.hi, '--hi')));
+  document.querySelectorAll('.sw[data-paper]').forEach(b => b.addEventListener('click', () => setSwatch('paper', b.dataset.paper, '--paper')));
+
+  document.getElementById('grid-size').addEventListener('input', (e) => {
+    const v = parseInt(e.target.value, 10);
+    document.body.style.backgroundSize = v + 'px ' + v + 'px';
+  });
+  document.getElementById('grid-on').addEventListener('change', (e) => {
+    document.body.style.backgroundImage = e.target.checked
+      ? 'linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px)'
+      : 'none';
+  });
+</script>
+
+</body>
+</html>
