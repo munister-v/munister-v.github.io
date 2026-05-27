@@ -775,6 +775,40 @@
       .rhythm-text { padding: 32px 24px; }
     }
 
+    /* pulse strip */
+    .pulse-strip {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 4px; margin-top: 4px;
+    }
+    .pulse-item {
+      position: relative; height: 340px; overflow: hidden; background: #0d0f12;
+    }
+    .pulse-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: grayscale(25%) brightness(.9);
+      transition: transform .65s ease, filter .4s;
+    }
+    .pulse-item:hover img { transform: scale(1.04); filter: grayscale(0%) brightness(1); }
+    .pulse-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.22) 65%, transparent 100%);
+      z-index: 1;
+    }
+    .pulse-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 26px 28px; z-index: 2; }
+    .pulse-time {
+      font-family: var(--mono); font-size: .65rem; letter-spacing: .18em;
+      color: var(--rust); display: block; margin-bottom: 8px;
+    }
+    .pulse-label {
+      font-family: var(--font-serif, Georgia, serif); font-size: 1.3rem;
+      color: #fff; font-weight: 700; line-height: 1.2; margin-bottom: 6px;
+    }
+    .pulse-sub { font-size: .75rem; color: rgba(255,255,255,.62); line-height: 1.45; }
+    @media (max-width: 768px) {
+      .pulse-strip { grid-template-columns: 1fr; }
+      .pulse-item { height: 240px; }
+    }
+
     /* ═══════════════════════════════════════
        05 - IMAGES / GALLERY
     ═══════════════════════════════════════ */
@@ -2018,8 +2052,8 @@
       <div class="rhythm-stage fu">
         <div class="rhythm-visual">
           <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Donetsk_panorama.jpg/1920px-Donetsk_panorama.jpg"
-            alt="Донецьк ритм"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/2013._%D0%94%D0%BE%D0%BD%D0%B5%D1%86%D0%BA_689.jpg/1280px-2013._%D0%94%D0%BE%D0%BD%D0%B5%D1%86%D0%BA_689.jpg"
+            alt="Донецьк · вулиця · 2013 · Andrew Butko"
             loading="lazy"
           >
         </div>
@@ -2027,10 +2061,10 @@
           <div>
             <h3 class="ua">Місто трьох змін</h3>
             <h3 class="en">City of Three Shifts</h3>
-            <p class="ua">Донецьк жив за законом шахтарської зміни: 6 ранку, 2 дня, 10 вечора. Це не просто розклад - це хронотип міста. Вулиці пульсували за підйомниками.</p>
-            <p class="en">Donetsk lived by the law of the miner's shift: 6am, 2pm, 10pm. Not merely a schedule - it was the city's chronotype. Streets pulsed in rhythm with the lifts.</p>
-            <p class="ua">Три зміни - три ритми проспекту. Ранок - автобуси з гірниками. День - шкільні дзвінки, базари. Ніч - перегаром і зоряним небом над відвалами.</p>
-            <p class="en">Three shifts - three rhythms of the boulevard. Morning - buses with miners. Day - school bells, markets. Night - the smell of vodka and starlight over the spoil heaps.</p>
+            <p class="ua">Донецьк жив за законом шахтарської зміни: 6 ранку, 2 дня, 10 вечора. Це не просто розклад — це хронотип міста. Вулиці пульсували за ритмом підйомників.</p>
+            <p class="en">Donetsk lived by the law of the miner's shift: 6 am, 2 pm, 10 pm. Not merely a schedule — it was the city's chronotype. Streets pulsed in rhythm with the cage lifts.</p>
+            <p class="ua">Три зміни — три обличчя проспекту. Ранок: автобуси з гірниками. День: шкільні дзвінки, базари, трамваї. Ніч: тиша над відвалами і вогні у темряві.</p>
+            <p class="en">Three shifts — three faces of the boulevard. Morning: buses full of miners. Day: school bells, markets, trams. Night: silence above the spoil tips and lights in the dark.</p>
           </div>
           <div class="rhythm-stats">
             <div class="rhythm-stat">
@@ -2040,16 +2074,57 @@
             </div>
             <div class="rhythm-stat">
               <span class="rhythm-stat-n">1M</span>
-              <span class="rhythm-stat-l ua">Мешканців (2013)</span>
-              <span class="rhythm-stat-l en">Residents (2013)</span>
+              <span class="rhythm-stat-l ua">Мешканців · 2013</span>
+              <span class="rhythm-stat-l en">Residents · 2013</span>
             </div>
             <div class="rhythm-stat">
-              <span class="rhythm-stat-n">1869</span>
-              <span class="rhythm-stat-l ua">Рік заснування</span>
-              <span class="rhythm-stat-l en">Year founded</span>
+              <span class="rhythm-stat-n">8 км</span>
+              <span class="rhythm-stat-l ua">Головний проспект</span>
+              <span class="rhythm-stat-l en">Main boulevard</span>
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Три зміни -->
+      <div class="pulse-strip fu">
+
+        <div class="pulse-item">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/%D0%9F%D1%80%D0%BE%D1%81%D0%BF%D0%B5%D0%BA%D1%82_%D0%9C%D0%B8%D1%80%D0%B0_-_panoramio_%282%29.jpg/1280px-%D0%9F%D1%80%D0%BE%D1%81%D0%BF%D0%B5%D0%BA%D1%82_%D0%9C%D0%B8%D1%80%D0%B0_-_panoramio_%282%29.jpg" alt="Проспект Миру, ранок" loading="lazy">
+          <div class="pulse-overlay"></div>
+          <div class="pulse-body">
+            <span class="pulse-time">06:00 · ПЕРША ЗМІНА</span>
+            <div class="pulse-label ua">Ранок</div>
+            <div class="pulse-label en">Morning</div>
+            <p class="pulse-sub ua">Автобуси ідуть на шахти. Проспект Миру ще порожній — тільки гірники і перші трамваї.</p>
+            <p class="pulse-sub en">Buses head to the mines. Peace Avenue still empty — only miners and the first trams.</p>
+          </div>
+        </div>
+
+        <div class="pulse-item">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/2020._%D0%94%D0%BE%D0%BD%D0%B5%D1%86%D0%BA_DSC_0177.jpg/1280px-2020._%D0%94%D0%BE%D0%BD%D0%B5%D1%86%D0%BA_DSC_0177.jpg" alt="Донецьк вулиця, день" loading="lazy">
+          <div class="pulse-overlay"></div>
+          <div class="pulse-body">
+            <span class="pulse-time">14:00 · ДРУГА ЗМІНА</span>
+            <div class="pulse-label ua">День</div>
+            <div class="pulse-label en">Day</div>
+            <p class="pulse-sub ua">Базари, школи, крамниці. Перша зміна вийшла з шахти — місто гуде у повну силу.</p>
+            <p class="pulse-sub en">Markets, schools, shops. First shift is up from the mine — the city hums at full strength.</p>
+          </div>
+        </div>
+
+        <div class="pulse-item">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/%D0%92%D0%B5%D1%87%D0%B5%D1%80%D0%BD%D0%B8%D0%B9_%D0%9A%D0%B0%D0%BB%D1%8C%D0%BC%D0%B8%D1%83%D1%81_-_panoramio.jpg/1280px-%D0%92%D0%B5%D1%87%D0%B5%D1%80%D0%BD%D0%B8%D0%B9_%D0%9A%D0%B0%D0%BB%D1%8C%D0%BC%D0%B8%D1%83%D1%81_-_panoramio.jpg" alt="Вечірній Кальміус" loading="lazy">
+          <div class="pulse-overlay"></div>
+          <div class="pulse-body">
+            <span class="pulse-time">22:00 · ТРЕТЯ ЗМІНА</span>
+            <div class="pulse-label ua">Ніч</div>
+            <div class="pulse-label en">Night</div>
+            <p class="pulse-sub ua">Вогні над Кальміусом. Третя зміна іде під землю — місто тихне, але не засинає.</p>
+            <p class="pulse-sub en">Lights over the Kalmius. Third shift goes underground — the city quiets, but never sleeps.</p>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
