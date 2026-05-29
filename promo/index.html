@@ -413,6 +413,46 @@
     .reveal-cta-wrap{padding-bottom:calc(var(--safe-bottom) + 18px)}
     #play{padding-bottom:calc(var(--safe-bottom) + 8px)}
   }
+
+  /* ── Messenger choice bottom-sheet ── */
+  #msg-sheet{
+    position:fixed;inset:0;z-index:9000;
+    display:flex;align-items:flex-end;justify-content:center;
+    background:rgba(5,4,5,.0);pointer-events:none;
+    transition:background .25s;
+  }
+  #msg-sheet.open{background:rgba(5,4,5,.72);pointer-events:auto}
+  .msg-sheet-inner{
+    width:100%;max-width:480px;
+    background:#1c1014;border-radius:24px 24px 0 0;
+    padding:20px 20px max(24px,env(safe-area-inset-bottom,24px));
+    border-top:1px solid rgba(244,200,117,.12);
+    box-shadow:0 -20px 60px rgba(0,0,0,.5);
+    transform:translateY(100%);
+    transition:transform .3s cubic-bezier(.34,1.2,.6,1);
+  }
+  #msg-sheet.open .msg-sheet-inner{transform:translateY(0)}
+  .msg-handle{width:40px;height:4px;border-radius:4px;background:rgba(255,255,255,.14);margin:0 auto 18px}
+  .msg-title{font-family:var(--sans);font-size:17px;font-weight:700;color:#fbf7f0;margin-bottom:4px;text-align:center}
+  .msg-price{font-family:var(--mono);font-size:12px;color:#f4c875;letter-spacing:.12em;text-align:center;margin-bottom:20px}
+  .msg-btns{display:grid;gap:10px}
+  .msg-btn{
+    display:flex;align-items:center;gap:14px;
+    padding:15px 18px;border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;background:rgba(255,255,255,.04);
+    color:#fbf7f0;text-decoration:none;
+    font-family:var(--sans);font-size:15px;font-weight:600;
+    transition:background .15s,border-color .15s;
+    cursor:pointer;
+  }
+  .msg-btn:hover,.msg-btn:active{background:rgba(244,200,117,.08);border-color:rgba(244,200,117,.3)}
+  .msg-btn-ic{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
+  .msg-btn-ic.wa{background:#25D366}
+  .msg-btn-ic.vb{background:#7360F2}
+  .msg-btn-ic.tg{background:#24A1DE}
+  .msg-btn-sub{font-size:11px;color:#8a7d6e;margin-top:2px;font-weight:400}
+  .msg-cancel{margin-top:10px;width:100%;padding:13px;border:0;border-radius:14px;background:rgba(255,255,255,.06);color:#8a7d6e;font-family:var(--sans);font-size:14px;cursor:pointer;transition:background .15s}
+  .msg-cancel:hover{background:rgba(255,255,255,.1)}
 </style>
 </head>
 <body>
@@ -427,6 +467,8 @@
 <nav class="desktop-nav">
   <a href="/">Головна</a>
   <a target="_blank" rel="noopener" href="https://wa.me/380683642205?text=Вітаю!%20Хочу%20обговорити%20сайт%20для%20свого%20бізнесу%20%E2%9C%A8">WhatsApp</a>
+  <a target="_blank" rel="noopener" href="viber://chat?number=%2B380683642205">Viber</a>
+  <a target="_blank" rel="noopener" href="https://t.me/vyanetto1">Telegram</a>
 </nav>
 
 <div id="stage">
@@ -530,7 +572,7 @@
       </div>
       <div class="reveal-cta-wrap">
         <button class="cta-big" id="cta-final">
-          <div class="cta-col"><div class="t">Хочу такий сайт</div><div class="s">→ WhatsApp · безкоштовно</div></div>
+          <div class="cta-col"><div class="t">Хочу такий сайт</div><div class="s">від 600 грн/міс · обрати месенджер</div></div>
           <div class="cta-arrow-big">→</div>
         </button>
         <div class="domain-line"><span class="hr"></span>munister.com.ua<span class="hr"></span></div>
@@ -565,9 +607,11 @@
       </div>
     </div>
     <div class="ds-cta-row">
-      <a class="ds-cta" target="_blank" rel="noopener" href="https://wa.me/380683642205?text=Вітаю!%20Хочу%20обговорити%20сайт%20для%20свого%20бізнесу%20%E2%9C%A8"><span>Написати в WhatsApp</span><span class="arr">↗</span></a>
-      <span class="ds-cta-ghost" style="font-family:var(--mono);font-size:12px;color:#8a7d6e;letter-spacing:.06em;text-transform:none;border-bottom:0">+38 068 364 22 05</span>
+      <a class="ds-cta" target="_blank" rel="noopener" href="https://wa.me/380683642205?text=Вітаю!%20Хочу%20обговорити%20сайт%20для%20свого%20бізнесу%20%E2%9C%A8"><span>WhatsApp</span><span class="arr">↗</span></a>
+      <a class="ds-cta" target="_blank" rel="noopener" href="viber://chat?number=%2B380683642205"><span>Viber</span><span class="arr">↗</span></a>
+      <a class="ds-cta" target="_blank" rel="noopener" href="https://t.me/vyanetto1"><span>Telegram</span><span class="arr">↗</span></a>
     </div>
+    <div style="font-family:var(--mono);font-size:11px;color:#8a7d6e;letter-spacing:.06em;margin-top:8px">від 600 грн/міс · +38 068 364 22 05</div>
   </aside>
 
 </div>
@@ -590,15 +634,22 @@
   }
   window.addEventListener('pageshow', setAppHeight, {passive:true});
 
-  function fbCTA(){
+  var MSG_TEXT = encodeURIComponent('Вітаю! Хочу обговорити сайт для свого бізнесу ✨');
+
+  function openMessengerSheet(){
     try {
       if (typeof FbPlayableAd !== 'undefined' && FbPlayableAd.onCTAClick) {
         FbPlayableAd.onCTAClick();
         return;
       }
     } catch(e){}
-    window.open('https://wa.me/380683642205?text=Вітаю!%20Хочу%20обговорити%20сайт%20для%20свого%20бізнесу%20%E2%9C%A8','_blank','noopener');
+    document.getElementById('msg-sheet').classList.add('open');
   }
+  function closeMessengerSheet(){
+    document.getElementById('msg-sheet').classList.remove('open');
+  }
+  // legacy alias kept for any inline onclick="fbCTA()" references
+  function fbCTA(){ openMessengerSheet(); }
   window.onPlayableAdReady = function(){};
 
   const BLOCKS = [
@@ -917,7 +968,36 @@
   document.getElementById('cta-final').addEventListener('click', ()=>{ vibrate(20); fbCTA(); });
   document.querySelector('#reveal .preview-wrap').addEventListener('click', fbCTA);
   document.addEventListener('contextmenu', (e)=>e.preventDefault());
+  // Close sheet on backdrop tap
+  document.getElementById('msg-sheet').addEventListener('click', function(e){
+    if(e.target===this) closeMessengerSheet();
+  });
 })();
 </script>
+
+<!-- Messenger choice sheet -->
+<div id="msg-sheet" role="dialog" aria-modal="true" aria-label="Обери месенджер">
+  <div class="msg-sheet-inner">
+    <div class="msg-handle"></div>
+    <div class="msg-title">Як зв'язатися?</div>
+    <div class="msg-price">Від 600 грн/місяць · Усе включено</div>
+    <div class="msg-btns">
+      <a class="msg-btn" href="https://wa.me/380683642205?text=%D0%92%D1%96%D1%82%D0%B0%D1%8E!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BE%D0%B1%D0%B3%D0%BE%D0%B2%D0%BE%D1%80%D0%B8%D1%82%D0%B8%20%D1%81%D0%B0%D0%B9%D1%82%20%E2%9C%A8" target="_blank" rel="noopener">
+        <div class="msg-btn-ic wa">💬</div>
+        <div><div>WhatsApp</div><div class="msg-btn-sub">+38 068 364 22 05</div></div>
+      </a>
+      <a class="msg-btn" href="viber://chat?number=%2B380683642205" target="_blank" rel="noopener">
+        <div class="msg-btn-ic vb">📲</div>
+        <div><div>Viber</div><div class="msg-btn-sub">+38 068 364 22 05</div></div>
+      </a>
+      <a class="msg-btn" href="https://t.me/vyanetto1" target="_blank" rel="noopener">
+        <div class="msg-btn-ic tg">✈️</div>
+        <div><div>Telegram</div><div class="msg-btn-sub">@vyanetto1</div></div>
+      </a>
+    </div>
+    <button class="msg-cancel" onclick="closeMessengerSheet()">Скасувати</button>
+  </div>
+</div>
+
 </body>
 </html>
