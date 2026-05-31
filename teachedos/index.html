@@ -789,11 +789,47 @@ html,body {
 .tool-builder-meta { margin-top:4px; font-size:10px; font-family:var(--font-mono); color:var(--text-3); letter-spacing:.08em; text-transform:uppercase; }
 .tool-close { margin-left:auto; width:32px; height:32px; border:0; border-radius:10px; background:rgba(255,75,139,.08); color:var(--accent); cursor:pointer; font-weight:900; }
 .tool-builder-body { padding:16px 18px 18px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; }
+.tool-flow-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
+.tool-flow-step {
+  border:1px solid rgba(255,75,139,.12); border-radius:12px; padding:8px;
+  background:rgba(255,255,255,.72); color:var(--text-3);
+  font-size:10px; line-height:1.25; font-family:var(--font-mono); font-weight:900;
+  text-transform:uppercase; letter-spacing:.06em;
+}
+.tool-flow-step b { display:block; color:var(--accent); font-size:12px; margin-bottom:3px; font-family:var(--font-ui); letter-spacing:0; text-transform:none; }
 .tool-field { display:flex; flex-direction:column; gap:6px; }
 .tool-field label { font-size:10px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.10em; color:var(--text-3); font-weight:900; }
+.tool-field-hint { font-size:11px; color:var(--text-3); line-height:1.45; font-weight:650; }
 .tool-input, .tool-select, .tool-textarea { width:100%; border:1.5px solid rgba(255,75,139,.14); background:#fff; color:var(--text); border-radius:12px; padding:10px 12px; font-family:var(--font-ui); font-weight:700; font-size:13px; outline:none; }
 .tool-textarea { min-height:96px; resize:vertical; line-height:1.55; }
 .tool-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.tool-row.three { grid-template-columns:1fr 1fr 1fr; }
+.tool-chip-options { display:flex; gap:7px; flex-wrap:wrap; }
+.tool-check-chip {
+  display:inline-flex; align-items:center; gap:6px; padding:8px 10px; border-radius:999px;
+  background:rgba(255,75,139,.07); border:1px solid rgba(255,75,139,.12);
+  color:var(--text); font-size:11px; font-weight:850; cursor:pointer;
+}
+.tool-check-chip input { accent-color:var(--accent); }
+.tool-repeat-list { display:flex; flex-direction:column; gap:8px; }
+.tool-repeat-row { display:grid; grid-template-columns:72px 1fr; gap:10px; align-items:center; }
+.tool-upload-box {
+  height:58px; border-radius:13px; border:1.5px dashed rgba(255,75,139,.22);
+  display:grid; place-items:center; background:linear-gradient(135deg,#fff,#fff7fb);
+  color:var(--text-3); font-size:20px; font-weight:900;
+}
+.tool-mini-action {
+  align-self:flex-start; border:0; border-radius:999px; padding:7px 10px;
+  background:rgba(184,241,50,.22); color:#3f711e; font-size:11px; font-weight:900;
+  cursor:pointer; font-family:var(--font-ui);
+}
+.tool-preview-tabs { display:flex; gap:7px; margin-top:2px; flex-wrap:wrap; }
+.tool-preview-tab {
+  border:1px solid rgba(255,75,139,.12); background:#fff; color:var(--text-3);
+  border-radius:999px; padding:7px 10px; font-size:10px; font-family:var(--font-mono);
+  text-transform:uppercase; letter-spacing:.08em; font-weight:900;
+}
+.tool-preview-tab.active { background:var(--lime); color:#16210b; border-color:rgba(184,241,50,.7); }
 .tool-buttons { display:flex; gap:8px; flex-wrap:wrap; position:sticky; bottom:-18px; padding:12px 0 0; background:linear-gradient(180deg,rgba(255,255,255,0),#fff 24%); }
 .tool-btn { border:0; border-radius:12px; padding:10px 12px; cursor:pointer; font-family:var(--font-ui); font-weight:900; font-size:12px; }
 .tool-btn.primary { background:var(--accent); color:#fff; box-shadow:0 5px 16px rgba(255,75,139,.20); }
@@ -2227,6 +2263,7 @@ let activeToolId = null;
 let lastToolOutput = '';
 function safeHtml(str) { return String(str || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
 function splitList(value) { return String(value || '').split(/[\n,;]+/).map(x => x.trim()).filter(Boolean); }
+function byId(id) { return document.getElementById(id); }
 function currentTool() { return TOOLS_DATA.find(t => t.id === activeToolId); }
 function toolsUpdateCounts() {
   const all = document.querySelector('[data-tool-count="all"]');
@@ -2277,6 +2314,30 @@ function toolsRender() {
       '</div><div class="tool-desc">' + safeHtml(t.desc) + '</div><div class="tool-action">Open constructor →</div></div>';
   }).join('');
 }
+function toolProfile(tool) {
+  const output = tool.output;
+  if (['matching','definitions','sentences','wordbank','odd','sort','translation'].includes(output)) return 'vocabulary';
+  if (['gap','gapOptions','errors','grammarRules','rewrite'].includes(output)) return 'grammar';
+  if (['listeningQs','transcriptLesson','listeningGap','listeningFlow'].includes(output)) return 'listening';
+  if (['discussion','roleplay','debate','speakingCards','preListening'].includes(output)) return 'speaking';
+  if (['prompts','creativeVocab','linkWords','dialogue','essay'].includes(output)) return 'writing';
+  if (['text','mcq','questions','tf','titles','summary','vocabExtract'].includes(output)) return 'reading';
+  return 'lesson';
+}
+function toolProfileLabel(tool) {
+  const labels = { vocabulary:'Word bank → exercise → key', grammar:'Grammar point → examples → answer key', listening:'Transcript/media → tasks → follow-up', speaking:'Situation → roles → support language', writing:'Prompt → scaffold → checklist', reading:'Text/source → questions → key', lesson:'Aim → stages → board cards' };
+  return labels[toolProfile(tool)] || labels.lesson;
+}
+function toolOutputModes(tool) {
+  const profile = toolProfile(tool);
+  if (profile === 'lesson') return ['Teacher view','Student handout','Board cards','Homework'];
+  if (profile === 'vocabulary') return ['Exercise','Student handout','Answer key','Board cards'];
+  if (profile === 'grammar') return ['Exercise','Answer key','Teacher notes','Board cards'];
+  if (profile === 'listening') return ['Before / While / After','Student handout','Answer key','Board cards'];
+  if (profile === 'speaking') return ['Role cards','Teacher view','Student handout','Board cards'];
+  if (profile === 'writing') return ['Student handout','Teacher rubric','Homework','Board cards'];
+  return ['Teacher-ready','Student handout','Board cards','Homework'];
+}
 function toolOpen(id) {
   activeToolId = id;
   lastToolOutput = '';
@@ -2286,70 +2347,162 @@ function toolOpen(id) {
   if (!panel || !t) return;
   panel.classList.add('open');
   const meta = TOOL_GROUP_META[t.group] || TOOL_GROUP_META.utility;
-  panel.innerHTML = '<div class="tool-builder-head"><div class="tool-builder-top"><div class="tool-icon" style="--tool-color:' + meta.color + '">' + t.icon + '</div><div><div class="tool-builder-title">' + safeHtml(t.name) + '</div><div class="tool-builder-meta">' + safeHtml(t.tags.join(' / ')) + '</div></div><button class="tool-close" onclick="toolClose()">×</button></div><div class="tool-desc" style="margin-top:10px;">' + safeHtml(t.desc) + '</div></div><div class="tool-builder-body">' + toolFormHtml(t) + '<div class="tool-buttons"><button class="tool-btn primary" onclick="toolGenerate()">Generate</button><button class="tool-btn secondary" onclick="toolUseDemo()">Demo data</button><button class="tool-btn secondary" onclick="toolCopyOutput()">Copy</button><button class="tool-btn secondary" onclick="toolSaveToNotes()">Add to Notes</button><button class="tool-btn secondary" onclick="toolAddToBoard()">Add to Board</button></div><div class="tool-output tool-empty" id="tool-output">Fill the fields and click Generate. The result will appear here.</div></div>';
+  panel.innerHTML = '<div class="tool-builder-head"><div class="tool-builder-top"><div class="tool-icon" style="--tool-color:' + meta.color + '">' + t.icon + '</div><div><div class="tool-builder-title">' + safeHtml(t.name) + '</div><div class="tool-builder-meta">' + safeHtml(t.tags.join(' / ')) + ' · ' + safeHtml(toolProfileLabel(t)) + '</div></div><button class="tool-close" onclick="toolClose()">×</button></div><div class="tool-desc" style="margin-top:10px;">' + safeHtml(t.desc) + '</div></div><div class="tool-builder-body">' + toolFormHtml(t) + '<div class="tool-buttons"><button class="tool-btn primary" type="button" data-tool-action="generate">Do the magic</button><button class="tool-btn secondary" type="button" data-tool-action="demo">Demo data</button><button class="tool-btn secondary" type="button" data-tool-action="copy">Copy</button><button class="tool-btn secondary" type="button" data-tool-action="notes">Add to Notes</button><button class="tool-btn secondary" type="button" data-tool-action="board">Add to Board</button></div><div class="tool-preview-tabs"><span class="tool-preview-tab active">Preview</span><span class="tool-preview-tab">Student</span><span class="tool-preview-tab">Key</span><span class="tool-preview-tab">Board</span></div><div class="tool-output tool-empty" id="tool-output">Fill the fields and click Do the magic. The result will appear here.</div></div>';
 }
 function toolClose() { const panel = document.getElementById('tool-builder-panel'); if (panel) panel.classList.remove('open'); activeToolId = null; toolsRender(); }
-function toolFormHtml() {
-  return '<div class="tool-row"><div class="tool-field"><label>Level</label><select class="tool-select" id="tool-level"><option>A1</option><option>A2</option><option selected>B1</option><option>B2</option><option>C1</option></select></div><div class="tool-field"><label>Time / count</label><select class="tool-select" id="tool-count-input"><option>5 min</option><option selected>10 min</option><option>20 min</option><option>45 min</option></select></div></div><div class="tool-field"><label>Topic / aim</label><input class="tool-input" id="tool-topic" placeholder="e.g. travel problems, job interview, food waste"></div><div class="tool-field"><label>Target vocabulary</label><textarea class="tool-textarea" id="tool-vocab" placeholder="miss a flight, complain, refund, delayed, accommodation"></textarea></div><div class="tool-field"><label>Source text / teacher notes</label><textarea class="tool-textarea" id="tool-source" placeholder="Paste text, transcript, grammar point, student mistakes or lesson idea..."></textarea></div><div class="tool-row"><div class="tool-field"><label>Student profile</label><input class="tool-input" id="tool-student" placeholder="adult, teen, business, exam"></div><div class="tool-field"><label>Output style</label><select class="tool-select" id="tool-style"><option>Teacher-ready</option><option>Student handout</option><option>Board cards</option><option>Homework</option></select></div></div>';
+function toolOptionsHtml(options, selected) {
+  return options.map(option => '<option' + (option === selected ? ' selected' : '') + '>' + safeHtml(option) + '</option>').join('');
+}
+function toolFlowStepsHtml(profile) {
+  const map = {
+    reading:['Paste text','Choose tasks','Export worksheet'],
+    vocabulary:['Add words','Pick exercise','Get key'],
+    grammar:['Set target','Create drills','Check answers'],
+    listening:['Add media notes','Build stages','Follow-up speaking'],
+    speaking:['Set situation','Create roles','Run class'],
+    writing:['Set product','Scaffold output','Assess'],
+    lesson:['Define aim','Build stages','Send to board']
+  };
+  const steps = map[profile] || map.lesson;
+  return '<div class="tool-flow-steps">' + steps.map((s,i)=>'<div class="tool-flow-step"><b>0' + (i+1) + '</b>' + safeHtml(s) + '</div>').join('') + '</div>';
+}
+function toolImageRowsHtml() {
+  return '<div class="tool-field"><label>Image / word rows</label><div class="tool-field-hint">Twee-like word-image mode: upload boxes are placeholders now, words generate matching cards and board blocks.</div><div class="tool-repeat-list" id="tool-image-rows">' +
+    [1,2,3].map(i => '<div class="tool-repeat-row"><div class="tool-upload-box">🖼️</div><input class="tool-input tool-image-word" placeholder="Word ' + i + '"></div>').join('') +
+    '</div><button class="tool-mini-action" type="button" onclick="toolAddImageRow()">+ Add row</button></div>';
+}
+function toolAddImageRow() {
+  const list = document.getElementById('tool-image-rows');
+  if (!list) return;
+  const index = list.querySelectorAll('.tool-repeat-row').length + 1;
+  const row = document.createElement('div');
+  row.className = 'tool-repeat-row';
+  row.innerHTML = '<div class="tool-upload-box">🖼️</div><input class="tool-input tool-image-word" placeholder="Word ' + index + '">';
+  list.appendChild(row);
+}
+function toolFormHtml(tool) {
+  const profile = toolProfile(tool);
+  const modes = toolOutputModes(tool);
+  let html = toolFlowStepsHtml(profile);
+  html += '<div class="tool-row three"><div class="tool-field"><label>Level</label><select class="tool-select" id="tool-level">' + toolOptionsHtml(['A1','A2','B1','B2','C1'], 'B1') + '</select></div><div class="tool-field"><label>Length / count</label><select class="tool-select" id="tool-count-input">' + toolOptionsHtml(['4 items','6 items','8 items','10 min','20 min','45 min'], ['matching','mcq','gap','gapOptions','questions','tf','odd','sort'].includes(tool.output) ? '6 items' : '10 min') + '</select></div><div class="tool-field"><label>Language</label><select class="tool-select" id="tool-language">' + toolOptionsHtml(['English (American)','English (British)','Ukrainian support','Russian support','Polish support'], 'English (American)') + '</select></div></div>';
+  html += '<div class="tool-field"><label>Topic / aim</label><input class="tool-input" id="tool-topic" placeholder="' + safeHtml(profile === 'grammar' ? 'e.g. Past Simple vs Present Perfect' : profile === 'listening' ? 'e.g. short video about travel problems' : 'e.g. travel problems, job interview, food waste') + '"></div>';
+  if (tool.output === 'matching') {
+    html += toolImageRowsHtml();
+  } else {
+    html += '<div class="tool-field"><label>Target vocabulary</label><textarea class="tool-textarea" id="tool-vocab" placeholder="delayed flight, refund, baggage claim, accommodation, complain politely, boarding pass"></textarea></div>';
+  }
+  if (profile === 'grammar') {
+    html += '<div class="tool-row"><div class="tool-field"><label>Grammar target</label><input class="tool-input" id="tool-focus" placeholder="e.g. present perfect with ever/yet/already"></div><div class="tool-field"><label>Exercise type</label><select class="tool-select" id="tool-task-type">' + toolOptionsHtml(['Gap fill','Multiple choice','Rewrite','Error correction','Mixed review'], tool.output === 'rewrite' ? 'Rewrite' : 'Gap fill') + '</select></div></div>';
+  } else if (profile === 'listening') {
+    html += '<div class="tool-row"><div class="tool-field"><label>Media type</label><select class="tool-select" id="tool-task-type">' + toolOptionsHtml(['YouTube/video','Audio transcript','Podcast notes','Teacher summary'], 'YouTube/video') + '</select></div><div class="tool-field"><label>Task focus</label><select class="tool-select" id="tool-focus">' + toolOptionsHtml(['gist + details','gap fill','discussion','vocabulary noticing'], 'gist + details') + '</select></div></div>';
+  } else if (profile === 'speaking') {
+    html += '<div class="tool-row"><div class="tool-field"><label>Interaction</label><select class="tool-select" id="tool-task-type">' + toolOptionsHtml(['Pairs','Groups','Mingle','Debate teams','Role-play'], tool.output === 'roleplay' ? 'Role-play' : 'Pairs') + '</select></div><div class="tool-field"><label>Support level</label><select class="tool-select" id="tool-focus">' + toolOptionsHtml(['light prompts','useful phrases','sentence starters','full scaffold'], 'useful phrases') + '</select></div></div>';
+  } else if (profile === 'writing') {
+    html += '<div class="tool-row"><div class="tool-field"><label>Product</label><select class="tool-select" id="tool-task-type">' + toolOptionsHtml(['email','essay','story','dialogue','social post','report'], tool.output === 'dialogue' ? 'dialogue' : 'email') + '</select></div><div class="tool-field"><label>Scaffold</label><select class="tool-select" id="tool-focus">' + toolOptionsHtml(['outline','sentence starters','model answer','checklist'], 'outline') + '</select></div></div>';
+  } else if (profile === 'reading') {
+    html += '<div class="tool-row"><div class="tool-field"><label>Text mode</label><select class="tool-select" id="tool-task-type">' + toolOptionsHtml(['Use pasted text','Generate short text','Simplify text','Upgrade text'], tool.output === 'text' ? 'Generate short text' : 'Use pasted text') + '</select></div><div class="tool-field"><label>Question style</label><select class="tool-select" id="tool-focus">' + toolOptionsHtml(['gist','detail','inference','vocabulary','mixed'], 'mixed') + '</select></div></div>';
+  } else {
+    html += '<div class="tool-row"><div class="tool-field"><label>Class format</label><select class="tool-select" id="tool-task-type">' + toolOptionsHtml(['1-to-1','small group','online class','homework','board flow'], 'board flow') + '</select></div><div class="tool-field"><label>Teacher goal</label><input class="tool-input" id="tool-focus" placeholder="confidence, fluency, accuracy, exam prep"></div></div>';
+  }
+  html += '<div class="tool-field"><label>Source text / teacher notes</label><textarea class="tool-textarea" id="tool-source" placeholder="Paste text, transcript, article, student mistakes, exam task, video notes or lesson idea..."></textarea></div>';
+  html += '<div class="tool-row"><div class="tool-field"><label>Student profile</label><input class="tool-input" id="tool-student" placeholder="adult, teen, business, exam"></div><div class="tool-field"><label>Output style</label><select class="tool-select" id="tool-style">' + toolOptionsHtml(modes, modes[0]) + '</select></div></div>';
+  html += '<div class="tool-chip-options"><label class="tool-check-chip"><input type="checkbox" id="tool-answer-key" checked> Answer key</label><label class="tool-check-chip"><input type="checkbox" id="tool-teacher-notes" checked> Teacher notes</label><label class="tool-check-chip"><input type="checkbox" id="tool-board-ready" checked> Board ready</label></div>';
+  return html;
 }
 function toolValues() {
-  return { level: document.getElementById('tool-level')?.value || 'B1', count: document.getElementById('tool-count-input')?.value || '10 min', topic: document.getElementById('tool-topic')?.value.trim() || 'everyday communication', vocab: splitList(document.getElementById('tool-vocab')?.value), source: document.getElementById('tool-source')?.value.trim(), student: document.getElementById('tool-student')?.value.trim() || 'mixed adult group', style: document.getElementById('tool-style')?.value || 'Teacher-ready' };
+  const imageWords = [...document.querySelectorAll('.tool-image-word')].map(input => input.value.trim()).filter(Boolean);
+  return {
+    level: byId('tool-level')?.value || 'B1',
+    count: byId('tool-count-input')?.value || '10 min',
+    language: byId('tool-language')?.value || 'English (American)',
+    topic: byId('tool-topic')?.value.trim() || 'everyday communication',
+    vocab: imageWords.length ? imageWords : splitList(byId('tool-vocab')?.value),
+    source: byId('tool-source')?.value.trim(),
+    student: byId('tool-student')?.value.trim() || 'mixed adult group',
+    style: byId('tool-style')?.value || 'Teacher-ready',
+    focus: byId('tool-focus')?.value || '',
+    taskType: byId('tool-task-type')?.value || '',
+    answerKey: byId('tool-answer-key')?.checked !== false,
+    teacherNotes: byId('tool-teacher-notes')?.checked !== false,
+    boardReady: byId('tool-board-ready')?.checked !== false
+  };
 }
 function toolUseDemo() {
   const t = currentTool();
   if (!t) return;
-  document.getElementById('tool-topic').value = t.group === 'grammar' ? 'Past Simple vs Present Perfect' : 'travel problems at the airport';
-  document.getElementById('tool-vocab').value = 'delayed flight, refund, baggage claim, accommodation, complain politely, boarding pass';
-  document.getElementById('tool-source').value = 'A customer arrives at the airport and discovers the flight is delayed. They need to ask for help, understand options and solve the problem politely.';
-  document.getElementById('tool-student').value = 'B1 adults, speaking confidence is low';
+  const profile = toolProfile(t);
+  if (byId('tool-topic')) byId('tool-topic').value = profile === 'grammar' ? 'Past Simple vs Present Perfect' : profile === 'writing' ? 'a complaint email after a delayed flight' : 'travel problems at the airport';
+  if (byId('tool-vocab')) byId('tool-vocab').value = 'delayed flight, refund, baggage claim, accommodation, complain politely, boarding pass';
+  document.querySelectorAll('.tool-image-word').forEach((input, index) => {
+    input.value = ['boarding pass','baggage claim','delayed flight','refund'][index] || 'airport help';
+  });
+  if (byId('tool-focus')) byId('tool-focus').value = profile === 'grammar' ? 'Present Perfect for recent travel experiences' : (byId('tool-focus').tagName === 'SELECT' ? byId('tool-focus').value : 'confidence and polite problem solving');
+  if (byId('tool-source')) byId('tool-source').value = 'A customer arrives at the airport and discovers the flight is delayed. They need to ask for help, understand options and solve the problem politely.';
+  if (byId('tool-student')) byId('tool-student').value = 'B1 adults, speaking confidence is low';
   toolGenerate();
 }
 function lineList(items, fn) { return items.map((item, i) => (i + 1) + '. ' + fn(item, i)).join('\n'); }
 function sampleWords(v) { return v.vocab.length ? v.vocab : ['book a ticket','ask for help','solve a problem','explain a reason','make a decision']; }
 function sourceOrTopic(v) { return v.source || ('Topic: ' + v.topic); }
+function toolCountNumber(value, fallback) {
+  const match = String(value || '').match(/\d+/);
+  return match ? Math.max(3, Math.min(12, Number(match[0]))) : fallback;
+}
+function toolCommonHeader(tool, v) {
+  const title = tool.name + ' · ' + v.level + ' · ' + v.topic;
+  return title + '\n' + '—'.repeat(Math.min(44, title.length)) + '\nStudent: ' + v.student + '\nLanguage: ' + v.language + '\nMode: ' + v.style + '\nFocus: ' + (v.focus || v.taskType || 'classroom-ready output') + '\n\n';
+}
+function toolFooter(v) {
+  let footer = '';
+  if (v.answerKey) footer += '\n\nAnswer key:\nUse the suggested answers above, accept accurate alternatives and ask students to justify choices.';
+  if (v.teacherNotes) footer += '\n\nTeacher notes:\nModel the first item, keep correction light during fluency stages, then upgrade 2-3 useful sentences at the end.';
+  if (v.boardReady) footer += '\n\nBoard-ready blocks:\n[Context] → [Language] → [Task] → [Feedback]';
+  return footer;
+}
+function taskQuantity(v, fallback = 6) { return toolCountNumber(v.count, fallback); }
 function buildToolOutput(tool, v) {
   const words = sampleWords(v);
-  const title = tool.name + ' · ' + v.level + ' · ' + v.topic;
-  const commonHeader = title + '\n' + '—'.repeat(Math.min(44, title.length)) + '\nStudent: ' + v.student + '\nStyle: ' + v.style + '\n\n';
+  const commonHeader = toolCommonHeader(tool, v);
+  const qty = taskQuantity(v, 6);
   const generic = () => commonHeader + 'Ready activity:\n1. Teacher sets context: ' + v.topic + '.\n2. Students notice target language: ' + words.slice(0,5).join(', ') + '.\n3. Students complete the task in pairs.\n4. Teacher checks answers and upgrades language.\n5. Students reuse the language in a new situation.';
   const generators = {
-    lesson: () => commonHeader + 'Lesson aim: students can handle ' + v.topic + ' using target language accurately.\n\nTiming:\n1. Warm-up — 5 min: quick personal question and prediction.\n2. Input — 8 min: teacher boards useful phrases and checks meaning.\n3. Controlled practice — 10 min: matching / gap-fill with target vocabulary.\n4. Communicative task — 15 min: pair role-play with a problem to solve.\n5. Feedback — 5 min: upgrade 3 student sentences.\n6. Homework — write a short message connected to the lesson.\n\nTarget language:\n' + lineList(words, w => w + ' — student example: I need to use "' + w + '" in context.') + '\n\nBoard plan:\n[Problem] → [Useful phrases] → [Practice] → [Role-play] → [Feedback]',
+    lesson: () => commonHeader + 'Lesson aim: students can handle ' + v.topic + ' using target language accurately.\n\nTeacher workflow:\n1. Lead-in — 5 min: personal hook + prediction.\n2. Input — 8 min: model useful phrases and check meaning.\n3. Noticing — 7 min: students underline target language in source/context.\n4. Controlled practice — 10 min: matching / gap-fill with target vocabulary.\n5. Communicative task — 15 min: pair role-play with a problem to solve.\n6. Feedback — 5 min: board upgrades and pronunciation.\n7. Homework — short message connected to the lesson.\n\nTarget language:\n' + lineList(words.slice(0, qty), w => w + ' — student example: I need to use "' + w + '" in context.') + '\n\nStudent handout:\nComplete the task, reuse at least 4 target phrases, then reflect: What was easy? What needs practice?' + toolFooter(v),
     flow: () => commonHeader + 'Board cards:\n' + ['Hook question','Vocabulary input','Model dialogue','Controlled practice','Speaking mission','Feedback wall','Homework card'].map((x,i)=> (i+1)+'. '+x+' — '+(i<2?v.topic:'students use target language in a clear task')).join('\n'),
-    rubric: () => commonHeader + 'Success criteria:\n1. Content: answers the task fully and stays on topic.\n2. Language: uses target vocabulary: ' + words.slice(0,4).join(', ') + '.\n3. Accuracy: grammar mistakes do not block meaning.\n4. Interaction: asks follow-up questions and reacts naturally.\n\nTeacher scale:\n3 = confident / independent\n2 = mostly successful\n1 = needs support',
+    rubric: () => commonHeader + 'Success criteria:\n1. Content: answers the task fully and stays on topic.\n2. Language: uses target vocabulary: ' + words.slice(0,4).join(', ') + '.\n3. Accuracy: grammar mistakes do not block meaning.\n4. Interaction: asks follow-up questions and reacts naturally.\n5. Upgrade: improves one answer after feedback.\n\nTeacher scale:\n3 = confident / independent\n2 = mostly successful\n1 = needs support\n\nStudent self-check:\nI used target phrases. I asked a follow-up. I corrected one mistake.',
     cefr: () => commonHeader + 'Estimated level: ' + v.level + '\n\nWhy:\n- Sentence length and topic density fit ' + v.level + '.\n- Vocabulary load: ' + (words.length > 6 ? 'high' : 'moderate') + '.\n- Support needed: pre-teach 4-6 key phrases.\n\nSimplify: shorter sentences, direct verbs.\nUpgrade: add however, although, as a result.',
-    text: () => commonHeader + 'Reading text:\n' + (v.source || ('Last week, a traveller had a problem with ' + v.topic + '. At first, the situation seemed stressful, but the traveller stayed calm and asked clear questions. The assistant explained the options, offered practical help and gave a simple solution. In the end, the traveller understood what to do next and felt more confident.')) + '\n\nComprehension check:\n1. What was the main problem?\n2. What did the person ask for?\n3. What solution was offered?\n\nVocabulary to notice: ' + words.join(', '),
-    mcq: () => commonHeader + [1,2,3,4,5].map(n => n+'. What is the best answer about '+v.topic+'?\nA. A detail from the text\nB. A wrong but tempting answer\nC. The correct answer\nD. Not mentioned\nAnswer: C').join('\n\n'),
-    questions: () => commonHeader + 'Open questions:\n' + lineList(['main idea','details','opinion','personal connection','follow-up'], x => 'What can students say about the ' + x + ' in "' + v.topic + '"?'),
-    tf: () => commonHeader + 'True / False:\n1. The speaker understands the problem immediately. F\n2. The assistant gives more than one option. T\n3. The customer uses polite language. T\n4. The problem cannot be solved. F\n5. The situation connects to ' + v.topic + '. T',
+    text: () => commonHeader + 'Reading text:\n' + (v.source || ('Last week, a traveller had a problem with ' + v.topic + '. At first, the situation seemed stressful, but the traveller stayed calm and asked clear questions. The assistant explained the options, offered practical help and gave a simple solution. In the end, the traveller understood what to do next and felt more confident.')) + '\n\nComprehension check:\n1. What was the main problem?\n2. What did the person ask for?\n3. What solution was offered?\n\nVocabulary to notice: ' + words.join(', ') + toolFooter(v),
+    mcq: () => commonHeader + Array.from({length:qty}, (_,i)=> (i+1)+'. What is the best answer about '+v.topic+'?\nA. A detail from the text\nB. A wrong but tempting answer\nC. The correct answer\nD. Not mentioned\nAnswer: C').join('\n\n') + toolFooter(v),
+    questions: () => commonHeader + 'Open questions:\n' + lineList(['main idea','details','opinion','personal connection','follow-up','language choice','prediction','reflection'].slice(0, qty), x => 'What can students say about the ' + x + ' in "' + v.topic + '"?') + toolFooter(v),
+    tf: () => commonHeader + 'True / False:\n' + ['The speaker understands the problem immediately. F','The assistant gives more than one option. T','The customer uses polite language. T','The problem cannot be solved. F','The situation connects to ' + v.topic + '. T','The speaker needs to make a decision. T'].slice(0, qty).map((x,i)=>(i+1)+'. '+x).join('\n') + toolFooter(v),
     titles: () => commonHeader + 'Choose the best title:\nA. A Small Problem, A Clear Solution ✓\nB. Why This Is Always Impossible\nC. A Story About Food and Weather',
     summary: () => commonHeader + 'Gist summary:\nThe text is about ' + v.topic + ' and shows how clear communication helps people solve a practical problem.\n\nKey points:\n1. The problem appears.\n2. The person asks for help.\n3. Options are explained.\n4. A solution is chosen.',
-    vocabExtract: () => commonHeader + 'Useful vocabulary extracted:\n' + lineList(words, w => w + ' — meaning: connected to ' + v.topic + '; collocation: ' + w + ' clearly'),
-    matching: () => commonHeader + 'Word-image matching:\n' + lineList(words, w => '[image box]  ' + w + '  — students match picture to word'),
-    definitions: () => commonHeader + 'Match words to definitions:\n' + lineList(words, w => w + ' — a useful phrase connected to ' + v.topic),
-    sentences: () => commonHeader + 'Example sentences:\n' + lineList(words, w => 'When dealing with ' + v.topic + ', you may need to use "' + w + '" politely.'),
-    wordbank: () => commonHeader + 'Essential vocabulary bank:\n' + lineList(words.concat(['Could you help me?','What are my options?','I would like to clarify...']), w => w + ' — phrase / collocation / classroom example'),
+    vocabExtract: () => commonHeader + 'Useful vocabulary extracted:\n' + lineList(words.slice(0, qty), w => w + ' — meaning: connected to ' + v.topic + '; collocation: use "' + w + '" naturally') + '\n\nFollow-up: students choose 4 words and create a mini-dialogue.' + toolFooter(v),
+    matching: () => commonHeader + 'Word-image matching:\n' + lineList(words.slice(0, qty), w => '[image box]  ' + w + '  — students match picture to word') + '\n\nTeacher flow:\n1. Show images without words.\n2. Students predict words.\n3. Reveal word bank.\n4. Students match and say one sentence per image.' + toolFooter(v),
+    definitions: () => commonHeader + 'Match words to definitions:\n' + lineList(words.slice(0, qty), w => w + ' — a useful phrase connected to ' + v.topic) + toolFooter(v),
+    sentences: () => commonHeader + 'Example sentences:\n' + lineList(words.slice(0, qty), w => 'When dealing with ' + v.topic + ', you may need to use "' + w + '" politely.') + '\n\nStudent task: replace the underlined part with a personal example.' + toolFooter(v),
+    wordbank: () => commonHeader + 'Essential vocabulary bank:\n' + lineList(words.concat(['Could you help me?','What are my options?','I would like to clarify...']).slice(0, qty + 3), w => w + ' — phrase / collocation / classroom example') + toolFooter(v),
     odd: () => commonHeader + 'Odd one out:\n1. ' + words.slice(0,3).join(' / ') + ' / banana — Odd: banana\n2. polite / helpful / delayed / friendly — Odd: delayed\n3. refund / ticket / passport / sleepy — Odd: sleepy',
     sort: () => commonHeader + 'Sort the words:\nProblems: delayed flight, lost baggage, missed connection\nActions: complain politely, ask for help, request a refund\nDocuments: ticket, boarding pass, passport\nFeelings: worried, relieved, confused\n\nAdd your target words: ' + words.join(', '),
-    translation: () => commonHeader + 'Translation practice:\n' + lineList(words.slice(0,6), w => 'Translate into English using "' + w + '": ______________________________'),
-    gap: () => commonHeader + 'Gap fill:\nWord bank: ' + words.join(' / ') + '\n\n1. My flight was ______, so I asked for help.\n2. I went to the ______ to find my suitcase.\n3. The assistant offered a ______.\n4. We needed new ______ for the night.',
-    gapOptions: () => commonHeader + 'Gap fill with options:\n1. The flight was _____. (delayed / delicious / wooden)\n2. I asked for a _____. (refund / cloud / pencil)\n3. She spoke _____. (politely / purple / upstairs)\n4. We checked the _____. (boarding pass / sandwich / carpet)',
-    errors: () => commonHeader + 'Error correction:\n1. I am agree with you. → I agree with you.\n2. My flight delay yesterday. → My flight was delayed yesterday.\n3. Can you to help me? → Can you help me?\n4. I need informations. → I need information.',
-    grammarRules: () => commonHeader + 'Grammar focus: ' + v.topic + '\n\nRule: use the target structure to show time, result or contrast clearly.\n\nExamples:\n1. I have already checked in.\n2. I checked in yesterday.\n3. Have you spoken to the assistant yet?\n\nCommon mistakes: mixing finished time with present perfect; forgetting auxiliary verbs.',
-    rewrite: () => commonHeader + 'Rewrite the sentence:\n1. The flight is late. → The flight has been delayed.\n2. I want my money back. → I would like to request a refund.\n3. Help me. → Could you help me, please?\n4. I lost my bag. → My bag has been lost.',
-    prompts: () => commonHeader + 'Writing prompts:\n1. Write an email asking for help with ' + v.topic + '.\n2. Describe a problem and explain how you solved it.\n3. Write a review of a service experience.\n4. Give advice to someone facing this situation.',
-    creativeVocab: () => commonHeader + 'Creative writing mission:\nWrite a 120-word story titled "A Problem at the Airport". You must use: ' + words.slice(0,6).join(', ') + '.\n\nBonus: include one surprise and one polite complaint.',
-    linkWords: () => commonHeader + 'Link words into sentences:\n' + lineList(words, w => w + ' + because / although / so → write one original sentence'),
-    dialogue: () => commonHeader + 'Dialogue:\nA: Excuse me, my flight has been delayed. Could you help me?\nB: Of course. May I see your boarding pass?\nA: Here it is. What are my options?\nB: You can wait for the next flight or request accommodation.\nA: I would like to understand the refund policy.\nB: Certainly. I will explain it clearly.',
-    essay: () => commonHeader + 'Essay outline:\nThesis: ' + v.topic + ' shows why clear communication matters.\n\nParagraph 1: describe the problem.\nParagraph 2: explain possible solutions.\nParagraph 3: give your opinion and example.\nConclusion: recommend the best action.\n\nUseful connectors: firstly, however, as a result, in conclusion.',
-    discussion: () => commonHeader + 'Discussion questions:\n1. What problems can happen with ' + v.topic + '?\n2. How do people usually react under stress?\n3. What phrases sound polite and confident?\n4. Have you ever solved a similar problem?\n5. What advice would you give?',
-    roleplay: () => commonHeader + 'Role-play cards:\nStudent A: You have a problem with ' + v.topic + '. You want a quick solution and clear information.\nStudent B: You are the assistant. You must be polite, offer two options and explain the next step.\n\nUseful phrases:\n- Could you help me with...?\n- Let me check that for you.\n- One option is...',
-    debate: () => commonHeader + 'Debate motion:\n"Companies should always compensate customers when ' + v.topic + ' causes inconvenience."\n\nFor: fairness, trust, customer loyalty.\nAgainst: cost, responsibility, unexpected events.\n\nLanguage: I partly agree because... / A counterexample is...',
-    speakingCards: () => commonHeader + 'Speaking cards:\n1. Describe a time when you needed help.\n2. Ask your partner for advice about ' + v.topic + '.\n3. Complain politely about a service problem.\n4. Offer two solutions to a customer.\n5. Explain what happened using 3 target words.',
-    preListening: () => commonHeader + 'Before listening:\n1. Predict 5 words you expect to hear about ' + v.topic + '.\n2. Discuss: what can go wrong?\n3. Match key phrases: ' + words.slice(0,5).join(', ') + '.\n\nWhile listening: tick the problems you hear.\nAfter listening: role-play the same situation.',
-    listeningQs: () => commonHeader + 'Listening questions:\n1. What is the main problem?\n2. Which option is offered first?\n3. What detail does the speaker need to confirm?\n4. How does the conversation end?\n5. What phrase shows politeness?',
-    transcriptLesson: () => commonHeader + 'Transcript-to-lesson:\nSource:\n' + sourceOrTopic(v) + '\n\nTasks:\n1. Listen once for gist.\n2. Listen again and complete missing phrases.\n3. Underline useful chunks.\n4. Rebuild the dialogue from memory.\n5. Create a new version with a different problem.',
-    listeningGap: () => commonHeader + 'Listening gap fill:\n1. Excuse me, my flight has been ______.\n2. Could you check my ______, please?\n3. What are my ______?\n4. I would like to request a ______.\n5. Thank you for explaining everything ______.\n\nWord bank: ' + words.join(' / '),
-    listeningFlow: () => commonHeader + 'Listening sequence:\nBefore: predict the situation and useful phrases.\nWhile 1: choose the main idea.\nWhile 2: answer detail questions.\nLanguage focus: notice polite requests.\nAfter: role-play the conversation with a new problem.'
+    translation: () => commonHeader + 'Translation practice:\n' + lineList(words.slice(0, qty), w => 'Translate into English using "' + w + '": ______________________________') + toolFooter(v),
+    gap: () => commonHeader + 'Gap fill:\nWord bank: ' + words.join(' / ') + '\n\n' + ['My flight was ______, so I asked for help.','I went to the ______ to find my suitcase.','The assistant offered a ______.','We needed new ______ for the night.','Could you explain the ______ policy?','She handled the problem ______.'].slice(0, qty).map((x,i)=>(i+1)+'. '+x).join('\n') + toolFooter(v),
+    gapOptions: () => commonHeader + 'Gap fill with options:\n' + ['The flight was _____. (delayed / delicious / wooden)','I asked for a _____. (refund / cloud / pencil)','She spoke _____. (politely / purple / upstairs)','We checked the _____. (boarding pass / sandwich / carpet)','They offered _____. (accommodation / alphabet / sunshine)','He complained _____. (politely / angrily / both possible)'].slice(0, qty).map((x,i)=>(i+1)+'. '+x).join('\n') + toolFooter(v),
+    errors: () => commonHeader + 'Error correction:\n' + ['I am agree with you. → I agree with you.','My flight delay yesterday. → My flight was delayed yesterday.','Can you to help me? → Can you help me?','I need informations. → I need information.','She explained me the rule. → She explained the rule to me.','I have been in Spain last year. → I was in Spain last year.'].slice(0, qty).map((x,i)=>(i+1)+'. '+x).join('\n') + toolFooter(v),
+    grammarRules: () => commonHeader + 'Grammar focus: ' + (v.focus || v.topic) + '\n\nRule: use the target structure to show time, result or contrast clearly.\n\nExamples:\n1. I have already checked in.\n2. I checked in yesterday.\n3. Have you spoken to the assistant yet?\n\nCommon mistakes: mixing finished time with present perfect; forgetting auxiliary verbs.\n\nMicro-practice:\nStudents create 3 true sentences and ask one follow-up question.' + toolFooter(v),
+    rewrite: () => commonHeader + 'Rewrite the sentence:\n' + ['The flight is late. → The flight has been delayed.','I want my money back. → I would like to request a refund.','Help me. → Could you help me, please?','I lost my bag. → My bag has been lost.','They gave me a room. → I was given a room.','I did not expect this. → This was unexpected.'].slice(0, qty).map((x,i)=>(i+1)+'. '+x).join('\n') + toolFooter(v),
+    prompts: () => commonHeader + 'Writing prompts:\n' + ['Write an email asking for help with ' + v.topic + '.','Describe a problem and explain how you solved it.','Write a review of a service experience.','Give advice to someone facing this situation.','Write a short dialogue before the written task.','Rewrite your first version with 3 upgraded phrases.'].slice(0, qty).map((x,i)=>(i+1)+'. '+x).join('\n') + '\n\nScaffold: ' + (v.focus || 'outline') + toolFooter(v),
+    creativeVocab: () => commonHeader + 'Creative writing mission:\nWrite a 120-word story titled "A Problem at the Airport". You must use: ' + words.slice(0, qty).join(', ') + '.\n\nBonus: include one surprise and one polite complaint.\n\nPeer check: underline target words and circle one sentence to improve.' + toolFooter(v),
+    linkWords: () => commonHeader + 'Link words into sentences:\n' + lineList(words.slice(0, qty), w => w + ' + because / although / so → write one original sentence') + toolFooter(v),
+    dialogue: () => commonHeader + 'Dialogue:\nA: Excuse me, my flight has been delayed. Could you help me?\nB: Of course. May I see your boarding pass?\nA: Here it is. What are my options?\nB: You can wait for the next flight or request accommodation.\nA: I would like to understand the refund policy.\nB: Certainly. I will explain it clearly.\n\nStudent task: replace the problem, add one emotion, and continue for 4 lines.' + toolFooter(v),
+    essay: () => commonHeader + 'Essay outline:\nThesis: ' + v.topic + ' shows why clear communication matters.\n\nParagraph 1: describe the problem.\nParagraph 2: explain possible solutions.\nParagraph 3: give your opinion and example.\nConclusion: recommend the best action.\n\nUseful connectors: firstly, however, as a result, in conclusion.\nChecklist: clear thesis / examples / connectors / final recommendation.' + toolFooter(v),
+    discussion: () => commonHeader + 'Discussion questions:\n' + ['What problems can happen with ' + v.topic + '?','How do people usually react under stress?','What phrases sound polite and confident?','Have you ever solved a similar problem?','What advice would you give?','What is the worst possible solution?','How would this change in another country?'].slice(0, qty).map((x,i)=>(i+1)+'. '+x).join('\n') + toolFooter(v),
+    roleplay: () => commonHeader + 'Role-play cards:\nStudent A: You have a problem with ' + v.topic + '. You want a quick solution and clear information.\nStudent B: You are the assistant. You must be polite, offer two options and explain the next step.\n\nUseful phrases:\n- Could you help me with...?\n- Let me check that for you.\n- One option is...\n\nTwist cards:\n1. The first solution is not possible.\n2. The customer is late.\n3. The assistant needs one missing detail.' + toolFooter(v),
+    debate: () => commonHeader + 'Debate motion:\n"Companies should always compensate customers when ' + v.topic + ' causes inconvenience."\n\nFor: fairness, trust, customer loyalty.\nAgainst: cost, responsibility, unexpected events.\n\nLanguage: I partly agree because... / A counterexample is...\n\nRound structure: opening → rebuttal → example → final vote.' + toolFooter(v),
+    speakingCards: () => commonHeader + 'Speaking cards:\n' + ['Describe a time when you needed help.','Ask your partner for advice about ' + v.topic + '.','Complain politely about a service problem.','Offer two solutions to a customer.','Explain what happened using 3 target words.','Ask a follow-up question and react naturally.'].slice(0, qty).map((x,i)=>(i+1)+'. '+x).join('\n') + toolFooter(v),
+    preListening: () => commonHeader + 'Before listening:\n1. Predict 5 words you expect to hear about ' + v.topic + '.\n2. Discuss: what can go wrong?\n3. Match key phrases: ' + words.slice(0,5).join(', ') + '.\n\nWhile listening: tick the problems you hear.\nAfter listening: role-play the same situation.' + toolFooter(v),
+    listeningQs: () => commonHeader + 'Listening questions:\n' + ['What is the main problem?','Which option is offered first?','What detail does the speaker need to confirm?','How does the conversation end?','What phrase shows politeness?','What would you do next?'].slice(0, qty).map((x,i)=>(i+1)+'. '+x).join('\n') + toolFooter(v),
+    transcriptLesson: () => commonHeader + 'Transcript-to-lesson:\nSource:\n' + sourceOrTopic(v) + '\n\nTasks:\n1. Listen once for gist.\n2. Listen again and complete missing phrases.\n3. Underline useful chunks.\n4. Rebuild the dialogue from memory.\n5. Create a new version with a different problem.\n\nTeacher move: play / pause / predict / replay / perform.' + toolFooter(v),
+    listeningGap: () => commonHeader + 'Listening gap fill:\n' + ['Excuse me, my flight has been ______.','Could you check my ______, please?','What are my ______?','I would like to request a ______.','Thank you for explaining everything ______.','Can you confirm the next ______?'].slice(0, qty).map((x,i)=>(i+1)+'. '+x).join('\n') + '\n\nWord bank: ' + words.join(' / ') + toolFooter(v),
+    listeningFlow: () => commonHeader + 'Listening sequence:\nBefore: predict the situation and useful phrases.\nWhile 1: choose the main idea.\nWhile 2: answer detail questions.\nLanguage focus: notice polite requests.\nAfter: role-play the conversation with a new problem.' + toolFooter(v)
   };
   return (generators[tool.output] || generic)();
 }
@@ -2482,6 +2635,41 @@ function boardClear() {
   boardSave();
   boardRender();
 }
+let lastToolPointerAction = '';
+let lastToolPointerActionAt = 0;
+function toolRunAction(actionName) {
+  const actions = { generate:toolGenerate, demo:toolUseDemo, copy:toolCopyOutput, notes:toolSaveToNotes, board:toolAddToBoard };
+  const action = actions[actionName];
+  if (action) action();
+}
+function toolActionEvent(event) {
+  const btn = event.target && event.target.closest ? event.target.closest('[data-tool-action]') : null;
+  if (!btn) return;
+  event.preventDefault();
+  event.stopPropagation();
+  if (event.type === 'click' && lastToolPointerAction === btn.dataset.toolAction && Date.now() - lastToolPointerActionAt < 450) return;
+  if (event.type !== 'click') {
+    lastToolPointerAction = btn.dataset.toolAction;
+    lastToolPointerActionAt = Date.now();
+  }
+  toolRunAction(btn.dataset.toolAction);
+}
+document.addEventListener('pointerup', toolActionEvent, true);
+document.addEventListener('click', toolActionEvent, true);
+Object.assign(window, {
+  toolsFilter,
+  toolsSearch,
+  toolOpen,
+  toolClose,
+  toolAddImageRow,
+  toolRunAction,
+  toolGenerate,
+  toolUseDemo,
+  toolCopyOutput,
+  toolSaveToNotes,
+  toolAddToBoard,
+  boardClear
+});
 toolsRender();
 boardRender();
 
