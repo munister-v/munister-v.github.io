@@ -762,6 +762,14 @@ html,body {
 .tools-search { flex:1; height:40px; border-radius:14px; border:1.5px solid rgba(255,75,139,.14); background:#fff; padding:0 14px; color:var(--text); outline:none; font-family:var(--font-ui); font-size:13px; font-weight:700; box-shadow:0 2px 10px rgba(255,75,139,.05); }
 .tools-search::placeholder { color:var(--text-3); }
 .tools-pill { height:36px; display:flex; align-items:center; gap:7px; border-radius:999px; padding:0 12px; background:rgba(110,201,138,.10); border:1px solid rgba(110,201,138,.24); color:#45a866; font-size:10px; font-family:var(--font-mono); font-weight:900; letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; }
+.tools-chipbar { display:flex; gap:8px; padding:0 20px 14px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+.tools-chipbar::-webkit-scrollbar { display:none; }
+.tools-filter-chip { border:1px solid rgba(255,75,139,.13); background:#fff; color:var(--text-3); border-radius:999px; padding:8px 12px; font-size:11px; font-family:var(--font-ui); font-weight:900; cursor:pointer; white-space:nowrap; transition:background .15s,color .15s,border-color .15s,transform .15s; }
+.tools-filter-chip:hover { transform:translateY(-1px); border-color:rgba(255,75,139,.24); color:var(--accent); }
+.tools-filter-chip.active { background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:0 6px 18px rgba(255,75,139,.18); }
+.tools-side-card { margin:8px; padding:12px; border-radius:16px; background:linear-gradient(135deg,#fff,rgba(255,240,248,.86)); border:1px solid rgba(255,75,139,.12); box-shadow:0 8px 22px rgba(196,84,114,.07); }
+.tools-side-card-title { color:var(--text); font-size:13px; font-weight:900; margin-bottom:4px; }
+.tools-side-card-copy { color:var(--text-3); font-size:11px; line-height:1.45; font-weight:600; }
 #tools-grid { overflow-y:auto; align-content:start; }
 .tool-card { min-height:178px; background:rgba(255,255,255,.78); border:1.5px solid rgba(255,75,139,.12); border-radius:17px; padding:16px; cursor:pointer; transition:background .18s,border-color .18s,transform .15s,box-shadow .15s; position:relative; overflow:hidden; box-shadow:0 8px 24px rgba(196,84,114,.06); }
 .tool-card::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg,var(--tool-color,#f4a7b9),rgba(255,255,255,.3)); opacity:.9; }
@@ -795,6 +803,7 @@ html,body {
   .tools-hero { margin:14px; padding:14px; }
   .tools-controls { margin:0 14px 12px; flex-direction:column; align-items:stretch; }
   .tools-pill { justify-content:center; }
+  .tools-chipbar { padding:0 14px 12px; }
   .tool-builder-panel { width:100%; left:0; top:0; }
   #tools-grid { padding:0 14px 20px !important; }
 }
@@ -1606,10 +1615,11 @@ html,body {
   </div>
   <div class="win-body" style="position:relative;">
     <div class="win-sidebar" id="sidebar-tools">
+      <div class="tools-side-card"><div class="tools-side-card-title">Tools</div><div class="tools-side-card-copy">Twee-style generators for lesson materials.</div></div>
       <div class="sb-section-label">All Skills</div>
       <div class="sb-item active" id="tg-all" onclick="toolsFilter('all',this)">
         <span class="sb-item-ic">✦</span> All Tools
-        <span class="sb-item-badge" data-tool-count="all">34</span>
+        <span class="sb-item-badge" data-tool-count="all">50</span>
       </div>
       <div class="sb-section-label" style="margin-top:6px;">By Skill</div>
       <div class="sb-item" id="tg-reading"    onclick="toolsFilter('reading',this)">   <span class="sb-item-ic">📖</span> Reading    <span class="sb-item-badge" data-tool-count="reading" style="background:rgba(96,165,250,.3);color:#60a5fa;">7</span></div>
@@ -1634,6 +1644,17 @@ html,body {
       <div class="tools-controls">
         <input class="tools-search" id="tools-search" placeholder="Search tools: gap fill, dialogue, CEFR, vocabulary..." oninput="toolsSearch(this.value)">
         <div class="tools-pill" id="tools-count">34 tools</div>
+      </div>
+      <div class="tools-chipbar" id="tools-chipbar">
+        <button class="tools-filter-chip active" data-chip="all" onclick="toolsFilter('all',document.getElementById('tg-all'))">All</button>
+        <button class="tools-filter-chip" data-chip="favorites" onclick="toolsFilter('favorites',null)">Favorites</button>
+        <button class="tools-filter-chip" data-chip="reading" onclick="toolsFilter('reading',document.getElementById('tg-reading'))">Reading</button>
+        <button class="tools-filter-chip" data-chip="vocabulary" onclick="toolsFilter('vocabulary',document.getElementById('tg-vocabulary'))">Vocabulary</button>
+        <button class="tools-filter-chip" data-chip="writing" onclick="toolsFilter('writing',document.getElementById('tg-writing'))">Writing</button>
+        <button class="tools-filter-chip" data-chip="speaking" onclick="toolsFilter('speaking',document.getElementById('tg-speaking'))">Speaking</button>
+        <button class="tools-filter-chip" data-chip="grammar" onclick="toolsFilter('grammar',document.getElementById('tg-grammar'))">Grammar</button>
+        <button class="tools-filter-chip" data-chip="listening" onclick="toolsFilter('listening',document.getElementById('tg-listening'))">Listening</button>
+        <button class="tools-filter-chip" data-chip="utility" onclick="toolsFilter('utility',document.getElementById('tg-utility'))">Utility</button>
       </div>
       <div id="tools-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 20px 20px;"></div>
       <div class="tool-builder-panel" id="tool-builder-panel"></div>
@@ -2064,7 +2085,28 @@ const TOOLS_DATA = [
   { id:'audio-questions', name:'Audio & Video Question Creator', desc:'Creates listening questions from a transcript or video/audio notes.', tags:['Listening'], badge:null, icon:'🎧', group:'listening', output:'listeningQs' },
   { id:'transcript-cleaner', name:'Convert Audio/Video to Lesson Text', desc:'Turns a transcript into classroom-ready listening material.', tags:['Listening'], badge:null, icon:'🎬', group:'listening', output:'transcriptLesson' },
   { id:'listening-gaps', name:'Listening Gap Fill', desc:'Creates listening cloze tasks from a transcript.', tags:['Listening','Grammar'], badge:null, icon:'🎚️', group:'listening', output:'listeningGap' },
-  { id:'listening-sequence', name:'Listening Sequence Tasks', desc:'Creates before, while and after listening tasks.', tags:['Listening'], badge:null, icon:'📻', group:'listening', output:'listeningFlow' },
+  { id:'audio-summary-gapfill', name:'Audio & Video Summary GapFill', desc:'Creates a listening exercise where students complete gaps in a summary of audio or video.', tags:['Listening'], badge:null, icon:'🧩', group:'listening', output:'listeningGap' },
+  { id:'choose-summary', name:'Choose the Right Summary', desc:'Creates three summaries for audio or video, two wrong and one correct.', tags:['Listening'], badge:null, icon:'☑️', group:'listening', output:'titles' },
+  { id:'lead-in-text', name:'Lead-in Activities for a Text', desc:'Creates three engaging lead-in activities before reading.', tags:['Speaking','Reading'], badge:null, icon:'🚪', group:'speaking', output:'preListening' },
+  { id:'four-opinions', name:'Four Opinions', desc:'Creates four opinions from different people to spark discussion.', tags:['Writing','Speaking'], badge:null, icon:'🗯️', group:'speaking', output:'discussion' },
+  { id:'communicative-situations', name:'Create Communicative Situations', desc:'Creates short two-line dialogues with target vocabulary.', tags:['Vocabulary','Speaking'], badge:null, icon:'🎬', group:'vocabulary', output:'dialogue' },
+  { id:'rephrase-word', name:'Rephrase Using the Word Given', desc:'Creates sentence transformation tasks using a required word or phrase.', tags:['Vocabulary','Grammar'], badge:null, icon:'🔄', group:'grammar', output:'rewrite' },
+  { id:'simplify-upgrade', name:'Simplify or Upgrade Your Text', desc:'Adapts pasted text up or down for a chosen CEFR level.', tags:['Reading','Utility'], badge:null, icon:'⚙️', group:'utility', output:'cefr' },
+  { id:'word-translation', name:'Word-Translation Matching', desc:'Translates word lists and creates bilingual matching exercises.', tags:['Vocabulary'], badge:null, icon:'🌍', group:'vocabulary', output:'translation' },
+  { id:'interesting-facts', name:'Find Interesting Facts', desc:'Finds facts on a topic for icebreakers, quizzes or discussions.', tags:['Speaking'], badge:null, icon:'💡', group:'speaking', output:'discussion' },
+  { id:'pros-cons', name:'Create a List of Pros and Cons', desc:'Creates balanced arguments for discussions and debates.', tags:['Speaking','Writing'], badge:null, icon:'⚖️', group:'speaking', output:'debate' },
+  { id:'matching-halves', name:'Create an Exercise with Matching Halves', desc:'Builds matching halves for collocations, sentences and grammar chunks.', tags:['Grammar','Vocabulary'], badge:null, icon:'🧷', group:'grammar', output:'sort' },
+  { id:'quotes', name:'Find Quotes by Famous People', desc:'Creates quotes for warm-ups, discussions and essay topics.', tags:['Writing','Speaking'], badge:null, icon:'❞', group:'writing', output:'prompts' },
+  { id:'essay-topics', name:'Create a List of Essay Topics', desc:'Creates writing topics on any subject for class or homework.', tags:['Writing'], badge:null, icon:'📝', group:'writing', output:'essay' },
+  { id:'reading-bits', name:'Reading Bits and Pieces', desc:'Creates small classroom texts for fast reading activities.', tags:['Reading'], badge:null, icon:'🧩', group:'reading', output:'text' },
+  { id:'scramble-words', name:'Scramble the Words in Sentences', desc:'Mixes words in sentences for word order practice.', tags:['Grammar'], badge:null, icon:'🔀', group:'grammar', output:'rewrite' },
+  { id:'type-gap', name:'Type Anything into a Gap', desc:'Creates open gap tasks where any grammatically correct answer can work.', tags:['Grammar'], badge:null, icon:'✍️', group:'grammar', output:'gap' },
+  { id:'bracket-gaps', name:'Gaps with Brackets', desc:'Creates word form or tense gaps using bracketed prompts.', tags:['Grammar'], badge:null, icon:'()' , group:'grammar', output:'gapOptions' },
+  { id:'abcd-gaps', name:'Gaps with ABCD', desc:'Creates multiple-choice cloze grammar exercises.', tags:['Grammar'], badge:null, icon:'AB', group:'grammar', output:'gapOptions' },
+  { id:'slash-options', name:'Two Options with a Slash', desc:'Creates choose-the-correct-option exercises like was/were.', tags:['Grammar'], badge:null, icon:'/', group:'grammar', output:'gapOptions' },
+  { id:'add-text', name:'Add Your Text', desc:'Adds teacher text or creative task to the lesson flow.', tags:['Utility'], badge:null, icon:'➕', group:'utility', output:'text' },
+  { id:'add-images', name:'Add Your Images', desc:'Creates speaking or writing tasks around teacher images.', tags:['Utility'], badge:null, icon:'🖼️', group:'utility', output:'matching' },
+  { id:'add-video', name:'Add Your Video', desc:'Adds video/audio material and creates a learning task around it.', tags:['Utility','Listening'], badge:null, icon:'▶️', group:'utility', output:'listeningFlow' },
 ];
 
 const TOOL_GROUP_META = {
@@ -2098,13 +2140,14 @@ function toolsFilter(group, el) {
 function toolsRender() {
   toolsUpdateCounts();
   const filtered = TOOLS_DATA.filter(t => {
-    const groupOk = activeToolGroup === 'all' || t.group === activeToolGroup;
     const haystack = [t.name, t.desc, t.group, ...(t.tags || [])].join(' ').toLowerCase();
     const searchOk = !toolsSearchQuery || haystack.includes(toolsSearchQuery);
+    const groupOk = toolsSearchQuery || activeToolGroup === 'all' || (activeToolGroup === 'favorites' ? ['Popular','Core','New'].includes(t.badge) : t.group === activeToolGroup);
     return groupOk && searchOk;
   });
   const count = document.getElementById('tools-count');
   if (count) count.textContent = filtered.length + ' tool' + (filtered.length === 1 ? '' : 's');
+  document.querySelectorAll('.tools-filter-chip').forEach(chip => chip.classList.toggle('active', chip.dataset.chip === activeToolGroup));
   const grid = document.getElementById('tools-grid');
   if (!grid) return;
   if (!filtered.length) {
