@@ -282,6 +282,7 @@ html,body {
 .di-icon.schedule    { background: linear-gradient(145deg,#d4749a,#a84d70); }
 .di-icon.notes       { background: linear-gradient(145deg,#f4a7b9,#e87898); }
 .di-icon.dictionary  { background: linear-gradient(145deg,#7ca8d4,#4a72a0); }
+.di-icon.board       { background: linear-gradient(145deg,#b8f132,#67c66a); color:#152015; }
 .di-icon.settings    { background: linear-gradient(145deg,#5a4550,#3a2d35); }
 .di-icon.finder      { background: linear-gradient(145deg,#4ab0c8,#2a7d96); }
 
@@ -799,6 +800,71 @@ html,body {
 .tool-btn.secondary { background:rgba(255,75,139,.08); color:var(--accent); }
 .tool-output { border:1.5px solid rgba(110,201,138,.20); background:linear-gradient(180deg,#fff,#f7fff9); border-radius:14px; padding:14px; color:var(--text); font-size:12.5px; line-height:1.55; white-space:pre-wrap; min-height:170px; box-shadow:inset 0 1px 0 rgba(255,255,255,.7); }
 .tool-empty { color:var(--text-3); font-style:italic; }
+
+/* ═══════════════════════════ BOARD APP ═══════════════════════════ */
+#win-board { top:76px; left:130px; width:780px; height:560px; }
+.board-shell { padding:0; flex-direction:column; background:
+  radial-gradient(circle at 10% 12%, rgba(184,241,50,.18), transparent 28%),
+  radial-gradient(circle at 92% 24%, rgba(255,75,139,.13), transparent 28%),
+  linear-gradient(180deg,#fffdf7,#fff8fb);
+}
+.board-toolbar {
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  padding:18px 20px; border-bottom:1px solid rgba(255,75,139,.12);
+  background:rgba(255,255,255,.72); backdrop-filter:blur(16px);
+}
+.board-kicker {
+  font-family:var(--font-mono); font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); font-weight:900;
+}
+.board-title {
+  margin-top:4px; font-size:24px; font-weight:900; letter-spacing:-.035em;
+  color:var(--text); font-family:var(--font-ui);
+}
+.board-toolbar-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+.board-action-btn {
+  border:0; border-radius:999px; padding:10px 13px; cursor:pointer;
+  font-family:var(--font-ui); font-weight:900; font-size:12px;
+  background:rgba(255,75,139,.09); color:var(--accent);
+}
+.board-action-btn.primary { background:var(--lime); color:#16210b; box-shadow:0 8px 20px rgba(184,241,50,.20); }
+.board-canvas {
+  position:relative; flex:1; overflow:auto; padding:24px;
+  background-image:
+    radial-gradient(rgba(196,84,114,.18) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(255,255,255,.68), rgba(255,250,235,.62));
+  background-size:18px 18px, 100% 100%;
+}
+.board-card {
+  position:absolute; width:238px; min-height:146px; padding:16px;
+  border-radius:18px; background:var(--card-bg,#fffbe5);
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 16px 30px rgba(60,45,30,.12), 0 2px 0 rgba(255,255,255,.72) inset;
+  color:#282316; font-family:var(--font-ui);
+}
+.board-card::before {
+  content:''; position:absolute; inset:0 0 auto 0; height:7px; border-radius:18px 18px 0 0;
+  background:linear-gradient(90deg,var(--pin,#b8f132),rgba(255,255,255,.3));
+}
+.board-card-title {
+  font-size:13px; font-weight:1000; line-height:1.25; color:#17140e;
+  letter-spacing:-.015em; margin:2px 0 10px;
+}
+.board-card-body {
+  white-space:pre-wrap; font-size:12px; line-height:1.52; color:#403c32; font-weight:650;
+}
+.board-card-meta {
+  display:flex; align-items:center; gap:6px; margin-top:12px; flex-wrap:wrap;
+  font-family:var(--font-mono); font-size:9px; text-transform:uppercase; letter-spacing:.08em;
+  color:rgba(40,35,22,.55); font-weight:900;
+}
+.board-card-meta span { padding:3px 7px; border-radius:999px; background:rgba(255,255,255,.56); border:1px solid rgba(0,0,0,.04); }
+.board-empty {
+  position:absolute; inset:26px; display:grid; place-items:center; text-align:center;
+  border:1.5px dashed rgba(255,75,139,.18); border-radius:22px;
+  color:var(--text-3); font-weight:800; line-height:1.55; background:rgba(255,255,255,.42);
+}
+.board-empty strong { display:block; color:var(--text); font-size:20px; margin-bottom:8px; }
 @media (max-width:768px) {
   .tools-hero { margin:14px; padding:14px; }
   .tools-controls { margin:0 14px 12px; flex-direction:column; align-items:stretch; }
@@ -806,6 +872,10 @@ html,body {
   .tools-chipbar { padding:0 14px 12px; }
   .tool-builder-panel { width:100%; left:0; top:0; }
   #tools-grid { padding:0 14px 20px !important; }
+  .board-toolbar { align-items:flex-start; flex-direction:column; padding:14px; }
+  .board-canvas { padding:16px; }
+  .board-card { position:relative; width:auto; min-height:0; margin-bottom:14px; left:auto !important; top:auto !important; }
+  .board-empty { position:relative; inset:auto; min-height:240px; padding:22px; }
 }
 
 /* ═══════════════════════════ DICTIONARY APP ═══════════════════════════ */
@@ -1565,6 +1635,37 @@ html,body {
   </div>
 </div>
 
+<!-- BOARD -->
+<div class="win" id="win-board">
+  <div class="win-titlebar" id="tb-board">
+    <div class="win-controls">
+      <div class="tl close"  onclick="closeWin('board')"></div>
+      <div class="tl min"    onclick="minWin('board')"></div>
+      <div class="tl max"></div>
+    </div>
+    <div class="win-title">🧩 Board Flow</div>
+  </div>
+  <div class="win-body">
+    <div class="win-main board-shell">
+      <div class="mob-win-header">
+        <span style="font-size:22px;">🧩</span>
+        <div class="mob-win-title">Board</div>
+      </div>
+      <div class="board-toolbar">
+        <div>
+          <div class="board-kicker">Generated from teacher tools</div>
+          <div class="board-title">Board cards</div>
+        </div>
+        <div class="board-toolbar-actions">
+          <button class="board-action-btn primary" onclick="openApp('tools')">Open Tools →</button>
+          <button class="board-action-btn" onclick="boardClear()">Clear board</button>
+        </div>
+      </div>
+      <div class="board-canvas" id="board-canvas"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ABOUT -->
 <div class="win" id="win-about" style="top:80px;left:340px;width:480px;height:340px;">
   <div class="win-titlebar" id="tb-about">
@@ -1693,6 +1794,11 @@ html,body {
     <div class="di" id="di-dictionary" onclick="openApp('dictionary')" title="Dictionary">
       <div class="di-icon dictionary">🌐</div>
       <div class="di-label">Dictionary</div>
+      <div class="di-dot"></div>
+    </div>
+    <div class="di" id="di-board" onclick="openApp('board')" title="Board">
+      <div class="di-icon board">🧩</div>
+      <div class="di-label">Board</div>
       <div class="di-dot"></div>
     </div>
     <div class="di" id="di-tools" onclick="openApp('tools')" title="Teaching Tools">
@@ -2180,7 +2286,7 @@ function toolOpen(id) {
   if (!panel || !t) return;
   panel.classList.add('open');
   const meta = TOOL_GROUP_META[t.group] || TOOL_GROUP_META.utility;
-  panel.innerHTML = '<div class="tool-builder-head"><div class="tool-builder-top"><div class="tool-icon" style="--tool-color:' + meta.color + '">' + t.icon + '</div><div><div class="tool-builder-title">' + safeHtml(t.name) + '</div><div class="tool-builder-meta">' + safeHtml(t.tags.join(' / ')) + '</div></div><button class="tool-close" onclick="toolClose()">×</button></div><div class="tool-desc" style="margin-top:10px;">' + safeHtml(t.desc) + '</div></div><div class="tool-builder-body">' + toolFormHtml(t) + '<div class="tool-buttons"><button class="tool-btn primary" onclick="toolGenerate()">Generate</button><button class="tool-btn secondary" onclick="toolUseDemo()">Demo data</button><button class="tool-btn secondary" onclick="toolCopyOutput()">Copy</button><button class="tool-btn secondary" onclick="toolSaveToNotes()">Add to Notes</button></div><div class="tool-output tool-empty" id="tool-output">Fill the fields and click Generate. The result will appear here.</div></div>';
+  panel.innerHTML = '<div class="tool-builder-head"><div class="tool-builder-top"><div class="tool-icon" style="--tool-color:' + meta.color + '">' + t.icon + '</div><div><div class="tool-builder-title">' + safeHtml(t.name) + '</div><div class="tool-builder-meta">' + safeHtml(t.tags.join(' / ')) + '</div></div><button class="tool-close" onclick="toolClose()">×</button></div><div class="tool-desc" style="margin-top:10px;">' + safeHtml(t.desc) + '</div></div><div class="tool-builder-body">' + toolFormHtml(t) + '<div class="tool-buttons"><button class="tool-btn primary" onclick="toolGenerate()">Generate</button><button class="tool-btn secondary" onclick="toolUseDemo()">Demo data</button><button class="tool-btn secondary" onclick="toolCopyOutput()">Copy</button><button class="tool-btn secondary" onclick="toolSaveToNotes()">Add to Notes</button><button class="tool-btn secondary" onclick="toolAddToBoard()">Add to Board</button></div><div class="tool-output tool-empty" id="tool-output">Fill the fields and click Generate. The result will appear here.</div></div>';
 }
 function toolClose() { const panel = document.getElementById('tool-builder-panel'); if (panel) panel.classList.remove('open'); activeToolId = null; toolsRender(); }
 function toolFormHtml() {
@@ -2272,7 +2378,112 @@ function toolSaveToNotes() {
   const out = document.getElementById('tool-output');
   if (out) out.textContent = lastToolOutput + '\n\n✓ Added to Notes';
 }
+const BOARD_STORE_KEY = 'teachedos.generatedBoardCards.v1';
+const BOARD_COLORS = [
+  { bg:'#fff2a8', pin:'#f9cf31' },
+  { bg:'#ffd0b1', pin:'#ff9a55' },
+  { bg:'#ffc5cc', pin:'#ff6b7a' },
+  { bg:'#e7c7ff', pin:'#b36bff' },
+  { bg:'#c8e3ff', pin:'#6ea8ff' },
+  { bg:'#c8f8ec', pin:'#50d2b4' },
+  { bg:'#d9f7ae', pin:'#9be653' },
+  { bg:'#f5f5f5', pin:'#d8d8d8' }
+];
+let BOARD_CARDS = [];
+try { BOARD_CARDS = JSON.parse(localStorage.getItem(BOARD_STORE_KEY) || '[]'); } catch(e) { BOARD_CARDS = []; }
+function boardSave() {
+  try { localStorage.setItem(BOARD_STORE_KEY, JSON.stringify(BOARD_CARDS.slice(0, 80))); } catch(e) {}
+}
+function boardCardTitleBody(text, fallbackTitle) {
+  const cleaned = String(text || '').replace(/^\d+\.\s*/, '').trim();
+  const dashSplit = cleaned.split(/\s+[—-]\s+/);
+  if (dashSplit.length > 1 && dashSplit[0].length <= 58) {
+    return { title: dashSplit[0].trim(), body: dashSplit.slice(1).join(' — ').trim() };
+  }
+  const colonSplit = cleaned.split(/:\s+/);
+  if (colonSplit.length > 1 && colonSplit[0].length <= 58) {
+    return { title: colonSplit[0].trim(), body: colonSplit.slice(1).join(': ').trim() };
+  }
+  const words = cleaned.split(/\s+/);
+  return { title: fallbackTitle || words.slice(0, 5).join(' '), body: words.length > 6 ? cleaned : '' };
+}
+function boardMakeCards(tool, output) {
+  const clean = String(output || '').replace(/\r/g, '').replace(/—{3,}/g, '').trim();
+  if (!clean) return [];
+  const lines = clean.split('\n').map(line => line.trim()).filter(Boolean);
+  const titleLine = lines[0] || (tool ? tool.name : 'Generated board');
+  const cards = [];
+  const numbered = lines.filter(line => /^\d+\.\s+/.test(line));
+  if (numbered.length >= 3) {
+    cards.push({ title: 'Overview', body: titleLine });
+    numbered.slice(0, 12).forEach((line, index) => {
+      const card = boardCardTitleBody(line, 'Card ' + (index + 1));
+      cards.push(card);
+    });
+  } else {
+    const chunks = clean.split(/\n{2,}/).map(chunk => chunk.trim()).filter(Boolean);
+    chunks.slice(0, 10).forEach((chunk, index) => {
+      const chunkLines = chunk.split('\n').map(line => line.trim()).filter(Boolean);
+      const head = chunkLines.shift() || ('Card ' + (index + 1));
+      cards.push({ title: head.replace(/:$/, ''), body: chunkLines.join('\n') || head });
+    });
+  }
+  return cards.filter(card => card.title || card.body).map((card, index) => {
+    const color = BOARD_COLORS[index % BOARD_COLORS.length];
+    return {
+      id: Date.now() + '-' + Math.random().toString(36).slice(2),
+      title: card.title || 'Board card',
+      body: card.body || 'Ready for class.',
+      tool: tool ? tool.name : 'Tool output',
+      group: tool ? tool.group : 'utility',
+      bg: color.bg,
+      pin: color.pin
+    };
+  });
+}
+function boardAddFromTool(tool, output) {
+  const cards = boardMakeCards(tool, output);
+  if (!cards.length) return;
+  BOARD_CARDS = cards.concat(BOARD_CARDS).slice(0, 80);
+  boardSave();
+  boardRender();
+}
+function boardRender() {
+  const canvas = document.getElementById('board-canvas');
+  if (!canvas) return;
+  if (!BOARD_CARDS.length) {
+    canvas.innerHTML = '<div class="board-empty"><div><strong>No board cards yet</strong>Generate a tool, then click <b>Add to Board</b>. Lesson flow cards will appear here as separate movable-style cards.</div></div>';
+    return;
+  }
+  canvas.innerHTML = BOARD_CARDS.map((card, index) => {
+    const col = index % 3;
+    const row = Math.floor(index / 3);
+    const left = 24 + col * 260 + (row % 2) * 22;
+    const top = 24 + row * 180;
+    return '<article class="board-card" style="left:' + left + 'px;top:' + top + 'px;--card-bg:' + safeHtml(card.bg) + ';--pin:' + safeHtml(card.pin) + ';z-index:' + (BOARD_CARDS.length - index) + '">' +
+      '<div class="board-card-title">' + safeHtml(card.title) + '</div>' +
+      '<div class="board-card-body">' + safeHtml(card.body) + '</div>' +
+      '<div class="board-card-meta"><span>' + safeHtml(card.group || 'tool') + '</span><span>' + safeHtml(card.tool || 'Generated') + '</span></div>' +
+      '</article>';
+  }).join('');
+}
+function toolAddToBoard() {
+  const t = currentTool();
+  if (!t) return;
+  if (!lastToolOutput) toolGenerate();
+  boardAddFromTool(t, lastToolOutput);
+  openApp('board');
+  const out = document.getElementById('tool-output');
+  if (out) out.textContent = lastToolOutput + '\n\n✓ Added to Board as separate cards';
+}
+function boardClear() {
+  if (!BOARD_CARDS.length) return;
+  BOARD_CARDS = [];
+  boardSave();
+  boardRender();
+}
 toolsRender();
+boardRender();
 
 /* ══════════════════════ CURRICULUM TABS ══════════════════════ */
 function setTab(el, type) {
