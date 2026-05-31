@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <title>Ф.О.Б</title>
+  <script>
+    // GitHub Pages SPA redirect trick.
+    // Кодирует маршрут в ?p=... и редиректит на index.html приложения.
+    // index.html читает ?p= и восстанавливает путь через history.replaceState.
+    //
+    // pathSegmentsToKeep = 1 — оставляем /fob/ как корень приложения.
+    var segmentsToKeep = 1;
+    var l = window.location;
+    var segments = l.pathname.split('/');
+    var appRoot  = segments.slice(0, segmentsToKeep + 1).join('/');
+    var route    = '/' + segments.slice(segmentsToKeep + 1).join('/');
+    l.replace(
+      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+      appRoot + '/?p=' + encodeURIComponent(route) +
+      (l.search ? '&q=' + encodeURIComponent(l.search.slice(1)) : '') +
+      l.hash
+    );
+  </script>
+</head>
+<body></body>
+</html>
