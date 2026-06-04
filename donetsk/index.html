@@ -1802,6 +1802,104 @@
       text-transform: uppercase; color: rgba(255,255,255,0.4); margin-top: 10px; display: block;
     }
 
+    /* ═══════════════════════════════════════
+       АТЛАС ДОМІНАНТ — interactive landmark map
+    ═══════════════════════════════════════ */
+    #atlas { background: #0b0d11; border-top: 1px solid rgba(255,255,255,0.06); }
+    #atlas .sec-h2 { color: #fff; }
+    #atlas .sec-sub { color: rgba(255,255,255,0.45); }
+    #atlas .sec-num { color: var(--rust); }
+    #atlas .sec-rule { background: rgba(255,255,255,0.16); }
+    .atlas-lead {
+      max-width: 60ch; margin: 0 0 40px; border-left: 3px solid var(--rust); padding-left: 26px;
+    }
+    .atlas-lead p {
+      font-family: var(--serif); font-size: clamp(17px, 1.9vw, 23px);
+      font-style: italic; color: rgba(255,255,255,0.78); line-height: 1.6;
+    }
+    .atlas-stage {
+      display: grid; grid-template-columns: 1.55fr 1fr; gap: 22px; align-items: stretch;
+    }
+    .atlas-map {
+      position: relative; aspect-ratio: 4 / 3; min-height: 360px;
+      background:
+        radial-gradient(ellipse 80% 70% at 38% 42%, rgba(100,130,180,0.10), transparent 60%),
+        radial-gradient(ellipse 60% 60% at 80% 78%, rgba(180,96,48,0.08), transparent 60%),
+        #0e1116;
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;
+    }
+    .atlas-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .atlas-hud {
+      position: absolute; top: 14px; left: 14px; z-index: 4;
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.4); line-height: 1.7;
+    }
+    .atlas-hud b { color: rgba(242,101,34,0.85); font-weight: 500; }
+    .atlas-node {
+      position: absolute; transform: translate(-50%, -50%); z-index: 5;
+      cursor: pointer; width: 0; height: 0;
+    }
+    .atlas-node-dot {
+      position: absolute; left: 0; top: 0; transform: translate(-50%, -50%);
+      width: 13px; height: 13px; border-radius: 50%;
+      background: rgba(255,255,255,0.22); border: 1.5px solid rgba(255,255,255,0.7);
+      transition: transform .3s var(--ease), background .3s, box-shadow .3s;
+    }
+    .atlas-node::after {
+      content: attr(data-n); position: absolute; left: 0; top: 0;
+      transform: translate(-50%, -52%); font-family: var(--mono); font-size: 8px;
+      color: #fff; pointer-events: none;
+    }
+    .atlas-node-label {
+      position: absolute; left: 12px; top: -7px; white-space: nowrap;
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(255,255,255,0.55);
+      transition: color .3s; pointer-events: none;
+    }
+    .atlas-node:hover .atlas-node-dot,
+    .atlas-node.active .atlas-node-dot {
+      background: var(--rust); border-color: var(--rust);
+      transform: translate(-50%, -50%) scale(1.5);
+      box-shadow: 0 0 0 6px rgba(242,101,34,0.18), 0 0 22px rgba(242,101,34,0.5);
+    }
+    .atlas-node:hover .atlas-node-label,
+    .atlas-node.active .atlas-node-label { color: #fff; }
+    /* detail panel */
+    .atlas-detail {
+      background: linear-gradient(165deg, #15181e, #0d0f13);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;
+      padding: 30px 28px; display: flex; flex-direction: column;
+    }
+    .atlas-detail-kicker {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--rust); margin-bottom: 18px;
+    }
+    .atlas-detail-num {
+      font-family: var(--sans); font-weight: 800; font-size: clamp(40px, 5vw, 64px);
+      line-height: 0.9; color: rgba(255,255,255,0.14); letter-spacing: -0.02em;
+    }
+    .atlas-detail-name {
+      font-family: var(--sans); font-weight: 700; font-size: 1.5rem; color: #fff;
+      line-height: 1.15; margin: 14px 0 6px;
+    }
+    .atlas-detail-meta {
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(242,101,34,0.8); margin-bottom: 18px;
+    }
+    .atlas-detail-desc {
+      font-family: var(--sans); font-size: 0.9rem; color: rgba(255,255,255,0.74);
+      line-height: 1.65; margin-bottom: auto;
+    }
+    .atlas-detail-hint {
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-top: 24px;
+    }
+    @media (max-width: 860px) {
+      .atlas-stage { grid-template-columns: 1fr; }
+      .atlas-map { aspect-ratio: 1 / 1; min-height: 320px; }
+      .atlas-node-label { display: none; }
+    }
+
   </style>
 </head>
 
@@ -1829,6 +1927,10 @@
       <li><a href="#arkhitektura">
         <span class="ua">Архітектура</span>
         <span class="en">Architecture</span>
+      </a></li>
+      <li><a href="#atlas">
+        <span class="ua">Атлас</span>
+        <span class="en">Atlas</span>
       </a></li>
       <li><a href="#materialy">
         <span class="ua">Матеріали</span>
@@ -1890,6 +1992,9 @@
     </a>
     <a href="#arkhitektura" onclick="closeMobileMenu()">
       <span class="ua">Архітектура</span><span class="en">Architecture</span>
+    </a>
+    <a href="#atlas" onclick="closeMobileMenu()">
+      <span class="ua">Атлас</span><span class="en">Atlas</span>
     </a>
     <a href="#materialy" onclick="closeMobileMenu()">
       <span class="ua">Матеріали</span><span class="en">Materials</span>
@@ -2427,6 +2532,104 @@
         <span class="arch-tag en">Spoil Tips</span>
         <span class="arch-tag ua">Шахтні башти</span>
         <span class="arch-tag en">Headframes</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════
+       АТЛАС ДОМІНАНТ — interactive map
+  ════════════════════════ -->
+  <section id="atlas" class="section">
+    <div class="wrap">
+      <header class="sec-head fu">
+        <span class="sec-num">△</span>
+        <h2 class="sec-h2 ua">Атлас<br>Домінант</h2>
+        <h2 class="sec-h2 en">Atlas of<br>Dominants</h2>
+        <div class="sec-rule"></div>
+        <span class="sec-sub ua">Вертикалі міста · 48°00′N 37°48′E</span>
+        <span class="sec-sub en">The city's verticals · 48°00′N 37°48′E</span>
+      </header>
+
+      <div class="atlas-lead fu">
+        <p class="ua">Це не географічна мапа, а мапа пам'яті. Терикони, копри, проспект, арена — домінанти, за якими місто впізнавали з будь-якого кварталу. Обери точку.</p>
+        <p class="en">This is not a geographic map but a map of memory. Spoil tips, headframes, the boulevard, the arena — the dominants by which the city was recognised from any district. Choose a point.</p>
+      </div>
+
+      <div class="atlas-stage fu">
+        <div class="atlas-map" id="atlas-map">
+          <svg class="atlas-svg" viewBox="0 0 100 75" preserveAspectRatio="none" aria-hidden="true">
+            <!-- faint grid -->
+            <g stroke="rgba(255,255,255,0.05)" stroke-width="0.15">
+              <line x1="0" y1="18.75" x2="100" y2="18.75"/><line x1="0" y1="37.5" x2="100" y2="37.5"/><line x1="0" y1="56.25" x2="100" y2="56.25"/>
+              <line x1="25" y1="0" x2="25" y2="75"/><line x1="50" y1="0" x2="50" y2="75"/><line x1="75" y1="0" x2="75" y2="75"/>
+            </g>
+            <!-- Kalmius river -->
+            <path d="M 82 0 C 76 18, 86 30, 78 46 C 72 58, 80 68, 74 75" fill="none" stroke="rgba(100,140,200,0.35)" stroke-width="0.7"/>
+            <!-- main boulevard axis -->
+            <path d="M 8 66 L 70 14" fill="none" stroke="rgba(242,101,34,0.4)" stroke-width="0.5" stroke-dasharray="1.4 1.4"/>
+          </svg>
+          <div class="atlas-hud">Донецьк<br><b>атлас домінант</b></div>
+
+          <div class="atlas-node active" data-n="1" style="left:22%;top:32%"
+            data-name-ua="Донбас Арена" data-name-en="Donbas Arena"
+            data-meta-ua="Стадіон · 2009 · арх. Populous" data-meta-en="Stadium · 2009 · arch. Populous"
+            data-desc-ua="Один із найсучасніших стадіонів Європи свого часу. 51 504 глядачі, скляний фасад, підсвічений помаранчевим — кольором «Шахтаря»." data-desc-en="One of Europe's most modern stadiums of its time. 51,504 seats, a glass facade lit orange — the colour of Shakhtar.">
+            <div class="atlas-node-dot"></div><span class="atlas-node-label">Донбас Арена</span>
+          </div>
+          <div class="atlas-node" data-n="2" style="left:46%;top:23%"
+            data-name-ua="Театр опери та балету" data-name-en="Opera &amp; Ballet Theatre"
+            data-meta-ua="Театр · 1941" data-meta-en="Theatre · 1941"
+            data-desc-ua="Сталінська неокласика з колонадою. Відкритий у перші дні війни 1941 року — і пережив її. Культурне серце міста." data-desc-en="Stalinist neoclassicism with a colonnade. Opened in the first days of the 1941 war — and survived it. The cultural heart of the city.">
+            <div class="atlas-node-dot"></div><span class="atlas-node-label">Театр опери</span>
+          </div>
+          <div class="atlas-node" data-n="3" style="left:68%;top:17%"
+            data-name-ua="Залізничний вокзал" data-name-en="Railway Station"
+            data-meta-ua="Вокзал · 1932" data-meta-en="Station · 1932"
+            data-desc-ua="Брама міста. Через нього проходили тисячі — шахтарі, студенти, гості. Точка, з якої починалась і закінчувалась дорога додому." data-desc-en="The city's gate. Thousands passed through — miners, students, guests. The point where the road home began and ended.">
+            <div class="atlas-node-dot"></div><span class="atlas-node-label">Вокзал</span>
+          </div>
+          <div class="atlas-node" data-n="4" style="left:49%;top:47%"
+            data-name-ua="Площа Леніна" data-name-en="Lenin Square"
+            data-meta-ua="Центр · головна площа" data-meta-en="Centre · main square"
+            data-desc-ua="Композиційний центр міста. Звідси розходились проспекти, тут збиралось місто — і у свята, і у злам 2014-го." data-desc-en="The compositional centre of the city. Boulevards radiated from here; the city gathered here — in celebration, and in the 2014 rupture.">
+            <div class="atlas-node-dot"></div><span class="atlas-node-label">Пл. Леніна</span>
+          </div>
+          <div class="atlas-node" data-n="5" style="left:35%;top:62%"
+            data-name-ua="Бульвар Пушкіна" data-name-en="Pushkin Boulevard"
+            data-meta-ua="Бульвар · Пальма Мерцалова" data-meta-en="Boulevard · Mertsalov Palm"
+            data-desc-ua="Пішохідна вісь із трояндами й каштанами. Тут стоїть Пальма Мерцалова — пальма, викувана з однієї рейки 1896 року. Символ майстерності Донбасу." data-desc-en="A pedestrian axis of roses and chestnuts. Home to the Mertsalov Palm — a palm forged from a single rail in 1896. A symbol of Donbas craftsmanship.">
+            <div class="atlas-node-dot"></div><span class="atlas-node-label">Бульвар Пушкіна</span>
+          </div>
+          <div class="atlas-node" data-n="6" style="left:18%;top:79%"
+            data-name-ua="Терикон" data-name-en="Spoil Tip"
+            data-meta-ua="Домінанта · рукотворна гора" data-meta-en="Dominant · man-made mountain"
+            data-desc-ua="Чорна піраміда з пустої породи. Видно з будь-якого кварталу — як шпиль собору в середньовічному місті. Нова топографія Донбасу." data-desc-en="A black pyramid of waste rock. Visible from any district — like a cathedral spire in a medieval city. The new topography of Donbas.">
+            <div class="atlas-node-dot"></div><span class="atlas-node-label">Терикон</span>
+          </div>
+          <div class="atlas-node" data-n="7" style="left:79%;top:58%"
+            data-name-ua="Річка Кальміус" data-name-en="Kalmius River"
+            data-meta-ua="Вода · вісь міста" data-meta-en="Water · the city's axis"
+            data-desc-ua="Річка, на берегах якої Юз заклав завод. Вечорами вогні мостів відбивались у воді. Зараз місто — без води у кранах, але річка лишається." data-desc-en="The river on whose banks Hughes founded the plant. In the evenings the bridge lights reflected in the water. Now the city is without water in its taps — but the river remains.">
+            <div class="atlas-node-dot"></div><span class="atlas-node-label">Кальміус</span>
+          </div>
+          <div class="atlas-node" data-n="8" style="left:62%;top:80%"
+            data-name-ua="Донецький університет" data-name-en="Donetsk University"
+            data-meta-ua="Університет · 1965" data-meta-en="University · 1965"
+            data-desc-ua="Місто було не лише шахтарським, а й студентським — десятки тисяч студентів. Університет як обіцянка майбутнього, яке обірвали." data-desc-en="The city was not only a miners' city but a students' one — tens of thousands of students. The university as a promise of a future that was cut short.">
+            <div class="atlas-node-dot"></div><span class="atlas-node-label">Університет</span>
+          </div>
+        </div>
+
+        <div class="atlas-detail" id="atlas-detail">
+          <div class="atlas-detail-kicker ua">Домінанта · обрана точка</div>
+          <div class="atlas-detail-kicker en">Dominant · selected point</div>
+          <div class="atlas-detail-num" id="atlas-num">01</div>
+          <div class="atlas-detail-name" id="atlas-name">Донбас Арена</div>
+          <div class="atlas-detail-meta" id="atlas-meta">Стадіон · 2009 · арх. Populous</div>
+          <p class="atlas-detail-desc" id="atlas-desc">Один із найсучасніших стадіонів Європи свого часу. 51 504 глядачі, скляний фасад, підсвічений помаранчевим — кольором «Шахтаря».</p>
+          <div class="atlas-detail-hint ua">↑ Обери точку на мапі</div>
+          <div class="atlas-detail-hint en">↑ Choose a point on the map</div>
+        </div>
       </div>
     </div>
   </section>
@@ -3718,6 +3921,7 @@
       document.body.classList.toggle('lang-en', lang === 'en');
       document.getElementById('btn-ua').classList.toggle('active', lang === 'ua');
       document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      if (window.__atlasRerender) window.__atlasRerender();
     }
 
     /* ── Scroll-reveal ── */
@@ -3834,6 +4038,41 @@
           rail.scrollLeft += e.deltaY; e.preventDefault();
         }
       }, { passive: false });
+    })();
+
+    /* ── Atlas of dominants: interactive nodes ── */
+    (function () {
+      const map = document.getElementById('atlas-map');
+      const detail = document.getElementById('atlas-detail');
+      if (!map || !detail) return;
+      const nodes = [...map.querySelectorAll('.atlas-node')];
+      const elNum = document.getElementById('atlas-num');
+      const elName = document.getElementById('atlas-name');
+      const elMeta = document.getElementById('atlas-meta');
+      const elDesc = document.getElementById('atlas-desc');
+      let active = nodes[0];
+      function render(node) {
+        if (!node) return;
+        const en = document.body.classList.contains('lang-en');
+        const d = node.dataset;
+        elNum.textContent = String(d.n).padStart(2, '0');
+        elName.textContent = en ? d.nameEn : d.nameUa;
+        elMeta.textContent = en ? d.metaEn : d.metaUa;
+        elDesc.textContent = en ? d.descEn : d.descUa;
+      }
+      function select(node) {
+        nodes.forEach(n => n.classList.remove('active'));
+        node.classList.add('active');
+        active = node;
+        render(node);
+      }
+      nodes.forEach(n => {
+        n.addEventListener('click', () => select(n));
+        n.addEventListener('mouseenter', () => render(n));
+        n.addEventListener('mouseleave', () => render(active));
+      });
+      render(active);
+      window.__atlasRerender = () => render(active);
     })();
 
     /* ── Sticky nav ── */
