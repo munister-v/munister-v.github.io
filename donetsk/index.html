@@ -253,11 +253,42 @@
       50%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
       100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
     }
+    /* hero motif wrapper (cursor depth) */
+    .hero-motif {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: min(380px, 52vw); height: 100%; z-index: 2; pointer-events: none;
+      opacity: 0.07; will-change: transform;
+    }
+    .hero-motif svg { width: 100%; height: 100%; display: block; }
+    /* cursor-depth smoothing */
+    .hero-motif, .hero-title { transition: transform .3s cubic-bezier(.22,.61,.36,1); }
+    /* title entrance */
+    .hero-title > * {
+      opacity: 0; transform: translateY(28px);
+      animation: heroIn .95s cubic-bezier(.16,.84,.32,1) forwards;
+    }
+    .hero-eyebrow { animation-delay: .15s; }
+    .ht-city { animation-delay: .32s; }
+    .ht-through { animation-delay: .52s; }
+    .ht-author { animation-delay: .66s; }
+    @keyframes heroIn { to { opacity: 1; transform: none; } }
+    /* a hairline that draws under the city name */
+    .ht-rule {
+      display: block; height: 2px; width: 0; background: var(--rust);
+      margin: 14px 0 10px; animation: htRule 1s cubic-bezier(.16,.84,.32,1) .82s forwards;
+    }
+    @keyframes htRule { to { width: clamp(120px, 22vw, 260px); } }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-title > *, .ht-rule { animation: none; opacity: 1; transform: none; }
+      .ht-rule { width: clamp(120px, 22vw, 260px); }
+    }
     @media (max-width: 900px) {
       #home { height: min(100svh, 880px); min-height: 520px; }
       .hero-bg img { transform: none !important; object-position: 52% 38%; transition: none; }
       .hero-title { left: 0; right: 0; width: auto; border-radius: 0; padding: 0 24px 48px; background: none; backdrop-filter: none; }
       .hero-top { padding: 20px 24px 0; }
+      .hero-motif, .hero-title { transform: translateX(-50%) !important; }
+      .hero-title { transform: none !important; }
     }
 
     /* ═══════════════════════════════════════
@@ -1904,20 +1935,23 @@
       <span class="hero-edition en">Author Portal · The Visual Code of Donetsk</span>
     </div>
 
-    <!-- Industrial arch motif -->
-    <svg style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:min(380px,52vw);height:100%;z-index:2;pointer-events:none;opacity:0.07" viewBox="0 0 380 700" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-      <!-- Blast furnace silhouette -->
-      <path d="M 80 700 L 80 200 L 60 180 L 60 140 L 80 120 L 100 80 L 120 60 L 140 50 L 150 40 L 160 50 L 170 60 L 190 80 L 200 120 L 220 140 L 220 180 L 200 200 L 200 700" fill="none" stroke="#F0EBE4" stroke-width="1"/>
-      <path d="M 240 700 L 240 300 L 230 280 L 250 260 L 250 220 L 268 200 L 280 700" fill="none" stroke="#F0EBE4" stroke-width="0.6" opacity="0.5"/>
-      <line x1="60" y1="180" x2="220" y2="180" stroke="#F0EBE4" stroke-width="0.5" opacity="0.4"/>
-    </svg>
+    <!-- Industrial arch motif (cursor-depth layer) -->
+    <div class="hero-motif" data-depth="26">
+      <svg viewBox="0 0 380 700" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <!-- Blast furnace silhouette -->
+        <path d="M 80 700 L 80 200 L 60 180 L 60 140 L 80 120 L 100 80 L 120 60 L 140 50 L 150 40 L 160 50 L 170 60 L 190 80 L 200 120 L 220 140 L 220 180 L 200 200 L 200 700" fill="none" stroke="#F0EBE4" stroke-width="1"/>
+        <path d="M 240 700 L 240 300 L 230 280 L 250 260 L 250 220 L 268 200 L 280 700" fill="none" stroke="#F0EBE4" stroke-width="0.6" opacity="0.5"/>
+        <line x1="60" y1="180" x2="220" y2="180" stroke="#F0EBE4" stroke-width="0.5" opacity="0.4"/>
+      </svg>
+    </div>
 
-    <div class="hero-title">
+    <div class="hero-title" data-depth="-8">
       <p class="hero-eyebrow ua">Наративний атлас · вугілля, сталь, пам'ять</p>
       <p class="hero-eyebrow en">Narrative Atlas · coal, steel, memory</p>
       <span class="ht-city">ДОНЕЦЬК</span>
-      <span class="ht-through ua">моїми (нашими) очима</span>
-      <span class="ht-through en">through my eyes</span>
+      <span class="ht-rule"></span>
+      <span class="ht-through ua">моїми (нашими) очима · я повернусь</span>
+      <span class="ht-through en">through my eyes · I will return</span>
       <span class="ht-author">MUNISTER</span>
     </div>
 
@@ -3799,7 +3833,7 @@
       nav.classList.toggle('solid', window.scrollY > 60);
     }, { passive: true });
 
-    /* ── Hero parallax ── */
+    /* ── Hero parallax (scroll) ── */
     const heroImg = document.getElementById('hero-img');
     if (heroImg && window.matchMedia('(min-width: 901px)').matches) {
       window.addEventListener('scroll', () => {
@@ -3809,6 +3843,33 @@
         }
       }, { passive: true });
     }
+
+    /* ── Hero cursor-depth parallax ── */
+    (function () {
+      const home = document.getElementById('home');
+      if (!home) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const fine = window.matchMedia('(min-width: 901px) and (pointer: fine)').matches;
+      if (reduce || !fine) return;
+      const layers = [...home.querySelectorAll('[data-depth]')].map(el => ({
+        el, depth: parseFloat(el.dataset.depth) || 0,
+        base: el.classList.contains('hero-motif') ? 'translateX(-50%) ' : ''
+      }));
+      let tx = 0, ty = 0, raf = null;
+      function apply() {
+        layers.forEach(l => {
+          l.el.style.transform = `${l.base}translate(${tx * l.depth}px, ${ty * l.depth}px)`;
+        });
+        raf = null;
+      }
+      home.addEventListener('pointermove', e => {
+        const r = home.getBoundingClientRect();
+        tx = ((e.clientX - r.left) / r.width - 0.5) * 2;   // -1 … 1
+        ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+      home.addEventListener('pointerleave', () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(apply); });
+    })();
 
     /* ── Admin editor ── */
     const adminUrlParams = new URLSearchParams(window.location.search);
