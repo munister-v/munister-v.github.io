@@ -1552,6 +1552,174 @@
       .admin-panel { right: 12px; bottom: 130px; width: calc(100vw - 24px); max-height: calc(100svh - 150px); }
     }
 
+    /* ═══════════════════════════════════════
+       ТОДІ / ЗАРАЗ — then / now (memory as resistance)
+    ═══════════════════════════════════════ */
+    #tznow { background: #0b0c0e; border-top: 1px solid rgba(255,255,255,0.06); }
+    #tznow .sec-h2 { color: #fff; }
+    #tznow .sec-sub { color: rgba(255,255,255,0.42); }
+    #tznow .sec-num { color: var(--rust); }
+    .tz-lead {
+      max-width: 64ch; margin: 0 0 44px;
+      border-left: 3px solid var(--rust); padding-left: 28px;
+    }
+    .tz-lead p {
+      font-family: var(--serif); font-size: clamp(19px, 2.1vw, 27px);
+      font-style: italic; color: rgba(255,255,255,0.82); line-height: 1.6;
+    }
+    .tz-lead .tz-lead-sub {
+      font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: rgba(242,101,34,0.8); font-style: normal;
+      margin-top: 16px; display: block;
+    }
+    /* drag reveal slider */
+    .tz-slider {
+      position: relative; width: 100%; aspect-ratio: 16/9;
+      overflow: hidden; user-select: none; cursor: ew-resize;
+      background: #16181c; border: 1px solid rgba(255,255,255,0.08);
+      touch-action: none;
+    }
+    .tz-slider img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; pointer-events: none; display: block;
+    }
+    .tz-now { filter: grayscale(72%) contrast(1.08) brightness(0.74); }
+    .tz-then {
+      clip-path: inset(0 50% 0 0);
+      will-change: clip-path;
+    }
+    .tz-handle {
+      position: absolute; top: 0; bottom: 0; left: 50%; width: 44px;
+      transform: translateX(-50%); z-index: 5; cursor: ew-resize;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tz-handle::before {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 50%;
+      width: 2px; transform: translateX(-50%); background: rgba(255,255,255,0.9);
+    }
+    .tz-handle-knob {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--rust); color: #fff; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+    }
+    .tz-tag {
+      position: absolute; top: 16px; z-index: 4;
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.16em;
+      text-transform: uppercase; padding: 7px 12px; backdrop-filter: blur(4px);
+    }
+    .tz-tag-then { left: 16px; background: rgba(242,101,34,0.9); color: #fff; }
+    .tz-tag-now { right: 16px; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.85); }
+    .tz-hint {
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.4);
+      text-align: center; margin-top: 14px;
+    }
+    /* editorial diptychs */
+    .tz-diptych {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-top: 4px;
+    }
+    .tz-panel { position: relative; aspect-ratio: 4/5; overflow: hidden; background: #16181c; }
+    .tz-panel img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform .7s var(--ease), filter .6s var(--ease);
+    }
+    .tz-panel:hover img { transform: scale(1.04); }
+    .tz-panel-now img { filter: grayscale(78%) contrast(1.1) brightness(0.7); }
+    .tz-panel-now:hover img { filter: grayscale(40%) contrast(1.12) brightness(0.82); }
+    .tz-panel-label {
+      position: absolute; top: 0; left: 0; z-index: 2;
+      font-family: var(--sans); font-weight: 800; line-height: 0.9;
+      font-size: clamp(34px, 6vw, 88px); letter-spacing: -0.03em;
+      padding: 18px 22px; color: #fff; mix-blend-mode: difference;
+      pointer-events: none;
+    }
+    .tz-panel-meta {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; padding: 16px 20px;
+      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+      font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.72);
+    }
+    @media (max-width: 760px) {
+      .tz-diptych { grid-template-columns: 1fr; }
+      .tz-panel { aspect-ratio: 16/10; }
+    }
+
+    /* ═══════════════════════════════════════
+       BOLD COUNTER BAND — Донецьк у вазі
+    ═══════════════════════════════════════ */
+    .count-band {
+      background: var(--coal); color: #fff; padding: 72px 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .count-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    }
+    .count-cell {
+      padding: 0 28px; border-left: 1px solid rgba(255,255,255,0.1);
+    }
+    .count-cell:first-child { border-left: none; padding-left: 0; }
+    .count-n {
+      font-family: var(--sans); font-weight: 800; letter-spacing: -0.03em;
+      font-size: clamp(48px, 8vw, 116px); line-height: 0.92; color: #fff;
+      display: block; font-variant-numeric: tabular-nums;
+    }
+    .count-cell:nth-child(3) .count-n { color: var(--rust); }
+    .count-l {
+      font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: rgba(255,255,255,0.5);
+      margin-top: 18px; display: block; line-height: 1.5;
+    }
+    @media (max-width: 760px) {
+      .count-grid { grid-template-columns: 1fr; gap: 40px; }
+      .count-cell { border-left: none; padding: 0; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 28px; }
+      .count-cell:first-child { border-top: none; padding-top: 0; }
+    }
+
+    /* ═══════════════════════════════════════
+       ЛИСТ ДО МІСТА — letter to the city
+    ═══════════════════════════════════════ */
+    #lyst {
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(242,101,34,0.06), transparent 60%),
+        #111214;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 96px 0 104px;
+    }
+    .lyst-wrap { max-width: 760px; margin: 0 auto; }
+    .lyst-eyebrow {
+      font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(242,101,34,0.85);
+      text-align: center; display: block; margin-bottom: 36px;
+    }
+    .lyst-body p {
+      font-family: var(--serif); font-size: clamp(20px, 2.4vw, 30px);
+      line-height: 1.62; color: rgba(255,255,255,0.86); margin: 0 0 30px;
+      opacity: 0; transform: translateY(22px);
+      transition: opacity .8s var(--ease), transform .8s var(--ease);
+    }
+    .lyst-body p.reveal { opacity: 1; transform: none; }
+    .lyst-body p em { color: var(--rust); font-style: italic; }
+    .lyst-body p strong {
+      display: block; font-family: var(--sans); font-weight: 800;
+      font-size: clamp(30px, 5vw, 60px); letter-spacing: -0.02em;
+      line-height: 1; color: #fff; margin: 8px 0 4px;
+    }
+    .lyst-sign {
+      margin-top: 56px; text-align: right;
+      opacity: 0; transform: translateY(22px);
+      transition: opacity .8s var(--ease), transform .8s var(--ease);
+    }
+    .lyst-sign.reveal { opacity: 1; transform: none; }
+    .lyst-sign-name {
+      font-family: var(--serif); font-style: italic; font-size: 1.6rem;
+      color: #fff; display: block;
+    }
+    .lyst-sign-meta {
+      font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.4); margin-top: 10px; display: block;
+    }
+
   </style>
 </head>
 
@@ -1595,6 +1763,10 @@
       <li><a href="#okupatsia">
         <span class="ua">Окупація</span>
         <span class="en">Occupation</span>
+      </a></li>
+      <li><a href="#tznow">
+        <span class="ua">Тоді / Зараз</span>
+        <span class="en">Then / Now</span>
       </a></li>
       <li><a href="#pamyat">
         <span class="ua">Пам'ять</span>
@@ -1648,6 +1820,9 @@
     </a>
     <a href="#okupatsia" onclick="closeMobileMenu()">
       <span class="ua">Окупація</span><span class="en">Occupation</span>
+    </a>
+    <a href="#tznow" onclick="closeMobileMenu()">
+      <span class="ua">Тоді / Зараз</span><span class="en">Then / Now</span>
     </a>
     <a href="#pamyat" onclick="closeMobileMenu()">
       <span class="ua">Пам'ять</span><span class="en">Memory</span>
@@ -2300,17 +2475,17 @@
 
       <div class="rhythm-stats fu" style="margin-top:32px;border-top:1px solid var(--line);padding-top:28px">
         <div class="rhythm-stat">
-          <span class="rhythm-stat-n">150+</span>
+          <span class="rhythm-stat-n" data-count="150" data-suffix="+">0</span>
           <span class="rhythm-stat-l ua">Шахт у регіоні</span>
           <span class="rhythm-stat-l en">Mines in the region</span>
         </div>
         <div class="rhythm-stat">
-          <span class="rhythm-stat-n">1M</span>
+          <span class="rhythm-stat-n" data-count="1" data-suffix="M">0</span>
           <span class="rhythm-stat-l ua">Мешканців · 2013</span>
           <span class="rhythm-stat-l en">Residents · 2013</span>
         </div>
         <div class="rhythm-stat">
-          <span class="rhythm-stat-n">8 км</span>
+          <span class="rhythm-stat-n" data-count="8" data-suffix=" км">0</span>
           <span class="rhythm-stat-l ua">Головний проспект</span>
           <span class="rhythm-stat-l en">Main boulevard</span>
         </div>
@@ -2581,6 +2756,117 @@
   </section>
 
   <!-- ════════════════════════
+       ТОДІ / ЗАРАЗ — then / now confrontation
+  ════════════════════════ -->
+  <section id="tznow" class="section">
+    <div class="wrap">
+      <header class="sec-head fu">
+        <span class="sec-num">×</span>
+        <h2 class="sec-h2 ua">Тоді<br>і Зараз</h2>
+        <h2 class="sec-h2 en">Then<br>and Now</h2>
+        <div class="sec-rule"></div>
+        <span class="sec-sub ua">Одне місто · два погляди · 2012 ↔ 2025</span>
+        <span class="sec-sub en">One city · two gazes · 2012 ↔ 2025</span>
+      </header>
+
+      <div class="tz-lead fu">
+        <p class="ua">Те саме місто. Але між цими кадрами — окупація, тиша і відсутність. Потягни межу: ліворуч — Донецьк, яким він був. Праворуч — яким його залишили.</p>
+        <p class="en">The same city. But between these frames lie occupation, silence and absence. Drag the divider: on the left — the Donetsk that was. On the right — the one they left behind.</p>
+        <span class="tz-lead-sub ua">Пам'ять — це форма опору</span>
+        <span class="tz-lead-sub en">Memory is a form of resistance</span>
+      </div>
+
+      <div class="tz-slider fu" id="tz-slider">
+        <img class="tz-now" src="after2022/photo_2024-09-05_15-15-06.jpg" alt="Донецьк в окупації, вересень 2024" loading="lazy">
+        <img class="tz-then" id="tz-then-img" src="panorama/IMG_0628%20as%20Smart%20Object-1.jpg" alt="Донецьк на піку розвитку, 2012" loading="lazy">
+        <span class="tz-tag tz-tag-then">Тоді · 2012</span>
+        <span class="tz-tag tz-tag-now">Зараз · 2024</span>
+        <div class="tz-handle" id="tz-handle"><div class="tz-handle-knob">⟺</div></div>
+      </div>
+      <div class="tz-hint ua">← Потягни, щоб порівняти →</div>
+      <div class="tz-hint en">← Drag to compare →</div>
+
+      <div class="tz-diptych fu">
+        <div class="tz-panel tz-panel-then" onclick="openLightbox(this)">
+          <span class="tz-panel-label">ТОДІ</span>
+          <img src="panorama/IMG_3013.jpg" alt="Донецьк, розквіт міста 2012–2014" loading="lazy">
+          <div class="tz-panel-meta ua">Живе місто · 2012–2014 · z1uk / railalex</div>
+          <div class="tz-panel-meta en">Living city · 2012–2014 · z1uk / railalex</div>
+          <div class="occ-item-cap ua" hidden>Тоді · живе місто · 2012–2014</div>
+          <div class="occ-item-cap en" hidden>Then · living city · 2012–2014</div>
+        </div>
+        <div class="tz-panel tz-panel-now" onclick="openLightbox(this)">
+          <span class="tz-panel-label">ЗАРАЗ</span>
+          <img src="after2022/photo_2026-03-08_08-22-05.jpg" alt="Донецьк в окупації, 2026" loading="lazy">
+          <div class="tz-panel-meta ua">Місто без нас · 2024–2025 · фото автора</div>
+          <div class="tz-panel-meta en">City without us · 2024–2025 · author</div>
+          <div class="occ-item-cap ua" hidden>Зараз · місто без нас · 2024–2025</div>
+          <div class="occ-item-cap en" hidden>Now · city without us · 2024–2025</div>
+        </div>
+
+        <div class="tz-panel tz-panel-then" onclick="openLightbox(this)">
+          <span class="tz-panel-label">ТОДІ</span>
+          <img src="panorama/IMG_5484.jpg" alt="Донецьк, розквіт міста 2012–2014" loading="lazy">
+          <div class="tz-panel-meta ua">Проспекти й люди · 2012–2014</div>
+          <div class="tz-panel-meta en">Boulevards and people · 2012–2014</div>
+          <div class="occ-item-cap ua" hidden>Тоді · проспекти й люди</div>
+          <div class="occ-item-cap en" hidden>Then · boulevards and people</div>
+        </div>
+        <div class="tz-panel tz-panel-now" onclick="openLightbox(this)">
+          <span class="tz-panel-label">ЗАРАЗ</span>
+          <img src="after2022/photo_2026-03-08_08-22-12.jpg" alt="Донецьк в окупації, порожні простори" loading="lazy">
+          <div class="tz-panel-meta ua">Порожні простори · без води</div>
+          <div class="tz-panel-meta en">Empty spaces · without water</div>
+          <div class="occ-item-cap ua" hidden>Зараз · порожні простори</div>
+          <div class="occ-item-cap en" hidden>Now · empty spaces</div>
+        </div>
+
+        <div class="tz-panel tz-panel-then" onclick="openLightbox(this)">
+          <span class="tz-panel-label">ТОДІ</span>
+          <img src="panorama/IMG_6009.jpg" alt="Донецьк, розквіт міста 2012–2014" loading="lazy">
+          <div class="tz-panel-meta ua">Місто на піку · 2012–2014</div>
+          <div class="tz-panel-meta en">City at its peak · 2012–2014</div>
+          <div class="occ-item-cap ua" hidden>Тоді · місто на піку</div>
+          <div class="occ-item-cap en" hidden>Then · city at its peak</div>
+        </div>
+        <div class="tz-panel tz-panel-now" onclick="openLightbox(this)">
+          <span class="tz-panel-label">ЗАРАЗ</span>
+          <img src="after2022/photo_2026-03-08_08-22-30.jpg" alt="Донецьк в окупації, час зупинився" loading="lazy">
+          <div class="tz-panel-meta ua">Час зупинився · 2024–2025</div>
+          <div class="tz-panel-meta en">Time stopped · 2024–2025</div>
+          <div class="occ-item-cap ua" hidden>Зараз · час зупинився</div>
+          <div class="occ-item-cap en" hidden>Now · time stopped</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════
+       COUNTER BAND — вага міста
+  ════════════════════════ -->
+  <section class="count-band">
+    <div class="wrap">
+      <div class="count-grid fu">
+        <div class="count-cell">
+          <span class="count-n" data-count="157">0</span>
+          <span class="count-l ua">Років місту · засноване 1869</span>
+          <span class="count-l en">Years of the city · founded 1869</span>
+        </div>
+        <div class="count-cell">
+          <span class="count-n" data-count="1000000" data-group="1">0</span>
+          <span class="count-l ua">Троянд · місто мільйону троянд</span>
+          <span class="count-l en">Roses · the city of a million roses</span>
+        </div>
+        <div class="count-cell">
+          <span class="count-n" data-count="900000" data-group="1">0</span>
+          <span class="count-l ua">Вимушено покинули домівки після 2014</span>
+          <span class="count-l en">Forced to leave their homes since 2014</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════
        06 - MEMORY (Mondrian layout)
   ════════════════════════ -->
   <section id="pamyat" class="wuf-host">
@@ -2701,22 +2987,22 @@
 
         <div class="donbas-facts">
           <div class="donbas-fact">
-            <span class="donbas-fact-n">157</span>
+            <span class="donbas-fact-n" data-count="157">0</span>
             <span class="donbas-fact-l ua">Років з дня заснування</span>
             <span class="donbas-fact-l en">Years since founding</span>
           </div>
           <div class="donbas-fact">
-            <span class="donbas-fact-n">1M+</span>
+            <span class="donbas-fact-n" data-count="1" data-suffix="M+">0</span>
             <span class="donbas-fact-l ua">Троянд у місті</span>
             <span class="donbas-fact-l en">Roses in the city</span>
           </div>
           <div class="donbas-fact">
-            <span class="donbas-fact-n">900K</span>
+            <span class="donbas-fact-n" data-count="900" data-suffix="K">0</span>
             <span class="donbas-fact-l ua">ВПО після 2014</span>
             <span class="donbas-fact-l en">IDPs after 2014</span>
           </div>
           <div class="donbas-fact">
-            <span class="donbas-fact-n">60+</span>
+            <span class="donbas-fact-n" data-count="60" data-suffix="+">0</span>
             <span class="donbas-fact-l ua">Університетів і коледжів</span>
             <span class="donbas-fact-l en">Universities and colleges</span>
           </div>
@@ -2811,6 +3097,42 @@
             <p class="ua">Після понад століття мій рід покидає Донецьк - я виїжджаю з окупованого міста. Це не кінець історії, а пауза. Цей портал - обіцянка повернутись.</p>
             <p class="en">After more than a century, my family leaves Donetsk - I depart the occupied city. This is not the end of the story, but a pause. This portal is a promise to return.</p>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════
+       ЛИСТ ДО МІСТА — letter to the city
+  ════════════════════════ -->
+  <section id="lyst">
+    <div class="wrap">
+      <div class="lyst-wrap">
+        <span class="lyst-eyebrow ua">Лист до міста</span>
+        <span class="lyst-eyebrow en">A letter to the city</span>
+
+        <div class="lyst-body">
+          <p class="ua" data-reveal>Місто моє,</p>
+          <p class="en" data-reveal>My city,</p>
+
+          <p class="ua" data-reveal>я знаю тебе довше, ніж знаю себе. Мій рід дихав твоїм повітрям, коли ти ще звався <em>Юзівкою</em> — більше століття тому. Ми росли разом: ти — вулицями й проспектами, ми — поколіннями.</p>
+          <p class="en" data-reveal>I have known you longer than I have known myself. My family breathed your air when you were still called <em>Yuzivka</em> — more than a century ago. We grew up together: you — in streets and boulevards, we — in generations.</p>
+
+          <p class="ua" data-reveal>Я бачив тебе на піку: <strong>живим.</strong> Троянди на проспекті, вугільний пил, сталь, людський гул о шостій ранку. А потім бачив тебе <strong>тихим.</strong> Без води. Без нас.</p>
+          <p class="en" data-reveal>I saw you at your peak: <strong>alive.</strong> Roses on the boulevard, coal dust, steel, the human hum at six in the morning. And then I saw you <strong>silent.</strong> Without water. Without us.</p>
+
+          <p class="ua" data-reveal>У 2025-му я поїхав. Але я не прощаюся. Тебе можна зайняти силою — але не можна стерти з пам'яті. Поки я пам'ятаю кожен твій кут, ти живеш. Ця сторінка — твій пульс, який я тримаю в долоні.</p>
+          <p class="en" data-reveal>In 2025 I left. But I am not saying goodbye. You can be seized by force — but you cannot be erased from memory. As long as I remember every one of your corners, you are alive. This page is your pulse, held in my palm.</p>
+
+          <p class="ua" data-reveal><strong>Я повернусь.</strong></p>
+          <p class="en" data-reveal><strong>I will return.</strong></p>
+        </div>
+
+        <div class="lyst-sign" data-reveal>
+          <span class="lyst-sign-name ua">Вячеслав</span>
+          <span class="lyst-sign-name en">Vyacheslav</span>
+          <span class="lyst-sign-meta ua">Донецьк · рід з 1910-х · назавжди</span>
+          <span class="lyst-sign-meta en">Donetsk · family since the 1910s · forever</span>
         </div>
       </div>
     </div>
@@ -3296,6 +3618,73 @@
       });
     }, { threshold: 0.07, rootMargin: '0px 0px -50px 0px' });
     document.querySelectorAll('.fu').forEach(el => observer.observe(el));
+
+    /* ── Count-up numbers ── */
+    function animateCount(el) {
+      const target = parseInt(el.dataset.count, 10);
+      if (isNaN(target)) return;
+      const suffix = el.dataset.suffix || '';
+      const group = el.dataset.group === '1';
+      const dur = 1500;
+      const start = performance.now();
+      const fmt = n => {
+        const v = Math.round(n);
+        return group ? v.toLocaleString('uk-UA').replace(/ /g, ' ').replace(/,/g, ' ') : String(v);
+      };
+      function step(now) {
+        const t = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = fmt(target * eased) + suffix;
+        if (t < 1) requestAnimationFrame(step);
+        else el.textContent = fmt(target) + suffix;
+      }
+      requestAnimationFrame(step);
+    }
+    const countObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { animateCount(e.target); countObserver.unobserve(e.target); }
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
+
+    /* ── Letter reveal (line by line) ── */
+    const lystObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const items = [...document.querySelectorAll('#lyst [data-reveal], #lyst .lyst-sign')];
+          items.forEach((el, i) => setTimeout(() => el.classList.add('reveal'), i * 220));
+          lystObserver.disconnect();
+        }
+      });
+    }, { threshold: 0.25 });
+    const lystEl = document.getElementById('lyst');
+    if (lystEl) lystObserver.observe(lystEl);
+
+    /* ── Then / Now drag slider ── */
+    (function () {
+      const slider = document.getElementById('tz-slider');
+      const handle = document.getElementById('tz-handle');
+      const thenImg = document.getElementById('tz-then-img');
+      if (!slider || !handle || !thenImg) return;
+      let pos = 50;
+      function setPos(p) {
+        pos = Math.max(0, Math.min(100, p));
+        thenImg.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
+        handle.style.left = pos + '%';
+      }
+      function fromEvent(clientX) {
+        const r = slider.getBoundingClientRect();
+        setPos(((clientX - r.left) / r.width) * 100);
+      }
+      let dragging = false;
+      const start = () => { dragging = true; slider.style.cursor = 'ew-resize'; };
+      const end = () => { dragging = false; };
+      slider.addEventListener('pointerdown', e => { start(); fromEvent(e.clientX); slider.setPointerCapture(e.pointerId); });
+      slider.addEventListener('pointermove', e => { if (dragging) fromEvent(e.clientX); });
+      slider.addEventListener('pointerup', end);
+      slider.addEventListener('pointercancel', end);
+      setPos(50);
+    })();
 
     /* ── Sticky nav ── */
     const nav = document.getElementById('main-nav');
