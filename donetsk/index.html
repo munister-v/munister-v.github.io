@@ -1086,40 +1086,82 @@
     ═══════════════════════════════════════ */
     #cronologia { padding: 64px 0 72px; border-top: 1px solid var(--line); }
     .crono-head { margin-bottom: 36px; }
-    .crono-list { position: relative; }
-    .crono-list::before {
-      content: ''; position: absolute; left: 88px; top: 0; bottom: 0;
-      width: 1px; background: var(--line);
+    .crono-rail-wrap { position: relative; }
+    .crono-rail {
+      display: flex; gap: 18px; overflow-x: auto;
+      scroll-snap-type: x proximity;
+      padding: 14px 4px 30px; margin: 0 -4px;
+      scrollbar-width: none; cursor: grab;
+      -webkit-overflow-scrolling: touch;
     }
-    .crono-item {
-      display: grid; grid-template-columns: 88px 1fr; gap: 32px;
-      padding: 28px 0; border-bottom: 1px solid rgba(200,192,184,0.32);
-      position: relative; transition: background .2s;
+    .crono-rail::-webkit-scrollbar { display: none; }
+    .crono-rail.grabbing { cursor: grabbing; }
+    .crono-rail.grabbing .crono-card { pointer-events: none; }
+    .crono-card {
+      flex: 0 0 clamp(258px, 28vw, 330px); scroll-snap-align: start;
+      position: relative; padding: 30px 26px 30px;
+      background: #fff; border: 1px solid var(--line); border-radius: 4px;
+      display: flex; flex-direction: column; min-height: 320px;
+      transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .3s;
     }
-    .crono-item:hover { background: rgba(200,192,184,0.06); }
-    .crono-year {
-      font-family: var(--mono); font-size: 0.75rem; font-weight: 500;
-      letter-spacing: 0.06em; color: var(--wuf-blue); padding-top: 4px;
-      text-align: right; padding-right: 20px; flex-shrink: 0;
+    .crono-card:hover { transform: translateY(-6px); box-shadow: 0 18px 44px rgba(30,34,40,0.12); }
+    .crono-card-dot {
+      position: absolute; top: -6px; left: 28px; width: 11px; height: 11px;
+      border-radius: 50%; background: var(--wuf-blue);
+      box-shadow: 0 0 0 4px rgba(0,90,184,0.12);
     }
-    .crono-item::after {
-      content: ''; position: absolute; left: 84.5px; top: 34px;
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--stone); border: 1px solid var(--line);
-      transition: background .2s, border-color .2s;
+    .crono-card-year {
+      font-family: var(--sans); font-weight: 800; letter-spacing: -0.02em;
+      font-size: clamp(40px, 4.2vw, 62px); line-height: 0.92; color: var(--coal);
     }
-    .crono-item:hover::after { background: var(--rust); border-color: var(--rust); }
-    .crono-content h4 {
-      font-family: var(--sans); font-size: 1.25rem;
-      font-weight: 600; color: var(--coal); margin-bottom: 8px; line-height: 1.3;
+    .crono-card-era {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--text-light); margin: 12px 0 20px; display: block;
     }
-    .crono-content p {
-      font-family: var(--sans); font-size: 0.875rem; color: var(--text-mid); line-height: 1.65;
+    .crono-card h4 {
+      font-family: var(--sans); font-size: 1.12rem; font-weight: 700; color: var(--coal);
+      line-height: 1.25; margin-bottom: 10px;
+    }
+    .crono-card p {
+      font-family: var(--sans); font-size: 0.83rem; color: var(--text-mid); line-height: 1.6;
+    }
+    /* peak (2012) — blue glow */
+    .crono-card.peak { border-color: rgba(0,90,184,0.5); }
+    .crono-card.peak .crono-card-year { color: var(--wuf-blue); }
+    /* pivot (2014, 2022) — dark */
+    .crono-card.pivot { background: var(--coal); border-color: var(--coal); }
+    .crono-card.pivot .crono-card-year, .crono-card.pivot h4 { color: #fff; }
+    .crono-card.pivot .crono-card-era { color: var(--rust); }
+    .crono-card.pivot p { color: rgba(255,255,255,0.75); }
+    .crono-card.pivot .crono-card-dot { background: var(--rust); box-shadow: 0 0 0 4px rgba(242,101,34,0.18); }
+    /* climax (2025) — departure & promise */
+    .crono-card.climax {
+      background: linear-gradient(165deg, #1c1f25 0%, #0c0e11 100%);
+      border-color: var(--rust);
+    }
+    .crono-card.climax .crono-card-year { color: var(--rust); }
+    .crono-card.climax h4 { color: #fff; }
+    .crono-card.climax .crono-card-era { color: var(--rust); }
+    .crono-card.climax p { color: rgba(255,255,255,0.78); }
+    .crono-card.climax .crono-card-dot { background: var(--rust); box-shadow: 0 0 0 5px rgba(242,101,34,0.22); }
+    .crono-card-return {
+      margin-top: auto; padding-top: 18px;
+      font-family: var(--sans); font-weight: 800; font-size: 1.4rem;
+      letter-spacing: -0.01em; color: #fff;
+    }
+    .crono-card-return span { color: var(--rust); }
+    /* progress + hint */
+    .crono-progress { height: 2px; background: var(--line); position: relative; border-radius: 2px; }
+    .crono-progress-bar {
+      position: absolute; left: 0; top: 0; height: 100%; width: 12%;
+      background: var(--rust); border-radius: 2px; transition: width .12s linear, left .12s linear;
+    }
+    .crono-hint {
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--text-light); margin-top: 16px; text-align: center;
     }
     @media (max-width: 640px) {
-      .crono-list::before { left: 60px; }
-      .crono-item { grid-template-columns: 60px 1fr; gap: 20px; }
-      .crono-item::after { left: 57px; }
+      .crono-card { flex-basis: 80vw; min-height: 300px; }
     }
 
     /* ═══════════════════════════════════════
@@ -3025,80 +3067,104 @@
         <span class="sec-sub en">Key moments in the city's history</span>
       </header>
 
-      <div class="crono-list fu">
-        <div class="crono-item">
-          <div class="crono-year">1869</div>
-          <div class="crono-content">
+      <div class="crono-rail-wrap fu">
+        <div class="crono-rail" id="crono-rail">
+
+          <div class="crono-card">
+            <div class="crono-card-dot"></div>
+            <div class="crono-card-year">1869</div>
+            <span class="crono-card-era ua">Юзівка · початок</span>
+            <span class="crono-card-era en">Yuzivka · the beginning</span>
             <h4 class="ua">Заснування Юзівки</h4>
             <h4 class="en">Founding of Yuzivka</h4>
-            <p class="ua">Валлійський промисловець Джон Юз засновує металургійний завод і шахти на берегах річки Кальміус. Починається місто.</p>
-            <p class="en">Welsh industrialist John Hughes establishes a metallurgical plant and mines on the banks of the Kalmius River. The city begins.</p>
+            <p class="ua">Валлієць Джон Юз засновує металургійний завод і шахти на берегах Кальміусу. Народжується місто.</p>
+            <p class="en">Welshman John Hughes founds a metallurgical plant and mines on the Kalmius. A city is born.</p>
           </div>
-        </div>
-        <div class="crono-item">
-          <div class="crono-year">1924</div>
-          <div class="crono-content">
+
+          <div class="crono-card">
+            <div class="crono-card-dot"></div>
+            <div class="crono-card-year">1924</div>
+            <span class="crono-card-era ua">Сталіно · індустріалізація</span>
+            <span class="crono-card-era en">Stalino · industrialisation</span>
             <h4 class="ua">Перейменування на Сталіно</h4>
             <h4 class="en">Renamed Stalino</h4>
-            <p class="ua">Радянська влада перейменовує місто. Починається масштабна індустріалізація, зведення радянської архітектури, формування нового міського ладу.</p>
-            <p class="en">Soviet authorities rename the city. Large-scale industrialisation begins, Soviet architecture is erected, a new urban order takes shape.</p>
+            <p class="ua">Радянська влада перейменовує місто. Масштабна індустріалізація, нова архітектура, новий міський лад.</p>
+            <p class="en">Soviet rule renames the city. Mass industrialisation, new architecture, a new urban order.</p>
           </div>
-        </div>
-        <div class="crono-item">
-          <div class="crono-year">1961</div>
-          <div class="crono-content">
+
+          <div class="crono-card">
+            <div class="crono-card-dot"></div>
+            <div class="crono-card-year">1961</div>
+            <span class="crono-card-era ua">Відлига · мільйонник</span>
+            <span class="crono-card-era en">The Thaw · a million</span>
             <h4 class="ua">Перейменування на Донецьк</h4>
             <h4 class="en">Renamed Donetsk</h4>
-            <p class="ua">Хрущовська відлига - нова назва, нова архітектура, нові райони. Місто стає мільйонним - одним із найбільших в СРСР.</p>
-            <p class="en">Khrushchev's Thaw - new name, new architecture, new districts. The city reaches one million - one of the largest in the USSR.</p>
+            <p class="ua">Нова назва, нова архітектура, нові райони. Місто стає мільйонним — одним із найбільших в СРСР.</p>
+            <p class="en">New name, new architecture, new districts. The city passes a million — among the largest in the USSR.</p>
           </div>
-        </div>
-        <div class="crono-item">
-          <div class="crono-year">1991</div>
-          <div class="crono-content">
+
+          <div class="crono-card">
+            <div class="crono-card-dot"></div>
+            <div class="crono-card-year">1991</div>
+            <span class="crono-card-era ua">Україна · трансформація</span>
+            <span class="crono-card-era en">Ukraine · transformation</span>
             <h4 class="ua">Незалежна Україна</h4>
             <h4 class="en">Independent Ukraine</h4>
-            <p class="ua">Донецьк у складі незалежної України. Шахтарські страйки, економічна криза, трансформація - і поступове відродження у 2000-х.</p>
-            <p class="en">Donetsk within independent Ukraine. Miners' strikes, economic crisis, transformation - and gradual revival in the 2000s.</p>
+            <p class="ua">Донецьк у складі незалежної України. Страйки, криза, трансформація — і відродження у 2000-х.</p>
+            <p class="en">Donetsk within independent Ukraine. Strikes, crisis, transformation — and revival in the 2000s.</p>
           </div>
-        </div>
-        <div class="crono-item">
-          <div class="crono-year">2012</div>
-          <div class="crono-content">
+
+          <div class="crono-card peak">
+            <div class="crono-card-dot"></div>
+            <div class="crono-card-year">2012</div>
+            <span class="crono-card-era ua">Пік розвитку</span>
+            <span class="crono-card-era en">Peak</span>
             <h4 class="ua">Євро-2012</h4>
             <h4 class="en">Euro 2012</h4>
-            <p class="ua">Донецьк приймає матчі Євро-2012. Донбас Арена відкривається. Місто стоїть на вершині - модерне, амбітне, самовпевнене.</p>
-            <p class="en">Donetsk hosts Euro 2012 matches. Donbas Arena opens. The city stands at its peak - modern, ambitious, confident.</p>
+            <p class="ua">Донецьк приймає Євро-2012. Відкривається Донбас Арена. Місто на вершині — модерне, амбітне, впевнене.</p>
+            <p class="en">Donetsk hosts Euro 2012. Donbas Arena opens. The city at its peak — modern, ambitious, confident.</p>
           </div>
-        </div>
-        <div class="crono-item">
-          <div class="crono-year">2014</div>
-          <div class="crono-content">
+
+          <div class="crono-card pivot">
+            <div class="crono-card-dot"></div>
+            <div class="crono-card-year">2014</div>
+            <span class="crono-card-era ua">Злам · окупація</span>
+            <span class="crono-card-era en">Rupture · occupation</span>
             <h4 class="ua">Окупація</h4>
             <h4 class="en">Occupation</h4>
-            <p class="ua">Озброєні формування за підтримки Росії захоплюють місто. Починається масове переміщення населення. Понад 900 000 осіб залишають домівки.</p>
-            <p class="en">Armed formations backed by Russia seize the city. Mass displacement of the population begins. Over 900,000 people leave their homes.</p>
+            <p class="ua">Озброєні формування за підтримки Росії захоплюють місто. Понад 900 000 осіб залишають домівки.</p>
+            <p class="en">Russia-backed armed formations seize the city. Over 900,000 people leave their homes.</p>
           </div>
-        </div>
-        <div class="crono-item">
-          <div class="crono-year">2022–</div>
-          <div class="crono-content">
+
+          <div class="crono-card pivot">
+            <div class="crono-card-dot"></div>
+            <div class="crono-card-year">2022</div>
+            <span class="crono-card-era ua">Велика війна</span>
+            <span class="crono-card-era en">The great war</span>
             <h4 class="ua">Повномасштабне вторгнення</h4>
             <h4 class="en">Full-scale invasion</h4>
-            <p class="ua">Лютий 2022. Росія починає повномасштабну агресію проти України. Донецьк і Донбас - в епіцентрі. Боротьба триває.</p>
-            <p class="en">February 2022. Russia begins full-scale aggression against Ukraine. Donetsk and Donbas at the epicentre. The struggle continues.</p>
+            <p class="ua">Лютий 2022. Росія починає повномасштабну агресію проти України. Донецьк і Донбас — в епіцентрі.</p>
+            <p class="en">February 2022. Russia launches full-scale aggression against Ukraine. Donetsk and Donbas at the epicentre.</p>
           </div>
-        </div>
-        <div class="crono-item">
-          <div class="crono-year">2025</div>
-          <div class="crono-content">
+
+          <div class="crono-card climax">
+            <div class="crono-card-dot"></div>
+            <div class="crono-card-year">2025</div>
+            <span class="crono-card-era ua">Пауза · не кінець</span>
+            <span class="crono-card-era en">A pause · not the end</span>
             <h4 class="ua">Я виїжджаю</h4>
             <h4 class="en">I leave</h4>
-            <p class="ua">Після понад століття мій рід покидає Донецьк - я виїжджаю з окупованого міста. Це не кінець історії, а пауза. Цей портал - обіцянка повернутись.</p>
-            <p class="en">After more than a century, my family leaves Donetsk - I depart the occupied city. This is not the end of the story, but a pause. This portal is a promise to return.</p>
+            <p class="ua">Після понад століття мій рід покидає Донецьк. Це не кінець історії — це пауза.</p>
+            <p class="en">After more than a century, my family leaves Donetsk. This is not the end of the story — it is a pause.</p>
+            <div class="crono-card-return ua">Я <span>повернусь.</span></div>
+            <div class="crono-card-return en">I will <span>return.</span></div>
           </div>
+
         </div>
       </div>
+      <div class="crono-progress fu"><div class="crono-progress-bar" id="crono-progress-bar"></div></div>
+      <div class="crono-hint ua">← Гортай стрічку часу →</div>
+      <div class="crono-hint en">← Drag the timeline →</div>
     </div>
   </section>
 
@@ -3684,6 +3750,47 @@
       slider.addEventListener('pointerup', end);
       slider.addEventListener('pointercancel', end);
       setPos(50);
+    })();
+
+    /* ── Horizontal timeline: drag + progress ── */
+    (function () {
+      const rail = document.getElementById('crono-rail');
+      const bar = document.getElementById('crono-progress-bar');
+      if (!rail) return;
+      function updateBar() {
+        const max = rail.scrollWidth - rail.clientWidth;
+        const ratio = max > 0 ? rail.scrollLeft / max : 0;
+        const visible = rail.clientWidth / rail.scrollWidth;
+        if (bar) {
+          bar.style.width = Math.max(visible * 100, 8) + '%';
+          bar.style.left = ratio * (100 - Math.max(visible * 100, 8)) + '%';
+        }
+      }
+      rail.addEventListener('scroll', updateBar, { passive: true });
+      window.addEventListener('resize', updateBar);
+      updateBar();
+      // drag-to-scroll
+      let down = false, startX = 0, startLeft = 0, moved = false;
+      rail.addEventListener('pointerdown', e => {
+        down = true; moved = false; startX = e.clientX; startLeft = rail.scrollLeft;
+        rail.classList.add('grabbing');
+      });
+      rail.addEventListener('pointermove', e => {
+        if (!down) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 4) moved = true;
+        rail.scrollLeft = startLeft - dx;
+      });
+      const stop = () => { down = false; rail.classList.remove('grabbing'); };
+      rail.addEventListener('pointerup', stop);
+      rail.addEventListener('pointerleave', stop);
+      rail.addEventListener('pointercancel', stop);
+      // wheel: vertical → horizontal
+      rail.addEventListener('wheel', e => {
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+          rail.scrollLeft += e.deltaY; e.preventDefault();
+        }
+      }, { passive: false });
     })();
 
     /* ── Sticky nav ── */
