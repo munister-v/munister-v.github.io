@@ -1855,105 +1855,150 @@
     }
 
     /* ═══════════════════════════════════════
-       ЗАЛ ДОМІНАНТ — gallery hall
+       ЗАЛ ДОМІНАНТ — museum hall
     ═══════════════════════════════════════ */
     #atlas {
       background:
-        radial-gradient(ellipse 78% 46% at 50% -2%, rgba(255,224,168,0.16), transparent 60%),
-        linear-gradient(180deg, #1b1714 0%, #15110e 58%, #0e0c0a 100%);
+        radial-gradient(ellipse 96% 34% at 50% 0%, rgba(255,228,172,0.18), transparent 56%),
+        linear-gradient(180deg, #2b2622 0%, #262019 40%, #221c17 60%, #1c1713 100%);
       border-top: 1px solid rgba(255,255,255,0.06);
       position: relative; overflow: hidden;
     }
+    /* polished parquet floor */
     #atlas::after {
-      content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 140px;
-      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.55));
-      pointer-events: none; z-index: 0;
+      content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 160px; z-index: 0;
+      background:
+        linear-gradient(180deg, rgba(255,228,172,0.05), transparent 30%),
+        linear-gradient(180deg, #1d1813 0%, #15110d 55%, #0d0a08 100%);
+      box-shadow: inset 0 1px 0 rgba(201,162,75,0.18), inset 0 26px 50px -34px rgba(0,0,0,0.85);
+      pointer-events: none;
     }
-    #atlas .sec-num { color: #c9a24b; }
+    #atlas .wrap { position: relative; z-index: 1; }
+    #atlas .sec-num { color: #cFa84e; color: #cda64e; }
     #atlas .sec-h2 { color: #f3ecdd; }
     #atlas .sec-sub { color: rgba(255,255,255,0.42); }
-    #atlas .sec-rule { background: #c9a24b; }
-    .hall-lead {
-      max-width: 62ch; margin: 0 0 50px; border-left: 3px solid #c9a24b; padding-left: 28px;
-      position: relative; z-index: 1;
+    #atlas .sec-rule { background: #cda64e; }
+
+    /* curatorial wall panel */
+    .hall-panel {
+      max-width: 700px; margin: 4px auto 60px; position: relative; z-index: 1;
+      border: 1px solid rgba(201,162,75,0.32); border-radius: 2px;
+      padding: 36px clamp(26px,4vw,46px); text-align: center;
+      background: rgba(255,255,255,0.025);
+      box-shadow: 0 20px 50px -28px rgba(0,0,0,0.7);
     }
-    .hall-lead p {
-      font-family: var(--serif); font-size: clamp(18px, 2vw, 25px);
-      font-style: italic; color: rgba(245,238,224,0.85); line-height: 1.65;
+    .hall-panel-k {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: #cda64e; display: block; margin-bottom: 16px;
     }
-    .hall-lead em { color: #e3c170; font-style: normal; }
+    .hall-panel-t {
+      font-family: var(--serif); font-size: clamp(20px,2.4vw,30px); font-style: italic;
+      color: #f3ecdd; line-height: 1.2; margin-bottom: 20px;
+    }
+    .hall-panel p {
+      font-family: var(--sans); font-size: clamp(14px,1.5vw,16px);
+      color: rgba(245,238,224,0.72); line-height: 1.75; margin: 0 auto;
+    }
+    .hall-panel-sign {
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(201,162,75,0.7);
+      display: block; margin-top: 22px; padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* the hung wall */
     .hall-wall {
-      display: flex; flex-wrap: wrap; justify-content: center;
-      gap: clamp(30px, 4vw, 60px); padding: 16px 0 54px;
+      display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end;
+      gap: clamp(34px,4.5vw,68px) clamp(30px,4vw,56px); padding: 30px 0 70px;
       position: relative; z-index: 1;
     }
     .artwork {
-      flex: 0 1 calc(33.333% - 44px); min-width: 240px;
+      flex: 0 1 calc(33.333% - 40px); min-width: 230px;
       position: relative; cursor: pointer;
       display: flex; flex-direction: column; align-items: center;
     }
-    .artwork.feature { flex-basis: calc(66.666% - 30px); }
-    /* picture-light spotlight */
-    .artwork::before {
-      content: ''; position: absolute; left: 50%; top: -9%;
-      width: 152%; height: 128%; transform: translateX(-50%);
-      background: radial-gradient(ellipse 48% 56% at 50% 0%, rgba(255,231,178,0.24), rgba(255,231,178,0.05) 46%, transparent 72%);
-      pointer-events: none; opacity: 0.45; z-index: 0;
-      transition: opacity .45s var(--ease);
+    .artwork.feature { flex-basis: calc(60% - 30px); }
+    /* brass picture light */
+    .art-lamp {
+      position: relative; z-index: 3; width: 44%; height: 8px; margin-bottom: 12px;
+      border-radius: 4px 4px 2px 2px;
+      background: linear-gradient(180deg, #f0d896 0%, #c2a049 55%, #7c5d22 100%);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.5);
     }
-    .artwork:hover::before { opacity: 1; }
+    .art-lamp::before {
+      content: ''; position: absolute; left: 50%; top: -7px; transform: translateX(-50%);
+      width: 3px; height: 7px; background: #9c7a32;
+    }
+    .art-lamp::after {
+      content: ''; position: absolute; left: 50%; top: 100%; transform: translateX(-50%);
+      width: 230%; height: 260px; pointer-events: none;
+      background: radial-gradient(ellipse 46% 80% at 50% 0%, rgba(255,224,158,0.30), rgba(255,224,158,0.07) 38%, transparent 68%);
+      opacity: 0.7; transition: opacity .45s var(--ease);
+    }
+    .artwork:hover .art-lamp::after { opacity: 1.1; }
+    /* gilded frame */
     .art-frame {
-      position: relative; z-index: 1; width: 100%;
-      padding: clamp(9px, 1vw, 15px);
-      background: linear-gradient(135deg, #2c251b 0%, #4d4030 22%, #1f1a13 54%, #3c3122 80%, #221d15 100%);
+      position: relative; z-index: 2; width: 100%;
+      padding: clamp(11px,1.2vw,17px);
+      background:
+        linear-gradient(135deg, #e4c878 0%, #a7842f 20%, #6f531d 42%, #c8a44e 62%, #7c5d22 84%, #dcbf6e 100%);
       border-radius: 2px;
       box-shadow:
-        inset 0 0 0 1px rgba(201,162,75,0.55),
-        inset 0 0 0 6px rgba(0,0,0,0.4),
-        0 30px 52px -14px rgba(0,0,0,0.72),
-        0 8px 18px rgba(0,0,0,0.5);
+        inset 0 0 0 2px rgba(110,82,28,0.7),
+        inset 0 0 16px rgba(0,0,0,0.4),
+        0 28px 50px -14px rgba(0,0,0,0.78),
+        0 7px 16px rgba(0,0,0,0.55);
       transition: transform .45s var(--ease), box-shadow .45s var(--ease);
     }
     .artwork:hover .art-frame {
-      transform: translateY(-7px);
+      transform: translateY(-8px);
       box-shadow:
-        inset 0 0 0 1px rgba(201,162,75,0.85),
-        inset 0 0 0 6px rgba(0,0,0,0.4),
-        0 44px 76px -12px rgba(0,0,0,0.82),
-        0 10px 22px rgba(0,0,0,0.55);
+        inset 0 0 0 2px rgba(140,105,38,0.85),
+        inset 0 0 16px rgba(0,0,0,0.4),
+        0 44px 80px -12px rgba(0,0,0,0.85),
+        0 10px 22px rgba(0,0,0,0.6);
     }
     .art-mat {
-      background: #ece4d2; padding: clamp(11px, 1.4vw, 20px);
-      box-shadow: inset 0 2px 7px rgba(0,0,0,0.28);
+      background: #efe7d4; padding: clamp(12px,1.6vw,22px);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12), inset 0 3px 9px rgba(0,0,0,0.22);
     }
     .art-mat img {
       display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover;
-      filter: saturate(1.04) contrast(1.03);
-      transition: filter .5s var(--ease);
+      filter: saturate(1.04) contrast(1.03); transition: filter .5s var(--ease);
     }
     .artwork:hover .art-mat img { filter: saturate(1.16) contrast(1.05) brightness(1.03); }
-    .art-plaque {
-      position: relative; z-index: 1; margin-top: 18px; padding: 9px 20px; max-width: 86%;
-      background: linear-gradient(180deg, #cda64e 0%, #9c7a2e 100%);
-      border-radius: 2px; text-align: center;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.4);
+    /* museum object label */
+    .art-label {
+      position: relative; z-index: 3; margin-top: 22px; padding: 13px 20px 14px;
+      background: #f1e9d6; border: 1px solid rgba(0,0,0,0.14); border-radius: 1px;
+      max-width: 82%; text-align: left;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.42);
     }
-    .art-plaque-t {
-      font-family: var(--sans); font-weight: 700; font-size: 0.82rem;
-      color: #2a2008; letter-spacing: 0.01em; line-height: 1.2;
+    .art-label-no {
+      font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.16em;
+      color: #a07d2c; display: block; margin-bottom: 6px;
     }
-    .art-plaque-s {
-      font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.14em;
-      text-transform: uppercase; color: rgba(42,32,8,0.72); margin-top: 4px; display: block;
+    .art-label-t {
+      font-family: var(--serif); font-style: italic; font-weight: 600;
+      font-size: 1.02rem; color: #221d15; line-height: 1.22; display: block;
+    }
+    .art-label-meta {
+      font-family: var(--sans); font-size: 0.72rem; color: #564d3d;
+      display: block; margin-top: 7px; line-height: 1.4;
+    }
+    .art-label-med {
+      font-family: var(--sans); font-style: italic; font-size: 0.66rem;
+      color: #8a7c64; display: block; margin-top: 3px;
     }
     @media (max-width: 860px) {
-      .hall-wall { gap: 28px; }
-      .artwork { flex-basis: calc(50% - 16px); }
+      .artwork { flex-basis: calc(50% - 18px); }
       .artwork.feature { flex-basis: 100%; }
     }
     @media (max-width: 560px) {
       .artwork, .artwork.feature { flex-basis: 100%; }
+      .art-label { max-width: 92%; }
     }
+
 
   </style>
 </head>
@@ -2569,243 +2614,325 @@
         <h2 class="sec-h2 ua">Атлас<br>Домінант</h2>
         <h2 class="sec-h2 en">Atlas of<br>Dominants</h2>
         <div class="sec-rule"></div>
-        <span class="sec-sub ua">Зал міських домінант · галерея авторських світлин</span>
-        <span class="sec-sub en">A hall of the city's dominants · gallery of author's photographs</span>
+        <span class="sec-sub ua">Зал I · постійна експозиція · вхід вільний</span>
+        <span class="sec-sub en">Hall I · permanent exhibition · free entry</span>
       </header>
 
-      <div class="hall-lead fu">
-        <p class="ua">Уяви музейний зал. На стінах — <em>домінанти</em> Донецька у золотій годині: вокзал, вежі, проспекти, ріка. Кожна світлина у рамі, під теплим світлом. Це місто, яким його бачив автор.</p>
-        <p class="en">Imagine a museum hall. On its walls — the <em>dominants</em> of Donetsk in the golden hour: the station, the towers, the boulevards, the river. Each photograph framed, under warm light. The city as the author saw it.</p>
+      <div class="hall-panel fu">
+        <span class="hall-panel-k ua">Кураторський текст · виставка</span>
+        <span class="hall-panel-k en">Curatorial note · exhibition</span>
+        <div class="hall-panel-t ua">«Донецьк у золотій годині»</div>
+        <div class="hall-panel-t en">"Donetsk in the Golden Hour"</div>
+        <p class="ua">Цей зал зібрав домінанти міста — вокзали, вежі, проспекти й ріку, — зняті в години, коли світло робить ніжним навіть індустріальний пейзаж. Тут немає ні репортажу, ні путівника. Є спроба побачити Донецьк як портрет: теплий, спокійний, гідний. Дев'ятнадцять світлин — дев'ятнадцять поглядів на місто, яке лишилось у пам'яті таким, яким воно було.</p>
+        <p class="en">This hall gathers the city's dominants — stations, towers, boulevards and the river — captured in the hours when light turns even an industrial landscape tender. There is neither reportage nor a guidebook here. There is an attempt to see Donetsk as a portrait: warm, calm, dignified. Nineteen photographs — nineteen glances at a city that remains in memory exactly as it was.</p>
+        <span class="hall-panel-sign ua">Фотографії Вячеслава Муністера · 2012–2014 · 19 робіт</span>
+        <span class="hall-panel-sign en">Photographs by Vyacheslav Munister · 2012–2014 · 19 works</span>
       </div>
 
       <div class="hall-wall fu">
         <figure class="artwork feature" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_0435_2_1000.jpg" alt="Донецьк · Вокзал на заході · фото автора" loading="lazy">
+            <img src="bor/DSC_0435_2_1000.jpg" alt="Вокзал на заході · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Вокзал на заході</span><span class="art-plaque-t en">The Station at Sunset</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 01</span>
+            <span class="art-label-t ua">Вокзал на заході</span><span class="art-label-t en">The Station at Sunset</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Вокзал на заході · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>The Station at Sunset · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Вокзал на заході · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>The Station at Sunset · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_0428_1000.jpg" alt="Донецьк · Скло і світло · фото автора" loading="lazy">
+            <img src="bor/DSC_0428_1000.jpg" alt="Скло і світло · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Скло і світло</span><span class="art-plaque-t en">Glass and Light</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 02</span>
+            <span class="art-label-t ua">Скло і світло</span><span class="art-label-t en">Glass and Light</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Скло і світло · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>Glass and Light · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Скло і світло · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>Glass and Light · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_0469_1000_530853.jpg" alt="Донецьк · Золота година · фото автора" loading="lazy">
+            <img src="bor/DSC_0469_1000_530853.jpg" alt="Золота година · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Золота година</span><span class="art-plaque-t en">Golden Hour</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 03</span>
+            <span class="art-label-t ua">Золота година</span><span class="art-label-t en">Golden Hour</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Золота година · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>Golden Hour · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Золота година · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>Golden Hour · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_1468_2_1000.jpg" alt="Донецьк · Телевежі · фото автора" loading="lazy">
+            <img src="bor/DSC_1468_2_1000.jpg" alt="Телевежі · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Телевежі</span><span class="art-plaque-t en">The Towers</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 04</span>
+            <span class="art-label-t ua">Телевежі</span><span class="art-label-t en">The Towers</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Телевежі · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>The Towers · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Телевежі · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>The Towers · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_1472_1000.jpg" alt="Донецьк · Вечірнє місто · фото автора" loading="lazy">
+            <img src="bor/DSC_1472_1000.jpg" alt="Вечірнє місто · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Вечірнє місто</span><span class="art-plaque-t en">Evening City</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 05</span>
+            <span class="art-label-t ua">Вечірнє місто</span><span class="art-label-t en">Evening City</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Вечірнє місто · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>Evening City · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Вечірнє місто · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>Evening City · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_1536_1000.jpg" alt="Донецьк · Вертикаль · фото автора" loading="lazy">
+            <img src="bor/DSC_1536_1000.jpg" alt="Вертикаль · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Вертикаль</span><span class="art-plaque-t en">The Vertical</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 06</span>
+            <span class="art-label-t ua">Вертикаль</span><span class="art-label-t en">The Vertical</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Вертикаль · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>The Vertical · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Вертикаль · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>The Vertical · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_1608_1000.jpg" alt="Донецьк · Над дахами · фото автора" loading="lazy">
+            <img src="bor/DSC_1608_1000.jpg" alt="Над дахами · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Над дахами</span><span class="art-plaque-t en">Above the Roofs</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 07</span>
+            <span class="art-label-t ua">Над дахами</span><span class="art-label-t en">Above the Roofs</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Над дахами · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>Above the Roofs · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Над дахами · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>Above the Roofs · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_2068-2_900.jpg" alt="Донецьк · Тиша проспекту · фото автора" loading="lazy">
+            <img src="bor/DSC_2068-2_900.jpg" alt="Тиша проспекту · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Тиша проспекту</span><span class="art-plaque-t en">The Quiet Avenue</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 08</span>
+            <span class="art-label-t ua">Тиша проспекту</span><span class="art-label-t en">The Quiet Avenue</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Тиша проспекту · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>The Quiet Avenue · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Тиша проспекту · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>The Quiet Avenue · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_3352_DxO_2.jpg" alt="Донецьк · Кальміус у сутінках · фото автора" loading="lazy">
+            <img src="bor/DSC_3352_DxO_2.jpg" alt="Кальміус у сутінках · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Кальміус у сутінках</span><span class="art-plaque-t en">Kalmius at Dusk</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 09</span>
+            <span class="art-label-t ua">Кальміус у сутінках</span><span class="art-label-t en">Kalmius at Dusk</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Кальміус у сутінках · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>Kalmius at Dusk · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Кальміус у сутінках · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>Kalmius at Dusk · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_3810_DxO.jpg" alt="Донецьк · Останнє світло · фото автора" loading="lazy">
+            <img src="bor/DSC_3810_DxO.jpg" alt="Останнє світло · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Останнє світло</span><span class="art-plaque-t en">Last Light</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 10</span>
+            <span class="art-label-t ua">Останнє світло</span><span class="art-label-t en">Last Light</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Останнє світло · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>Last Light · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Останнє світло · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>Last Light · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_4014_DxO.jpg" alt="Донецьк · Місто згори · фото автора" loading="lazy">
+            <img src="bor/DSC_4014_DxO.jpg" alt="Місто згори · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Місто згори</span><span class="art-plaque-t en">The City from Above</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 11</span>
+            <span class="art-label-t ua">Місто згори</span><span class="art-label-t en">The City from Above</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Місто згори · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>The City from Above · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Місто згори · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>The City from Above · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_4041.jpg" alt="Донецьк · Квартали · фото автора" loading="lazy">
+            <img src="bor/DSC_4041.jpg" alt="Квартали · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Квартали</span><span class="art-plaque-t en">The Quarters</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 12</span>
+            <span class="art-label-t ua">Квартали</span><span class="art-label-t en">The Quarters</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Квартали · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>The Quarters · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Квартали · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>The Quarters · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_4538.jpg" alt="Донецьк · Магістраль · фото автора" loading="lazy">
+            <img src="bor/DSC_4538.jpg" alt="Магістраль · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Магістраль</span><span class="art-plaque-t en">The Artery</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 13</span>
+            <span class="art-label-t ua">Магістраль</span><span class="art-label-t en">The Artery</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Магістраль · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>The Artery · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Магістраль · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>The Artery · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_4539-2.jpg" alt="Донецьк · Світло над містом · фото автора" loading="lazy">
+            <img src="bor/DSC_4539-2.jpg" alt="Світло над містом · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Світло над містом</span><span class="art-plaque-t en">Light over the City</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 14</span>
+            <span class="art-label-t ua">Світло над містом</span><span class="art-label-t en">Light over the City</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Світло над містом · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>Light over the City · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Світло над містом · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>Light over the City · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_5303_2_1000.jpg" alt="Донецьк · Серце міста · фото автора" loading="lazy">
+            <img src="bor/DSC_5303_2_1000.jpg" alt="Серце міста · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Серце міста</span><span class="art-plaque-t en">Heart of the City</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 15</span>
+            <span class="art-label-t ua">Серце міста</span><span class="art-label-t en">Heart of the City</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Серце міста · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>Heart of the City · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Серце міста · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>Heart of the City · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_5573.jpg" alt="Донецьк · Сутінки · фото автора" loading="lazy">
+            <img src="bor/DSC_5573.jpg" alt="Сутінки · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Сутінки</span><span class="art-plaque-t en">Dusk</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 16</span>
+            <span class="art-label-t ua">Сутінки</span><span class="art-label-t en">Dusk</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Сутінки · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>Dusk · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Сутінки · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>Dusk · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_5599.jpg" alt="Донецьк · Місто засинає · фото автора" loading="lazy">
+            <img src="bor/DSC_5599.jpg" alt="Місто засинає · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Місто засинає</span><span class="art-plaque-t en">The City Sleeps</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 17</span>
+            <span class="art-label-t ua">Місто засинає</span><span class="art-label-t en">The City Sleeps</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Місто засинає · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>The City Sleeps · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Місто засинає · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>The City Sleeps · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_5668.jpg" alt="Донецьк · Вогні · фото автора" loading="lazy">
+            <img src="bor/DSC_5668.jpg" alt="Вогні · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Вогні</span><span class="art-plaque-t en">City Lights</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 18</span>
+            <span class="art-label-t ua">Вогні</span><span class="art-label-t en">City Lights</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Вогні · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>City Lights · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Вогні · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>City Lights · Donetsk, 2012–2014</div>
         </figure>
         <figure class="artwork" onclick="openLightbox(this)">
+          <div class="art-lamp"></div>
           <div class="art-frame"><div class="art-mat">
-            <img src="bor/DSC_60352_1000.jpg" alt="Донецьк · Горизонт Донбасу · фото автора" loading="lazy">
+            <img src="bor/DSC_60352_1000.jpg" alt="Горизонт Донбасу · Донецьк, фотографія Вячеслава Муністера" loading="lazy">
           </div></div>
-          <figcaption class="art-plaque">
-            <span class="art-plaque-t ua">Горизонт Донбасу</span><span class="art-plaque-t en">Donbas Horizon</span>
-            <span class="art-plaque-s ua">Донецьк · фото автора</span>
-            <span class="art-plaque-s en">Donetsk · author's photo</span>
+          <figcaption class="art-label">
+            <span class="art-label-no">Nº 19</span>
+            <span class="art-label-t ua">Горизонт Донбасу</span><span class="art-label-t en">Donbas Horizon</span>
+            <span class="art-label-meta ua">Вячеслав Муністер · Донецьк, 2012–2014</span>
+            <span class="art-label-meta en">Vyacheslav Munister · Donetsk, 2012–2014</span>
+            <span class="art-label-med ua">Архівний цифровий друк</span>
+            <span class="art-label-med en">Archival digital print</span>
           </figcaption>
-          <div class="occ-item-cap ua" hidden>Горизонт Донбасу · Донецьк · фото автора</div>
-          <div class="occ-item-cap en" hidden>Donbas Horizon · Donetsk · author's photo</div>
+          <div class="occ-item-cap ua" hidden>Горизонт Донбасу · Донецьк, 2012–2014</div>
+          <div class="occ-item-cap en" hidden>Donbas Horizon · Donetsk, 2012–2014</div>
         </figure>
       </div>
     </div>
