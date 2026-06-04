@@ -872,64 +872,71 @@
     /* ═══════════════════════════════════════
        05 - IMAGES / GALLERY
     ═══════════════════════════════════════ */
-    .gallery-intro { max-width: 56ch; margin-bottom: 32px; }
+    .gallery-kicker {
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--rust); display: block; margin-bottom: 14px;
+    }
+    .gallery-intro { max-width: 62ch; margin-bottom: 4px; }
     .gallery-intro p {
-      font-family: var(--sans); font-size: 1rem;
-      color: var(--text-mid); line-height: 1.65;
+      font-family: var(--sans); font-size: 1.02rem;
+      color: var(--text-mid); line-height: 1.7;
     }
     .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-auto-rows: 220px;
-      gap: 4px;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 232px; grid-auto-flow: dense; gap: 6px; margin-top: 36px;
     }
     .gallery-item {
-      position: relative; overflow: hidden; background: var(--stone);
-      cursor: pointer;
+      position: relative; overflow: hidden; background: #14130f;
+      cursor: pointer; margin: 0;
     }
     .gallery-item img {
       width: 100%; height: 100%; object-fit: cover;
-      filter: grayscale(18%) contrast(1.05);
-      transition: filter .5s var(--ease), transform .6s var(--ease);
+      filter: grayscale(30%) sepia(10%) contrast(1.04) brightness(0.88);
+      transition: filter .6s var(--ease), transform .8s var(--ease);
     }
-    .gallery-item:hover img { filter: grayscale(5%) contrast(1.08); transform: scale(1.04); }
-    .gallery-item-cap {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 8px 12px;
-      background: linear-gradient(to top, rgba(17,18,20,0.82), transparent);
-      font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.12em;
-      text-transform: uppercase; color: rgba(255,255,255,0.65);
-      opacity: 0; transform: translateY(6px);
-      transition: opacity .3s, transform .3s;
+    .gallery-item:hover img {
+      filter: grayscale(0%) sepia(0%) contrast(1.07) brightness(1.03);
+      transform: scale(1.05);
     }
-    .gallery-item:hover .gallery-item-cap { opacity: 1; transform: none; }
-    .gi-1 { grid-column: span 2; grid-row: span 2; }
-    .gi-2 { grid-column: span 1; }
-    .gi-3 { grid-column: span 1; }
-    .gi-4 { grid-column: span 1; }
-    .gi-5 { grid-column: span 1; }
-    .gi-6 { grid-column: span 2; }
-    .gi-7 { grid-column: span 1; }
-    .gi-8 { grid-column: span 1; }
-    .gi-9  { grid-column: span 2; }
-    .gi-10 { grid-column: span 1; }
-    .gi-11 { grid-column: span 1; }
-    .gi-12 { grid-column: span 1; }
-    .gi-13 { grid-column: span 1; }
-    .gi-14 { grid-column: span 2; grid-row: span 2; }
-    .gi-15 { grid-column: span 1; }
-    .gi-16 { grid-column: span 2; }
-    .gi-17 { grid-column: span 1; }
-    .gi-18 { grid-column: span 1; }
-    .gi-19 { grid-column: span 2; grid-row: span 2; }
-    .gi-20 { grid-column: span 1; }
-    .gi-21 { grid-column: span 1; }
-    .gi-22 { grid-column: span 2; }
-    .gi-23 { grid-column: span 1; }
-    .gi-24 { grid-column: span 1; }
+    .gallery-item::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      box-shadow: inset 0 -70px 64px -34px rgba(8,9,7,0.78);
+      transition: box-shadow .4s var(--ease);
+    }
+    .gallery-item:hover::after { box-shadow: inset 0 -80px 70px -30px rgba(8,9,7,0.6); }
+    .g-num {
+      position: absolute; top: 11px; left: 13px; z-index: 3;
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.82); text-shadow: 0 1px 5px rgba(0,0,0,0.7);
+    }
+    .g-cap {
+      position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+      padding: 16px 15px 13px;
+    }
+    .g-cap-t {
+      display: block; font-family: var(--sans); font-weight: 600;
+      font-size: 0.9rem; color: #fff; line-height: 1.22;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.55);
+    }
+    .g-cap-m {
+      display: block; font-family: var(--mono); font-size: 0.56rem;
+      letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.66);
+      margin-top: 6px; max-height: 0; opacity: 0; overflow: hidden;
+      transform: translateY(5px); transition: max-height .4s var(--ease), opacity .35s, transform .35s;
+    }
+    .gallery-item:hover .g-cap-m { max-height: 34px; opacity: 1; transform: none; }
+    .gi-big  { grid-column: span 2; grid-row: span 2; }
+    .gi-wide { grid-column: span 2; }
+    .gi-tall { grid-row: span 2; }
     @media (max-width: 900px) {
-      .gallery-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 180px; }
-      .gi-1,.gi-2,.gi-3,.gi-4,.gi-5,.gi-6,.gi-7,.gi-8,.gi-9,.gi-10,.gi-11,.gi-12,.gi-13,.gi-14,.gi-15,.gi-16,.gi-17,.gi-18,.gi-19,.gi-20,.gi-21,.gi-22,.gi-23,.gi-24 { grid-column: span 1; grid-row: span 1; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 200px; }
+      .gi-big { grid-column: span 2; grid-row: span 2; }
+      .gi-wide { grid-column: span 2; grid-row: span 1; }
+      .gi-tall { grid-column: span 1; grid-row: span 2; }
+    }
+    @media (max-width: 560px) {
+      .gallery-grid { grid-template-columns: 1fr; grid-auto-rows: 220px; }
+      .gi-big, .gi-wide, .gi-tall { grid-column: span 1; grid-row: span 1; }
     }
 
     /* ═══════════════════════════════════════
@@ -2998,133 +3005,255 @@
       </header>
 
       <div class="gallery-intro fu">
-        <p class="ua">Ці фотографії - спроба зафіксувати місто в його повноті до 2014 року. Кожен знімок - фраза у візуальній мові Донецька: проспект, шахта, парк, завод, ринок.</p>
-        <p class="en">These photographs attempt to capture the city in its fullness before 2014. Each image is a phrase in Donetsk's visual language: boulevard, mine, park, plant, market.</p>
+        <span class="gallery-kicker ua">Архів · місто до 2014</span>
+        <span class="gallery-kicker en">Archive · the city before 2014</span>
+        <p class="ua">Архів облич міста: проспекти й парки, зими й футбольні літа, трамваї у калюжах і монументи. Це не каталог пам'яток — а Донецьк, яким він жив. Наведи, щоб роздивитися.</p>
+        <p class="en">An archive of the city's faces: boulevards and parks, winters and football summers, trams in puddles and monuments. Not a catalogue of sights — but the Donetsk that was alive. Hover to look closer.</p>
       </div>
 
       <div class="gallery-grid fu">
-        <div class="gallery-item gi-1" onclick="openLightbox(this)">
-          <img src="images/Донецк_2012_-_panoramio.jpg" alt="Донецьк 2012, панорама" loading="lazy">
-          <div class="gallery-item-cap ua">Панорама · 2012</div>
-          <div class="gallery-item-cap en">Panorama · 2012</div>
-        </div>
-        <div class="gallery-item gi-2" onclick="openLightbox(this)">
-          <img src="images/Парк_у_Донбасс_Арены_-_panoramio.jpg" alt="Парк у Донбас Арени" loading="lazy">
-          <div class="gallery-item-cap ua">Парк у Донбас Арени</div>
-          <div class="gallery-item-cap en">Donbas Arena Park</div>
-        </div>
-        <div class="gallery-item gi-3" onclick="openLightbox(this)">
-          <img src="images/2012-11-20_-_panoramio.jpg" alt="Донецьк, листопад 2012" loading="lazy">
-          <div class="gallery-item-cap ua">Листопад 2012</div>
-          <div class="gallery-item-cap en">November 2012</div>
-        </div>
-        <div class="gallery-item gi-4" onclick="openLightbox(this)">
-          <img src="images/После_реконструкции_2012_-_panoramio.jpg" alt="Після реконструкції" loading="lazy">
-          <div class="gallery-item-cap ua">Після реконструкції · 2012</div>
-          <div class="gallery-item-cap en">After reconstruction · 2012</div>
-        </div>
-        <div class="gallery-item gi-5" onclick="openLightbox(this)">
-          <img src="images/Panoramio_-_V&amp;A_Dudush_-_вот_и_Донецк_на_горизонте.jpg" alt="Донецьк на горизонті" loading="lazy">
-          <div class="gallery-item-cap ua">Донецьк на горизонті</div>
-          <div class="gallery-item-cap en">Donetsk on the horizon</div>
-        </div>
-        <div class="gallery-item gi-6" onclick="openLightbox(this)">
-          <img src="images/Солнечная_беседка_-_panoramio.jpg" alt="Сонячна бесідка" loading="lazy">
-          <div class="gallery-item-cap ua">Сонячна бесідка</div>
-          <div class="gallery-item-cap en">Sunny gazebo</div>
-        </div>
-        <div class="gallery-item gi-7" onclick="openLightbox(this)">
-          <img src="images/Новинка_Авапарк_-_panoramio.jpg" alt="Аквапарк" loading="lazy">
-          <div class="gallery-item-cap ua">Аквапарк</div>
-          <div class="gallery-item-cap en">Aquapark</div>
-        </div>
-        <div class="gallery-item gi-8" onclick="openLightbox(this)">
-          <img src="images/Дзержинского_-_Розенкова_-_panoramio_(cropped).jpg" alt="Вулиця Дзержинського" loading="lazy">
-          <div class="gallery-item-cap ua">Міська архітектура</div>
-          <div class="gallery-item-cap en">Urban architecture</div>
-        </div>
-        <div class="gallery-item gi-9" onclick="openLightbox(this)">
-          <img src="before2014/photo_2026-02-09_14-52-34.jpg" alt="Донецьк до 2014" loading="lazy">
-          <div class="gallery-item-cap ua">Донецьк · до 2014</div>
-          <div class="gallery-item-cap en">Donetsk · before 2014</div>
-        </div>
-        <div class="gallery-item gi-10" onclick="openLightbox(this)">
-          <img src="before2014/photo_2026-02-09_15-40-03.jpg" alt="Донецьк до 2014" loading="lazy">
-          <div class="gallery-item-cap ua">Вулиці міста</div>
-          <div class="gallery-item-cap en">City streets</div>
-        </div>
-        <div class="gallery-item gi-11" onclick="openLightbox(this)">
-          <img src="before2014/photo_2026-02-09_15-51-01.jpg" alt="Донецьк до 2014" loading="lazy">
-          <div class="gallery-item-cap ua">Міський простір</div>
-          <div class="gallery-item-cap en">Urban space</div>
-        </div>
-        <div class="gallery-item gi-12" onclick="openLightbox(this)">
-          <img src="before2014/photo_2026-02-09_15-51-02.jpg" alt="Донецьк до 2014" loading="lazy">
-          <div class="gallery-item-cap ua">Архітектура міста</div>
-          <div class="gallery-item-cap en">City architecture</div>
-        </div>
-        <div class="gallery-item gi-13" onclick="openLightbox(this)">
-          <img src="before2014/photo_2026-02-10_19-24-09.jpg" alt="Донецьк до 2014" loading="lazy">
-          <div class="gallery-item-cap ua">Донецьк · пейзаж</div>
-          <div class="gallery-item-cap en">Donetsk · cityscape</div>
-        </div>
-        <div class="gallery-item gi-14" onclick="openLightbox(this)">
-          <img src="before2014/photo_2026-02-10_19-24-09%20(2).jpg" alt="Донецьк до 2014" loading="lazy">
-          <div class="gallery-item-cap ua">Образ міста</div>
-          <div class="gallery-item-cap en">City portrait</div>
-        </div>
-        <div class="gallery-item gi-15" onclick="openLightbox(this)">
-          <img src="before2014/photo_2026-02-17_22-26-32.jpg" alt="Донецьк до 2014" loading="lazy">
-          <div class="gallery-item-cap ua">Донецьк · деталь</div>
-          <div class="gallery-item-cap en">Donetsk · detail</div>
-        </div>
-        <div class="gallery-item gi-16" onclick="openLightbox(this)">
-          <img src="images/Лето_2013_-_panoramio_(7).jpg" alt="Донецьк, літо 2013" loading="lazy">
-          <div class="gallery-item-cap ua">Літо 2013</div>
-          <div class="gallery-item-cap en">Summer 2013</div>
-        </div>
-        <div class="gallery-item gi-17" onclick="openLightbox(this)">
-          <img src="images/Апрель_2013_-_panoramio_(1).jpg" alt="Донецьк, квітень 2013" loading="lazy">
-          <div class="gallery-item-cap ua">Квітень 2013</div>
-          <div class="gallery-item-cap en">April 2013</div>
-        </div>
-        <div class="gallery-item gi-18" onclick="openLightbox(this)">
-          <img src="images/Апрель_2013_-_panoramio_(5).jpg" alt="Донецьк, весна 2013" loading="lazy">
-          <div class="gallery-item-cap ua">Весна 2013</div>
-          <div class="gallery-item-cap en">Spring 2013</div>
-        </div>
-        <div class="gallery-item gi-19" onclick="openLightbox(this)">
-          <img src="images/Август_2012_-_panoramio_(6).jpg" alt="Донецьк, серпень 2012" loading="lazy">
-          <div class="gallery-item-cap ua">Серпень 2012</div>
-          <div class="gallery-item-cap en">August 2012</div>
-        </div>
-        <div class="gallery-item gi-20" onclick="openLightbox(this)">
-          <img src="images/2012._Донецк_008.jpg" alt="Донецьк, 2012" loading="lazy">
-          <div class="gallery-item-cap ua">Донецьк · 2012</div>
-          <div class="gallery-item-cap en">Donetsk · 2012</div>
-        </div>
-        <div class="gallery-item gi-21" onclick="openLightbox(this)">
-          <img src="images/2012._Донецк_014.jpg" alt="Донецьк, 2012" loading="lazy">
-          <div class="gallery-item-cap ua">Місто · 2012</div>
-          <div class="gallery-item-cap en">The city · 2012</div>
-        </div>
-        <div class="gallery-item gi-22" onclick="openLightbox(this)">
-          <img src="images/2012_-_panoramio_(214).jpg" alt="Донецьк, вулиці 2012" loading="lazy">
-          <div class="gallery-item-cap ua">Вулиці · 2012</div>
-          <div class="gallery-item-cap en">Streets · 2012</div>
-        </div>
-        <div class="gallery-item gi-23" onclick="openLightbox(this)">
-          <img src="images/2012-11-02_-_panoramio_(2).jpg" alt="Донецьк, листопад 2012" loading="lazy">
-          <div class="gallery-item-cap ua">Листопад 2012</div>
-          <div class="gallery-item-cap en">November 2012</div>
-        </div>
-        <div class="gallery-item gi-24" onclick="openLightbox(this)">
-          <img src="images/Жарикова_-_panoramio.jpg" alt="Вулиця Жарикова, Донецьк" loading="lazy">
-          <div class="gallery-item-cap ua">Вулиця Жарикова</div>
-          <div class="gallery-item-cap en">Zharykova Street</div>
-        </div>
+        <figure class="gallery-item gi-big" onclick="openLightbox(this)">
+          <img src="before2014/photo_2026-02-09_14-52-34.jpg" alt="Монумент Визволителям Донбасу · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 01</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Монумент Визволителям Донбасу</span><span class="g-cap-t en">Monument to the Liberators of Donbas</span>
+            <span class="g-cap-m ua">Меморіал · біля Донбас Арени</span><span class="g-cap-m en">Memorial · near Donbas Arena</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Монумент Визволителям Донбасу · Меморіал · біля Донбас Арени</div>
+          <div class="gallery-item-cap en" hidden>Monument to the Liberators of Donbas · Memorial · near Donbas Arena</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/%D0%9F%D0%B0%D1%80%D0%BA_%D1%83_%D0%94%D0%BE%D0%BD%D0%B1%D0%B0%D1%81%D1%81_%D0%90%D1%80%D0%B5%D0%BD%D1%8B_-_panoramio.jpg" alt="Парк біля Донбас Арени · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 02</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Парк біля Донбас Арени</span><span class="g-cap-t en">Park by Donbas Arena</span>
+            <span class="g-cap-m ua">Парк Ленінського комсомолу</span><span class="g-cap-m en">Lenin Komsomol Park</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Парк біля Донбас Арени · Парк Ленінського комсомолу</div>
+          <div class="gallery-item-cap en" hidden>Park by Donbas Arena · Lenin Komsomol Park</div>
+        </figure>
+        <figure class="gallery-item gi-tall" onclick="openLightbox(this)">
+          <img src="before2014/photo_2026-02-17_22-26-32.jpg" alt="Трамвай у відображенні · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 03</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Трамвай у відображенні</span><span class="g-cap-t en">Tram in the Reflection</span>
+            <span class="g-cap-m ua">Після дощу · вагон 3011</span><span class="g-cap-m en">After the rain · car 3011</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Трамвай у відображенні · Після дощу · вагон 3011</div>
+          <div class="gallery-item-cap en" hidden>Tram in the Reflection · After the rain · car 3011</div>
+        </figure>
+        <figure class="gallery-item gi-wide" onclick="openLightbox(this)">
+          <img src="before2014/photo_2026-02-09_15-40-03.jpg" alt="Вечірнє місто · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 04</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Вечірнє місто</span><span class="g-cap-t en">The City at Dusk</span>
+            <span class="g-cap-m ua">Золота година над проспектом</span><span class="g-cap-m en">Golden hour over the boulevard</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Вечірнє місто · Золота година над проспектом</div>
+          <div class="gallery-item-cap en" hidden>The City at Dusk · Golden hour over the boulevard</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/%D0%A1%D0%BE%D0%BB%D0%BD%D0%B5%D1%87%D0%BD%D0%B0%D1%8F_%D0%B1%D0%B5%D1%81%D0%B5%D0%B4%D0%BA%D0%B0_-_panoramio.jpg" alt="Сонячна альтанка · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 05</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Сонячна альтанка</span><span class="g-cap-t en">The Sunlit Pavilion</span>
+            <span class="g-cap-m ua">Міський парк</span><span class="g-cap-m en">City park</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Сонячна альтанка · Міський парк</div>
+          <div class="gallery-item-cap en" hidden>The Sunlit Pavilion · City park</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="before2014/photo_2026-02-09_15-51-01.jpg" alt="Зимовий бульвар · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 06</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Зимовий бульвар</span><span class="g-cap-t en">Winter Boulevard</span>
+            <span class="g-cap-m ua">Сніг · ковані скульптури</span><span class="g-cap-m en">Snow · forged sculptures</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Зимовий бульвар · Сніг · ковані скульптури</div>
+          <div class="gallery-item-cap en" hidden>Winter Boulevard · Snow · forged sculptures</div>
+        </figure>
+        <figure class="gallery-item gi-big" onclick="openLightbox(this)">
+          <img src="before2014/photo_2026-02-09_15-51-02.jpg" alt="Прогулянка з візком · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 07</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Прогулянка з візком</span><span class="g-cap-t en">A Walk with the Pram</span>
+            <span class="g-cap-m ua">Зима · буденне життя міста</span><span class="g-cap-m en">Winter · the city's daily life</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Прогулянка з візком · Зима · буденне життя міста</div>
+          <div class="gallery-item-cap en" hidden>A Walk with the Pram · Winter · the city's daily life</div>
+        </figure>
+        <figure class="gallery-item gi-wide" onclick="openLightbox(this)">
+          <img src="before2014/photo_2026-02-10_19-24-09.jpg" alt="Місто вболіває · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 08</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Місто вболіває</span><span class="g-cap-t en">The City Cheers</span>
+            <span class="g-cap-m ua">Євро-2012 · збірна України</span><span class="g-cap-m en">Euro 2012 · Ukraine team</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Місто вболіває · Євро-2012 · збірна України</div>
+          <div class="gallery-item-cap en" hidden>The City Cheers · Euro 2012 · Ukraine team</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="before2014/photo_2026-02-10_19-24-09%20%282%29.jpg" alt="Фан-зона Євро-2012 · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 09</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Фан-зона Євро-2012</span><span class="g-cap-t en">Euro 2012 Fan Zone</span>
+            <span class="g-cap-m ua">Червень 2012</span><span class="g-cap-m en">June 2012</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Фан-зона Євро-2012 · Червень 2012</div>
+          <div class="gallery-item-cap en" hidden>Euro 2012 Fan Zone · June 2012</div>
+        </figure>
+        <figure class="gallery-item gi-wide" onclick="openLightbox(this)">
+          <img src="images/%D0%94%D0%BE%D0%BD%D0%B5%D1%86%D0%BA_2012_-_panoramio.jpg" alt="Панорама міста · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 10</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Панорама міста</span><span class="g-cap-t en">Panorama of the City</span>
+            <span class="g-cap-m ua">Дахи й проспекти · 2012</span><span class="g-cap-m en">Rooftops and boulevards · 2012</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Панорама міста · Дахи й проспекти · 2012</div>
+          <div class="gallery-item-cap en" hidden>Panorama of the City · Rooftops and boulevards · 2012</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/Panoramio_-_V&amp;A_Dudush_-_вот_и_Донецк_на_горизонте.jpg" alt="Місто на горизонті · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 11</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Місто на горизонті</span><span class="g-cap-t en">The City on the Horizon</span>
+            <span class="g-cap-m ua">Краєвид зі степу</span><span class="g-cap-m en">A view from the steppe</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Місто на горизонті · Краєвид зі степу</div>
+          <div class="gallery-item-cap en" hidden>The City on the Horizon · A view from the steppe</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/%D0%9D%D0%BE%D0%B2%D0%B8%D0%BD%D0%BA%D0%B0_%D0%90%D0%B2%D0%B0%D0%BF%D0%B0%D1%80%D0%BA_-_panoramio.jpg" alt="Аквапарк · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 12</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Аквапарк</span><span class="g-cap-t en">The Waterpark</span>
+            <span class="g-cap-m ua">Дозвілля · 2010-ті</span><span class="g-cap-m en">Leisure · 2010s</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Аквапарк · Дозвілля · 2010-ті</div>
+          <div class="gallery-item-cap en" hidden>The Waterpark · Leisure · 2010s</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/%D0%94%D0%B7%D0%B5%D1%80%D0%B6%D0%B8%D0%BD%D1%81%D0%BA%D0%BE%D0%B3%D0%BE_-_%D0%A0%D0%BE%D0%B7%D0%B5%D0%BD%D0%BA%D0%BE%D0%B2%D0%B0_-_panoramio_%28cropped%29.jpg" alt="Центральне перехрестя · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 13</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Центральне перехрестя</span><span class="g-cap-t en">A Central Crossroads</span>
+            <span class="g-cap-m ua">Вулиці міста</span><span class="g-cap-m en">City streets</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Центральне перехрестя · Вулиці міста</div>
+          <div class="gallery-item-cap en" hidden>A Central Crossroads · City streets</div>
+        </figure>
+        <figure class="gallery-item gi-wide" onclick="openLightbox(this)">
+          <img src="images/%D0%9B%D0%B5%D1%82%D0%BE_2013_-_panoramio_%287%29.jpg" alt="Літо в місті · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 14</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Літо в місті</span><span class="g-cap-t en">Summer in the City</span>
+            <span class="g-cap-m ua">Липень 2013</span><span class="g-cap-m en">July 2013</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Літо в місті · Липень 2013</div>
+          <div class="gallery-item-cap en" hidden>Summer in the City · July 2013</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/%D0%90%D0%BF%D1%80%D0%B5%D0%BB%D1%8C_2013_-_panoramio_%281%29.jpg" alt="Квітнева зелень · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 15</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Квітнева зелень</span><span class="g-cap-t en">April Greenery</span>
+            <span class="g-cap-m ua">Весна 2013</span><span class="g-cap-m en">Spring 2013</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Квітнева зелень · Весна 2013</div>
+          <div class="gallery-item-cap en" hidden>April Greenery · Spring 2013</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/%D0%90%D0%BF%D1%80%D0%B5%D0%BB%D1%8C_2013_-_panoramio_%285%29.jpg" alt="Весняні проспекти · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 16</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Весняні проспекти</span><span class="g-cap-t en">Spring Boulevards</span>
+            <span class="g-cap-m ua">Квітень 2013</span><span class="g-cap-m en">April 2013</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Весняні проспекти · Квітень 2013</div>
+          <div class="gallery-item-cap en" hidden>Spring Boulevards · April 2013</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/%D0%90%D0%B2%D0%B3%D1%83%D1%81%D1%82_2012_-_panoramio_%286%29.jpg" alt="Серпневий вечір · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 17</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Серпневий вечір</span><span class="g-cap-t en">An August Evening</span>
+            <span class="g-cap-m ua">Літо 2012</span><span class="g-cap-m en">Summer 2012</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Серпневий вечір · Літо 2012</div>
+          <div class="gallery-item-cap en" hidden>An August Evening · Summer 2012</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/%D0%9F%D0%BE%D1%81%D0%BB%D0%B5_%D1%80%D0%B5%D0%BA%D0%BE%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D0%B8_2012_-_panoramio.jpg" alt="Оновлений центр · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 18</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Оновлений центр</span><span class="g-cap-t en">The Renovated Centre</span>
+            <span class="g-cap-m ua">Після реконструкції · 2012</span><span class="g-cap-m en">After reconstruction · 2012</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Оновлений центр · Після реконструкції · 2012</div>
+          <div class="gallery-item-cap en" hidden>The Renovated Centre · After reconstruction · 2012</div>
+        </figure>
+        <figure class="gallery-item gi-wide" onclick="openLightbox(this)">
+          <img src="images/2012._%D0%94%D0%BE%D0%BD%D0%B5%D1%86%D0%BA_008.jpg" alt="Дахи Донецька · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 19</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Дахи Донецька</span><span class="g-cap-t en">Rooftops of Donetsk</span>
+            <span class="g-cap-m ua">Краєвид міста · 2012</span><span class="g-cap-m en">Cityscape · 2012</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Дахи Донецька · Краєвид міста · 2012</div>
+          <div class="gallery-item-cap en" hidden>Rooftops of Donetsk · Cityscape · 2012</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/2012._%D0%94%D0%BE%D0%BD%D0%B5%D1%86%D0%BA_014.jpg" alt="Міські квартали · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 20</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Міські квартали</span><span class="g-cap-t en">City Quarters</span>
+            <span class="g-cap-m ua">2012</span><span class="g-cap-m en">2012</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Міські квартали · 2012</div>
+          <div class="gallery-item-cap en" hidden>City Quarters · 2012</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/2012_-_panoramio_%28214%29.jpg" alt="Літній Донецьк · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 21</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Літній Донецьк</span><span class="g-cap-t en">Summer Donetsk</span>
+            <span class="g-cap-m ua">2012</span><span class="g-cap-m en">2012</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Літній Донецьк · 2012</div>
+          <div class="gallery-item-cap en" hidden>Summer Donetsk · 2012</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/2012-11-20_-_panoramio.jpg" alt="Осінній проспект · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 22</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Осінній проспект</span><span class="g-cap-t en">Autumn Boulevard</span>
+            <span class="g-cap-m ua">Листопад 2012</span><span class="g-cap-m en">November 2012</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Осінній проспект · Листопад 2012</div>
+          <div class="gallery-item-cap en" hidden>Autumn Boulevard · November 2012</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/2012-11-02_-_panoramio_%282%29.jpg" alt="Пізня осінь · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 23</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Пізня осінь</span><span class="g-cap-t en">Late Autumn</span>
+            <span class="g-cap-m ua">Листопад 2012</span><span class="g-cap-m en">November 2012</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Пізня осінь · Листопад 2012</div>
+          <div class="gallery-item-cap en" hidden>Late Autumn · November 2012</div>
+        </figure>
+        <figure class="gallery-item" onclick="openLightbox(this)">
+          <img src="images/%D0%96%D0%B0%D1%80%D0%B8%D0%BA%D0%BE%D0%B2%D0%B0_-_panoramio.jpg" alt="Вулиця Жарикова · Донецьк до 2014" loading="lazy">
+          <span class="g-num">Nº 24</span>
+          <figcaption class="g-cap">
+            <span class="g-cap-t ua">Вулиця Жарикова</span><span class="g-cap-t en">Zharykova Street</span>
+            <span class="g-cap-m ua">Житловий квартал</span><span class="g-cap-m en">Residential quarter</span>
+          </figcaption>
+          <div class="gallery-item-cap ua" hidden>Вулиця Жарикова · Житловий квартал</div>
+          <div class="gallery-item-cap en" hidden>Zharykova Street · Residential quarter</div>
+        </figure>
       </div>
-    </div>
+      </div>
   </section>
 
   <!-- ════════════════════════
