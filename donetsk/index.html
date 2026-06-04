@@ -1574,7 +1574,7 @@
 
     .admin-panel {
       position: fixed; right: 28px; bottom: 144px; z-index: 500;
-      width: min(390px, calc(100vw - 32px)); max-height: min(640px, calc(100svh - 174px));
+      width: min(440px, calc(100vw - 32px)); max-height: min(760px, calc(100svh - 174px));
       display: none; flex-direction: column; gap: 12px;
       padding: 14px; overflow: auto;
       border: 1px solid rgba(255,255,255,0.14);
@@ -1592,7 +1592,37 @@
       font-family: var(--sans); font-size: 12px; line-height: 1.55;
       color: rgba(255,255,255,0.64);
     }
+    .admin-selected {
+      display: flex; flex-direction: column; gap: 4px;
+      padding: 10px; border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.07);
+      font-family: var(--sans); font-size: 12px; line-height: 1.45;
+      color: rgba(255,255,255,0.78);
+    }
+    .admin-selected strong {
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(255,255,255,0.95);
+    }
+    .admin-label {
+      display: flex; flex-direction: column; gap: 6px;
+      font-family: var(--mono); font-size: 0.58rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.58);
+    }
+    .admin-input,
+    .admin-field {
+      width: 100%; padding: 10px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.24); color: rgba(255,255,255,0.9);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 11px; line-height: 1.45;
+    }
+    .admin-input { min-height: 38px; }
+    .admin-file {
+      font-family: var(--sans); font-size: 12px; color: rgba(255,255,255,0.72);
+    }
     .admin-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .admin-actions.admin-actions-wide { grid-template-columns: 1fr 1fr 1fr; }
     .admin-btn {
       min-height: 38px; padding: 0 10px;
       border: 1px solid rgba(255,255,255,0.16);
@@ -1602,14 +1632,11 @@
       transition: background .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease);
     }
     .admin-btn:hover { background: rgba(0,90,184,0.34); border-color: rgba(0,90,184,0.68); transform: translateY(-1px); }
+    .admin-btn.admin-primary { background: rgba(242,101,34,0.9); border-color: rgba(242,101,34,0.95); color: #fff; }
     .admin-btn.admin-danger:hover { background: rgba(180,40,40,0.32); border-color: rgba(220,80,80,0.62); }
-    .admin-field {
-      width: 100%; min-height: 122px; resize: vertical; padding: 10px;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(0,0,0,0.24); color: rgba(255,255,255,0.9);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 11px; line-height: 1.45;
-    }
+    .admin-btn:disabled { opacity: 0.42; cursor: not-allowed; transform: none; }
+    .admin-field { min-height: 112px; resize: vertical; }
+    .admin-json-field { min-height: 92px; }
     .admin-status {
       min-height: 18px; font-family: var(--mono); font-size: 0.625rem;
       color: rgba(242,101,34,0.92);
@@ -1623,6 +1650,14 @@
     body.admin-mode [data-admin-kind="image"] {
       cursor: copy;
       box-shadow: inset 0 0 0 2px rgba(242,101,34,0.74);
+    }
+    body.admin-mode [data-admin-selected="true"] {
+      outline: 3px solid rgba(0,90,184,0.95) !important;
+      outline-offset: 5px !important;
+    }
+    body.admin-mode [data-admin-hidden="true"] {
+      opacity: 0.34 !important;
+      filter: grayscale(1);
     }
     body.admin-mode [contenteditable="true"]:focus {
       outline: 2px solid rgba(242,101,34,0.95);
@@ -3893,15 +3928,40 @@
       <span>Site editor</span>
       <span id="admin-count">0 items</span>
     </div>
-    <p class="admin-panel-note">Кликни текст и редактируй прямо на странице. Клик по фото меняет путь/alt. Ссылка: клик меняет текст, Alt+Click меняет URL. Правки сохраняются в этом браузере.</p>
-    <div class="admin-actions">
-      <button class="admin-btn" id="admin-export" type="button">Export</button>
-      <button class="admin-btn" id="admin-import" type="button">Import</button>
+    <p class="admin-panel-note">Кликни любой текст, ссылку или фото. Изменения сразу видны на странице, автосохраняются в браузере и публикуются кнопкой Push Git.</p>
+    <div class="admin-selected" id="admin-selected">
+      <strong>Nothing selected</strong>
+      <span>Выбери элемент на странице.</span>
+    </div>
+    <label class="admin-label" for="admin-edit-html">
+      Text / HTML
+      <textarea class="admin-field" id="admin-edit-html" spellcheck="false" placeholder="Текст выбранного элемента"></textarea>
+    </label>
+    <label class="admin-label" for="admin-edit-href">
+      Link URL
+      <input class="admin-input" id="admin-edit-href" type="url" placeholder="https://...">
+    </label>
+    <label class="admin-label" for="admin-edit-src">
+      Image URL / path
+      <input class="admin-input" id="admin-edit-src" type="text" placeholder="images/photo.jpg или https://...">
+    </label>
+    <label class="admin-label" for="admin-edit-alt">
+      Image alt
+      <input class="admin-input" id="admin-edit-alt" type="text" placeholder="Описание изображения">
+    </label>
+    <input class="admin-file" id="admin-image-file" type="file" accept="image/*">
+    <div class="admin-actions admin-actions-wide">
+      <button class="admin-btn admin-primary" id="admin-apply" type="button">Apply</button>
+      <button class="admin-btn" id="admin-duplicate" type="button">Duplicate</button>
+      <button class="admin-btn" id="admin-hide" type="button">Hide</button>
+      <button class="admin-btn" id="admin-add-text" type="button">Add text</button>
+      <button class="admin-btn" id="admin-export" type="button">Refresh JSON</button>
+      <button class="admin-btn" id="admin-import" type="button">Import JSON</button>
       <button class="admin-btn" id="admin-copy" type="button">Copy JSON</button>
       <button class="admin-btn" id="admin-push" type="button">Push Git</button>
       <button class="admin-btn admin-danger" id="admin-reset" type="button">Reset</button>
     </div>
-    <textarea class="admin-field" id="admin-json" spellcheck="false" placeholder="JSON правок появится здесь"></textarea>
+    <textarea class="admin-field admin-json-field" id="admin-json" spellcheck="false" placeholder="JSON правок появится здесь"></textarea>
     <div class="admin-status" id="admin-status"></div>
   </div>
 
@@ -4123,7 +4183,8 @@
     const adminUrlParams = new URLSearchParams(window.location.search);
     const adminHashParams = new URLSearchParams(window.location.hash.slice(1));
     const adminAllowed = adminUrlParams.get('admin') === '1' || adminHashParams.get('admin') === '1';
-    const adminStorageKey = 'munister-donetsk-admin-v2';
+    const adminStorageKey = 'munister-donetsk-admin-v3';
+    const adminLegacyStorageKey = 'munister-donetsk-admin-v2';
     const adminRemotePath = 'admin-edits.json';
     const adminGithubConfig = {
       owner: 'munister-v',
@@ -4131,18 +4192,34 @@
       branch: 'main',
       path: 'donetsk/admin-edits.json'
     };
+    const adminEditableSelector = 'h1,h2,h3,h4,h5,h6,p,span,em,strong,cite,a,div,li,figcaption,blockquote';
+    const adminEls = {};
+
     function adminLoadData() {
       try {
-        return JSON.parse(localStorage.getItem(adminStorageKey) || '{}');
+        return JSON.parse(localStorage.getItem(adminStorageKey) || localStorage.getItem(adminLegacyStorageKey) || '{}');
       } catch {
         localStorage.removeItem(adminStorageKey);
         return {};
       }
     }
+
     const adminState = {
       active: adminAllowed,
-      data: adminLoadData()
+      data: adminLoadData(),
+      selectedEl: null,
+      saveTimer: null
     };
+
+    function adminBindEls() {
+      [
+        'admin-count', 'admin-selected', 'admin-edit-html', 'admin-edit-href',
+        'admin-edit-src', 'admin-edit-alt', 'admin-image-file', 'admin-apply',
+        'admin-duplicate', 'admin-hide', 'admin-add-text', 'admin-export',
+        'admin-import', 'admin-copy', 'admin-push', 'admin-reset',
+        'admin-json', 'admin-status', 'admin-toggle'
+      ].forEach(id => { adminEls[id] = document.getElementById(id); });
+    }
 
     function adminBase64(text) {
       const bytes = new TextEncoder().encode(text);
@@ -4162,10 +4239,33 @@
       }
     }
 
+    function adminStatus(message) {
+      if (adminEls['admin-status'] && message) adminEls['admin-status'].textContent = message;
+    }
+
+    function adminAttr(value) {
+      return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    }
+
+    function adminFindByKey(key) {
+      return document.querySelector(`[data-admin-key="${adminAttr(key)}"]`);
+    }
+
+    function adminCollect(root, selector) {
+      const items = [];
+      if (root?.nodeType === 1 && root.matches(selector)) items.push(root);
+      if (root?.querySelectorAll) items.push(...root.querySelectorAll(selector));
+      return items;
+    }
+
     function adminPath(el) {
       const parts = [];
       let node = el;
       while (node && node.nodeType === 1 && node !== document.body) {
+        if (node.dataset.adminStructureId) {
+          parts.unshift(`structure:${node.dataset.adminStructureId}`);
+          break;
+        }
         let part = node.tagName.toLowerCase();
         if (node.id && !node.id.startsWith('admin-') && node.id !== 'lightbox' && node.id !== 'back-to-top') {
           part += `#${node.id}`;
@@ -4183,24 +4283,48 @@
     }
 
     function adminRecord(el) {
-      const key = el.dataset.adminKey;
+      const key = el?.dataset?.adminKey;
       if (!key) return null;
       adminState.data[key] ||= { kind: el.dataset.adminKind };
       return adminState.data[key];
     }
 
     function adminSave(message) {
+      adminState.data.__meta = {
+        editorVersion: 3,
+        updatedAt: new Date().toISOString()
+      };
       localStorage.setItem(adminStorageKey, JSON.stringify(adminState.data));
-      const field = document.getElementById('admin-json');
-      const status = document.getElementById('admin-status');
-      if (field) field.value = JSON.stringify(adminState.data, null, 2);
-      if (status && message) status.textContent = message;
+      if (adminEls['admin-json']) adminEls['admin-json'].value = JSON.stringify(adminState.data, null, 2);
+      adminStatus(message);
+    }
+
+    function adminQueueSave(message) {
+      window.clearTimeout(adminState.saveTimer);
+      adminState.saveTimer = window.setTimeout(() => adminSave(message || 'Autosaved'), 180);
+    }
+
+    function adminApplyHidden(el, record) {
+      if (!el || !record) return;
+      if (record.hidden) {
+        if (!Object.prototype.hasOwnProperty.call(el.dataset, 'adminOriginalDisplay')) {
+          el.dataset.adminOriginalDisplay = el.style.display || '';
+        }
+        el.dataset.adminHidden = 'true';
+        el.style.display = adminState.active ? el.dataset.adminOriginalDisplay : 'none';
+      } else {
+        if (Object.prototype.hasOwnProperty.call(el.dataset, 'adminOriginalDisplay')) {
+          el.style.display = el.dataset.adminOriginalDisplay;
+          delete el.dataset.adminOriginalDisplay;
+        }
+        delete el.dataset.adminHidden;
+      }
     }
 
     function adminApplyValue(el, record) {
-      if (!record) return;
+      if (!record || !el) return;
       if ((el.dataset.adminKind === 'text' || el.dataset.adminKind === 'link') && typeof record.html === 'string') {
-        el.innerHTML = record.html;
+        if (el.innerHTML !== record.html) el.innerHTML = record.html;
       }
       if (el.dataset.adminKind === 'link' && typeof record.href === 'string') {
         el.setAttribute('href', record.href);
@@ -4211,11 +4335,18 @@
         if (record.bg) el.style.backgroundImage = `url("${record.bg}")`;
         if (record.dataImg) el.dataset.img = record.dataImg;
       }
+      adminApplyHidden(el, record);
+    }
+
+    function adminApplyAllValues(root = document) {
+      adminCollect(root, '[data-admin-key]').forEach(el => {
+        adminApplyValue(el, adminState.data[el.dataset.adminKey]);
+      });
     }
 
     function adminIsEditableText(el) {
       if (!el || el.closest('.admin-panel, .admin-launch, .photo-lightbox, script, style')) return false;
-      if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'IMG', 'VIDEO', 'SOURCE', 'BR', 'HR', 'BUTTON'].includes(el.tagName)) return false;
+      if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'IMG', 'VIDEO', 'SOURCE', 'BR', 'HR', 'BUTTON', 'INPUT', 'TEXTAREA'].includes(el.tagName)) return false;
       if (el.tagName === 'A') return true;
       if (el.tagName === 'DIV' && el.children.length) return false;
       const text = el.textContent.trim();
@@ -4226,44 +4357,111 @@
       return blockChildren.length === 0;
     }
 
+    function adminPrepareText(el) {
+      if (el.dataset.adminReady === 'text') return;
+      if (!el.dataset.adminKey) el.dataset.adminKey = adminPath(el);
+      el.dataset.adminKind = el.tagName === 'A' ? 'link' : 'text';
+      el.dataset.adminReady = 'text';
+      adminApplyValue(el, adminState.data[el.dataset.adminKey]);
+      el.addEventListener('focus', () => {
+        if (adminState.active) adminSelectElement(el);
+      });
+      el.addEventListener('input', () => {
+        if (!adminState.active) return;
+        const record = adminRecord(el);
+        if (!record) return;
+        record.html = el.innerHTML;
+        if (el.dataset.adminKind === 'link') record.href = el.getAttribute('href') || '';
+        if (adminState.selectedEl === el) adminSyncInspectorFromElement();
+        adminQueueSave('Сохранено автоматически');
+      });
+      el.addEventListener('blur', () => {
+        const record = adminRecord(el);
+        if (!record) return;
+        record.html = el.innerHTML;
+        if (el.dataset.adminKind === 'link') record.href = el.getAttribute('href') || '';
+        adminSave('Сохранено');
+      });
+      el.addEventListener('keydown', event => {
+        if (adminState.active && event.key === 'Escape') {
+          el.blur();
+          window.getSelection()?.removeAllRanges();
+        }
+      });
+    }
+
+    function adminPrepareImage(el) {
+      if (el.dataset.adminReady === 'image') return;
+      if (!el.dataset.adminKey) el.dataset.adminKey = adminPath(el);
+      el.dataset.adminKind = 'image';
+      el.dataset.adminReady = 'image';
+      adminApplyValue(el, adminState.data[el.dataset.adminKey]);
+    }
+
+    function adminRefreshEditables(root = document) {
+      adminCollect(root, adminEditableSelector)
+        .filter(adminIsEditableText)
+        .forEach(adminPrepareText);
+
+      adminCollect(root, 'img, [style*="background-image"], [data-img]')
+        .filter(el => !el.closest('.admin-panel, .admin-launch, .photo-lightbox'))
+        .forEach(adminPrepareImage);
+    }
+
+    function adminRefreshCount() {
+      if (adminEls['admin-count']) {
+        adminEls['admin-count'].textContent = `${document.querySelectorAll('[data-admin-key]').length} items`;
+      }
+    }
+
+    function adminCleanClone(node) {
+      const cleanAttrs = [
+        'data-admin-key', 'data-admin-kind', 'data-admin-ready', 'data-admin-selected',
+        'data-admin-hidden', 'data-admin-original-display', 'data-admin-structure-id',
+        'contenteditable', 'aria-selected'
+      ];
+      [node, ...node.querySelectorAll('*')].forEach(el => {
+        cleanAttrs.forEach(attr => el.removeAttribute(attr));
+        if (el.id) el.removeAttribute('id');
+      });
+      return node;
+    }
+
+    function adminInsertStructure(key, record) {
+      const existing = document.querySelector(`[data-admin-structure-id="${adminAttr(key)}"]`);
+      if (record.hidden) {
+        existing?.remove();
+        return;
+      }
+      if (existing || !record.anchorKey || !record.html) return;
+      const anchor = adminFindByKey(record.anchorKey);
+      if (!anchor) return;
+      const template = document.createElement('template');
+      template.innerHTML = record.html.trim();
+      const node = template.content.firstElementChild;
+      if (!node) return;
+      node.dataset.adminStructureId = key;
+      node.classList.add('admin-added-block');
+      anchor.insertAdjacentElement('afterend', node);
+      adminRefreshEditables(node);
+      adminApplyAllValues(node);
+    }
+
+    function adminApplyStructures() {
+      Object.entries(adminState.data).forEach(([key, record]) => {
+        if (record?.kind === 'structure') adminInsertStructure(key, record);
+      });
+    }
+
     function adminSetup() {
+      adminBindEls();
       document.body.classList.toggle('admin-available', adminAllowed);
-      const textNodes = Array.from(document.querySelectorAll('h1,h2,h3,h4,p,span,em,strong,cite,a,div'));
-      textNodes.filter(adminIsEditableText).forEach(el => {
-        if (el.closest('[data-admin-kind="text"], [data-admin-kind="link"]')) return;
-        const key = adminPath(el);
-        el.dataset.adminKey = key;
-        el.dataset.adminKind = el.tagName === 'A' ? 'link' : 'text';
-        adminApplyValue(el, adminState.data[key]);
-        el.addEventListener('focus', () => {
-          if (adminState.active) el.setAttribute('contenteditable', 'true');
-        });
-        el.addEventListener('blur', () => {
-          const record = adminRecord(el);
-          if (record) {
-            record.html = el.innerHTML;
-            if (el.dataset.adminKind === 'link') record.href = el.getAttribute('href') || '';
-            adminSave('Сохранено');
-          }
-        });
-        el.addEventListener('keydown', event => {
-          if (adminState.active && event.key === 'Escape') {
-            el.blur();
-            window.getSelection()?.removeAllRanges();
-          }
-        });
-      });
-
-      const imageNodes = Array.from(document.querySelectorAll('img, [style*="background-image"], [data-img]'));
-      imageNodes.forEach(el => {
-        if (el.closest('.admin-panel, .admin-launch, .photo-lightbox')) return;
-        const key = adminPath(el);
-        el.dataset.adminKey = key;
-        el.dataset.adminKind = 'image';
-        adminApplyValue(el, adminState.data[key]);
-      });
-
-      document.getElementById('admin-count').textContent = `${document.querySelectorAll('[data-admin-key]').length} items`;
+      adminRefreshEditables(document);
+      adminApplyStructures();
+      adminRefreshEditables(document);
+      adminApplyAllValues(document);
+      adminRefreshCount();
+      adminUpdateInspectorState();
       adminSave();
       adminSetMode(adminState.active);
     }
@@ -4277,18 +4475,164 @@
         if (active) el.setAttribute('contenteditable', 'true');
         else el.removeAttribute('contenteditable');
       });
-      const toggle = document.getElementById('admin-toggle');
-      if (toggle) toggle.setAttribute('aria-pressed', active ? 'true' : 'false');
-      const status = document.getElementById('admin-status');
-      if (status) status.textContent = active ? 'Admin включен' : 'Admin выключен';
+      adminApplyAllValues(document);
+      if (adminEls['admin-toggle']) adminEls['admin-toggle'].setAttribute('aria-pressed', active ? 'true' : 'false');
+      adminStatus(active ? 'Admin включен' : 'Admin выключен');
+    }
+
+    function adminKindLabel(el) {
+      if (!el) return 'Nothing selected';
+      const kind = el.dataset.adminKind || 'block';
+      const name = el.tagName.toLowerCase();
+      return `${kind} · ${name}`;
+    }
+
+    function adminCurrentImageSrc(el) {
+      if (!el) return '';
+      if (el.tagName === 'IMG') return el.getAttribute('src') || '';
+      return el.dataset.img || (el.style.backgroundImage.match(/url\(["']?(.+?)["']?\)/) || [])[1] || '';
+    }
+
+    function adminSyncInspectorFromElement() {
+      const el = adminState.selectedEl;
+      const kind = el?.dataset?.adminKind;
+      if (adminEls['admin-selected']) {
+        adminEls['admin-selected'].innerHTML = el
+          ? `<strong>${adminKindLabel(el)}</strong><span>${el.dataset.adminKey || ''}</span>`
+          : '<strong>Nothing selected</strong><span>Выбери элемент на странице.</span>';
+      }
+      if (adminEls['admin-edit-html']) adminEls['admin-edit-html'].value = (kind === 'text' || kind === 'link') ? el.innerHTML : '';
+      if (adminEls['admin-edit-href']) adminEls['admin-edit-href'].value = kind === 'link' ? (el.getAttribute('href') || '') : '';
+      if (adminEls['admin-edit-src']) adminEls['admin-edit-src'].value = kind === 'image' ? adminCurrentImageSrc(el) : '';
+      if (adminEls['admin-edit-alt']) adminEls['admin-edit-alt'].value = kind === 'image' && el.tagName === 'IMG' ? (el.getAttribute('alt') || '') : '';
+      adminUpdateInspectorState();
+    }
+
+    function adminUpdateInspectorState() {
+      const el = adminState.selectedEl;
+      const kind = el?.dataset?.adminKind;
+      const hasSelection = Boolean(el);
+      const isText = kind === 'text' || kind === 'link';
+      const isImage = kind === 'image';
+      const isLink = kind === 'link';
+      if (adminEls['admin-edit-html']) adminEls['admin-edit-html'].disabled = !isText;
+      if (adminEls['admin-edit-href']) adminEls['admin-edit-href'].disabled = !isLink;
+      if (adminEls['admin-edit-src']) adminEls['admin-edit-src'].disabled = !isImage;
+      if (adminEls['admin-edit-alt']) adminEls['admin-edit-alt'].disabled = !isImage;
+      if (adminEls['admin-image-file']) adminEls['admin-image-file'].disabled = !isImage;
+      ['admin-apply', 'admin-duplicate', 'admin-hide', 'admin-add-text'].forEach(id => {
+        if (adminEls[id]) adminEls[id].disabled = !hasSelection;
+      });
+      if (adminEls['admin-hide'] && hasSelection) {
+        const structureKey = el.closest('[data-admin-structure-id]')?.dataset.adminStructureId;
+        const record = structureKey ? adminState.data[structureKey] : adminState.data[el.dataset.adminKey];
+        adminEls['admin-hide'].textContent = record?.hidden ? 'Show' : 'Hide';
+      }
+    }
+
+    function adminSelectElement(el) {
+      if (!el || !el.dataset.adminKey) return;
+      document.querySelectorAll('[data-admin-selected="true"]').forEach(item => delete item.dataset.adminSelected);
+      adminState.selectedEl = el;
+      el.dataset.adminSelected = 'true';
+      adminSyncInspectorFromElement();
+    }
+
+    function adminApplyInspector() {
+      const el = adminState.selectedEl;
+      if (!el) return;
+      const record = adminRecord(el);
+      if (!record) return;
+      if (el.dataset.adminKind === 'text' || el.dataset.adminKind === 'link') {
+        record.html = adminEls['admin-edit-html'].value;
+        el.innerHTML = record.html;
+      }
+      if (el.dataset.adminKind === 'link') {
+        record.href = adminEls['admin-edit-href'].value;
+        el.setAttribute('href', record.href);
+      }
+      if (el.dataset.adminKind === 'image') {
+        const src = adminEls['admin-edit-src'].value.trim();
+        if (el.tagName === 'IMG') {
+          record.src = src;
+          record.alt = adminEls['admin-edit-alt'].value;
+          el.setAttribute('src', record.src);
+          el.setAttribute('alt', record.alt);
+        } else {
+          record.bg = src;
+          el.style.backgroundImage = `url("${src}")`;
+          if (el.dataset.img) {
+            record.dataImg = src;
+            el.dataset.img = src;
+          }
+        }
+      }
+      adminSave('Сохранено');
+    }
+
+    function adminSerializeElement(el) {
+      const clone = adminCleanClone(el.cloneNode(true));
+      return clone.outerHTML;
+    }
+
+    function adminDuplicateSelected() {
+      const el = adminState.selectedEl;
+      if (!el) return;
+      const anchorKey = el.dataset.adminKey;
+      const key = `__structure:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
+      adminState.data[key] = {
+        kind: 'structure',
+        anchorKey,
+        html: adminSerializeElement(el)
+      };
+      adminInsertStructure(key, adminState.data[key]);
+      const inserted = document.querySelector(`[data-admin-structure-id="${adminAttr(key)}"]`);
+      if (inserted) {
+        adminRefreshEditables(inserted);
+        adminSelectElement(inserted.querySelector('[data-admin-key]') || inserted);
+      }
+      adminRefreshCount();
+      adminSave('Блок продублирован');
+    }
+
+    function adminAddTextBlock() {
+      const el = adminState.selectedEl;
+      if (!el) return;
+      const key = `__structure:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
+      adminState.data[key] = {
+        kind: 'structure',
+        anchorKey: el.dataset.adminKey,
+        html: '<p class="admin-added-text"><span class="ua">Новий текст</span><span class="en">New text</span></p>'
+      };
+      adminInsertStructure(key, adminState.data[key]);
+      const inserted = document.querySelector(`[data-admin-structure-id="${adminAttr(key)}"]`);
+      if (inserted) adminSelectElement(inserted.querySelector('[data-admin-key]') || inserted);
+      adminRefreshCount();
+      adminSave('Текстовый блок добавлен');
+    }
+
+    function adminToggleHiddenSelected() {
+      const el = adminState.selectedEl;
+      if (!el) return;
+      const structureKey = el.closest('[data-admin-structure-id]')?.dataset.adminStructureId;
+      const record = structureKey ? adminState.data[structureKey] : adminRecord(el);
+      if (!record) return;
+      record.hidden = !record.hidden;
+      if (structureKey) {
+        adminInsertStructure(structureKey, record);
+        if (record.hidden) adminState.selectedEl = null;
+      } else {
+        adminApplyValue(el, record);
+      }
+      adminSyncInspectorFromElement();
+      adminSave(record.hidden ? 'Скрыто' : 'Показано');
     }
 
     async function adminPushToGithub() {
-      adminSave();
-      const status = document.getElementById('admin-status');
+      adminSave('Готовлю Push Git...');
       const token = sessionStorage.getItem('munister-github-token') || prompt('GitHub token с доступом Contents: write / repo:');
       if (!token) {
-        if (status) status.textContent = 'Push отменен: токен не введен';
+        adminStatus('Push отменен: токен не введен');
         return;
       }
       sessionStorage.setItem('munister-github-token', token);
@@ -4307,7 +4651,7 @@
         }
       } catch {}
       const payload = {
-        message: 'donetsk: update admin edits',
+        message: 'donetsk: update live editor content',
         branch: adminGithubConfig.branch,
         content: adminBase64(JSON.stringify(adminState.data, null, 2))
       };
@@ -4319,49 +4663,21 @@
       });
       if (!response.ok) {
         const detail = await response.text();
-        if (status) status.textContent = `GitHub error ${response.status}`;
+        adminStatus(`GitHub error ${response.status}`);
         console.error('GitHub push failed:', detail);
         return;
       }
-      if (status) status.textContent = 'Запушено в GitHub: admin-edits.json';
+      adminStatus('Запушено в GitHub: admin-edits.json');
     }
 
-    function adminEditImage(el) {
-      const record = adminRecord(el);
-      if (!record) return;
-      const currentSrc = el.tagName === 'IMG'
-        ? el.getAttribute('src')
-        : (el.dataset.img || (el.style.backgroundImage.match(/url\(["']?(.+?)["']?\)/) || [])[1] || '');
-      const nextSrc = prompt('Путь или URL изображения:', currentSrc || '');
-      if (nextSrc === null) return;
-      if (el.tagName === 'IMG') {
-        el.setAttribute('src', nextSrc);
-        record.src = nextSrc;
-        const nextAlt = prompt('Alt-текст изображения:', el.getAttribute('alt') || '');
-        if (nextAlt !== null) {
-          el.setAttribute('alt', nextAlt);
-          record.alt = nextAlt;
-        }
-      } else {
-        el.style.backgroundImage = `url("${nextSrc}")`;
-        record.bg = nextSrc;
-        if (el.dataset.img) {
-          el.dataset.img = nextSrc;
-          record.dataImg = nextSrc;
-        }
-      }
-      adminSave('Картинка сохранена');
-    }
-
-    function adminEditLink(el) {
-      const record = adminRecord(el);
-      if (!record) return;
-      const nextHref = prompt('URL ссылки:', el.getAttribute('href') || '');
-      if (nextHref === null) return;
-      el.setAttribute('href', nextHref);
-      record.href = nextHref;
-      record.html = el.innerHTML;
-      adminSave('Ссылка сохранена');
+    function adminApplyImportedData() {
+      document.querySelectorAll('[data-admin-structure-id]').forEach(node => node.remove());
+      adminApplyStructures();
+      adminRefreshEditables(document);
+      adminApplyAllValues(document);
+      if (adminState.selectedEl && !adminState.selectedEl.isConnected) adminState.selectedEl = null;
+      adminRefreshCount();
+      adminSyncInspectorFromElement();
     }
 
     document.addEventListener('click', event => {
@@ -4370,54 +4686,89 @@
       if (!editable || editable.closest('.admin-panel, .admin-launch')) return;
       event.preventDefault();
       event.stopImmediatePropagation();
-      if (editable.dataset.adminKind === 'image') {
-        adminEditImage(editable);
-      } else if (editable.dataset.adminKind === 'link' && event.altKey) {
-        adminEditLink(editable);
-      } else {
-        editable.focus();
-      }
+      adminSelectElement(editable);
+      if (editable.dataset.adminKind === 'text' || editable.dataset.adminKind === 'link') editable.focus();
     }, true);
 
-    document.getElementById('admin-toggle').addEventListener('click', () => adminSetMode(!adminState.active));
-    document.getElementById('admin-export').addEventListener('click', () => adminSave('JSON готов'));
-    document.getElementById('admin-copy').addEventListener('click', async () => {
-      adminSave();
-      const text = document.getElementById('admin-json').value;
-      try {
-        await navigator.clipboard.writeText(text);
-        document.getElementById('admin-status').textContent = 'JSON скопирован';
-      } catch {
-        document.getElementById('admin-status').textContent = 'Скопируй JSON из поля';
-      }
-    });
-    document.getElementById('admin-import').addEventListener('click', () => {
-      try {
-        adminState.data = JSON.parse(document.getElementById('admin-json').value || '{}');
-        localStorage.setItem(adminStorageKey, JSON.stringify(adminState.data));
-        document.querySelectorAll('[data-admin-key]').forEach(el => adminApplyValue(el, adminState.data[el.dataset.adminKey]));
-        adminSave('Импортировано');
-      } catch {
-        document.getElementById('admin-status').textContent = 'JSON не читается';
-      }
-    });
-    document.getElementById('admin-push').addEventListener('click', adminPushToGithub);
-    document.getElementById('admin-reset').addEventListener('click', () => {
-      if (!confirm('Сбросить все локальные правки админ-режима?')) return;
-      localStorage.removeItem(adminStorageKey);
-      adminState.data = {};
-      adminSave('Локальные правки сброшены, обнови страницу');
-    });
     document.addEventListener('keydown', event => {
       if (adminAllowed && event.ctrlKey && event.altKey && event.key.toLowerCase() === 'e') {
         event.preventDefault();
         adminSetMode(!adminState.active);
       }
+      if (adminState.active && event.ctrlKey && event.key.toLowerCase() === 's') {
+        event.preventDefault();
+        adminSave('Сохранено');
+      }
     });
+
+    document.addEventListener('input', event => {
+      if (!event.target.closest('.admin-panel')) return;
+      if (['admin-edit-html', 'admin-edit-href', 'admin-edit-src', 'admin-edit-alt'].includes(event.target.id)) {
+        adminApplyInspector();
+      }
+    });
+
+    window.addEventListener('beforeunload', () => adminSave());
+
+    adminBindEls();
+    adminEls['admin-toggle']?.addEventListener('click', () => adminSetMode(!adminState.active));
+    adminEls['admin-apply']?.addEventListener('click', adminApplyInspector);
+    adminEls['admin-duplicate']?.addEventListener('click', adminDuplicateSelected);
+    adminEls['admin-hide']?.addEventListener('click', adminToggleHiddenSelected);
+    adminEls['admin-add-text']?.addEventListener('click', adminAddTextBlock);
+    adminEls['admin-export']?.addEventListener('click', () => adminSave('JSON обновлен'));
+    adminEls['admin-copy']?.addEventListener('click', async () => {
+      adminSave();
+      const text = adminEls['admin-json'].value;
+      try {
+        await navigator.clipboard.writeText(text);
+        adminStatus('JSON скопирован');
+      } catch {
+        adminStatus('Скопируй JSON из поля');
+      }
+    });
+    adminEls['admin-import']?.addEventListener('click', () => {
+      try {
+        adminState.data = JSON.parse(adminEls['admin-json'].value || '{}');
+        localStorage.setItem(adminStorageKey, JSON.stringify(adminState.data));
+        adminApplyImportedData();
+        adminSave('Импортировано');
+      } catch {
+        adminStatus('JSON не читается');
+      }
+    });
+    adminEls['admin-push']?.addEventListener('click', adminPushToGithub);
+    adminEls['admin-reset']?.addEventListener('click', () => {
+      if (!confirm('Сбросить все локальные правки админ-режима?')) return;
+      localStorage.removeItem(adminStorageKey);
+      localStorage.removeItem(adminLegacyStorageKey);
+      adminState.data = {};
+      adminSave('Локальные правки сброшены, страница обновляется');
+      window.location.reload();
+    });
+    adminEls['admin-image-file']?.addEventListener('change', event => {
+      const file = event.target.files?.[0];
+      if (!file || adminState.selectedEl?.dataset.adminKind !== 'image') return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        adminEls['admin-edit-src'].value = String(reader.result || '');
+        adminApplyInspector();
+        adminStatus('Фото загружено в JSON');
+      };
+      reader.readAsDataURL(file);
+    });
+
     adminLoadRemoteData().then(remoteData => {
       adminState.data = { ...remoteData, ...adminState.data };
       adminSetup();
     });
+
+    window.donetskAdmin = {
+      setMode: adminSetMode,
+      save: adminSave,
+      push: adminPushToGithub,
+      getData: () => adminState.data
+    };
 
     /* ── Lightbox ── */
     function openLightbox(el) {
