@@ -1029,8 +1029,53 @@
     #atlante-city > .occ-grid,
     #materialy > .occ-grid,
     #obrazy > .gallery-grid,
+    #rytm > .occ-grid,
+    #rytm > .rytm-hero,
     #okupatsia > .occ-grid {
       width: 100%; gap: 3px;
+    }
+
+    /* ── Ритм · повноширинна стрічка ── */
+    .rytm-hero {
+      position: relative; overflow: hidden; cursor: pointer;
+      height: clamp(300px, 58vh, 660px);
+      margin: 6px 0 3px; background: #0e1014;
+    }
+    .rytm-hero img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: grayscale(18%) contrast(1.06) brightness(0.9);
+      transition: filter .7s var(--ease), transform .9s var(--ease);
+    }
+    .rytm-hero:hover img {
+      filter: grayscale(0%) contrast(1.03) brightness(1.0); transform: scale(1.035);
+    }
+    .rytm-hero-tag {
+      position: absolute; top: 22px; left: 0;
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 20px 8px 24px;
+      background: rgba(242,101,34,0.92);
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: #fff;
+    }
+    .rytm-hero-cap {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      padding: 60px 36px 28px;
+      background: linear-gradient(to top, rgba(8,9,11,0.92), rgba(8,9,11,0.4) 55%, transparent);
+      display: flex; align-items: flex-end; justify-content: space-between; gap: 20px;
+    }
+    .rytm-hero-cap-t {
+      font-family: var(--serif); font-size: clamp(20px, 3vw, 38px);
+      color: #fff; line-height: 1.1; max-width: 70%;
+    }
+    .rytm-hero-cap-m {
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.62);
+      text-align: right; flex-shrink: 0; white-space: nowrap;
+    }
+    @media (max-width: 700px) {
+      .rytm-hero-cap { flex-direction: column; align-items: flex-start; padding: 48px 16px 20px; }
+      .rytm-hero-cap-t { max-width: 100%; }
+      .rytm-hero-cap-m { text-align: left; }
     }
     .occ-item {
       position: relative; overflow: hidden; background: #1a1d22; cursor: pointer;
@@ -1907,224 +1952,51 @@
     /* ── Лист до міста ── */
     #lyst {
       background:
-        radial-gradient(ellipse 90% 55% at 15% 100%, rgba(160,80,15,0.13), transparent 55%),
-        radial-gradient(ellipse 60% 45% at 85% 0%,   rgba(242,101,34,0.09), transparent 50%),
-        radial-gradient(ellipse 40% 60% at 50% 50%,  rgba(60,45,30,0.25),   transparent 70%),
-        linear-gradient(165deg, #0f1118 0%, #100e0b 55%, #0c0a07 100%);
+        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(242,101,34,0.06), transparent 60%),
+        #111214;
       border-top: 1px solid rgba(255,255,255,0.06);
-      padding: 100px 0 128px;
-      position: relative;
-      overflow: hidden;
+      padding: 96px 0 104px;
     }
-    #lyst::before {
-      content: '';
-      position: absolute;
-      top: -1px; left: 50%; transform: translateX(-50%);
-      width: 320px; height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(242,101,34,0.55), transparent);
+    .lyst-wrap { max-width: 720px; margin: 0 auto; }
+    .lyst-eyebrow {
+      font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(242,101,34,0.85);
+      text-align: center; display: block; margin-bottom: 14px;
     }
-    .lyst-outer { max-width: 800px; margin: 0 auto; }
-
-    /* Section label with flanking lines */
-    .lyst-label {
-      display: flex; align-items: center; gap: 18px;
-      margin-bottom: 52px;
+    .lyst-rule {
+      width: 48px; height: 2px; margin: 0 auto 40px;
+      background: rgba(242,101,34,0.55);
     }
-    .lyst-label-line {
-      flex: 1; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(242,101,34,0.35), transparent);
-    }
-    .lyst-label-text {
-      font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.24em;
-      text-transform: uppercase; color: rgba(242,101,34,0.88);
-      white-space: nowrap; flex-shrink: 0;
-    }
-
-    /* Paper card */
-    .lyst-paper {
-      background: linear-gradient(150deg, #1c1810 0%, #161310 65%, #110f0c 100%);
-      border: 1px solid rgba(242,101,34,0.14);
-      border-radius: 4px;
-      padding: clamp(32px, 6vw, 76px) clamp(28px, 7vw, 88px);
-      position: relative;
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,0.025) inset,
-        0 4px 6px rgba(0,0,0,0.45),
-        0 12px 40px rgba(0,0,0,0.32),
-        0 48px 100px rgba(0,0,0,0.18);
-    }
-    .lyst-paper::before {
-      content: '';
-      position: absolute; left: 0; top: 10%; bottom: 10%;
-      width: 3px;
-      background: linear-gradient(180deg,
-        transparent,
-        rgba(242,101,34,0.6) 30%,
-        rgba(242,101,34,0.35) 70%,
-        transparent);
-      border-radius: 0 2px 2px 0;
-    }
-    .lyst-paper::after {
-      content: '"';
-      position: absolute; top: clamp(16px, 3vw, 32px); right: clamp(20px, 4vw, 44px);
-      font-family: var(--serif); font-size: clamp(80px, 12vw, 140px);
-      line-height: 1; color: rgba(242,101,34,0.06);
-      font-style: italic; pointer-events: none; user-select: none;
-    }
-
-    /* Letter header */
-    .lyst-header {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 28px; gap: 20px;
-    }
-    .lyst-from {
-      font-family: var(--sans); font-size: 0.78rem; font-weight: 600;
-      color: rgba(255,255,255,0.65); display: block; margin-bottom: 5px;
-      letter-spacing: 0.01em;
-    }
-    .lyst-addr {
-      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em;
-      color: rgba(242,101,34,0.65); display: block; text-transform: uppercase;
-    }
-    .lyst-header-right { text-align: right; flex-shrink: 0; }
-    .lyst-date {
-      font-family: var(--serif); font-size: 1.05rem; font-style: italic;
-      color: rgba(255,255,255,0.45); display: block;
-    }
-    .lyst-coords {
-      font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.22); display: block; margin-top: 4px;
-    }
-
-    /* Decorative divider */
-    .lyst-divider {
-      display: flex; align-items: center; gap: 10px;
-      margin: 26px 0;
-    }
-    .lyst-divider-line {
-      flex: 1; height: 1px;
-      background: rgba(255,255,255,0.07);
-    }
-    .lyst-divider-dot {
-      width: 4px; height: 4px; border-radius: 50%;
-      background: rgba(242,101,34,0.45); flex-shrink: 0;
-    }
-    .lyst-divider--thin .lyst-divider-dot {
-      width: 3px; height: 3px; background: rgba(255,255,255,0.14);
-    }
-    .lyst-divider--thin .lyst-divider-line { background: rgba(255,255,255,0.04); }
-
-    /* Salutation */
-    .lyst-salute p {
-      font-family: var(--serif); font-size: clamp(22px, 2.8vw, 34px);
-      color: rgba(255,255,255,0.88); margin: 0 0 24px;
-      font-style: italic;
-      opacity: 0; transform: translateY(22px);
-      transition: opacity .8s var(--ease), transform .8s var(--ease);
-    }
-    .lyst-salute p.reveal { opacity: 1; transform: none; }
-
-    /* Body text */
     .lyst-body p {
-      font-family: var(--serif); font-size: clamp(16px, 1.9vw, 21px);
-      line-height: 1.76; color: rgba(235,228,215,0.82); margin: 0 0 24px;
+      font-family: var(--serif); font-size: clamp(19px, 2.1vw, 26px);
+      line-height: 1.72; color: rgba(255,255,255,0.9); margin: 0 0 28px;
       opacity: 0; transform: translateY(22px);
       transition: opacity .8s var(--ease), transform .8s var(--ease);
     }
     .lyst-body p.reveal { opacity: 1; transform: none; }
+    .lyst-body p.lyst-lead {
+      font-style: italic; color: #fff;
+      font-size: clamp(22px, 2.6vw, 30px);
+    }
     .lyst-body p em { color: #f2a56a; font-style: italic; }
     .lyst-body p strong {
       display: block; font-family: var(--sans); font-weight: 800;
-      font-size: clamp(34px, 5.5vw, 66px); letter-spacing: -0.025em;
-      line-height: 1; color: #fff; margin: 14px 0 6px;
+      font-size: clamp(30px, 5vw, 60px); letter-spacing: -0.02em;
+      line-height: 1; color: #fff; margin: 6px 0 4px;
     }
-    /* Drop cap */
-    .lyst-dropcap::first-letter {
-      float: left;
-      font-size: clamp(54px, 8vw, 82px);
-      line-height: 0.8;
-      font-family: var(--serif); font-weight: 700;
-      color: var(--rust);
-      margin: 8px 13px -6px 0;
-    }
-
-    /* Pull quote */
-    .lyst-quote {
-      margin: 36px 0;
-      padding: 24px 28px 24px 32px;
-      background: rgba(242,101,34,0.055);
-      border-left: 3px solid rgba(242,101,34,0.55);
-      border-radius: 0 4px 4px 0;
-      opacity: 0; transform: translateY(22px);
-      transition: opacity .8s var(--ease), transform .8s var(--ease);
-    }
-    .lyst-quote.reveal { opacity: 1; transform: none; }
-    .lyst-quote span {
-      font-family: var(--serif); font-style: italic;
-      font-size: clamp(15px, 1.75vw, 20px); line-height: 1.65;
-      color: rgba(242,140,80,0.95);
-    }
-
-    /* Signature block */
     .lyst-sign {
-      margin-top: 48px;
+      margin-top: 56px; text-align: right;
       opacity: 0; transform: translateY(22px);
       transition: opacity .8s var(--ease), transform .8s var(--ease);
     }
     .lyst-sign.reveal { opacity: 1; transform: none; }
-    .lyst-sign-inner {
-      display: flex; justify-content: flex-end;
-      align-items: flex-end; gap: 28px;
-    }
-    .lyst-sign-text { text-align: right; }
     .lyst-sign-name {
-      font-family: var(--serif); font-style: italic; font-size: 1.75rem;
-      color: rgba(255,255,255,0.9); display: block; margin-bottom: 8px;
+      font-family: var(--serif); font-style: italic; font-size: 1.65rem;
+      color: #fff; display: block;
     }
     .lyst-sign-meta {
-      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
-      text-transform: uppercase; color: rgba(255,255,255,0.32); display: block;
-    }
-
-    /* Circular stamp */
-    .lyst-stamp {
-      flex-shrink: 0; width: 76px; height: 76px;
-      border: 2px solid rgba(242,101,34,0.38);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      position: relative; opacity: 0.75;
-    }
-    .lyst-stamp-inner { text-align: center; position: relative; z-index: 1; }
-    .lyst-stamp-ring {
-      position: absolute; inset: 5px;
-      border: 1px dashed rgba(242,101,34,0.22); border-radius: 50%;
-    }
-    .lyst-stamp-city {
-      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em;
-      color: rgba(242,101,34,0.75); display: block; font-weight: 700;
-    }
-    .lyst-stamp-year {
-      font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.1em;
-      color: rgba(242,101,34,0.45); display: block; margin-top: 2px;
-    }
-
-    /* P.S. */
-    .lyst-ps {
-      margin-top: 40px; padding: 22px 0 0;
-      border-top: 1px solid rgba(255,255,255,0.05);
-      opacity: 0; transform: translateY(18px);
-      transition: opacity .8s var(--ease), transform .8s var(--ease);
-    }
-    .lyst-ps.reveal { opacity: 1; transform: none; }
-    .lyst-ps-label {
-      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: rgba(242,101,34,0.55);
-      display: block; margin-bottom: 10px;
-    }
-    .lyst-ps p {
-      font-family: var(--serif); font-style: italic;
-      font-size: clamp(13px, 1.5vw, 16px); line-height: 1.72;
-      color: rgba(235,228,215,0.48); margin: 0;
+      font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.4); margin-top: 10px; display: block;
     }
 
     /* ═══════════════════════════════════════
@@ -3531,33 +3403,53 @@
           <p class="en">Three shifts — three faces of the city. The miner returning home at seven in the morning. The student rushing to a lecture. The kiosk owner opening up. All of them — Donetsk.</p>
         </div>
       </div>
+    </div><!-- /wrap -->
 
-      <div class="occ-grid fu">
+    <!-- Full-bleed герой · донецький трамвай -->
+    <div class="rytm-hero" onclick="openLightbox(this)">
+      <img src="transport/786502.jpg" alt="Червоний трамвай Tatra на проспекті · Донецьк" loading="lazy">
+      <div class="rytm-hero-tag">
+        <span class="ua">Транспорт міста</span>
+        <span class="en">City transport</span>
+      </div>
+      <div class="rytm-hero-cap">
+        <span class="rytm-hero-cap-t ua">Червоний трамвай — кровоносна система проспектів</span>
+        <span class="rytm-hero-cap-t en">The red tram — the bloodstream of the boulevards</span>
+        <span class="rytm-hero-cap-m ua">Маршрут № 3022 · Tatra T3 · Донецьк</span>
+        <span class="rytm-hero-cap-m en">Route № 3022 · Tatra T3 · Donetsk</span>
+      </div>
+      <div class="occ-item-cap ua" hidden>Червоний трамвай Tatra на проспекті · Донецьк</div>
+      <div class="occ-item-cap en" hidden>Red Tatra tram on the boulevard · Donetsk</div>
+    </div>
 
-        <div class="occ-item s04i-1" onclick="openLightbox(this)">
-          <img src="panfilova%20and%20others/05357.jpg" alt="Залізничний вокзал · платформа вночі · Донецьк" loading="lazy">
-          <div class="occ-item-cap ua">Залізничний вокзал · платформа вночі</div>
-          <div class="occ-item-cap en">Railway station · platform at night</div>
-        </div>
-        <div class="occ-item s04i-2" onclick="openLightbox(this)">
-          <img src="panfilova%20and%20others/DSC_1124_1024.jpg" alt="06:00 · Нічний проспект · Донецьк" loading="lazy">
-          <div class="occ-item-cap ua">06:00 · Нічний проспект</div>
-          <div class="occ-item-cap en">06:00 · The night boulevard</div>
-        </div>
-        <div class="occ-item s04i-3" onclick="openLightbox(this)">
-          <img src="panfilova%20and%20others/05127.jpg" alt="14:00 · Парк у вечірній годині · Донецьк" loading="lazy">
-          <div class="occ-item-cap ua">14:00 · Парк у вечірній годині</div>
-          <div class="occ-item-cap en">14:00 · The park at evening hour</div>
-        </div>
-        <div class="occ-item s04i-4" onclick="openLightbox(this)">
-          <img src="panfilova%20and%20others/IMG_3751.jpg" alt="22:00 · Місто у тумані · Донецьк" loading="lazy">
-          <div class="occ-item-cap ua">22:00 · Місто у тумані</div>
-          <div class="occ-item-cap en">22:00 · The city in haze</div>
-        </div>
+    <!-- Full-bleed сітка · три зміни -->
+    <div class="occ-grid">
 
+      <div class="occ-item s04i-1" onclick="openLightbox(this)">
+        <img src="panfilova%20and%20others/05357.jpg" alt="Залізничний вокзал · платформа вночі · Донецьк" loading="lazy">
+        <div class="occ-item-cap ua">Залізничний вокзал · платформа вночі</div>
+        <div class="occ-item-cap en">Railway station · platform at night</div>
+      </div>
+      <div class="occ-item s04i-2" onclick="openLightbox(this)">
+        <img src="panfilova%20and%20others/DSC_1124_1024.jpg" alt="06:00 · Нічний проспект · Донецьк" loading="lazy">
+        <div class="occ-item-cap ua">06:00 · Нічний проспект</div>
+        <div class="occ-item-cap en">06:00 · The night boulevard</div>
+      </div>
+      <div class="occ-item s04i-3" onclick="openLightbox(this)">
+        <img src="panfilova%20and%20others/05127.jpg" alt="14:00 · Парк у вечірній годині · Донецьк" loading="lazy">
+        <div class="occ-item-cap ua">14:00 · Парк у вечірній годині</div>
+        <div class="occ-item-cap en">14:00 · The park at evening hour</div>
+      </div>
+      <div class="occ-item s04i-4" onclick="openLightbox(this)">
+        <img src="panfilova%20and%20others/IMG_3751.jpg" alt="22:00 · Місто у тумані · Донецьк" loading="lazy">
+        <div class="occ-item-cap ua">22:00 · Місто у тумані</div>
+        <div class="occ-item-cap en">22:00 · The city in haze</div>
       </div>
 
-      <div class="rhythm-stats fu" style="margin-top:32px;border-top:1px solid var(--line);padding-top:28px">
+    </div>
+
+    <div class="wrap">
+      <div class="rhythm-stats fu" style="margin-top:36px;border-top:1px solid var(--line);padding-top:28px">
         <div class="rhythm-stat">
           <span class="rhythm-stat-n" data-count="150" data-suffix="+">0</span>
           <span class="rhythm-stat-l ua">Шахт у регіоні</span>
@@ -4355,105 +4247,36 @@
   ════════════════════════ -->
   <section id="lyst">
     <div class="wrap">
-      <div class="lyst-outer">
+      <div class="lyst-wrap">
+        <span class="lyst-eyebrow ua">Лист до міста</span>
+        <span class="lyst-eyebrow en">A letter to the city</span>
+        <div class="lyst-rule"></div>
 
-        <!-- Section label with flanking lines -->
-        <div class="lyst-label">
-          <span class="lyst-label-line"></span>
-          <span class="lyst-label-text ua">Лист до міста</span>
-          <span class="lyst-label-text en">A letter to the city</span>
-          <span class="lyst-label-line"></span>
+        <div class="lyst-body">
+          <p class="ua lyst-lead" data-reveal>Місто моє,</p>
+          <p class="en lyst-lead" data-reveal>My city,</p>
+
+          <p class="ua" data-reveal>я знаю тебе довше, ніж пам'ятаю себе. Ще тоді, коли ти звався <em>Юзівкою</em> — понад століття тому, — твоє повітря вже було моїм. Ми росли разом: ти — вулицями й проспектами, я — поряд із тобою.</p>
+          <p class="en" data-reveal>I have known you longer than I remember myself. Back when you were still called <em>Yuzivka</em> — more than a century ago — your air was already mine. We grew up together: you — in streets and boulevards, I — right beside you.</p>
+
+          <p class="ua" data-reveal>Я бачив тебе <strong>живим.</strong> Троянди на проспекті, вугільний пил, сталь і людський гул о шостій ранку. А потім побачив тебе <strong>тихим.</strong> Без води. Без нас.</p>
+          <p class="en" data-reveal>I saw you <strong>alive.</strong> Roses on the boulevard, coal dust, steel and the human hum at six in the morning. And then I saw you <strong>silent.</strong> Without water. Without us.</p>
+
+          <p class="ua" data-reveal>У 2025-му я поїхав — але не прощаюся. Тебе можна зайняти силою, та не можна стерти з пам'яті. Поки я пам'ятаю кожен твій кут, ти живеш. Ця сторінка — твій пульс, який я тримаю в долоні.</p>
+          <p class="en" data-reveal>In 2025 I left — but I am not saying goodbye. You can be taken by force, but never erased from memory. As long as I remember every corner of you, you are alive. This page is your pulse, held in my palm.</p>
+
+          <p class="ua" data-reveal><strong>Я повернусь.</strong></p>
+          <p class="en" data-reveal><strong>I will return.</strong></p>
         </div>
 
-        <div class="lyst-paper">
-
-          <!-- Letter header -->
-          <div class="lyst-header">
-            <div>
-              <span class="lyst-from ua">Вячеслав Муністер</span>
-              <span class="lyst-from en">Vyacheslav Munister</span>
-              <span class="lyst-addr ua">Донецьк → Ужгород</span>
-              <span class="lyst-addr en">Donetsk → Uzhhorod</span>
-            </div>
-            <div class="lyst-header-right">
-              <span class="lyst-date">2025</span>
-              <span class="lyst-coords">48°01′N 37°48′E</span>
-            </div>
-          </div>
-
-          <div class="lyst-divider">
-            <span class="lyst-divider-dot"></span>
-            <span class="lyst-divider-line"></span>
-            <span class="lyst-divider-dot"></span>
-          </div>
-
-          <!-- Salutation -->
-          <div class="lyst-salute">
-            <p class="ua" data-reveal>Місто моє,</p>
-            <p class="en" data-reveal>My city,</p>
-          </div>
-
-          <!-- Body -->
-          <div class="lyst-body">
-            <p class="ua lyst-dropcap" data-reveal>я знаю тебе довше, ніж знаю себе. Мій рід дихав твоїм повітрям, коли ти ще звався <em>Юзівкою</em> — більше століття тому. Ми росли разом: ти — вулицями й проспектами, ми — поколіннями.</p>
-            <p class="en lyst-dropcap" data-reveal>I have known you longer than I have known myself. My family breathed your air when you were still called <em>Yuzivka</em> — more than a century ago. We grew up together: you — in streets and boulevards, we — in generations.</p>
-
-            <p class="ua" data-reveal>Я бачив тебе на піку: <strong>живим.</strong> Троянди на проспекті, вугільний пил, сталь, людський гул о шостій ранку. А потім бачив тебе <strong>тихим.</strong> Без води. Без нас.</p>
-            <p class="en" data-reveal>I saw you at your peak: <strong>alive.</strong> Roses on the boulevard, coal dust, steel, the human hum at six in the morning. And then I saw you <strong>silent.</strong> Without water. Without us.</p>
-
-            <p class="ua" data-reveal>Я знаю кожен твій закут. Запах тераси на Університетській. Звук трамвая після дощу на Артемі. Як пахне кераміт у шахтарських дворах у серпні. Як відбиваються ліхтарі у калюжах на Ларіна. Це — моя карта тебе, яку не замінить жоден додаток.</p>
-            <p class="en" data-reveal>I know your every corner. The smell of the terrace on Universytetska. The sound of a tram after rain on Artyom. How ceramite smells in miners' yards in August. How lanterns reflect in puddles on Larina. This is my map of you — one no app will ever replace.</p>
-
-            <p class="ua" data-reveal>У 2025-му я поїхав. Але я не прощаюся. Тебе можна зайняти силою — але не можна стерти з пам'яті. Поки я пам'ятаю кожен твій кут, ти живеш. Ця сторінка — твій пульс, який я тримаю в долоні.</p>
-            <p class="en" data-reveal>In 2025 I left. But I am not saying goodbye. You can be seized by force — but you cannot be erased from memory. As long as I remember every one of your corners, you are alive. This page is your pulse, held in my palm.</p>
-          </div>
-
-          <!-- Pull quote -->
-          <blockquote class="lyst-quote" data-reveal>
-            <span class="ua">Тебе можна зайняти силою — але не можна стерти з пам'яті.</span>
-            <span class="en">You can be seized by force — but you cannot be erased from memory.</span>
-          </blockquote>
-
-          <div class="lyst-body">
-            <p class="ua" data-reveal><strong>Я повернусь.</strong></p>
-            <p class="en" data-reveal><strong>I will return.</strong></p>
-          </div>
-
-          <div class="lyst-divider lyst-divider--thin">
-            <span class="lyst-divider-dot"></span>
-            <span class="lyst-divider-line"></span>
-            <span class="lyst-divider-dot"></span>
-          </div>
-
-          <!-- Signature -->
-          <div class="lyst-sign" data-reveal>
-            <div class="lyst-sign-inner">
-              <div class="lyst-sign-text">
-                <span class="lyst-sign-name ua">Вячеслав</span>
-                <span class="lyst-sign-name en">Vyacheslav</span>
-                <span class="lyst-sign-meta ua">Донецьк · рід з 1910-х · назавжди</span>
-                <span class="lyst-sign-meta en">Donetsk · family since the 1910s · forever</span>
-              </div>
-              <div class="lyst-stamp">
-                <div class="lyst-stamp-ring"></div>
-                <div class="lyst-stamp-inner">
-                  <span class="lyst-stamp-city">ДНК</span>
-                  <span class="lyst-stamp-year">1910–∞</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- P.S. -->
-          <div class="lyst-ps" data-reveal>
-            <span class="lyst-ps-label">P.S.</span>
-            <p class="ua">Якщо ти читаєш це — і ти теж з Донецька — знай: твоя пам'ять важлива. Ми не дозволимо нікому вирішувати за нас, ким ми були.</p>
-            <p class="en">If you're reading this — and you're from Donetsk too — know: your memory matters. We won't let anyone decide for us who we were.</p>
-          </div>
-
-        </div><!-- /lyst-paper -->
-      </div><!-- /lyst-outer -->
-    </div><!-- /wrap -->
+        <div class="lyst-sign" data-reveal>
+          <span class="lyst-sign-name ua">Вячеслав</span>
+          <span class="lyst-sign-name en">Vyacheslav</span>
+          <span class="lyst-sign-meta ua">Донецьк · назавжди</span>
+          <span class="lyst-sign-meta en">Donetsk · forever</span>
+        </div>
+      </div>
+    </div>
   </section>
 
 
