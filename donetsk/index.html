@@ -1904,45 +1904,227 @@
     /* ═══════════════════════════════════════
        ЛИСТ ДО МІСТА — letter to the city
     ═══════════════════════════════════════ */
+    /* ── Лист до міста ── */
     #lyst {
       background:
-        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(242,101,34,0.06), transparent 60%),
-        #111214;
+        radial-gradient(ellipse 90% 55% at 15% 100%, rgba(160,80,15,0.13), transparent 55%),
+        radial-gradient(ellipse 60% 45% at 85% 0%,   rgba(242,101,34,0.09), transparent 50%),
+        radial-gradient(ellipse 40% 60% at 50% 50%,  rgba(60,45,30,0.25),   transparent 70%),
+        linear-gradient(165deg, #0f1118 0%, #100e0b 55%, #0c0a07 100%);
       border-top: 1px solid rgba(255,255,255,0.06);
-      padding: 96px 0 104px;
+      padding: 100px 0 128px;
+      position: relative;
+      overflow: hidden;
     }
-    .lyst-wrap { max-width: 760px; margin: 0 auto; }
-    .lyst-eyebrow {
-      font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.18em;
-      text-transform: uppercase; color: rgba(242,101,34,0.85);
-      text-align: center; display: block; margin-bottom: 36px;
+    #lyst::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 50%; transform: translateX(-50%);
+      width: 320px; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(242,101,34,0.55), transparent);
     }
+    .lyst-outer { max-width: 800px; margin: 0 auto; }
+
+    /* Section label with flanking lines */
+    .lyst-label {
+      display: flex; align-items: center; gap: 18px;
+      margin-bottom: 52px;
+    }
+    .lyst-label-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(242,101,34,0.35), transparent);
+    }
+    .lyst-label-text {
+      font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.24em;
+      text-transform: uppercase; color: rgba(242,101,34,0.88);
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* Paper card */
+    .lyst-paper {
+      background: linear-gradient(150deg, #1c1810 0%, #161310 65%, #110f0c 100%);
+      border: 1px solid rgba(242,101,34,0.14);
+      border-radius: 4px;
+      padding: clamp(32px, 6vw, 76px) clamp(28px, 7vw, 88px);
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.025) inset,
+        0 4px 6px rgba(0,0,0,0.45),
+        0 12px 40px rgba(0,0,0,0.32),
+        0 48px 100px rgba(0,0,0,0.18);
+    }
+    .lyst-paper::before {
+      content: '';
+      position: absolute; left: 0; top: 10%; bottom: 10%;
+      width: 3px;
+      background: linear-gradient(180deg,
+        transparent,
+        rgba(242,101,34,0.6) 30%,
+        rgba(242,101,34,0.35) 70%,
+        transparent);
+      border-radius: 0 2px 2px 0;
+    }
+    .lyst-paper::after {
+      content: '"';
+      position: absolute; top: clamp(16px, 3vw, 32px); right: clamp(20px, 4vw, 44px);
+      font-family: var(--serif); font-size: clamp(80px, 12vw, 140px);
+      line-height: 1; color: rgba(242,101,34,0.06);
+      font-style: italic; pointer-events: none; user-select: none;
+    }
+
+    /* Letter header */
+    .lyst-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 28px; gap: 20px;
+    }
+    .lyst-from {
+      font-family: var(--sans); font-size: 0.78rem; font-weight: 600;
+      color: rgba(255,255,255,0.65); display: block; margin-bottom: 5px;
+      letter-spacing: 0.01em;
+    }
+    .lyst-addr {
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em;
+      color: rgba(242,101,34,0.65); display: block; text-transform: uppercase;
+    }
+    .lyst-header-right { text-align: right; flex-shrink: 0; }
+    .lyst-date {
+      font-family: var(--serif); font-size: 1.05rem; font-style: italic;
+      color: rgba(255,255,255,0.45); display: block;
+    }
+    .lyst-coords {
+      font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.22); display: block; margin-top: 4px;
+    }
+
+    /* Decorative divider */
+    .lyst-divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 26px 0;
+    }
+    .lyst-divider-line {
+      flex: 1; height: 1px;
+      background: rgba(255,255,255,0.07);
+    }
+    .lyst-divider-dot {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: rgba(242,101,34,0.45); flex-shrink: 0;
+    }
+    .lyst-divider--thin .lyst-divider-dot {
+      width: 3px; height: 3px; background: rgba(255,255,255,0.14);
+    }
+    .lyst-divider--thin .lyst-divider-line { background: rgba(255,255,255,0.04); }
+
+    /* Salutation */
+    .lyst-salute p {
+      font-family: var(--serif); font-size: clamp(22px, 2.8vw, 34px);
+      color: rgba(255,255,255,0.88); margin: 0 0 24px;
+      font-style: italic;
+      opacity: 0; transform: translateY(22px);
+      transition: opacity .8s var(--ease), transform .8s var(--ease);
+    }
+    .lyst-salute p.reveal { opacity: 1; transform: none; }
+
+    /* Body text */
     .lyst-body p {
-      font-family: var(--serif); font-size: clamp(20px, 2.4vw, 30px);
-      line-height: 1.62; color: rgba(255,255,255,0.86); margin: 0 0 30px;
+      font-family: var(--serif); font-size: clamp(16px, 1.9vw, 21px);
+      line-height: 1.76; color: rgba(235,228,215,0.82); margin: 0 0 24px;
       opacity: 0; transform: translateY(22px);
       transition: opacity .8s var(--ease), transform .8s var(--ease);
     }
     .lyst-body p.reveal { opacity: 1; transform: none; }
-    .lyst-body p em { color: var(--rust); font-style: italic; }
+    .lyst-body p em { color: #f2a56a; font-style: italic; }
     .lyst-body p strong {
       display: block; font-family: var(--sans); font-weight: 800;
-      font-size: clamp(30px, 5vw, 60px); letter-spacing: -0.02em;
-      line-height: 1; color: #fff; margin: 8px 0 4px;
+      font-size: clamp(34px, 5.5vw, 66px); letter-spacing: -0.025em;
+      line-height: 1; color: #fff; margin: 14px 0 6px;
     }
+    /* Drop cap */
+    .lyst-dropcap::first-letter {
+      float: left;
+      font-size: clamp(54px, 8vw, 82px);
+      line-height: 0.8;
+      font-family: var(--serif); font-weight: 700;
+      color: var(--rust);
+      margin: 8px 13px -6px 0;
+    }
+
+    /* Pull quote */
+    .lyst-quote {
+      margin: 36px 0;
+      padding: 24px 28px 24px 32px;
+      background: rgba(242,101,34,0.055);
+      border-left: 3px solid rgba(242,101,34,0.55);
+      border-radius: 0 4px 4px 0;
+      opacity: 0; transform: translateY(22px);
+      transition: opacity .8s var(--ease), transform .8s var(--ease);
+    }
+    .lyst-quote.reveal { opacity: 1; transform: none; }
+    .lyst-quote span {
+      font-family: var(--serif); font-style: italic;
+      font-size: clamp(15px, 1.75vw, 20px); line-height: 1.65;
+      color: rgba(242,140,80,0.95);
+    }
+
+    /* Signature block */
     .lyst-sign {
-      margin-top: 56px; text-align: right;
+      margin-top: 48px;
       opacity: 0; transform: translateY(22px);
       transition: opacity .8s var(--ease), transform .8s var(--ease);
     }
     .lyst-sign.reveal { opacity: 1; transform: none; }
+    .lyst-sign-inner {
+      display: flex; justify-content: flex-end;
+      align-items: flex-end; gap: 28px;
+    }
+    .lyst-sign-text { text-align: right; }
     .lyst-sign-name {
-      font-family: var(--serif); font-style: italic; font-size: 1.6rem;
-      color: #fff; display: block;
+      font-family: var(--serif); font-style: italic; font-size: 1.75rem;
+      color: rgba(255,255,255,0.9); display: block; margin-bottom: 8px;
     }
     .lyst-sign-meta {
-      font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em;
-      text-transform: uppercase; color: rgba(255,255,255,0.4); margin-top: 10px; display: block;
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.32); display: block;
+    }
+
+    /* Circular stamp */
+    .lyst-stamp {
+      flex-shrink: 0; width: 76px; height: 76px;
+      border: 2px solid rgba(242,101,34,0.38);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; opacity: 0.75;
+    }
+    .lyst-stamp-inner { text-align: center; position: relative; z-index: 1; }
+    .lyst-stamp-ring {
+      position: absolute; inset: 5px;
+      border: 1px dashed rgba(242,101,34,0.22); border-radius: 50%;
+    }
+    .lyst-stamp-city {
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em;
+      color: rgba(242,101,34,0.75); display: block; font-weight: 700;
+    }
+    .lyst-stamp-year {
+      font-family: var(--mono); font-size: 0.48rem; letter-spacing: 0.1em;
+      color: rgba(242,101,34,0.45); display: block; margin-top: 2px;
+    }
+
+    /* P.S. */
+    .lyst-ps {
+      margin-top: 40px; padding: 22px 0 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      opacity: 0; transform: translateY(18px);
+      transition: opacity .8s var(--ease), transform .8s var(--ease);
+    }
+    .lyst-ps.reveal { opacity: 1; transform: none; }
+    .lyst-ps-label {
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(242,101,34,0.55);
+      display: block; margin-bottom: 10px;
+    }
+    .lyst-ps p {
+      font-family: var(--serif); font-style: italic;
+      font-size: clamp(13px, 1.5vw, 16px); line-height: 1.72;
+      color: rgba(235,228,215,0.48); margin: 0;
     }
 
     /* ═══════════════════════════════════════
@@ -4173,35 +4355,105 @@
   ════════════════════════ -->
   <section id="lyst">
     <div class="wrap">
-      <div class="lyst-wrap">
-        <span class="lyst-eyebrow ua">Лист до міста</span>
-        <span class="lyst-eyebrow en">A letter to the city</span>
+      <div class="lyst-outer">
 
-        <div class="lyst-body">
-          <p class="ua" data-reveal>Місто моє,</p>
-          <p class="en" data-reveal>My city,</p>
-
-          <p class="ua" data-reveal>я знаю тебе довше, ніж знаю себе. Мій рід дихав твоїм повітрям, коли ти ще звався <em>Юзівкою</em> — більше століття тому. Ми росли разом: ти — вулицями й проспектами, ми — поколіннями.</p>
-          <p class="en" data-reveal>I have known you longer than I have known myself. My family breathed your air when you were still called <em>Yuzivka</em> — more than a century ago. We grew up together: you — in streets and boulevards, we — in generations.</p>
-
-          <p class="ua" data-reveal>Я бачив тебе на піку: <strong>живим.</strong> Троянди на проспекті, вугільний пил, сталь, людський гул о шостій ранку. А потім бачив тебе <strong>тихим.</strong> Без води. Без нас.</p>
-          <p class="en" data-reveal>I saw you at your peak: <strong>alive.</strong> Roses on the boulevard, coal dust, steel, the human hum at six in the morning. And then I saw you <strong>silent.</strong> Without water. Without us.</p>
-
-          <p class="ua" data-reveal>У 2025-му я поїхав. Але я не прощаюся. Тебе можна зайняти силою — але не можна стерти з пам'яті. Поки я пам'ятаю кожен твій кут, ти живеш. Ця сторінка — твій пульс, який я тримаю в долоні.</p>
-          <p class="en" data-reveal>In 2025 I left. But I am not saying goodbye. You can be seized by force — but you cannot be erased from memory. As long as I remember every one of your corners, you are alive. This page is your pulse, held in my palm.</p>
-
-          <p class="ua" data-reveal><strong>Я повернусь.</strong></p>
-          <p class="en" data-reveal><strong>I will return.</strong></p>
+        <!-- Section label with flanking lines -->
+        <div class="lyst-label">
+          <span class="lyst-label-line"></span>
+          <span class="lyst-label-text ua">Лист до міста</span>
+          <span class="lyst-label-text en">A letter to the city</span>
+          <span class="lyst-label-line"></span>
         </div>
 
-        <div class="lyst-sign" data-reveal>
-          <span class="lyst-sign-name ua">Вячеслав</span>
-          <span class="lyst-sign-name en">Vyacheslav</span>
-          <span class="lyst-sign-meta ua">Донецьк · рід з 1910-х · назавжди</span>
-          <span class="lyst-sign-meta en">Donetsk · family since the 1910s · forever</span>
-        </div>
-      </div>
-    </div>
+        <div class="lyst-paper">
+
+          <!-- Letter header -->
+          <div class="lyst-header">
+            <div>
+              <span class="lyst-from ua">Вячеслав Муністер</span>
+              <span class="lyst-from en">Vyacheslav Munister</span>
+              <span class="lyst-addr ua">Донецьк → Ужгород</span>
+              <span class="lyst-addr en">Donetsk → Uzhhorod</span>
+            </div>
+            <div class="lyst-header-right">
+              <span class="lyst-date">2025</span>
+              <span class="lyst-coords">48°01′N 37°48′E</span>
+            </div>
+          </div>
+
+          <div class="lyst-divider">
+            <span class="lyst-divider-dot"></span>
+            <span class="lyst-divider-line"></span>
+            <span class="lyst-divider-dot"></span>
+          </div>
+
+          <!-- Salutation -->
+          <div class="lyst-salute">
+            <p class="ua" data-reveal>Місто моє,</p>
+            <p class="en" data-reveal>My city,</p>
+          </div>
+
+          <!-- Body -->
+          <div class="lyst-body">
+            <p class="ua lyst-dropcap" data-reveal>я знаю тебе довше, ніж знаю себе. Мій рід дихав твоїм повітрям, коли ти ще звався <em>Юзівкою</em> — більше століття тому. Ми росли разом: ти — вулицями й проспектами, ми — поколіннями.</p>
+            <p class="en lyst-dropcap" data-reveal>I have known you longer than I have known myself. My family breathed your air when you were still called <em>Yuzivka</em> — more than a century ago. We grew up together: you — in streets and boulevards, we — in generations.</p>
+
+            <p class="ua" data-reveal>Я бачив тебе на піку: <strong>живим.</strong> Троянди на проспекті, вугільний пил, сталь, людський гул о шостій ранку. А потім бачив тебе <strong>тихим.</strong> Без води. Без нас.</p>
+            <p class="en" data-reveal>I saw you at your peak: <strong>alive.</strong> Roses on the boulevard, coal dust, steel, the human hum at six in the morning. And then I saw you <strong>silent.</strong> Without water. Without us.</p>
+
+            <p class="ua" data-reveal>Я знаю кожен твій закут. Запах тераси на Університетській. Звук трамвая після дощу на Артемі. Як пахне кераміт у шахтарських дворах у серпні. Як відбиваються ліхтарі у калюжах на Ларіна. Це — моя карта тебе, яку не замінить жоден додаток.</p>
+            <p class="en" data-reveal>I know your every corner. The smell of the terrace on Universytetska. The sound of a tram after rain on Artyom. How ceramite smells in miners' yards in August. How lanterns reflect in puddles on Larina. This is my map of you — one no app will ever replace.</p>
+
+            <p class="ua" data-reveal>У 2025-му я поїхав. Але я не прощаюся. Тебе можна зайняти силою — але не можна стерти з пам'яті. Поки я пам'ятаю кожен твій кут, ти живеш. Ця сторінка — твій пульс, який я тримаю в долоні.</p>
+            <p class="en" data-reveal>In 2025 I left. But I am not saying goodbye. You can be seized by force — but you cannot be erased from memory. As long as I remember every one of your corners, you are alive. This page is your pulse, held in my palm.</p>
+          </div>
+
+          <!-- Pull quote -->
+          <blockquote class="lyst-quote" data-reveal>
+            <span class="ua">Тебе можна зайняти силою — але не можна стерти з пам'яті.</span>
+            <span class="en">You can be seized by force — but you cannot be erased from memory.</span>
+          </blockquote>
+
+          <div class="lyst-body">
+            <p class="ua" data-reveal><strong>Я повернусь.</strong></p>
+            <p class="en" data-reveal><strong>I will return.</strong></p>
+          </div>
+
+          <div class="lyst-divider lyst-divider--thin">
+            <span class="lyst-divider-dot"></span>
+            <span class="lyst-divider-line"></span>
+            <span class="lyst-divider-dot"></span>
+          </div>
+
+          <!-- Signature -->
+          <div class="lyst-sign" data-reveal>
+            <div class="lyst-sign-inner">
+              <div class="lyst-sign-text">
+                <span class="lyst-sign-name ua">Вячеслав</span>
+                <span class="lyst-sign-name en">Vyacheslav</span>
+                <span class="lyst-sign-meta ua">Донецьк · рід з 1910-х · назавжди</span>
+                <span class="lyst-sign-meta en">Donetsk · family since the 1910s · forever</span>
+              </div>
+              <div class="lyst-stamp">
+                <div class="lyst-stamp-ring"></div>
+                <div class="lyst-stamp-inner">
+                  <span class="lyst-stamp-city">ДНК</span>
+                  <span class="lyst-stamp-year">1910–∞</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- P.S. -->
+          <div class="lyst-ps" data-reveal>
+            <span class="lyst-ps-label">P.S.</span>
+            <p class="ua">Якщо ти читаєш це — і ти теж з Донецька — знай: твоя пам'ять важлива. Ми не дозволимо нікому вирішувати за нас, ким ми були.</p>
+            <p class="en">If you're reading this — and you're from Donetsk too — know: your memory matters. We won't let anyone decide for us who we were.</p>
+          </div>
+
+        </div><!-- /lyst-paper -->
+      </div><!-- /lyst-outer -->
+    </div><!-- /wrap -->
   </section>
 
 
