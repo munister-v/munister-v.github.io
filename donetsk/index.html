@@ -2117,6 +2117,103 @@
       .ep-hero, .ep-wide, .ep-tall, .ep-full, .ep-full-t { grid-column: span 1; grid-row: span 1; }
     }
 
+    /* ═══════════════════════════════════════
+       ВІДЕО — Нові Герої Донбасу
+    ═══════════════════════════════════════ */
+    #heroes {
+      background: #0a0c0e;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    #heroes .sec-h2 { color: #fff; }
+    #heroes .sec-sub { color: rgba(255,255,255,0.42); }
+    #heroes .sec-num { color: #f26522; }
+    #heroes .sec-rule { background: #f26522; }
+    .heroes-note {
+      max-width: 60ch; margin: 0 0 40px;
+      border-left: 3px solid #f26522; padding-left: 26px;
+    }
+    .heroes-note p {
+      font-family: var(--serif); font-size: clamp(17px, 1.8vw, 22px);
+      font-style: italic; color: rgba(255,255,255,0.82); line-height: 1.65;
+    }
+    .heroes-note em { color: #f9a440; font-style: normal; }
+    .heroes-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px;
+    }
+    .hero-card {
+      position: relative; overflow: hidden; background: #111418;
+      cursor: pointer; aspect-ratio: 16/9;
+    }
+    .hero-card.featured { grid-column: span 2; aspect-ratio: 16/9; }
+    .hero-card img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: brightness(0.72) saturate(0.8);
+      transition: filter .5s ease, transform .6s ease;
+    }
+    .hero-card:hover img { filter: brightness(0.88) saturate(1.05); transform: scale(1.04); }
+    .hero-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.2) 50%, transparent 75%);
+    }
+    .hero-play {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.85);
+      width: 46px; height: 46px; border-radius: 50%;
+      background: rgba(242,101,34,0.9); display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .3s, transform .3s;
+    }
+    .hero-play svg { fill: #fff; width: 18px; height: 18px; margin-left: 3px; }
+    .hero-card:hover .hero-play { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+    .hero-meta {
+      position: absolute; bottom: 0; left: 0; right: 0; padding: 14px 16px 12px; z-index: 2;
+    }
+    .hero-series {
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: #f9a440; display: block; margin-bottom: 5px;
+    }
+    .hero-title {
+      font-family: var(--sans); font-weight: 700; font-size: 0.88rem;
+      color: #fff; line-height: 1.25; display: block;
+    }
+    .hero-card.featured .hero-title { font-size: 1.08rem; }
+    /* video modal */
+    .yt-modal {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.9); align-items: center; justify-content: center;
+    }
+    .yt-modal.open { display: flex; }
+    .yt-modal-inner { position: relative; width: min(920px, 94vw); }
+    .yt-modal-inner iframe {
+      width: 100%; aspect-ratio: 16/9; border: none; display: block;
+    }
+    .yt-modal-close {
+      position: absolute; top: -40px; right: 0; color: rgba(255,255,255,0.7);
+      font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em;
+      text-transform: uppercase; cursor: pointer; background: none; border: none; padding: 4px 0;
+    }
+    .yt-modal-close:hover { color: #fff; }
+    .heroes-cta {
+      margin-top: 28px; display: flex; align-items: center; gap: 20px;
+    }
+    .heroes-cta-link {
+      font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(242,101,34,0.9); text-decoration: none;
+      border-bottom: 1px solid rgba(242,101,34,0.4); padding-bottom: 2px;
+      transition: color .2s, border-color .2s;
+    }
+    .heroes-cta-link:hover { color: #fff; border-color: #fff; }
+    .heroes-unseen {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.38);
+    }
+    @media (max-width: 900px) {
+      .heroes-grid { grid-template-columns: 1fr 1fr; }
+      .hero-card.featured { grid-column: span 2; }
+    }
+    @media (max-width: 560px) {
+      .heroes-grid { grid-template-columns: 1fr; }
+      .hero-card.featured { grid-column: span 1; }
+    }
+
   </style>
 </head>
 
@@ -2165,6 +2262,10 @@
         <span class="ua">Пам'ять</span>
         <span class="en">Memory</span>
       </a></li>
+      <li><a href="#heroes">
+        <span class="ua">Герої</span>
+        <span class="en">Heroes</span>
+      </a></li>
       <li><a href="#botsad">
         <span class="ua">Оазис</span>
         <span class="en">Oasis</span>
@@ -2204,6 +2305,9 @@
     </a>
     <a href="#pamyat" onclick="closeMobileMenu()">
       <span class="ua">Пам'ять</span><span class="en">Memory</span>
+    </a>
+    <a href="#heroes" onclick="closeMobileMenu()">
+      <span class="ua">Герої</span><span class="en">Heroes</span>
     </a>
     <a href="#botsad" onclick="closeMobileMenu()">
       <span class="ua">Оазис</span><span class="en">Oasis</span>
@@ -3378,10 +3482,10 @@
       </div>
 
       <div class="tz-slider fu" id="tz-slider">
-        <img class="tz-now" src="after2022/photo_2024-09-05_15-15-06.jpg" alt="Донецьк в окупації, вересень 2024" loading="lazy">
-        <img class="tz-then" id="tz-then-img" src="panorama/IMG_0628%20as%20Smart%20Object-1.jpg" alt="Донецьк на піку розвитку, 2012" loading="lazy">
+        <img class="tz-now" src="after2022/photo_2026-03-08_08-22-01.jpg" alt="Донецьк в окупації · пуста вулиця 2026" loading="lazy">
+        <img class="tz-then" id="tz-then-img" src="before2014/photo_2026-02-10_19-24-09.jpg" alt="Донецьк 2012 · Євро-2012 · живе місто" loading="lazy">
         <span class="tz-tag tz-tag-then">Тоді · 2012</span>
-        <span class="tz-tag tz-tag-now">Зараз · 2024</span>
+        <span class="tz-tag tz-tag-now">Зараз · 2026</span>
         <div class="tz-handle" id="tz-handle"><div class="tz-handle-knob">⟺</div></div>
       </div>
       <div class="tz-hint ua">← Потягни, щоб порівняти →</div>
@@ -3511,6 +3615,121 @@
       </div>
     </div>
   </section>
+
+
+  <!-- ════════════════════════
+       НОВІ ГЕРОЇ — DonbasThinkTank
+  ════════════════════════ -->
+  <section id="heroes" class="section">
+    <div class="wrap">
+      <header class="sec-head fu">
+        <span class="sec-num">▷</span>
+        <h2 class="sec-h2 ua">Нові Герої<br>Донбасу</h2>
+        <h2 class="sec-h2 en">New Heroes<br>of Donbas</h2>
+        <div class="sec-rule"></div>
+        <span class="sec-sub ua">Документальні фільми · «Фабрика думки Донбас»</span>
+        <span class="sec-sub en">Documentary films · Donbas Think Tank</span>
+      </header>
+
+      <div class="heroes-note fu">
+        <p class="ua">Ці відео <em>майже ніхто не бачив</em>. Документальні портрети людей, які залишились у Донецьку після 2014 — і не скорились. Правозахисники, священики, журналісти, педагоги. Звичайні люди з необичайною стійкістю.</p>
+        <p class="en">These videos have been seen by <em>almost nobody</em>. Documentary portraits of people who stayed in Donetsk after 2014 — and did not submit. Human rights defenders, priests, journalists, teachers. Ordinary people with extraordinary resilience.</p>
+      </div>
+    </div>
+
+    <div class="heroes-grid fu">
+        <div class="hero-card featured" onclick="openYT('vcTuMIsXpwo')">
+          <img src="https://img.youtube.com/vi/vcTuMIsXpwo/maxresdefault.jpg" alt="Ігор Козловський · Частина 1" loading="lazy">
+          <div class="hero-card-overlay"></div>
+          <div class="hero-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="hero-meta">
+            <span class="hero-series">ГЕРОЇ ДОНБАСУ</span>
+            <span class="hero-title">Ігор Козловський · Частина 1</span>
+          </div>
+        </div>
+        <div class="hero-card" onclick="openYT('kMZxz6jmXbQ')">
+          <img src="https://img.youtube.com/vi/kMZxz6jmXbQ/maxresdefault.jpg" alt="Ігор Козловський · Частина 2" loading="lazy">
+          <div class="hero-card-overlay"></div>
+          <div class="hero-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="hero-meta">
+            <span class="hero-series">ГЕРОЇ ДОНБАСУ</span>
+            <span class="hero-title">Ігор Козловський · Частина 2</span>
+          </div>
+        </div>
+        <div class="hero-card" onclick="openYT('u5X9lhkgzas')">
+          <img src="https://img.youtube.com/vi/u5X9lhkgzas/maxresdefault.jpg" alt="Роман Світан" loading="lazy">
+          <div class="hero-card-overlay"></div>
+          <div class="hero-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="hero-meta">
+            <span class="hero-series">ГЕРОЇ ДОНБАСУ</span>
+            <span class="hero-title">Роман Світан</span>
+          </div>
+        </div>
+        <div class="hero-card" onclick="openYT('VAGD9nVshy0')">
+          <img src="https://img.youtube.com/vi/VAGD9nVshy0/maxresdefault.jpg" alt="Олександр Соболь" loading="lazy">
+          <div class="hero-card-overlay"></div>
+          <div class="hero-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="hero-meta">
+            <span class="hero-series">ГЕРОЇ ДОНБАСУ</span>
+            <span class="hero-title">Олександр Соболь</span>
+          </div>
+        </div>
+        <div class="hero-card" onclick="openYT('RaPSk1aGhd0')">
+          <img src="https://img.youtube.com/vi/RaPSk1aGhd0/maxresdefault.jpg" alt="Леонід Краснопольський" loading="lazy">
+          <div class="hero-card-overlay"></div>
+          <div class="hero-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="hero-meta">
+            <span class="hero-series">ГЕРОЇ ДОНБАСУ</span>
+            <span class="hero-title">Леонід Краснопольський</span>
+          </div>
+        </div>
+        <div class="hero-card featured" onclick="openYT('kk3cwZ3esMg')">
+          <img src="https://img.youtube.com/vi/kk3cwZ3esMg/maxresdefault.jpg" alt="Маріуполь · Український Форпост" loading="lazy">
+          <div class="hero-card-overlay"></div>
+          <div class="hero-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="hero-meta">
+            <span class="hero-series">ДОКУМЕНТАЛЬНИЙ</span>
+            <span class="hero-title">Маріуполь · Український Форпост</span>
+          </div>
+        </div>
+        <div class="hero-card" onclick="openYT('KOMvYraNzcY')">
+          <img src="https://img.youtube.com/vi/KOMvYraNzcY/maxresdefault.jpg" alt="Донецьк #1" loading="lazy">
+          <div class="hero-card-overlay"></div>
+          <div class="hero-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="hero-meta">
+            <span class="hero-series">ГРОМАДЯНСЬКИЙ СПРОТИВ</span>
+            <span class="hero-title">Донецьк #1</span>
+          </div>
+        </div>
+        <div class="hero-card" onclick="openYT('SSCJWS_b720')">
+          <img src="https://img.youtube.com/vi/SSCJWS_b720/maxresdefault.jpg" alt="Дмитро Чернявський" loading="lazy">
+          <div class="hero-card-overlay"></div>
+          <div class="hero-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="hero-meta">
+            <span class="hero-series">ГРОМАДЯНСЬКИЙ СПРОТИВ</span>
+            <span class="hero-title">Дмитро Чернявський</span>
+          </div>
+        </div>
+    </div>
+
+    <div class="wrap">
+      <div class="heroes-cta fu">
+        <a href="https://www.youtube.com/@DonbasThinkTank/videos" target="_blank" rel="noopener" class="heroes-cta-link ua">Всі відео на каналі →</a>
+        <a href="https://www.youtube.com/@DonbasThinkTank/videos" target="_blank" rel="noopener" class="heroes-cta-link en">All videos on the channel →</a>
+        <span class="heroes-unseen ua">· Фабрика Думки «Донбас» · незалежна редакція</span>
+        <span class="heroes-unseen en">· Donbas Think Tank · independent editorial</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- YouTube modal -->
+  <div class="yt-modal" id="yt-modal" onclick="if(event.target===this)closeYT()">
+    <div class="yt-modal-inner">
+      <button class="yt-modal-close" onclick="closeYT()">✕ Закрити</button>
+      <iframe id="yt-iframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+    </div>
+  </div>
+
 
   <!-- ════════════════════════
        07 - DONBAS IDENTITY
@@ -3939,6 +4158,20 @@
       slider.addEventListener('pointercancel', end);
       setPos(50);
     })();
+
+
+    /* ── YouTube modal ── */
+    function openYT(id) {
+      document.getElementById('yt-iframe').src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0';
+      document.getElementById('yt-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeYT() {
+      document.getElementById('yt-modal').classList.remove('open');
+      document.getElementById('yt-iframe').src = '';
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeYT(); });
 
     /* ── Sticky nav ── */
     const nav = document.getElementById('main-nav');
