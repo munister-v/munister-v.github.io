@@ -2413,8 +2413,16 @@
     #heroes .sec-sub { color: rgba(255,255,255,0.42); }
     #heroes .sec-num { color: #f26522; }
     #heroes .sec-rule { background: #f26522; }
+    .heroes-intro {
+      display: grid;
+      grid-template-columns: minmax(300px, 0.82fr) minmax(440px, 1.18fr);
+      gap: clamp(36px, 7vw, 104px);
+      align-items: end;
+      margin-bottom: 48px;
+    }
+    .heroes-intro .sec-head { margin-bottom: 32px; }
     .heroes-note {
-      max-width: 60ch; margin: 0 0 40px;
+      max-width: 60ch; margin: 0;
       border-left: 3px solid #f26522; padding-left: 26px;
     }
     .heroes-note p {
@@ -2422,8 +2430,87 @@
       font-style: italic; color: rgba(255,255,255,0.82); line-height: 1.65;
     }
     .heroes-note em { color: #f9a440; font-style: normal; }
+    .heroes-feature {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #111418;
+      color: #fff;
+      cursor: pointer;
+      text-align: left;
+      padding: 0;
+    }
+    .heroes-feature img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: brightness(0.76) saturate(0.92) contrast(1.06);
+      transition: filter .45s ease, transform .6s ease;
+    }
+    .heroes-feature:hover img {
+      filter: brightness(0.94) saturate(1.05) contrast(1.04);
+      transform: scale(1.025);
+    }
+    .heroes-feature:focus-visible {
+      outline: 2px solid #f9a440;
+      outline-offset: 4px;
+    }
+    .heroes-feature:hover .video-play,
+    .heroes-feature:focus-visible .video-play {
+      opacity: 1;
+      transform: translate(-50%,-50%) scale(1);
+    }
+    .heroes-feature::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.08) 68%);
+    }
+    .heroes-feature-copy {
+      position: absolute; left: 24px; right: 24px; bottom: 22px; z-index: 2;
+    }
+    .heroes-feature-kicker {
+      display: block; margin-bottom: 8px;
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: #f9a440;
+    }
+    .heroes-feature-title {
+      display: block; max-width: 22ch;
+      font-family: var(--sans); font-size: clamp(1.35rem, 2.5vw, 2.4rem);
+      font-weight: 760; line-height: 1.06;
+    }
+    .heroes-feature-duration {
+      position: absolute; top: 14px; right: 14px; z-index: 2;
+      padding: 6px 8px; background: rgba(0,0,0,0.76);
+      font-family: var(--mono); font-size: 0.62rem; color: #fff;
+    }
+    .heroes-catalog { margin-top: 8px; }
+    .heroes-toolbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      margin-bottom: 24px; padding: 16px 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .heroes-filters {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .heroes-filter {
+      min-height: 42px; padding: 0 14px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: transparent; color: rgba(255,255,255,0.62);
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.11em;
+      text-transform: uppercase; cursor: pointer;
+      transition: color .2s, border-color .2s, background .2s;
+    }
+    .heroes-filter:hover { color: #fff; border-color: rgba(255,255,255,0.42); }
+    .heroes-filter.active {
+      color: #fff; border-color: #f26522; background: rgba(242,101,34,0.14);
+    }
+    .heroes-total {
+      flex-shrink: 0; font-family: var(--mono); font-size: 0.62rem;
+      letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.44);
+    }
+    .heroes-total strong { color: #fff; font-size: 1rem; margin-right: 6px; }
     .heroes-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px;
       grid-auto-flow: dense;
     }
     .video-card {
@@ -2436,7 +2523,6 @@
       outline: 2px solid #f9a440;
       outline-offset: -4px;
     }
-    .video-card.featured { grid-column: span 2; aspect-ratio: 16/9; }
     .video-card img {
       width: 100%; height: 100%; object-fit: cover; display: block;
       filter: brightness(0.76) saturate(0.92) contrast(1.03);
@@ -2457,6 +2543,11 @@
     .video-play svg { fill: #fff; width: 18px; height: 18px; margin-left: 3px; }
     .video-card:hover .video-play,
     .video-card:focus-visible .video-play { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+    .video-duration {
+      position: absolute; top: 10px; right: 10px; z-index: 2;
+      padding: 5px 7px; background: rgba(0,0,0,0.78);
+      font-family: var(--mono); font-size: 0.58rem; color: #fff;
+    }
     .video-meta {
       position: absolute; bottom: 0; left: 0; right: 0; padding: 14px 16px 12px; z-index: 2;
     }
@@ -2466,9 +2557,10 @@
     }
     .video-title {
       font-family: var(--sans); font-weight: 700; font-size: 0.88rem;
-      color: #fff; line-height: 1.25; display: block;
+      color: #fff; line-height: 1.25; display: -webkit-box;
+      -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
-    .video-card.featured .video-title { font-size: 1.08rem; }
+    .video-card[hidden] { display: none; }
     /* video modal */
     .yt-modal {
       display: none; position: fixed; inset: 0; z-index: 300;
@@ -2486,7 +2578,13 @@
     }
     .yt-modal-close:hover { color: #fff; }
     .heroes-cta {
-      margin-top: 28px; display: flex; align-items: center; gap: 20px;
+      margin-top: 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .heroes-channel {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .heroes-channel img {
+      width: 48px; height: 48px; object-fit: cover; background: #fff;
     }
     .heroes-cta-link {
       font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em;
@@ -2499,13 +2597,24 @@
       font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em;
       text-transform: uppercase; color: rgba(255,255,255,0.38);
     }
+    .heroes-more {
+      min-height: 44px; padding: 0 18px;
+      border: 1px solid rgba(255,255,255,0.2); background: transparent;
+      color: #fff; font-family: var(--mono); font-size: 0.6rem;
+      letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+    }
+    .heroes-more:hover { border-color: #f26522; color: #f9a440; }
+    .heroes-more[hidden] { display: none; }
     @media (max-width: 900px) {
+      .heroes-intro { grid-template-columns: 1fr; align-items: start; }
       .heroes-grid { grid-template-columns: 1fr 1fr; }
-      .video-card.featured { grid-column: span 2; }
     }
     @media (max-width: 560px) {
+      .heroes-toolbar { align-items: flex-start; flex-direction: column; }
+      .heroes-filter { flex: 1 1 calc(50% - 4px); }
       .heroes-grid { grid-template-columns: 1fr; }
-      .video-card.featured { grid-column: span 1; }
+      .heroes-feature-copy { left: 16px; right: 16px; bottom: 16px; }
+      .heroes-cta { align-items: flex-start; flex-direction: column; }
     }
 
   </style>
@@ -4083,102 +4192,70 @@
   ════════════════════════ -->
   <section id="heroes" class="section">
     <div class="wrap">
-      <header class="sec-head fu">
-        <span class="sec-num">▷</span>
-        <h2 class="sec-h2 ua">Нові Герої<br>Донбасу</h2>
-        <h2 class="sec-h2 en">New Heroes<br>of Donbas</h2>
-        <div class="sec-rule"></div>
-        <span class="sec-sub ua">Документальні фільми · «Фабрика думки Донбас»</span>
-        <span class="sec-sub en">Documentary films · Donbas Think Tank</span>
-      </header>
+      <div class="heroes-intro fu">
+        <div>
+          <header class="sec-head">
+            <span class="sec-num">46 відео</span>
+            <h2 class="sec-h2 ua">Нові Герої<br>Донбасу</h2>
+            <h2 class="sec-h2 en">New Heroes<br>of Donbas</h2>
+            <div class="sec-rule"></div>
+            <span class="sec-sub ua">Відеоархів · «Фабрика думки Донбас»</span>
+            <span class="sec-sub en">Video archive · Donbas Think Tank</span>
+          </header>
 
-      <div class="heroes-note fu">
-        <p class="ua">Ці відео <em>майже ніхто не бачив</em>. Документальні портрети людей, які залишились у Донецьку після 2014 — і не скорились. Правозахисники, священики, журналісти, педагоги. Звичайні люди з необичайною стійкістю.</p>
-        <p class="en">These videos have been seen by <em>almost nobody</em>. Documentary portraits of people who stayed in Donetsk after 2014 — and did not submit. Human rights defenders, priests, journalists, teachers. Ordinary people with extraordinary resilience.</p>
+          <div class="heroes-note">
+            <p class="ua">Повний відеоархів каналу: <em>портрети людей Донбасу</em>, громадянський спротив, документальні фільми та ранні випуски про тих, хто зберіг власний голос.</p>
+            <p class="en">The channel's complete video archive: <em>portraits of Donbas people</em>, civic resistance, documentaries, and early episodes about those who kept their own voice.</p>
+          </div>
+        </div>
+
+        <button type="button" class="heroes-feature" data-yt-id="kk3cwZ3esMg" aria-label="Відкрити відео: Маріуполь. Український форпост">
+          <img src="video-thumbs/kk3cwZ3esMg.jpg" alt="Маріуполь. Український форпост" loading="lazy" decoding="async" width="1280" height="720">
+          <span class="heroes-feature-duration">54:16</span>
+          <span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="heroes-feature-copy">
+            <span class="heroes-feature-kicker ua">Головний документальний фільм</span>
+            <span class="heroes-feature-kicker en">Featured documentary</span>
+            <span class="heroes-feature-title">Маріуполь. Український форпост</span>
+          </span>
+        </button>
       </div>
-    </div>
 
-    <div class="heroes-grid fu">
-        <button type="button" class="video-card featured" data-yt-id="vcTuMIsXpwo" aria-label="Відкрити відео: Ігор Козловський · Частина 1">
-          <img src="https://i.ytimg.com/vi/vcTuMIsXpwo/hqdefault.jpg" alt="Ігор Козловський · Частина 1" loading="lazy" decoding="async" width="480" height="360">
-          <span class="video-card-overlay"></span>
-          <span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="video-meta">
-            <span class="video-series">ГЕРОЇ ДОНБАСУ</span>
-            <span class="video-title">Ігор Козловський · Частина 1</span>
-          </span>
-        </button>
-        <button type="button" class="video-card" data-yt-id="kMZxz6jmXbQ" aria-label="Відкрити відео: Ігор Козловський · Частина 2">
-          <img src="https://i.ytimg.com/vi/kMZxz6jmXbQ/hqdefault.jpg" alt="Ігор Козловський · Частина 2" loading="lazy" decoding="async" width="480" height="360">
-          <span class="video-card-overlay"></span>
-          <span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="video-meta">
-            <span class="video-series">ГЕРОЇ ДОНБАСУ</span>
-            <span class="video-title">Ігор Козловський · Частина 2</span>
-          </span>
-        </button>
-        <button type="button" class="video-card" data-yt-id="u5X9lhkgzas" aria-label="Відкрити відео: Роман Світан">
-          <img src="https://i.ytimg.com/vi/u5X9lhkgzas/hqdefault.jpg" alt="Роман Світан" loading="lazy" decoding="async" width="480" height="360">
-          <span class="video-card-overlay"></span>
-          <span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="video-meta">
-            <span class="video-series">ГЕРОЇ ДОНБАСУ</span>
-            <span class="video-title">Роман Світан</span>
-          </span>
-        </button>
-        <button type="button" class="video-card" data-yt-id="VAGD9nVshy0" aria-label="Відкрити відео: Олександр Соболь">
-          <img src="https://i.ytimg.com/vi/VAGD9nVshy0/hqdefault.jpg" alt="Олександр Соболь" loading="lazy" decoding="async" width="480" height="360">
-          <span class="video-card-overlay"></span>
-          <span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="video-meta">
-            <span class="video-series">ГЕРОЇ ДОНБАСУ</span>
-            <span class="video-title">Олександр Соболь</span>
-          </span>
-        </button>
-        <button type="button" class="video-card" data-yt-id="RaPSk1aGhd0" aria-label="Відкрити відео: Леонід Краснопольський">
-          <img src="https://i.ytimg.com/vi/RaPSk1aGhd0/hqdefault.jpg" alt="Леонід Краснопольський" loading="lazy" decoding="async" width="480" height="360">
-          <span class="video-card-overlay"></span>
-          <span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="video-meta">
-            <span class="video-series">ГЕРОЇ ДОНБАСУ</span>
-            <span class="video-title">Леонід Краснопольський</span>
-          </span>
-        </button>
-        <button type="button" class="video-card featured" data-yt-id="kk3cwZ3esMg" aria-label="Відкрити відео: Маріуполь · Український Форпост">
-          <img src="https://i.ytimg.com/vi/kk3cwZ3esMg/hqdefault.jpg" alt="Маріуполь · Український Форпост" loading="lazy" decoding="async" width="480" height="360">
-          <span class="video-card-overlay"></span>
-          <span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="video-meta">
-            <span class="video-series">ДОКУМЕНТАЛЬНИЙ</span>
-            <span class="video-title">Маріуполь · Український Форпост</span>
-          </span>
-        </button>
-        <button type="button" class="video-card" data-yt-id="KOMvYraNzcY" aria-label="Відкрити відео: Донецьк #1">
-          <img src="https://i.ytimg.com/vi/KOMvYraNzcY/hqdefault.jpg" alt="Донецьк #1" loading="lazy" decoding="async" width="480" height="360">
-          <span class="video-card-overlay"></span>
-          <span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="video-meta">
-            <span class="video-series">ГРОМАДЯНСЬКИЙ СПРОТИВ</span>
-            <span class="video-title">Донецьк #1</span>
-          </span>
-        </button>
-        <button type="button" class="video-card" data-yt-id="SSCJWS_b720" aria-label="Відкрити відео: Дмитро Чернявський">
-          <img src="https://i.ytimg.com/vi/SSCJWS_b720/hqdefault.jpg" alt="Дмитро Чернявський" loading="lazy" decoding="async" width="480" height="360">
-          <span class="video-card-overlay"></span>
-          <span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="video-meta">
-            <span class="video-series">ГРОМАДЯНСЬКИЙ СПРОТИВ</span>
-            <span class="video-title">Дмитро Чернявський</span>
-          </span>
-        </button>
-    </div>
+      <div class="heroes-catalog">
+        <div class="heroes-toolbar fu">
+          <div class="heroes-filters" role="group" aria-label="Фільтр відео">
+            <button type="button" class="heroes-filter active" data-video-filter="all" aria-pressed="true">
+              <span class="ua">Усі</span><span class="en">All</span>
+            </button>
+            <button type="button" class="heroes-filter" data-video-filter="new" aria-pressed="false">
+              <span class="ua">Герої</span><span class="en">Heroes</span>
+            </button>
+            <button type="button" class="heroes-filter" data-video-filter="archive" aria-pressed="false">
+              <span class="ua">Архів серії</span><span class="en">Series archive</span>
+            </button>
+            <button type="button" class="heroes-filter" data-video-filter="docs" aria-pressed="false">
+              <span class="ua">Документалістика</span><span class="en">Documentaries</span>
+            </button>
+          </div>
+          <div class="heroes-total"><strong id="heroes-visible-count">46</strong><span class="ua">відео</span><span class="en">videos</span></div>
+        </div>
 
-    <div class="wrap">
-      <div class="heroes-cta fu">
-        <a href="https://www.youtube.com/@DonbasThinkTank/videos" target="_blank" rel="noopener" class="heroes-cta-link ua">Всі відео на каналі →</a>
-        <a href="https://www.youtube.com/@DonbasThinkTank/videos" target="_blank" rel="noopener" class="heroes-cta-link en">All videos on the channel →</a>
-        <span class="heroes-unseen ua">· Фабрика Думки «Донбас» · незалежна редакція</span>
-        <span class="heroes-unseen en">· Donbas Think Tank · independent editorial</span>
+        <div class="heroes-grid fu" id="heroes-grid"></div>
+
+        <div class="heroes-cta fu">
+          <div class="heroes-channel">
+            <img src="video-thumbs/UCcbtaKdsYI0ILNjYQVwQ6rQ.jpg" alt="" width="48" height="48">
+            <div>
+              <a href="https://www.youtube.com/@DonbasThinkTank/videos" target="_blank" rel="noopener" class="heroes-cta-link ua">Канал на YouTube →</a>
+              <a href="https://www.youtube.com/@DonbasThinkTank/videos" target="_blank" rel="noopener" class="heroes-cta-link en">YouTube channel →</a>
+              <span class="heroes-unseen ua">· Фабрика Думки «Донбас» · 46 відео</span>
+              <span class="heroes-unseen en">· Donbas Think Tank · 46 videos</span>
+            </div>
+          </div>
+          <button type="button" class="heroes-more" id="heroes-more">
+            <span class="ua">Показати всі 46</span><span class="en">Show all 46</span>
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -4186,8 +4263,8 @@
   <!-- YouTube modal -->
   <div class="yt-modal" id="yt-modal" onclick="if(event.target===this)closeYT()">
     <div class="yt-modal-inner">
-      <button class="yt-modal-close" onclick="closeYT()">✕ Закрити</button>
-      <iframe id="yt-iframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      <button class="yt-modal-close" onclick="closeYT()"><span class="ua">✕ Закрити</span><span class="en">✕ Close</span></button>
+      <iframe id="yt-iframe" src="" title="YouTube video player" allowfullscreen allow="autoplay; encrypted-media"></iframe>
     </div>
   </div>
 
@@ -4847,6 +4924,7 @@
     <div class="photo-lightbox-caption" id="lightbox-cap"></div>
   </div>
 
+  <script src="donbas-videos.js"></script>
   <script>
     /* ── Language ── */
     function setLang(lang) {
@@ -4933,22 +5011,113 @@
 
     /* ── YouTube modal ── */
     (function setupVideoCards() {
-      const fallbackThumb = 'murzilka/99955.jpg';
-      document.querySelectorAll('.video-card[data-yt-id]').forEach(card => {
-        const id = card.dataset.ytId;
-        const img = card.querySelector('img');
-        card.addEventListener('click', () => openYT(id));
-        if (!img) return;
-        img.addEventListener('error', () => {
-          if (!img.dataset.triedMq) {
-            img.dataset.triedMq = '1';
-            img.src = `https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
-            return;
-          }
-          card.classList.add('broken-thumb');
-          img.src = fallbackThumb;
+      const videos = Array.isArray(window.DONBAS_VIDEOS) ? window.DONBAS_VIDEOS : [];
+      const grid = document.getElementById('heroes-grid');
+      const moreButton = document.getElementById('heroes-more');
+      const visibleCount = document.getElementById('heroes-visible-count');
+      const initialLimit = 12;
+      let activeFilter = 'all';
+      let expanded = false;
+
+      function categoryFor(title) {
+        if (title.startsWith('ГЕРОЇ УКРАЇНСЬКОГО ДОНБАСУ')) return 'new';
+        if (title.startsWith('Новые Герои Донбасса')) return 'archive';
+        return 'docs';
+      }
+
+      function categoryLabel(category) {
+        if (category === 'new') return 'ГЕРОЇ УКРАЇНСЬКОГО ДОНБАСУ';
+        if (category === 'archive') return 'АРХІВ · НОВІ ГЕРОЇ ДОНБАСУ';
+        return 'ДОКУМЕНТАЛІСТИКА';
+      }
+
+      function displayTitle(video) {
+        return video.title
+          .replace(/^ГЕРОЇ УКРАЇНСЬКОГО ДОНБАСУ\.\s*/i, '')
+          .replace(/^Новые Герои Донбасса,\s*/i, '')
+          .replace(/\.$/, '');
+      }
+
+      function formatDuration(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const rest = seconds % 60;
+        return `${minutes}:${String(rest).padStart(2, '0')}`;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function cardMarkup(video) {
+        const category = categoryFor(video.title);
+        const title = displayTitle(video);
+        return `
+          <button type="button" class="video-card" data-yt-id="${video.id}" data-video-category="${category}" aria-label="Відкрити відео: ${escapeHtml(title)}">
+            <img src="video-thumbs/${video.id}.jpg" alt="${escapeHtml(title)}" loading="lazy" decoding="async" width="1280" height="720">
+            <span class="video-card-overlay"></span>
+            <span class="video-duration">${formatDuration(video.duration)}</span>
+            <span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="video-meta">
+              <span class="video-series">${categoryLabel(category)}</span>
+              <span class="video-title">${escapeHtml(title)}</span>
+            </span>
+          </button>`;
+      }
+
+      function applyFilter() {
+        const matching = videos.filter(video => activeFilter === 'all' || categoryFor(video.title) === activeFilter);
+        let shown = 0;
+        grid.querySelectorAll('.video-card').forEach(card => {
+          const matches = activeFilter === 'all' || card.dataset.videoCategory === activeFilter;
+          const withinLimit = activeFilter !== 'all' || expanded || shown < initialLimit;
+          card.hidden = !matches || !withinLimit;
+          if (matches) shown += 1;
+        });
+        visibleCount.textContent = matching.length;
+        moreButton.hidden = activeFilter !== 'all' || expanded || matching.length <= initialLimit;
+      }
+
+      if (grid) {
+        grid.innerHTML = videos.map(cardMarkup).join('');
+        grid.addEventListener('click', event => {
+          const card = event.target.closest('.video-card[data-yt-id]');
+          if (card) openYT(card.dataset.ytId);
+        });
+        grid.addEventListener('error', event => {
+          const img = event.target.closest('.video-card img');
+          if (!img || img.dataset.fallback) return;
+          img.dataset.fallback = '1';
+          img.src = `https://i.ytimg.com/vi/${img.closest('.video-card').dataset.ytId}/hqdefault.jpg`;
+        }, true);
+      }
+
+      document.querySelectorAll('.heroes-feature[data-yt-id]').forEach(card => {
+        card.addEventListener('click', () => openYT(card.dataset.ytId));
+      });
+
+      document.querySelectorAll('.heroes-filter').forEach(button => {
+        button.addEventListener('click', () => {
+          activeFilter = button.dataset.videoFilter;
+          expanded = activeFilter !== 'all';
+          document.querySelectorAll('.heroes-filter').forEach(item => {
+            const active = item === button;
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-pressed', String(active));
+          });
+          applyFilter();
         });
       });
+
+      moreButton?.addEventListener('click', () => {
+        expanded = true;
+        applyFilter();
+      });
+
+      applyFilter();
     })();
     function openYT(id) {
       if (!id) return;
