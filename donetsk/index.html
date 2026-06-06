@@ -69,6 +69,52 @@
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; border: none; background: none; font: inherit; }
 
+    /* Content protection for the public view. Admin mode stays fully editable. */
+    body:not(.admin-available) {
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    body:not(.admin-available) img {
+      -webkit-user-drag: none;
+      user-drag: none;
+    }
+    body.admin-available,
+    body.admin-available * {
+      -webkit-user-select: text;
+      user-select: text;
+      -webkit-touch-callout: default;
+    }
+    input, textarea, [contenteditable="true"] {
+      -webkit-user-select: text;
+      user-select: text;
+    }
+    .protection-notice {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 500;
+      max-width: min(520px, calc(100vw - 32px));
+      padding: 11px 16px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(8,10,12,.94);
+      color: rgba(255,255,255,.88);
+      font-family: var(--mono);
+      font-size: .62rem;
+      letter-spacing: .08em;
+      line-height: 1.45;
+      text-align: center;
+      text-transform: uppercase;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 12px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .protection-notice.visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
     /* ═══════════════════════════════════════
        LANGUAGE SYSTEM
     ═══════════════════════════════════════ */
@@ -5722,6 +5768,73 @@
       active: adminAllowed,
       data: adminLoadData()
     };
+
+    /* ── Public content protection ── */
+    (function setupContentProtection() {
+      if (adminAllowed) return;
+
+      const notice = document.createElement('div');
+      notice.className = 'protection-notice';
+      notice.setAttribute('role', 'status');
+      notice.setAttribute('aria-live', 'polite');
+      document.body.appendChild(notice);
+      let noticeTimer;
+
+      function showProtectionNotice() {
+        const isEn = document.body.classList.contains('lang-en');
+        notice.textContent = isEn
+          ? 'Copyrighted author material · copying is disabled'
+          : 'Авторський матеріал захищено · копіювання вимкнено';
+        notice.classList.add('visible');
+        clearTimeout(noticeTimer);
+        noticeTimer = setTimeout(() => notice.classList.remove('visible'), 1800);
+      }
+
+      function isEditableTarget(target) {
+        return target instanceof Element && Boolean(target.closest('input, textarea, [contenteditable="true"]'));
+      }
+
+      document.querySelectorAll('img').forEach(img => {
+        img.draggable = false;
+        img.setAttribute('draggable', 'false');
+      });
+
+      document.addEventListener('contextmenu', event => {
+        if (isEditableTarget(event.target)) return;
+        event.preventDefault();
+        showProtectionNotice();
+      }, true);
+
+      document.addEventListener('dragstart', event => {
+        if (isEditableTarget(event.target)) return;
+        event.preventDefault();
+        showProtectionNotice();
+      }, true);
+
+      ['copy', 'cut', 'selectstart'].forEach(type => {
+        document.addEventListener(type, event => {
+          if (isEditableTarget(event.target)) return;
+          event.preventDefault();
+          if (type !== 'selectstart') showProtectionNotice();
+        }, true);
+      });
+
+      document.addEventListener('keydown', event => {
+        if (isEditableTarget(event.target)) return;
+        const key = event.key.toLowerCase();
+        const primary = event.ctrlKey || event.metaKey;
+        const inspectShortcut =
+          event.key === 'F12'
+          || (primary && event.shiftKey && ['i', 'j', 'c', 'k'].includes(key))
+          || (event.metaKey && event.altKey && ['i', 'j', 'c', 'u'].includes(key));
+        const sourceOrSave = primary && ['u', 's'].includes(key);
+
+        if (!inspectShortcut && !sourceOrSave) return;
+        event.preventDefault();
+        event.stopPropagation();
+        showProtectionNotice();
+      }, true);
+    })();
 
     function adminBase64(text) {
       const bytes = new TextEncoder().encode(text);
