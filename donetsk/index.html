@@ -3408,6 +3408,50 @@
       .footer-meta { display: none; }
     }
 
+    /* ── Legal panel: detailed licence / usage terms, redesigned ── */
+    .legal-panel { margin-top: 40px; padding-top: 32px; border-top: 1px solid rgba(200,192,184,0.10); }
+    .legal-kicker {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--rust); margin: 0 0 20px;
+    }
+    .legal-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+      background: rgba(200,192,184,0.08); border: 1px solid rgba(200,192,184,0.08);
+    }
+    .legal-item { background: #0d0c0b; padding: 22px 24px 24px; transition: background .25s ease; }
+    .legal-item:hover { background: rgba(255,255,255,0.025); }
+    .legal-num {
+      display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.16em;
+      color: rgba(242,101,34,0.5); margin-bottom: 12px;
+    }
+    .legal-h {
+      font-family: var(--sans); font-size: 0.95rem; font-weight: 700;
+      color: rgba(232,227,221,0.92); margin: 0 0 8px; letter-spacing: 0.005em; line-height: 1.25;
+    }
+    .legal-p {
+      font-family: var(--sans); font-size: 0.755rem; line-height: 1.7;
+      color: rgba(200,192,184,0.52); margin: 0;
+    }
+    .legal-p a { color: rgba(200,192,184,0.72); border-bottom: 1px solid rgba(200,192,184,0.28); text-decoration: none; transition: color .2s, border-color .2s; }
+    .legal-p a:hover { color: var(--rust); border-color: var(--rust); }
+    .legal-p strong { color: rgba(222,216,208,0.8); font-weight: 700; }
+    .legal-footnote {
+      margin: 22px 2px 0; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.05em;
+      color: rgba(200,192,184,0.32); line-height: 1.6;
+    }
+    .legal-jump {
+      display: inline-block; margin-top: 8px; font-family: var(--mono); font-size: 0.66rem;
+      letter-spacing: 0.1em; color: rgba(200,192,184,0.45); text-decoration: none;
+      border-bottom: 1px solid rgba(200,192,184,0.22); transition: color .2s, border-color .2s;
+    }
+    .legal-jump:hover { color: var(--rust); border-color: var(--rust); }
+    @media (max-width: 980px) { .legal-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) {
+      .legal-grid { grid-template-columns: 1fr; }
+      .legal-panel { margin-top: 30px; padding-top: 22px; }
+      .legal-item { padding: 20px 20px 22px; }
+    }
+
   </style>
 </head>
 
@@ -6164,19 +6208,74 @@
             <li><a href="https://pastvu.com/?b=37.7,47.9,38.1,48.1" target="_blank" rel="noopener">PastVu</a> <span class="credits-license">ретрофото</span></li>
           </ul>
         </div>
-        <div class="credits-block">
+                <div class="credits-block">
           <p class="credits-label ua">Ліцензія</p>
           <p class="credits-label en">License</p>
           <ul class="credits-list">
-                        <li class="credits-license" style="font-size:.7rem;color:rgba(200,192,184,.45);line-height:1.8">
-              <strong style="color:rgba(220,214,206,.7)">Авторське право.</strong> Усі авторські фотографії, тексти, дизайн і компонування цього сайту © В'ячеслав Муністер, 2006–2026. Усі права захищено.<br>
-              <strong style="color:rgba(220,214,206,.7)">Заборона використання.</strong> Копіювання, відтворення, розповсюдження, публікація чи будь-яке комерційне використання авторських матеріалів без письмової згоди автора — заборонено. Для запиту дозволу звертайтеся через профіль автора.<br>
-              <strong style="color:rgba(220,214,206,.7)">Матеріали третіх сторін.</strong> Фотографії та цитати авторів ЖЖ використано з дозволу або згідно з умовами поширення першоджерела, з обов'язковим посиланням на автора. Фото з Wikimedia Commons поширюються на умовах CC BY-SA 4.0 (атрибуція: автор і джерело вказані у підписах). Фото з PastVu використано в ознайомлювальних цілях з посиланням на джерело.<br>
-              <strong style="color:rgba(220,214,206,.7)">Призначення.</strong> Сайт є приватним, некомерційним, меморіальним проєктом. Він не має на меті отримання прибутку; будь-які добровільні внески спрямовуються виключно на підтримку й розвиток проєкту.<br>
-              <strong style="color:rgba(220,214,206,.7)">Претензії.</strong> Якщо ви є правовласником матеріалу, розміщеного на цьому сайті, і вважаєте, що його використання порушує ваші права — зв'яжіться з автором, і матеріал буде оперативно розглянуто та за потреби вилучено.
-            </li>
+            <li class="ua" lang="uk">© В'ячеслав Муністер, 2006–2026<br><span class="credits-license">усі права на авторські матеріали захищено</span></li>
+            <li class="en" lang="en">© Vyacheslav Munister, 2006–2026<br><span class="credits-license">all rights to original materials reserved</span></li>
           </ul>
+          <a href="#legal" class="legal-jump ua" lang="uk">Повні умови використання ↓</a>
+          <a href="#legal" class="legal-jump en" lang="en">Full terms of use ↓</a>
         </div>
+      </div>
+
+      <div class="legal-panel" id="legal">
+        <p class="legal-kicker ua" lang="uk">§ Умови використання матеріалів сайту</p>
+        <p class="legal-kicker en" lang="en">§ Terms of use for site materials</p>
+        <div class="legal-grid">
+
+          <div class="legal-item">
+            <span class="legal-num">01 / 06</span>
+            <h3 class="legal-h ua" lang="uk">Авторське право</h3>
+            <h3 class="legal-h en" lang="en">Copyright</h3>
+            <p class="legal-p ua" lang="uk">Усі авторські фотографії, тексти, ілюстрації, дизайн і компонування цього сайту — © В'ячеслав Муністер, 2006–2026. Права захищені законодавством України про авторське право та суміжні права, а також міжнародними угодами.</p>
+            <p class="legal-p en" lang="en">All original photographs, texts, illustrations, design and layout on this site are © Vyacheslav Munister, 2006–2026, protected under Ukrainian copyright law and international treaties.</p>
+          </div>
+
+          <div class="legal-item">
+            <span class="legal-num">02 / 06</span>
+            <h3 class="legal-h ua" lang="uk">Заборона використання</h3>
+            <h3 class="legal-h en" lang="en">Usage restrictions</h3>
+            <p class="legal-p ua" lang="uk">Копіювання, кадрування, відтворення, розповсюдження, публікація в ЗМІ чи соцмережах, а також будь-яке комерційне використання авторських матеріалів без попередньої письмової згоди автора — заборонено.</p>
+            <p class="legal-p en" lang="en">Copying, cropping, reproducing, redistributing, publishing in media or social networks, and any commercial use of original materials without the author's prior written consent is prohibited.</p>
+          </div>
+
+          <div class="legal-item">
+            <span class="legal-num">03 / 06</span>
+            <h3 class="legal-h ua" lang="uk">Цитування й атрибуція</h3>
+            <h3 class="legal-h en" lang="en">Quoting &amp; attribution</h3>
+            <p class="legal-p ua" lang="uk">Короткі цитати текстів допустимі в обсязі, виправданому метою (огляд, наука, журналістика), за обов'язкової умови: вказано автора — В'ячеслав Муністер — і додано пряме посилання на цю сторінку.</p>
+            <p class="legal-p en" lang="en">Brief excerpts are permitted to the extent justified by purpose (review, research, journalism), provided the author — Vyacheslav Munister — is credited and a direct link to this page is included.</p>
+          </div>
+
+          <div class="legal-item">
+            <span class="legal-num">04 / 06</span>
+            <h3 class="legal-h ua" lang="uk">Матеріали третіх сторін</h3>
+            <h3 class="legal-h en" lang="en">Third-party materials</h3>
+            <p class="legal-p ua" lang="uk">Світлини й цитати інших авторів (LiveJournal, державні архіви, дослідницькі проєкти) використано з дозволу або згідно з умовами поширення першоджерела, з обов'язковою атрибуцією. Матеріали Wikimedia Commons — на умовах <strong>CC&nbsp;BY-SA&nbsp;4.0</strong> (атрибуція в підписах). Архівні фото PastVu — в ознайомлювальних, неприбуткових цілях, з посиланням на джерело.</p>
+            <p class="legal-p en" lang="en">Photos and quotes by other authors (LiveJournal, state archives, research projects) are used with permission or per the source's distribution terms, always attributed. Wikimedia Commons material is under <strong>CC&nbsp;BY-SA&nbsp;4.0</strong> (credited in captions); PastVu archival photos are used for illustrative, non-profit purposes with a source link.</p>
+          </div>
+
+          <div class="legal-item">
+            <span class="legal-num">05 / 06</span>
+            <h3 class="legal-h ua" lang="uk">Призначення проєкту</h3>
+            <h3 class="legal-h en" lang="en">Purpose of the project</h3>
+            <p class="legal-p ua" lang="uk">Сайт — приватний, некомерційний, меморіальний проєкт однієї людини. Він не має на меті прибуток, рекламу чи політичну агітацію. Будь-які добровільні внески спрямовуються виключно на хостинг, технічну підтримку й розвиток архіву.</p>
+            <p class="legal-p en" lang="en">This site is a private, non-commercial, memorial project run by one person — not for profit, advertising, or political ends. Any voluntary contributions go solely toward hosting, upkeep and further development of the archive.</p>
+          </div>
+
+          <div class="legal-item">
+            <span class="legal-num">06 / 06</span>
+            <h3 class="legal-h ua" lang="uk">Претензії правовласників</h3>
+            <h3 class="legal-h en" lang="en">Rights-holder claims</h3>
+            <p class="legal-p ua" lang="uk">Якщо ви правовласник матеріалу, розміщеного тут, і вважаєте, що його використання порушує ваші права — зв'яжіться з автором особисто через <a href="https://munister.com.ua" target="_blank" rel="noopener">munister.com.ua</a>. Звернення розглядається оперативно: матеріал буде уточнено, коректно атрибутовано або вилучено за обґрунтованою вимогою.</p>
+            <p class="legal-p en" lang="en">If you hold rights to material published here and believe its use infringes them, contact the author directly via <a href="https://munister.com.ua" target="_blank" rel="noopener">munister.com.ua</a>. Requests are handled promptly — material will be corrected, properly attributed, or removed upon a substantiated claim.</p>
+          </div>
+
+        </div>
+        <p class="legal-footnote ua" lang="uk">Останнє оновлення умов — червень 2026 · з питань прав і дозволів звертайтеся лише через офіційний профіль автора.</p>
+        <p class="legal-footnote en" lang="en">Terms last updated — June 2026 · for rights and permissions, contact only via the author's official profile.</p>
       </div>
     </div>
   </div>
