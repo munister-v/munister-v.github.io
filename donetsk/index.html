@@ -3452,6 +3452,32 @@
       .legal-item { padding: 20px 20px 22px; }
     }
 
+    /* ── Legal panel as a compact disclosure (collapsed by default) ── */
+    .legal-summary {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      cursor: pointer; list-style: none; -webkit-user-select: none; user-select: none;
+    }
+    .legal-summary::-webkit-details-marker { display: none; }
+    .legal-summary::marker { content: ""; }
+    .legal-summary .legal-kicker { margin: 0; transition: color .2s; }
+    .legal-summary:hover .legal-kicker { color: #ffb066; }
+    .legal-summary-meta { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .legal-summary-hint {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(200,192,184,0.32);
+    }
+    .legal-summary-arrow {
+      display: inline-block; font-size: 0.7rem; line-height: 1; color: rgba(200,192,184,0.4);
+      transition: transform .3s var(--ease);
+    }
+    .legal-panel[open] .legal-summary-arrow { transform: rotate(180deg); }
+    .legal-panel[open] .legal-summary-hint.ua::after { content: " · згорнути"; }
+    .legal-panel[open] .legal-summary-hint.en::after { content: " · collapse"; }
+    .legal-panel > .legal-grid { margin-top: 24px; }
+    .legal-panel .legal-grid,
+    .legal-panel .legal-footnote { animation: legal-reveal .35s var(--ease); }
+    @keyframes legal-reveal { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
   </style>
 </head>
 
@@ -4146,9 +4172,9 @@
               <figcaption class="en">Night over the city · 2012 panorama</figcaption>
             </figure>
             <figure class="euro-card euro-card-tall">
-              <img src="euro2012/IMG_9718%20as%20Smart%20Object-2.jpg" alt="Проспект Ілліча у вечірній годині · Донецьк" loading="lazy">
-              <figcaption class="ua">Проспект Ілліча · вечірня година</figcaption>
-              <figcaption class="en">Ilyich Avenue · evening hour</figcaption>
+              <img src="euro2012/IMG_9718%20as%20Smart%20Object-2.jpg" alt="Вулиця Артема у вечірній годині · Донецьк" loading="lazy">
+              <figcaption class="ua">Вулиця Артема · вечірня година</figcaption>
+              <figcaption class="en">Artema Street · evening hour</figcaption>
             </figure>
           </div>
           <div class="euro-facts">
@@ -6220,9 +6246,16 @@
         </div>
       </div>
 
-      <div class="legal-panel" id="legal">
-        <p class="legal-kicker ua" lang="uk">§ Умови використання матеріалів сайту</p>
-        <p class="legal-kicker en" lang="en">§ Terms of use for site materials</p>
+      <details class="legal-panel" id="legal">
+        <summary class="legal-summary">
+          <span class="legal-kicker ua" lang="uk">§ Умови використання матеріалів сайту</span>
+          <span class="legal-kicker en" lang="en">§ Terms of use for site materials</span>
+          <span class="legal-summary-meta">
+            <span class="legal-summary-hint ua" lang="uk">6 пунктів · розгорнути</span>
+            <span class="legal-summary-hint en" lang="en">6 points · expand</span>
+            <span class="legal-summary-arrow" aria-hidden="true">⌄</span>
+          </span>
+        </summary>
         <div class="legal-grid">
 
           <div class="legal-item">
@@ -6276,7 +6309,7 @@
         </div>
         <p class="legal-footnote ua" lang="uk">Останнє оновлення умов — червень 2026 · з питань прав і дозволів звертайтеся лише через офіційний профіль автора.</p>
         <p class="legal-footnote en" lang="en">Terms last updated — June 2026 · for rights and permissions, contact only via the author's official profile.</p>
-      </div>
+      </details>
     </div>
   </div>
 
@@ -6287,8 +6320,6 @@
         <span class="footer-logo">Донецьк <em>нашими очима</em></span>
         <span class="footer-meta ua">Авторський портал · 2026</span>
         <span class="footer-meta en">Personal portal · 2026</span>
-        <a href="https://munister.com.ua/" target="_blank" rel="noopener" class="footer-back ua">← Повернутися на проект</a>
-        <a href="https://munister.com.ua/" target="_blank" rel="noopener" class="footer-back en">← Back to the project</a>
       </div>
     </div>
   </footer>
