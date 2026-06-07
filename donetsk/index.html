@@ -3296,6 +3296,74 @@
       .izol-grid { grid-template-columns: 1fr; gap: 24px; }
     }
 
+    /* ── Round 7 polish ─────────────────────────────────
+       Izolyatsia: visible heading + larger type + pull-quote
+       Euro-2012: stop title clipping at mid widths
+       Voloshkove: bump small/low-contrast labels
+       Footer + Privat24: readability + mobile trim ── */
+    .izol .sec-h2 { color: #fff; }
+    .izol-kicker { font-size: 0.66rem; }
+    .izol-text { font-size: 1.05rem; line-height: 1.78; color: rgba(225,219,212,0.88); }
+    .izol-video-cap { font-size: 0.68rem; }
+    .izol-stat strong { font-size: 1.85rem; }
+    .izol-stat span { font-size: 0.6rem; }
+    .izol-link { font-size: 0.7rem; padding: 12px 18px; }
+    .izol-quote {
+      margin: 4px 0 20px; padding: 18px 22px;
+      border-left: 3px solid var(--rust);
+      background: rgba(196,68,36,0.07); border-radius: 0 4px 4px 0;
+    }
+    .izol-quote p {
+      font-family: var(--serif); font-style: italic;
+      font-size: 1.08rem; line-height: 1.6;
+      color: rgba(242,237,230,0.92); margin: 0 0 8px;
+    }
+    .izol-quote cite {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em;
+      text-transform: uppercase; font-style: normal;
+      color: rgba(200,192,184,0.5);
+    }
+    .izol-quote cite a { color: rgba(242,140,90,0.92); text-decoration: none; }
+    .izol-quote cite a:hover { color: #fff; }
+
+    /* Євро-2012: title was overflowing its grid column at ~600-1100px,
+       getting visually clipped behind the photo stage */
+    .euro-copy { min-width: 0; }
+    .euro-title { overflow-wrap: break-word; word-break: break-word; }
+    @media (max-width: 1100px) and (min-width: 561px) {
+      .euro-title { font-size: clamp(40px, 9vw, 92px); }
+    }
+
+    /* Волошкове поле: small mono labels were too faint to read */
+    .vol-eyebrow, .vol-kicker, .vol-subtitle {
+      font-size: 0.72rem; letter-spacing: 0.1em;
+    }
+    .vol-eyebrow { color: rgba(242,120,80,0.88); }
+    .vol-kicker, .vol-subtitle { color: rgba(255,255,255,0.5); }
+    .vol-ch-desc { font-size: 0.82rem; line-height: 1.6; color: rgba(255,255,255,0.55); }
+    .vol-tr-n { font-size: 0.7rem; color: rgba(165,185,220,0.6); }
+    .vol-tr-sub { font-size: 0.7rem; color: rgba(255,255,255,0.45); }
+    .vol-cover-overlay-sub { font-size: 0.66rem; color: rgba(175,193,222,0.78); }
+    .vol-cover-badge { font-size: 0.64rem; }
+    .vol-cover-price { font-size: 0.66rem; }
+
+    /* Privat24: longer routing hint needs to wrap cleanly */
+    .pay-btn-txt small {
+      display: block; line-height: 1.4; white-space: normal;
+      font-size: 0.6rem; opacity: .68;
+    }
+
+    /* Footer: readable sizing + tidy mobile stack */
+    .footer-logo { font-size: 18px; letter-spacing: 0.04em; }
+    .footer-meta, .footer-back { font-size: 0.7rem; }
+    @media (max-width: 640px) {
+      .site-footer { padding: 28px 0; }
+      .footer-inner { gap: 10px; }
+    }
+    @media (max-width: 440px) {
+      .footer-meta { display: none; }
+    }
+
   </style>
 </head>
 
@@ -4337,7 +4405,8 @@
             <span class="pay-btn-txt">
               <span class="ua">Сплатити · Privat24</span>
               <span class="en">Pay · Privat24</span>
-              <small>privat24.ua</small>
+              <small class="ua">Перекази → «На рахунок IBAN» · реквізити нижче</small>
+              <small class="en">Transfers → "To IBAN account" · details below</small>
             </span>
           </a>
 
@@ -4357,13 +4426,6 @@
               <div class="pay-field-row">
                 <span class="pay-field-val pay-field-val--iban">UA72 3052 9902 6204 6401 0062 5701 7</span>
                 <button type="button" class="pay-copy" data-copy="UA723052990262046401006257017" onclick="copyPay(this)" aria-label="Копіювати IBAN">⧉</button>
-              </div>
-            </div>
-            <div class="pay-field">
-              <span class="pay-field-label">РНОКПП</span>
-              <div class="pay-field-row">
-                <span class="pay-field-val">3646300111</span>
-                <button type="button" class="pay-copy" data-copy="3646300111" onclick="copyPay(this)" aria-label="Копіювати РНОКПП">⧉</button>
               </div>
             </div>
             <div class="pay-field">
@@ -5195,8 +5257,15 @@
           <p class="izol-text ua">З 2010 року «Ізоляція» була одним із найвідоміших центрів сучасного мистецтва України — на території колишнього заводу ізоляційних матеріалів. 9 червня 2014 року бойовики «ДНР» захопили арт-фонд і перетворили його на таємну в'язницю на вулиці Світлого Шляху, 3.</p>
           <p class="izol-text en">From 2010, Izolyatsia was one of Ukraine's most renowned contemporary-art centres, on the grounds of a former insulation-materials factory. On 9 June 2014, «DNR» militants seized it and turned it into a secret prison on Paradise Street, 3.</p>
 
-          <p class="izol-text ua">Журналіст і письменник <strong>Станіслав Асєєв</strong> провів тут <strong>962 дні</strong> полону й катувань. Після звільнення в обміні 2019 року він написав книжку «Світлий шлях. Історія одного концтабору» — одне з найважливіших свідчень про злочини в окупованому Донецьку. У 2021 році — Шевченківська премія.</p>
-          <p class="izol-text en">Journalist and writer <strong>Stanislav Aseyev</strong> spent <strong>962 days</strong> here in captivity and torture. After his 2019 release in a prisoner exchange he wrote "The Torture Camp on Paradise Street" — one of the most important testimonies of crimes in occupied Donetsk. In 2021, the Shevchenko National Prize.</p>
+          <p class="izol-text ua">Журналіст і письменник <strong>Станіслав Асєєв</strong> провів тут <strong>962 дні</strong> полону й катувань — 28 місяців у секретній в'язниці за сфабрикованими звинуваченнями у шпигунстві. Після звільнення в обміні полоненими 29 грудня 2019 року він видав книжку «Світлий шлях. Історія одного концтабору»: частину написав у неволі й виніс контрабандою, частину — відтворив із пам'яті. У 2021 році — Шевченківська національна премія.</p>
+          <p class="izol-text en">Journalist and writer <strong>Stanislav Aseyev</strong> spent <strong>962 days</strong> here in captivity and torture — 28 months in a secret prison on fabricated espionage charges. After his release in a prisoner exchange on 29 December 2019, he published the book "The Torture Camp on Paradise Street": part of it written in captivity and smuggled out, part reconstructed from memory. In 2021, the Shevchenko National Prize.</p>
+
+          <blockquote class="izol-quote">
+            <p class="ua">«У концтаборі „Ізоляція" панують класичні психопати і садисти.»</p>
+            <p class="en">"Classic psychopaths and sadists ruled the 'Izolyatsia' concentration camp."</p>
+            <cite class="ua">Станіслав Асєєв · з інтерв'ю · <a href="https://www.youtube.com/watch?v=K-9jAYN1e0E" target="_blank" rel="noopener">Українська правда ↗</a></cite>
+            <cite class="en">Stanislav Aseyev · from an interview · <a href="https://www.youtube.com/watch?v=K-9jAYN1e0E" target="_blank" rel="noopener">Ukrainska Pravda ↗</a></cite>
+          </blockquote>
 
           <div class="izol-stats">
             <div class="izol-stat"><strong>962</strong><span class="ua">дні в полоні</span><span class="en">days in captivity</span></div>
@@ -6064,7 +6133,7 @@
           <p class="credits-label en">License</p>
           <ul class="credits-list">
             <li class="credits-license" style="font-size:.7rem;color:rgba(200,192,184,.45);line-height:1.7">
-              Авторські фото © Мунистер, усі права захищено.<br>
+              Авторські фото © Муністер, усі права захищено.<br>
               Фото ЖЖ-авторів використано з дозволу або у відповідності до ліцензії CC.<br>
               Фото з Wikimedia Commons — CC BY-SA 4.0.<br>
               Матеріали використані в некомерційних, меморіальних цілях.
