@@ -2175,8 +2175,28 @@
 
         patchTimeline();
         patchHero();
+        patchBureauToCV();
         injectMethodologyMap();
         scheduleABLocaleSync();
+        return true;
+      }
+
+      function patchBureauToCV() {
+        const nav = document.querySelector('nav');
+        if (!nav || nav.dataset.cvPatchDone) return false;
+        const allBtns = Array.from(nav.querySelectorAll('a, button'));
+        const bureauEl = allBtns.find(el => /^bureau$/i.test((el.textContent || '').trim()));
+        if (!bureauEl) return false;
+        // Style as download link
+        bureauEl.textContent = 'CV ↓';
+        bureauEl.title = 'Завантажити CV (PDF)';
+        bureauEl.style.cssText += ';cursor:pointer;';
+        bureauEl.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          window.open('/cv-ua.html', '_blank');
+        }, true);
+        nav.dataset.cvPatchDone = '1';
         return true;
       }
 
