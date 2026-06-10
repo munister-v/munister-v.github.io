@@ -1,0 +1,35 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3100:3000"
+    volumes:
+      - poruch_uploads:/app/uploads
+    networks:
+      - poruch
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - poruch_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U poruch -d poruch"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - poruch
+
+volumes:
+  poruch_db:
+  poruch_uploads:
+
+networks:
+  poruch:
