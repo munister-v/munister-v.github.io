@@ -1,19 +1,23 @@
 :root {
-  --mem-cream: #ece8df;
-  --mem-paper: #f8f5ef;
-  --mem-ink: #1f2722;
-  --mem-forest: #263f32;
-  --mem-forest-light: #385746;
-  --mem-moss: #7d8970;
-  --mem-burgundy: #754642;
-  --mem-gold: #b99b62;
-  --mem-line: rgba(31, 39, 34, .18);
-  --mem-soft-line: rgba(31, 39, 34, .1);
+  --mem-cream: #e6e2dc;
+  --mem-paper: #f7f6f4;
+  --mem-ink: #0f0f0f;
+  --mem-forest: #171a17;
+  --mem-forest-light: #303630;
+  --mem-moss: #747b70;
+  --mem-burgundy: #704843;
+  --mem-gold: #d4c4b5;
+  --mem-line: rgba(15, 15, 15, .22);
+  --mem-soft-line: rgba(15, 15, 15, .11);
+  --mem-serif: "Cormorant Garamond", Georgia, serif;
+  --mem-sans: "Inter", system-ui, sans-serif;
+  --mem-mono: "JetBrains Mono", "Courier New", monospace;
 }
 
 .memorial-home {
   background: var(--mem-cream);
   color: var(--mem-ink);
+  font-family: var(--mem-sans);
 }
 
 .memorial-home::before {
@@ -29,7 +33,7 @@
   position: sticky;
   z-index: 100;
   top: 0;
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid var(--mem-line);
   background: color-mix(in srgb, var(--mem-cream) 91%, transparent);
   backdrop-filter: blur(18px);
   transition: border-color .2s ease, background .2s ease;
@@ -45,13 +49,13 @@
   min-height: 78px;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 48px;
+  gap: 0;
 }
 
-.mem-header .brand-mark,
-.mem-footer .brand-mark {
-  border-radius: 50%;
-  background: var(--mem-forest);
+.mem-header .brand-lockup {
+  align-self: stretch;
+  padding-right: 28px;
+  border-right: 1px solid var(--mem-line);
 }
 
 .mem-header .brand-name,
@@ -59,18 +63,38 @@
   color: var(--mem-ink);
 }
 
+.mem-header .brand-monogram,
+.mem-footer .brand-monogram {
+  background: var(--mem-ink);
+  color: var(--mem-paper);
+}
+
+.mem-header .brand-parent,
+.mem-footer .brand-parent {
+  font-family: var(--mem-mono);
+}
+
 .mem-nav {
   display: flex;
+  align-self: stretch;
   justify-content: center;
-  gap: 30px;
+  gap: 0;
 }
 
 .mem-nav a,
 .mem-link {
   position: relative;
-  color: #4e5751;
-  font-size: 13px;
-  font-weight: 600;
+  display: inline-flex;
+  min-height: 100%;
+  align-items: center;
+  padding: 0 24px;
+  border-right: 1px solid var(--mem-soft-line);
+  color: #444;
+  font-family: var(--mem-mono);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: .07em;
+  text-transform: uppercase;
 }
 
 .mem-nav a::after,
@@ -93,8 +117,11 @@
 
 .mem-header-actions {
   display: flex;
+  align-self: stretch;
   align-items: center;
   gap: 22px;
+  padding-left: 24px;
+  border-left: 1px solid var(--mem-line);
 }
 
 .mem-button,
@@ -108,8 +135,11 @@
   border-radius: 0;
   background: var(--mem-forest);
   color: #fffdf7;
-  font-size: 14px;
-  font-weight: 700;
+  font-family: var(--mem-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
   transition: background .2s ease, color .2s ease, transform .2s ease;
 }
 
@@ -142,8 +172,9 @@
 .mem-overline,
 .mem-index {
   color: var(--mem-burgundy);
-  font-size: 11px;
-  font-weight: 700;
+  font-family: var(--mem-mono);
+  font-size: 9px;
+  font-weight: 500;
   letter-spacing: .18em;
   text-transform: uppercase;
 }
@@ -170,13 +201,17 @@
 
 .mem-hero::before {
   position: absolute;
-  top: -80px;
-  left: -180px;
-  width: 540px;
-  height: 540px;
-  border: 1px solid rgba(117, 70, 66, .16);
-  border-radius: 50%;
-  content: "";
+  z-index: 0;
+  top: -150px;
+  left: 4%;
+  color: rgba(15, 15, 15, .035);
+  content: "P";
+  font-family: var(--mem-serif);
+  font-size: min(78vw, 980px);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1;
+  pointer-events: none;
 }
 
 .mem-hero-grid {
@@ -195,16 +230,16 @@
 .mem-hero h1 {
   max-width: 830px;
   margin: 24px 0 28px;
-  font-family: var(--serif);
+  font-family: var(--mem-serif);
   font-size: clamp(62px, 7.2vw, 112px);
-  font-weight: 400;
+  font-weight: 300;
   line-height: .88;
   letter-spacing: -.055em;
 }
 
 .mem-hero h1 em {
   color: var(--mem-burgundy);
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .mem-hero-lead {
@@ -260,7 +295,9 @@
   height: min(690px, 66vw);
   min-height: 570px;
   overflow: hidden;
+  border: 1px solid #171717;
   background: var(--mem-forest);
+  box-shadow: 20px 20px 0 rgba(15, 15, 15, .08);
 }
 
 .mem-photo-frame::after {
@@ -292,14 +329,15 @@
 
 .mem-ticket-status {
   color: var(--mem-burgundy);
-  font-size: 9px;
-  font-weight: 700;
+  font-family: var(--mem-mono);
+  font-size: 8px;
+  font-weight: 500;
   letter-spacing: .14em;
   text-transform: uppercase;
 }
 
 .mem-report-ticket strong {
-  font-family: var(--serif);
+  font-family: var(--mem-serif);
   font-size: 24px;
   font-weight: 500;
 }
@@ -312,7 +350,8 @@
 .mem-photo-caption {
   margin-top: 18px;
   color: #606861;
-  font-size: 11px;
+  font-family: var(--mem-mono);
+  font-size: 9px;
   line-height: 1.5;
 }
 
@@ -351,8 +390,8 @@
 .mem-executor-callout h2,
 .mem-faq h2,
 .mem-order h2 {
-  font-family: var(--serif);
-  font-weight: 400;
+  font-family: var(--mem-serif);
+  font-weight: 300;
   letter-spacing: -.035em;
   line-height: 1;
 }
@@ -374,7 +413,7 @@
   padding-top: 22px;
   border-top: 1px solid var(--mem-burgundy);
   color: var(--mem-burgundy);
-  font-family: var(--serif);
+  font-family: var(--mem-serif);
   font-size: 22px;
   font-style: italic;
   line-height: 1.45;
@@ -427,15 +466,16 @@
 
 .mem-care-number {
   color: var(--mem-burgundy);
-  font-family: var(--serif);
+  font-family: var(--mem-mono);
   font-size: 18px;
 }
 
 .mem-care-label {
   margin-bottom: 7px;
   color: var(--mem-burgundy);
-  font-size: 9px;
-  font-weight: 700;
+  font-family: var(--mem-mono);
+  font-size: 8px;
+  font-weight: 500;
   letter-spacing: .14em;
   text-transform: uppercase;
 }
@@ -480,7 +520,7 @@
 
 .mem-care-price strong {
   margin: 2px 0 12px;
-  font-family: var(--serif);
+  font-family: var(--mem-serif);
   font-size: 27px;
   font-weight: 500;
 }
@@ -489,8 +529,11 @@
   padding-bottom: 4px;
   border-bottom: 1px solid var(--mem-burgundy);
   color: var(--mem-burgundy);
-  font-size: 12px;
-  font-weight: 700;
+  font-family: var(--mem-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .07em;
+  text-transform: uppercase;
 }
 
 .mem-care-price a span {
@@ -517,7 +560,7 @@
 
 .mem-process-title h2 {
   margin: 24px 0 26px;
-  font-family: var(--serif);
+  font-family: var(--mem-serif);
   font-size: clamp(48px, 5.4vw, 76px);
   font-weight: 400;
   line-height: .98;
@@ -550,7 +593,7 @@
 
 .mem-process-steps > li > span {
   color: #c9b895;
-  font-family: var(--serif);
+  font-family: var(--mem-mono);
   font-size: 20px;
 }
 
@@ -610,8 +653,9 @@
 
 .mem-report-facts dt {
   color: var(--mem-burgundy);
-  font-size: 11px;
-  font-weight: 700;
+  font-family: var(--mem-mono);
+  font-size: 8px;
+  font-weight: 500;
   text-transform: uppercase;
 }
 
@@ -633,8 +677,9 @@
   padding-bottom: 18px;
   border-bottom: 1px solid var(--mem-line);
   color: #687069;
-  font-size: 9px;
-  font-weight: 700;
+  font-family: var(--mem-mono);
+  font-size: 8px;
+  font-weight: 500;
   letter-spacing: .1em;
 }
 
@@ -659,8 +704,9 @@
   padding: 6px 9px;
   background: var(--mem-forest);
   color: white;
-  font-size: 9px;
-  font-weight: 700;
+  font-family: var(--mem-mono);
+  font-size: 8px;
+  font-weight: 500;
   letter-spacing: .12em;
 }
 
@@ -669,8 +715,9 @@
   grid-template-columns: 1fr 1fr;
   gap: 8px 16px;
   margin: 22px 0;
-  font-size: 11px;
-  font-weight: 600;
+  font-family: var(--mem-mono);
+  font-size: 9px;
+  font-weight: 400;
 }
 
 .mem-paper-checks span {
@@ -681,7 +728,7 @@
   padding-top: 18px;
   border-top: 1px solid var(--mem-soft-line);
   color: #687069;
-  font-family: var(--serif);
+  font-family: var(--mem-serif);
   font-size: 15px;
   font-style: italic;
   line-height: 1.55;
@@ -713,7 +760,7 @@
 .mem-other-list span {
   padding: 17px 0;
   border-top: 1px solid var(--mem-line);
-  font-family: var(--serif);
+  font-family: var(--mem-serif);
   font-size: 20px;
 }
 
@@ -781,7 +828,7 @@
   align-items: center;
   gap: 20px;
   cursor: pointer;
-  font-family: var(--serif);
+  font-family: var(--mem-serif);
   font-size: 21px;
   list-style: none;
 }
@@ -792,7 +839,7 @@
 
 .mem-faq summary span {
   color: var(--mem-burgundy);
-  font-family: var(--sans);
+  font-family: var(--mem-mono);
   font-size: 22px;
   text-align: center;
   transition: transform .2s ease;
@@ -967,7 +1014,10 @@
   justify-content: space-between;
   padding-top: 24px;
   border-top: 1px solid rgba(255, 255, 255, .12);
-  font-size: 10px;
+  font-family: var(--mem-mono);
+  font-size: 8px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
 }
 
 @media (max-width: 1080px) {
