@@ -329,13 +329,39 @@ function roleName(role) {
   return role === "customer" ? "Замовник" : "Виконавець";
 }
 
-function layout({ title, user, body, description = "" }) {
+function firstName(name = "") {
+  return String(name).trim().split(/\s+/)[0] || "Вітаємо";
+}
+
+function icon(name) {
+  const paths = {
+    home: `<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M9.5 20v-6h5v6"/>`,
+    plus: `<path d="M12 5v14M5 12h14"/>`,
+    orders: `<path d="M7 4h10l2 3v13H5V7l2-3Z"/><path d="M5 8h14M9 12h6M9 16h4"/>`,
+    bell: `<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/>`,
+    user: `<circle cx="12" cy="8" r="4"/><path d="M4 21c.7-4 3.3-6 8-6s7.3 2 8 6"/>`,
+    arrow: `<path d="M5 12h14M14 7l5 5-5 5"/>`,
+    shield: `<path d="M12 3 5 6v5c0 4.6 2.6 8 7 10 4.4-2 7-5.4 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-5"/>`,
+    camera: `<path d="M4 8h4l1.5-2h5L16 8h4v11H4V8Z"/><circle cx="12" cy="13" r="3"/>`,
+    message: `<path d="M4 5h16v12H8l-4 4V5Z"/><path d="M8 9h8M8 13h5"/>`,
+    check: `<path d="m5 12 4 4L19 6"/>`,
+    search: `<circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/>`,
+    wallet: `<path d="M4 6h15v13H4V6Z"/><path d="M4 9h16M15 13h5v3h-5z"/>`
+  };
+  return `<svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${paths[name] || paths.arrow}</svg>`;
+}
+
+function navLink(href, label, iconName, active = false) {
+  return `<a href="${href}" ${active ? `aria-current="page"` : ""}>${icon(iconName)}<span>${label}</span></a>`;
+}
+
+function layout({ title, user, body, description = "", current = "" }) {
   const navigation = user ? `
     <nav class="nav" aria-label="Основна навігація">
-      <a href="/dashboard">Кабінет</a>
-      ${user.role === "customer" ? `<a href="/orders/new">Нове замовлення</a>` : `<a href="/orders/available">Доступні замовлення</a>`}
-      <a href="/notifications">Сповіщення</a>
-      <a href="/profile">Профіль</a>
+      <a href="/dashboard" ${current === "dashboard" ? `aria-current="page"` : ""}>Кабінет</a>
+      ${user.role === "customer" ? `<a href="/orders/new" ${current === "orders" ? `aria-current="page"` : ""}>Нове замовлення</a>` : `<a href="/orders/available" ${current === "orders" ? `aria-current="page"` : ""}>Доступні замовлення</a>`}
+      <a href="/notifications" ${current === "notifications" ? `aria-current="page"` : ""}>Сповіщення</a>
+      <a href="/profile" ${current === "profile" ? `aria-current="page"` : ""}>Профіль</a>
       ${isAdmin(user) ? `<a href="/admin">Операції</a>` : ""}
       <a href="https://munister.com.ua/poruch/">Про сервіс</a>
     </nav>
@@ -354,15 +380,22 @@ function layout({ title, user, body, description = "" }) {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/app.css?v=20260612-3">
+  <link rel="stylesheet" href="/assets/app.css?v=20260612-4">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">До основного вмісту</a>
   <div class="shell">
     ${user ? `<header class="topbar">
       <a class="brand" href="/dashboard"><span class="brand-mark">P</span><span class="brand-copy"><small>MUNISTER / SERVICE 01</small><strong>Поруч</strong></span></a>
       ${navigation}
     </header>` : ""}
-    ${body}
+    <div id="main-content">${body}</div>
+    ${user ? `<nav class="mobile-nav" aria-label="Мобільна навігація">
+      ${navLink("/dashboard", "Головна", "home", current === "dashboard")}
+      ${navLink(user.role === "customer" ? "/orders/new" : "/orders/available", user.role === "customer" ? "Створити" : "Знайти", user.role === "customer" ? "plus" : "search", current === "orders")}
+      ${navLink("/notifications", "Події", "bell", current === "notifications")}
+      ${navLink("/profile", "Профіль", "user", current === "profile")}
+    </nav>` : ""}
   </div>
 </body>
 </html>`;
@@ -427,16 +460,49 @@ function statusTag(status) {
   return `<span class="status status-${esc(status)}">${esc(statusLabels[status] || status)}</span>`;
 }
 
-function orderRows(orders, userRole) {
-  if (!orders.length) return `<div class="empty">Тут поки немає замовлень.</div>`;
+function emptyState({ iconName = "orders", title, text, href = "", label = "" }) {
+  return `<div class="empty-state">
+    <span class="empty-icon">${icon(iconName)}</span>
+    <div><h3>${esc(title)}</h3><p>${esc(text)}</p></div>
+    ${href ? `<a class="button button-secondary" href="${href}">${esc(label)}</a>` : ""}
+  </div>`;
+}
+
+function orderRows(orders, userRole, emptyOptions) {
+  if (!orders.length) return emptyState(emptyOptions || {
+    title: "Замовлень поки немає",
+    text: "Коли з'явиться перша справа, її статус і наступний крок будуть тут."
+  });
   return `<div class="order-list">${orders.map(order => `
     <a class="order-row" href="/orders/${order.id}">
       <span class="order-id">№ ${String(order.id).padStart(4, "0")}</span>
-      <div><h3>${esc(order.title)}</h3><p>${esc(order.city)} · ${esc(order.care_type)}</p></div>
+      <div><h3>${esc(order.title)}</h3><p>${esc(order.city)} · ${esc(order.care_type)}${userRole === "customer" && Number(order.proposal_count || 0) ? ` · ${Number(order.proposal_count)} пропоз.` : ""}</p></div>
       <div class="order-meta">${statusTag(order.status)}<span>${order.deadline ? `до ${date(order.deadline)}` : "без жорсткої дати"}</span></div>
       <div class="order-money"><span>${userRole === "executor" ? "Ваша виплата" : "Бюджет роботи"}</span><strong>${money(userRole === "executor" ? payout(order.work_budget) : order.work_budget)}</strong></div>
-      <span class="chevron">→</span>
+      <span class="chevron">${icon("arrow")}</span>
     </a>`).join("")}</div>`;
+}
+
+function processSteps(role) {
+  const steps = role === "customer"
+    ? [
+        ["01", "Створіть бриф", "Опишіть місце, потрібний догляд, строк і бюджет."],
+        ["02", "Оберіть людину", "Порівняйте пропозиції, профіль, рейтинг і повідомлення."],
+        ["03", "Слідкуйте за роботою", "Домовленості й уточнення залишаються в картці замовлення."],
+        ["04", "Прийміть звіт", "Перевірте фотографії, результат і лише тоді завершіть справу."]
+      ]
+    : [
+        ["01", "Оберіть справу", "Перевірте місто, обсяг, строк і суму виплати."],
+        ["02", "Надішліть пропозицію", "Коротко опишіть підхід, доступну дату й свою ціну."],
+        ["03", "Зафіксуйте роботу", "Усі зміни погоджуйте в чаті до додаткових витрат."],
+        ["04", "Здайте результат", "Додайте змістовний коментар і фотографії до та після."]
+      ];
+  return `<div class="process-steps">${steps.map(([number, title, text]) => `<article><span>${number}</span><div><h3>${title}</h3><p>${text}</p></div></article>`).join("")}</div>`;
+}
+
+function dashboardUpdates(items) {
+  if (!items.length) return `<p class="quiet-copy">Нових подій немає. Важливі зміни замовлень з'являться тут і в центрі сповіщень.</p>`;
+  return `<div class="dashboard-updates">${items.map(item => `<a href="${item.order_id ? `/orders/${item.order_id}` : "/profile"}"><span class="${item.read_at ? "" : "update-dot"}"></span><div><strong>${esc(item.title)}</strong><p>${esc(item.body)}</p></div><time>${date(item.created_at, true)}</time></a>`).join("")}</div>`;
 }
 
 async function getOrderForUser(id, user) {
@@ -676,6 +742,7 @@ app.get("/profile", requireAuth, async (req, res, next) => {
     res.send(layout({
       title: "Профіль і безпека",
       user,
+      current: "profile",
       body: `<main class="page">
         <header class="page-head"><div><p class="eyebrow">Профіль / безпека</p><h1>Дані, довіра і доступ.</h1><p>Підтримуйте контакти актуальними, керуйте активними входами та налаштовуйте робочий профіль.</p></div></header>
         ${req.query.saved ? `<div class="notice">Зміни збережено.</div>` : ""}
@@ -770,6 +837,7 @@ app.get("/notifications", requireAuth, async (req, res, next) => {
     res.send(layout({
       title: "Сповіщення",
       user: withSessionUser(req),
+      current: "notifications",
       body: `<main class="page"><header class="page-head"><div><p class="eyebrow">Центр подій</p><h1>Нічого важливого не загубиться.</h1><p>Пропозиції, призначення, звіти, рішення і безпекові події зібрані в одному журналі.</p></div>
         ${notifications.some(item => !item.read_at) ? `<form method="post" action="/notifications/read-all">${csrfField(req)}<button class="button button-secondary" type="submit">Позначити прочитаними</button></form>` : ""}</header>
         <div class="notification-list">${notifications.length ? notifications.map(item => `<a class="notification ${item.read_at ? "" : "notification-unread"}" href="${item.order_id ? `/orders/${item.order_id}` : "/profile"}"><span>${esc(item.type)}</span><div><h3>${esc(item.title)}</h3><p>${esc(item.body)}</p></div><time>${date(item.created_at, true)}</time></a>`).join("") : `<div class="empty">Сповіщень поки немає.</div>`}</div>
@@ -795,6 +863,7 @@ app.get("/verification", requireRole("executor"), async (req, res, next) => {
     res.send(layout({
       title: "Перевірка виконавця",
       user: withSessionUser(req),
+      current: "profile",
       body: `<main class="page"><header class="page-head"><div><p class="eyebrow">Стандарт довіри</p><h1>Підтвердьте готовність працювати.</h1><p>Команда Poruch перевіряє досвід, зону виїзду та здатність формувати доказовий фото-звіт.</p></div></header>
         ${current?.status === "pending" ? `<div class="notice">Заявку вже отримано ${date(current.created_at)}. Рішення з'явиться в кабінеті.</div>` : ""}
         <form class="form-card" method="post" action="/verification">${csrfField(req)}
@@ -833,72 +902,254 @@ app.get("/dashboard", requireAuth, async (req, res, next) => {
   try {
     const user = withSessionUser(req);
     if (req.user.role === "customer") {
-      const orders = (await pool.query("SELECT * FROM orders WHERE customer_id = $1 ORDER BY created_at DESC", [req.user.id])).rows;
+      const [ordersResult, notificationsResult] = await Promise.all([
+        pool.query(
+          `SELECT o.*, (SELECT COUNT(*)::int FROM proposals p WHERE p.order_id = o.id) proposal_count
+           FROM orders o WHERE o.customer_id = $1 ORDER BY o.updated_at DESC`,
+          [req.user.id]
+        ),
+        pool.query("SELECT * FROM notifications WHERE user_id=$1 ORDER BY created_at DESC LIMIT 4", [req.user.id])
+      ]);
+      const orders = ordersResult.rows;
       const counts = {
         new: orders.filter(order => order.status === "new").length,
         in_progress: orders.filter(order => ["assigned", "in_progress", "changes_requested"].includes(order.status)).length,
         awaiting_review: orders.filter(order => order.status === "awaiting_review").length,
         completed: orders.filter(order => order.status === "completed").length
       };
+      const priority = orders.find(order => order.status === "awaiting_review")
+        || orders.find(order => order.status === "changes_requested")
+        || orders.find(order => order.status === "new" && Number(order.proposal_count) > 0)
+        || orders.find(order => ["assigned", "in_progress"].includes(order.status));
+      const priorityCopy = !priority
+        ? {
+            eyebrow: "Перший крок",
+            title: "Створіть перше доручення",
+            text: "Опишіть потрібний догляд за похованням. Точні персональні дані можна передати вже обраному виконавцю.",
+            href: "/orders/new",
+            label: "Створити замовлення",
+            iconName: "plus"
+          }
+        : priority.status === "awaiting_review"
+          ? {
+              eyebrow: "Потрібне ваше рішення",
+              title: "Перевірте фото-звіт",
+              text: `Виконавець завершив «${priority.title}». Перегляньте матеріали, прийміть роботу або опишіть потрібні зміни.`,
+              href: `/orders/${priority.id}`,
+              label: "Перевірити результат",
+              iconName: "camera"
+            }
+          : priority.status === "changes_requested"
+            ? {
+                eyebrow: "Уточнення в роботі",
+                title: "Слідкуйте за виправленнями",
+                text: `За замовленням «${priority.title}» зафіксовано уточнення. Вся домовленість зберігається в картці.`,
+                href: `/orders/${priority.id}`,
+                label: "Відкрити замовлення",
+                iconName: "message"
+              }
+            : priority.status === "new"
+              ? {
+                  eyebrow: "Є нові кандидати",
+                  title: `Отримано пропозицій: ${Number(priority.proposal_count)}`,
+                  text: `Порівняйте виконавців для «${priority.title}» і зафіксуйте вибір у кабінеті до початку робіт.`,
+                  href: `/orders/${priority.id}`,
+                  label: "Обрати виконавця",
+                  iconName: "user"
+                }
+              : {
+                  eyebrow: "Зараз у роботі",
+                  title: priority.title,
+                  text: "Перевіряйте повідомлення, погоджуйте зміни та витрати лише в картці замовлення.",
+                  href: `/orders/${priority.id}`,
+                  label: "Перейти до справи",
+                  iconName: "orders"
+                };
       return res.send(layout({
         title: "Кабінет замовника",
         user,
-        body: `<main class="page">
-          <header class="page-head">
-            <div><p class="eyebrow">Кабінет замовника</p><h1>Ваші справи під контролем.</h1><p>Створюйте замовлення, обирайте виконавця, погоджуйте зміни й приймайте фото-звіт в одному місці.</p></div>
-            <a class="button button-wine" href="/orders/new">Створити замовлення</a>
+        current: "dashboard",
+        body: `<main class="page dashboard-page">
+          <header class="dashboard-hero">
+            <div class="dashboard-intro">
+              <p class="eyebrow">Кабінет замовника / ${esc(req.user.city)}</p>
+              <h1>Добрий день, ${esc(firstName(req.user.name))}.</h1>
+              <p>Тут видно стан кожної справи, наступне рішення і повну історію догляду за похованням.</p>
+              <div class="hero-actions"><a class="button button-wine" href="/orders/new">${icon("plus")}Створити замовлення</a><a class="text-action" href="mailto:${esc(SUPPORT_EMAIL)}">Поставити питання команді ${icon("arrow")}</a></div>
+            </div>
+            <aside class="priority-card">
+              <span class="priority-icon">${icon(priorityCopy.iconName)}</span>
+              <p class="eyebrow">${priorityCopy.eyebrow}</p>
+              <h2>${esc(priorityCopy.title)}</h2>
+              <p>${esc(priorityCopy.text)}</p>
+              <a href="${priorityCopy.href}">${esc(priorityCopy.label)} ${icon("arrow")}</a>
+            </aside>
           </header>
-          ${req.query.welcome ? `<div class="notice">Кабінет створено. Тепер можна оформити перше замовлення.</div>` : ""}
-          <section class="stats">
-            <div class="stat"><span>Нові</span><strong>${counts.new}</strong></div>
-            <div class="stat"><span>У роботі</span><strong>${counts.in_progress}</strong></div>
-            <div class="stat"><span>На перевірці</span><strong>${counts.awaiting_review}</strong></div>
-            <div class="stat"><span>Завершено</span><strong>${counts.completed}</strong></div>
+          ${req.query.welcome ? `<div class="notice" role="status">Кабінет створено. Почніть із першого замовлення або перегляньте, як працює захищений процес.</div>` : ""}
+          <section class="dashboard-stats" aria-label="Стан замовлень">
+            <div><span>Відкриті</span><strong>${counts.new}</strong><small>очікують вибору</small></div>
+            <div><span>У роботі</span><strong>${counts.in_progress}</strong><small>виконуються зараз</small></div>
+            <div><span>На прийманні</span><strong>${counts.awaiting_review}</strong><small>потрібна перевірка</small></div>
+            <div><span>Завершені</span><strong>${counts.completed}</strong><small>зі звітом в архіві</small></div>
           </section>
-          <section class="section-block">
-            <div class="section-title"><h2>Усі замовлення</h2><p>У картці зберігаються пропозиції, переписка, звіти й історія рішень.</p></div>
-            ${orderRows(orders, "customer")}
+          <div class="dashboard-grid">
+            <section class="dashboard-main">
+              <div class="section-title"><div><p class="eyebrow">Ваші справи</p><h2>Останні замовлення</h2></div><a class="text-action" href="/orders/new">Нове замовлення ${icon("arrow")}</a></div>
+              ${orderRows(orders.slice(0, 6), "customer", {
+                iconName: "plus",
+                title: "Почніть із короткого брифу",
+                text: "Вкажіть місто, кладовище, бажаний результат і бюджет. Публікація займає кілька хвилин.",
+                href: "/orders/new",
+                label: "Створити замовлення"
+              })}
+            </section>
+            <aside class="dashboard-side">
+              <section class="side-panel">
+                <div class="panel-heading"><div><p class="eyebrow">Останні події</p><h2>Не пропустіть важливе</h2></div><a href="/notifications" aria-label="Усі сповіщення">${icon("arrow")}</a></div>
+                ${dashboardUpdates(notificationsResult.rows)}
+              </section>
+              <section class="protection-panel">
+                ${icon("shield")}
+                <div><p class="eyebrow">Захищений процес</p><h2>Домовленості залишаються з вами</h2><p>Бриф, повідомлення, зміни, фото й рішення зберігаються в одному замовленні. У спірній ситуації команда бачить повну хронологію.</p></div>
+              </section>
+            </aside>
+          </div>
+          <section class="process-section">
+            <div class="section-title"><div><p class="eyebrow">Як це працює</p><h2>Від потреби до підтвердженого результату</h2></div><p>Чотири зрозумілі етапи без домовленостей, що губляться в різних месенджерах.</p></div>
+            ${processSteps("customer")}
           </section>
         </main>`
       }));
     }
 
-    const active = (await pool.query(
-      "SELECT * FROM orders WHERE executor_id = $1 AND status NOT IN ('completed','cancelled') ORDER BY updated_at DESC",
-      [req.user.id]
-    )).rows;
-    const available = (await pool.query(
-      `SELECT o.* FROM orders o
-       WHERE o.status = 'new' AND NOT EXISTS (
-         SELECT 1 FROM proposals p WHERE p.order_id = o.id AND p.executor_id = $1
-       ) ORDER BY o.created_at DESC LIMIT 8`,
-      [req.user.id]
-    )).rows;
-    const completed = (await pool.query("SELECT * FROM orders WHERE executor_id = $1 AND status = 'completed'", [req.user.id])).rows;
+    const [activeResult, availableResult, completedResult, proposalsResult, notificationsResult, verificationResult] = await Promise.all([
+      pool.query(
+        "SELECT * FROM orders WHERE executor_id = $1 AND status NOT IN ('completed','cancelled') ORDER BY updated_at DESC",
+        [req.user.id]
+      ),
+      pool.query(
+        `SELECT o.* FROM orders o
+         WHERE o.status = 'new' AND NOT EXISTS (
+           SELECT 1 FROM proposals p WHERE p.order_id = o.id AND p.executor_id = $1
+         ) ORDER BY o.created_at DESC LIMIT 8`,
+        [req.user.id]
+      ),
+      pool.query("SELECT * FROM orders WHERE executor_id = $1 AND status = 'completed'", [req.user.id]),
+      pool.query(
+        `SELECT COUNT(*)::int count FROM proposals p JOIN orders o ON o.id=p.order_id
+         WHERE p.executor_id=$1 AND o.status='new'`,
+        [req.user.id]
+      ),
+      pool.query("SELECT * FROM notifications WHERE user_id=$1 ORDER BY created_at DESC LIMIT 4", [req.user.id]),
+      pool.query("SELECT * FROM verification_requests WHERE user_id=$1 ORDER BY created_at DESC LIMIT 1", [req.user.id])
+    ]);
+    const active = activeResult.rows;
+    const available = availableResult.rows;
+    const completed = completedResult.rows;
     const pendingPayout = active.reduce((sum, order) => sum + payout(order.work_budget), 0);
     const earned = completed.reduce((sum, order) => sum + payout(order.work_budget), 0);
+    const pendingProposals = Number(proposalsResult.rows[0]?.count || 0);
+    const verification = verificationResult.rows[0];
+    const profileChecks = [req.user.name, req.user.phone, req.user.city, req.user.bio, Number(req.user.service_radius) > 0];
+    const profileComplete = Math.round((profileChecks.filter(Boolean).length / profileChecks.length) * 100);
+    const priority = active.find(order => ["changes_requested", "awaiting_review"].includes(order.status)) || active[0];
+    const priorityCopy = priority
+      ? priority.status === "changes_requested"
+        ? {
+            eyebrow: "Потрібне уточнення",
+            title: priority.title,
+            text: "Замовник залишив коментар до результату. Перегляньте його до повторного виїзду або нових витрат.",
+            href: `/orders/${priority.id}`,
+            label: "Переглянути зміни",
+            iconName: "message"
+          }
+        : priority.status === "awaiting_review"
+          ? {
+              eyebrow: "Результат передано",
+              title: priority.title,
+              text: "Фото-звіт очікує рішення замовника. Слідкуйте за повідомленнями в картці справи.",
+              href: `/orders/${priority.id}`,
+              label: "Відкрити замовлення",
+              iconName: "camera"
+            }
+          : {
+              eyebrow: "Активна робота",
+              title: priority.title,
+              text: "Усі уточнення, погодження матеріалів і докази виконання фіксуйте в картці замовлення.",
+              href: `/orders/${priority.id}`,
+              label: "Продовжити роботу",
+              iconName: "orders"
+            }
+      : {
+          eyebrow: "Наступний крок",
+          title: available.length ? "Оберіть відповідне замовлення" : "Підготуйте профіль до нових справ",
+          text: available.length
+            ? `Зараз доступно ${available.length} нових замовлень. Відгукуйтеся лише на ті, де впевнені у строках і результаті.`
+            : "Заповнений і перевірений профіль підвищує довіру замовника та шанс отримати роботу.",
+          href: available.length ? "/orders/available" : "/profile",
+          label: available.length ? "Переглянути замовлення" : "Доповнити профіль",
+          iconName: available.length ? "search" : "user"
+        };
     res.send(layout({
       title: "Кабінет виконавця",
       user,
-      body: `<main class="page">
-        <header class="page-head">
-          <div><p class="eyebrow">Кабінет виконавця</p><h1>Робота без холодного пошуку клієнтів.</h1><p>Переглядайте підготовлені замовлення, надсилайте пропозицію, фіксуйте зміни й здавайте результат за стандартом Poruch.</p></div>
-          <a class="button" href="/orders/available">Усі доступні</a>
+      current: "dashboard",
+      body: `<main class="page dashboard-page">
+        <header class="dashboard-hero executor-hero">
+          <div class="dashboard-intro">
+            <div class="executor-labels"><p class="eyebrow">Кабінет виконавця / ${esc(req.user.city)}</p>${req.user.verified_at ? `<span class="verified">${icon("check")} Перевірено</span>` : ""}</div>
+            <h1>Добрий день, ${esc(firstName(req.user.name))}.</h1>
+            <p>Плануйте роботу, відповідайте клієнтам і здавайте доказовий результат без холодного пошуку замовлень.</p>
+            <div class="hero-actions"><a class="button" href="/orders/available">${icon("search")}Знайти замовлення</a><a class="text-action" href="/profile">Профіль виконавця ${icon("arrow")}</a></div>
+          </div>
+          <aside class="priority-card priority-dark">
+            <span class="priority-icon">${icon(priorityCopy.iconName)}</span>
+            <p class="eyebrow">${priorityCopy.eyebrow}</p>
+            <h2>${esc(priorityCopy.title)}</h2>
+            <p>${esc(priorityCopy.text)}</p>
+            <a href="${priorityCopy.href}">${esc(priorityCopy.label)} ${icon("arrow")}</a>
+          </aside>
         </header>
-        ${req.query.welcome ? `<div class="notice">Кабінет створено. Перегляньте доступні замовлення у вашому місті.</div>` : ""}
-        <section class="stats">
-          <div class="stat"><span>Активні</span><strong>${active.length}</strong></div>
-          <div class="stat"><span>Нові поруч</span><strong>${available.length}</strong></div>
-          <div class="stat"><span>Очікувана виплата</span><strong>${money(pendingPayout)}</strong></div>
-          <div class="stat"><span>Вже зароблено</span><strong>${money(earned)}</strong></div>
+        ${req.query.welcome ? `<div class="notice" role="status">Кабінет створено. Доповніть профіль і подайте заявку на перевірку, щоб замовникам було легше обрати вас.</div>` : ""}
+        <section class="dashboard-stats" aria-label="Робочі показники">
+          <div><span>Активні</span><strong>${active.length}</strong><small>справ у роботі</small></div>
+          <div><span>Пропозиції</span><strong>${pendingProposals}</strong><small>очікують рішення</small></div>
+          <div><span>До виплати</span><strong>${money(pendingPayout)}</strong><small>після комісії 25%</small></div>
+          <div><span>Зароблено</span><strong>${money(earned)}</strong><small>за завершені справи</small></div>
         </section>
+        <div class="dashboard-grid">
+          <section class="dashboard-main">
+            <div class="section-title"><div><p class="eyebrow">Робочий стіл</p><h2>Активні справи</h2></div><a class="text-action" href="/orders/available">Знайти ще ${icon("arrow")}</a></div>
+            ${orderRows(active, "executor", {
+              iconName: "search",
+              title: "Активних справ поки немає",
+              text: "Оберіть замовлення за містом, строком і обсягом. До призначення не починайте роботу й не купуйте матеріали.",
+              href: "/orders/available",
+              label: "Переглянути доступні"
+            })}
+          </section>
+          <aside class="dashboard-side">
+            <section class="profile-health">
+              <div class="profile-score"><span>${profileComplete}%</span><small>профіль</small></div>
+              <div><p class="eyebrow">Готовність профілю</p><h2>${req.user.verified_at ? "Ви пройшли перевірку" : verification?.status === "pending" ? "Перевірка триває" : "Підсиліть довіру"}</h2><p>${req.user.verified_at ? "Замовники бачать позначку перевіреного виконавця." : verification?.status === "pending" ? "Рішення з'явиться у сповіщеннях і профілі." : "Додайте досвід, зону виїзду та подайте заявку на перевірку."}</p><a href="${!req.user.verified_at && verification?.status !== "pending" ? "/verification" : "/profile"}">${!req.user.verified_at && verification?.status !== "pending" ? "Пройти перевірку" : "Відкрити профіль"} ${icon("arrow")}</a></div>
+            </section>
+            <section class="side-panel">
+              <div class="panel-heading"><div><p class="eyebrow">Останні події</p><h2>Робочий журнал</h2></div><a href="/notifications" aria-label="Усі сповіщення">${icon("arrow")}</a></div>
+              ${dashboardUpdates(notificationsResult.rows)}
+            </section>
+          </aside>
+        </div>
         <section class="section-block">
-          <div class="section-title"><h2>Активна робота</h2><p>Тут замовлення, у яких вас уже обрано виконавцем.</p></div>
-          ${orderRows(active, "executor")}
+          <div class="section-title"><div><p class="eyebrow">Нові можливості</p><h2>Замовлення, на які можна відгукнутися</h2></div><p>До пропозиції видно обсяг, строк, бюджет і вашу виплату після комісії 25%.</p></div>
+          ${orderRows(available.slice(0, 4), "executor", {
+            iconName: "bell",
+            title: "Нових замовлень зараз немає",
+            text: "Ми покажемо їх тут, щойно з'являться справи у вашій зоні роботи."
+          })}
         </section>
-        <section class="section-block">
-          <div class="section-title"><h2>Нові замовлення</h2><p>До прийняття видно обсяг, строк, бюджет і вашу виплату після комісії 25%.</p></div>
-          ${orderRows(available, "executor")}
+        <section class="process-section">
+          <div class="section-title"><div><p class="eyebrow">Стандарт Poruch</p><h2>Як вести замовлення без ризиків</h2></div><p>Клієнта, правила взаємодії та доказову історію надає сервіс. Ваша зона відповідальності — точний результат.</p></div>
+          ${processSteps("executor")}
         </section>
       </main>`
     }));
@@ -918,6 +1169,7 @@ app.get("/orders/available", requireRole("executor"), async (req, res, next) => 
     res.send(layout({
       title: "Доступні замовлення",
       user: withSessionUser(req),
+      current: "orders",
       body: `<main class="page">
         <header class="page-head"><div><p class="eyebrow">Біржа замовлень</p><h1>Оберіть справу, яка вам підходить.</h1><p>Надсилання пропозиції не зобов'язує замовника обрати вас. Не починайте роботу до офіційного призначення в кабінеті.</p></div></header>
         ${orderRows(orders, "executor")}
@@ -932,6 +1184,7 @@ app.get("/orders/new", requireRole("customer"), (req, res) => {
   res.send(layout({
     title: "Нове замовлення",
     user: withSessionUser(req),
+    current: "orders",
     body: `<main class="page">
       <header class="page-head"><div><p class="eyebrow">Нове замовлення</p><h1>Опишіть результат, який потрібно отримати.</h1><p>Точну адресу й чутливі дані можна уточнити після вибору виконавця. На першому кроці достатньо міста, кладовища та орієнтирів.</p></div></header>
       <form class="form-card" method="post" action="/orders">
@@ -1036,6 +1289,7 @@ app.get("/orders/:id", requireAuth, async (req, res, next) => {
     res.send(layout({
       title: order.title,
       user: withSessionUser(req),
+      current: "orders",
       body: `<main class="page">
         ${req.query.created ? `<div class="notice">Замовлення опубліковано. Тепер виконавці можуть надіслати пропозиції.</div>` : ""}
         ${req.query.updated ? `<div class="notice">Статус замовлення оновлено.</div>` : ""}
