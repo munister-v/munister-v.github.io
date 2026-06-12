@@ -551,7 +551,9 @@ app.get(["/healthz", "/readyz"], async (_req, res) => {
 
 app.get("/register", (req, res) => {
   if (req.user) return res.redirect("/dashboard");
-  res.send(authView(req, "register"));
+  res.send(authView(req, "register", "", {
+    role: req.query.role === "executor" ? "executor" : "customer"
+  }));
 });
 
 app.post("/register", limitAuth, async (req, res, next) => {
