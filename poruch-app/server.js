@@ -20,8 +20,6 @@ const PORT = Number(process.env.PORT || 3000);
 const APP_ORIGIN = process.env.APP_ORIGIN || `http://localhost:${PORT}`;
 const COOKIE_NAME = process.env.COOKIE_NAME || "poruch_session";
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "munister@outlook.com";
-const ADMIN_EMAILS = new Set(String(process.env.ADMIN_EMAILS || SUPPORT_EMAIL)
-  .split(",").map(value => value.trim().toLowerCase()).filter(Boolean));
 const SESSION_DAYS = 30;
 const COMMISSION_RATE = 0.25;
 const uploadDir = path.join(__dirname, "uploads");
@@ -212,7 +210,7 @@ async function createSession(req, res, userId) {
 }
 
 function isAdmin(user) {
-  return Boolean(user && ADMIN_EMAILS.has(String(user.email).toLowerCase()));
+  return user?.is_admin === true;
 }
 
 async function sendMail({ to, subject, text }) {
@@ -259,7 +257,7 @@ app.use(async (req, _res, next) => {
         `SELECT s.token_hash, s.csrf_token, s.expires_at,
                 u.id, u.name, u.email, u.role, u.phone, u.city, u.account_type,
                 u.organization_name, u.bio, u.service_radius, u.notification_email,
-                u.verified_at, u.status
+                u.verified_at, u.status, u.is_admin
          FROM sessions s JOIN users u ON u.id = s.user_id
          WHERE s.token_hash = $1 AND s.expires_at > NOW() AND u.status = 'active'`,
         [tokenHash(token)]
