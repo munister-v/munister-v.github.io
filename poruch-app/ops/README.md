@@ -31,3 +31,13 @@ tar -xzf /tmp/poruch-restore/uploads.tar.gz -C "$UPLOAD_PATH"
 
 Keep an encrypted off-server copy. A backup on the same VPS is operational
 convenience, not disaster recovery.
+
+## First administrator
+
+Register the operator through the normal UI, then grant the role directly in
+PostgreSQL. Administrative access is never inferred from an unverified email.
+
+```sh
+docker compose exec -T db psql -U poruch -d poruch \
+  -c "UPDATE users SET is_admin=TRUE WHERE email='operator@example.com';"
+```
