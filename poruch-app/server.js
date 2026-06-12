@@ -282,7 +282,9 @@ app.use((req, res, next) => {
   const origin = req.get("origin");
   const expected = `${req.protocol}://${req.get("host")}`;
   const canonical = new URL(APP_ORIGIN).origin;
-  if (origin && origin !== expected && origin !== canonical) {
+  // Some desktop browsers send the literal "null" origin after a meta refresh.
+  // Authenticated mutations still require the per-session CSRF token below.
+  if (origin && origin !== "null" && origin !== expected && origin !== canonical) {
     console.warn(JSON.stringify({ level: "warn", event: "origin_rejected", origin, expected, canonical, requestId: req.requestId }));
     return res.status(403).send("Запит із цього джерела заборонено.");
   }

@@ -1,5 +1,5 @@
 const base = process.env.BASE_URL || "http://127.0.0.1:3000";
-const testOrigin = process.env.TEST_ORIGIN || new URL(base).origin;
+const testOrigin = process.env.TEST_ORIGIN ?? new URL(base).origin;
 const stamp = Date.now();
 const password = "Poruch-Test-2026!";
 
