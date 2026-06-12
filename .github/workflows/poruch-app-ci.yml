@@ -1,0 +1,64 @@
+name: Poruch app CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "poruch-app/**"
+      - ".github/workflows/poruch-app-ci.yml"
+  pull_request:
+    paths:
+      - "poruch-app/**"
+      - ".github/workflows/poruch-app-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: poruch
+          POSTGRES_USER: poruch
+          POSTGRES_PASSWORD: poruch-ci-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U poruch -d poruch"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    defaults:
+      run:
+        working-directory: poruch-app
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: poruch-app/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      - run: npm audit --omit=dev
+      - name: Start application
+        env:
+          NODE_ENV: test
+          PORT: 3000
+          APP_ORIGIN: http://127.0.0.1:3000
+          DATABASE_URL: postgres://poruch:poruch-ci-password@127.0.0.1:5432/poruch
+          ADMIN_EMAILS: admin@example.test
+        run: |
+          npm start > /tmp/poruch-app.log 2>&1 &
+          for attempt in {1..30}; do
+            curl -fsS http://127.0.0.1:3000/readyz && exit 0
+            sleep 1
+          done
+          cat /tmp/poruch-app.log
+          exit 1
+      - run: npm run smoke
