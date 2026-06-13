@@ -124,6 +124,73 @@
   border-left: 1px solid var(--mem-line);
 }
 
+.mem-mobile-menu {
+  position: relative;
+  display: none;
+}
+
+.mem-mobile-menu summary {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  place-content: center;
+  gap: 6px;
+  border: 1px solid var(--mem-line);
+  list-style: none;
+}
+
+.mem-mobile-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.mem-mobile-menu summary::before,
+.mem-mobile-menu summary::after {
+  width: 18px;
+  height: 1px;
+  background: currentColor;
+  content: "";
+  transition: transform .2s ease;
+}
+
+.mem-mobile-menu[open] summary::before {
+  transform: translateY(3.5px) rotate(45deg);
+}
+
+.mem-mobile-menu[open] summary::after {
+  transform: translateY(-3.5px) rotate(-45deg);
+}
+
+.mem-mobile-menu nav {
+  position: fixed;
+  z-index: 110;
+  top: 68px;
+  right: 0;
+  left: 0;
+  display: grid;
+  padding: 8px 14px 18px;
+  border-bottom: 1px solid var(--mem-line);
+  background: var(--mem-paper);
+  box-shadow: 0 28px 48px rgba(15, 15, 15, .16);
+}
+
+.mem-mobile-menu nav a {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--mem-soft-line);
+  font-family: var(--mem-serif);
+  font-size: 22px;
+}
+
+.mem-mobile-menu nav a::after {
+  color: var(--mem-burgundy);
+  content: "→";
+  font-family: var(--mem-sans);
+  font-size: 16px;
+}
+
 .mem-button,
 .mem-outline-button {
   display: inline-flex;
@@ -487,7 +554,6 @@
 .mem-section-head h2,
 .mem-interaction h2,
 .mem-report h2,
-.mem-other h2,
 .mem-executor-callout h2,
 .mem-agencies h2,
 .mem-faq h2,
@@ -519,6 +585,101 @@
   font-size: 22px;
   font-style: italic;
   line-height: 1.45;
+}
+
+.mem-situations {
+  padding: 118px 0 132px;
+  border-bottom: 1px solid var(--mem-line);
+}
+
+.mem-situations-head {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: clamp(38px, 6vw, 94px);
+  align-items: start;
+  margin-bottom: 60px;
+}
+
+.mem-situations-head h2 {
+  max-width: 920px;
+  font-family: var(--mem-serif);
+  font-size: clamp(43px, 5.2vw, 74px);
+  font-weight: 300;
+  letter-spacing: -.035em;
+  line-height: 1;
+}
+
+.mem-situation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-block: 1px solid var(--mem-line);
+}
+
+.mem-situation-grid > a {
+  display: flex;
+  min-height: 350px;
+  flex-direction: column;
+  padding: 32px;
+  border-right: 1px solid var(--mem-line);
+  transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+
+.mem-situation-grid > a:last-child {
+  border-right: 0;
+}
+
+.mem-situation-grid > a:hover {
+  z-index: 1;
+  transform: translateY(-6px);
+  color: #fff;
+  background: var(--mem-forest);
+}
+
+.mem-situation-grid span {
+  color: var(--mem-burgundy);
+  font-family: var(--mem-mono);
+  font-size: 8px;
+  letter-spacing: .1em;
+}
+
+.mem-situation-grid h3 {
+  max-width: 300px;
+  margin: 84px 0 16px;
+  font-family: var(--mem-serif);
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.mem-situation-grid p {
+  max-width: 360px;
+  color: #5c645e;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.mem-situation-grid strong {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--mem-line);
+  font-size: 11px;
+}
+
+.mem-situation-grid b {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.mem-situation-grid > a:hover span,
+.mem-situation-grid > a:hover p {
+  color: #cbd1cc;
+}
+
+.mem-situation-grid > a:hover strong {
+  border-color: rgba(255,255,255,.22);
 }
 
 .mem-care {
@@ -1211,40 +1372,107 @@
   line-height: 1.55;
 }
 
-.mem-other {
-  padding: 88px 0;
+.mem-boundaries {
+  padding: 118px 0;
   border-block: 1px solid var(--mem-line);
+  background: #d8d1c6;
 }
 
-.mem-other-grid {
+.mem-boundaries-grid {
   display: grid;
-  grid-template-columns: minmax(260px, .55fr) 1fr minmax(260px, .55fr);
-  gap: clamp(42px, 7vw, 100px);
-  align-items: start;
+  grid-template-columns: minmax(0, .9fr) minmax(280px, .5fr) minmax(280px, .5fr);
+  border: 1px solid var(--mem-line);
 }
 
-.mem-other h2 {
-  margin-top: 17px;
-  font-size: 38px;
+.mem-boundaries-title,
+.mem-boundary-card {
+  min-height: 470px;
+  padding: 38px;
+  border-right: 1px solid var(--mem-line);
 }
 
-.mem-other-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0 28px;
+.mem-boundary-card:last-child {
+  border-right: 0;
 }
 
-.mem-other-list span {
-  padding: 17px 0;
-  border-top: 1px solid var(--mem-line);
+.mem-boundaries-title {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: var(--mem-paper);
+}
+
+.mem-boundaries-title h2 {
+  max-width: 640px;
+  margin: 24px 0;
   font-family: var(--mem-serif);
-  font-size: 20px;
+  font-size: clamp(42px, 4.6vw, 66px);
+  font-weight: 300;
+  letter-spacing: -.04em;
+  line-height: .96;
 }
 
-.mem-other-grid > p {
-  color: #5c645e;
+.mem-boundaries-title > p:last-child {
+  max-width: 580px;
+  color: #59615b;
   font-size: 13px;
-  line-height: 1.75;
+  line-height: 1.7;
+}
+
+.mem-boundary-card {
+  color: #f8f5ef;
+  background: var(--mem-forest);
+}
+
+.mem-boundary-included {
+  color: var(--mem-ink);
+  background: #d5c5a4;
+}
+
+.mem-boundary-card > span {
+  display: block;
+  min-height: 86px;
+  color: #c9b895;
+  font-family: var(--mem-mono);
+  font-size: 8px;
+  letter-spacing: .1em;
+}
+
+.mem-boundary-included > span {
+  color: var(--mem-burgundy);
+}
+
+.mem-boundary-card ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.mem-boundary-card li {
+  position: relative;
+  padding: 18px 0 18px 24px;
+  border-top: 1px solid rgba(255,255,255,.18);
+  color: #cbd1cc;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.mem-boundary-card li::before {
+  position: absolute;
+  top: 18px;
+  left: 0;
+  color: #c9b895;
+  content: "＋";
+}
+
+.mem-boundary-included li {
+  border-color: rgba(15,15,15,.18);
+  color: #444b45;
+}
+
+.mem-boundary-included li::before {
+  color: var(--mem-burgundy);
+  content: "✓";
 }
 
 .mem-executor-callout {
@@ -1755,6 +1983,10 @@
     display: none;
   }
 
+  .mem-mobile-menu {
+    display: block;
+  }
+
   .mem-header-inner {
     grid-template-columns: 1fr auto;
   }
@@ -1824,13 +2056,6 @@
     display: none;
   }
 
-  .mem-other-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .mem-other-grid > p {
-    grid-column: 2;
-  }
 }
 
 @media (max-width: 820px) {
@@ -1859,6 +2084,41 @@
 
   .mem-agency-models {
     grid-template-columns: 1fr;
+  }
+
+  .mem-situations-head,
+  .mem-situation-grid,
+  .mem-boundaries-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mem-situations-head {
+    gap: 22px;
+  }
+
+  .mem-situation-grid > a {
+    min-height: 250px;
+    border-right: 0;
+    border-bottom: 1px solid var(--mem-line);
+  }
+
+  .mem-situation-grid > a:last-child {
+    border-bottom: 0;
+  }
+
+  .mem-situation-grid h3 {
+    margin-top: 46px;
+  }
+
+  .mem-boundaries-title,
+  .mem-boundary-card {
+    min-height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--mem-line);
+  }
+
+  .mem-boundary-card:last-child {
+    border-bottom: 0;
   }
 
   .mem-agency-models article {
@@ -1904,13 +2164,6 @@
     grid-template-columns: 1fr;
   }
 
-  .mem-other-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .mem-other-grid > p {
-    grid-column: auto;
-  }
 }
 
 @media (max-width: 620px) {
@@ -1935,6 +2188,21 @@
 
   .mem-header .brand-parent {
     display: none;
+  }
+
+  .mem-header-actions {
+    gap: 8px;
+    padding-left: 8px;
+  }
+
+  .mem-header-actions .mem-button {
+    max-width: 112px;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .mem-mobile-menu nav {
+    top: 68px;
   }
 
   .mem-hero h1 {
@@ -1985,11 +2253,13 @@
   }
 
   .mem-intro,
+  .mem-situations,
   .mem-care,
   .mem-process,
   .mem-protection,
   .mem-interaction,
   .mem-report,
+  .mem-boundaries,
   .mem-agencies,
   .mem-faq,
   .mem-order {
@@ -2101,7 +2371,6 @@
   }
 
   .mem-paper-checks,
-  .mem-other-list,
   .mem-field-row {
     grid-template-columns: 1fr;
   }
@@ -2125,6 +2394,29 @@
     border-right: 0;
     border-bottom: 1px solid rgba(15,15,15,.2);
     padding: 28px 22px;
+  }
+
+  .mem-situation-grid > a {
+    min-height: 235px;
+    padding: 26px 20px;
+  }
+
+  .mem-situation-grid h3 {
+    margin-top: 38px;
+    font-size: 30px;
+  }
+
+  .mem-boundaries-title,
+  .mem-boundary-card {
+    padding: 28px 22px;
+  }
+
+  .mem-boundaries-title h2 {
+    font-size: 43px;
+  }
+
+  .mem-boundary-card > span {
+    min-height: 52px;
   }
 
   .mem-start-card h3 {
@@ -2191,7 +2483,10 @@
 @media (prefers-reduced-motion: reduce) {
   .mem-button,
   .mem-role-path,
+  .mem-situation-grid > a,
   .mem-start-card,
+  .mem-mobile-menu summary::before,
+  .mem-mobile-menu summary::after,
   .mem-nav a::after,
   .mem-link::after,
   .mem-faq summary span {
