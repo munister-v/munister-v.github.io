@@ -3,7 +3,7 @@ const categoryError = document.querySelector("#category-error");
 const formStatus = document.querySelector("#form-status");
 
 function selectedCategories(formElement) {
-  return [...formElement.querySelectorAll('input[name="categories"]:checked')]
+  return [...formElement.querySelectorAll('input[name="categories[]"]:checked')]
     .map((input) => input.value);
 }
 
@@ -51,7 +51,7 @@ if (form) {
     window.location.href = buildApplicationEmail(form);
   });
 
-  form.querySelectorAll('input[name="categories"]').forEach((input) => {
+  form.querySelectorAll('input[name="categories[]"]').forEach((input) => {
     input.addEventListener("change", () => {
       if (selectedCategories(form).length > 0) {
         categoryError.textContent = "";
