@@ -1,6 +1,41 @@
 const form = document.querySelector("#executor-form");
 const categoryError = document.querySelector("#category-error");
 const formStatus = document.querySelector("#form-status");
+const incomeCalculator = document.querySelector("[data-income-calculator]");
+
+const currencyFormatter = new Intl.NumberFormat("uk-UA", {
+  maximumFractionDigits: 0
+});
+
+function formatCurrency(value) {
+  return `${currencyFormatter.format(value)} грн`;
+}
+
+function updateIncomeCalculator() {
+  if (!incomeCalculator) {
+    return;
+  }
+
+  const reward = Number(incomeCalculator.querySelector("[data-reward-input]").value);
+  const tasks = Number(incomeCalculator.querySelector("[data-tasks-input]").value);
+  const gross = reward * tasks;
+  const fee = gross * 0.25;
+  const net = gross - fee;
+
+  incomeCalculator.querySelector("[data-reward-output]").textContent = formatCurrency(reward);
+  incomeCalculator.querySelector("[data-tasks-output]").textContent = String(tasks);
+  incomeCalculator.querySelector("[data-income-gross]").textContent = formatCurrency(gross);
+  incomeCalculator.querySelector("[data-income-fee]").textContent = `− ${formatCurrency(fee)}`;
+  incomeCalculator.querySelector("[data-income-one]").textContent = formatCurrency(reward * 0.75);
+  incomeCalculator.querySelector("[data-income-total]").textContent = formatCurrency(net);
+}
+
+if (incomeCalculator) {
+  incomeCalculator.querySelectorAll('input[type="range"]').forEach((input) => {
+    input.addEventListener("input", updateIncomeCalculator);
+  });
+  updateIncomeCalculator();
+}
 
 function selectedCategories(formElement) {
   return [...formElement.querySelectorAll('input[name="categories[]"]:checked')]
