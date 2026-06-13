@@ -4,6 +4,7 @@ const header = document.getElementById("header");
 const mobileMenu = document.querySelector(".mem-mobile-menu");
 const journeyLinks = [...document.querySelectorAll("[data-journey-link]")];
 const carePlanner = document.querySelector("[data-care-planner]");
+const yearPlan = document.querySelector("[data-year-plan]");
 
 if (header) {
   const updateHeader = () => {
@@ -204,6 +205,106 @@ if (carePlanner) {
 
   controls.addEventListener("change", updatePlanner);
   updatePlanner();
+}
+
+const yearPlanModes = {
+  2: {
+    months: [4, 10],
+    count: "2 візити / рік",
+    description: "Мінімальний сезонний ритм: весняне відновлення після зими та осіннє прибирання перед холодами.",
+    visits: [
+      ["КВІТЕНЬ", "Після зими", "листя · очищення · первинний огляд"],
+      ["ЖОВТЕНЬ", "Перед холодами", "опале листя · порядок · фінальний звіт"]
+    ]
+  },
+  4: {
+    months: [3, 5, 8, 10],
+    count: "4 візити / рік",
+    description: "Збалансований сезонний план: після зими, до важливої дати, влітку та восени.",
+    visits: [
+      ["БЕРЕЗЕНЬ", "Після зими", "огляд · листя · очищення"],
+      ["ТРАВЕНЬ", "Пам'ятна дата", "квіти · лампадка · фото"],
+      ["СЕРПЕНЬ", "Літній догляд", "бур'яни · порядок · огляд"],
+      ["ЖОВТЕНЬ", "Осінній візит", "листя · підготовка до холодів"]
+    ]
+  },
+  6: {
+    months: [3, 5, 7, 8, 10, 12],
+    count: "6 візитів / рік",
+    description: "Частіший контроль для місць, які потребують сезонного догляду або кількох важливих дат.",
+    visits: [
+      ["БЕРЕЗЕНЬ", "Весняний огляд", "стан після зими · фото"],
+      ["ТРАВЕНЬ", "Пам'ятний візит", "квіти · прибирання"],
+      ["ЛИПЕНЬ", "Літній контроль", "бур'яни · сухе листя"],
+      ["СЕРПЕНЬ", "Другий літній візит", "порядок · оновлення квітів"],
+      ["ЖОВТЕНЬ", "Осіннє прибирання", "листя · підготовка"],
+      ["ГРУДЕНЬ", "Зимове підтвердження", "огляд · фото стану"]
+    ]
+  }
+};
+
+if (yearPlan) {
+  const buttons = [...yearPlan.querySelectorAll("[data-year-mode]")];
+  const monthLabels = [...yearPlan.querySelectorAll("[data-month]")];
+  const markers = [...yearPlan.querySelectorAll("[data-month-marker]")];
+  const visits = yearPlan.querySelector("[data-year-visits]");
+  const count = yearPlan.querySelector("[data-year-count]");
+  const description = yearPlan.querySelector("[data-year-description]");
+
+  const updateYearPlan = (mode) => {
+    const plan = yearPlanModes[mode] || yearPlanModes[4];
+    const activeMonths = new Set(plan.months);
+
+    buttons.forEach((button) => {
+      const active = Number(button.dataset.yearMode) === Number(mode);
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+
+    monthLabels.forEach((label) => {
+      label.classList.toggle("is-active", activeMonths.has(Number(label.dataset.month)));
+    });
+
+    markers.forEach((marker) => {
+      marker.classList.toggle("is-active", activeMonths.has(Number(marker.dataset.monthMarker)));
+    });
+
+    visits.style.setProperty("--visit-count", String(plan.visits.length));
+    count.textContent = plan.count;
+    description.textContent = plan.description;
+    visits.replaceChildren(...plan.visits.map(([month, title, details], index) => {
+      const article = document.createElement("article");
+      const number = String(index + 1).padStart(2, "0");
+      article.innerHTML = `<span>${number} / ${month}</span><h3>${title}</h3><p>${details}</p>`;
+      return article;
+    }));
+  };
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => updateYearPlan(Number(button.dataset.yearMode)));
+  });
+
+  updateYearPlan(4);
+}
+
+if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const revealTargets = document.querySelectorAll(
+    ".mem-section-head, .mem-cases-head, .mem-protection-head, .mem-interaction-head, .mem-report-grid, .mem-boundaries-grid, .mem-agency-head, .mem-faq-grid"
+  );
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-revealed");
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  revealTargets.forEach((target) => {
+    target.classList.add("mem-reveal");
+    revealObserver.observe(target);
+  });
 }
 
 document.querySelectorAll("[data-compare]").forEach((compare) => {
