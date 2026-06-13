@@ -24,3 +24,16 @@ if (mobileMenu) {
     }
   });
 }
+
+document.querySelectorAll("[data-compare]").forEach((compare) => {
+  const range = compare.querySelector('input[type="range"]');
+
+  if (!range) return;
+
+  const updateCompare = () => {
+    compare.style.setProperty("--compare-position", `${range.value}%`);
+  };
+
+  updateCompare();
+  range.addEventListener("input", updateCompare);
+});
