@@ -1,14 +1,15 @@
 :root {
-  --ex-ink: #10110f;
-  --ex-cream: #f1efe7;
-  --ex-paper: #fbfaf5;
-  --ex-green: #b8ff35;
-  --ex-yellow: #ffd43b;
-  --ex-blue: #b9d7ff;
-  --ex-coral: #ff7b61;
-  --ex-wine: #712f47;
-  --ex-line: rgba(16, 17, 15, .24);
-  --ex-soft-line: rgba(16, 17, 15, .12);
+  /* ── Mania Group palette — bright editorial accents neutralised ── */
+  --ex-ink: #17130f;
+  --ex-cream: #f6f3ee;
+  --ex-paper: #faf8f4;
+  --ex-green: #d8c7a8;   /* was acid lime — champagne accent */
+  --ex-yellow: #cdb88f;  /* was bright yellow — muted gold */
+  --ex-blue: #ece7df;    /* was sky blue — cloud neutral */
+  --ex-coral: #7a5c3e;   /* was coral — bronze */
+  --ex-wine: #5f4730;    /* was wine — deep bronze */
+  --ex-line: rgba(23, 19, 15, .18);
+  --ex-soft-line: rgba(23, 19, 15, .09);
 }
 
 .executor-memorial {
@@ -1560,3 +1561,59 @@
     transition-duration: .01ms !important;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   Mania Group overlay — dark film-grain hero (2026-06-20)
+   ════════════════════════════════════════════════════════════════ */
+.executor-hero {
+  color: var(--ex-paper);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E") 0 0 / 150px 150px,
+    linear-gradient(90deg, transparent calc(50% - .5px), rgba(246, 243, 238, .08) 50%, transparent calc(50% + .5px)),
+    radial-gradient(135% 105% at 10% -10%, rgba(122, 92, 62, .26), transparent 56%),
+    var(--ex-ink);
+}
+.executor-hero-meta span:last-child { border-color: rgba(246, 243, 238, .35); }
+.executor-memorial .executor-hero .eyebrow { color: var(--ex-green); }
+.executor-memorial .executor-hero h1 { color: var(--ex-paper); }
+.executor-memorial .executor-hero h1 em {
+  background: var(--ex-green);
+  color: var(--ex-ink);
+}
+.executor-memorial .executor-hero .hero-lead { color: rgba(246, 243, 238, .72); }
+.executor-memorial .executor-hero .text-link {
+  color: var(--ex-paper);
+  border-bottom: 1px solid rgba(246, 243, 238, .35);
+}
+.executor-memorial .executor-hero .trust-list { color: var(--ex-paper); }
+.executor-memorial .executor-hero .trust-list li::before { color: var(--ex-green); }
+.executor-memorial .executor-hero .btn-primary,
+.executor-memorial .executor-hero .hero-actions .btn {
+  border-color: var(--ex-paper);
+  background: var(--ex-paper);
+  color: var(--ex-ink);
+}
+.executor-memorial .executor-hero .btn-primary:hover {
+  background: var(--ex-green);
+  border-color: var(--ex-green);
+}
+
+/* dark-section eyebrows must not be ink-on-ink */
+.platform-value .eyebrow,
+.application-section .eyebrow,
+.split-section .eyebrow { color: var(--ex-green); }
+.platform-value .eyebrow::before,
+.application-section .eyebrow::before { background: var(--ex-green); }
+
+/* agency-invite sits on bronze (--ex-coral) → paper text throughout */
+.agency-invite :is(h2, h3, p, span, li, strong, dt, dd, .eyebrow) {
+  color: var(--ex-paper);
+}
+.agency-invite .eyebrow::before { background: var(--ex-paper); }
+.agency-invite .btn-primary { color: var(--ex-ink); }
+
+/* stronger override — beat .executor-memorial .eyebrow and .agency-grid rules */
+.executor-memorial .agency-invite :is(h2, h3, p, span, li, strong, dt, dd, .eyebrow, .card-kicker) {
+  color: var(--ex-paper);
+}
+.executor-memorial .agency-invite .btn-primary { color: var(--ex-ink); }

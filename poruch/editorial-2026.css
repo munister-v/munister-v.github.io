@@ -1,14 +1,15 @@
 :root {
-  --por-ink: #10110f;
-  --por-cream: #f1efe7;
-  --por-paper: #fbfaf5;
-  --por-green: #b8ff35;
-  --por-yellow: #ffd43b;
-  --por-blue: #b9d7ff;
-  --por-coral: #ff7b61;
-  --por-wine: #712f47;
-  --por-line: rgba(16, 17, 15, .22);
-  --por-soft-line: rgba(16, 17, 15, .11);
+  /* ── Mania Group palette — bright editorial accents neutralised ── */
+  --por-ink: #17130f;
+  --por-cream: #f6f3ee;
+  --por-paper: #faf8f4;
+  --por-green: #d8c7a8;   /* was acid lime — now champagne accent */
+  --por-yellow: #cdb88f;  /* was bright yellow — muted gold */
+  --por-blue: #ece7df;    /* was sky blue — cloud neutral */
+  --por-coral: #7a5c3e;   /* was coral — bronze */
+  --por-wine: #5f4730;    /* was wine — deep bronze */
+  --por-line: rgba(23, 19, 15, .16);
+  --por-soft-line: rgba(23, 19, 15, .08);
 }
 
 .mem-header::after {
@@ -1998,4 +1999,69 @@
   .mem-marquee > div {
     animation: none;
   }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Mania Group overlay — dark film-grain hero (2026-06-20)
+   Darkens the hero band and flips left-column text to paper, so the
+   light role-board cards read as light cards on warm ink (maniagroup).
+   ════════════════════════════════════════════════════════════════ */
+.mem-hero {
+  color: var(--mem-paper);
+  border-bottom-color: rgba(246, 243, 238, .14);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E") 0 0 / 150px 150px,
+    linear-gradient(90deg, transparent calc(50% - .5px), rgba(246, 243, 238, .08) 50%, transparent calc(50% + .5px)),
+    radial-gradient(135% 105% at 10% -10%, rgba(122, 92, 62, .26), transparent 56%),
+    var(--mem-ink);
+}
+.mem-hero h1 { color: var(--mem-paper); }
+.mem-hero h1 em {
+  background: var(--mem-champagne);
+  color: var(--mem-ink);
+}
+.mem-hero .mem-overline { color: var(--mem-champagne); }
+.mem-hero .mem-overline::before { background: var(--mem-champagne); }
+.mem-hero-topline > span {
+  border-color: rgba(246, 243, 238, .35);
+  color: var(--mem-paper);
+}
+.mem-hero-lead { color: rgba(246, 243, 238, .72); }
+.mem-hero-notes { color: var(--mem-paper); }
+.mem-hero-notes li::before { color: var(--mem-champagne); }
+.mem-hero .mem-text-link {
+  border-bottom-color: rgba(246, 243, 238, .35);
+  color: var(--mem-paper);
+}
+.mem-hero .mem-button {
+  border-color: var(--mem-paper);
+  background: var(--mem-paper);
+  color: var(--mem-ink);
+}
+.mem-hero .mem-button:hover {
+  background: var(--mem-champagne);
+  border-color: var(--mem-champagne);
+}
+.mem-hero-visual { border-left-color: rgba(246, 243, 238, .14); }
+/* role-board: keep light cards but warm them + hairline borders + soft shadow on hover */
+.mem-hero-role { border-color: rgba(23, 19, 15, .14); }
+.mem-hero-role:hover { box-shadow: 7px 7px 0 rgba(0, 0, 0, .28); }
+.mem-hero-role-client { background: var(--mem-champagne); }
+.mem-hero-role-worker { background: var(--mem-cloud); }
+
+/* executor recruitment callout sits on bronze (--por-coral) → paper text */
+.mem-executor-callout,
+.mem-executor-callout h2,
+.mem-executor-callout p,
+.mem-executor-callout .mem-index,
+.mem-executor-callout .mem-overline {
+  color: var(--mem-paper);
+}
+.mem-executor-callout .mem-overline::before {
+  background: var(--mem-paper);
+}
+.mem-executor-callout .mem-executor-grid p,
+.mem-executor-callout .mem-executor-grid h2,
+.mem-executor-callout .mem-executor-grid .mem-index {
+  color: var(--mem-paper);
 }
