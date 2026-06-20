@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#17130f">
+  <title>Бізнес-план — Поруч</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&amp;family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --paper:#f6f3ee;--ink:#17130f;--bronze:#7a5c3e;--champagne:#d8c7a8;
+      --muted:#8c8174;--line:#ddd6cb;--cloud:#ece7df;--deep:#5f4730;
+      --green:#5b7a52;--red:#a04040;
+      --sans:'Jost',system-ui,sans-serif;--serif:'Cormorant Garamond',Georgia,serif;
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+    a{color:var(--bronze);text-decoration:underline;text-underline-offset:3px}
+    a:hover{color:var(--deep)}
+
+    .bp-header{display:flex;align-items:center;justify-content:space-between;padding:20px clamp(20px,4vw,48px);border-bottom:1px solid var(--line)}
+    .bp-brand{font-family:var(--serif);font-size:22px;font-weight:500;color:var(--ink);text-decoration:none}
+    .bp-back{font-size:13px;color:var(--muted);text-decoration:none}
+    .bp-back:hover{color:var(--ink)}
+
+    .bp-cover{padding:clamp(60px,10vh,120px) clamp(20px,4vw,48px) clamp(40px,6vh,80px);background:var(--ink);color:var(--paper)}
+    .bp-cover-inner{max-width:900px}
+    .bp-eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--champagne);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;margin-bottom:24px}
+    .bp-eyebrow::before{width:24px;height:1px;background:var(--champagne);content:""}
+    .bp-cover h1{font-family:var(--serif);font-size:clamp(36px,5.5vw,64px);font-weight:500;line-height:1.05;letter-spacing:-.03em}
+    .bp-cover h1 em{color:var(--champagne);font-style:italic}
+    .bp-cover-sub{margin-top:20px;max-width:640px;color:rgba(246,243,238,.6);font-size:17px;line-height:1.7}
+    .bp-cover-meta{display:flex;gap:32px;margin-top:36px;padding-top:24px;border-top:1px solid rgba(246,243,238,.12);color:rgba(246,243,238,.45);font-size:12px;letter-spacing:.04em}
+
+    .bp-body{max-width:820px;margin:0 auto;padding:clamp(40px,6vh,80px) clamp(20px,4vw,48px)}
+
+    .bp-section{margin-bottom:clamp(48px,7vh,80px)}
+    .bp-section-num{display:inline-block;width:32px;height:32px;line-height:32px;text-align:center;border-radius:50%;background:var(--ink);color:var(--paper);font-size:13px;font-weight:600;margin-bottom:14px}
+    .bp-section h2{font-family:var(--serif);font-size:clamp(26px,3.5vw,36px);font-weight:500;letter-spacing:-.02em;line-height:1.15;margin-bottom:18px}
+    .bp-section h3{font-size:17px;font-weight:600;margin:28px 0 10px}
+    .bp-section p{color:#3d3a35;margin-bottom:14px}
+    .bp-section ul,.bp-section ol{margin:10px 0 18px 24px;color:#3d3a35}
+    .bp-section li{margin-bottom:6px}
+
+    .bp-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:24px 0}
+    .bp-kpi-card{padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--cloud)}
+    .bp-kpi-card dt{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    .bp-kpi-card dd{font-family:var(--serif);font-size:30px;font-weight:500;margin-top:6px;letter-spacing:-.02em}
+    .bp-kpi-card span{display:block;margin-top:4px;font-size:12px;color:var(--muted)}
+
+    .bp-table{width:100%;border-collapse:collapse;margin:20px 0 28px;font-size:14px}
+    .bp-table th{text-align:left;padding:10px 14px;background:var(--ink);color:var(--paper);font-weight:500;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+    .bp-table th:first-child{border-radius:8px 0 0 0}
+    .bp-table th:last-child{border-radius:0 8px 0 0}
+    .bp-table td{padding:10px 14px;border-bottom:1px solid var(--line)}
+    .bp-table tr:last-child td{border-bottom:0}
+    .bp-table .num{text-align:right;font-family:var(--serif);font-size:16px;font-weight:500}
+    .bp-table .total{background:var(--cloud);font-weight:600}
+
+    .bp-timeline{position:relative;padding-left:28px;margin:20px 0}
+    .bp-timeline::before{position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--line);content:""}
+    .bp-milestone{position:relative;margin-bottom:24px}
+    .bp-milestone::before{position:absolute;left:-28px;top:6px;width:16px;height:16px;border-radius:50%;border:3px solid var(--paper);background:var(--bronze);box-shadow:0 0 0 2px var(--bronze);content:""}
+    .bp-milestone.done::before{background:var(--green);box-shadow:0 0 0 2px var(--green)}
+    .bp-milestone h4{font-size:15px;font-weight:600}
+    .bp-milestone p{font-size:14px;color:var(--muted);margin-top:3px}
+    .bp-milestone time{font-size:11px;color:var(--bronze);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+
+    .bp-highlight{padding:24px;border-left:4px solid var(--bronze);background:var(--cloud);border-radius:0 12px 12px 0;margin:24px 0}
+    .bp-highlight p{color:var(--ink);margin:0}
+    .bp-highlight strong{color:var(--deep)}
+
+    .bp-footer{padding:24px clamp(20px,4vw,48px);border-top:1px solid var(--line);display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
+
+    @media(max-width:600px){
+      .bp-cover-meta{flex-direction:column;gap:8px}
+      .bp-kpi{grid-template-columns:1fr}
+      .bp-table{font-size:13px}
+      .bp-table th,.bp-table td{padding:8px 10px}
+    }
+  </style>
+</head>
+<body>
+  <header class="bp-header">
+    <a class="bp-brand" href="./">Поруч</a>
+    <a class="bp-back" href="./">← На сайт</a>
+  </header>
+
+  <section class="bp-cover">
+    <div class="bp-cover-inner">
+      <span class="bp-eyebrow">Бізнес-план</span>
+      <h1>Поруч — сервіс делікатного догляду<br>за місцями <em>пам'яті.</em></h1>
+      <p class="bp-cover-sub">Маркетплейс-модель з комісією 25%, який з'єднує родини з перевіреними виконавцями для догляду за похованнями в Україні. Документ для внутрішнього планування та інвесторської оцінки.</p>
+      <div class="bp-cover-meta">
+        <span>Версія: червень 2026</span>
+        <span>Стадія: пілот (MVP)</span>
+        <span>Ринок: Україна</span>
+        <span>Конфіденційно</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="bp-body">
+
+    <!-- 1. ПРОБЛЕМА -->
+    <section class="bp-section">
+      <span class="bp-section-num">1</span>
+      <h2>Проблема</h2>
+      <p>Понад 10 мільйонів українців живуть за кордоном або в іншому місті, далеко від місць поховання рідних. Жодного цифрового сервісу, який би дозволив безпечно делегувати догляд, не існує.</p>
+      <h3>Болі замовника</h3>
+      <ul>
+        <li>Немає перевірених людей — пошук через OLX, знайомих, сусідів без гарантій</li>
+        <li>Усні домовленості — ніхто не фіксує обсяг, ціну й результат</li>
+        <li>Немає доказів роботи — «зробили» без фото, чеків, звіту</li>
+        <li>Емоційна вразливість — тема делікатна, торгуватися і контролювати — складно</li>
+      </ul>
+      <h3>Болі виконавця</h3>
+      <ul>
+        <li>Холодний пошук клієнтів — немає каналу входу</li>
+        <li>Незахищені домовленості — клієнт може не заплатити або змінити обсяг</li>
+        <li>Відсутність репутації — немає платформи для рейтингу й відгуків</li>
+      </ul>
+    </section>
+
+    <!-- 2. РІШЕННЯ -->
+    <section class="bp-section">
+      <span class="bp-section-num">2</span>
+      <h2>Рішення</h2>
+      <p>Поруч — маркетплейс, який фіксує замовлення, підбирає перевіреного виконавця, контролює виконання через фотозвіт з геолокацією та зберігає повну доказову історію.</p>
+      <div class="bp-kpi">
+        <dl class="bp-kpi-card"><dt>Захищений бриф</dt><dd>100%</dd><span>обсяг, ціна, строк — у картці</span></dl>
+        <dl class="bp-kpi-card"><dt>Фотозвіт</dt><dd>6–10</dd><span>фото до/після з геолокацією</span></dl>
+        <dl class="bp-kpi-card"><dt>Комісія</dt><dd>25%</dd><span>з винагороди виконавця</span></dl>
+        <dl class="bp-kpi-card"><dt>Вхідний поріг</dt><dd>0 ₴</dd><span>реєстрація безкоштовна</span></dl>
+      </div>
+      <div class="bp-highlight">
+        <p><strong>Ключова перевага:</strong> ми не просто зводимо людей — ми фіксуємо домовленості і створюємо доказову базу, яка захищає обидві сторони. Це compliance-шар, якого немає в жодному конкуренті.</p>
+      </div>
+    </section>
+
+    <!-- 3. РИНОК -->
+    <section class="bp-section">
+      <span class="bp-section-num">3</span>
+      <h2>Ринок</h2>
+      <p>Ринок ритуальних послуг України оцінюється в 12–15 млрд ₴ на рік. Сегмент догляду за похованнями — регулярна, повторювана послуга, яка не залежить від нових смертей.</p>
+
+      <h3>TAM / SAM / SOM</h3>
+      <table class="bp-table">
+        <tr><th>Рівень</th><th>Опис</th><th class="num">Обсяг</th></tr>
+        <tr><td>TAM</td><td>Усі домогосподарства з похованнями в Україні (~8 млн)</td><td class="num">4,8 млрд ₴/рік</td></tr>
+        <tr><td>SAM</td><td>Діаспора + внутрішні переселенці (~3,2 млн домогосподарств)</td><td class="num">1,9 млрд ₴/рік</td></tr>
+        <tr><td>SOM</td><td>Реалістичне покриття 1-3 року: 40 міст, digital-first аудиторія</td><td class="num">120 млн ₴/рік</td></tr>
+      </table>
+
+      <h3>Конкурентне середовище</h3>
+      <p>Прямих конкурентів з digital-платформою в Україні немає. Існують:</p>
+      <ul>
+        <li><strong>OLX / дошки оголошень</strong> — без верифікації, без фіксації домовленостей, без звітів</li>
+        <li><strong>Ритуальні агенції</strong> — фокус на похоронах, не на регулярному догляді; дорого, непрозоро</li>
+        <li><strong>Сарафанне радіо</strong> — ненадійно, немасштабовано, без захисту</li>
+      </ul>
+    </section>
+
+    <!-- 4. БІЗНЕС-МОДЕЛЬ -->
+    <section class="bp-section">
+      <span class="bp-section-num">4</span>
+      <h2>Бізнес-модель</h2>
+      <p>Комісійна модель з боку виконавця. Замовник платить повну вартість; 25% утримується як комісія платформи, 75% — виплата виконавцю.</p>
+
+      <h3>Юніт-економіка одного замовлення</h3>
+      <table class="bp-table">
+        <tr><th>Показник</th><th class="num">Базовий</th><th class="num">Середній</th><th class="num">Преміум</th></tr>
+        <tr><td>Вартість замовлення</td><td class="num">700 ₴</td><td class="num">1 200 ₴</td><td class="num">2 500 ₴</td></tr>
+        <tr><td>Комісія Poruch (25%)</td><td class="num">175 ₴</td><td class="num">300 ₴</td><td class="num">625 ₴</td></tr>
+        <tr><td>Виплата виконавцю</td><td class="num">525 ₴</td><td class="num">900 ₴</td><td class="num">1 875 ₴</td></tr>
+        <tr><td>Матеріали (окремо)</td><td class="num">0 ₴</td><td class="num">~500 ₴</td><td class="num">~1 200 ₴</td></tr>
+        <tr class="total"><td>Дохід платформи</td><td class="num">175 ₴</td><td class="num">300 ₴</td><td class="num">625 ₴</td></tr>
+      </table>
+
+      <h3>Середній чек і повторюваність</h3>
+      <div class="bp-kpi">
+        <dl class="bp-kpi-card"><dt>Середній чек</dt><dd>1 100 ₴</dd><span>робота без матеріалів</span></dl>
+        <dl class="bp-kpi-card"><dt>Дохід з чеку</dt><dd>275 ₴</dd><span>комісія 25%</span></dl>
+        <dl class="bp-kpi-card"><dt>LTV замовника</dt><dd>3–4×</dd><span>візити/рік (регулярний план)</span></dl>
+        <dl class="bp-kpi-card"><dt>CAC цільовий</dt><dd>&lt; 200 ₴</dd><span>Google Ads + SEO + реферали</span></dl>
+      </div>
+      <p>При LTV 3–4 замовлення на рік: дохід з одного замовника = 825–1 100 ₴/рік. Payback period на CAC &lt; 200 ₴ — перше замовлення.</p>
+
+      <h3>Додаткові потоки доходу (фаза 2)</h3>
+      <ul>
+        <li><strong>Преміум-підписка для замовників</strong> — пріоритетний підбір, розширений звіт, нагадування</li>
+        <li><strong>SaaS для агентств</strong> — брендований кабінет, управління командою, аналітика</li>
+        <li><strong>Регулярні плани</strong> — передоплачений пакет 4–6 візитів зі знижкою → прогнозований cash flow</li>
+        <li><strong>Квіти і матеріали</strong> — маркетплейс з маржею на закупівлі (10–15%)</li>
+      </ul>
+    </section>
+
+    <!-- 5. GTM -->
+    <section class="bp-section">
+      <span class="bp-section-num">5</span>
+      <h2>Go-to-Market</h2>
+
+      <h3>Фаза 1: Пілот (Q2–Q3 2026)</h3>
+      <ul>
+        <li>5 міст: Вінниця, Київ, Львів, Одеса, Дніпро</li>
+        <li>Ручна координація, email-based заявки → кабінет</li>
+        <li>Ціль: 50 завершених замовлень, 20 перевірених виконавців</li>
+        <li>Канали: SEO лендинг, Google Ads (diaspora keywords), Facebook UA communities abroad</li>
+      </ul>
+
+      <h3>Фаза 2: Масштабування (Q4 2026 – Q2 2027)</h3>
+      <ul>
+        <li>Розширення до 40 міст</li>
+        <li>Підключення платіжного партнера (escrow)</li>
+        <li>Партнерська програма для агентств (white-label виконання)</li>
+        <li>Мобільний додаток для виконавців (GPS-трекінг, камера → звіт)</li>
+        <li>Ціль: 500 замовлень/місяць</li>
+      </ul>
+
+      <h3>Фаза 3: Зростання (2027+)</h3>
+      <ul>
+        <li>Регулярні підписки і передоплачені плани</li>
+        <li>Вихід на сусідні ринки (Польща — українська діаспора, Молдова)</li>
+        <li>B2B інтеграції з ритуальними агенціями і страховими компаніями</li>
+      </ul>
+    </section>
+
+    <!-- 6. ФІНАНСИ -->
+    <section class="bp-section">
+      <span class="bp-section-num">6</span>
+      <h2>Фінансові проєкції</h2>
+
+      <table class="bp-table">
+        <tr><th>Показник</th><th class="num">2026 (H2)</th><th class="num">2027</th><th class="num">2028</th></tr>
+        <tr><td>Замовлень / місяць (середнє)</td><td class="num">30</td><td class="num">400</td><td class="num">1 800</td></tr>
+        <tr><td>GMV (оборот), ₴</td><td class="num">198 000</td><td class="num">5 280 000</td><td class="num">23 760 000</td></tr>
+        <tr><td>Дохід (комісія 25%), ₴</td><td class="num">49 500</td><td class="num">1 320 000</td><td class="num">5 940 000</td></tr>
+        <tr><td>Операційні витрати, ₴</td><td class="num">180 000</td><td class="num">960 000</td><td class="num">3 200 000</td></tr>
+        <tr class="total"><td>EBITDA, ₴</td><td class="num" style="color:var(--red)">−130 500</td><td class="num">360 000</td><td class="num">2 740 000</td></tr>
+        <tr><td>EBITDA margin</td><td class="num">—</td><td class="num">27%</td><td class="num">46%</td></tr>
+      </table>
+
+      <h3>Структура витрат (2027)</h3>
+      <table class="bp-table">
+        <tr><th>Стаття</th><th class="num">₴ / міс</th><th class="num">% від доходу</th></tr>
+        <tr><td>Координатор + підтримка (2 людини)</td><td class="num">40 000</td><td class="num">36%</td></tr>
+        <tr><td>Маркетинг (Google Ads, Facebook, SEO)</td><td class="num">20 000</td><td class="num">18%</td></tr>
+        <tr><td>Інфраструктура (VPS, домен, SMS, email)</td><td class="num">5 000</td><td class="num">5%</td></tr>
+        <tr><td>Платіжна комісія (~2.5%)</td><td class="num">11 000</td><td class="num">10%</td></tr>
+        <tr><td>Юридичне, бухгалтерське</td><td class="num">4 000</td><td class="num">4%</td></tr>
+        <tr class="total"><td>Усього</td><td class="num">80 000</td><td class="num">73%</td></tr>
+      </table>
+
+      <div class="bp-highlight">
+        <p><strong>Точка беззбитковості:</strong> ~73 замовлення / місяць при середньому чеку 1 100 ₴. Очікується досягнення в Q1 2027.</p>
+      </div>
+    </section>
+
+    <!-- 7. РИЗИКИ -->
+    <section class="bp-section">
+      <span class="bp-section-num">7</span>
+      <h2>Ризики та мітигація</h2>
+      <table class="bp-table">
+        <tr><th>Ризик</th><th>Вплив</th><th>Мітигація</th></tr>
+        <tr><td>Низький попит на старті</td><td>Повільне зростання</td><td>Фокус на діаспорі (платоспроможна, digital-first); SEO + paid ads з точним таргетингом</td></tr>
+        <tr><td>Виконавці обходять платформу</td><td>Втрата комісії</td><td>Цінність платформи = захист домовленостей + потік клієнтів; складно замінити після першого замовлення</td></tr>
+        <tr><td>Якість виконання</td><td>Репутаційний удар</td><td>Верифікація + фотозвіт + рейтинг + система спорів + координатор</td></tr>
+        <tr><td>Сезонність</td><td>Нерівномірний cash flow</td><td>Регулярні плани (4–6 візитів) + інші доручення поза сезоном</td></tr>
+        <tr><td>Конкуренти (копіювання)</td><td>Цінова війна</td><td>First-mover + мережевий ефект (рейтинги, історія) + compliance-шар</td></tr>
+      </table>
+    </section>
+
+    <!-- 8. КОМАНДА -->
+    <section class="bp-section">
+      <span class="bp-section-num">8</span>
+      <h2>Команда і потреби</h2>
+      <h3>Зараз (пілот)</h3>
+      <ul>
+        <li><strong>Фаундер</strong> — продукт, розробка, координація, маркетинг</li>
+        <li>Повний стек: лендинг, Node.js бекенд, PostgreSQL, VPS, Docker</li>
+      </ul>
+      <h3>Потрібні (Q3–Q4 2026)</h3>
+      <ul>
+        <li><strong>Координатор</strong> — комунікація з замовниками та виконавцями, контроль якості</li>
+        <li><strong>Маркетолог</strong> — Google Ads, Facebook, контент для діаспори (EN/UA)</li>
+      </ul>
+      <h3>Потрібні (2027)</h3>
+      <ul>
+        <li><strong>Другий розробник</strong> — мобільний додаток для виконавців</li>
+        <li><strong>Operations lead</strong> — масштабування мережі виконавців, агентства</li>
+      </ul>
+    </section>
+
+    <!-- 9. ROADMAP -->
+    <section class="bp-section">
+      <span class="bp-section-num">9</span>
+      <h2>Дорожня карта</h2>
+      <div class="bp-timeline">
+        <div class="bp-milestone done">
+          <time>Червень 2026</time>
+          <h4>MVP запущено</h4>
+          <p>Лендинг + кабінет + форма виконавця + юридичні документи</p>
+        </div>
+        <div class="bp-milestone">
+          <time>Липень – Серпень 2026</time>
+          <h4>Перші 50 замовлень</h4>
+          <p>5 міст, ручна координація, збір фідбеку, ітерації продукту</p>
+        </div>
+        <div class="bp-milestone">
+          <time>Вересень 2026</time>
+          <h4>Платіжний партнер</h4>
+          <p>Escrow-модель: кошти резервуються до прийняття роботи</p>
+        </div>
+        <div class="bp-milestone">
+          <time>Q4 2026</time>
+          <h4>Масштабування до 40 міст</h4>
+          <p>Партнерська програма для агентств, автоматизація верифікації</p>
+        </div>
+        <div class="bp-milestone">
+          <time>Q1 2027</time>
+          <h4>Точка беззбитковості</h4>
+          <p>73+ замовлення/місяць, стабільний позитивний cash flow</p>
+        </div>
+        <div class="bp-milestone">
+          <time>Q2 2027</time>
+          <h4>Мобільний додаток</h4>
+          <p>GPS-трекінг, камера → звіт, push-сповіщення для виконавців</p>
+        </div>
+        <div class="bp-milestone">
+          <time>H2 2027</time>
+          <h4>Регулярні плани + B2B</h4>
+          <p>Передоплачені пакети візитів, інтеграція зі страховими і ритуальними</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. ІНВЕСТИЦІЙНА ПОТРЕБА -->
+    <section class="bp-section">
+      <span class="bp-section-num">10</span>
+      <h2>Інвестиційна потреба</h2>
+      <p>Поточний етап фінансується бутстрепом. Для прискорення масштабування розглядається залучення seed-раунду.</p>
+
+      <div class="bp-kpi">
+        <dl class="bp-kpi-card"><dt>Seed-раунд</dt><dd>$50–80K</dd><span>runway 12–15 місяців</span></dl>
+        <dl class="bp-kpi-card"><dt>Використання</dt><dd>65%</dd><span>маркетинг + команда</span></dl>
+        <dl class="bp-kpi-card"><dt>Ціль раунду</dt><dd>500</dd><span>замовлень/місяць до Q2 2027</span></dl>
+      </div>
+
+      <h3>Алокація коштів</h3>
+      <table class="bp-table">
+        <tr><th>Напрямок</th><th class="num">%</th><th>Деталі</th></tr>
+        <tr><td>Маркетинг і залучення</td><td class="num">35%</td><td>Google Ads diaspora, Facebook, SEO, контент</td></tr>
+        <tr><td>Команда (координатор + маркетолог)</td><td class="num">30%</td><td>2 людини на 12 місяців</td></tr>
+        <tr><td>Продукт (мобільний додаток)</td><td class="num">20%</td><td>React Native додаток для виконавців</td></tr>
+        <tr><td>Операційні + юридичні</td><td class="num">10%</td><td>ФОП/ТОВ, платіжний партнер, страхування</td></tr>
+        <tr><td>Резерв</td><td class="num">5%</td><td>Непередбачені витрати</td></tr>
+      </table>
+    </section>
+
+    <!-- 11. КОНТАКТ -->
+    <section class="bp-section" style="text-align:center;padding:40px 0;border-top:1px solid var(--line)">
+      <h2>Зв'язатися</h2>
+      <p style="max-width:480px;margin:14px auto"><a href="mailto:munister@outlook.com">munister@outlook.com</a></p>
+      <p style="color:var(--muted);font-size:13px;margin-top:24px">Цей документ є конфіденційним і призначений виключно для адресата.</p>
+    </section>
+
+  </div>
+
+  <footer class="bp-footer">
+    <span>© 2026 Поруч</span>
+    <span>poruch.munister.com.ua</span>
+  </footer>
+</body>
+</html>
