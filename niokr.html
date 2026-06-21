@@ -592,84 +592,84 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
 </section>
 
 
-<!-- ══ 06 GOSSIP + CRDT ══ -->
+<!-- ══ 06 СИНХРОНИЗАЦИЯ ══ -->
 <section class="slide dm">
-  <div class="label">Синхронизация состояния · gossip + CRDT</div>
-  <!-- 4 символа как визуальные якоря -->
+  <div class="label">Надёжность · как устройства остаются в синхронизации</div>
+  <div class="D2" style="margin-bottom:clamp(14px,2vw,24px)">Устройства<br>договариваются<br>сами — без сервера</div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:.5rem">
     <div class="block-f" style="padding:clamp(18px,2.5vw,36px) clamp(16px,2vw,28px)">
-      <div class="deco" style="font-size:clamp(56px,7vw,100px);color:var(--GL)">T</div>
-      <div class="D3" style="margin-top:.6rem">Снимок<br>32 байта</div>
-      <div class="body" style="margin-top:.6rem;font-size:clamp(12px,.97vw,14.5px)">CPU/GPU/NPU, память, очередь, p50/p99, тепло, потери. Компактнее UDP-пакета.</div>
+      <div class="deco" style="font-size:clamp(56px,7vw,100px);color:var(--GL)">←→</div>
+      <div class="D3" style="margin-top:.6rem">Минимальный<br>трафик</div>
+      <div class="body" style="margin-top:.6rem;font-size:clamp(12px,.97vw,14.5px)">Служебный обмен — 4,8 КБ/с в худшем случае. Меньше голосового сообщения. Работает на канале 64 кбит/с.</div>
     </div>
     <div class="block-f" style="padding:clamp(18px,2.5vw,36px) clamp(16px,2vw,28px)">
       <div class="deco" style="font-size:clamp(56px,7vw,100px);color:var(--GL)">Δ</div>
-      <div class="D3" style="margin-top:.6rem">Delta-<br>кодирование</div>
-      <div class="body" style="margin-top:.6rem;font-size:clamp(12px,.97vw,14.5px)">Передаются только изменения сверх кванта. Периодически — полный снимок (fallback).</div>
+      <div class="D3" style="margin-top:.6rem">Только<br>изменения</div>
+      <div class="body" style="margin-top:.6rem;font-size:clamp(12px,.97vw,14.5px)">Устройства передают только то, что изменилось — не весь массив данных. Это снижает нагрузку на сеть в разы.</div>
     </div>
     <div class="block-f" style="padding:clamp(18px,2.5vw,36px) clamp(16px,2vw,28px)">
-      <div class="deco" style="font-size:clamp(56px,7vw,100px);color:var(--GL)">φ</div>
-      <div class="D3" style="margin-top:.6rem">Phi-accrual<br>детектор</div>
-      <div class="body" style="margin-top:.6rem;font-size:clamp(12px,.97vw,14.5px)">Вероятностная оценка по истории heartbeat-интервалов. Нет ложных тревог при задержках.</div>
+      <div class="deco" style="font-size:clamp(56px,7vw,100px);color:var(--GL)">✓</div>
+      <div class="D3" style="margin-top:.6rem">Нет ложных<br>тревог</div>
+      <div class="body" style="margin-top:.6rem;font-size:clamp(12px,.97vw,14.5px)">Система отличает временный сбой связи от реального отказа узла. Не паникует из-за секундной задержки.</div>
     </div>
     <div class="block-f" style="padding:clamp(18px,2.5vw,36px) clamp(16px,2vw,28px)">
-      <div class="deco" style="font-size:clamp(56px,7vw,100px);color:var(--GL)">∞</div>
-      <div class="D3" style="margin-top:.6rem">CRDT-<br>слияние</div>
-      <div class="body" style="margin-top:.6rem;font-size:clamp(12px,.97vw,14.5px)">LWW: последняя метка времени побеждает. При разрыве — автослияние при восстановлении.</div>
+      <div class="deco" style="font-size:clamp(56px,7vw,100px);color:var(--GL)">↺</div>
+      <div class="D3" style="margin-top:.6rem">Авто-<br>восстановление</div>
+      <div class="body" style="margin-top:.6rem;font-size:clamp(12px,.97vw,14.5px)">Связь вернулась — устройства сами сверяют состояния без вашего вмешательства. Ничего не теряется.</div>
     </div>
   </div>
   <div class="hl" style="margin-top:1.6rem">
-    <div class="body"><strong>Итог:</strong> при 64 кбит/с служебный трафик занимает 4,8 КБ/с в худшем случае. Каждый узел всегда знает актуальное состояние кластера — даже без непрерывной связи.</div>
+    <div class="body"><strong>Главное:</strong> даже при полном обрыве сети каждое устройство продолжает работать самостоятельно. При восстановлении соединения синхронизация происходит автоматически.</div>
   </div>
 </section>
 
 
 <!-- ══ 07 ПЛАНИРОВЩИК ══ -->
 <section class="slide">
-  <div class="label">Двухуровневый планировщик · L1 + L2</div>
+  <div class="label">Скорость · умный диспетчер задач</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:.5rem">
     <div class="block-t">
-      <div class="accent-bar" style="background:rgba(0,0,0,.2);margin-bottom:1rem">L1 — горячий путь</div>
+      <div class="accent-bar" style="background:rgba(0,0,0,.2);margin-bottom:1rem">Мгновенный выбор</div>
       <div class="D2" style="color:var(--W);font-size:clamp(22px,3vw,46px)">0,33 мкс</div>
-      <div class="serif-xl" style="font-size:clamp(16px,2vw,26px);margin-top:.4rem;color:rgba(255,253,248,.7)">линейный скоринг кандидатов</div>
-      <div class="body" style="margin-top:1rem;color:rgba(255,253,248,.8)">Фильтрация подозрительных и перегруженных узлов. Взвешенная функция стоимости: загрузка, очередь, кэш модели, тепло, риск φ. Работает <strong style="color:var(--W)">всегда</strong> — даже без L2.</div>
+      <div class="serif-xl" style="font-size:clamp(16px,2vw,26px);margin-top:.4rem;color:rgba(255,253,248,.7)">выбор лучшего устройства</div>
+      <div class="body" style="margin-top:1rem;color:rgba(255,253,248,.8)">Система за долю секунды смотрит на каждое устройство: насколько загружено, не перегрето ли, какая очередь — и выбирает лучшее. Работает <strong style="color:var(--W)">всегда</strong>, даже если оптимизатор недоступен.</div>
     </div>
     <div class="block-c">
-      <div class="accent-bar" style="background:var(--INK);color:var(--W);margin-bottom:1rem">L2 — фон</div>
-      <div class="D2" style="font-size:clamp(22px,3vw,46px)">MILP</div>
-      <div class="serif-xl" style="font-size:clamp(16px,2vw,26px);margin-top:.4rem;color:var(--MU)">оптимизация без блокировки</div>
-      <div class="body" style="margin-top:1rem">Бинарные переменные размещения, ограничения памяти и SLA. Публикует подсказки L1: residency hints, standby routing, traffic split. <strong>Не блокирует</strong> горячий путь.</div>
+      <div class="accent-bar" style="background:var(--INK);color:var(--W);margin-bottom:1rem">Фоновая оптимизация</div>
+      <div class="D2" style="font-size:clamp(22px,3vw,46px)">100–500 мс</div>
+      <div class="serif-xl" style="font-size:clamp(16px,2vw,26px);margin-top:.4rem;color:var(--MU)">глубокий анализ кластера</div>
+      <div class="body" style="margin-top:1rem">Параллельно идёт анализ всего кластера — строит план на ближайшие минуты, учитывает резервы и приоритеты. <strong>Не останавливает</strong> обработку запросов ни на мгновение.</div>
     </div>
   </div>
   <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;margin-top:2px;background:var(--LN)">
-    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">L — загрузка</div><div class="sm">Основной показатель доступности узла</div></div>
-    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">Q — очередь</div><div class="sm">Прогноз дополнительной задержки</div></div>
-    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">M — кэш</div><div class="sm">Cold-start добавляет 800–3000 мс</div></div>
-    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">T — тепло</div><div class="sm">Throttling снижает производительность</div></div>
-    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">D — риск φ</div><div class="sm">Вес по истории heartbeat</div></div>
+    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">Нагрузка</div><div class="sm">Сколько задач уже есть у устройства</div></div>
+    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">Очередь</div><div class="sm">Сколько ждёт обработки прямо сейчас</div></div>
+    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">Кэш модели</div><div class="sm">Загружена ли нужная нейросеть в память</div></div>
+    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">Температура</div><div class="sm">Не перегревается ли процессор/GPU</div></div>
+    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">Надёжность</div><div class="sm">Насколько стабильно работал в последнее время</div></div>
   </div>
 </section>
 
 
-<!-- ══ 08 ZERO-COPY ══ -->
+<!-- ══ 08 БЫСТРАЯ ПЕРЕДАЧА ДАННЫХ ══ -->
 <section class="slide dk">
-  <div class="label">Передача тензоров · zero-copy IPC</div>
+  <div class="label">Скорость · передача данных между компонентами</div>
   <div class="split s40">
     <div>
       <div class="stat-n">0,58</div>
-      <div class="stat-u">мс p99</div>
-      <div class="body" style="margin-top:1rem">тензор 10 МБ между процессами</div>
+      <div class="stat-u">мс — 10 МБ данных</div>
+      <div class="body" style="margin-top:1rem">Результаты нейросети передаются между компонентами системы практически мгновенно — без потери времени на копирование.</div>
       <div style="margin-top:1.4rem;border-top:1px solid var(--LLT);padding-top:1.2rem">
-        <div class="sm">Классический IPC: сериализация → копирование → десериализация = десятки мс на 10+ МБ</div>
-        <div class="sm" style="margin-top:.6rem;color:var(--G)">Zero-copy: только хэндл (~100 байт), данные не двигаются</div>
+        <div class="sm">Обычный способ: скопировать → упаковать → передать → распаковать = десятки миллисекунд</div>
+        <div class="sm" style="margin-top:.6rem;color:var(--G)">Наш способ: оба компонента работают с одной областью памяти — данные не двигаются вообще</div>
       </div>
     </div>
     <div>
       <ul class="sr">
-        <li><span class="sridx">1</span><div><div class="D3">Выделение shm-региона</div><p class="body" style="margin-top:.35rem">Node-agent создаёт POSIX shared memory под тензор. Размер = shape × dtype. Имя — UUID.</p></div></li>
-        <li><span class="sridx">2</span><div><div class="D3">Запись без копии</div><p class="body" style="margin-top:.35rem">Inference-движок пишет результат напрямую в mmap-область. Промежуточный буфер отсутствует.</p></div></li>
-        <li><span class="sridx">3</span><div><div class="D3">Передача TensorHandle</div><p class="body" style="margin-top:.35rem">Через IPC уходит только лёгкий хэндл: имя + shape + dtype + offset. ~100 байт.</p></div></li>
-        <li><span class="sridx">4</span><div><div class="D3">Чтение на месте</div><p class="body" style="margin-top:.35rem">Получатель маппирует тот же регион и работает напрямую. 10 МБ — 0,58 мс p99.</p></div></li>
+        <li><span class="sridx">1</span><div><div class="D3">Нейросеть завершила работу</div><p class="body" style="margin-top:.35rem">Результат записывается в специальную область памяти, доступную всем компонентам системы.</p></div></li>
+        <li><span class="sridx">2</span><div><div class="D3">Передаётся только «адрес»</div><p class="body" style="margin-top:.35rem">Следующий компонент получает не сами данные, а указатель на них. Это ~100 байт вместо 10 МБ.</p></div></li>
+        <li><span class="sridx">3</span><div><div class="D3">Данные не перемещаются</div><p class="body" style="margin-top:.35rem">Получатель читает данные напрямую из той же памяти. Никаких копий, никаких задержек на перемещение.</p></div></li>
+        <li><span class="sridx">4</span><div><div class="D3">Результат — 0,58 мс на 10 МБ</div><p class="body" style="margin-top:.35rem">В 17 раз быстрее обычных методов. Критично для потоков видеоаналитики и задач реального времени.</p></div></li>
       </ul>
     </div>
   </div>
@@ -712,11 +712,11 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
   <div class="D2" style="margin-bottom:1.6rem">От поступления<br>до результата</div>
   <!-- горизонтальные ряды -->
   <div class="rmap">
-    <div class="rmap-row"><div class="rmap-n">01</div><div class="rmap-body"><h3>Сбор и кодирование телеметрии</h3><p>Telemetry Layer: 32-байтный снимок. Delta-кодирование — только изменения сверх кванта, периодически полный снимок.</p></div></div>
-    <div class="rmap-row"><div class="rmap-n">02</div><div class="rmap-body"><h3>Gossip-обмен состоянием</h3><p>State Bus распространяет дельты. CRDT — бесконфликтное слияние без лидера. Каждый узел видит актуальную картину.</p></div></div>
-    <div class="rmap-row"><div class="rmap-n">03</div><div class="rmap-body"><h3>Решение планировщика L1</h3><p>Фильтрация подозрительных и перегруженных. Взвешенный скоринг. Выбор минимума стоимости. 0,33 мкс p99.</p></div></div>
-    <div class="rmap-row"><div class="rmap-n">04</div><div class="rmap-body"><h3>Исполнение через Runtime Adapter</h3><p>Runtime Adapter запускает inference. Тензоры через Zero-copy IPC напрямую через shared memory. 0,58 мс p99 на 10 МБ.</p></div></div>
-    <div class="rmap-row"><div class="rmap-n">05</div><div class="rmap-body"><h3>Recovery при сбое</h3><p>Phi-accrual фиксирует отказ → захват standby-лизинга → повтор идемпотентной очереди → reroute. ~2,1 с p95.</p><div class="sub">При разрыве сети — CRDT-копия работает локально, консистентность восстанавливается при возобновлении связи.</div></div></div>
+    <div class="rmap-row"><div class="rmap-n">01</div><div class="rmap-body"><h3>Каждое устройство следит за собой</h3><p>Непрерывно собирает данные: загрузка процессора, температура, очередь задач, скорость отклика. Передаёт коллегам только изменения — минимальный трафик.</p></div></div>
+    <div class="rmap-row"><div class="rmap-n">02</div><div class="rmap-body"><h3>Все устройства знают о состоянии кластера</h3><p>Каждый узел видит актуальную картину всего кластера — без центрального сервера, без интернета. Как в хорошо слаженной команде: каждый знает, кто чем занят.</p></div></div>
+    <div class="rmap-row"><div class="rmap-n">03</div><div class="rmap-body"><h3>Мгновенный выбор исполнителя</h3><p>При поступлении задачи — система за 0,33 мкс выбирает лучшее устройство. Смотрит на нагрузку, температуру, очередь, надёжность. Никакого ручного управления.</p></div></div>
+    <div class="rmap-row"><div class="rmap-n">04</div><div class="rmap-body"><h3>Нейросеть работает, результат — мгновенно</h3><p>Выбранное устройство запускает нейросеть. Результат передаётся следующему компоненту без копирования — 10 МБ за 0,58 мс.</p></div></div>
+    <div class="rmap-row"><div class="rmap-n">05</div><div class="rmap-body"><h3>Сбой? Система восстанавливается сама</h3><p>Если устройство упало — система обнаруживает это за ~300 мс и переключается на резерв. Весь процесс занимает ~2,1 с без вашего участия.</p><div class="sub">При обрыве сети каждое устройство продолжает работать автономно. Синхронизация восстанавливается при возвращении связи.</div></div></div>
   </div>
 </section>
 
@@ -1267,6 +1267,43 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
   </div>
 </section>
 
+
+<!-- ══ DIVIDER: ТЕХНИЧЕСКОЕ ПРИЛОЖЕНИЕ ══ -->
+<section class="slide dk bleed" style="display:flex;flex-direction:column;padding:0">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(28px,5vw,80px)">
+    <div class="label" style="color:rgba(250,248,244,.3)">Приложение · для технической команды</div>
+    <div style="font-family:var(--sans);font-weight:700;text-transform:uppercase;
+                font-size:clamp(48px,10vw,148px);line-height:.82;letter-spacing:.02em;
+                color:rgba(255,253,248,.1);margin-bottom:clamp(16px,2.5vw,32px)">
+      СХЕМЫ
+    </div>
+    <div style="height:2px;background:var(--T);width:clamp(40px,6vw,80px);margin-bottom:clamp(16px,2.5vw,32px)"></div>
+    <div style="font-family:var(--serif);font-style:italic;font-size:clamp(20px,2.4vw,36px);color:var(--CH);line-height:1.3;max-width:28ch">
+      Технические диаграммы — для инженеров и технической экспертизы
+    </div>
+    <div class="body" style="margin-top:1.2rem;color:rgba(250,248,244,.45);max-width:44ch">
+      Следующие 4 слайда показывают внутреннее устройство системы: протокол синхронизации, алгоритм планирования, передачу данных и механизм восстановления.
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,253,248,.06);padding-bottom:var(--nb)">
+    <div style="background:var(--FM);padding:clamp(12px,1.6vw,20px) clamp(16px,2.5vw,28px)">
+      <div class="sm" style="color:var(--T);margin-bottom:.3rem;font-weight:600">→ Схема 1</div>
+      <div class="sm" style="color:rgba(250,248,244,.45)">Протокол распространения состояния</div>
+    </div>
+    <div style="background:var(--FM);padding:clamp(12px,1.6vw,20px) clamp(16px,2.5vw,28px)">
+      <div class="sm" style="color:var(--T);margin-bottom:.3rem;font-weight:600">→ Схема 2</div>
+      <div class="sm" style="color:rgba(250,248,244,.45)">Двухуровневый планировщик задач</div>
+    </div>
+    <div style="background:var(--FM);padding:clamp(12px,1.6vw,20px) clamp(16px,2.5vw,28px)">
+      <div class="sm" style="color:var(--T);margin-bottom:.3rem;font-weight:600">→ Схема 3</div>
+      <div class="sm" style="color:rgba(250,248,244,.45)">Путь данных без копирования</div>
+    </div>
+    <div style="background:var(--FM);padding:clamp(12px,1.6vw,20px) clamp(16px,2.5vw,28px)">
+      <div class="sm" style="color:var(--T);margin-bottom:.3rem;font-weight:600">→ Схема 4</div>
+      <div class="sm" style="color:rgba(250,248,244,.45)">Восстановление после отказа узла</div>
+    </div>
+  </div>
+</section>
 
 <!-- ══ 25 СХЕМА: GOSSIP-СЕТЬ -->
 <section class="slide dk">
