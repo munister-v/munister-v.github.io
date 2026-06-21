@@ -31,7 +31,7 @@
   --LLT: rgba(255,253,248,.13);
   --serif: "Cormorant Garamond", Georgia, serif;
   --sans: "Jost", system-ui, sans-serif;
-  --nb: 108px; /* nav bottom clearance */
+  --nb: 88px; /* nav bottom clearance */
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
@@ -41,7 +41,7 @@ body{font-family:var(--sans);background:var(--F);-webkit-font-smoothing:antialia
 .deck{position:fixed;inset:0}
 .slide{
   position:absolute;inset:0;
-  padding:clamp(72px,8vh,104px) clamp(32px,6vw,96px) var(--nb);
+  padding:clamp(58px,7vh,96px) clamp(32px,6vw,96px) var(--nb);
   opacity:0;transform:translateY(14px);
   transition:opacity .44s ease,transform .44s ease;
   pointer-events:none;overflow-y:auto;overflow-x:hidden;
@@ -134,6 +134,11 @@ hr{border:0;border-top:1px solid var(--LN);margin:0}
 .dk .rtable .row{border-color:var(--LLT)}
 .rtable .row>*{padding:clamp(11px,1.2vw,17px) 0}
 .rtable .row>*+*{padding-left:clamp(16px,2vw,28px)}
+/* column presets: t2 = вопрос|ответ, t3 = отрасль|задача|ограничение */
+.rtable.t2 .rh,.rtable.t2 .row{grid-template-columns:minmax(150px,1fr) 1.85fr}
+.rtable.t3 .rh,.rtable.t3 .row{grid-template-columns:minmax(120px,150px) 1fr minmax(120px,170px)}
+.rtable.t2 .row>*{padding:clamp(6px,.8vw,11px) 0}
+.rtable.t3 .row>*{padding:clamp(6px,.8vw,11px) 0}
 .tc-key{font-size:clamp(12.5px,1vw,15px);font-weight:600;color:var(--INK);line-height:1.3}
 .dk .tc-key{color:var(--W)}
 .tc-val{font-size:clamp(12.5px,1vw,15px);font-weight:400;color:var(--INK3);line-height:1.5}
@@ -159,7 +164,7 @@ hr{border:0;border-top:1px solid var(--LN);margin:0}
   display:grid;grid-template-columns:clamp(48px,5vw,72px) 1fr;
   gap:clamp(14px,2vw,24px);
   border-top:1px solid var(--LN);
-  padding:clamp(16px,1.8vw,26px) 0;align-items:start;
+  padding:clamp(11px,1.3vw,18px) 0;align-items:start;
 }
 .sr li:last-child{border-bottom:1px solid var(--LN)}
 .dk .sr li,.dm .sr li{border-color:var(--LLT)}
@@ -230,10 +235,14 @@ hr{border:0;border-top:1px solid var(--LN);margin:0}
 .medit-row:last-child{border-bottom:1px solid var(--LLT)}
 .m-n{
   font-family:var(--serif);font-weight:300;font-style:italic;
-  font-size:clamp(36px,5.5vw,80px);line-height:1;
-  color:var(--CH);padding:clamp(14px,1.6vw,22px) clamp(18px,2.2vw,30px) clamp(14px,1.6vw,22px) 0;
+  font-size:clamp(34px,4.4vw,64px);line-height:1;
+  color:var(--CH);padding:clamp(11px,1.3vw,18px) clamp(18px,2.2vw,30px) clamp(11px,1.3vw,18px) 0;
   letter-spacing:-.01em;
 }
+/* compact preset для слайдов с 5–6 метриками */
+.medit.compact .m-n{font-size:clamp(28px,3.4vw,48px);padding:clamp(7px,.9vw,12px) clamp(16px,2vw,26px) clamp(7px,.9vw,12px) 0}
+.medit.compact .m-desc{padding:clamp(7px,.9vw,12px) clamp(16px,2vw,26px)}
+.medit.compact .medit-row{grid-template-columns:clamp(150px,18vw,240px) 1fr clamp(110px,13vw,170px)}
 .m-desc{
   padding:clamp(14px,1.6vw,22px) clamp(18px,2.2vw,30px);
   border-left:1px solid var(--LLT);
@@ -255,12 +264,12 @@ hr{border:0;border-top:1px solid var(--LN);margin:0}
 }
 .rmap-n{
   font-family:var(--serif);font-size:clamp(24px,2.8vw,40px);font-weight:300;
-  color:var(--G);padding:clamp(16px,1.8vw,24px) clamp(12px,1.5vw,20px) clamp(16px,1.8vw,24px) 0;
+  color:var(--G);padding:clamp(10px,1.2vw,16px) clamp(12px,1.5vw,20px) clamp(10px,1.2vw,16px) 0;
   line-height:1;
 }
 .rmap-body{
   border-left:1px solid var(--LLT);
-  padding:clamp(16px,1.8vw,24px) 0 clamp(16px,1.8vw,24px) clamp(18px,2.2vw,30px);
+  padding:clamp(10px,1.2vw,16px) 0 clamp(10px,1.2vw,16px) clamp(18px,2.2vw,30px);
 }
 .rmap-body h3{font-size:clamp(13px,1.1vw,16px);font-weight:600;color:var(--W);margin-bottom:.35rem;letter-spacing:-.02em}
 .rmap-body p{font-size:clamp(12px,.95vw,14.5px);color:#9a9083;line-height:1.5;font-weight:400}
@@ -715,8 +724,8 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
 <!-- ══ 11 МЕТРИКИ ══ -->
 <section class="slide dk">
   <div class="label">Производительность · измеренные показатели</div>
-  <div class="D2" style="margin-bottom:1.4rem">Все цели перекрыты</div>
-  <div class="medit">
+  <div class="D2" style="margin-bottom:1rem">Все цели перекрыты</div>
+  <div class="medit compact">
     <div class="medit-row">
       <div class="m-n">0,33 <span style="font-size:.5em;font-style:normal">мкс</span></div>
       <div class="m-desc"><div class="m-lbl">Решение планировщика L1 (50 узлов), p99</div><div class="m-tgt">Цель ≤ 45 мс</div></div>
@@ -1009,7 +1018,7 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
       <div class="serif-xl" style="margin-top:.8rem;font-size:clamp(15px,1.6vw,22px)">Там, где облако невозможно — по регуляции, по физике или по выбору.</div>
     </div>
     <div>
-      <div class="rtable">
+      <div class="rtable t3">
         <div class="row" style="font-weight:700;font-size:clamp(11px,.82vw,13px);letter-spacing:.1em;text-transform:uppercase;padding-bottom:.6rem">
           <div>Отрасль</div><div>Задача</div><div style="text-align:right">Главное ограничение</div>
         </div>
@@ -1123,7 +1132,7 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
       <div class="body" style="margin-top:1rem">Три метрики — три прямые статьи экономии.</div>
     </div>
     <div>
-      <div class="medit" style="margin-top:0">
+      <div class="medit compact" style="margin-top:0">
         <div class="medit-row">
           <div class="m-n">+21,9 <span style="font-size:.4em;font-style:normal">%</span></div>
           <div class="m-desc">
@@ -1215,10 +1224,10 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
 <!-- ══ 24 FAQ ══ -->
 <section class="slide">
   <div class="label">Ответы на вопросы · часто задаваемые</div>
-  <div class="D2" style="margin-bottom:clamp(20px,3vw,40px)">Главные вопросы<br>собственника</div>
-  <div class="rtable">
-    <div class="row" style="font-weight:700;font-size:clamp(11px,.82vw,13px);letter-spacing:.1em;text-transform:uppercase;padding-bottom:.6rem">
-      <div>Вопрос</div><div style="flex:2">Ответ</div>
+  <div class="D2" style="margin-bottom:clamp(16px,2.2vw,30px)">Главные вопросы<br>собственника</div>
+  <div class="rtable t2">
+    <div class="row" style="font-weight:700;font-size:clamp(11px,.82vw,13px);letter-spacing:.1em;text-transform:uppercase;padding-bottom:.5rem">
+      <div>Вопрос</div><div>Ответ</div>
     </div>
     <div class="row">
       <div style="color:var(--T);font-style:italic;font-family:var(--serif)">Можно добавить новое железо?</div>
@@ -1249,14 +1258,14 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
       <div style="flex:2">Да. Masterless = минимум 1 узел, максимум — не ограничен. Нет центрального сервера.</div>
     </div>
   </div>
-  <div style="margin-top:auto;padding-top:clamp(16px,2vw,24px);border-top:1px solid var(--LN);display:flex;align-items:center;gap:1rem">
+  <div style="margin-top:auto;padding-top:clamp(10px,1.3vw,15px);border-top:1px solid var(--LN);display:flex;align-items:center;gap:1rem">
     <div class="sm" style="color:var(--MU);letter-spacing:.1em;text-transform:uppercase;flex-shrink:0">Полный список</div>
     <div class="body" style="color:var(--MU)">16 вопросов с развёрнутыми ответами — в документе НИОКР-ЭИО-01-2026 / Ответы.pdf</div>
   </div>
 </section>
 
 
-<!-- ══ 25 СХЕМА: GOSSIP-СЕТЬ ══ -->
+<!-- ══ 25 СХЕМА: GOSSIP-СЕТЬ -->
 <section class="slide dk">
   <div class="label">Схема · протокол распространения состояния</div>
   <div class="split s40">
@@ -1339,7 +1348,7 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
 <!-- ══ 26 СХЕМА: ПЛАНИРОВЩИК L1+L2 ══ -->
 <section class="slide">
   <div class="label">Схема · двухуровневый планировщик задач</div>
-  <div class="D2" style="margin-bottom:clamp(16px,2.5vw,32px)">Планировщик<br>L1 + L2</div>
+  <div class="D2" style="margin-bottom:clamp(12px,1.6vw,20px)">Планировщик<br>L1 + L2</div>
   <div style="display:grid;grid-template-columns:1fr clamp(180px,20vw,240px);gap:clamp(16px,2.5vw,32px);align-items:start">
     <div>
       <div style="background:var(--C);border-left:4px solid var(--INK);padding:clamp(12px,1.5vw,18px) clamp(16px,2vw,24px);margin-bottom:2px">
@@ -1347,7 +1356,7 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
         <div class="D3">Inference-запрос от клиента</div>
         <div class="body" style="margin-top:.3rem">Тип модели · размер батча · приоритет · hard deadline</div>
       </div>
-      <div style="text-align:center;font-size:22px;color:var(--T);line-height:1.4;margin:2px 0">▼</div>
+      <div style="text-align:center;font-size:18px;color:var(--T);line-height:1;margin:1px 0">▼</div>
       <div style="background:var(--T);padding:clamp(12px,1.5vw,18px) clamp(16px,2vw,24px);margin-bottom:2px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
           <div class="sm" style="letter-spacing:.1em;text-transform:uppercase;color:rgba(250,248,244,.6)">Уровень L1 · горячий путь</div>
@@ -1356,7 +1365,7 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
         <div class="D3" style="color:var(--W)">Линейный скоринг по 50 узлам</div>
         <div style="margin-top:.5rem;font-size:clamp(12px,1.1vw,15px);color:rgba(250,248,244,.7);font-family:var(--serif);font-style:italic">score = α·load + β·vram_free + γ·net_latency + δ·thermal</div>
       </div>
-      <div style="text-align:center;font-size:22px;color:var(--S);line-height:1.4;margin:2px 0">▼</div>
+      <div style="text-align:center;font-size:18px;color:var(--S);line-height:1;margin:1px 0">▼</div>
       <div style="background:var(--S);padding:clamp(12px,1.5vw,18px) clamp(16px,2vw,24px)">
         <div class="sm" style="letter-spacing:.1em;text-transform:uppercase;color:rgba(250,248,244,.6);margin-bottom:.3rem">Результат</div>
         <div class="D3" style="color:var(--W)">Dispatch на лучший узел → Inference</div>
