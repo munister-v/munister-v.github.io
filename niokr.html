@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEMIR AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --F: #17130f;   /* forest — почти чёрный */
+  --FM: #1e1810;
+  --P: #faf8f4;   /* paper */
+  --C: #f2ece0;   /* cream */
+  --W: #fffdf8;   /* white */
+  --CH: #d8c7a8;  /* champagne */
+  --T: #b86f54;   /* terra */
+  --TB: #f0ddd6;  /* terra-bg */
+  --S: #667b61;   /* sage */
+  --SB: #e4ece0;
+  --G: #c9a96e;   /* gold */
+  --GL: #e8d5b0;
+  --INK: #17130f;
+  --INK2: #3a3630;
+  --INK3: #5e5a52;
+  --MU: #928e85;
+  --FA: #bfb9ae;
+  --LN: rgba(23,19,15,.1);
+  --LN2: rgba(23,19,15,.05);
+  --LLT: rgba(255,253,248,.13);
+  --serif: "Cormorant Garamond", Georgia, serif;
+  --sans: "Jost", system-ui, sans-serif;
+  --nb: 108px; /* nav bottom clearance */
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--sans);background:var(--F);-webkit-font-smoothing:antialiased}
+
+/* ─── DECK ─── */
+.deck{position:fixed;inset:0}
+.slide{
+  position:absolute;inset:0;
+  padding:clamp(72px,8vh,104px) clamp(32px,6vw,96px) var(--nb);
+  opacity:0;transform:translateY(14px);
+  transition:opacity .44s ease,transform .44s ease;
+  pointer-events:none;overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:none;background:var(--P);
+}
+.slide::-webkit-scrollbar{display:none}
+.slide.on{opacity:1;transform:none;pointer-events:auto}
+.dk{background:var(--F)}
+.dm{background:var(--FM)}
+
+/* ─── TYPE ─── */
+.label{
+  font-size:clamp(9px,.75vw,10.5px);font-weight:500;
+  letter-spacing:.24em;text-transform:uppercase;
+  color:var(--INK3);display:flex;align-items:center;gap:10px;
+  margin-bottom:clamp(20px,2.5vw,36px);
+}
+.label::before{content:"";width:24px;height:1px;background:currentColor;flex-shrink:0}
+.dk .label,.dm .label{color:#6a6358}
+.dk .label::before,.dm .label::before{background:#6a6358}
+
+/* display */
+.D1{
+  font-family:var(--sans);font-weight:700;text-transform:uppercase;
+  font-size:clamp(60px,10vw,152px);line-height:.82;letter-spacing:-.06em;
+  color:var(--W);
+}
+.D2{
+  font-family:var(--sans);font-weight:700;
+  font-size:clamp(28px,4.2vw,62px);line-height:.9;letter-spacing:-.045em;
+  color:var(--INK);
+}
+.dk .D2,.dm .D2{color:var(--W)}
+.D3{
+  font-family:var(--sans);font-weight:700;
+  font-size:clamp(18px,2vw,28px);line-height:1;letter-spacing:-.03em;
+  color:var(--INK);
+}
+.dk .D3,.dm .D3{color:var(--W)}
+.serif-xl{
+  font-family:var(--serif);font-weight:300;font-style:italic;
+  font-size:clamp(28px,3.8vw,58px);line-height:1.05;color:var(--G);
+}
+/* big decorative number */
+.deco{
+  font-family:var(--serif);font-weight:300;
+  font-size:clamp(80px,12vw,180px);line-height:.85;letter-spacing:-.03em;
+  color:var(--CH);
+}
+.dk .deco,.dm .deco{color:rgba(201,169,110,.25)}
+.deco-t{color:rgba(184,111,84,.15)}
+/* stat */
+.stat-n{
+  font-family:var(--serif);font-weight:300;
+  font-size:clamp(48px,7vw,108px);line-height:.88;letter-spacing:-.02em;
+  color:var(--CH);
+}
+.stat-u{
+  font-family:var(--serif);font-weight:300;font-style:italic;
+  font-size:clamp(24px,3vw,44px);color:var(--G);
+}
+
+/* body */
+.body{font-size:clamp(14px,1.15vw,17px);line-height:1.65;color:var(--INK3);font-weight:400;max-width:62ch}
+.dk .body,.dm .body{color:#b0a898;max-width:none}
+.sm{font-size:clamp(12px,.95vw,14.5px);line-height:1.6;color:var(--MU);font-weight:400}
+.dk .sm,.dm .sm{color:#6a6358}
+
+/* ─── HAIRLINE RULES ─── */
+hr{border:0;border-top:1px solid var(--LN);margin:0}
+.dk hr,.dm hr{border-color:var(--LLT)}
+.rule-t{width:36px;height:2px;background:var(--T);display:block;margin-bottom:1.6rem}
+.dk .rule-t,.dm .rule-t{background:var(--G)}
+
+/* ─── TERRA ACCENT BAR ─── */
+.accent-bar{
+  display:inline-block;background:var(--T);color:var(--W);
+  font-size:clamp(9px,.75vw,10.5px);font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  padding:.35em 1em;
+}
+
+/* ─── ROW TABLE (no borders, just rules) ─── */
+.rtable{width:100%}
+.rtable .rh{
+  display:grid;border-bottom:2px solid var(--INK);padding-bottom:.5rem;margin-bottom:0;
+  font-size:clamp(9px,.75vw,10.5px);font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--INK3);
+}
+.rtable .row{display:grid;border-top:1px solid var(--LN);align-items:start}
+.dk .rtable .rh{border-color:var(--W);color:#7a7268}
+.dk .rtable .row{border-color:var(--LLT)}
+.rtable .row>*{padding:clamp(11px,1.2vw,17px) 0}
+.rtable .row>*+*{padding-left:clamp(16px,2vw,28px)}
+.tc-key{font-size:clamp(12.5px,1vw,15px);font-weight:600;color:var(--INK);line-height:1.3}
+.dk .tc-key{color:var(--W)}
+.tc-val{font-size:clamp(12.5px,1vw,15px);font-weight:400;color:var(--INK3);line-height:1.5}
+.dk .tc-val{color:#a09888}
+.tc-badge{font-size:clamp(10px,.82vw,12px);font-weight:600;padding:.28em .7em;letter-spacing:.06em}
+.hi{color:#8e4e39;background:#fdf0ec}
+.me{color:#7a5a18;background:#fdf5e3}
+.lo{color:var(--S);background:#eef5ec}
+
+/* ─── SPLIT LAYOUT ─── */
+.split{display:grid;gap:0;align-items:start}
+.s50{grid-template-columns:1fr 1fr}
+.s40{grid-template-columns:2fr 3fr}
+.s60{grid-template-columns:3fr 2fr}
+.s33{grid-template-columns:1fr 2fr}
+.split>*+*{border-left:1px solid var(--LN);padding-left:clamp(28px,4vw,60px)}
+.dk .split>*+*,.dm .split>*+*{border-color:var(--LLT)}
+.split>*:first-child{padding-right:clamp(28px,4vw,60px)}
+
+/* ─── STEP ROWS (unique, not generic) ─── */
+.sr{list-style:none}
+.sr li{
+  display:grid;grid-template-columns:clamp(48px,5vw,72px) 1fr;
+  gap:clamp(14px,2vw,24px);
+  border-top:1px solid var(--LN);
+  padding:clamp(16px,1.8vw,26px) 0;align-items:start;
+}
+.sr li:last-child{border-bottom:1px solid var(--LN)}
+.dk .sr li,.dm .sr li{border-color:var(--LLT)}
+.sridx{
+  font-family:var(--serif);font-size:clamp(28px,3vw,44px);
+  font-weight:300;line-height:1;color:var(--T);
+}
+.dk .sridx,.dm .sridx{color:var(--G)}
+.sr h3{font-size:clamp(13.5px,1.15vw,17px);font-weight:600;letter-spacing:-.02em;color:var(--INK);margin-bottom:.35rem}
+.dk .sr h3,.dm .sr h3{color:var(--W)}
+.sr p{font-size:clamp(13px,1.05vw,15.5px);color:var(--INK3);line-height:1.55;font-weight:400}
+.dk .sr p,.dm .sr p{color:#9a9083}
+
+/* ─── COLOR BLOCKS ─── */
+.block-t{background:var(--T);color:var(--W);padding:clamp(20px,2.5vw,36px)}
+.block-s{background:var(--SB);color:var(--INK);padding:clamp(20px,2.5vw,36px)}
+.block-c{background:var(--C);color:var(--INK);padding:clamp(20px,2.5vw,36px)}
+.block-f{background:var(--FM);color:var(--W);padding:clamp(20px,2.5vw,36px)}
+.block-ch{background:var(--CH);color:var(--INK);padding:clamp(20px,2.5vw,36px)}
+.block-t .D3,.block-f .D3{color:var(--W)}
+.block-t .body{color:rgba(255,253,248,.8)}
+.block-f .body{color:#a09888}
+
+/* ─── HIGHLIGHT ─── */
+.hl{border-left:2px solid var(--T);padding-left:1.2rem;margin:1.2rem 0}
+.dk .hl,.dm .hl{border-color:var(--G)}
+
+/* ─── TAGS ─── */
+.tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem}
+.tag{border:1px solid var(--LN);font-size:clamp(11px,.88vw,13px);font-weight:500;color:var(--INK3);padding:.3em .8em}
+.dk .tag,.dm .tag{border-color:var(--LLT);color:#7a7268}
+
+/* ─── STATUS COLS ─── */
+.status3{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.st-col{border-top:4px solid var(--LN)}
+.st-col.g{border-color:var(--S)}
+.st-col.a{border-color:#c49a45}
+.st-col.b{border-color:#5a78a8}
+.st-col-hd{
+  padding:clamp(14px,1.6vw,20px) clamp(16px,1.8vw,24px);
+  border-bottom:1px solid var(--LN);
+  font-size:clamp(11px,.9vw,13.5px);font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+}
+.st-col.g .st-col-hd{color:var(--S)}
+.st-col.a .st-col-hd{color:#7a5a18}
+.st-col.b .st-col-hd{color:#3a5880}
+.st-col-body{padding:0}
+.st-col-body li{
+  display:flex;gap:9px;align-items:flex-start;
+  font-size:clamp(12px,.97vw,14.5px);color:var(--INK3);line-height:1.4;
+  padding:clamp(9px,1vw,13px) clamp(16px,1.8vw,24px);
+  border-top:1px solid var(--LN2);list-style:none;
+}
+.st-col-body li:first-child{border-top:0}
+.st-col-body li::before{content:"";flex:0 0 4px;height:4px;border-radius:50%;background:var(--FA);margin-top:.6em}
+
+/* ─── BADGES (title) ─── */
+.bdg-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:clamp(24px,3vw,40px)}
+.bdg{font-size:clamp(11px,.88vw,13px);border:1px solid var(--LLT);color:var(--FA);padding:.45em .95em;font-weight:400}
+.bdg b{color:var(--W);font-weight:600}
+
+/* ─── METRICS EDITORIAL ─── */
+.medit{display:grid;gap:0}
+.medit-row{
+  display:grid;grid-template-columns:clamp(180px,22vw,300px) 1fr clamp(120px,14vw,180px);
+  border-top:1px solid var(--LLT);align-items:center;
+}
+.medit-row:last-child{border-bottom:1px solid var(--LLT)}
+.m-n{
+  font-family:var(--serif);font-weight:300;font-style:italic;
+  font-size:clamp(36px,5.5vw,80px);line-height:1;
+  color:var(--CH);padding:clamp(14px,1.6vw,22px) clamp(18px,2.2vw,30px) clamp(14px,1.6vw,22px) 0;
+  letter-spacing:-.01em;
+}
+.m-desc{
+  padding:clamp(14px,1.6vw,22px) clamp(18px,2.2vw,30px);
+  border-left:1px solid var(--LLT);
+}
+.m-desc .m-lbl{font-size:clamp(12.5px,1vw,15px);color:#a09888;line-height:1.4;font-weight:400}
+.m-desc .m-tgt{font-size:clamp(9px,.75vw,10.5px);letter-spacing:.18em;text-transform:uppercase;color:var(--G);font-weight:500;margin-top:.35rem}
+.m-gain{
+  padding:clamp(14px,1.6vw,22px) 0 clamp(14px,1.6vw,22px) clamp(18px,2.2vw,30px);
+  border-left:1px solid var(--LLT);
+  font-size:clamp(11px,.9vw,13.5px);color:#6a6358;line-height:1.4;font-weight:400;
+  font-family:var(--serif);font-style:italic;
+}
+
+/* ─── ROADMAP HORIZONTAL ─── */
+.rmap{display:grid;gap:0;margin-top:2rem}
+.rmap-row{
+  display:grid;grid-template-columns:clamp(44px,5vw,68px) 1fr;
+  border-top:1px solid var(--LLT);
+}
+.rmap-n{
+  font-family:var(--serif);font-size:clamp(24px,2.8vw,40px);font-weight:300;
+  color:var(--G);padding:clamp(16px,1.8vw,24px) clamp(12px,1.5vw,20px) clamp(16px,1.8vw,24px) 0;
+  line-height:1;
+}
+.rmap-body{
+  border-left:1px solid var(--LLT);
+  padding:clamp(16px,1.8vw,24px) 0 clamp(16px,1.8vw,24px) clamp(18px,2.2vw,30px);
+}
+.rmap-body h3{font-size:clamp(13px,1.1vw,16px);font-weight:600;color:var(--W);margin-bottom:.35rem;letter-spacing:-.02em}
+.rmap-body p{font-size:clamp(12px,.95vw,14.5px);color:#9a9083;line-height:1.5;font-weight:400}
+.rmap-body .sub{font-size:clamp(11px,.88vw,13px);color:#6a6358;line-height:1.4;margin-top:.5rem;font-style:italic;font-family:var(--serif)}
+
+/* ─── CHROME ─── */
+.topbar{position:fixed;top:0;left:0;height:2px;background:var(--T);z-index:60;transition:width .45s ease}
+.brand{
+  position:fixed;top:22px;left:clamp(16px,2.5vw,34px);z-index:50;
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+}
+.brand-mk{
+  width:24px;height:24px;background:var(--T);
+  display:grid;place-items:center;color:var(--W);
+  font-family:var(--serif);font-size:16px;font-weight:300;
+}
+#brand-txt{color:var(--P)}
+.slidectr{
+  position:fixed;top:26px;right:clamp(90px,11vw,130px);z-index:50;
+  font-family:var(--serif);font-size:16px;letter-spacing:.08em;color:var(--MU);
+}
+#slidecur{color:var(--P)}
+
+/* nav */
+.nav{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:50;
+  display:flex;align-items:center;gap:10px;
+  background:var(--W);border:1px solid var(--LN);
+  padding:5px 12px;
+  box-shadow:0 2px 16px rgba(23,19,15,.1);
+}
+.nav button{
+  background:none;border:0;cursor:pointer;
+  font-family:var(--serif);font-size:20px;color:var(--INK);
+  width:30px;height:30px;display:grid;place-items:center;
+}
+.nav button:hover{color:var(--T)}
+.dots{display:flex;gap:5px;align-items:center}
+.dots i{display:block;width:5px;height:5px;background:var(--LN);cursor:pointer;transition:all .3s}
+.dots i.on{width:18px;background:var(--T)}
+.hint{position:fixed;bottom:25px;right:clamp(16px,2.5vw,34px);z-index:50;font-size:10.5px;color:var(--FA);letter-spacing:.07em}
+kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);padding:1px 5px;font-size:10px}
+
+/* ─── PDF BUTTON ─── */
+.pdf-btn{
+  position:fixed;top:18px;right:clamp(16px,2.5vw,34px);z-index:52;
+  display:flex;align-items:center;gap:7px;
+  font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--FA);border:1px solid rgba(255,253,248,.2);background:rgba(30,24,16,.7);
+  padding:.42em 1em;cursor:pointer;backdrop-filter:blur(8px);
+  transition:color .2s,border-color .2s;
+}
+.pdf-btn:hover{color:var(--W);border-color:rgba(255,253,248,.45)}
+.pdf-btn svg{flex-shrink:0}
+/* hide pdf btn when on light slide — will reset via js */
+
+/* ─── PRINT / PDF ─── */
+@media print {
+  @page{size:297mm 167mm;margin:0}
+  html,body{height:auto;overflow:visible;background:var(--F)}
+  .topbar,.nav,.hint,.pdf-btn{display:none!important}
+  .slidectr,.brand{display:none!important}
+  .deck{position:static;height:auto;overflow:visible}
+  .slide{
+    position:relative!important;opacity:1!important;
+    transform:none!important;pointer-events:auto!important;
+    width:297mm!important;height:167mm!important;min-height:167mm!important;max-height:167mm!important;
+    overflow:hidden!important;
+    page-break-after:always;break-after:page;
+    padding:20mm 26mm 18mm!important;
+    display:flex!important;flex-direction:column!important;justify-content:flex-start;
+    box-sizing:border-box!important;
+  }
+  /* slides with edge-to-edge layout (padding:0 inline) keep their own inner padding */
+  .slide > [style*="flex:1"],[style*="grid-template-columns:repeat(4"]{
+    flex-shrink:1!important;
+  }
+  /* force correct fonts */
+  .D1{font-size:96pt}
+  .D2{font-size:32pt}
+  .body{font-size:10pt}
+  .sm{font-size:8pt}
+  /* metrics editorial */
+  .medit-row{grid-template-columns:140px 1fr 140px}
+  .m-n{font-size:40pt}
+  /* split layout */
+  .split{display:grid!important}
+  .s50{grid-template-columns:1fr 1fr!important}
+  .s40{grid-template-columns:2fr 3fr!important}
+  .s33{grid-template-columns:1fr 2fr!important}
+  .split>*+*{border-left:1px solid var(--LN)!important;padding-left:24px!important}
+  /* status */
+  .status3{display:grid!important;grid-template-columns:repeat(3,1fr)!important}
+  /* gossip 4-col */
+  .block-f{padding:16px}
+  /* rmap */
+  .rmap-row{display:grid!important;grid-template-columns:44px 1fr!important}
+  /* vs table */
+  .rtable .rh,.rtable .row{display:grid!important}
+}
+
+/* responsive */
+@media(max-width:900px){
+  .split{grid-template-columns:1fr!important}
+  .split>*+*{border-left:0;padding-left:0;border-top:1px solid var(--LN);padding-top:clamp(20px,3vw,32px)}
+  .dk .split>*+*,.dm .split>*+*{border-color:var(--LLT)}
+  .split>*:first-child{padding-right:0}
+  .status3{grid-template-columns:1fr}
+  .st-col+.st-col{border-top:1px solid var(--LN)}
+  .medit-row{grid-template-columns:clamp(120px,18vw,180px) 1fr}
+  .medit-row .m-gain{display:none}
+}
+@media(max-width:600px){
+  .medit-row{grid-template-columns:1fr}
+  .m-n{padding-bottom:0}
+  .m-desc{border-left:0;border-top:1px solid var(--LLT)}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+<div class="topbar" id="bar"></div>
+<div class="brand" id="brand"><span class="brand-mk">T</span><span id="brand-txt">Temir AI</span></div>
+<div class="slidectr" id="ctr"><span id="slidecur">01</span> <span style="color:#4a453f">/</span> <span id="slidetot"></span></div>
+<button class="pdf-btn" id="pdfbtn" onclick="exportPDF()" title="Экспорт в PDF">
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.5 1v8M3.5 6.5l3 3 3-3M1.5 11h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  PDF
+</button>
+
+<div class="deck">
+
+<!-- ══ 01 TITLE ══ -->
+<section class="slide dk on" style="display:flex;flex-direction:column;padding:0">
+  <!-- label bar -->
+  <div style="padding:clamp(28px,3.5vh,48px) clamp(28px,5vw,80px) 0;display:flex;justify-content:space-between">
+    <div class="label" style="color:rgba(250,248,244,.38)">НИОКР-ЭИО-01-2026</div>
+    <div class="label" style="color:rgba(250,248,244,.38)">Вячеслав Мунистер · Киев · 2026</div>
+  </div>
+  <!-- MAIN HERO — вся высота между лейблом и статами -->
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(28px,5vw,80px)">
+    <!-- massive single-line title -->
+    <div style="font-family:var(--sans);font-weight:700;text-transform:uppercase;
+                font-size:clamp(64px,18.8vw,276px);line-height:.80;letter-spacing:.03em;
+                color:var(--W);overflow:hidden">
+      <span style="color:var(--T)">T</span>EMIR AI
+    </div>
+    <!-- terra rule -->
+    <div style="height:3px;background:var(--T);margin:clamp(14px,2.2vh,28px) 0"></div>
+    <!-- subtitle row: serif italic + key properties -->
+    <div style="display:grid;grid-template-columns:1fr auto;gap:clamp(20px,4vw,60px);align-items:start">
+      <div style="font-family:var(--serif);font-style:italic;font-weight:300;
+                  font-size:clamp(16px,1.75vw,25px);line-height:1.42;
+                  color:rgba(250,248,244,.68)">
+        Децентрализованная оркестрация нейросетей<br>в изолированных периферийных средах
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.35rem;align-items:flex-end">
+        <span class="bdg" style="white-space:nowrap"><b>Masterless</b></span>
+        <span class="bdg" style="white-space:nowrap"><b>Air-gapped</b></span>
+        <span class="bdg" style="white-space:nowrap"><b>Rust + Python</b></span>
+        <span class="bdg" style="white-space:nowrap"><b>5 этапов</b></span>
+      </div>
+    </div>
+  </div>
+  <!-- stats strip flush bottom -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,253,248,.06);padding-bottom:var(--nb)">
+    <div style="background:var(--FM);padding:clamp(12px,1.6vw,20px) clamp(16px,2.5vw,28px)">
+      <div class="stat-n" style="font-size:clamp(24px,3vw,40px)">0,33 <span style="font-size:.5em;color:var(--G);font-family:var(--serif);font-style:italic">мкс</span></div>
+      <div class="sm" style="margin-top:.3rem">планировщик L1, p99</div>
+    </div>
+    <div style="background:var(--FM);padding:clamp(12px,1.6vw,20px) clamp(16px,2.5vw,28px)">
+      <div class="stat-n" style="font-size:clamp(24px,3vw,40px)">≈ 2 <span style="font-size:.5em;color:var(--G);font-family:var(--serif);font-style:italic">МБ</span></div>
+      <div class="sm" style="margin-top:.3rem">RAM демона узла</div>
+    </div>
+    <div style="background:var(--FM);padding:clamp(12px,1.6vw,20px) clamp(16px,2.5vw,28px)">
+      <div class="stat-n" style="font-size:clamp(24px,3vw,40px)">2,1 <span style="font-size:.5em;color:var(--G);font-family:var(--serif);font-style:italic">с</span></div>
+      <div class="sm" style="margin-top:.3rem">восстановление p95</div>
+    </div>
+    <div style="background:var(--FM);padding:clamp(12px,1.6vw,20px) clamp(16px,2.5vw,28px)">
+      <div class="stat-n" style="font-size:clamp(24px,3vw,40px)">+21,9 <span style="font-size:.4em;color:var(--G);font-family:var(--serif);font-style:italic">%</span></div>
+      <div class="sm" style="margin-top:.3rem">утилизация GPU/NPU</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 02 СУТЬ ══ -->
+<section class="slide">
+  <div class="label">В чём суть</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:-.5rem">
+    <div style="padding-right:clamp(28px,4vw,60px);border-right:1px solid var(--LN)">
+      <div class="D2">«Диспетчер»<br>для ИИ<br>без облака</div>
+      <div class="body" style="margin-top:1rem">Группа разнородных устройств — серверы, GPU/NPU-блоки, edge-узлы — <strong>сама решает</strong>, на каком узле выгоднее выполнить запрос к нейросети. Без интернета. Без главного сервера.</div>
+      <div class="hl" style="margin-top:1.4rem">
+        <div class="body"><strong>Каждый узел равноправен</strong> и хранит локальную картину кластера. Сеть разорвалась — система продолжает работать.</div>
+      </div>
+    </div>
+    <div style="padding-left:clamp(28px,4vw,60px)">
+      <ul class="sr">
+        <li><span class="sridx">A</span><div><div class="D3">Автономность</div><p class="body" style="margin-top:.4rem">Каждый узел принимает решения локально без внешнего управляющего сигнала — даже при обрыве связи.</p></div></li>
+        <li><span class="sridx">B</span><div><div class="D3">Скорость</div><p class="body" style="margin-top:.4rem">Маршрутизация за микросекунды. Сложная оптимизация идёт в фоне и не блокирует обработку.</p></div></li>
+        <li><span class="sridx">C</span><div><div class="D3">Живучесть</div><p class="body" style="margin-top:.4rem">При жёстком отказе узла нагрузка переходит на тёплый резерв. Восстановление за ~2 с.</p></div></li>
+        <li><span class="sridx">D</span><div><div class="D3">Экономичность</div><p class="body" style="margin-top:.4rem">Весь демон — ~2 МБ RAM. Служебный трафик — 4,8 КБ/с. Работает в самом скромном контуре.</p></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 03 ПРОБЛЕМА ══ -->
+<section class="slide">
+  <div class="label">Проблема</div>
+  <div class="split s40" style="gap:0">
+    <div style="padding-right:clamp(28px,4vw,60px);border-right:1px solid var(--LN)">
+      <div class="deco deco-t" style="margin-bottom:.4rem">?</div>
+      <div class="D2" style="margin-top:-.5rem">Облако<br>здесь не<br>работает</div>
+      <div class="body" style="margin-top:1rem">Закрытые промышленные, транспортные и оборонные контуры лишены постоянного интернета. Round-robin не знает ни о тепле GPU, ни о кэше модели, ни о глубине очереди.</div>
+      <div class="tags" style="margin-top:1.2rem">
+        <span class="tag">Нет интернета</span>
+        <span class="tag">Нет master</span>
+        <span class="tag">64 кбит/с</span>
+        <span class="tag">CPU / GPU / NPU</span>
+      </div>
+    </div>
+    <div style="padding-left:clamp(28px,4vw,60px)">
+      <ul class="sr">
+        <li><span class="sridx">01</span><div><div class="D3">Ограниченный канал</div><p class="body" style="margin-top:.4rem">Бюджет 64 кбит/с. Тяжёлый JSON-обмен исключён. Нужна компактная бинарная телеметрия с delta-кодированием.</p></div></li>
+        <li><span class="sridx">02</span><div><div class="D3">Гетерогенное «железо»</div><p class="body" style="margin-top:.4rem">На кластере — разные CPU, GPU, NPU. Один планировщик обязан учитывать их все: память, тепло, очередь, кэш.</p></div></li>
+        <li><span class="sridx">03</span><div><div class="D3">Split brain</div><p class="body" style="margin-top:.4rem">При разрыве каждый узел должен работать локально и восстанавливать консистентность без ручного вмешательства.</p></div></li>
+        <li><span class="sridx">04</span><div><div class="D3">Air-gapped поставка</div><p class="body" style="margin-top:.4rem">Доставка образов и зависимостей без интернета требует воспроизводимых офлайн-сборок и строгого SBOM.</p></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 04 VS ══ -->
+<section class="slide">
+  <div class="label">Сравнение · позиционирование</div>
+  <div class="D2" style="margin-bottom:1.6rem">Не замена Kubernetes —<br>а то, чего он не умеет</div>
+  <div class="rtable">
+    <div class="rh" style="grid-template-columns:2fr 1fr 1fr;gap:0">
+      <span style="padding-bottom:.5rem">Критерий</span>
+      <span style="padding:0 0 .5rem clamp(16px,2vw,28px);border-left:1px solid var(--LN)">Kubernetes / облако</span>
+      <span style="padding:0 0 .5rem clamp(16px,2vw,28px);border-left:1px solid var(--LN);color:var(--S)">Temir AI</span>
+    </div>
+    <div class="row" style="grid-template-columns:2fr 1fr 1fr">
+      <span class="tc-key">Интернет</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN)">Обязателен</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN);color:var(--S);font-weight:500">Не нужен</span>
+    </div>
+    <div class="row" style="grid-template-columns:2fr 1fr 1fr">
+      <span class="tc-key">Единая точка отказа</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN)">Мастер-узел</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN);color:var(--S);font-weight:500">Нет — все равны</span>
+    </div>
+    <div class="row" style="grid-template-columns:2fr 1fr 1fr">
+      <span class="tc-key">Сетевой трафик</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN)">От 1 Мбит/с</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN);color:var(--S);font-weight:500">4,8 КБ/с max</span>
+    </div>
+    <div class="row" style="grid-template-columns:2fr 1fr 1fr">
+      <span class="tc-key">GPU/NPU-специфика (тепло, кэш, очередь)</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN)">Не учитывается</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN);color:var(--S);font-weight:500">Основа скоринга</span>
+    </div>
+    <div class="row" style="grid-template-columns:2fr 1fr 1fr">
+      <span class="tc-key">Разрыв сети (split brain)</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN)">Кластер теряет управление</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN);color:var(--S);font-weight:500">Каждый узел работает по CRDT-копии</span>
+    </div>
+    <div class="row" style="grid-template-columns:2fr 1fr 1fr">
+      <span class="tc-key">RAM демона</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN)">Сотни МБ</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN);color:var(--S);font-weight:500">≈ 2 МБ</span>
+    </div>
+    <div class="row" style="grid-template-columns:2fr 1fr 1fr">
+      <span class="tc-key">Восстановление после отказа</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN)">Минуты (ручное)</span>
+      <span class="tc-val" style="border-left:1px solid var(--LN);color:var(--S);font-weight:500">~2,1 с p95 (авто)</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 05 АРХИТЕКТУРА ══ -->
+<section class="slide">
+  <div class="label">Архитектура · 8 модулей на каждом узле</div>
+  <div class="split s33">
+    <div>
+      <div class="rule-t"></div>
+      <div class="D2">Один<br>демон —<br>вся логика</div>
+      <div class="body" style="margin-top:1rem">Все узлы равноправны. На каждом — один демон node-agent, принимающий решения локально без обращения к центру.</div>
+    </div>
+    <div>
+      <div class="rtable">
+        <div class="rh" style="grid-template-columns:44px 1fr"><span></span><span>Модуль / функция</span></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">01</span><div><div class="tc-key">Node Agent</div><div class="tc-val">Демон узла. Читает конфигурацию, собирает метрики, участвует в gossip, регистрирует runtime-адаптеры.</div></div></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">02</span><div><div class="tc-key">Telemetry</div><div class="tc-val">32-байтный снимок: CPU/GPU/NPU, память, очередь, задержки, тепло, потери. Phi-accrual детектор.</div></div></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">03</span><div><div class="tc-key">State Bus</div><div class="tc-val">LWW-CRDT-карта кластера + опц. Raft для лиз-согласования. Работает при разрывах сети.</div></div></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">04</span><div><div class="tc-key">Scheduler L1/L2</div><div class="tc-val">L1 — скоринг за 0,33 мкс. L2 — MILP в фоне, подсказки по residency/standby/routing split.</div></div></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">05</span><div><div class="tc-key">Runtime Adapters</div><div class="tc-val">Единый trait: mock, ONNX Runtime, будущие GPU/NPU-бэкенды — без изменений ядра.</div></div></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">06</span><div><div class="tc-key">Zero-copy IPC</div><div class="tc-val">Тензоры через mmap shared memory — без копирования. 10 МБ за 0,58 мс через TensorHandle.</div></div></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">07</span><div><div class="tc-key">Recovery</div><div class="tc-val">Phi-accrual → standby-лизинг → повтор очереди → reroute. ~2,1 с без потери задач.</div></div></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">08</span><div><div class="tc-key">Dashboard</div><div class="tc-val">Локальная панель наблюдения кластера. Без CDN, офлайн, встроена в демон.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 06 GOSSIP + CRDT ══ -->
+<section class="slide dm">
+  <div class="label">Синхронизация состояния · gossip + CRDT</div>
+  <!-- 4 символа как визуальные якоря -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:.5rem">
+    <div class="block-f" style="padding:clamp(18px,2.5vw,36px) clamp(16px,2vw,28px)">
+      <div class="deco" style="font-size:clamp(56px,7vw,100px);color:var(--GL)">T</div>
+      <div class="D3" style="margin-top:.6rem">Снимок<br>32 байта</div>
+      <div class="body" style="margin-top:.6rem;font-size:clamp(12px,.97vw,14.5px)">CPU/GPU/NPU, память, очередь, p50/p99, тепло, потери. Компактнее UDP-пакета.</div>
+    </div>
+    <div class="block-f" style="padding:clamp(18px,2.5vw,36px) clamp(16px,2vw,28px)">
+      <div class="deco" style="font-size:clamp(56px,7vw,100px);color:var(--GL)">Δ</div>
+      <div class="D3" style="margin-top:.6rem">Delta-<br>кодирование</div>
+      <div class="body" style="margin-top:.6rem;font-size:clamp(12px,.97vw,14.5px)">Передаются только изменения сверх кванта. Периодически — полный снимок (fallback).</div>
+    </div>
+    <div class="block-f" style="padding:clamp(18px,2.5vw,36px) clamp(16px,2vw,28px)">
+      <div class="deco" style="font-size:clamp(56px,7vw,100px);color:var(--GL)">φ</div>
+      <div class="D3" style="margin-top:.6rem">Phi-accrual<br>детектор</div>
+      <div class="body" style="margin-top:.6rem;font-size:clamp(12px,.97vw,14.5px)">Вероятностная оценка по истории heartbeat-интервалов. Нет ложных тревог при задержках.</div>
+    </div>
+    <div class="block-f" style="padding:clamp(18px,2.5vw,36px) clamp(16px,2vw,28px)">
+      <div class="deco" style="font-size:clamp(56px,7vw,100px);color:var(--GL)">∞</div>
+      <div class="D3" style="margin-top:.6rem">CRDT-<br>слияние</div>
+      <div class="body" style="margin-top:.6rem;font-size:clamp(12px,.97vw,14.5px)">LWW: последняя метка времени побеждает. При разрыве — автослияние при восстановлении.</div>
+    </div>
+  </div>
+  <div class="hl" style="margin-top:1.6rem">
+    <div class="body"><strong>Итог:</strong> при 64 кбит/с служебный трафик занимает 4,8 КБ/с в худшем случае. Каждый узел всегда знает актуальное состояние кластера — даже без непрерывной связи.</div>
+  </div>
+</section>
+
+
+<!-- ══ 07 ПЛАНИРОВЩИК ══ -->
+<section class="slide">
+  <div class="label">Двухуровневый планировщик · L1 + L2</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:.5rem">
+    <div class="block-t">
+      <div class="accent-bar" style="background:rgba(0,0,0,.2);margin-bottom:1rem">L1 — горячий путь</div>
+      <div class="D2" style="color:var(--W);font-size:clamp(22px,3vw,46px)">0,33 мкс</div>
+      <div class="serif-xl" style="font-size:clamp(16px,2vw,26px);margin-top:.4rem;color:rgba(255,253,248,.7)">линейный скоринг кандидатов</div>
+      <div class="body" style="margin-top:1rem;color:rgba(255,253,248,.8)">Фильтрация подозрительных и перегруженных узлов. Взвешенная функция стоимости: загрузка, очередь, кэш модели, тепло, риск φ. Работает <strong style="color:var(--W)">всегда</strong> — даже без L2.</div>
+    </div>
+    <div class="block-c">
+      <div class="accent-bar" style="background:var(--INK);color:var(--W);margin-bottom:1rem">L2 — фон</div>
+      <div class="D2" style="font-size:clamp(22px,3vw,46px)">MILP</div>
+      <div class="serif-xl" style="font-size:clamp(16px,2vw,26px);margin-top:.4rem;color:var(--MU)">оптимизация без блокировки</div>
+      <div class="body" style="margin-top:1rem">Бинарные переменные размещения, ограничения памяти и SLA. Публикует подсказки L1: residency hints, standby routing, traffic split. <strong>Не блокирует</strong> горячий путь.</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;margin-top:2px;background:var(--LN)">
+    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">L — загрузка</div><div class="sm">Основной показатель доступности узла</div></div>
+    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">Q — очередь</div><div class="sm">Прогноз дополнительной задержки</div></div>
+    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">M — кэш</div><div class="sm">Cold-start добавляет 800–3000 мс</div></div>
+    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">T — тепло</div><div class="sm">Throttling снижает производительность</div></div>
+    <div style="background:var(--W);padding:clamp(12px,1.4vw,18px)"><div class="sm" style="color:var(--T);font-weight:600;margin-bottom:.3rem">D — риск φ</div><div class="sm">Вес по истории heartbeat</div></div>
+  </div>
+</section>
+
+
+<!-- ══ 08 ZERO-COPY ══ -->
+<section class="slide dk">
+  <div class="label">Передача тензоров · zero-copy IPC</div>
+  <div class="split s40">
+    <div>
+      <div class="stat-n">0,58</div>
+      <div class="stat-u">мс p99</div>
+      <div class="body" style="margin-top:1rem">тензор 10 МБ между процессами</div>
+      <div style="margin-top:1.4rem;border-top:1px solid var(--LLT);padding-top:1.2rem">
+        <div class="sm">Классический IPC: сериализация → копирование → десериализация = десятки мс на 10+ МБ</div>
+        <div class="sm" style="margin-top:.6rem;color:var(--G)">Zero-copy: только хэндл (~100 байт), данные не двигаются</div>
+      </div>
+    </div>
+    <div>
+      <ul class="sr">
+        <li><span class="sridx">1</span><div><div class="D3">Выделение shm-региона</div><p class="body" style="margin-top:.35rem">Node-agent создаёт POSIX shared memory под тензор. Размер = shape × dtype. Имя — UUID.</p></div></li>
+        <li><span class="sridx">2</span><div><div class="D3">Запись без копии</div><p class="body" style="margin-top:.35rem">Inference-движок пишет результат напрямую в mmap-область. Промежуточный буфер отсутствует.</p></div></li>
+        <li><span class="sridx">3</span><div><div class="D3">Передача TensorHandle</div><p class="body" style="margin-top:.35rem">Через IPC уходит только лёгкий хэндл: имя + shape + dtype + offset. ~100 байт.</p></div></li>
+        <li><span class="sridx">4</span><div><div class="D3">Чтение на месте</div><p class="body" style="margin-top:.35rem">Получатель маппирует тот же регион и работает напрямую. 10 МБ — 0,58 мс p99.</p></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 09 FAULT TOLERANCE ══ -->
+<section class="slide">
+  <div class="label">Отказоустойчивость · warm standby + recovery</div>
+  <div class="split s40">
+    <div>
+      <div class="deco deco-t" style="line-height:.9;margin-bottom:-.4rem">2,1</div>
+      <div class="D2" style="margin-top:0">секунды<br>p95</div>
+      <div class="body" style="margin-top:.8rem">от обнаружения отказа узла до восстановления потока задач на резерве</div>
+      <div class="hl" style="margin-top:1.2rem">
+        <div class="body">Без ручного вмешательства. Задачи из очереди не теряются — идемпотентный повтор.</div>
+      </div>
+      <div class="tags" style="margin-top:1rem">
+        <span class="tag">Phi-accrual φ</span>
+        <span class="tag">Warm standby</span>
+        <span class="tag">Raft-лизинг</span>
+        <span class="tag">Идемпотентная очередь</span>
+      </div>
+    </div>
+    <div>
+      <ul class="sr">
+        <li><span class="sridx">φ</span><div><div class="D3">Phi-accrual детектор</div><p class="body" style="margin-top:.35rem">φ вычисляется из исторических heartbeat-интервалов. При φ > threshold — узел «подозрительный». Нет ложных тревог при временных задержках сети.</p></div></li>
+        <li><span class="sridx">S</span><div><div class="D3">Захват standby-лизинга</div><p class="body" style="margin-top:.35rem">При confirmed failure резервный узел захватывает лизинг через Raft-консенсус. Гарантирует единственность standby.</p></div></li>
+        <li><span class="sridx">R</span><div><div class="D3">Повтор очереди</div><p class="body" style="margin-top:.35rem">Задачи «в полёте» повторяются на новом узле. Идемпотентность гарантирует корректность при возможном дублировании.</p></div></li>
+        <li><span class="sridx">→</span><div><div class="D3">Reroute трафика</div><p class="body" style="margin-top:.35rem">Планировщик исключает отказавший узел. Новые запросы уходят на живые узлы автоматически.</p></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 10 ПУТЬ ЗАПРОСА ══ -->
+<section class="slide dk">
+  <div class="label">Жизненный цикл запроса · end-to-end</div>
+  <div class="D2" style="margin-bottom:1.6rem">От поступления<br>до результата</div>
+  <!-- горизонтальные ряды -->
+  <div class="rmap">
+    <div class="rmap-row"><div class="rmap-n">01</div><div class="rmap-body"><h3>Сбор и кодирование телеметрии</h3><p>Telemetry Layer: 32-байтный снимок. Delta-кодирование — только изменения сверх кванта, периодически полный снимок.</p></div></div>
+    <div class="rmap-row"><div class="rmap-n">02</div><div class="rmap-body"><h3>Gossip-обмен состоянием</h3><p>State Bus распространяет дельты. CRDT — бесконфликтное слияние без лидера. Каждый узел видит актуальную картину.</p></div></div>
+    <div class="rmap-row"><div class="rmap-n">03</div><div class="rmap-body"><h3>Решение планировщика L1</h3><p>Фильтрация подозрительных и перегруженных. Взвешенный скоринг. Выбор минимума стоимости. 0,33 мкс p99.</p></div></div>
+    <div class="rmap-row"><div class="rmap-n">04</div><div class="rmap-body"><h3>Исполнение через Runtime Adapter</h3><p>Runtime Adapter запускает inference. Тензоры через Zero-copy IPC напрямую через shared memory. 0,58 мс p99 на 10 МБ.</p></div></div>
+    <div class="rmap-row"><div class="rmap-n">05</div><div class="rmap-body"><h3>Recovery при сбое</h3><p>Phi-accrual фиксирует отказ → захват standby-лизинга → повтор идемпотентной очереди → reroute. ~2,1 с p95.</p><div class="sub">При разрыве сети — CRDT-копия работает локально, консистентность восстанавливается при возобновлении связи.</div></div></div>
+  </div>
+</section>
+
+
+<!-- ══ 11 МЕТРИКИ ══ -->
+<section class="slide dk">
+  <div class="label">Производительность · измеренные показатели</div>
+  <div class="D2" style="margin-bottom:1.4rem">Все цели перекрыты</div>
+  <div class="medit">
+    <div class="medit-row">
+      <div class="m-n">0,33 <span style="font-size:.5em;font-style:normal">мкс</span></div>
+      <div class="m-desc"><div class="m-lbl">Решение планировщика L1 (50 узлов), p99</div><div class="m-tgt">Цель ≤ 45 мс</div></div>
+      <div class="m-gain">в ~136 000 раз быстрее цели</div>
+    </div>
+    <div class="medit-row">
+      <div class="m-n">0,58 <span style="font-size:.5em;font-style:normal">мс</span></div>
+      <div class="m-desc"><div class="m-lbl">Передача тензора 10 МБ через IPC, p99</div><div class="m-tgt">Цель ≤ 5 мс</div></div>
+      <div class="m-gain">в 8,6× быстрее цели</div>
+    </div>
+    <div class="medit-row">
+      <div class="m-n">2,1 <span style="font-size:.5em;font-style:normal">с</span></div>
+      <div class="m-desc"><div class="m-lbl">Восстановление после жёсткого отказа узла, p95</div><div class="m-tgt">Цель ≤ 5 с</div></div>
+      <div class="m-gain">в 2,4× быстрее цели</div>
+    </div>
+    <div class="medit-row">
+      <div class="m-n">4,8 <span style="font-size:.5em;font-style:normal">КБ/с</span></div>
+      <div class="m-desc"><div class="m-lbl">Gossip-трафик телеметрии на узел (worst case)</div><div class="m-tgt">Цель ≤ 8 КБ/с при 64 кбит/с</div></div>
+      <div class="m-gain">в бюджете канала</div>
+    </div>
+    <div class="medit-row">
+      <div class="m-n">2 <span style="font-size:.5em;font-style:normal">МБ</span></div>
+      <div class="m-desc"><div class="m-lbl">Резидентная память демона узла (RSS)</div><div class="m-tgt">Цель ≤ 128 МБ</div></div>
+      <div class="m-gain">в 64 раза ниже лимита</div>
+    </div>
+    <div class="medit-row">
+      <div class="m-n">+21,9 <span style="font-size:.4em;font-style:normal">%</span></div>
+      <div class="m-desc"><div class="m-lbl">Прирост утилизации ускорителей (симуляция)</div><div class="m-tgt">Цель +15–25 %</div></div>
+      <div class="m-gain">в рамках цели, подтвердить на железе в Этапе 1</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 12 ЧТО ПОЛУЧАЕТ СОБСТВЕННИК ══ -->
+<section class="slide">
+  <div class="label">Передаваемые материалы</div>
+  <div class="split s40">
+    <div>
+      <div class="rule-t"></div>
+      <div class="D2">Актив,<br>а не<br>«ящик»</div>
+      <div class="body" style="margin-top:.9rem">Полный комплект для самостоятельной эксплуатации, аудита, сборки, доработки и коммерческого использования. Без участия исполнителя.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:1.4rem">
+        <div style="background:var(--C);padding:clamp(12px,1.4vw,18px)"><div class="D3" style="font-size:clamp(26px,3vw,44px)">61</div><div class="sm" style="margin-top:.3rem">файл в поставке</div></div>
+        <div style="background:var(--C);padding:clamp(12px,1.4vw,18px)"><div class="D3" style="font-size:clamp(26px,3vw,44px)">5 556</div><div class="sm" style="margin-top:.3rem">строк исходного кода</div></div>
+      </div>
+      <div class="body" style="margin-top:1rem;font-size:clamp(12px,.97vw,14.5px);color:var(--MU)">Pre-existing IP фиксируется письменно до старта. Неописанные компоненты не объявляются собственностью исполнителя задним числом.</div>
+    </div>
+    <div>
+      <div class="rtable">
+        <div class="row" style="grid-template-columns:180px 1fr"><span class="tc-key">Исходные коды</span><span class="tc-val">Rust-контур (agent, state-bus, IPC, scheduler) и Python-контур (L2, MILP, симулятор). Без обфускации.</span></div>
+        <div class="row" style="grid-template-columns:180px 1fr"><span class="tc-key">Имущественные права</span><span class="tc-val">В согласованном объёме. Pre-existing IP фиксируется до старта. Всё созданное в проекте — проектный результат.</span></div>
+        <div class="row" style="grid-template-columns:180px 1fr"><span class="tc-key">Документация</span><span class="tc-val">Архитектура, API, инструкции сборки, эксплуатации и аварийного восстановления. Регламенты для инженеров.</span></div>
+        <div class="row" style="grid-template-columns:180px 1fr"><span class="tc-key">Deployment</span><span class="tc-val">Docker-манифесты, air-gapped сборки, systemd unit-файлы, скрипты доставки и восстановления.</span></div>
+        <div class="row" style="grid-template-columns:180px 1fr"><span class="tc-key">Тесты</span><span class="tc-val">Нагрузочные сценарии, fault-injection, протоколы приёмки, воспроизводимые benchmark-команды (Прил. Б).</span></div>
+        <div class="row" style="grid-template-columns:180px 1fr"><span class="tc-key">Обучение</span><span class="tc-val">Обучение инженеров заказчика на месте по всем компонентам системы + материалы для регистрации ПО.</span></div>
+        <div class="row" style="grid-template-columns:180px 1fr"><span class="tc-key">Лицензии (SBOM)</span><span class="tc-val">MIT/BSD/Apache-2.0 по умолчанию. GPL/AGPL — только с письменного согласования. Реестр dependency+license в поставке.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 13 СТАТУС ══ -->
+<section class="slide">
+  <div class="label">Текущий статус · честная оценка</div>
+  <div class="D2" style="margin-bottom:1.4rem">Опытный образец,<br>готовый к доводке</div>
+  <div class="status3">
+    <div class="st-col g" style="border-right:1px solid var(--LN)">
+      <div class="st-col-hd">Готово — передаётся сразу</div>
+      <ul class="st-col-body">
+        <li>Node Agent — исполняемый демон</li>
+        <li>Telemetry Layer — сбор и кодирование</li>
+        <li>Scheduler L1 — скоринг 0,33 мкс</li>
+        <li>State Bus — CRDT + опц. Raft</li>
+        <li>Zero-copy IPC — тензоры 0,58 мс</li>
+        <li>Recovery — ~2,1 с p95</li>
+        <li>Dashboard — офлайн-панель</li>
+        <li>Документация и deployment</li>
+      </ul>
+    </div>
+    <div class="st-col a" style="border-right:1px solid var(--LN)">
+      <div class="st-col-hd">Адаптация под контур</div>
+      <ul class="st-col-body">
+        <li>Конкретные GPU/CPU/NPU заказчика</li>
+        <li>Драйверы, ОС, container runtime</li>
+        <li>Права доступа и политики ИБ</li>
+        <li>Модели ONNX / TensorRT / OpenVINO</li>
+        <li>Мониторинг и сетевые ограничения</li>
+        <li>ipc:host — согласование с ИБ</li>
+      </ul>
+    </div>
+    <div class="st-col b">
+      <div class="st-col-hd">R&D · исследовательская зона</div>
+      <ul class="st-col-body">
+        <li>Калибровка L2 MILP на реальных моделях</li>
+        <li>Устойчивость при деградации каналов</li>
+        <li>Масштабирование до 100+ узлов</li>
+        <li>Фактический прирост утилизации</li>
+        <li>Время восстановления на реальном железе</li>
+        <li>GNN-PPO — расширение L2</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sm" style="margin-top:1.2rem;border-top:1px solid var(--LN);padding-top:1rem">Технические гарантии по метрикам фиксируются после Этапа 1 на оборудовании заказчика — не до.</div>
+</section>
+
+
+<!-- ══ 14 РИСКИ ══ -->
+<section class="slide">
+  <div class="label">Управление рисками · реестр</div>
+  <div class="split s40">
+    <div>
+      <div class="rule-t"></div>
+      <div class="D2">Риски<br>названы<br>заранее</div>
+      <div class="body" style="margin-top:.9rem">Каждый риск сопровождается конкретным mitigation, заложенным в архитектуру. Ни один не скрывается.</div>
+      <div class="hl" style="margin-top:1.2rem">
+        <div class="body">Риск, названный до старта и покрытый mitigation'ом — инженерная честность. Риск, обнаруженный в производстве — технический долг с ценой простоя.</div>
+      </div>
+    </div>
+    <div>
+      <div class="rtable">
+        <div class="rh" style="grid-template-columns:1fr 1fr 80px">
+          <span>Риск</span>
+          <span style="padding-left:clamp(16px,2vw,28px);border-left:1px solid var(--LN)">Mitigation</span>
+          <span style="padding-left:clamp(16px,2vw,28px);border-left:1px solid var(--LN)">Уровень</span>
+        </div>
+        <div class="row" style="grid-template-columns:1fr 1fr 80px">
+          <span class="tc-val">Phi-accrual ложное срабатывание при высоком jitter</span>
+          <span class="tc-val" style="border-left:1px solid var(--LN)">Регулируемый порог φ; grace-период до переключения</span>
+          <span style="border-left:1px solid var(--LN);padding:clamp(11px,1.2vw,17px) 0 clamp(11px,1.2vw,17px) clamp(16px,2vw,28px)"><span class="tc-badge me">средний</span></span>
+        </div>
+        <div class="row" style="grid-template-columns:1fr 1fr 80px">
+          <span class="tc-val">L2 MILP не сходится в срок под нагрузкой</span>
+          <span class="tc-val" style="border-left:1px solid var(--LN)">L1 работает независимо; L2 — только подсказки</span>
+          <span style="border-left:1px solid var(--LN);padding:clamp(11px,1.2vw,17px) 0 clamp(11px,1.2vw,17px) clamp(16px,2vw,28px)"><span class="tc-badge lo">низкий</span></span>
+        </div>
+        <div class="row" style="grid-template-columns:1fr 1fr 80px">
+          <span class="tc-val">Несовместимость ipc:host с политикой ИБ</span>
+          <span class="tc-val" style="border-left:1px solid var(--LN)">Альтернативный TCP/UNIX-socket режим</span>
+          <span style="border-left:1px solid var(--LN);padding:clamp(11px,1.2vw,17px) 0 clamp(11px,1.2vw,17px) clamp(16px,2vw,28px)"><span class="tc-badge me">средний</span></span>
+        </div>
+        <div class="row" style="grid-template-columns:1fr 1fr 80px">
+          <span class="tc-val">Метрики не воспроизводятся на реальном железе</span>
+          <span class="tc-val" style="border-left:1px solid var(--LN)">Этап 1 — обязательный аудит и калибровка</span>
+          <span style="border-left:1px solid var(--LN);padding:clamp(11px,1.2vw,17px) 0 clamp(11px,1.2vw,17px) clamp(16px,2vw,28px)"><span class="tc-badge hi">высокий</span></span>
+        </div>
+        <div class="row" style="grid-template-columns:1fr 1fr 80px">
+          <span class="tc-val">Выбытие ключевого разработчика</span>
+          <span class="tc-val" style="border-left:1px solid var(--LN)">Bus Factor ≥ 2, ADR, code review, передача контекста</span>
+          <span style="border-left:1px solid var(--LN);padding:clamp(11px,1.2vw,17px) 0 clamp(11px,1.2vw,17px) clamp(16px,2vw,28px)"><span class="tc-badge me">средний</span></span>
+        </div>
+        <div class="row" style="grid-template-columns:1fr 1fr 80px">
+          <span class="tc-val">GPL-зависимость в дереве open-source</span>
+          <span class="tc-val" style="border-left:1px solid var(--LN)">SBOM-аудит до старта; MIT/BSD/Apache-2.0 default</span>
+          <span style="border-left:1px solid var(--LN);padding:clamp(11px,1.2vw,17px) 0 clamp(11px,1.2vw,17px) clamp(16px,2vw,28px)"><span class="tc-badge lo">низкий</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 15 КОМАНДА ══ -->
+<section class="slide">
+  <div class="label">Команда · роли</div>
+  <div class="split s33">
+    <div>
+      <div class="rule-t"></div>
+      <div class="D2">5–6<br>ролей</div>
+      <div class="body" style="margin-top:.9rem">Bus Factor ≥ 2 по каждому критическому направлению. Актуальные ADR, обязательный code review, передача контекста.</div>
+      <div class="body" style="margin-top:.8rem;color:var(--MU);font-size:clamp(12px,.97vw,14.5px)">Если причина выбытия — на стороне исполнителя, замена без доп. оплаты.</div>
+    </div>
+    <div>
+      <div class="rtable">
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">01</span><div><div class="tc-key">Технический архитектор</div><div class="tc-val">Архитектура, декомпозиция, контроль решений, согласование ТЗ и протоколов приёмки.</div></div></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">02</span><div><div class="tc-key">Rust / Systems Developer</div><div class="tc-val">Node-agent, State Bus, IPC/zero-copy, L1-планировщик. Производительность и безопасность памяти.</div></div></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">03</span><div><div class="tc-key">Python / ML / Optimization</div><div class="tc-val">L2-планировщик, MILP/эвристики, интеграция моделей, аналитика телеметрии, симулятор.</div></div></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">04</span><div><div class="tc-key">DevOps / Infrastructure</div><div class="tc-val">Docker, air-gapped сборки, CI/CD, стенды, delivery-скрипты, процедуры восстановления.</div></div></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">05</span><div><div class="tc-key">QA / Performance Engineer</div><div class="tc-val">Нагрузочные тесты, fault-injection, деградация сети, протоколы испытаний.</div></div></div>
+        <div class="row" style="grid-template-columns:44px 1fr"><span class="sridx" style="font-size:clamp(18px,2vw,26px)">06</span><div><div class="tc-key">Аналитик / Документация</div><div class="tc-val">Регламенты, протоколы этапов, реестр рисков, SBOM и лицензионный аудит.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 16 ROADMAP ══ -->
+<section class="slide dk">
+  <div class="label">Дорожная карта · 5 этапов</div>
+  <div class="split s33">
+    <div>
+      <div class="rule-t"></div>
+      <div class="D2">Поэтапная<br>приёмка</div>
+      <div class="serif-xl" style="font-size:clamp(18px,2.2vw,30px);margin-top:.6rem">акт на каждом шаге</div>
+      <div class="body" style="margin-top:1rem">Каждый этап принимается отдельно: свои deliverables, протокол испытаний и акт. Замечания классифицируются: критические, существенные, несущественные.</div>
+      <div class="tags" style="margin-top:1rem">
+        <span class="tag">5–10 р.д. на проверку</span>
+        <span class="tag">Реестр блокеров</span>
+        <span class="tag">~12 месяцев</span>
+      </div>
+    </div>
+    <div>
+      <div class="rmap">
+        <div class="rmap-row"><div class="rmap-n">1</div><div class="rmap-body"><h3>Технический аудит</h3><p>Инвентаризация оборудования, топология, ограничения ОС/драйверов/сети. Уточнение ТЗ, методики и матрицы рисков.</p></div></div>
+        <div class="rmap-row"><div class="rmap-n">2</div><div class="rmap-body"><h3>Интеграция моделей</h3><p>ONNX/TensorRT/OpenVINO/PyTorch, рабочий L2-планировщик, тестовые сценарии на реальных нагрузках.</p></div></div>
+        <div class="rmap-row"><div class="rmap-n">3</div><div class="rmap-body"><h3>Отказоустойчивость</h3><p>Fault-injection на реальном железе. Отчёт: время восстановления p95, поведение при разрыве сети.</p></div></div>
+        <div class="rmap-row"><div class="rmap-n">4</div><div class="rmap-body"><h3>Нагрузочные испытания</h3><p>До 100 узлов. Деградация каналов. Финальные замеры p99/traffic/recovery/utilization.</p></div></div>
+        <div class="rmap-row"><div class="rmap-n">5</div><div class="rmap-body"><h3>Передача и регистрация</h3><p>Финальный комплект, документация, SBOM/license register, регистрация ПО, обучение команды, итоговый акт.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 17 УСЛОВИЯ ══ -->
+<section class="slide">
+  <div class="label">Условия · гарантии и ограничения</div>
+  <div class="D2" style="margin-bottom:1.4rem">Честные условия<br>обеих сторон</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px">
+    <div class="block-s">
+      <div class="accent-bar" style="background:var(--S);margin-bottom:1rem">Гарантируется</div>
+      <ul class="sr" style="--border:rgba(102,123,97,.2)">
+        <li style="border-color:rgba(102,123,97,.2)"><span class="sridx" style="color:var(--S)">✓</span><div><div class="D3">Поэтапная приёмка</div><p class="body" style="margin-top:.35rem">5 этапов с отдельным актом. Критические замечания — до акта. Существенные — план с датой.</p></div></li>
+        <li style="border-color:rgba(102,123,97,.2)"><span class="sridx" style="color:var(--S)">✓</span><div><div class="D3">Bus Factor ≥ 2</div><p class="body" style="margin-top:.35rem">По каждому критическому компоненту. ADR, code review, передача контекста. Замена без доп. оплаты при выбытии по вине исполнителя.</p></div></li>
+        <li style="border-color:rgba(102,123,97,.2)"><span class="sridx" style="color:var(--S)">✓</span><div><div class="D3">Реестр блокеров</div><p class="body" style="margin-top:.35rem">Открытый список блокирующих вопросов с ответственными и сроками. Актуализируется на каждом этапе.</p></div></li>
+      </ul>
+    </div>
+    <div class="block-c">
+      <div class="accent-bar" style="background:var(--INK);color:var(--W);margin-bottom:1rem">Не входит в объём</div>
+      <ul class="sr">
+        <li><span class="sridx" style="color:var(--MU)">✗</span><div><div class="D3">Компенсация простоя</div><p class="body" style="margin-top:.35rem">Не предусмотрена по умолчанию. Только если закреплено отдельным SLA в тексте договора.</p></div></li>
+        <li><span class="sridx" style="color:var(--MU)">✗</span><div><div class="D3">Гарантия метрик до Этапа 1</div><p class="body" style="margin-top:.35rem">Целевые показатели (мкс, МБ, % утилизации) гарантируются только после аудита на оборудовании заказчика.</p></div></li>
+        <li><span class="sridx" style="color:var(--MU)">✗</span><div><div class="D3">Коробочный продукт</div><p class="body" style="margin-top:.35rem">НИОКР — исследовательская разработка, не готовый SaaS. Промышленная доводка — в Этапах 1–4.</p></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 18 СЛЕДУЮЩИЙ ШАГ ══ -->
+<section class="slide" style="background:var(--T)">
+  <div class="label" style="color:rgba(255,253,248,.6)">Следующий шаг</div>
+  <div class="D2" style="color:var(--W)">Этап 1 —<br>аудит вашей<br>инфраструктуры</div>
+  <div class="serif-xl" style="color:rgba(255,253,248,.7);margin-top:.6rem;font-size:clamp(18px,2.2vw,32px)">без него нельзя гарантировать метрики</div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;margin-top:clamp(24px,3vw,44px);background:rgba(0,0,0,.2)">
+    <div style="background:rgba(0,0,0,.15);padding:clamp(14px,1.8vw,24px)"><div class="sm" style="color:rgba(255,253,248,.5);margin-bottom:.5rem;font-weight:600;letter-spacing:.14em">A</div><div class="D3" style="color:var(--W);font-size:clamp(14px,1.3vw,18px)">Инвентаризация оборудования</div><div class="sm" style="margin-top:.4rem;color:rgba(255,253,248,.6)">GPU/CPU/NPU, ОС, драйверы, runtime, топология</div></div>
+    <div style="background:rgba(0,0,0,.15);padding:clamp(14px,1.8vw,24px)"><div class="sm" style="color:rgba(255,253,248,.5);margin-bottom:.5rem;font-weight:600;letter-spacing:.14em">B</div><div class="D3" style="color:var(--W);font-size:clamp(14px,1.3vw,18px)">Политики безопасности</div><div class="sm" style="margin-top:.4rem;color:rgba(255,253,248,.6)">Права ОС, ipc:host, фаерволы, air-gapped поставка</div></div>
+    <div style="background:rgba(0,0,0,.15);padding:clamp(14px,1.8vw,24px)"><div class="sm" style="color:rgba(255,253,248,.5);margin-bottom:.5rem;font-weight:600;letter-spacing:.14em">C</div><div class="D3" style="color:var(--W);font-size:clamp(14px,1.3vw,18px)">Уточнение метрик</div><div class="sm" style="margin-top:.4rem;color:rgba(255,253,248,.6)">Реалистичные цели на реальном железе заказчика</div></div>
+    <div style="background:rgba(0,0,0,.15);padding:clamp(14px,1.8vw,24px)"><div class="sm" style="color:rgba(255,253,248,.5);margin-bottom:.5rem;font-weight:600;letter-spacing:.14em">D</div><div class="D3" style="color:var(--W);font-size:clamp(14px,1.3vw,18px)">Матрица рисков</div><div class="sm" style="margin-top:.4rem;color:rgba(255,253,248,.6)">Обновлённый реестр с mitigation и ответственными</div></div>
+    <div style="background:rgba(0,0,0,.15);padding:clamp(14px,1.8vw,24px)"><div class="sm" style="color:rgba(255,253,248,.5);margin-bottom:.5rem;font-weight:600;letter-spacing:.14em">E</div><div class="D3" style="color:var(--W);font-size:clamp(14px,1.3vw,18px)">Подписание акта</div><div class="sm" style="margin-top:.4rem;color:rgba(255,253,248,.6)">После — старт Этапов 2–5 с гарантированными показателями</div></div>
+  </div>
+</section>
+
+
+<!-- ══ 19 ИТОГ ══ -->
+<section class="slide dk">
+  <div class="label">Итог для собственника</div>
+  <div class="split s50" style="align-items:center">
+    <div>
+      <div class="rule-t"></div>
+      <div class="D2">Уникальная<br>разработка<br>с полной</div>
+      <div class="serif-xl" style="margin-top:.3rem">передачей прав</div>
+      <div class="body" style="margin-top:1rem">Система решает реальную задачу там, где облако недоступно. Все технические цели перекрыты с запасом. Передаётся как сопровождаемый актив — исходный код, документация, тесты, обучение.</div>
+      <div class="body" style="margin-top:.8rem">Следующий шаг — <strong>Этап 1:</strong> аудит инфраструктуры и подтверждение метрик на вашем оборудовании.</div>
+      <div class="sm" style="margin-top:1.4rem;border-top:1px solid var(--LLT);padding-top:1rem">
+        Temir AI · НИОКР-ЭИО-01-2026<br>
+        Вячеслав Мунистер · munister@outlook.com
+      </div>
+    </div>
+    <div>
+      <div class="medit" style="margin-top:0">
+        <div class="medit-row"><div class="m-n">0,33 <span style="font-size:.45em;font-style:normal">мкс</span></div><div class="m-desc"><div class="m-lbl">Планировщик L1, p99 (50 узлов)</div><div class="m-tgt">Цель была ≤ 45 мс · в 136 000 раз быстрее</div></div></div>
+        <div class="medit-row"><div class="m-n">≈ 2 <span style="font-size:.45em;font-style:normal">МБ</span></div><div class="m-desc"><div class="m-lbl">RAM демона узла (RSS)</div><div class="m-tgt">Лимит 128 МБ · в 64 раза ниже</div></div></div>
+        <div class="medit-row"><div class="m-n">2,1 <span style="font-size:.45em;font-style:normal">с</span></div><div class="m-desc"><div class="m-lbl">Восстановление после отказа, p95</div><div class="m-tgt">Цель ≤ 5 с · warm standby</div></div></div>
+        <div class="medit-row"><div class="m-n">+21,9 <span style="font-size:.38em;font-style:normal">%</span></div><div class="m-desc"><div class="m-lbl">Прирост утилизации GPU/NPU</div><div class="m-tgt">Цель +15–25 % · симуляция</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 20 ДЛЯ КОГО ══ -->
+<section class="slide">
+  <div class="label">Применимость · для кого создан TEMIR AI</div>
+  <div class="split s50">
+    <div>
+      <div class="deco" style="line-height:.8;margin-bottom:.6rem">?</div>
+      <div class="D2">Кто может<br>использовать<br>систему</div>
+      <div class="serif-xl" style="margin-top:.8rem;font-size:clamp(15px,1.6vw,22px)">Там, где облако невозможно — по регуляции, по физике или по выбору.</div>
+    </div>
+    <div>
+      <div class="rtable">
+        <div class="row" style="font-weight:700;font-size:clamp(11px,.82vw,13px);letter-spacing:.1em;text-transform:uppercase;padding-bottom:.6rem">
+          <div>Отрасль</div><div>Задача</div><div style="text-align:right">Главное ограничение</div>
+        </div>
+        <div class="row">
+          <div style="color:var(--T);font-weight:600">Оборона</div>
+          <div>Нейросети на полевом оборудовании (дроны, РЭБ, видеоаналитика)</div>
+          <div style="text-align:right;color:var(--MU)">air-gap, 64 кбит/с</div>
+        </div>
+        <div class="row">
+          <div style="color:var(--T);font-weight:600">Промышленность</div>
+          <div>Контроль качества, предиктивное обслуживание, SCADA AI</div>
+          <div style="text-align:right;color:var(--MU)">закрытая сеть, legacy PLC</div>
+        </div>
+        <div class="row">
+          <div style="color:var(--T);font-weight:600">Медицина</div>
+          <div>МРТ/КТ аналитика в полевых госпиталях, телемедицина</div>
+          <div style="text-align:right;color:var(--MU)">HIPAA, нет интернета</div>
+        </div>
+        <div class="row">
+          <div style="color:var(--T);font-weight:600">Транспорт</div>
+          <div>Бортовой AI на поездах, судах, беспилотниках</div>
+          <div style="text-align:right;color:var(--MU)">прерывистый сигнал</div>
+        </div>
+        <div class="row">
+          <div style="color:var(--T);font-weight:600">Критинфраструктура</div>
+          <div>Энергосети, водоснабжение — независимость от облака по закону</div>
+          <div style="text-align:right;color:var(--MU)">суверенность данных</div>
+        </div>
+      </div>
+      <div style="margin-top:1.4rem;padding:clamp(14px,1.8vw,22px);background:var(--C);border-left:4px solid var(--T)">
+        <div class="sm" style="letter-spacing:.1em;text-transform:uppercase;color:var(--MU);margin-bottom:.4rem">Общий знаменатель</div>
+        <div class="body">GPU/NPU есть. Интернета — нет. Задержка планировщика считается в мкс, а не мс. TEMIR AI — для таких условий.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 21 ТЕХНИЧЕСКИЙ СТЕК ══ -->
+<section class="slide dm" style="display:flex;flex-direction:column;padding:0">
+  <!-- header -->
+  <div style="padding:clamp(24px,3vh,40px) clamp(28px,5vw,80px) 0">
+    <div class="label">Технологии · выбор языков и инструментов</div>
+  </div>
+  <!-- two-panel full-bleed -->
+  <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:clamp(16px,2vh,24px);overflow:hidden">
+    <!-- RUST panel — dark forest -->
+    <div style="background:var(--F);padding:clamp(24px,3.5vw,52px);overflow:hidden;display:flex;flex-direction:column">
+      <div style="font-family:var(--sans);font-weight:700;font-size:clamp(32px,4.5vw,68px);
+                  letter-spacing:-.04em;line-height:.85;color:var(--T);margin-bottom:.5rem">Rust</div>
+      <div class="sm" style="color:rgba(250,248,244,.4);letter-spacing:.12em;text-transform:uppercase;
+                              margin-bottom:clamp(14px,2vw,24px)">Производственное ядро</div>
+      <!-- items — простые div-блоки, без вложенного грида -->
+      <div style="border-top:1px solid rgba(250,248,244,.1);padding-top:clamp(12px,1.5vw,18px);margin-bottom:clamp(10px,1.2vw,16px)">
+        <div style="color:var(--T);font-size:clamp(11px,.9vw,13px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem">Zero-cost abstractions</div>
+        <div class="body" style="color:rgba(250,248,244,.62)">Нет GC-пауз — 0,33 мкс scheduler p99</div>
+      </div>
+      <div style="border-top:1px solid rgba(250,248,244,.1);padding-top:clamp(12px,1.5vw,18px);margin-bottom:clamp(10px,1.2vw,16px)">
+        <div style="color:var(--T);font-size:clamp(11px,.9vw,13px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem">Memory safety без runtime</div>
+        <div class="body" style="color:rgba(250,248,244,.62)">Borrow checker исключает race conditions и UAF на уровне компиляции</div>
+      </div>
+      <div style="border-top:1px solid rgba(250,248,244,.1);padding-top:clamp(12px,1.5vw,18px);margin-bottom:clamp(10px,1.2vw,16px)">
+        <div style="color:var(--T);font-size:clamp(11px,.9vw,13px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem">≈ 2 МБ RSS</div>
+        <div class="body" style="color:rgba(250,248,244,.62)">Работает на SBC с 256 МБ RAM без контейнера</div>
+      </div>
+      <div style="border-top:1px solid rgba(250,248,244,.1);padding-top:clamp(12px,1.5vw,18px)">
+        <div style="color:var(--T);font-size:clamp(11px,.9vw,13px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem">Fearless concurrency</div>
+        <div class="body" style="color:rgba(250,248,244,.62)">Gossip, IPC, HTTP API — все потоки без дедлоков</div>
+      </div>
+    </div>
+    <!-- PYTHON panel — cream -->
+    <div style="background:var(--C);padding:clamp(24px,3.5vw,52px);overflow:hidden;display:flex;flex-direction:column">
+      <div style="font-family:var(--sans);font-weight:700;font-size:clamp(32px,4.5vw,68px);
+                  letter-spacing:-.04em;line-height:.85;color:var(--S);margin-bottom:.5rem">Python</div>
+      <div class="sm" style="color:var(--MU);letter-spacing:.12em;text-transform:uppercase;
+                              margin-bottom:clamp(14px,2vw,24px)">ML-исследования и оптимизация</div>
+      <div style="border-top:1px solid rgba(23,19,15,.12);padding-top:clamp(12px,1.5vw,18px);margin-bottom:clamp(10px,1.2vw,16px)">
+        <div style="color:var(--S);font-size:clamp(11px,.9vw,13px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem">ML-экосистема</div>
+        <div class="body">PyTorch, ONNX, TensorRT — все ML-фреймворки уже на Python</div>
+      </div>
+      <div style="border-top:1px solid rgba(23,19,15,.12);padding-top:clamp(12px,1.5vw,18px);margin-bottom:clamp(10px,1.2vw,16px)">
+        <div style="color:var(--S);font-size:clamp(11px,.9vw,13px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem">MILP-планировщик L2</div>
+        <div class="body">PuLP + CBC/HiGHS для фонового глобального расписания</div>
+      </div>
+      <div style="border-top:1px solid rgba(23,19,15,.12);padding-top:clamp(12px,1.5vw,18px);margin-bottom:clamp(10px,1.2vw,16px)">
+        <div style="color:var(--S);font-size:clamp(11px,.9vw,13px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem">Быстрые итерации</div>
+        <div class="body">GNN-PPO прототипирование без перекомпиляции ядра</div>
+      </div>
+      <div style="border-top:1px solid rgba(23,19,15,.12);padding-top:clamp(12px,1.5vw,18px)">
+        <div style="color:var(--S);font-size:clamp(11px,.9vw,13px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem">Исследовательская гибкость</div>
+        <div class="body">Тюнинг гиперпараметров, анализ симуляций, CI-бенчмарки</div>
+      </div>
+    </div>
+  </div>
+  <!-- FFI footer -->
+  <div style="background:var(--FM);padding:clamp(10px,1.4vw,16px) clamp(28px,5vw,80px);
+              display:flex;align-items:center;gap:1.2rem;flex-shrink:0;margin-bottom:var(--nb)">
+    <div class="sm" style="color:rgba(250,248,244,.4);letter-spacing:.1em;text-transform:uppercase;flex-shrink:0">FFI-мост</div>
+    <div class="body" style="color:rgba(250,248,244,.55)">Rust вызывает Python-планировщик через subprocess/socket. Горячий путь — всегда Rust. Python работает фоном без влияния на задержку p99.</div>
+  </div>
+</section>
+
+
+<!-- ══ 22 БИЗНЕС-ЦЕННОСТЬ ══ -->
+<section class="slide">
+  <div class="label">Бизнес-ценность · ROI для собственника</div>
+  <div class="split s40">
+    <div>
+      <div class="deco" style="line-height:.8;margin-bottom:.4rem">₴</div>
+      <div class="D2">Что это<br>значит в деньгах</div>
+      <div class="body" style="margin-top:1rem">Три метрики — три прямые статьи экономии.</div>
+    </div>
+    <div>
+      <div class="medit" style="margin-top:0">
+        <div class="medit-row">
+          <div class="m-n">+21,9 <span style="font-size:.4em;font-style:normal">%</span></div>
+          <div class="m-desc">
+            <div class="m-lbl">Утилизация GPU/NPU</div>
+            <div class="m-tgt">На каждые 10 серверов нужен 1 меньше — оборудование заменяет операционника</div>
+          </div>
+          <div class="m-gain" style="color:var(--S)">– серверы</div>
+        </div>
+        <div class="medit-row">
+          <div class="m-n">0 <span style="font-size:.4em;font-style:normal">₴/мес</span></div>
+          <div class="m-desc">
+            <div class="m-lbl">Облачные расходы</div>
+            <div class="m-tgt">Все вычисления on-premise. Нет платёжей AWS/Azure/GCP за GPU-время</div>
+          </div>
+          <div class="m-gain" style="color:var(--S)">– облако</div>
+        </div>
+        <div class="medit-row">
+          <div class="m-n">2,1 <span style="font-size:.4em;font-style:normal">с</span></div>
+          <div class="m-desc">
+            <div class="m-lbl">Время восстановления p95</div>
+            <div class="m-tgt">Конкуренты — минуты ручного вмешательства. Автоматический failover без дежурного</div>
+          </div>
+          <div class="m-gain" style="color:var(--S)">– downtime</div>
+        </div>
+      </div>
+      <div style="margin-top:clamp(16px,2vw,28px);display:grid;grid-template-columns:1fr 1fr;gap:2px">
+        <div style="background:var(--C);padding:clamp(12px,1.6vw,20px)">
+          <div class="sm" style="letter-spacing:.1em;text-transform:uppercase;color:var(--MU);margin-bottom:.5rem">Полная передача прав</div>
+          <div class="body">Исходный код + документация + тесты. Не SaaS-подписка — актив на балансе.</div>
+        </div>
+        <div style="background:var(--C);padding:clamp(12px,1.6vw,20px)">
+          <div class="sm" style="letter-spacing:.1em;text-transform:uppercase;color:var(--MU);margin-bottom:.5rem">Масштабирование без лицензий</div>
+          <div class="body">Добавляете узлы — платите только за железо, не за seat/node licence.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 23 ДЕПЛОЙМЕНТ ══ -->
+<section class="slide dk">
+  <div class="label">Деплоймент · как система попадает к заказчику</div>
+  <div class="D2" style="margin-bottom:clamp(20px,3vw,40px)">Установка<br>без интернета</div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:var(--LN);margin-bottom:2px">
+    <div style="background:var(--FM);padding:clamp(14px,1.8vw,24px)">
+      <div class="sm" style="color:var(--T);font-weight:700;letter-spacing:.12em;margin-bottom:.6rem">01</div>
+      <div class="D3" style="color:var(--P);margin-bottom:.5rem">Инвентаризация</div>
+      <div class="body" style="color:var(--FA)">Аудит GPU/CPU/NPU, топология сети, ОС, права доступа.</div>
+    </div>
+    <div style="background:var(--FM);padding:clamp(14px,1.8vw,24px)">
+      <div class="sm" style="color:var(--T);font-weight:700;letter-spacing:.12em;margin-bottom:.6rem">02</div>
+      <div class="D3" style="color:var(--P);margin-bottom:.5rem">Офлайн-пакет</div>
+      <div class="body" style="color:var(--FA)">Docker-слои + бинари Rust на физическом носителе. Контрольная сумма SHA-256.</div>
+    </div>
+    <div style="background:var(--FM);padding:clamp(14px,1.8vw,24px)">
+      <div class="sm" style="color:var(--T);font-weight:700;letter-spacing:.12em;margin-bottom:.6rem">03</div>
+      <div class="D3" style="color:var(--P);margin-bottom:.5rem">Systemd-агент</div>
+      <div class="body" style="color:var(--FA)">node-agent запускается как systemd-сервис. Авторестарт при сбое.</div>
+    </div>
+    <div style="background:var(--FM);padding:clamp(14px,1.8vw,24px)">
+      <div class="sm" style="color:var(--T);font-weight:700;letter-spacing:.12em;margin-bottom:.6rem">04</div>
+      <div class="D3" style="color:var(--P);margin-bottom:.5rem">Gossip discovery</div>
+      <div class="body" style="color:var(--FA)">Узлы находят друг друга автоматически в LAN. Никакого ручного конфига сервиса.</div>
+    </div>
+    <div style="background:var(--FM);padding:clamp(14px,1.8vw,24px)">
+      <div class="sm" style="color:var(--T);font-weight:700;letter-spacing:.12em;margin-bottom:.6rem">05</div>
+      <div class="D3" style="color:var(--P);margin-bottom:.5rem">Приёмочные тесты</div>
+      <div class="body" style="color:var(--FA)">Замер p99 latency, RAM, восстановления. Подписание акта Этапа 1.</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;background:var(--LN)">
+    <div style="background:var(--F);padding:clamp(14px,1.8vw,22px)">
+      <div class="sm" style="color:var(--FA);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem">Что поставляется</div>
+      <div class="body" style="color:var(--P)">Исходники (Rust + Python), Docker-образы, systemd-юниты, документация, SBOM</div>
+    </div>
+    <div style="background:var(--F);padding:clamp(14px,1.8vw,22px)">
+      <div class="sm" style="color:var(--FA);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem">Требования к сети</div>
+      <div class="body" style="color:var(--P)">Только LAN между узлами. Внешний интернет не нужен ни на одном шаге.</div>
+    </div>
+    <div style="background:var(--F);padding:clamp(14px,1.8vw,22px)">
+      <div class="sm" style="color:var(--FA);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem">Обучение команды</div>
+      <div class="body" style="color:var(--P)">Передача контекста, code review, ADR — входит в Этап 5.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 24 FAQ ══ -->
+<section class="slide">
+  <div class="label">Ответы на вопросы · часто задаваемые</div>
+  <div class="D2" style="margin-bottom:clamp(20px,3vw,40px)">Главные вопросы<br>собственника</div>
+  <div class="rtable">
+    <div class="row" style="font-weight:700;font-size:clamp(11px,.82vw,13px);letter-spacing:.1em;text-transform:uppercase;padding-bottom:.6rem">
+      <div>Вопрос</div><div style="flex:2">Ответ</div>
+    </div>
+    <div class="row">
+      <div style="color:var(--T);font-style:italic;font-family:var(--serif)">Можно добавить новое железо?</div>
+      <div style="flex:2">Да. Любой узел с GPU/CPU/NPU — через trait-интерфейс без перекомпиляции ядра.</div>
+    </div>
+    <div class="row">
+      <div style="color:var(--T);font-style:italic;font-family:var(--serif)">Что если узел упадёт?</div>
+      <div style="flex:2">Warm standby: p95 восстановления 2,1 с. Phi-accrual детектор без ложных срабатываний.</div>
+    </div>
+    <div class="row">
+      <div style="color:var(--T);font-style:italic;font-family:var(--serif)">Нужен ли интернет после установки?</div>
+      <div style="flex:2">Нет. Система работает полностью в изолированной сети на скорости от 64 кбит/с.</div>
+    </div>
+    <div class="row">
+      <div style="color:var(--T);font-style:italic;font-family:var(--serif)">Совместимость с нашим ПО?</div>
+      <div style="flex:2">Определяется на Этапе 1 (аудит). HTTP API + gRPC — интеграция с любым стеком.</div>
+    </div>
+    <div class="row">
+      <div style="color:var(--T);font-style:italic;font-family:var(--serif)">Кто владеет кодом?</div>
+      <div style="flex:2">Полная передача прав заказчику. Исходники + лицензионный реестр в Этапе 5.</div>
+    </div>
+    <div class="row">
+      <div style="color:var(--T);font-style:italic;font-family:var(--serif)">Это готовый продукт или НИОКР?</div>
+      <div style="flex:2">НИОКР с рабочим прототипом. Промышленная доводка — в Этапах 2–4. Все метрики уже достигнуты в симуляции.</div>
+    </div>
+    <div class="row">
+      <div style="color:var(--T);font-style:italic;font-family:var(--serif)">Можно запустить на одном узле?</div>
+      <div style="flex:2">Да. Masterless = минимум 1 узел, максимум — не ограничен. Нет центрального сервера.</div>
+    </div>
+  </div>
+  <div style="margin-top:auto;padding-top:clamp(16px,2vw,24px);border-top:1px solid var(--LN);display:flex;align-items:center;gap:1rem">
+    <div class="sm" style="color:var(--MU);letter-spacing:.1em;text-transform:uppercase;flex-shrink:0">Полный список</div>
+    <div class="body" style="color:var(--MU)">16 вопросов с развёрнутыми ответами — в документе НИОКР-ЭИО-01-2026 / Ответы.pdf</div>
+  </div>
+</section>
+
+
+<!-- ══ 25 СХЕМА: GOSSIP-СЕТЬ ══ -->
+<section class="slide dk">
+  <div class="label">Схема · протокол распространения состояния</div>
+  <div class="split s40">
+    <div>
+      <div class="deco" style="line-height:.8;margin-bottom:.4rem;color:var(--T)">G</div>
+      <div class="D2">Gossip-<br>протокол</div>
+      <div class="body" style="margin-top:1rem;color:var(--FA)">Каждый узел выбирает <b style="color:var(--P)">fanout = 3</b> случайных соседа и передаёт дельту состояния — 32 байта/фрейм.</div>
+      <div class="body" style="margin-top:.6rem;color:var(--FA)">Состояние расходится по всем узлам за <b style="color:var(--P)">O(log N)</b> раундов без центрального брокера.</div>
+      <div style="margin-top:1.2rem;display:grid;grid-template-columns:1fr 1fr;gap:2px">
+        <div style="background:var(--FM);padding:clamp(10px,1.2vw,16px)">
+          <div class="sm" style="color:var(--T);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem">Фрейм</div>
+          <div class="D3" style="color:var(--P)">32 байта</div>
+          <div class="sm" style="color:var(--FA)">max 4,8 КБ/с</div>
+        </div>
+        <div style="background:var(--FM);padding:clamp(10px,1.2vw,16px)">
+          <div class="sm" style="color:var(--T);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem">CRDT</div>
+          <div class="D3" style="color:var(--P)">LWW-map</div>
+          <div class="sm" style="color:var(--FA)">без конфликтов</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 600 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:clamp(220px,32vh,340px)">
+        <g stroke="#d8c7a8" stroke-width="1" stroke-opacity="0.18" fill="none">
+          <line x1="300" y1="52" x2="490" y2="152"/>
+          <line x1="490" y1="152" x2="490" y2="282"/>
+          <line x1="490" y1="282" x2="300" y2="368"/>
+          <line x1="300" y1="368" x2="110" y2="282"/>
+          <line x1="110" y1="282" x2="110" y2="152"/>
+          <line x1="110" y1="152" x2="300" y2="52"/>
+          <line x1="300" y1="52" x2="490" y2="282"/>
+          <line x1="300" y1="52" x2="110" y2="282"/>
+          <line x1="490" y1="152" x2="110" y2="282"/>
+        </g>
+        <g stroke="#b86f54" stroke-width="2" stroke-opacity="0.85" fill="none" stroke-dasharray="6 4">
+          <line x1="300" y1="52" x2="490" y2="152"/>
+          <line x1="300" y1="52" x2="110" y2="152"/>
+        </g>
+        <g stroke="#c9a96e" stroke-width="1.5" stroke-opacity="0.7" fill="none" stroke-dasharray="4 5">
+          <line x1="490" y1="152" x2="490" y2="282"/>
+          <line x1="110" y1="152" x2="110" y2="282"/>
+        </g>
+        <g stroke="#667b61" stroke-width="1.5" stroke-opacity="0.6" fill="none" stroke-dasharray="3 6">
+          <line x1="490" y1="282" x2="300" y2="368"/>
+          <line x1="110" y1="282" x2="300" y2="368"/>
+        </g>
+        <circle cx="395" cy="102" r="5" fill="#b86f54"/>
+        <circle cx="205" cy="102" r="5" fill="#b86f54"/>
+        <circle cx="490" cy="217" r="4" fill="#c9a96e"/>
+        <circle cx="110" cy="217" r="4" fill="#c9a96e"/>
+        <circle cx="395" cy="325" r="4" fill="#667b61"/>
+        <circle cx="205" cy="325" r="4" fill="#667b61"/>
+        <circle cx="300" cy="52" r="30" fill="#b86f54" stroke="#faf8f4" stroke-width="1.5"/>
+        <text x="300" y="47" text-anchor="middle" fill="#faf8f4" font-family="Jost,sans-serif" font-weight="700" font-size="11" letter-spacing=".05em">SOURCE</text>
+        <text x="300" y="62" text-anchor="middle" fill="#faf8f4" font-family="Jost,sans-serif" font-weight="700" font-size="14">N1</text>
+        <circle cx="490" cy="152" r="24" fill="#1e1810" stroke="#d8c7a8" stroke-width="1.2"/>
+        <text x="490" y="157" text-anchor="middle" fill="#d8c7a8" font-family="Jost,sans-serif" font-weight="700" font-size="13">N2</text>
+        <circle cx="490" cy="282" r="24" fill="#1e1810" stroke="#c9a96e" stroke-width="1"/>
+        <text x="490" y="287" text-anchor="middle" fill="#c9a96e" font-family="Jost,sans-serif" font-weight="700" font-size="13">N3</text>
+        <circle cx="300" cy="368" r="24" fill="#1e1810" stroke="#667b61" stroke-width="1"/>
+        <text x="300" y="373" text-anchor="middle" fill="#667b61" font-family="Jost,sans-serif" font-weight="700" font-size="13">N4</text>
+        <circle cx="110" cy="282" r="24" fill="#1e1810" stroke="#c9a96e" stroke-width="1"/>
+        <text x="110" y="287" text-anchor="middle" fill="#c9a96e" font-family="Jost,sans-serif" font-weight="700" font-size="13">N5</text>
+        <circle cx="110" cy="152" r="24" fill="#1e1810" stroke="#d8c7a8" stroke-width="1.2"/>
+        <text x="110" y="157" text-anchor="middle" fill="#d8c7a8" font-family="Jost,sans-serif" font-weight="700" font-size="13">N6</text>
+        <g font-family="Jost,sans-serif" font-size="11" fill="#5e5a52">
+          <line x1="20" y1="340" x2="50" y2="340" stroke="#b86f54" stroke-width="2" stroke-dasharray="5 3"/>
+          <text x="56" y="344">Hop 1</text>
+          <line x1="100" y1="340" x2="130" y2="340" stroke="#c9a96e" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <text x="136" y="344">Hop 2</text>
+          <line x1="180" y1="340" x2="210" y2="340" stroke="#667b61" stroke-width="1.5" stroke-dasharray="3 5"/>
+          <text x="216" y="344">Hop 3</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 26 СХЕМА: ПЛАНИРОВЩИК L1+L2 ══ -->
+<section class="slide">
+  <div class="label">Схема · двухуровневый планировщик задач</div>
+  <div class="D2" style="margin-bottom:clamp(16px,2.5vw,32px)">Планировщик<br>L1 + L2</div>
+  <div style="display:grid;grid-template-columns:1fr clamp(180px,20vw,240px);gap:clamp(16px,2.5vw,32px);align-items:start">
+    <div>
+      <div style="background:var(--C);border-left:4px solid var(--INK);padding:clamp(12px,1.5vw,18px) clamp(16px,2vw,24px);margin-bottom:2px">
+        <div class="sm" style="letter-spacing:.1em;text-transform:uppercase;color:var(--MU);margin-bottom:.3rem">Входящая задача</div>
+        <div class="D3">Inference-запрос от клиента</div>
+        <div class="body" style="margin-top:.3rem">Тип модели · размер батча · приоритет · hard deadline</div>
+      </div>
+      <div style="text-align:center;font-size:22px;color:var(--T);line-height:1.4;margin:2px 0">▼</div>
+      <div style="background:var(--T);padding:clamp(12px,1.5vw,18px) clamp(16px,2vw,24px);margin-bottom:2px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+          <div class="sm" style="letter-spacing:.1em;text-transform:uppercase;color:rgba(250,248,244,.6)">Уровень L1 · горячий путь</div>
+          <div style="font-family:var(--serif);font-style:italic;font-size:clamp(18px,2vw,28px);color:var(--W)">0,33 мкс</div>
+        </div>
+        <div class="D3" style="color:var(--W)">Линейный скоринг по 50 узлам</div>
+        <div style="margin-top:.5rem;font-size:clamp(12px,1.1vw,15px);color:rgba(250,248,244,.7);font-family:var(--serif);font-style:italic">score = α·load + β·vram_free + γ·net_latency + δ·thermal</div>
+      </div>
+      <div style="text-align:center;font-size:22px;color:var(--S);line-height:1.4;margin:2px 0">▼</div>
+      <div style="background:var(--S);padding:clamp(12px,1.5vw,18px) clamp(16px,2vw,24px)">
+        <div class="sm" style="letter-spacing:.1em;text-transform:uppercase;color:rgba(250,248,244,.6);margin-bottom:.3rem">Результат</div>
+        <div class="D3" style="color:var(--W)">Dispatch на лучший узел → Inference</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="background:var(--FM);padding:clamp(12px,1.5vw,18px);flex:1">
+        <div class="sm" style="color:var(--T);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem">L2 · фоновый MILP</div>
+        <div class="D3" style="color:var(--P);margin-bottom:.5rem">100–500 мс</div>
+        <div class="body" style="color:var(--FA)">Глобальная оптимизация расписания по всему кластеру.</div>
+      </div>
+      <div style="background:var(--FM);padding:clamp(10px,1.2vw,16px)">
+        <div class="sm" style="color:var(--G);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem">→ hint для L1</div>
+        <div class="body" style="color:var(--FA)">Подсказка приоритетов — L1 учитывает в следующем цикле, не останавливая горячий путь.</div>
+      </div>
+      <div style="background:var(--C);padding:clamp(10px,1.2vw,16px)">
+        <div class="sm" style="letter-spacing:.1em;text-transform:uppercase;color:var(--MU);margin-bottom:.3rem">Следующий шаг</div>
+        <div class="body">GNN-PPO заменит MILP: обучение на реальных трассах кластера.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 27 СХЕМА: ZERO-COPY IPC ══ -->
+<section class="slide dk">
+  <div class="label">Схема · путь данных без копирования</div>
+  <div class="split s50" style="align-items:center">
+    <div>
+      <div class="D2">Zero-copy<br>TensorHandle</div>
+      <div class="body" style="margin-top:1rem;color:var(--FA)">Тензор ни разу не копируется. Страница физической RAM отображается в адресное пространство обоих процессов через mmap — Producer и Consumer работают с одной и той же страницей.</div>
+      <div style="margin-top:1.4rem;display:grid;grid-template-columns:1fr 1fr;gap:2px">
+        <div style="background:var(--FM);padding:clamp(12px,1.5vw,18px)">
+          <div class="stat-n" style="font-size:clamp(24px,3vw,42px)">0,58 <span style="font-size:.5em;color:var(--G);font-family:var(--serif);font-style:italic">мс</span></div>
+          <div class="sm" style="margin-top:.3rem">10 МБ p99 latency</div>
+        </div>
+        <div style="background:var(--FM);padding:clamp(12px,1.5vw,18px)">
+          <div class="stat-n" style="font-size:clamp(24px,3vw,42px)">0 <span style="font-size:.5em;color:var(--G);font-family:var(--serif);font-style:italic">копий</span></div>
+          <div class="sm" style="margin-top:.3rem">данные не перемещаются</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 560 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:clamp(180px,28vh,280px)">
+        <defs>
+          <marker id="arr-t" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#b86f54"/></marker>
+          <marker id="arr-s" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#667b61"/></marker>
+        </defs>
+        <rect x="10" y="90" width="130" height="70" rx="2" fill="#1e1810" stroke="#d8c7a8" stroke-width="1"/>
+        <text x="75" y="120" text-anchor="middle" fill="#faf8f4" font-family="Jost,sans-serif" font-weight="700" font-size="13">Dispatch</text>
+        <text x="75" y="138" text-anchor="middle" fill="#5e5a52" font-family="Jost,sans-serif" font-size="11">(Producer)</text>
+        <line x1="140" y1="125" x2="192" y2="125" stroke="#b86f54" stroke-width="1.5" marker-end="url(#arr-t)"/>
+        <rect x="196" y="60" width="168" height="130" rx="2" fill="#17130f" stroke="#b86f54" stroke-width="1.5"/>
+        <text x="280" y="95" text-anchor="middle" fill="#b86f54" font-family="Jost,sans-serif" font-weight="700" font-size="13">TensorHandle</text>
+        <text x="280" y="113" text-anchor="middle" fill="#5e5a52" font-family="Jost,sans-serif" font-size="11">mmap / shared memory</text>
+        <rect x="215" y="122" width="36" height="28" rx="1" fill="#1e1810" stroke="#c9a96e" stroke-width="1"/>
+        <text x="233" y="140" text-anchor="middle" fill="#c9a96e" font-family="Jost,sans-serif" font-size="10">page</text>
+        <rect x="256" y="122" width="36" height="28" rx="1" fill="#1e1810" stroke="#c9a96e" stroke-width="1"/>
+        <text x="274" y="140" text-anchor="middle" fill="#c9a96e" font-family="Jost,sans-serif" font-size="10">page</text>
+        <rect x="297" y="122" width="36" height="28" rx="1" fill="#1e1810" stroke="#c9a96e" stroke-width="1"/>
+        <text x="315" y="140" text-anchor="middle" fill="#c9a96e" font-family="Jost,sans-serif" font-size="10">page</text>
+        <text x="340" y="140" fill="#5e5a52" font-family="Jost,sans-serif" font-size="12">…</text>
+        <line x1="364" y1="125" x2="416" y2="125" stroke="#667b61" stroke-width="1.5" marker-end="url(#arr-s)"/>
+        <rect x="420" y="90" width="130" height="70" rx="2" fill="#1e1810" stroke="#667b61" stroke-width="1"/>
+        <text x="485" y="120" text-anchor="middle" fill="#faf8f4" font-family="Jost,sans-serif" font-weight="700" font-size="13">Inference</text>
+        <text x="485" y="138" text-anchor="middle" fill="#5e5a52" font-family="Jost,sans-serif" font-size="11">(Consumer)</text>
+        <text x="280" y="225" text-anchor="middle" fill="#b86f54" font-family="Cormorant Garamond,Georgia,serif" font-style="italic" font-size="16">zero-copy — страница не перемещается</text>
+        <text x="280" y="250" text-anchor="middle" fill="#5e5a52" font-family="Jost,sans-serif" font-size="12">10 МБ / 0,58 мс p99 · page-pinned · numa-aware</text>
+        <line x1="140" y1="170" x2="420" y2="170" stroke="#b86f54" stroke-width="1" stroke-opacity="0.25" stroke-dasharray="2 3"/>
+        <text x="280" y="188" text-anchor="middle" fill="#b86f54" font-family="Jost,sans-serif" font-size="10" letter-spacing=".1em" fill-opacity="0.4">NO MEMCPY</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 28 СХЕМА: FAILOVER TIMELINE ══ -->
+<section class="slide">
+  <div class="label">Схема · восстановление после отказа узла</div>
+  <div class="split s40">
+    <div>
+      <div class="D2">Failover<br>за 2,1 с</div>
+      <div class="body" style="margin-top:1rem">Phi-accrual detector непрерывно отслеживает heartbeat-интервалы. Когда φ превышает порог — узел объявляется недоступным автоматически, без фиксированного таймаута.</div>
+      <div style="margin-top:1.2rem;display:grid;grid-template-columns:1fr;gap:2px">
+        <div style="background:var(--C);padding:clamp(10px,1.2vw,16px)">
+          <div class="sm" style="color:var(--MU);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem">Phi-accrual</div>
+          <div class="body">Порог φ = 8 (настраивается). Нет false-positives при временных задержках сети.</div>
+        </div>
+        <div style="background:var(--C);padding:clamp(10px,1.2vw,16px)">
+          <div class="sm" style="color:var(--MU);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem">Warm Standby</div>
+          <div class="body">Резервный узел держит веса модели готовыми. Promotion без cold start — поэтому 2,1 с а не минуты.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 580 310" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:clamp(200px,32vh,300px)">
+        <line x1="40" y1="155" x2="548" y2="155" stroke="#d8c7a8" stroke-width="1.5" stroke-opacity="0.4"/>
+        <polygon points="548,150 560,155 548,160" fill="#d8c7a8" fill-opacity="0.4"/>
+        <text x="556" y="172" fill="#5e5a52" font-family="Jost,sans-serif" font-size="11">t</text>
+        <line x1="80" y1="130" x2="80" y2="180" stroke="#b86f54" stroke-width="2"/>
+        <circle cx="80" cy="155" r="7" fill="#b86f54" stroke="#faf8f4" stroke-width="1.5"/>
+        <text x="80" y="115" text-anchor="middle" fill="#b86f54" font-family="Jost,sans-serif" font-weight="700" font-size="13">Отказ узла</text>
+        <text x="80" y="200" text-anchor="middle" fill="#5e5a52" font-family="Jost,sans-serif" font-size="11">t = 0</text>
+        <line x1="220" y1="130" x2="220" y2="180" stroke="#c9a96e" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <circle cx="220" cy="155" r="6" fill="#c9a96e" stroke="#faf8f4" stroke-width="1"/>
+        <text x="220" y="113" text-anchor="middle" fill="#c9a96e" font-family="Jost,sans-serif" font-weight="700" font-size="12">φ > порог</text>
+        <text x="220" y="128" text-anchor="middle" fill="#5e5a52" font-family="Jost,sans-serif" font-size="10">детектор</text>
+        <text x="220" y="200" text-anchor="middle" fill="#5e5a52" font-family="Jost,sans-serif" font-size="11">~ 300 мс</text>
+        <line x1="430" y1="120" x2="430" y2="180" stroke="#667b61" stroke-width="2"/>
+        <circle cx="430" cy="155" r="8" fill="#667b61" stroke="#faf8f4" stroke-width="1.5"/>
+        <text x="430" y="105" text-anchor="middle" fill="#667b61" font-family="Jost,sans-serif" font-weight="700" font-size="13">Warm standby</text>
+        <text x="430" y="120" text-anchor="middle" fill="#5e5a52" font-family="Jost,sans-serif" font-size="10">полностью активен</text>
+        <text x="430" y="200" text-anchor="middle" fill="#667b61" font-family="Jost,sans-serif" font-weight="700" font-size="14">2,1 с p95</text>
+        <rect x="80" y="134" width="350" height="42" rx="0" fill="#b86f54" fill-opacity="0.06"/>
+        <rect x="80" y="225" width="130" height="44" rx="1" fill="#f2ece0" stroke="#d8c7a8" stroke-width="1"/>
+        <text x="145" y="245" text-anchor="middle" fill="#17130f" font-family="Jost,sans-serif" font-size="11" font-weight="700">Gossip update</text>
+        <text x="145" y="261" text-anchor="middle" fill="#5e5a52" font-family="Jost,sans-serif" font-size="10">узел помечен DOWN</text>
+        <rect x="220" y="225" width="140" height="44" rx="1" fill="#f2ece0" stroke="#d8c7a8" stroke-width="1"/>
+        <text x="290" y="245" text-anchor="middle" fill="#17130f" font-family="Jost,sans-serif" font-size="11" font-weight="700">L1 исключает узел</text>
+        <text x="290" y="261" text-anchor="middle" fill="#5e5a52" font-family="Jost,sans-serif" font-size="10">перепланирование</text>
+        <rect x="365" y="225" width="140" height="44" rx="1" fill="#f2ece0" stroke="#667b61" stroke-width="1"/>
+        <text x="435" y="245" text-anchor="middle" fill="#17130f" font-family="Jost,sans-serif" font-size="11" font-weight="700">Promotion</text>
+        <text x="435" y="261" text-anchor="middle" fill="#5e5a52" font-family="Jost,sans-serif" font-size="10">standby → primary</text>
+        <line x1="80" y1="180" x2="145" y2="225" stroke="#b86f54" stroke-width="1" stroke-opacity="0.4"/>
+        <line x1="220" y1="180" x2="290" y2="225" stroke="#c9a96e" stroke-width="1" stroke-opacity="0.4"/>
+        <line x1="430" y1="180" x2="435" y2="225" stroke="#667b61" stroke-width="1" stroke-opacity="0.5"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<div class="nav">
+  <button id="prev">‹</button>
+  <div class="dots" id="dots"></div>
+  <button id="next">›</button>
+</div>
+<div class="hint">Стрелки <kbd>←</kbd><kbd>→</kbd> · <kbd>Space</kbd></div>
+
+<script>
+const slides = [...document.querySelectorAll('.slide')];
+const dotsEl = document.getElementById('dots');
+let cur = 0;
+document.getElementById('slidetot').textContent = slides.length;
+slides.forEach((_,n) => { const d=document.createElement('i'); d.onclick=()=>go(n); dotsEl.appendChild(d); });
+const dots=[...dotsEl.children];
+
+function go(n){
+  cur = Math.max(0, Math.min(slides.length-1, n));
+  slides.forEach((s,k)=>{ s.classList.toggle('on', k===cur); if(k!==cur) s.scrollTop=0; });
+  dots.forEach((d,k)=>d.classList.toggle('on', k===cur));
+  document.getElementById('slidecur').textContent = String(cur+1).padStart(2,'0');
+  document.getElementById('bar').style.width = ((cur+1)/slides.length*100)+'%';
+  const dk = slides[cur].classList.contains('dk')||slides[cur].classList.contains('dm');
+  const isTerra = slides[cur].style.background === 'var(--T)' || getComputedStyle(slides[cur]).backgroundColor === 'rgb(184, 111, 84)';
+  const lightSlide = !dk && !isTerra;
+  document.getElementById('brand-txt').style.color = lightSlide ? 'var(--INK)' : 'var(--P)';
+  document.getElementById('slidecur').style.color  = lightSlide ? 'var(--INK)' : 'var(--P)';
+}
+document.getElementById('next').onclick = ()=>go(cur+1);
+document.getElementById('prev').onclick = ()=>go(cur-1);
+document.addEventListener('keydown', e=>{
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1);}
+  if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1);}
+  if(e.key==='Home') go(0);
+  if(e.key==='End')  go(slides.length-1);
+});
+let sx=0;
+addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});
+addEventListener('touchend',  e=>{const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>44)go(cur+(dx<0?1:-1));},{passive:true});
+go(0);
+
+// PDF export
+function exportPDF() {
+  const btn = document.getElementById('pdfbtn');
+  btn.textContent = '…';
+  btn.disabled = true;
+  // small delay so UI updates before print dialog opens
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => {
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6.5l3 3 3-3M1.5 11h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> PDF';
+      btn.disabled = false;
+    }, 800);
+  }, 120);
+}
+
+// sync pdf-btn color with slide theme
+function updatePdfBtn() {
+  const btn = document.getElementById('pdfbtn');
+  const s = slides[cur];
+  const light = !s.classList.contains('dk') && !s.classList.contains('dm') && s.style.background !== 'var(--T)';
+  if (light) {
+    btn.style.color = '#928e85';
+    btn.style.borderColor = 'rgba(23,19,15,.15)';
+    btn.style.background = 'rgba(250,248,244,.85)';
+  } else {
+    btn.style.color = '#bfb9ae';
+    btn.style.borderColor = 'rgba(255,253,248,.2)';
+    btn.style.background = 'rgba(30,24,16,.7)';
+  }
+}
+
+// patch go() to also update pdf btn
+const _go = go;
+window.go = function(n) { _go(n); updatePdfBtn(); }
+// init
+updatePdfBtn();
+</script>
+</body>
+</html>
