@@ -34,7 +34,7 @@
   --ease: cubic-bezier(.22,.61,.18,1);
   --ease-out: cubic-bezier(.16,1,.3,1);
   --dur:.64s;
-  --nb: 88px; /* nav bottom clearance */
+  --nb: 70px; /* nav bottom clearance */
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
@@ -50,7 +50,7 @@ body{font-family:var(--sans);background:var(--F);-webkit-font-smoothing:antialia
 }
 .slide{
   position:absolute;inset:0;
-  padding:clamp(58px,7vh,96px) clamp(32px,6vw,96px) var(--nb);
+  padding:clamp(40px,5vh,76px) clamp(32px,6vw,96px) var(--nb);
   opacity:0;transform:translateY(8px) scale(.995);
   transition:opacity .5s var(--ease),transform .5s var(--ease);
   pointer-events:none;overflow-y:auto;overflow-x:hidden;
@@ -175,7 +175,7 @@ hr{border:0;border-top:1px solid var(--LN);margin:0}
 .rtable.t2 .rh,.rtable.t2 .row{grid-template-columns:minmax(150px,1fr) 1.85fr}
 .rtable.t3 .rh,.rtable.t3 .row{grid-template-columns:minmax(120px,150px) 1fr minmax(120px,170px)}
 .rtable.t2 .row>*{padding:clamp(6px,.8vw,11px) 0}
-.rtable.t3 .row>*{padding:clamp(6px,.8vw,11px) 0}
+.rtable.t3 .row>*{padding:clamp(4px,.55vw,7px) 0}
 .tc-key{font-size:clamp(12.5px,1vw,15px);font-weight:600;color:var(--INK);line-height:1.3}
 .dk .tc-key{color:var(--W)}
 .tc-val{font-size:clamp(12.5px,1vw,15px);font-weight:400;color:var(--INK3);line-height:1.5}
@@ -251,8 +251,8 @@ hr{border:0;border-top:1px solid var(--LN);margin:0}
 .st-col-body{padding:0}
 .st-col-body li{
   display:flex;gap:9px;align-items:flex-start;
-  font-size:clamp(12px,.97vw,14.5px);color:var(--INK3);line-height:1.4;
-  padding:clamp(9px,1vw,13px) clamp(16px,1.8vw,24px);
+  font-size:clamp(12px,.97vw,14.5px);color:var(--INK3);line-height:1.35;
+  padding:clamp(5px,.7vw,8px) clamp(16px,1.8vw,24px);
   border-top:1px solid var(--LN2);list-style:none;
 }
 .st-col-body li:first-child{border-top:0}
@@ -371,7 +371,6 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
 /* ─── PRINT / PDF ─── */
 @media print {
   @page{size:297mm 167mm;margin:0}
-  /* КРИТИЧНО: заставляет печатать ВСЕ фоны/цвета (иначе тёмные слайды белые) */
   *,*::before,*::after{
     -webkit-print-color-adjust:exact!important;
     print-color-adjust:exact!important;
@@ -382,47 +381,281 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
   .t-hero{text-shadow:none!important}
   .topbar,.nav,.hint,.pdf-btn,.slidectr,.brand{display:none!important}
   .deck{position:static!important;height:auto!important;overflow:visible!important}
+
+  /* ── базовый слайд ── */
   .slide{
     position:relative!important;opacity:1!important;
     transform:none!important;pointer-events:auto!important;
     width:297mm!important;height:167mm!important;min-height:167mm!important;max-height:167mm!important;
     overflow:hidden!important;
     page-break-after:always;break-after:page;
-    padding:15mm 22mm 13mm!important;
+    padding:11mm 17mm 9mm!important;
     display:flex!important;flex-direction:column!important;justify-content:flex-start;
     box-sizing:border-box!important;
   }
-  /* edge-to-edge слайды (титул, Rust+Python) — без внешних полей, со своей вёрсткой */
   .slide.bleed{padding:0!important;justify-content:stretch!important}
   .slide.bleed [style*="var(--nb)"]{padding-bottom:0!important;margin-bottom:0!important}
-  /* гигантский титул вписываем в одну строку по ширине листа */
-  .t-hero{font-size:116pt!important;line-height:.84!important;letter-spacing:.01em!important}
-  /* типографика под печать */
-  .label{font-size:7pt!important;margin-bottom:5mm!important}
-  .D1{font-size:84pt!important}
-  .D2{font-size:30pt!important;line-height:.94!important}
-  .D3{font-size:12pt!important}
-  .body{font-size:9.5pt!important;line-height:1.38!important}
-  .sm{font-size:7.5pt!important}
-  .serif-xl{font-size:15pt!important}
-  .deco{font-size:58pt!important}
-  .stat-n{font-size:25pt!important}
-  .m-n{font-size:32pt!important}
-  .bdg{font-size:8pt!important;padding:4px 8px!important}
-  /* metrics editorial */
-  .medit-row{grid-template-columns:130px 1fr 120px!important}
-  /* split layout */
+
+  /* ── номера страниц + документный ID ── */
+  .slide::after{
+    content:"НИОКР-ЭИО-01-2026  ·  " counter(page);
+    counter-increment:page;
+    position:absolute;bottom:4mm;right:7mm;
+    font-family:var(--sans);font-size:6pt;font-weight:500;
+    letter-spacing:.1em;text-transform:uppercase;
+    color:rgba(23,19,15,.2);
+  }
+  .slide.dk::after,.slide.dm::after{color:rgba(250,248,244,.15)}
+  .slide[style*="background:var(--T)"]::after{color:rgba(255,253,248,.25)}
+  .slide[style*="background:var(--C)"]::after{color:rgba(23,19,15,.15)}
+  .slide.bleed::after{bottom:3mm;right:6mm}
+  .slide:first-child::after{content:none}
+
+  /* ── титул ── */
+  .t-hero{font-size:110pt!important;line-height:.82!important;letter-spacing:.01em!important}
+
+  /* ── типографика ── */
+  .label{font-size:6pt!important;margin-bottom:3mm!important;gap:6px!important}
+  .label::before{width:16px!important}
+  .D1{font-size:80pt!important}
+  .D2{font-size:22pt!important;line-height:.90!important}
+  .D3{font-size:10pt!important}
+  .body{font-size:8pt!important;line-height:1.30!important}
+  .sm{font-size:6.5pt!important;line-height:1.28!important}
+  .serif-xl{font-size:12pt!important}
+  .deco{font-size:42pt!important}
+  .stat-n{font-size:20pt!important}
+  .stat-u{font-size:11pt!important}
+  .m-n{font-size:24pt!important}
+  .bdg{font-size:7pt!important;padding:2px 6px!important}
+
+  /* ── metrics editorial ── */
+  .medit-row{grid-template-columns:100px 1fr 90px!important}
+  .medit-row:last-child{border-bottom:1px solid var(--LLT)!important}
+  .medit.compact .m-n{font-size:18pt!important}
+  .medit.compact .medit-row{grid-template-columns:90px 1fr 80px!important}
+  .m-desc{padding:5px 10px!important}
+  .m-gain{padding:5px 0 5px 10px!important;font-size:7pt!important}
+  .m-desc .m-lbl{font-size:8pt!important}
+  .m-desc .m-tgt{font-size:6.5pt!important;margin-top:1px!important}
+
+  /* ── split layout ── */
   .split{display:grid!important}
   .s50{grid-template-columns:1fr 1fr!important}
   .s40{grid-template-columns:2fr 3fr!important}
   .s33{grid-template-columns:1fr 2fr!important}
-  .split>*+*{border-left:1px solid var(--LN)!important;padding-left:20px!important}
-  /* status / rmap / vs */
+  .split>*+*{border-left:1px solid var(--LN)!important;padding-left:14px!important}
+  .split>*:first-child{padding-right:14px!important}
+
+  /* ── step rows ── */
+  .sr{margin:0!important}
+  .sr li{padding:3px 0!important;gap:6px!important;grid-template-columns:32px 1fr!important}
+  .sr li:last-child{border-bottom:1px solid var(--LN)!important}
+  .sr h3{font-size:9pt!important;margin-bottom:1px!important}
+  .sr p{font-size:7.5pt!important;line-height:1.28!important}
+  .sridx{font-size:16pt!important}
+
+  /* ── status columns ── */
   .status3{display:grid!important;grid-template-columns:repeat(3,1fr)!important}
-  .rmap-row{display:grid!important;grid-template-columns:44px 1fr!important}
+  .st-col-hd{padding:5px 8px!important;font-size:7pt!important}
+  .st-col-body li{padding:2px 8px!important;font-size:7.5pt!important;gap:5px!important}
+  .st-col-body li::before{margin-top:.45em!important}
+
+  /* ── roadmap rows ── */
+  .rmap{margin-top:6px!important}
+  .rmap-row{display:grid!important;grid-template-columns:30px 1fr!important}
+  .rmap-n{font-size:16pt!important;padding:4px 6px 4px 0!important}
+  .rmap-body{padding:4px 0 4px 12px!important}
+  .rmap-body h3{font-size:9pt!important;margin-bottom:1px!important}
+  .rmap-body p{font-size:7.5pt!important;line-height:1.28!important}
+  .rmap-body .sub{font-size:7pt!important;margin-top:2px!important}
+
+  /* ── tables ── */
   .rtable .rh,.rtable .row{display:grid!important}
-  /* SVG-схемы не должны раздувать страницу */
-  svg{max-height:58mm!important;width:auto!important}
+  .rtable .rh{font-size:6.5pt!important;padding-bottom:2px!important;margin-bottom:0!important;border-bottom-width:1.5px!important}
+  .rtable .row>*{padding:3px 0!important}
+  .rtable .row>*+*{padding-left:10px!important}
+  .tc-key{font-size:8pt!important}
+  .tc-val{font-size:7.5pt!important;line-height:1.28!important}
+  .tc-badge{font-size:6.5pt!important;padding:1px 4px!important}
+
+  /* ── tags ── */
+  .tags{gap:2px!important;margin-top:4px!important}
+  .tag{font-size:7pt!important;padding:1px 5px!important}
+
+  /* ── highlight blocks ── */
+  .hl{margin:5px 0!important;padding-left:8px!important}
+
+  /* ── colour blocks ── */
+  .block-t,.block-s,.block-c,.block-f,.block-ch{padding:8px 12px!important}
+  .accent-bar{font-size:6.5pt!important;padding:2px 7px!important;margin-bottom:5px!important}
+
+  /* ── SVG-схемы ── */
+  svg{max-height:48mm!important;width:auto!important}
+
+  /* ── var(--nb) clearance убирается — nav скрыт ── */
+  [style*="padding-bottom:var(--nb)"],[style*="margin-bottom:var(--nb)"]{
+    padding-bottom:0!important;margin-bottom:0!important;
+  }
+
+  /* ── СПЕЦИФИКА СЛАЙДОВ ── */
+
+  /* Титульный — stat strip компактнее */
+  .slide:first-child .stat-n{font-size:16pt!important}
+
+  /* Синхронизация (4 блока) — deco symbols меньше */
+  .block-f .deco{font-size:36pt!important}
+  .block-f .D3{font-size:9.5pt!important}
+  .block-f .body{font-size:7.5pt!important}
+
+  /* Планировщик (2 цветных блока + 5-col strip) */
+  .block-t .D2,.block-c .D2{font-size:20pt!important}
+  .block-t .serif-xl,.block-c .serif-xl{font-size:10pt!important}
+
+  /* Deployment — 5-col grid */
+  .slide.dk [style*="repeat(5,1fr)"]{gap:1px!important}
+
+  /* FAQ — ультра-компакт */
+  .slide.dk [style*="grid-template-columns:1fr 1fr"][style*="flex:1"] [style*="grid-template-columns:clamp(34px"]{
+    padding:4px 0!important;gap:5px!important;
+  }
+
+  /* Условия — два блока с SR */
+  .block-s .sr li,.block-c .sr li{padding:2px 0!important}
+  .block-s .sr h3,.block-c .sr h3{font-size:8.5pt!important}
+  .block-s .sr p,.block-c .sr p{font-size:7pt!important}
+
+  /* Rust+Python bleed — panels */
+  .slide.bleed [style*="flex-direction:column"][style*="background:var(--F)"],
+  .slide.bleed [style*="flex-direction:column"][style*="background:var(--C)"]{
+    padding:14px 24px!important;
+  }
+
+  /* Итог — medit без 3-й колонки для чистоты */
+  .slide.dk .medit:not(.compact) .m-gain{display:none!important}
+  .slide.dk .medit:not(.compact) .medit-row{grid-template-columns:100px 1fr!important}
+
+  /* Для-кого — t3 table компактнее */
+  .rtable.t3 .row>*{padding:2px 0!important}
+  .rtable.t3 .rh,.rtable.t3 .row{grid-template-columns:80px 1fr 100px!important}
+
+  /* Команда — table rows */
+  .slide .rtable .row[style*="grid-template-columns:44px 1fr"]{
+    grid-template-columns:30px 1fr!important;
+  }
+  .slide .rtable .row[style*="grid-template-columns:44px 1fr"] .sridx{font-size:14pt!important}
+  .slide .rtable .row[style*="grid-template-columns:44px 1fr"] .tc-val{font-size:7pt!important}
+
+  /* Архитектура 8 модулей — table */
+  .slide .rtable .rh[style*="grid-template-columns:44px 1fr"]{
+    grid-template-columns:30px 1fr!important;
+  }
+
+  /* Риски table */
+  .slide .rtable .rh[style*="grid-template-columns:1fr 1fr 80px"],
+  .slide .rtable .row[style*="grid-template-columns:1fr 1fr 80px"]{
+    grid-template-columns:1fr 1fr 60px!important;
+  }
+
+  /* Сравнение VS — 3-col table */
+  .slide .rtable .rh[style*="grid-template-columns:2fr 1fr 1fr"],
+  .slide .rtable .row[style*="grid-template-columns:2fr 1fr 1fr"]{
+    grid-template-columns:2fr 1fr 1fr!important;
+  }
+
+  /* Следующий шаг (terra bg) — 5-col grid */
+  .slide[style*="background:var(--T)"] .D2{font-size:22pt!important}
+  .slide[style*="background:var(--T)"] .serif-xl{font-size:11pt!important}
+
+  /* Divider slide — СХЕМЫ */
+  .slide.bleed .body{font-size:7.5pt!important}
+
+  /* ── ГЛОБАЛЬНЫЕ INLINE-MARGIN OVERRIDES ── */
+  /* inline margin-top: 1rem+ слишком щедро для печати */
+  .slide .body[style*="margin-top:1rem"]{margin-top:5px!important}
+  .slide .body[style*="margin-top:.8rem"]{margin-top:3px!important}
+  .slide .body[style*="margin-top:.9rem"]{margin-top:4px!important}
+  .slide .D2[style*="margin-top"]{margin-top:0!important}
+  .slide .hl[style*="margin-top"]{margin-top:4px!important}
+
+  /* rule-t — тоньше */
+  .rule-t{height:2px!important;margin-bottom:6px!important;width:32px!important}
+
+  /* deco — margin */
+  .deco[style*="margin-bottom"]{margin-bottom:2px!important}
+
+  /* ── Аналогии (E2–E7) — callout-блоки «Що це значить для вас» ── */
+  .slide [style*="border-left:4px solid var(--G)"],
+  .slide [style*="border-left:4px solid var(--T)"]{
+    margin-top:6px!important;padding:6px 10px!important;
+  }
+  .slide [style*="border-left:4px solid var(--G)"] .sm,
+  .slide [style*="border-left:4px solid var(--T)"] .sm{
+    margin-bottom:2px!important;
+  }
+
+  /* ── flex:1 containers — не растягивать сверх нужного ── */
+  .slide [style*="flex:1"]{flex:0 1 auto!important}
+
+  /* ── inline grid gaps ── */
+  .slide [style*="gap:2px"]{gap:1px!important}
+  .slide [style*="gap:1px"]{gap:1px!important}
+
+  /* ── Deployment 5-col + 3-col footer ── */
+  .slide.dk [style*="repeat(5,1fr)"]>div{padding:8px 10px!important}
+  .slide.dk [style*="repeat(5,1fr)"]>div .D3{font-size:9pt!important}
+  .slide.dk [style*="1fr 1fr 1fr"][style*="gap:2px"]>div{padding:8px 10px!important}
+
+  /* ── Следующий шаг 5-col ── */
+  .slide[style*="background:var(--T)"] [style*="repeat(5,1fr)"]>div{padding:8px 10px!important}
+  .slide[style*="background:var(--T)"] [style*="repeat(5,1fr)"] .D3{font-size:9pt!important}
+
+  /* ── Синхронизация 4-col — tighter ── */
+  .slide.dm [style*="repeat(4,1fr)"]>div{padding:8px 10px!important}
+  .slide.dm [style*="repeat(4,1fr)"] .deco{margin-bottom:3px!important}
+  .slide.dm [style*="repeat(4,1fr)"] .D3{margin-top:3px!important}
+  .slide.dm [style*="repeat(4,1fr)"] .body{margin-top:3px!important}
+
+  /* ── Планировщик slide — 5-col factor strip ── */
+  .slide [style*="repeat(5,1fr)"][style*="margin-top:2px"]>div{padding:6px 8px!important}
+
+  /* ── Статус slide — footer sm ── */
+  .slide .sm[style*="margin-top:1.2rem"]{margin-top:5px!important}
+  .slide .sm[style*="padding-top:1rem"]{padding-top:4px!important}
+
+  /* ── Бизнес-ценность — stat blocks внизу ── */
+  .slide [style*="grid-template-columns:1fr 1fr"][style*="gap:2px"][style*="margin-top:clamp"]>div{
+    padding:6px 10px!important;
+  }
+
+  /* ── Итог slide — author block ── */
+  .slide.dk [style*="gap:clamp(14px,1.8vw,22px)"][style*="border-top"]{
+    margin-top:6px!important;padding-top:6px!important;gap:10px!important;
+  }
+
+  /* ── bdg-row (title slide badges) ── */
+  .bdg-row{gap:3px!important;margin-top:6px!important}
+
+  /* ── Боль собственника — 4 step-rows fit ── */
+  .slide .sr li .D3{font-size:9pt!important}
+
+  /* ── Для кого — callout block at bottom ── */
+  .slide [style*="border-left:4px solid var(--T)"][style*="margin-top:.85rem"]{
+    margin-top:4px!important;padding:5px 10px!important;
+  }
+
+  /* ── stat-n inline size overrides ── */
+  .stat-n[style*="font-size:clamp(24px"]{font-size:16pt!important}
+
+  /* ── Общие grid margin-top inline ── */
+  .slide [style*="margin-top:clamp(24px"]{margin-top:10px!important}
+  .slide [style*="margin-top:clamp(16px"]{margin-top:8px!important}
+  .slide [style*="margin-top:2rem"]{margin-top:10px!important}
+  .slide [style*="margin-top:1.6rem"]{margin-top:8px!important}
+  .slide [style*="margin-top:1.4rem"]{margin-top:6px!important}
+  .slide [style*="margin-bottom:1.6rem"]{margin-bottom:6px!important}
+  .slide [style*="margin-bottom:1.4rem"]{margin-bottom:5px!important}
+  .slide .D2[style*="margin-bottom"]{margin-bottom:5px!important}
 }
 
 /* responsive */
@@ -473,7 +706,7 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
       <span style="color:var(--T)">T</span>EMIR AI
     </div>
     <!-- terra rule -->
-    <div style="height:3px;background:linear-gradient(90deg,var(--T) 0%,var(--G) 50%,rgba(201,169,110,0) 100%);margin:clamp(14px,2.2vh,28px) 0;box-shadow:0 0 22px rgba(201,169,110,.4)"></div>
+    <div style="height:3px;background:linear-gradient(90deg,var(--T) 0%,var(--G) 50%,rgba(201,169,110,0) 100%);margin:clamp(8px,1.4vh,18px) 0;box-shadow:0 0 22px rgba(201,169,110,.4)"></div>
     <!-- subtitle row: serif italic + key properties -->
     <div style="display:grid;grid-template-columns:1fr auto;gap:clamp(20px,4vw,60px);align-items:start">
       <div style="font-family:var(--serif);font-style:italic;font-weight:300;
@@ -491,24 +724,24 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
   </div>
   <!-- stats strip flush bottom -->
   <div style="padding-bottom:var(--nb)">
-    <div style="display:flex;align-items:center;gap:14px;padding:0 clamp(28px,5vw,80px) clamp(8px,1.2vh,14px)">
-      <span style="font-size:clamp(9px,.72vw,10.5px);font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:rgba(201,169,110,.72);white-space:nowrap">Измерено на прототипе</span>
+    <div style="display:flex;align-items:center;gap:14px;padding:0 clamp(28px,5vw,80px) clamp(2px,.5vh,6px)">
+      <span style="font-size:clamp(9px,.72vw,10.5px);font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:rgba(201,169,110,.72);white-space:nowrap;padding-bottom:0">Измерено на прототипе</span>
       <span style="flex:1;height:1px;background:linear-gradient(90deg,rgba(201,169,110,.45),rgba(201,169,110,0))"></span>
     </div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,253,248,.06)">
-      <div style="background:var(--FM);border-top:2px solid var(--T);padding:clamp(12px,1.6vw,20px) clamp(16px,2.5vw,28px)">
+      <div style="background:var(--FM);border-top:2px solid var(--T);padding:clamp(7px,1vw,13px) clamp(16px,2.5vw,28px)">
         <div class="stat-n" style="font-size:clamp(24px,3vw,40px)">0,33 <span style="font-size:.5em;color:var(--G);font-family:var(--serif);font-style:italic">мкс</span></div>
         <div class="sm" style="margin-top:.3rem;letter-spacing:.04em">планировщик L1, p99</div>
       </div>
-      <div style="background:var(--FM);border-top:2px solid rgba(201,169,110,.5);padding:clamp(12px,1.6vw,20px) clamp(16px,2.5vw,28px)">
+      <div style="background:var(--FM);border-top:2px solid rgba(201,169,110,.5);padding:clamp(7px,1vw,13px) clamp(16px,2.5vw,28px)">
         <div class="stat-n" style="font-size:clamp(24px,3vw,40px)">≈ 2 <span style="font-size:.5em;color:var(--G);font-family:var(--serif);font-style:italic">МБ</span></div>
         <div class="sm" style="margin-top:.3rem;letter-spacing:.04em">RAM демона узла</div>
       </div>
-      <div style="background:var(--FM);border-top:2px solid rgba(201,169,110,.5);padding:clamp(12px,1.6vw,20px) clamp(16px,2.5vw,28px)">
+      <div style="background:var(--FM);border-top:2px solid rgba(201,169,110,.5);padding:clamp(7px,1vw,13px) clamp(16px,2.5vw,28px)">
         <div class="stat-n" style="font-size:clamp(24px,3vw,40px)">2,1 <span style="font-size:.5em;color:var(--G);font-family:var(--serif);font-style:italic">с</span></div>
         <div class="sm" style="margin-top:.3rem;letter-spacing:.04em">восстановление p95</div>
       </div>
-      <div style="background:var(--FM);border-top:2px solid var(--T);padding:clamp(12px,1.6vw,20px) clamp(16px,2.5vw,28px)">
+      <div style="background:var(--FM);border-top:2px solid var(--T);padding:clamp(7px,1vw,13px) clamp(16px,2.5vw,28px)">
         <div class="stat-n" style="font-size:clamp(24px,3vw,40px)">+21,9 <span style="font-size:.4em;color:var(--G);font-family:var(--serif);font-style:italic">%</span></div>
         <div class="sm" style="margin-top:.3rem;letter-spacing:.04em">утилизация GPU/NPU</div>
       </div>
@@ -1239,7 +1472,7 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
 <!-- ══ 13 СТАТУС ══ -->
 <section class="slide">
   <div class="label">Текущий статус · честная оценка</div>
-  <div class="D2" style="margin-bottom:1.4rem">Опытный образец,<br>готовый к доводке</div>
+  <div class="D2" style="margin-bottom:.85rem">Опытный образец,<br>готовый к доводке</div>
   <div class="status3">
     <div class="st-col g" style="border-right:1px solid var(--LN)">
       <div class="st-col-hd">Готово — передаётся сразу</div>
@@ -1436,9 +1669,9 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
       <div class="rule-t"></div>
       <div class="D2">Уникальная<br>разработка<br>с полной</div>
       <div class="serif-xl" style="margin-top:.3rem">передачей прав</div>
-      <div class="body" style="margin-top:1rem">Система решает реальную задачу там, где облако недоступно. Все технические цели перекрыты с запасом. Передаётся как сопровождаемый актив — исходный код, документация, тесты, обучение.</div>
-      <div class="body" style="margin-top:.8rem">Следующий шаг — <strong>Этап 1:</strong> аудит инфраструктуры и подтверждение метрик на вашем оборудовании.</div>
-      <div style="margin-top:clamp(18px,2.4vw,30px);display:flex;align-items:center;gap:clamp(14px,1.8vw,22px);border-top:1px solid var(--LLT);padding-top:clamp(14px,1.8vw,22px)">
+      <div class="body" style="margin-top:.7rem">Система решает реальную задачу там, где облако недоступно. Все технические цели перекрыты с запасом. Передаётся как сопровождаемый актив — исходный код, документация, тесты, обучение.</div>
+      <div class="body" style="margin-top:.55rem">Следующий шаг — <strong>Этап 1:</strong> аудит инфраструктуры и подтверждение метрик на вашем оборудовании.</div>
+      <div style="margin-top:clamp(12px,1.8vw,22px);display:flex;align-items:center;gap:clamp(14px,1.8vw,22px);border-top:1px solid var(--LLT);padding-top:clamp(10px,1.4vw,16px)">
         <div style="width:48px;height:48px;flex-shrink:0;background:linear-gradient(150deg,var(--T),#9a5740);display:grid;place-items:center;color:var(--W);font-family:var(--serif);font-size:27px;border-radius:7px;box-shadow:0 5px 18px rgba(184,111,84,.42)">T</div>
         <div>
           <div style="font-family:var(--sans);font-weight:600;font-size:clamp(13px,1.1vw,16px);color:var(--W);letter-spacing:.02em">Вячеслав Мунистер</div>
@@ -1464,13 +1697,13 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
   <div class="label">Применимость · для кого создан TEMIR AI</div>
   <div class="split s50">
     <div>
-      <div class="deco" style="line-height:.8;margin-bottom:.6rem">?</div>
+      <div class="deco" style="line-height:.8;margin-bottom:.3rem;font-size:clamp(40px,5vw,72px)">?</div>
       <div class="D2">Кто может<br>использовать<br>систему</div>
-      <div class="serif-xl" style="margin-top:.8rem;font-size:clamp(15px,1.6vw,22px)">Там, где облако невозможно — по регуляции, по физике или по выбору.</div>
+      <div class="serif-xl" style="margin-top:.3rem;font-size:clamp(15px,1.6vw,22px)">Там, где облако невозможно — по регуляции, по физике или по выбору.</div>
     </div>
     <div>
       <div class="rtable t3">
-        <div class="row" style="font-weight:700;font-size:clamp(11px,.82vw,13px);letter-spacing:.1em;text-transform:uppercase;padding-bottom:.6rem">
+        <div class="row" style="font-weight:700;font-size:clamp(11px,.82vw,13px);letter-spacing:.1em;text-transform:uppercase;padding-bottom:.3rem">
           <div>Отрасль</div><div>Задача</div><div style="text-align:right">Главное ограничение</div>
         </div>
         <div class="row">
@@ -1499,7 +1732,7 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
           <div style="text-align:right;color:var(--MU)">суверенность данных</div>
         </div>
       </div>
-      <div style="margin-top:1.4rem;padding:clamp(14px,1.8vw,22px);background:var(--C);border-left:4px solid var(--T)">
+      <div style="margin-top:.85rem;padding:clamp(11px,1.4vw,18px);background:var(--C);border-left:4px solid var(--T)">
         <div class="sm" style="letter-spacing:.1em;text-transform:uppercase;color:var(--MU);margin-bottom:.4rem">Общий знаменатель</div>
         <div class="body">GPU/NPU есть. Интернета — нет. Задержка планировщика считается в мкс, а не мс. TEMIR AI — для таких условий.</div>
       </div>
@@ -1725,15 +1958,15 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
   <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(28px,5vw,80px)">
     <div class="label" style="color:rgba(250,248,244,.3)">Приложение · для технической команды</div>
     <div style="font-family:var(--sans);font-weight:700;text-transform:uppercase;
-                font-size:clamp(48px,10vw,148px);line-height:.82;letter-spacing:.02em;
-                color:rgba(255,253,248,.1);margin-bottom:clamp(16px,2.5vw,32px)">
+                font-size:clamp(40px,7vw,104px);line-height:.82;letter-spacing:.02em;
+                color:rgba(255,253,248,.1);margin-bottom:clamp(8px,1.4vw,18px)">
       СХЕМЫ
     </div>
-    <div style="height:2px;background:var(--T);width:clamp(40px,6vw,80px);margin-bottom:clamp(16px,2.5vw,32px)"></div>
+    <div style="height:2px;background:var(--T);width:clamp(40px,6vw,80px);margin-bottom:clamp(8px,1.4vw,18px)"></div>
     <div style="font-family:var(--serif);font-style:italic;font-size:clamp(20px,2.4vw,36px);color:var(--CH);line-height:1.3;max-width:28ch">
       Технические диаграммы — для инженеров и технической экспертизы
     </div>
-    <div class="body" style="margin-top:1.2rem;color:rgba(250,248,244,.45);max-width:44ch">
+    <div class="body" style="margin-top:.7rem;color:rgba(250,248,244,.45);max-width:44ch">
       Следующие 4 слайда показывают внутреннее устройство системы: протокол синхронизации, алгоритм планирования, передачу данных и механизм восстановления.
     </div>
   </div>
