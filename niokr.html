@@ -321,46 +321,55 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
 /* ─── PRINT / PDF ─── */
 @media print {
   @page{size:297mm 167mm;margin:0}
-  html,body{height:auto;overflow:visible;background:var(--F)}
-  .topbar,.nav,.hint,.pdf-btn{display:none!important}
-  .slidectr,.brand{display:none!important}
-  .deck{position:static;height:auto;overflow:visible}
+  /* КРИТИЧНО: заставляет печатать ВСЕ фоны/цвета (иначе тёмные слайды белые) */
+  *,*::before,*::after{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  html,body{height:auto!important;overflow:visible!important;background:var(--F)!important}
+  .topbar,.nav,.hint,.pdf-btn,.slidectr,.brand{display:none!important}
+  .deck{position:static!important;height:auto!important;overflow:visible!important}
   .slide{
     position:relative!important;opacity:1!important;
     transform:none!important;pointer-events:auto!important;
     width:297mm!important;height:167mm!important;min-height:167mm!important;max-height:167mm!important;
     overflow:hidden!important;
     page-break-after:always;break-after:page;
-    padding:20mm 26mm 18mm!important;
+    padding:15mm 22mm 13mm!important;
     display:flex!important;flex-direction:column!important;justify-content:flex-start;
     box-sizing:border-box!important;
   }
-  /* slides with edge-to-edge layout (padding:0 inline) keep their own inner padding */
-  .slide > [style*="flex:1"],[style*="grid-template-columns:repeat(4"]{
-    flex-shrink:1!important;
-  }
-  /* force correct fonts */
-  .D1{font-size:96pt}
-  .D2{font-size:32pt}
-  .body{font-size:10pt}
-  .sm{font-size:8pt}
+  /* edge-to-edge слайды (титул, Rust+Python) — без внешних полей, со своей вёрсткой */
+  .slide.bleed{padding:0!important;justify-content:stretch!important}
+  .slide.bleed [style*="var(--nb)"]{padding-bottom:0!important;margin-bottom:0!important}
+  /* гигантский титул вписываем в одну строку по ширине листа */
+  .t-hero{font-size:116pt!important;line-height:.84!important;letter-spacing:.01em!important}
+  /* типографика под печать */
+  .label{font-size:7pt!important;margin-bottom:5mm!important}
+  .D1{font-size:84pt!important}
+  .D2{font-size:30pt!important;line-height:.94!important}
+  .D3{font-size:12pt!important}
+  .body{font-size:9.5pt!important;line-height:1.38!important}
+  .sm{font-size:7.5pt!important}
+  .serif-xl{font-size:15pt!important}
+  .deco{font-size:58pt!important}
+  .stat-n{font-size:25pt!important}
+  .m-n{font-size:32pt!important}
+  .bdg{font-size:8pt!important;padding:4px 8px!important}
   /* metrics editorial */
-  .medit-row{grid-template-columns:140px 1fr 140px}
-  .m-n{font-size:40pt}
+  .medit-row{grid-template-columns:130px 1fr 120px!important}
   /* split layout */
   .split{display:grid!important}
   .s50{grid-template-columns:1fr 1fr!important}
   .s40{grid-template-columns:2fr 3fr!important}
   .s33{grid-template-columns:1fr 2fr!important}
-  .split>*+*{border-left:1px solid var(--LN)!important;padding-left:24px!important}
-  /* status */
+  .split>*+*{border-left:1px solid var(--LN)!important;padding-left:20px!important}
+  /* status / rmap / vs */
   .status3{display:grid!important;grid-template-columns:repeat(3,1fr)!important}
-  /* gossip 4-col */
-  .block-f{padding:16px}
-  /* rmap */
   .rmap-row{display:grid!important;grid-template-columns:44px 1fr!important}
-  /* vs table */
   .rtable .rh,.rtable .row{display:grid!important}
+  /* SVG-схемы не должны раздувать страницу */
+  svg{max-height:58mm!important;width:auto!important}
 }
 
 /* responsive */
@@ -396,7 +405,7 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
 <div class="deck">
 
 <!-- ══ 01 TITLE ══ -->
-<section class="slide dk on" style="display:flex;flex-direction:column;padding:0">
+<section class="slide dk on bleed" style="display:flex;flex-direction:column;padding:0">
   <!-- label bar -->
   <div style="padding:clamp(28px,3.5vh,48px) clamp(28px,5vw,80px) 0;display:flex;justify-content:space-between">
     <div class="label" style="color:rgba(250,248,244,.38)">НИОКР-ЭИО-01-2026</div>
@@ -405,7 +414,7 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
   <!-- MAIN HERO — вся высота между лейблом и статами -->
   <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(28px,5vw,80px)">
     <!-- massive single-line title -->
-    <div style="font-family:var(--sans);font-weight:700;text-transform:uppercase;
+    <div class="t-hero" style="font-family:var(--sans);font-weight:700;text-transform:uppercase;
                 font-size:clamp(64px,18.8vw,276px);line-height:.80;letter-spacing:.03em;
                 color:var(--W);overflow:hidden">
       <span style="color:var(--T)">T</span>EMIR AI
@@ -1040,7 +1049,7 @@ kbd{font-family:var(--sans);background:var(--C);border:1px solid var(--LN);paddi
 
 
 <!-- ══ 21 ТЕХНИЧЕСКИЙ СТЕК ══ -->
-<section class="slide dm" style="display:flex;flex-direction:column;padding:0">
+<section class="slide dm bleed" style="display:flex;flex-direction:column;padding:0">
   <!-- header -->
   <div style="padding:clamp(24px,3vh,40px) clamp(28px,5vw,80px) 0">
     <div class="label">Технологии · выбор языков и инструментов</div>
