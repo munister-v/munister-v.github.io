@@ -2817,8 +2817,6 @@
           {
             id: 'agency-radio-vinnipeg',
             href: 'https://radio.munister.com.ua',
-            image: 'https://agency.munister.com.ua/works/radio.webp',
-            imageClass: 'object-cover',
             badge: 'Radio platform',
             eyebrow: 'Radio · WebRTC',
             title: 'Radio Vinnipeg',
@@ -2832,8 +2830,6 @@
           {
             id: 'agency-teached',
             href: 'https://teached.tech',
-            image: 'https://agency.munister.com.ua/works/teached.webp',
-            imageClass: 'object-cover object-top',
             badge: 'EdTech SaaS',
             eyebrow: 'EdTech · SaaS',
             title: 'TeachEd',
@@ -2847,8 +2843,6 @@
           {
             id: 'agency-epris-journal',
             href: 'https://eprisjournal.com',
-            image: 'https://agency.munister.com.ua/works/epris.webp',
-            imageClass: 'object-cover object-top',
             badge: 'Editorial media',
             eyebrow: 'Design · Journal',
             title: 'EPRIS Journal',
@@ -2862,8 +2856,6 @@
           {
             id: 'agency-arm-bank',
             href: 'https://bank.munister.com.ua',
-            image: 'https://agency.munister.com.ua/works/armbank.webp',
-            imageClass: 'object-cover',
             badge: 'FinTech tools',
             eyebrow: 'FinTech · Tools',
             title: 'ARM Bank',
@@ -2877,8 +2869,6 @@
           {
             id: 'agency-am-publishing',
             href: 'https://ampublishing.org/#de',
-            image: 'https://agency.munister.com.ua/works/ampublishing.webp',
-            imageClass: 'object-cover object-top',
             badge: 'Publishing shop',
             eyebrow: 'Publishing · Shop',
             title: 'AM Publishing',
@@ -2892,8 +2882,6 @@
           {
             id: 'agency-mania-group',
             href: 'https://maniagroup.munister.com.ua',
-            image: 'https://agency.munister.com.ua/works/mania.webp',
-            imageClass: 'object-cover object-top',
             badge: 'Retail ERP',
             eyebrow: 'Retail · ERP',
             title: 'Mania Group',
@@ -2907,8 +2895,6 @@
           {
             id: 'agency-blue-ferret',
             href: 'https://blueferret.com.ua',
-            image: 'https://agency.munister.com.ua/works/blueferret.webp',
-            imageClass: 'object-cover object-top',
             badge: 'Game publishing',
             eyebrow: 'Publishing · Games',
             title: 'Blue Ferret',
@@ -2922,8 +2908,6 @@
           {
             id: 'agency-epris-design',
             href: 'https://eprisjournal.com/design',
-            image: 'https://agency.munister.com.ua/works/eprisdesign.webp',
-            imageClass: 'object-cover object-top',
             badge: 'Interior commerce',
             eyebrow: 'E-commerce · Interiors',
             title: 'EPRIS Design',
@@ -2937,8 +2921,6 @@
           {
             id: 'agency-help-us-help',
             href: 'https://helpushelp.com.ua',
-            image: 'https://agency.munister.com.ua/works/helpushelp.webp',
-            imageClass: 'object-cover object-top',
             badge: 'Nonprofit web',
             eyebrow: 'Nonprofit · Web',
             title: 'Help Us Help',
@@ -2952,8 +2934,6 @@
           {
             id: 'agency-062-dn',
             href: 'https://062.dn.ua/',
-            image: '/donetsk/panorama/photo_2026-06-02_20-38-22.jpg',
-            imageClass: 'object-cover',
             badge: 'Editorial platform',
             eyebrow: 'Donetsk archive',
             title: '062.dn.ua',
@@ -2976,6 +2956,19 @@
           }[char]));
         }
 
+        const agencyCaseStyle = document.createElement('style');
+        agencyCaseStyle.textContent = `
+          #cases[data-agency-only="true"] .agency-text-card {
+            min-height: 320px;
+          }
+          @media (max-width: 768px) {
+            #cases[data-agency-only="true"] .agency-text-card {
+              min-height: auto;
+            }
+          }
+        `;
+        document.head.appendChild(agencyCaseStyle);
+
         function buildAgencyCaseCard(project) {
           const card = document.createElement('a');
           card.href = project.href;
@@ -2983,54 +2976,35 @@
           card.rel = 'noopener noreferrer';
           card.dataset.caseId = project.id;
           card.setAttribute('aria-label', `Open ${project.title} project`);
-          card.className = 'group space-y-6';
+          card.className = 'agency-text-card group flex flex-col justify-between border-b border-r border-neutral-800 bg-neutral-950/70 p-6 transition duration-300 hover:border-sand/50 hover:bg-neutral-900/70 md:p-8';
           const tags = project.tags.map(tag => `
-            <span class="rounded-full border border-white/12 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-white/56">${escapeCaseText(tag)}</span>
+            <span class="border border-neutral-800 bg-neutral-900/60 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-neutral-500 transition duration-300 group-hover:border-sand/30 group-hover:text-sand">${escapeCaseText(tag)}</span>
           `).join('');
           card.innerHTML = `
-            <div class="space-y-6">
-              <div class="overflow-hidden rounded-[32px] border border-white/12 bg-white/6 shadow-[0_24px_60px_rgba(8,10,14,0.28)]">
-                <div class="relative aspect-[4/3] overflow-hidden">
-                  <img
-                    src="${escapeCaseText(project.image)}"
-                    alt="${escapeCaseText(project.title)} project preview"
-                    class="h-full w-full ${escapeCaseText(project.imageClass)} transition duration-700 group-hover:scale-[1.03]"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <div class="absolute inset-0 bg-gradient-to-t from-[#060709]/88 via-[#060709]/28 to-transparent"></div>
-                  <div class="absolute left-5 top-5 rounded-full border border-white/16 bg-black/40 px-3 py-1 text-[11px] uppercase tracking-[0.26em] text-white/78">
-                    ${escapeCaseText(project.badge)}
-                  </div>
-                  <div class="absolute inset-x-5 bottom-5 flex items-end justify-between gap-4">
-                    <div class="space-y-2">
-                      <p class="text-[11px] uppercase tracking-[0.32em] text-white/55">${escapeCaseText(project.eyebrow)}</p>
-                      <h3 class="text-[30px] font-semibold leading-[0.95] tracking-[-0.03em] text-white">${escapeCaseText(project.title)}</h3>
-                    </div>
-                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-white/10 text-white/88 transition duration-300 group-hover:bg-white group-hover:text-black">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M7 17 17 7M9 7h8v8"/>
-                      </svg>
-                    </span>
-                  </div>
+            <div class="space-y-8">
+              <div class="flex items-start justify-between gap-5">
+                <div class="space-y-3">
+                  <p class="text-[10px] uppercase tracking-[0.28em] text-sand">${escapeCaseText(project.eyebrow)}</p>
+                  <h3 class="font-serif text-4xl font-light leading-none text-white md:text-5xl">${escapeCaseText(project.title)}</h3>
+                  <p class="text-sm text-neutral-500">${escapeCaseText(project.ref)} / ${escapeCaseText(project.year)}</p>
                 </div>
+                <span class="flex h-11 w-11 shrink-0 items-center justify-center border border-neutral-800 text-neutral-500 transition duration-300 group-hover:border-sand group-hover:bg-sand group-hover:text-black">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </span>
               </div>
-              <div class="flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.28em] text-white/45">
-                <span>${escapeCaseText(project.sector)}</span>
-                <span>${escapeCaseText(project.year)}</span>
-              </div>
-              <div class="space-y-4">
-                <div class="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 class="text-2xl font-semibold tracking-[-0.02em] text-white">${escapeCaseText(project.title)}</h3>
-                    <p class="mt-1 text-sm text-white/45">${escapeCaseText(project.ref)}</p>
-                  </div>
-                  <span class="text-right text-xs uppercase tracking-[0.2em] text-white/40">${escapeCaseText(project.role)}</span>
+              <div class="space-y-5">
+                <div class="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-[0.22em] text-neutral-500">
+                  <span>${escapeCaseText(project.badge)}</span>
+                  <span class="text-neutral-700">/</span>
+                  <span>${escapeCaseText(project.sector)}</span>
                 </div>
-                <p class="max-w-xl text-sm leading-7 text-white/68">${escapeCaseText(project.desc)}</p>
-                <div class="flex flex-wrap gap-2">${tags}</div>
+                <p class="text-sm leading-7 text-neutral-300">${escapeCaseText(project.desc)}</p>
+                <p class="text-xs uppercase tracking-[0.18em] text-neutral-500">${escapeCaseText(project.role)}</p>
               </div>
             </div>
+            <div class="mt-10 flex flex-wrap gap-2">${tags}</div>
           `;
           return card;
         }
@@ -3041,11 +3015,16 @@
           const grid = casesSection.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3');
           if (!grid) return false;
 
-          grid.querySelector('[data-case-id="case-062-dn"]')?.remove();
+          casesSection.dataset.agencyOnly = 'true';
+          const filterPanel = [...casesSection.querySelectorAll('button')]
+            .find(button => button.textContent.includes('['))?.parentElement;
+          if (filterPanel) {
+            filterPanel.remove();
+          }
 
           const casesInPlace = AGENCY_CASES.every((project, index) => (
             grid.children[index]?.dataset.caseId === project.id
-          ));
+          )) && grid.children.length === AGENCY_CASES.length;
           if (casesInPlace) return true;
 
           const fragment = document.createDocumentFragment();
@@ -3056,7 +3035,7 @@
             }
             fragment.appendChild(card);
           });
-          grid.prepend(fragment);
+          grid.replaceChildren(fragment);
           return true;
         }
 
