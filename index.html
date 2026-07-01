@@ -2812,108 +2812,269 @@
         `;
         document.head.appendChild(colorShiftStyle);
 
-        /* ── 11. Inject 062.dn.ua into Selected Works ── */
-        const CASE_062_CARD = `
-          <div class="space-y-6">
-            <div class="overflow-hidden rounded-[32px] border border-white/12 bg-white/6 shadow-[0_24px_60px_rgba(8,10,14,0.28)]">
-              <div class="relative aspect-[4/3] overflow-hidden">
-                <img
-                  src="/donetsk/panorama/photo_2026-06-02_20-38-22.jpg"
-                  alt="062.dn.ua — documentary platform about Donetsk"
-                  class="h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-[#060709]/88 via-[#060709]/30 to-transparent"></div>
-                <div class="absolute left-5 top-5 rounded-full border border-white/16 bg-black/40 px-3 py-1 text-[11px] uppercase tracking-[0.26em] text-white/78">
-                  Editorial platform
-                </div>
-                <div class="absolute inset-x-5 bottom-5 flex items-end justify-between gap-4">
-                  <div class="space-y-2">
-                    <p class="text-[11px] uppercase tracking-[0.32em] text-white/55">Donetsk archive</p>
-                    <h3 class="text-[30px] font-semibold leading-[0.95] tracking-[-0.03em] text-white">062.dn.ua</h3>
-                  </div>
-                  <span class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-white/10 text-white/88 transition duration-300 group-hover:bg-white group-hover:text-black">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M7 17 17 7M9 7h8v8"/>
-                    </svg>
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.28em] text-white/45">
-              <span>Digital Platforms</span>
-              <span>2026</span>
-            </div>
-            <div class="space-y-4">
-              <div class="flex items-start justify-between gap-4">
-                <div>
-                  <h3 class="text-2xl font-semibold tracking-[-0.02em] text-white">062.dn.ua</h3>
-                  <p class="mt-1 text-sm text-white/45">REF 062</p>
-                </div>
-                <span class="text-right text-xs uppercase tracking-[0.2em] text-white/40">// Founder / Editor / Full-Stack Dev</span>
-              </div>
-              <p class="max-w-xl text-sm leading-7 text-white/68">
-                A bilingual documentary platform about Donetsk: pre-war city memory, visual archives, oral testimony,
-                and research-based sections about places, people, and rupture. Built as a living editorial system
-                rather than a static gallery.
-              </p>
-              <div class="flex flex-wrap gap-2">
-                <span class="rounded-full border border-white/12 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-white/56">Editorial System</span>
-                <span class="rounded-full border border-white/12 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-white/56">Archive Design</span>
-                <span class="rounded-full border border-white/12 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-white/56">HTML / CSS / JS</span>
-                <span class="rounded-full border border-white/12 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-white/56">Bilingual UX</span>
-              </div>
-            </div>
-          </div>
-        `;
+        /* ── 11. Sync agency projects into Selected Works ── */
+        const AGENCY_CASES = [
+          {
+            id: 'agency-radio-vinnipeg',
+            href: 'https://radio.munister.com.ua',
+            image: 'https://agency.munister.com.ua/works/radio.webp',
+            imageClass: 'object-cover',
+            badge: 'Radio platform',
+            eyebrow: 'Radio · WebRTC',
+            title: 'Radio Vinnipeg',
+            ref: 'REF RADIO',
+            role: '// Product / Full-Stack / Broadcast UX',
+            year: '2026',
+            sector: 'Digital Platforms',
+            desc: 'Live radio platform with schedule, chat and guest call-ins. A listener can join the broadcast from the browser, while the team manages programming from an admin panel.',
+            tags: ['Live Audio', 'WebRTC', 'Chat', 'Admin Panel']
+          },
+          {
+            id: 'agency-teached',
+            href: 'https://teached.tech',
+            image: 'https://agency.munister.com.ua/works/teached.webp',
+            imageClass: 'object-cover object-top',
+            badge: 'EdTech SaaS',
+            eyebrow: 'EdTech · SaaS',
+            title: 'TeachEd',
+            ref: 'REF TEACHED',
+            role: '// Founder / Product / Full-Stack',
+            year: '2026',
+            sector: 'Education Tools',
+            desc: 'Education workspace for ESL teachers: exercise generators, tests, vocabulary cards, lesson timer and a fast class-start flow across devices.',
+            tags: ['Teacher Tools', 'Generators', 'PWA', 'SaaS']
+          },
+          {
+            id: 'agency-epris-journal',
+            href: 'https://eprisjournal.com',
+            image: 'https://agency.munister.com.ua/works/epris.webp',
+            imageClass: 'object-cover object-top',
+            badge: 'Editorial media',
+            eyebrow: 'Design · Journal',
+            title: 'EPRIS Journal',
+            ref: 'REF EPRIS',
+            role: '// Editorial System / Frontend',
+            year: '2026',
+            sector: 'Media Systems',
+            desc: 'Editorial journal for design, travel and interiors: a strong cover, issue structure, articles and a visual system that feels like a complete independent publication.',
+            tags: ['Editorial UX', 'Journal', 'Design System', 'Content']
+          },
+          {
+            id: 'agency-arm-bank',
+            href: 'https://bank.munister.com.ua',
+            image: 'https://agency.munister.com.ua/works/armbank.webp',
+            imageClass: 'object-cover',
+            badge: 'FinTech tools',
+            eyebrow: 'FinTech · Tools',
+            title: 'ARM Bank',
+            ref: 'REF BANK',
+            role: '// Systems / Product / Frontend',
+            year: '2026',
+            sector: 'Financial Tools',
+            desc: 'Personal finance cabinet: currency converter, loan calculator, expense tracking and clear navigation for everyday money decisions.',
+            tags: ['FinTech', 'Calculators', 'Dashboard', 'UX']
+          },
+          {
+            id: 'agency-am-publishing',
+            href: 'https://ampublishing.org/#de',
+            image: 'https://agency.munister.com.ua/works/ampublishing.webp',
+            imageClass: 'object-cover object-top',
+            badge: 'Publishing shop',
+            eyebrow: 'Publishing · Shop',
+            title: 'AM Publishing',
+            ref: 'REF AMP',
+            role: '// Commerce / Frontend / Catalog',
+            year: '2026',
+            sector: 'Publishing Systems',
+            desc: 'Website for a Berlin publisher: book catalogue, cart, author pages, legal sections and an editorial presentation that supports the literary brand.',
+            tags: ['Catalog', 'Cart', 'Authors', 'German UX']
+          },
+          {
+            id: 'agency-mania-group',
+            href: 'https://maniagroup.munister.com.ua',
+            image: 'https://agency.munister.com.ua/works/mania.webp',
+            imageClass: 'object-cover object-top',
+            badge: 'Retail ERP',
+            eyebrow: 'Retail · ERP',
+            title: 'Mania Group',
+            ref: 'REF MANIA',
+            role: '// ERP / Catalog / Operations',
+            year: '2026',
+            sector: 'Commerce Ops',
+            desc: 'Operating system for a clothing store: catalogue from XLS exports, S-XXL size matrix, inventory, orders and assortment control without extra platforms.',
+            tags: ['ERP', 'Inventory', 'XLS Import', 'Retail']
+          },
+          {
+            id: 'agency-blue-ferret',
+            href: 'https://blueferret.com.ua',
+            image: 'https://agency.munister.com.ua/works/blueferret.webp',
+            imageClass: 'object-cover object-top',
+            badge: 'Game publishing',
+            eyebrow: 'Publishing · Games',
+            title: 'Blue Ferret',
+            ref: 'REF FERRET',
+            role: '// Static Site / Catalog UX',
+            year: '2026',
+            sector: 'Publishing Systems',
+            desc: 'Board-game publisher website: clean catalogue, cover-led product pages and fast static delivery on its own domain.',
+            tags: ['Board Games', 'Catalog', 'Static Site', 'Brand']
+          },
+          {
+            id: 'agency-epris-design',
+            href: 'https://eprisjournal.com/design',
+            image: 'https://agency.munister.com.ua/works/eprisdesign.webp',
+            imageClass: 'object-cover object-top',
+            badge: 'Interior commerce',
+            eyebrow: 'E-commerce · Interiors',
+            title: 'EPRIS Design',
+            ref: 'REF DESIGN',
+            role: '// Storefront / AI Content',
+            year: '2026',
+            sector: 'Commerce Media',
+            desc: 'Interior-goods storefront for EPRIS: curated selections, moodboard logic, product cards and a calm magazine rhythm instead of a generic shop.',
+            tags: ['Storefront', 'Moodboards', 'Products', 'Editorial Commerce']
+          },
+          {
+            id: 'agency-help-us-help',
+            href: 'https://helpushelp.com.ua',
+            image: 'https://agency.munister.com.ua/works/helpushelp.webp',
+            imageClass: 'object-cover object-top',
+            badge: 'Nonprofit web',
+            eyebrow: 'Nonprofit · Web',
+            title: 'Help Us Help',
+            ref: 'REF HUH',
+            role: '// Nonprofit UX / Frontend',
+            year: '2026',
+            sector: 'Public Interest',
+            desc: 'Website for the Help Us Help charity ecosystem: history, principles, programs and projects presented calmly, transparently and with trust first.',
+            tags: ['Nonprofit', 'Trust UX', 'Programs', 'Frontend']
+          },
+          {
+            id: 'agency-062-dn',
+            href: 'https://062.dn.ua/',
+            image: '/donetsk/panorama/photo_2026-06-02_20-38-22.jpg',
+            imageClass: 'object-cover',
+            badge: 'Editorial platform',
+            eyebrow: 'Donetsk archive',
+            title: '062.dn.ua',
+            ref: 'REF 062',
+            role: '// Founder / Editor / Full-Stack Dev',
+            year: '2026',
+            sector: 'Digital Platforms',
+            desc: 'A bilingual documentary platform about Donetsk: pre-war city memory, visual archives, oral testimony, and research-based sections about places, people, and rupture.',
+            tags: ['Editorial System', 'Archive Design', 'HTML / CSS / JS', 'Bilingual UX']
+          }
+        ];
 
-        function build062CaseCard() {
+        function escapeCaseText(value) {
+          return String(value ?? '').replace(/[&<>"']/g, char => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+          }[char]));
+        }
+
+        function buildAgencyCaseCard(project) {
           const card = document.createElement('a');
-          card.href = 'https://062.dn.ua/';
+          card.href = project.href;
           card.target = '_blank';
           card.rel = 'noopener noreferrer';
-          card.dataset.caseId = 'case-062-dn';
+          card.dataset.caseId = project.id;
+          card.setAttribute('aria-label', `Open ${project.title} project`);
           card.className = 'group space-y-6';
-          card.innerHTML = CASE_062_CARD;
+          const tags = project.tags.map(tag => `
+            <span class="rounded-full border border-white/12 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-white/56">${escapeCaseText(tag)}</span>
+          `).join('');
+          card.innerHTML = `
+            <div class="space-y-6">
+              <div class="overflow-hidden rounded-[32px] border border-white/12 bg-white/6 shadow-[0_24px_60px_rgba(8,10,14,0.28)]">
+                <div class="relative aspect-[4/3] overflow-hidden">
+                  <img
+                    src="${escapeCaseText(project.image)}"
+                    alt="${escapeCaseText(project.title)} project preview"
+                    class="h-full w-full ${escapeCaseText(project.imageClass)} transition duration-700 group-hover:scale-[1.03]"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-[#060709]/88 via-[#060709]/28 to-transparent"></div>
+                  <div class="absolute left-5 top-5 rounded-full border border-white/16 bg-black/40 px-3 py-1 text-[11px] uppercase tracking-[0.26em] text-white/78">
+                    ${escapeCaseText(project.badge)}
+                  </div>
+                  <div class="absolute inset-x-5 bottom-5 flex items-end justify-between gap-4">
+                    <div class="space-y-2">
+                      <p class="text-[11px] uppercase tracking-[0.32em] text-white/55">${escapeCaseText(project.eyebrow)}</p>
+                      <h3 class="text-[30px] font-semibold leading-[0.95] tracking-[-0.03em] text-white">${escapeCaseText(project.title)}</h3>
+                    </div>
+                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-white/10 text-white/88 transition duration-300 group-hover:bg-white group-hover:text-black">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M7 17 17 7M9 7h8v8"/>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.28em] text-white/45">
+                <span>${escapeCaseText(project.sector)}</span>
+                <span>${escapeCaseText(project.year)}</span>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 class="text-2xl font-semibold tracking-[-0.02em] text-white">${escapeCaseText(project.title)}</h3>
+                    <p class="mt-1 text-sm text-white/45">${escapeCaseText(project.ref)}</p>
+                  </div>
+                  <span class="text-right text-xs uppercase tracking-[0.2em] text-white/40">${escapeCaseText(project.role)}</span>
+                </div>
+                <p class="max-w-xl text-sm leading-7 text-white/68">${escapeCaseText(project.desc)}</p>
+                <div class="flex flex-wrap gap-2">${tags}</div>
+              </div>
+            </div>
+          `;
           return card;
         }
 
-        function ensure062CaseCard() {
+        function ensureAgencyCaseCards() {
           const casesSection = document.getElementById('cases');
           if (!casesSection) return false;
           const grid = casesSection.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3');
           if (!grid) return false;
 
-          let card = grid.querySelector('[data-case-id="case-062-dn"]');
-          if (!card) {
-            card = build062CaseCard();
-          }
-          if (grid.firstElementChild !== card) {
-            grid.prepend(card);
-          }
+          grid.querySelector('[data-case-id="case-062-dn"]')?.remove();
+
+          const casesInPlace = AGENCY_CASES.every((project, index) => (
+            grid.children[index]?.dataset.caseId === project.id
+          ));
+          if (casesInPlace) return true;
+
+          const fragment = document.createDocumentFragment();
+          AGENCY_CASES.forEach(project => {
+            let card = grid.querySelector(`[data-case-id="${project.id}"]`);
+            if (!card) {
+              card = buildAgencyCaseCard(project);
+            }
+            fragment.appendChild(card);
+          });
+          grid.prepend(fragment);
           return true;
         }
 
         function watchSelectedWorks() {
-          if (window.__case062ObserverBound) return;
-          window.__case062ObserverBound = true;
+          if (window.__agencyCasesObserverBound) return;
+          window.__agencyCasesObserverBound = true;
 
-          ensure062CaseCard();
+          ensureAgencyCaseCards();
 
-          const root = document.getElementById('root');
-          if (!root) return;
+          const root = document.getElementById('root') || document.body;
           const observer = new MutationObserver(() => {
-            ensure062CaseCard();
+            ensureAgencyCaseCards();
           });
           observer.observe(root, { childList: true, subtree: true });
         }
 
-        if (!ensure062CaseCard()) {
-          window.addEventListener('load', watchSelectedWorks, { once: true });
-        } else {
-          watchSelectedWorks();
-        }
+        watchSelectedWorks();
+        window.addEventListener('load', ensureAgencyCaseCards, { once: true });
 
       })();
     </script>
