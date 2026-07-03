@@ -1,0 +1,556 @@
+/* ============================================================
+   editorial.css — "Farewill" warm-friendly redesign layer (2026-07)
+   Reference: farewill.com — bright, warm, friendly. Yellow hero with a
+   hand-drawn line illustration, pill buttons, soft rounded cards,
+   organic wavy section edge, big friendly sans headlines.
+   Loaded LAST; scoped with .memorial-home / .executor-memorial.
+   ============================================================ */
+
+.memorial-home,
+.executor-memorial {
+  --fw-yellow: #ffd84a;        /* bright Farewill yellow */
+  --fw-yellow-deep: #e6b93a;
+  --fw-soft: #fff2c6;          /* soft yellow panel behind line-art illustrations */
+  --fw-card: #faf8f4;
+  --fw-radius: 22px;
+  --fw-radius-lg: 30px;
+  --fw-shadow: 0 14px 44px -18px rgba(23,19,15,.22);
+  --fw-shadow-soft: 0 10px 34px -16px rgba(23,19,15,.16);
+}
+
+/* ---------- Brand flower ---------- */
+.memorial-home .brand-flower,
+.executor-memorial .brand-flower { color: var(--mem-ink, #17130f); flex: none; }
+
+/* ---------- Pill buttons (dark primary / white secondary) ---------- */
+.fw-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 15px 30px; border-radius: 999px;
+  font-family: var(--mem-sans, var(--sans));
+  font-size: 15px; font-weight: 600; letter-spacing: 0;
+  border: 1.6px solid var(--mem-ink, #17130f);
+  transition: background .18s ease, color .18s ease, transform .15s ease;
+}
+.fw-btn span { transition: transform .18s ease; }
+.fw-btn:hover span { transform: translateX(4px); }
+.fw-btn-dark { background: var(--mem-ink, #17130f); color: #f6f3ee; }
+.fw-btn-dark:hover { background: #2a231b; }
+.fw-btn-white { background: #fff; color: var(--mem-ink, #17130f); }
+.fw-btn-white:hover { background: #f4efe6; }
+.fw-btn-sm { padding: 11px 20px; font-size: 14px; }
+
+/* legacy CTAs → dark pills too */
+.memorial-home .mem-button,
+.executor-memorial .btn,
+.executor-memorial .submit-button {
+  border-radius: 999px;
+  font-family: var(--mem-sans, var(--sans));
+  font-weight: 600; font-size: 15px; letter-spacing: 0; text-transform: none;
+  padding: 15px 28px;
+}
+.memorial-home .mem-button:hover,
+.executor-memorial .btn-primary:hover,
+.executor-memorial .submit-button:hover { transform: none; }
+
+/* ============================================================
+   INDEX HERO — Farewill yellow
+   ============================================================ */
+.memorial-home .fw-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: auto;
+  padding: clamp(24px, 3vw, 44px) 0 clamp(96px, 11vw, 150px);
+  background: var(--fw-yellow);
+  color: var(--mem-ink);
+  border-bottom: 0;
+}
+.memorial-home .fw-hero-inner {
+  display: grid;
+  grid-template-columns: 1.04fr .96fr;
+  gap: clamp(28px, 5vw, 72px);
+  align-items: center;
+  min-height: min(70vh, 620px);
+}
+.memorial-home .fw-badge {
+  display: inline-flex; align-items: center;
+  padding: 9px 18px; border-radius: 999px;
+  border: 1.6px solid var(--mem-ink);
+  background: rgba(255,255,255,.42);
+  font-size: 13px; font-weight: 600; letter-spacing: -.01em;
+}
+.memorial-home .fw-hero h1 {
+  margin: 24px 0 20px;
+  font-family: var(--mem-sans);
+  font-weight: 700;
+  font-size: clamp(40px, 5.7vw, 88px);
+  line-height: 1.02;
+  letter-spacing: -.038em;
+  color: var(--mem-ink);
+}
+.memorial-home .fw-hero-lead {
+  max-width: 540px;
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.62;
+  color: rgba(23,19,15,.82);
+}
+.memorial-home .fw-hero-actions {
+  display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px;
+}
+.memorial-home .fw-hero-art { position: relative; display: flex; justify-content: center; align-items: center; }
+.memorial-home .fw-hero-art img { width: 100%; max-width: 540px; height: auto; }
+.memorial-home .fw-bubble {
+  position: absolute; top: 4%; right: 0;
+  max-width: 172px; padding: 13px 18px;
+  background: #fff; border: 2px solid var(--mem-ink);
+  border-radius: 22px 22px 22px 5px;
+  font-size: 14px; font-weight: 600; line-height: 1.32;
+}
+.memorial-home .fw-bubble::after {
+  content: ""; position: absolute; left: 22px; bottom: -11px;
+  width: 16px; height: 16px; background: #fff;
+  border-right: 2px solid var(--mem-ink); border-bottom: 2px solid var(--mem-ink);
+  transform: rotate(45deg);
+}
+.memorial-home .fw-hero-wave {
+  position: absolute; left: 0; right: 0; bottom: -1px;
+  width: 100%; height: clamp(42px, 6vw, 74px); display: block;
+}
+
+/* ---------- Trust band ---------- */
+.memorial-home .fw-trust {
+  background: var(--mem-cream);
+  padding: clamp(40px, 6vw, 84px) 0 clamp(18px, 3vw, 34px);
+}
+.memorial-home .fw-trust-inner {
+  display: grid; grid-template-columns: 1fr auto; gap: clamp(28px, 5vw, 64px); align-items: center;
+}
+.memorial-home .fw-trust-copy h2 {
+  font-family: var(--mem-sans); font-weight: 700;
+  font-size: clamp(28px, 3.4vw, 46px); letter-spacing: -.035em; line-height: 1.04;
+}
+.memorial-home .fw-trust-copy p {
+  margin-top: 14px; max-width: 420px; color: rgba(23,19,15,.7);
+  font-size: 15px; line-height: 1.6;
+}
+.memorial-home .fw-badges { display: flex; gap: 14px; flex-wrap: wrap; }
+.memorial-home .fw-award {
+  display: inline-flex; align-items: center; text-align: center;
+  min-height: 82px; max-width: 152px; padding: 16px 20px;
+  border-radius: 16px; font-size: 13px; font-weight: 600; line-height: 1.3;
+}
+.memorial-home .fw-award-dark { background: var(--mem-ink); color: #f6f3ee; }
+.memorial-home .fw-award-laurel { border: 1.6px solid var(--mem-line); color: var(--mem-ink); }
+
+/* ---------- Stats ---------- */
+.memorial-home .fw-stats {
+  background: var(--mem-cream);
+  padding: clamp(22px, 3vw, 38px) 0 clamp(72px, 9vw, 120px);
+}
+.memorial-home .fw-stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(14px, 1.5vw, 22px);
+}
+.memorial-home .fw-stat {
+  background: var(--fw-card); border: 1px solid var(--mem-line);
+  border-radius: var(--fw-radius); padding: clamp(24px, 2.6vw, 40px);
+}
+.memorial-home .fw-stat strong {
+  display: block; font-family: var(--mem-sans);
+  font-size: clamp(34px, 3.8vw, 56px); font-weight: 700; letter-spacing: -.04em; line-height: 1;
+}
+.memorial-home .fw-stat span {
+  display: block; margin-top: 10px; color: rgba(23,19,15,.66); font-size: 14px;
+}
+
+/* ============================================================
+   Rest of the page — friendly sans headings, soft rounded cards
+   ============================================================ */
+.memorial-home .mem-decision-copy h2,
+.memorial-home .mem-intro h2,
+.memorial-home .mem-situations-head h2,
+.memorial-home .mem-section-head h2,
+.memorial-home .mem-year-head h2,
+.memorial-home .mem-process-title h2,
+.memorial-home .mem-protection-head h2,
+.memorial-home .mem-report-copy h2,
+.memorial-home .mem-agency-head h2,
+.memorial-home .mem-faq h2,
+.memorial-home .mem-order-copy h2,
+.memorial-home .mem-executor-callout h2 {
+  font-family: var(--mem-sans);
+  font-weight: 700;
+  letter-spacing: -.035em;
+  text-transform: none;
+  line-height: 1.05;
+}
+
+.memorial-home .mem-planner-shell,
+.memorial-home .mem-year-shell,
+.memorial-home .mem-decision-prices,
+.memorial-home .mem-case-grid,
+.memorial-home .mem-compare-card {
+  border-radius: var(--fw-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--mem-line);
+  box-shadow: var(--fw-shadow);
+  background: var(--fw-card);
+}
+.memorial-home .mem-demo-screen {
+  border-radius: var(--fw-radius);
+  box-shadow: var(--fw-shadow-soft);
+}
+.memorial-home .mem-report-frame { border-radius: var(--fw-radius); box-shadow: var(--fw-shadow); }
+
+/* neutralise loud colour-block sections into warm neutrals */
+.memorial-home .mem-process { color: var(--mem-ink); background: #eef1ec; }
+.memorial-home .mem-process .mem-overline-light,
+.memorial-home .mem-process-title > p:last-child,
+.memorial-home .mem-process-steps p { color: rgba(23,19,15,.66); }
+.memorial-home .mem-process-steps li { border-color: var(--mem-line); }
+.memorial-home .mem-process-steps > li > span { color: var(--fw-yellow-deep); }
+.memorial-home .mem-cases,
+.memorial-home .mem-boundaries { background: var(--mem-paper); }
+
+.memorial-home .mem-index,
+.memorial-home .mem-overline {
+  font-family: var(--mem-sans); font-size: 11px; font-weight: 600;
+  letter-spacing: .1em; color: var(--mem-burgundy);
+}
+.memorial-home .mem-overline::before { display: none; }
+
+/* ============================================================
+   EXECUTOR page — matching yellow hero + friendly system
+   ============================================================ */
+.executor-memorial .executor-hero {
+  position: relative; overflow: hidden;
+  color: var(--ex-ink);
+  background: var(--fw-yellow);
+  border-bottom: 0;
+  align-items: center;
+}
+.executor-memorial .executor-hero h1 {
+  font-family: var(--sans); font-weight: 700;
+  font-size: clamp(44px, 6vw, 96px); line-height: 1.02; letter-spacing: -.038em;
+  text-transform: none; color: var(--ex-ink);
+}
+.executor-memorial .executor-hero h1 em {
+  display: inline-block; padding: .02em .2em .06em; transform: none;
+  background: #fff; color: var(--ex-ink);
+  font-family: var(--sans); font-style: normal; font-weight: 700; font-size: 1em;
+  border-radius: 12px 18px 10px 20px / 18px 10px 20px 12px;
+}
+.executor-memorial .executor-hero .eyebrow,
+.executor-memorial .executor-hero .trust-list li::before { color: var(--ex-ink); }
+.executor-memorial .executor-hero .hero-lead { color: rgba(23,19,15,.82); }
+.executor-memorial .executor-hero .trust-list { color: rgba(23,19,15,.78); }
+.executor-memorial .executor-hero .text-link { color: var(--ex-ink); border-bottom-color: var(--ex-ink); }
+.executor-memorial .executor-hero-meta span { color: rgba(23,19,15,.6); }
+.executor-memorial .executor-hero .btn-primary {
+  border-color: var(--ex-ink); background: var(--ex-ink); color: #f6f3ee;
+}
+.executor-memorial .executor-hero .btn-primary:hover { background: #2a231b; }
+
+.executor-memorial .section-heading h2,
+.executor-memorial .workspace-heading h2,
+.executor-memorial .payment-copy h2,
+.executor-memorial .platform-value h2,
+.executor-memorial .application-intro h2,
+.executor-memorial .faq-heading h2,
+.executor-memorial .income-lab-heading h2,
+.executor-memorial .agency-invite h2 {
+  font-family: var(--sans); font-weight: 700; letter-spacing: -.035em; text-transform: none; line-height: 1.05;
+}
+.executor-memorial .eyebrow { color: var(--ex-coral); }
+
+.executor-memorial .executor-hero-figure { align-self: center; display: flex; justify-content: center; }
+.executor-memorial .executor-hero-frame {
+  position: relative; width: 100%; max-width: 460px; aspect-ratio: 4/5;
+  overflow: hidden; border-radius: var(--fw-radius); box-shadow: var(--fw-shadow);
+}
+.executor-memorial .executor-hero-frame img { width: 100%; height: 100%; object-fit: cover; }
+.executor-memorial .executor-hero-frame::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 72%, rgba(23,19,15,.28));
+}
+.executor-memorial .executor-hero-tag {
+  position: absolute; left: 16px; bottom: 14px; z-index: 2;
+  padding: 7px 13px; border-radius: 999px; background: rgba(23,19,15,.5); color: var(--ex-paper);
+  font-family: var(--sans); font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
+}
+.executor-memorial .calculation-card,
+.executor-memorial .income-calculator,
+.executor-memorial .application-form {
+  border-radius: var(--fw-radius-lg); box-shadow: var(--fw-shadow-soft);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .memorial-home .fw-hero-inner { grid-template-columns: 1fr; }
+  .memorial-home .fw-hero-art { order: -1; }
+  .memorial-home .fw-trust-inner { grid-template-columns: 1fr; }
+  .memorial-home .fw-stats-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .memorial-home .fw-stats-grid { grid-template-columns: 1fr 1fr; }
+  .memorial-home .fw-hero-actions .fw-btn { flex: 1 1 auto; justify-content: center; }
+}
+
+/* ---------- Framed illustrations in content sections ---------- */
+.memorial-home .fw-illus,
+.executor-memorial .fw-illus {
+  display: block; margin: 0; line-height: 0;
+  border-radius: var(--fw-radius-lg); overflow: hidden;
+  background: var(--fw-soft); padding: clamp(12px, 1.6vw, 24px);
+}
+.memorial-home .fw-illus img,
+.executor-memorial .fw-illus img { display: block; width: 100%; height: auto; }
+.memorial-home .fw-illus-max { max-width: 460px; margin-inline: auto; }
+.memorial-home .fw-illus-wide { max-width: 900px; margin: 0 auto; aspect-ratio: 16 / 7; padding: 0; }
+.memorial-home .fw-illus-wide img { height: 100%; object-fit: cover; object-position: center; }
+.memorial-home .fw-process-illus { margin-top: clamp(40px, 5vw, 72px); }
+
+/* ---------- Illustration placement helpers ---------- */
+.memorial-home .fw-intro-side { display: flex; flex-direction: column; gap: 22px; }
+.memorial-home .fw-intro-side .fw-illus { max-width: 340px; }
+.memorial-home .fw-year-illus { grid-column: 1 / -1; max-width: 380px; margin-top: 22px; }
+.memorial-home .fw-agency-illus { max-width: 500px; margin: 0 auto clamp(40px, 5vw, 64px); }
+.memorial-home .fw-faq-illus { max-width: 320px; margin-top: 34px; }
+.memorial-home .fw-order-illus { max-width: 360px; margin: 26px 0; }
+.memorial-home .mem-report-frame.fw-illus { aspect-ratio: auto; }
+
+/* executor hero illustration (blends on yellow) */
+.executor-memorial .executor-hero-frame.fw-illus {
+  max-width: 500px; aspect-ratio: 1 / 1; border-radius: 0; box-shadow: none; background: transparent;
+}
+.executor-memorial .executor-hero-frame.fw-illus::after { display: none; }
+
+/* ---------- Yellow pill button (Farewill card CTA) ---------- */
+.fw-btn-yellow { background: var(--fw-yellow); border-color: var(--fw-yellow); color: var(--mem-ink, #17130f); }
+.fw-btn-yellow:hover { background: var(--fw-yellow-deep); border-color: var(--fw-yellow-deep); }
+.fw-btn-block { width: 100%; justify-content: space-between; }
+
+/* ---------- Farewill white service cards (care section) ---------- */
+.memorial-home .fw-services {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(16px, 2vw, 26px); margin-top: clamp(32px, 4vw, 56px);
+}
+.memorial-home .fw-service-card {
+  display: flex; flex-direction: column;
+  background: #fff; border: 1px solid var(--mem-line);
+  border-radius: var(--fw-radius-lg); padding: clamp(20px, 2vw, 30px);
+  box-shadow: var(--fw-shadow-soft);
+}
+.memorial-home .fw-service-illus {
+  background: var(--fw-soft); border-radius: var(--fw-radius);
+  padding: 6px 14px; margin-bottom: 22px;
+}
+.memorial-home .fw-service-illus img { display: block; width: 100%; height: auto; }
+.memorial-home .fw-service-label {
+  color: var(--mem-burgundy); font-size: 12px; font-weight: 600;
+  letter-spacing: .04em; margin-bottom: 6px;
+}
+.memorial-home .fw-service-card h3 {
+  font-family: var(--mem-sans); font-weight: 700;
+  font-size: clamp(21px, 1.7vw, 27px); letter-spacing: -.025em; line-height: 1.1;
+}
+.memorial-home .fw-service-card > p {
+  color: rgba(23,19,15,.7); font-size: 14px; line-height: 1.6; margin: 10px 0 20px;
+}
+.memorial-home .fw-service-foot { margin-top: auto; }
+.memorial-home .fw-service-price { display: block; font-family: var(--mem-sans);
+  font-size: 24px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 16px; }
+.memorial-home .fw-service-price small { display: block; color: var(--mem-moss); font-size: 12px; font-weight: 500; letter-spacing: 0; }
+
+@media (max-width: 860px) {
+  .memorial-home .fw-services { grid-template-columns: 1fr; max-width: 460px; margin-inline: auto; }
+}
+
+/* ---------- Bugfix: sticky process-title overlapped the illustration/interaction block below it ---------- */
+.memorial-home .mem-process-title { position: static; }
+
+/* ---------- Bugfix: boundary cards had a same-specificity cascade trap —
+   .mem-boundary-included's light background got overridden back to dark
+   by a later .mem-boundary-card rule, leaving near-black text on near-black bg ---------- */
+.memorial-home .mem-boundaries-grid.mem-protection-boundaries {
+  border-radius: var(--fw-radius-lg); overflow: hidden; border-color: var(--mem-line);
+}
+.memorial-home .mem-boundary-card {
+  background: var(--mem-ink); color: #f6f3ee;
+}
+.memorial-home .mem-boundary-card > span { color: var(--fw-yellow-deep); }
+.memorial-home .mem-boundary-card li { border-color: rgba(255,255,255,.16); color: rgba(246,243,238,.78); }
+.memorial-home .mem-boundary-card li::before { color: var(--fw-yellow-deep); }
+.memorial-home .mem-boundary-included {
+  background: var(--fw-card); color: var(--mem-ink); border-right: 1px solid var(--mem-line);
+}
+.memorial-home .mem-boundary-included > span { color: var(--mem-burgundy); }
+.memorial-home .mem-boundary-included li { border-color: var(--mem-line); color: rgba(23,19,15,.72); }
+.memorial-home .mem-boundary-included li::before { color: var(--mem-burgundy); }
+@media (max-width: 820px) {
+  .memorial-home .mem-boundary-included { border-right: 0; border-bottom: 1px solid var(--mem-line); }
+}
+
+/* ============================================================
+   Round 2 — finish the Farewill reskin on the remaining sections
+   ============================================================ */
+
+/* ---------- Batch 1: decision / intro / report / faq ---------- */
+
+/* mem-decision: neutralise the saturated champagne/sand/cloud row stripes
+   and the dark-wine hover into the friendly card system */
+.memorial-home .mem-decision-prices > a {
+  background: var(--fw-card);
+  border-bottom-color: var(--mem-line);
+  color: var(--mem-ink);
+}
+.memorial-home .mem-decision-prices > a:hover {
+  background: var(--fw-soft);
+  color: var(--mem-ink);
+}
+.memorial-home .mem-decision-prices b {
+  font-family: var(--mem-sans);
+  color: var(--mem-ink);
+}
+.memorial-home .mem-decision-prices b i { color: var(--fw-yellow-deep); font-style: normal; }
+
+/* mem-intro: a later append-only rule from an earlier session left this
+   section on a dark ink background — revert to light so the page keeps
+   its light momentum right after hero/trust/stats; dark is reserved for
+   the CTA-style sections further down (order/agencies/executor-callout) */
+.memorial-home .mem-intro {
+  background: var(--mem-paper);
+  color: var(--mem-ink);
+}
+.memorial-home .mem-intro .mem-index { color: var(--mem-burgundy); }
+.memorial-home .mem-intro-grid > div > p { color: rgba(23, 19, 15, .68); }
+.memorial-home .mem-intro blockquote {
+  border-color: var(--fw-yellow-deep);
+  color: var(--mem-ink);
+}
+
+/* mem-report: soften the mono/uppercase fact-list labels */
+.memorial-home .mem-report-facts dt {
+  font-family: var(--mem-sans);
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--mem-burgundy);
+}
+.memorial-home .mem-report-facts dd { color: rgba(23, 19, 15, .68); }
+.memorial-home .mem-report-facts dd,
+.memorial-home .mem-report-facts dt { border-top-color: var(--mem-line); }
+
+/* mem-faq: round the accordion into one card, de-serif the summary rows */
+.memorial-home .mem-faq-list {
+  border: 1px solid var(--mem-line);
+  border-radius: var(--fw-radius-lg);
+  overflow: hidden;
+  background: var(--fw-card);
+  box-shadow: var(--fw-shadow-soft);
+}
+.memorial-home .mem-faq details {
+  padding-inline: clamp(20px, 3vw, 32px);
+  border-bottom-color: var(--mem-line);
+}
+.memorial-home .mem-faq details:last-child { border-bottom: 0; }
+.memorial-home .mem-faq summary {
+  font-family: var(--mem-sans);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -.01em;
+}
+.memorial-home .mem-faq summary span { color: var(--fw-yellow-deep); }
+.memorial-home .mem-faq details p { padding-right: clamp(20px, 4vw, 50px); }
+
+/* ---------- Batch 2: process / protection / executor-callout ---------- */
+
+/* mem-protection-grid: brutalist bordered grid → individually rounded cards */
+.memorial-home .mem-protection-grid {
+  border: 0;
+  gap: clamp(14px, 1.5vw, 20px);
+}
+.memorial-home .mem-protection-grid article,
+.memorial-home .mem-protection-grid article:last-child {
+  background: var(--fw-card);
+  border: 1px solid var(--mem-line);
+  border-radius: var(--fw-radius);
+  box-shadow: var(--fw-shadow-soft);
+}
+.memorial-home .mem-protection-grid h3 {
+  font-family: var(--mem-sans);
+  font-weight: 700;
+  letter-spacing: -.025em;
+}
+.memorial-home .mem-protection-number { color: var(--fw-yellow-deep); }
+
+/* mem-protection-cta: recolour off old bronze, pill the button */
+.memorial-home .mem-protection-cta {
+  background: var(--mem-ink);
+  border-radius: var(--fw-radius-lg);
+}
+.memorial-home .mem-protection-cta strong {
+  font-family: var(--mem-sans);
+  font-weight: 700;
+}
+.memorial-home .mem-protection-cta .mem-button {
+  border-color: #fff;
+}
+.memorial-home .mem-protection-cta .mem-button:hover {
+  color: var(--mem-ink);
+  background: #fff;
+}
+
+/* mem-executor-callout: recolour off old bronze onto the shared ink accent */
+.memorial-home .mem-executor-callout {
+  background: var(--mem-ink);
+  border-radius: var(--fw-radius-lg);
+  margin-inline: clamp(0px, 3vw, 24px);
+}
+.memorial-home .mem-executor-callout .mem-index { color: var(--fw-yellow-deep); }
+.memorial-home .mem-executor-grid > div > p { color: rgba(246, 243, 238, .78); }
+.memorial-home .mem-outline-solid {
+  border-color: #fffdf7;
+  color: var(--mem-ink);
+  background: #fffdf7;
+}
+.memorial-home .mem-outline-solid:hover {
+  color: #fffdf7;
+  background: transparent;
+}
+
+/* ---------- Batch 3: agencies + order (dark accent sections) ---------- */
+
+/* mem-agencies: soften hard white-line dividers into rounded card blocks,
+   fix the old hardcoded tan aside colour to the fw-soft token */
+.memorial-home .mem-agency-models,
+.memorial-home .mem-agency-contract {
+  border-radius: var(--fw-radius-lg);
+  overflow: hidden;
+  border-color: rgba(255, 255, 255, .14);
+}
+.memorial-home .mem-agency-contract aside {
+  background: var(--fw-soft);
+  color: var(--mem-ink);
+}
+.memorial-home .mem-agency-contract aside li { color: rgba(23, 19, 15, .72); }
+.memorial-home .mem-agency-contract aside li::before { color: var(--mem-burgundy); }
+
+/* mem-order: a later append-only rule from an earlier session recoloured
+   this section to old bronze/wine — bring it back to the shared ink accent
+   used by executor-callout/agencies for one consistent dark-CTA colour */
+.memorial-home .mem-order { background: var(--mem-ink); }
+.memorial-home .mem-start-options {
+  border-color: var(--mem-line);
+  border-radius: var(--fw-radius-lg);
+  overflow: hidden;
+}
+.memorial-home .mem-start-card,
+.memorial-home .mem-start-card:hover {
+  background: var(--fw-card);
+  border-color: var(--mem-line);
+  color: var(--mem-ink);
+}
+.memorial-home .mem-start-card > span { color: var(--mem-burgundy); }
+.memorial-home .mem-login-card {
+  background: var(--fw-yellow);
+  color: var(--mem-ink);
+}
+.memorial-home .mem-login-card span { color: rgba(23, 19, 15, .68); }
