@@ -363,7 +363,7 @@ function layout({ title, user, body, description = "", current = "" }) {
       <a href="/notifications" ${current === "notifications" ? `aria-current="page"` : ""}>Сповіщення</a>
       <a href="/profile" ${current === "profile" ? `aria-current="page"` : ""}>Профіль</a>
       ${isAdmin(user) ? `<a href="/admin">Операції</a>` : ""}
-      <a href="https://munister.com.ua/poruch/">Про сервіс</a>
+      <a href="https://poruch.munister.com.ua/">Про сервіс</a>
     </nav>
     <div class="user-menu">
       <div><strong>${esc(user.name)}</strong><span>${roleName(user.role)}</span></div>
@@ -411,7 +411,7 @@ function authView(req, mode, error = "", values = {}) {
     title: register ? "Створити кабінет" : "Увійти",
     body: `<main class="auth-page">
       <section class="auth-story">
-        <a class="brand" href="https://munister.com.ua/poruch/"><span class="brand-mark">P</span><span class="brand-copy"><small>MUNISTER / SERVICE 01</small><strong>Поруч</strong></span></a>
+        <a class="brand" href="https://poruch.munister.com.ua/"><span class="brand-mark">P</span><span class="brand-copy"><small>MUNISTER / SERVICE 01</small><strong>Поруч</strong></span></a>
         <div>
           <p class="eyebrow">CARE / UKRAINE / CABINET</p>
           <h1>${register ? "Один сервіс. Дві сторони турботи." : "Поверніться до справ, які вже поруч."}</h1>
@@ -446,7 +446,7 @@ function authView(req, mode, error = "", values = {}) {
           <label>Email<input name="email" type="email" autocomplete="email" required maxlength="200" value="${esc(values.email)}"></label>
           <label>Пароль<input name="password" type="password" autocomplete="${register ? "new-password" : "current-password"}" required minlength="12" maxlength="200"></label>
           ${register ? `<p class="helper">Щонайменше 12 символів, літера і цифра. Не використовуйте пароль від пошти чи банку.</p>` : ""}
-          ${register ? `<label class="consent-line"><input type="checkbox" name="consent" required><span>Погоджуюся з <a href="https://munister.com.ua/poruch/executor-terms.html" target="_blank" rel="noopener">умовами сервісу</a> та <a href="https://munister.com.ua/poruch/privacy.html" target="_blank" rel="noopener">обробкою персональних даних</a>.</span></label>` : ""}
+          ${register ? `<label class="consent-line"><input type="checkbox" name="consent" required><span>Погоджуюся з <a href="https://poruch.munister.com.ua/executor-terms.html" target="_blank" rel="noopener">умовами сервісу</a> та <a href="https://poruch.munister.com.ua/privacy.html" target="_blank" rel="noopener">обробкою персональних даних</a>.</span></label>` : ""}
           <button class="button button-wine" type="submit">${register ? "Створити кабінет" : "Увійти"}</button>
           ${register ? "" : `<p class="auth-switch"><a href="/forgot-password">Не пам'ятаю пароль</a></p>`}
           <p class="auth-switch">${register ? `Вже маєте кабінет? <a href="/login">Увійти</a>` : `Ще не зареєстровані? <a href="/register">Створити кабінет</a>`}</p>
@@ -1160,6 +1160,10 @@ app.get("/dashboard", requireAuth, async (req, res, next) => {
   }
 });
 
+app.get("/orders", requireAuth, (req, res) => {
+  res.redirect(req.user.role === "customer" ? "/orders/new" : "/orders/available");
+});
+
 app.get("/orders/available", requireRole("executor"), async (req, res, next) => {
   try {
     const orders = (await pool.query(
@@ -1225,9 +1229,13 @@ app.post("/orders", requireRole("customer"), verifyCsrf, async (req, res, next) 
     const workBudget = Number(req.body.workBudget);
     const materialsBudget = Number(req.body.materialsBudget || 0);
     const deadline = req.body.deadline || null;
-    if (!title || !careType || !city || !locationHint || description.length < 20 || workBudget < 100 || materialsBudget < 0) {
-      return res.status(400).send("Перевірте обов'язкові поля та бюджет.");
-    }
+    if (!title) return res.status(400).send("Вкажіть коротку назву замовлення.");
+    if (!careType) return res.status(400).send("Оберіть тип догляду.");
+    if (!city) return res.status(400).send("Вкажіть місто.");
+    if (!locationHint) return res.status(400).send("Вкажіть кладовище або орієнтир.");
+    if (description.length < 20) return res.status(400).send("Опис замовлення має містити щонайменше 20 символів.");
+    if (!workBudget || workBudget < 100) return res.status(400).send("Бюджет роботи має бути щонайменше 100 ₴.");
+    if (materialsBudget < 0) return res.status(400).send("Ліміт матеріалів не може бути від'ємним.");
     const { rows } = await pool.query(
       `INSERT INTO orders(customer_id, title, care_type, city, location_hint, description, deadline, work_budget, materials_budget)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id`,

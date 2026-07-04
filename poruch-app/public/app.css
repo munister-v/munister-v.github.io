@@ -985,3 +985,112 @@ input:focus, select:focus, textarea:focus {
   html { scroll-behavior: auto; }
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* ============================================================
+   Farewill system pass — matches poruch/editorial.css so the
+   authenticated app doesn't feel like a different, older product
+   the moment a customer logs in from the marketing site.
+   Append-only: adds tokens + overrides, doesn't touch rules above.
+   ============================================================ */
+:root {
+  --fw-yellow: #ffd84a;
+  --fw-yellow-deep: #e6b93a;
+  --fw-soft: #fff2c6;
+  --fw-card: #fbfaf7;
+  --fw-radius: 22px;
+  --fw-radius-lg: 30px;
+  --fw-shadow: 0 14px 44px -18px rgba(17,20,17,.22);
+  --fw-shadow-soft: 0 10px 34px -16px rgba(17,20,17,.16);
+  /* --forest was already near-identical to --ink (#1b211d vs #111411) —
+     consolidate to one dark anchor colour, same device as the
+     marketing site's ink. --wine/--gold keep their accent ROLE
+     (links, labels, status-new, awaiting-review) but retuned to the
+     marketing site's exact burgundy/sand hexes for cross-app parity. */
+  --forest: var(--ink);
+  --wine: #7a5c3e;
+  --wine-dark: #5f4730;
+  --gold: #cdb88f;
+}
+
+/* ---------- Buttons: square → pill ---------- */
+.button {
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 13px 26px;
+}
+.button-wine { border-color: var(--ink); background: var(--ink); }
+.button-danger { border-color: #9c372f; background: #9c372f; }
+
+/* ---------- Status pills ---------- */
+.status { border-radius: 999px; font-family: var(--sans); font-weight: 600; letter-spacing: .02em; }
+.status-awaiting_review { color: var(--ink); }
+
+/* ---------- Cards: sharp → rounded, flat → soft shadow ---------- */
+.form-card,
+.detail-card,
+.side-card,
+.dispute-card,
+.review-card,
+.ops-card {
+  border-radius: var(--fw-radius-lg);
+  border-color: var(--line);
+  background: var(--fw-card);
+  box-shadow: var(--fw-shadow-soft);
+}
+.stats,
+.dashboard-stats,
+.dashboard-hero,
+.priority-card,
+.payout {
+  border-radius: var(--fw-radius-lg);
+  overflow: hidden;
+}
+.stat { border-radius: 0; }
+.priority-card { background: var(--ink); }
+.priority-dark { background: var(--ink); }
+.payout { background: var(--ink); border-radius: var(--fw-radius); }
+.report { border-radius: var(--fw-radius); border-left-color: var(--wine); background: var(--fw-soft); }
+.message { border-radius: var(--fw-radius) var(--fw-radius) var(--fw-radius) 6px; background: #ede8db; }
+.message-own { border-radius: var(--fw-radius) var(--fw-radius) 6px var(--fw-radius); background: var(--fw-soft); }
+.verified { border-radius: 999px; }
+.trust-card { border-radius: var(--fw-radius-lg); border-top-color: var(--success); }
+
+/* ---------- Forms: sharp inputs → rounded ---------- */
+input, select, textarea {
+  border-radius: 14px;
+  border-color: var(--line);
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px rgba(17,20,17,.1);
+}
+.error { border-radius: var(--fw-radius); border-left-color: #9c372f; }
+.notice { border-radius: var(--fw-radius); border-left-color: var(--success); }
+
+/* ---------- Auth pages: dark panel matches the marketing hero ---------- */
+.auth-story {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E") 0 0/150px 150px,
+    radial-gradient(135% 105% at 10% -10%, rgba(122,92,62,.26), transparent 56%),
+    var(--ink);
+}
+.role-picker span {
+  border-radius: var(--fw-radius);
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 15px;
+  transition: background .18s ease, border-color .18s ease, transform .15s ease;
+}
+.role-picker label:hover span { background: var(--fw-soft); transform: translateY(-2px); }
+.role-picker input:checked + span {
+  border-color: var(--fw-yellow);
+  background: var(--fw-soft);
+  box-shadow: none;
+}
+.auth-form h2 { font-family: var(--sans); font-weight: 700; }
+.simple-page { background: var(--fw-card); }
+.simple-page .form-card { box-shadow: var(--fw-shadow); }
