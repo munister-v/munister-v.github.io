@@ -1220,3 +1220,55 @@
   grid-template-columns: 150px 1fr;
   max-width: 900px;
 }
+
+/* ============================================================
+   Fresh audit fixes (2026-07-04): burgundy label leak + remaining
+   sharp corners, found via computed-style sweep across the live page.
+   ============================================================ */
+
+/* --mem-burgundy (#7a5c3e, an old-system accent) was still live on
+   every overline/index label site-wide, plus several more-specific
+   rules that set it directly. .mem-executor-callout already got the
+   fw-yellow-deep treatment (L507-ish) — apply the same everywhere. */
+.memorial-home .mem-index,
+.memorial-home .mem-overline,
+.memorial-home .fw-service-label,
+.memorial-home .mem-boundary-included > span,
+.memorial-home .mem-boundary-included li::before,
+.memorial-home .mem-intro .mem-index,
+.memorial-home .mem-report-facts dt,
+.memorial-home .mem-agency-contract aside li::before,
+.memorial-home .mem-start-card > span,
+.memorial-home .mem-agency-head .mem-index,
+.memorial-home .mem-agency-models span,
+.memorial-home .mem-agency-contract .mem-overline,
+.memorial-home .mem-agency-contract li::before,
+.memorial-home .mem-agency-contract aside span {
+  color: var(--fw-yellow-deep);
+}
+
+/* fw-hero-art never got the shared illustration-frame treatment every
+   other illustration on the page has (rounded card + soft-yellow bg) */
+.memorial-home .fw-hero-art {
+  border-radius: var(--fw-radius-lg);
+  background: var(--fw-soft);
+  padding: clamp(12px, 1.6vw, 24px);
+}
+
+/* Remaining sharp-cornered (border-radius:0) interactive elements.
+   Note: .mem-year-controls buttons are left square-cornered on purpose
+   — they're segmented-control items inside an already-rounded
+   .mem-year-shell (same pattern as .mem-decision-prices rows), giving
+   each one its own pill radius would look like mismatched confetti
+   rather than a grouped control. */
+.memorial-home .mem-boundary-card,
+.memorial-home .mem-boundary-included {
+  border-radius: var(--fw-radius);
+}
+.memorial-home .mem-start-card,
+.memorial-home .mem-login-card {
+  border-radius: var(--fw-radius);
+}
+.memorial-home .mem-start-options {
+  overflow: hidden;
+}
