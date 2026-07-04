@@ -1123,3 +1123,84 @@
 .memorial-home .mem-process-grid {
   align-items: start;
 }
+
+/* Same 3-col dead-space bug as mem-executor-grid/mem-agency-head, but
+   with align-items:end — the short index label sat at the BOTTOM of
+   the tallest column's height, leaving a huge empty gap ABOVE it
+   (this is the "конструктор замовлень" planner head + year-plan head
+   the user flagged as looking hollow). Collapse to 2 columns so index
+   sits directly above the heading, both hugging the top naturally. */
+.memorial-home .mem-situations-head,
+.memorial-home .mem-year-head {
+  grid-template-columns: 1fr minmax(300px, .48fr);
+  align-items: start;
+}
+.memorial-home .mem-situations-head .mem-index,
+.memorial-home .mem-year-head .mem-index {
+  grid-column: 1;
+  grid-row: 1;
+  margin-bottom: 14px;
+}
+.memorial-home .mem-situations-head h2,
+.memorial-home .mem-year-head h2 {
+  grid-column: 1;
+  grid-row: 2;
+}
+.memorial-home .mem-situations-head > p:last-child,
+.memorial-home .mem-year-head > p:last-child {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: end;
+}
+
+/* mem-section-head / mem-protection-head: milder version of the same
+   thing (align-items:end left a gap above the shorter paragraph) */
+.memorial-home .mem-section-head,
+.memorial-home .mem-protection-head {
+  align-items: start;
+}
+
+/* mem-year-plan had a heavy saturated tan (--por-yellow/--mem-sand)
+   full-section background — never neutralised, unlike mem-planner
+   which already got the same light --mem-cloud tint. Match it so both
+   "widget" sections read as the same light, friendly family. */
+.memorial-home .mem-year-plan {
+  background: var(--mem-cloud);
+}
+
+/* mem-executor-callout: text/buttons/illustration were stacked in a
+   narrow left-hugging column (text capped at 710px, illustration
+   capped at 300px) leaving a huge dead void to the right in the wide
+   1fr column. Turn the inner wrapper into its own 2-col layout: copy
+   on the left, a properly large illustration filling the right. */
+.memorial-home .mem-executor-grid > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: clamp(28px, 4vw, 48px);
+  align-items: center;
+}
+.memorial-home .mem-executor-grid > div > p:first-child {
+  grid-column: 1;
+  grid-row: 1;
+}
+.memorial-home .mem-executor-actions {
+  grid-column: 1;
+  grid-row: 2;
+}
+.memorial-home .fw-callout-illus {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  max-width: none;
+  margin: 0;
+}
+@media (max-width: 780px) {
+  .memorial-home .mem-executor-grid > div {
+    grid-template-columns: 1fr;
+  }
+  .memorial-home .mem-executor-grid > div > p:first-child,
+  .memorial-home .mem-executor-actions,
+  .memorial-home .fw-callout-illus {
+    grid-column: 1;
+  }
+  .memorial-home .fw-callout-illus { max-width: 320px; }
+}
