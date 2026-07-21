@@ -1639,6 +1639,22 @@
         }
         // Text set by applyResearchMapLocale via syncABSectionLocale
 
+        // Remove the "[FINTECH ARCHITECT]" style badge row above the name
+        const badgeSpan = Array.from(root.querySelectorAll('span')).find(
+          el => el.textContent.trim() === '[FINTECH ARCHITECT]'
+        );
+        if (badgeSpan && badgeSpan.parentElement) {
+          badgeSpan.parentElement.remove();
+        }
+
+        // Rewrite the buzzword-heavy intersection paragraph into plain copy
+        const introEl = Array.from(root.querySelectorAll('div,p')).find(
+          el => el.children.length > 1 && el.textContent.trim().startsWith('Operating at the intersection of')
+        );
+        if (introEl) {
+          introEl.innerHTML = 'Full-stack developer and founder of <span class="text-white font-medium">Munister Agency</span>. I build web platforms, ERP systems and AI-powered tools for business and everyday life - from media platforms to fintech dashboards - taking products from idea to production.';
+        }
+
         // Inject Telegram link into hero social area
         if (!document.getElementById('hero-tg-link')) {
           // Try to find GitHub / LinkedIn anchor near the hero
@@ -2319,6 +2335,13 @@
         anchor.after(resumeLink);
         return true;
       }
+
+      // Mobile overlay menu is only mounted while open, so the one-shot
+      // #root observer above (which disconnects once the desktop nav is
+      // patched) can miss it entirely. Watch persistently and patch
+      // every time the overlay's links appear.
+      const resumeMenuObserver = new MutationObserver(() => patchMobileMenuResume());
+      resumeMenuObserver.observe(document.body, { childList: true, subtree: true });
 
       function patchBureauToCV() {
         const nav = document.querySelector('nav');
