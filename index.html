@@ -2297,8 +2297,26 @@
         patchTimeline();
         patchHero();
         patchBureauToCV();
+        patchMobileMenuResume();
         injectMethodologyMap();
         scheduleABLocaleSync();
+        return true;
+      }
+
+      function patchMobileMenuResume() {
+        const menuLinks = Array.from(document.querySelectorAll('a.text-4xl.font-serif'));
+        if (!menuLinks.length) return false;
+        if (menuLinks.some(el => el.dataset.resumeLink === '1')) return true;
+        const experienceLink = menuLinks.find(el => /^experience$/i.test((el.textContent || '').trim()));
+        const anchor = experienceLink || menuLinks[menuLinks.length - 1];
+        const resumeLink = anchor.cloneNode(true);
+        resumeLink.removeAttribute('href');
+        resumeLink.dataset.resumeLink = '1';
+        resumeLink.textContent = 'Резюме';
+        resumeLink.href = '/cv-ua.html';
+        resumeLink.target = '_blank';
+        resumeLink.rel = 'noopener noreferrer';
+        anchor.after(resumeLink);
         return true;
       }
 
