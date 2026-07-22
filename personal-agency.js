@@ -12,7 +12,15 @@
     currentNav.classList.toggle('is-scrolled', window.scrollY > 48);
   }
 
+  function removeSecondaryShowcases() {
+    ['army-bank-mvp', 'italy-showcase'].forEach((id) => {
+      const section = document.getElementById(id);
+      if (section) section.remove();
+    });
+  }
+
   function labelInterface() {
+    removeSecondaryShowcases();
     const currentNav = getNav();
     if (!currentNav) return;
 
@@ -37,6 +45,7 @@
   }
 
   updateNav();
+  removeSecondaryShowcases();
   labelInterface();
   window.addEventListener('scroll', updateNav, { passive: true });
 
