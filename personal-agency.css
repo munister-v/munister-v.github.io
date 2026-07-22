@@ -162,10 +162,24 @@ body nav > div > div:first-child a {
 
 /* Personal hero: preserve the portrait, remove the terminal-dashboard feel. */
 body main > section:first-child {
+  position: relative;
   min-height: 100svh !important;
   padding-top: 64px !important;
   background: var(--personal-ink) !important;
   border-color: var(--personal-dark-rule) !important;
+}
+
+body main > section:first-child::before {
+  content: 'MUNISTER / PERSONAL PRACTICE / 01';
+  position: absolute;
+  z-index: 20;
+  top: 96px;
+  left: max(32px, calc((100vw - 1380px) / 2));
+  color: rgba(247, 241, 230, .46);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .16em;
 }
 
 body main > section:first-child .bg-grid-pattern,
@@ -174,28 +188,46 @@ body main > section:first-child .text-\[20rem\] {
 }
 
 body main > section:first-child > div:last-child > div:first-child {
-  width: 62% !important;
+  position: relative;
+  width: 66% !important;
   border-color: var(--personal-dark-rule) !important;
   background: transparent !important;
   backdrop-filter: none !important;
 }
 
+body main > section:first-child > div:last-child > div:first-child::after {
+  content: '01';
+  position: absolute;
+  top: 88px;
+  right: 38px;
+  color: rgba(247, 241, 230, .09);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(120px, 17vw, 250px);
+  font-weight: 500;
+  line-height: .75;
+  pointer-events: none;
+}
+
 body main > section:first-child > div:last-child > div:last-child {
-  width: 38% !important;
+  width: 34% !important;
   border-color: var(--personal-dark-rule) !important;
 }
 
 body main > section:first-child h1 {
   max-width: 780px;
   margin-bottom: 42px !important;
-  font-size: clamp(64px, 7.4vw, 112px) !important;
-  line-height: .82 !important;
+  padding-top: 56px;
+  font-size: clamp(54px, 5.6vw, 82px) !important;
+  line-height: .88 !important;
   text-wrap: balance;
   font-weight: 500 !important;
 }
 
 body main > section:first-child h1 > span {
+  display: block;
+  margin-top: 8px;
   color: var(--personal-accent) !important;
+  font-size: 1.34em;
   font-weight: 600;
 }
 
@@ -219,8 +251,8 @@ body main > section:first-child .grid.grid-cols-2 {
 }
 
 body main > section:first-child .grid.grid-cols-2 > div {
-  min-height: 108px;
-  padding: 24px 28px !important;
+  min-height: 96px;
+  padding: 20px 26px !important;
   border-color: var(--personal-dark-rule) !important;
 }
 
@@ -235,11 +267,29 @@ body main > section:first-child .grid.grid-cols-2 > div span:last-child {
 }
 
 body main > section:first-child img {
-  filter: grayscale(1) contrast(1.08) brightness(.94) !important;
+  transform: none !important;
+  filter: grayscale(1) contrast(1.06) brightness(.9) !important;
+}
+
+body main > section:first-child > div:last-child > div:last-child > div:last-child {
+  display: none !important;
+}
+
+body main > section:first-child > div:last-child > div:last-child > div:nth-last-child(2) {
+  padding: 28px !important;
+}
+
+body main > section:first-child > div:last-child > div:last-child > div:nth-last-child(2) > div:last-child {
+  border: 1px solid var(--personal-dark-rule) !important;
+  border-left: 3px solid var(--personal-accent) !important;
+  background: rgba(26, 22, 17, .78) !important;
+  backdrop-filter: blur(8px) !important;
 }
 
 /* Shared editorial sections. */
 body main > section:not(:first-child) {
+  background: var(--personal-paper) !important;
+  color: var(--personal-ink) !important;
   border-color: var(--personal-rule) !important;
 }
 
@@ -370,11 +420,12 @@ body main > section:not(:first-child) {
   border-radius: 2px;
 }
 
-/* Dark editorial band for research, mirroring the Agency service band. */
+/* Research follows the same light editorial sequence as the other sections. */
 #science {
   padding-block: 112px !important;
-  background: var(--personal-ink) !important;
-  border-color: var(--personal-dark-rule) !important;
+  background: var(--personal-paper) !important;
+  color: var(--personal-ink) !important;
+  border-color: var(--personal-rule) !important;
 }
 
 #science > div[class*="absolute"] {
@@ -382,22 +433,34 @@ body main > section:not(:first-child) {
 }
 
 #science [class*="border-neutral"] {
-  border-color: var(--personal-dark-rule) !important;
+  border-color: var(--personal-rule) !important;
 }
 
 #science [class*="bg-neutral-900"] {
-  background: rgba(247, 241, 230, .035) !important;
+  background: transparent !important;
 }
 
 #science h2,
 #science h3 {
-  color: var(--personal-paper) !important;
+  color: var(--personal-ink) !important;
   font-weight: 600 !important;
 }
 
 #science p {
-  color: rgba(247, 241, 230, .7) !important;
+  color: var(--personal-muted) !important;
   font-weight: 500 !important;
+}
+
+#science [class*="text-sand"] {
+  color: #8f6755 !important;
+}
+
+#science [class*="text-white"] {
+  color: var(--personal-ink) !important;
+}
+
+#science [class*="text-neutral"] {
+  color: var(--personal-muted) !important;
 }
 
 /* Product features use the same section grammar, while product mockups keep identity. */
@@ -705,14 +768,31 @@ body footer a {
     padding-top: 60px !important;
   }
 
+  body main > section:first-child::before {
+    top: 88px;
+    left: 22px;
+    font-size: 8px;
+  }
+
+  body main > section:first-child > div:last-child > div:first-child::after {
+    top: 98px;
+    right: 18px;
+    font-size: 112px;
+  }
+
   body main > section:first-child > div:last-child > div:first-child > div:first-child {
     padding: 60px 22px 44px !important;
   }
 
   body main > section:first-child h1 {
     margin-bottom: 32px !important;
-    font-size: clamp(54px, 18vw, 78px) !important;
-    line-height: .86 !important;
+    padding-top: 52px;
+    font-size: clamp(45px, 14vw, 64px) !important;
+    line-height: .9 !important;
+  }
+
+  body main > section:first-child h1 > span {
+    font-size: 1.12em;
   }
 
   body main > section:first-child h1 + div {
