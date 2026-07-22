@@ -2207,8 +2207,9 @@
         const resumeLink = anchor.cloneNode(true);
         resumeLink.removeAttribute('href');
         resumeLink.dataset.resumeLink = '1';
-        resumeLink.textContent = 'Резюме';
-        resumeLink.href = '/cv-ua.html';
+        const lang = getCurrentPortfolioLang();
+        resumeLink.textContent = lang === 'ua' ? 'Резюме' : 'CV';
+        resumeLink.href = lang === 'ua' ? '/cv-ua.html' : '/cv.html';
         resumeLink.target = '_blank';
         resumeLink.rel = 'noopener noreferrer';
         anchor.after(resumeLink);
@@ -2230,12 +2231,13 @@
         if (!bureauEl) return false;
         // Style as download link
         bureauEl.textContent = 'CV ↓';
-        bureauEl.title = 'Завантажити CV (PDF)';
+        bureauEl.title = getCurrentPortfolioLang() === 'ua' ? 'Відкрити резюме' : 'Open CV';
         bureauEl.style.cssText += ';cursor:pointer;';
         bureauEl.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          window.open('/cv-ua.html', '_blank');
+          const href = getCurrentPortfolioLang() === 'ua' ? '/cv-ua.html' : '/cv.html';
+          window.open(href, '_blank');
         }, true);
         nav.dataset.cvPatchDone = '1';
         return true;
