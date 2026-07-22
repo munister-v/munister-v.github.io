@@ -25,9 +25,16 @@
     });
   }
 
+  function removeHeroModules() {
+    const hero = document.querySelector('main > section:first-child');
+    const modules = hero?.querySelector('.grid.grid-cols-2');
+    if (modules) modules.remove();
+  }
+
   function labelInterface() {
     removeSecondaryShowcases();
     removeSkillsNavigation();
+    removeHeroModules();
     const currentNav = getNav();
     if (!currentNav) return;
 
@@ -54,6 +61,7 @@
   updateNav();
   removeSecondaryShowcases();
   removeSkillsNavigation();
+  removeHeroModules();
   labelInterface();
   window.addEventListener('scroll', updateNav, { passive: true });
 
