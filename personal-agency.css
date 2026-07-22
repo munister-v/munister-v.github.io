@@ -377,20 +377,35 @@ body main > section:not(:first-child) {
 
 #work-exp .exp-title {
   color: var(--personal-ink) !important;
-  font-size: clamp(64px, 7.2vw, 104px) !important;
-  line-height: .9 !important;
+  max-width: 850px;
+  font-size: clamp(58px, 6vw, 88px) !important;
+  line-height: .94 !important;
   font-weight: 600 !important;
 }
 
 #work-exp .exp-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   margin-bottom: 24px !important;
   font-size: 11px !important;
 }
 
+#work-exp .exp-eyebrow::before,
+#methodology .rm-eyebrow::before {
+  content: '';
+  width: 1px;
+  height: 18px;
+  background: #b79582;
+  flex: 0 0 auto;
+}
+
 #work-exp .exp-sub {
-  max-width: 760px !important;
+  max-width: 710px !important;
   margin-top: 28px !important;
   margin-bottom: 64px !important;
+  padding-left: 24px;
+  border-left: 1px solid var(--personal-rule);
   font-size: 17px !important;
   line-height: 1.75 !important;
 }
@@ -417,6 +432,14 @@ body main > section:not(:first-child) {
 
 #work-exp .exp-item:hover {
   background: rgba(201, 166, 144, .08) !important;
+}
+
+#work-exp .exp-item {
+  min-height: 228px;
+}
+
+#work-exp .exp-period {
+  background: rgba(255, 255, 255, .14);
 }
 
 #work-exp .exp-dates {
@@ -475,6 +498,56 @@ body main > section:not(:first-child) {
 
 #science [class*="text-neutral"] {
   color: var(--personal-muted) !important;
+}
+
+/* Methodology uses the same quiet editorial opening as Research. */
+#methodology .rm-wrap {
+  padding: 0 !important;
+}
+
+#methodology .rm-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+#methodology .rm-title {
+  max-width: 820px;
+  margin-bottom: 28px;
+  font-size: clamp(56px, 6vw, 88px);
+  line-height: .94;
+}
+
+#methodology .rm-sub {
+  max-width: 700px;
+  margin-bottom: 72px;
+  padding-left: 24px;
+  border-left: 1px solid var(--personal-rule);
+  font-size: 16px;
+}
+
+#methodology .rm-grid,
+#methodology .rm-grid-2 {
+  gap: 0;
+  background: transparent;
+  border-color: var(--personal-rule);
+}
+
+#methodology .rm-cluster {
+  min-height: 270px;
+  padding: 38px 32px;
+  border-right: 1px solid var(--personal-rule);
+  border-bottom: 1px solid var(--personal-rule);
+}
+
+#methodology .rm-grid .rm-cluster:nth-child(3n),
+#methodology .rm-grid-2 .rm-cluster:last-child {
+  border-right: 0;
+}
+
+#methodology .rm-grid-2 .rm-cluster {
+  border-bottom: 0;
 }
 
 /* Product features use the same section grammar, while product mockups keep identity. */
@@ -578,19 +651,50 @@ body main > section:not(:first-child) {
   padding: 112px 40px 72px !important;
 }
 
+#cases > .container > div:first-child {
+  max-width: 820px;
+  padding-left: 0 !important;
+  border-left: 0 !important;
+}
+
+#cases > .container > div:first-child > div {
+  width: 100%;
+  max-width: 820px !important;
+}
+
+#cases > .container > div:first-child > div > div.absolute {
+  display: none !important;
+}
+
+#cases > .container > div:first-child span:first-of-type {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+#cases > .container > div:first-child span:first-of-type::before {
+  content: '';
+  width: 1px;
+  height: 18px;
+  background: #b79582;
+  flex: 0 0 auto;
+}
+
 #cases > .border-t {
   border-color: var(--personal-rule) !important;
 }
 
 #cases h2 {
-  font-size: clamp(56px, 7vw, 94px) !important;
-  line-height: .92 !important;
+  font-size: clamp(58px, 6vw, 88px) !important;
+  line-height: .94 !important;
 }
 
 #cases h2 + p {
-  max-width: 690px;
+  max-width: 700px;
+  margin-top: 28px !important;
+  padding-left: 24px !important;
+  border-left: 1px solid var(--personal-rule) !important;
   color: var(--personal-muted) !important;
-  border-color: var(--personal-rule) !important;
 }
 
 #cases .agency-text-card {
@@ -713,9 +817,32 @@ body footer a {
     padding-inline: 16px !important;
   }
 
-  body nav button.md\:hidden,
-  body nav.is-scrolled button.md\:hidden {
+  body nav .personal-language-toggle {
+    display: none !important;
+  }
+
+  body nav button.personal-menu-toggle {
+    display: flex !important;
+    width: 62px !important;
+    min-width: 62px !important;
+    min-height: 60px !important;
+    padding: 0 !important;
+    border-left: 1px solid var(--personal-dark-rule) !important;
+    background: rgba(247, 241, 230, .08) !important;
     color: var(--personal-paper) !important;
+  }
+
+  body nav.is-scrolled button.personal-menu-toggle {
+    border-left-color: var(--personal-rule) !important;
+    background: rgba(26, 22, 17, .06) !important;
+    color: var(--personal-ink) !important;
+  }
+
+  body nav button.personal-menu-toggle svg {
+    width: 25px;
+    height: 25px;
+    stroke: currentColor;
+    stroke-width: 2.25;
   }
 
   .personal-brand-main {
@@ -810,13 +937,23 @@ body footer a {
   }
 
   #work-exp .exp-title {
-    font-size: clamp(52px, 15vw, 72px) !important;
+    font-size: clamp(48px, 14vw, 64px) !important;
   }
 
   #work-exp .exp-sub {
     margin-top: 22px !important;
     margin-bottom: 44px !important;
     font-size: 15px !important;
+  }
+
+  #methodology .rm-title,
+  #cases h2 {
+    font-size: clamp(48px, 14vw, 64px) !important;
+  }
+
+  #methodology .rm-sub,
+  #cases h2 + p {
+    padding-left: 18px !important;
   }
 
   body main > section:first-child h1 + div {
@@ -851,6 +988,7 @@ body footer a {
 
   #work-exp .exp-item {
     grid-template-columns: 1fr !important;
+    min-height: 0;
   }
 
   #work-exp .exp-period {
@@ -875,6 +1013,14 @@ body footer a {
 
   #cases .agency-text-card h3 {
     font-size: 38px !important;
+  }
+
+  #methodology .rm-cluster,
+  #methodology .rm-grid .rm-cluster:nth-child(3n),
+  #methodology .rm-grid-2 .rm-cluster:last-child {
+    min-height: 0;
+    padding: 28px 20px;
+    border-right: 0;
   }
 
   body footer {

@@ -47,11 +47,32 @@
 
     const menuButton = currentNav.querySelector('button.md\\:hidden');
     if (menuButton) {
+      menuButton.classList.add('personal-menu-toggle');
       const isOpen = Boolean(currentNav.querySelector(':scope > div + div'));
       menuButton.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
       menuButton.setAttribute('aria-expanded', String(isOpen));
       document.body.classList.toggle('personal-menu-open', isOpen);
     }
+
+    currentNav.querySelectorAll('button').forEach((button) => {
+      const label = (button.textContent || '').trim().toUpperCase();
+      if (label === 'EN' || label === 'UA') {
+        button.classList.add('personal-language-toggle');
+        button.setAttribute('aria-label', label === 'EN' ? 'Switch language' : 'Змінити мову');
+      }
+    });
+
+    document.querySelectorAll('#cases .agency-text-card').forEach((card) => {
+      card.querySelectorAll('p').forEach((paragraph) => {
+        paragraph.childNodes.forEach((node) => {
+          if (node.nodeType === Node.TEXT_NODE && /full-stack/i.test(node.textContent || '')) {
+            node.textContent = (node.textContent || '')
+              .replace(/\s*\/\s*FULL-STACK/gi, '')
+              .replace(/FULL-STACK\s*\/\s*/gi, '');
+          }
+        });
+      });
+    });
 
     document.querySelectorAll('section').forEach((section, index) => {
       section.dataset.sectionIndex = String(index + 1).padStart(2, '0');
