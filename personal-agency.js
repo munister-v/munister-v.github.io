@@ -13,14 +13,29 @@
   }
 
   function removeSecondaryShowcases() {
-    ['army-bank-mvp', 'italy-showcase'].forEach((id) => {
+    ['army-bank-mvp', 'italy-showcase', 'experience'].forEach((id) => {
       const section = document.getElementById(id);
       if (section) section.remove();
     });
   }
 
+  function positionSkillsSection() {
+    const skills = document.getElementById('skills-block');
+    const hero = document.querySelector('main > section:first-child');
+    if (skills && hero && skills !== hero.nextElementSibling) {
+      hero.after(skills);
+    }
+
+    const skillsLink = document.querySelector('nav a[href="#experience"]');
+    if (skillsLink) {
+      skillsLink.href = '#skills-block';
+      skillsLink.textContent = 'Skills';
+    }
+  }
+
   function labelInterface() {
     removeSecondaryShowcases();
+    positionSkillsSection();
     const currentNav = getNav();
     if (!currentNav) return;
 
@@ -46,6 +61,7 @@
 
   updateNav();
   removeSecondaryShowcases();
+  positionSkillsSection();
   labelInterface();
   window.addEventListener('scroll', updateNav, { passive: true });
 
