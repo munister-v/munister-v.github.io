@@ -236,13 +236,13 @@ a.pub:hover .doi{color:var(--fg)}
 
     <!-- Article: The Heart of EPRIS -->
     <div class="cell">
-      <a class="card art" href="https://eprisjournal.com/article/the-heart-of-epris-maria-is-now-a-bachelor-of-architecture" target="_blank" rel="noopener">
+      <a class="card art" href="https://eprisjournal.com/article/the-sacred-spring-a-portrait-of-the-vienna-secession" target="_blank" rel="noopener">
         <span class="arrow">↗</span>
-        <div class="cover"><img src="images/works/article-heart.jpg" alt="The Heart of EPRIS" loading="lazy"></div>
+        <div class="cover"><img src="images/works/article-secession.jpg" alt="The Sacred Spring: A Portrait of the Vienna Secession" loading="lazy"></div>
         <div class="body">
-          <div class="kicker" data-i18n="artK2">Редакційна колонка · EPRIS Journal</div>
-          <h3>The Heart of EPRIS: Maria Is Now a Bachelor of Architecture</h3>
-          <div class="row"><span data-i18n="artM2">Архітектура · липень 2026</span><span class="go" data-i18n="read2">Читати ↗</span></div>
+          <div class="kicker" data-i18n="artK2">Есей · EPRIS Journal</div>
+          <h3>The Sacred Spring: A Portrait of the Vienna Secession</h3>
+          <div class="row"><span data-i18n="artM2">Відень · сецесія · 1897</span><span class="go" data-i18n="read2">Читати ↗</span></div>
         </div>
       </a>
     </div>
@@ -441,8 +441,8 @@ var EN = {
   memD: "French associations for the preservation and promotion of cultural heritage.",
   artK1: "Essay · EPRIS Journal",
   artM1: "Restoration · heritage · urban memory",
-  artK2: "Editorial · EPRIS Journal",
-  artM2: "Architecture · July 2026",
+  artK2: "Essay · EPRIS Journal",
+  artM2: "Vienna · Secession · 1897",
   read: "Read ↗", read2: "Read ↗",
   selected: "Digital products",
   armbankD: "Banking and messaging in one system: encrypted conversations, calls, statements, admin panel",
@@ -489,7 +489,7 @@ var WORDS = {
 
 var SCHOLAR = null;
 
-function lang(){ return document.documentElement.lang === 'en' ? 'en' : 'uk'; }
+function lang(){ return document.documentElement.lang.toLowerCase() === 'en' ? 'en' : 'uk'; }
 
 function renderLive(){
   if (!SCHOLAR) return;
@@ -523,7 +523,12 @@ function renderBars(){
   }).join('');
 }
 
-function setLang(l){
+// The previous version of this site stored other values (e.g. "ua") under the
+// same key, so anything that is not exactly "en" falls back to Ukrainian.
+function normLang(l){ return String(l).toLowerCase() === 'en' ? 'en' : 'uk'; }
+
+function setLang(raw){
+  var l = normLang(raw);
   var dict = l === 'en' ? EN : UK;
   document.querySelectorAll('[data-i18n]').forEach(function(el){
     var v = dict[el.dataset.i18n];
@@ -542,7 +547,10 @@ function setLang(l){
 
 var saved = null;
 try { saved = localStorage.getItem('munister-lang'); } catch(e){}
-if (!saved) saved = (navigator.language || '').toLowerCase().indexOf('uk') === 0 ? 'uk' : 'en';
+if (saved !== 'uk' && saved !== 'en') {
+  var nav = (navigator.language || '').toLowerCase();
+  saved = (nav.indexOf('uk') === 0 || nav.indexOf('ru') === 0) ? 'uk' : 'en';
+}
 setLang(saved);
 
 document.getElementById('langBtn').addEventListener('click', function(){
