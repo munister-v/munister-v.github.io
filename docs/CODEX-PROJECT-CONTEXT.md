@@ -25,8 +25,8 @@
 | CV | `https://munister.com.ua/cv.html` |
 | **Army Bank — маркетинговий лендінг (UK)** | `https://munister.com.ua/army-bank/` |
 | Якір «Можливості» / продукт | `https://munister.com.ua/army-bank/#products` |
-| **Army Bank — PWA / застосунок (Render)** | `https://army-bank.onrender.com/dashboard` |
-| API (базовий шлях) | `https://army-bank.onrender.com/api` |
+| **Army Bank — PWA / застосунок (Render)** | `https://bank.munister.com.ua/dashboard` |
+| API (базовий шлях) | `https://bank.munister.com.ua/api` |
 | Army Admin (статичний SPA у цьому ж репо) | `https://munister.com.ua/army-admin/` |
 | Редірект `/bank/` → застосунок | `https://munister.com.ua/bank/` → має вести на live app (див. `bank/index.html`) |
 
@@ -60,7 +60,7 @@
 
 ## 4. Правила для Army Bank (лендінг)
 
-- Кнопки типу **«Відкрити додаток»**, **live demo**, **«Відкрити платформу»** у HTML мають `href="https://army-bank.onrender.com/dashboard"`.
+- Кнопки типу **«Відкрити додаток»**, **live demo**, **«Відкрити платформу»** у HTML мають `href="https://bank.munister.com.ua/dashboard"`.
 - У `army-bank/app.js`: на хості `*.onrender.com` (і localhost) ці посилання переписуються на **відносний** `/dashboard` (без `target="_blank"`).
 - Секція «Можливості» має **`id="products"`** (не `features`) — для посилань виду `/army-bank/#products`.
 - Версіонування кешу: у `army-bank/index.html` параметри `?v=…` для `styles.css` та `app.js` — при змінах бажано інкрементувати.
@@ -105,7 +105,7 @@ git push origin main
 
 1. Репо: `munister-v/munister-v.github.io`, гілка `main`.
 2. Лендінг Army Bank: `army-bank/index.html`, якір `#products`.
-3. Live app: `https://army-bank.onrender.com/dashboard`, API: `…/api`.
+3. Live app: `https://bank.munister.com.ua/dashboard`, API: `…/api`.
 4. Після змін — `git push`; чекати GitHub Pages; при потребі підняти `?v=` у лендінгу.
 
 ---

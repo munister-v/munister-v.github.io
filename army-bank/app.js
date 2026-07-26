@@ -8,7 +8,7 @@
 
   /* На Render / localhost — «Відкрити додаток» веде на цей же хост /dashboard */
   if (/onrender\.com$/i.test(location.hostname) || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-    document.querySelectorAll('a[href="https://army-bank.onrender.com/dashboard"]').forEach(function (a) {
+    document.querySelectorAll('a[href="https://bank.munister.com.ua/dashboard"]').forEach(function (a) {
       a.setAttribute('href', '/dashboard');
       a.removeAttribute('target');
       a.removeAttribute('rel');
@@ -174,7 +174,7 @@
   // Silently wake up the Render backend when the landing page loads.
   // By the time the visitor clicks "Open platform" (~20-40s later), server is ready.
   setTimeout(function () {
-    fetch('https://army-bank.onrender.com/api/health', {
+    fetch('https://bank.munister.com.ua/api/health', {
       method: 'GET',
       mode: 'no-cors',
       cache: 'no-store'
