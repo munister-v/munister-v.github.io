@@ -152,10 +152,28 @@ a.pub:hover .doi{color:var(--fg)}
 .foot a:hover{color:var(--fg)}
 
 @media (max-width:820px){
-  .wrap{grid-template-columns:1fr;gap:34px;padding:32px 18px 60px}
-  .side{position:static}
-  .name{font-size:34px}
+  .wrap{grid-template-columns:1fr;gap:30px;padding:28px 18px 56px}
   .grid{column-count:1}
+
+  /* portrait beside the name, everything else full width */
+  .side{
+    position:static;
+    display:grid;
+    grid-template-columns:auto 1fr;
+    grid-template-areas:"ava name" "ava role" "bio bio" "links links" "foot foot";
+    column-gap:18px;
+  }
+  .avatar{grid-area:ava;width:96px;height:96px;align-self:center}
+  .name{grid-area:name;align-self:end;margin:0;font-size:29px;line-height:1.08}
+  .role{grid-area:role;align-self:start;margin-top:7px;font-size:12px}
+  .bio{grid-area:bio;max-width:none;margin-top:20px;font-size:16.5px}
+  .side-links{grid-area:links;margin-top:18px}
+  .side-foot{grid-area:foot;margin-top:18px}
+}
+
+@media (max-width:380px){
+  .side{grid-template-columns:1fr;grid-template-areas:"ava" "name" "role" "bio" "links" "foot"}
+  .name{margin-top:18px;font-size:31px}
 }
 </style>
 </head>
@@ -166,8 +184,8 @@ a.pub:hover .doi{color:var(--fg)}
   <aside class="side">
     <img class="avatar" src="images/munister-2026.jpg" alt="Вʼячеслав Муністер">
     <h1 class="name" data-i18n="name">Вʼячеслав<br>Муністер</h1>
-    <p class="role" data-i18n="role">Дослідник · розробник</p>
-    <p class="bio" data-i18n="bio">Промисловий IoT, edge- і fog-обчислення, нейро-нечітке керування. <b><span data-live="works">37</span> праць</b>, <b><span data-live="citations">599</span> цитувань</b>, h-index <b><span data-live="hIndex">14</span></b>. Член асоціацій спадщини <b>En Quête de Patrimoine</b> та <b>Histoire dʼen Parler</b>, пишу для EPRIS Journal. Паралельно проєктую цифрові продукти: CTO у <a href="https://teached.tech/" target="_blank" rel="noopener">TeachEd</a>, засновник <a href="https://agency.munister.com.ua" target="_blank" rel="noopener">Munister Agency</a>.</p>
+    <p class="role" data-i18n="role">Дослідник · CTO · автор</p>
+    <p class="bio" data-i18n="bio">Досліджую промисловий IoT, edge-обчислення та нейро-нечітке керування — <b><span data-live="works">37</span> праць</b> і <b><span data-live="citations">599</span> цитувань</b>, h-index <b><span data-live="hIndex">14</span></b>. Член асоціацій спадщини <b>En Quête de Patrimoine</b> і <b>Histoire dʼen Parler</b>, дописувач EPRIS Journal. Те саме мислення переношу в цифрові продукти: CTO у <a href="https://teached.tech/" target="_blank" rel="noopener">TeachEd</a>, засновник <a href="https://agency.munister.com.ua" target="_blank" rel="noopener">Munister Agency</a>.</p>
     <div class="side-links">
       <button class="chip lang" id="langBtn" type="button">EN</button>
       <a class="chip" href="cv-ua.html" data-i18n="cv">Резюме</a>
@@ -217,7 +235,7 @@ a.pub:hover .doi{color:var(--fg)}
           <li><span>✓</span>En Quête de Patrimoine</li>
           <li><span>✓</span>Histoire dʼen Parler</li>
         </ul>
-        <p data-i18n="memD">Французькі асоціації збереження та популяризації культурної спадщини.</p>
+        <p data-i18n="memD">Французькі асоціації, що досліджують і популяризують культурну спадщину.</p>
       </div>
     </div>
 
@@ -411,7 +429,7 @@ a.pub:hover .doi{color:var(--fg)}
       <a class="card plain" href="mailto:munister@outlook.com" style="background:#0b0b0c;color:#fff">
         <div class="k" style="color:rgba(255,255,255,.55)" data-i18n="ctK">Контакт</div>
         <h3>munister@outlook.com</h3>
-        <p style="color:rgba(255,255,255,.6)" data-i18n="ctD">Дослідницька співпраця, рецензування, продуктова розробка</p>
+        <p style="color:rgba(255,255,255,.6)" data-i18n="ctD">Відкритий до наукової співпраці, рецензування та продуктових проєктів</p>
       </a>
     </div>
 
@@ -428,8 +446,8 @@ document.getElementById('y').textContent = new Date().getFullYear();
 
 var EN = {
   name: "Viacheslav<br>Munister",
-  role: "Researcher · developer",
-  bio: 'Industrial IoT, edge and fog computing, neuro-fuzzy control. <b><span data-live="works">37</span> papers</b>, <b><span data-live="citations">599</span> citations</b>, h-index <b><span data-live="hIndex">14</span></b>. Member of the heritage associations <b>En Quête de Patrimoine</b> and <b>Histoire dʼen Parler</b>, writing for EPRIS Journal. In parallel I design digital products: CTO at <a href="https://teached.tech/" target="_blank" rel="noopener">TeachEd</a>, founder of <a href="https://agency.munister.com.ua" target="_blank" rel="noopener">Munister Agency</a>.',
+  role: "Researcher · CTO · writer",
+  bio: 'I study industrial IoT, edge computing and neuro-fuzzy control — <b><span data-live="works">37</span> papers</b> and <b><span data-live="citations">599</span> citations</b>, h-index <b><span data-live="hIndex">14</span></b>. Member of the heritage associations <b>En Quête de Patrimoine</b> and <b>Histoire dʼen Parler</b>, contributing editor at EPRIS Journal. The same thinking goes into digital products: CTO at <a href="https://teached.tech/" target="_blank" rel="noopener">TeachEd</a>, founder of <a href="https://agency.munister.com.ua" target="_blank" rel="noopener">Munister Agency</a>.',
   cv: "CV", cv2: "CV", email: "Email",
   loc: "Kyiv region · Ukraine",
   resK: "Research",
@@ -438,7 +456,7 @@ var EN = {
   nCit: "citations", nH: "h-index", nI10: "i10-index",
   openProfile: "Profile", worksWord: "papers",
   memK: "Memberships",
-  memD: "French associations for the preservation and promotion of cultural heritage.",
+  memD: "French associations that research and champion cultural heritage.",
   artK1: "Essay · EPRIS Journal",
   artM1: "Restoration · heritage · urban memory",
   artK2: "Essay · EPRIS Journal",
@@ -464,7 +482,7 @@ var EN = {
   expD: "Technology direction at TeachEd since Oct 2025. Editorial platform of EPRIS Journal since Jul 2025. Process analysis and ERP design at ITS LLC since Apr 2026.",
   tgSA: "Systems analysis", tgArch: "Systems architecture", tgML: "Machine learning",
   ctK: "Contact",
-  ctD: "Research collaboration, peer review, product development",
+  ctD: "Open to research collaboration, peer review and product work",
   footName: "Viacheslav Munister"
 };
 
