@@ -62,11 +62,13 @@ a.card:hover{transform:translateY(-3px);box-shadow:0 14px 34px -18px rgba(0,0,0,
 a.card:hover .arrow{opacity:1;transform:none}
 
 /* project visual */
-.shot{position:relative;padding:22px 22px 0;aspect-ratio:16/11;display:flex;align-items:flex-end;overflow:hidden}
+.shot{position:relative;padding:22px 22px 0;aspect-ratio:16/13;display:flex;flex-direction:column;overflow:hidden}
 .shot.tall{aspect-ratio:4/5}
 .shot.wide{aspect-ratio:16/9}
-.shot h3{font-size:21px;line-height:1.15;font-weight:600;letter-spacing:-.02em;position:absolute;top:22px;left:22px;right:60px;z-index:2}
-.shot p{position:absolute;top:22px;left:22px;right:24px;margin-top:52px;font-size:13px;opacity:.72;z-index:2;max-width:88%}
+.shot h3{font-size:21px;line-height:1.15;font-weight:600;letter-spacing:-.02em;padding-right:38px;z-index:2}
+.shot p{margin-top:8px;font-size:13px;opacity:.72;z-index:2}
+.shot .frame{margin-top:18px}
+.shot .phone,.shot .mock{margin-top:auto}
 .on-dark{color:#fff}
 .on-dark p{opacity:.66}
 
@@ -82,6 +84,12 @@ a.card:hover .arrow{opacity:1;transform:none}
 .mock .rows span.w1{width:70%}.mock .rows span.w2{width:45%}.mock .rows span.w3{width:88%}
 .mock .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
 .mock .tiles i{display:block;height:34px;border-radius:7px;background:#eeeef3}
+
+/* real screenshot in a browser frame */
+.frame{width:100%;border-radius:12px 12px 0 0;overflow:hidden;background:#fff;box-shadow:0 -12px 36px -14px rgba(0,0,0,.5);position:relative;z-index:1}
+.frame .chrome{display:flex;gap:5px;padding:8px 10px;background:#f1f1f5}
+.frame .chrome i{width:8px;height:8px;border-radius:50%;background:#d8d8e0;display:block}
+.frame img{width:100%;display:block}
 
 /* phone mock */
 .phone{width:150px;margin:0 auto;border-radius:20px 20px 0 0;background:#fff;padding:9px;box-shadow:0 -10px 34px -12px rgba(0,0,0,.5);position:relative;z-index:1}
@@ -106,7 +114,7 @@ a.card:hover .arrow{opacity:1;transform:none}
 .tags span{font-size:11.5px;padding:5px 9px;border-radius:999px;background:#fff;color:#4b5563;border:1px solid var(--line)}
 
 /* label pill card */
-.label-card{aspect-ratio:16/9;display:grid;place-items:center;background:var(--card)}
+.label-card{aspect-ratio:16/6;display:grid;place-items:center;background:var(--card)}
 .label-card b{font-size:13px;font-weight:500;background:#fff;border-radius:999px;padding:9px 16px;box-shadow:0 2px 10px -4px rgba(0,0,0,.2)}
 
 /* social card */
@@ -118,6 +126,7 @@ a.card:hover .arrow{opacity:1;transform:none}
 .social .hd{font-size:12.5px;color:var(--muted)}
 .social .thumbs{margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .social .thumbs i{display:block;aspect-ratio:1;border-radius:9px;background:#f0f0f5}
+.social .thumbs img{width:100%;aspect-ratio:1;object-fit:cover;object-position:top left;border-radius:9px}
 
 /* stat card */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
@@ -168,7 +177,7 @@ a.card:hover .arrow{opacity:1;transform:none}
     <div class="cell">
       <a class="card" href="https://bank.munister.com.ua" target="_blank" rel="noopener">
         <span class="arrow">↗</span>
-        <div class="shot tall on-dark" style="background:linear-gradient(160deg,#1e3a8a,#0b1220 70%)">
+        <div class="shot on-dark" style="background:linear-gradient(160deg,#1e3a8a,#0b1220 70%)">
           <h3>ARM Bank</h3>
           <p data-i18n="armbankD">Цифровий банкінг і зашифрований месенджер як одна система</p>
           <div class="phone">
@@ -193,11 +202,7 @@ a.card:hover .arrow{opacity:1;transform:none}
         <div class="shot on-dark" style="background:linear-gradient(150deg,#2b2118,#0d0b09 75%)">
           <h3>ARM OS</h3>
           <p data-i18n="armosD">Фінансове десктоп-середовище в одному HTML-файлі</p>
-          <div class="mock">
-            <div class="bar"><i></i><i></i><i></i></div>
-            <div class="rows"><span class="w1"></span><span class="w3"></span><span class="w2"></span></div>
-            <div class="tiles"><i></i><i></i><i></i></div>
-          </div>
+          <div class="frame"><span class="chrome"><i></i><i></i><i></i></span><img src="images/works/armos.jpg" alt="ARM OS" loading="lazy"></div>
         </div>
         <div class="meta"><span class="t">ARM OS</span><span class="s" data-i18n="armosS">Vanilla JS · менеджер вікон</span></div>
       </a>
@@ -219,7 +224,11 @@ a.card:hover .arrow{opacity:1;transform:none}
         </div>
         <div class="nm">GitHub</div>
         <div class="hd" data-i18n="ghH">@munister-v · 29 публічних репозиторіїв</div>
-        <div class="thumbs"><i></i><i></i><i></i></div>
+        <div class="thumbs">
+          <img src="images/works/agency.jpg" alt="" loading="lazy">
+          <img src="images/works/mania.jpg" alt="" loading="lazy">
+          <img src="images/works/blueferret.jpg" alt="" loading="lazy">
+        </div>
       </a>
     </div>
 
@@ -227,9 +236,10 @@ a.card:hover .arrow{opacity:1;transform:none}
     <div class="cell">
       <a class="card" href="https://eprisjournal.com/" target="_blank" rel="noopener">
         <span class="arrow">↗</span>
-        <div class="shot wide on-dark" style="background:linear-gradient(140deg,#3f3a52,#14121c 75%)">
+        <div class="shot on-dark" style="background:linear-gradient(140deg,#3f3a52,#14121c 75%)">
           <h3>EPRIS Journal</h3>
           <p data-i18n="eprisD">Мультимовний lifestyle-журнал: редакційна платформа, AI-інструменти, design shop</p>
+          <div class="frame"><span class="chrome"><i></i><i></i><i></i></span><img src="images/works/epris.jpg" alt="EPRIS Journal" loading="lazy"></div>
         </div>
         <div class="meta"><span class="t">eprisjournal.com</span><span class="s">React · Vite · i18n</span></div>
       </a>
@@ -242,11 +252,7 @@ a.card:hover .arrow{opacity:1;transform:none}
         <div class="shot" style="background:linear-gradient(150deg,#e8ffd6,#c9f39a 80%)">
           <h3>TeachEd</h3>
           <p data-i18n="teachedD">Інструменти для викладачів англійської — 51+ інструмент і AI-генерація уроків</p>
-          <div class="mock">
-            <div class="bar"><i></i><i></i><i></i></div>
-            <div class="tiles"><i></i><i></i><i></i></div>
-            <div class="rows" style="margin-top:8px"><span class="w2"></span></div>
-          </div>
+          <div class="frame"><span class="chrome"><i></i><i></i><i></i></span><img src="images/works/teached.jpg" alt="TeachEd" loading="lazy"></div>
         </div>
         <div class="meta"><span class="t">teached.tech</span><span class="s" data-i18n="teachedS">CTO · продукт і архітектура</span></div>
       </a>
@@ -256,15 +262,10 @@ a.card:hover .arrow{opacity:1;transform:none}
     <div class="cell">
       <a class="card" href="https://maniagroup.munister.com.ua" target="_blank" rel="noopener">
         <span class="arrow">↗</span>
-        <div class="shot tall on-dark" style="background:linear-gradient(160deg,#4a4a4a,#101010 72%)">
+        <div class="shot on-dark" style="background:linear-gradient(160deg,#4a4a4a,#101010 72%)">
           <h3>Mania Group</h3>
           <p data-i18n="maniaD">Магазин брендового одягу з власною ERP: матриця розмірів, розумний імпорт XLS, склад</p>
-          <div class="mock">
-            <div class="bar"><i></i><i></i><i></i></div>
-            <div class="tiles"><i></i><i></i><i></i></div>
-            <div class="tiles"><i></i><i></i><i></i></div>
-            <div class="rows" style="margin-top:8px"><span class="w1"></span><span class="w2"></span></div>
-          </div>
+          <div class="frame"><span class="chrome"><i></i><i></i><i></i></span><img src="images/works/mania.jpg" alt="Mania Group" loading="lazy"></div>
         </div>
         <div class="meta"><span class="t">Mania Group</span><span class="s">Next.js · TypeScript · PostgreSQL</span></div>
       </a>
@@ -283,9 +284,10 @@ a.card:hover .arrow{opacity:1;transform:none}
     <div class="cell">
       <a class="card" href="https://agency.munister.com.ua" target="_blank" rel="noopener">
         <span class="arrow">↗</span>
-        <div class="shot wide" style="background:linear-gradient(140deg,#eef2ff,#dbe4ff 80%)">
+        <div class="shot" style="background:linear-gradient(140deg,#eef2ff,#dbe4ff 80%)">
           <h3>Munister Agency</h3>
           <p data-i18n="agencyD">Студія розробки — портфоліо з 10 реалізованих проєктів, uk / en / de / pl</p>
+          <div class="frame"><span class="chrome"><i></i><i></i><i></i></span><img src="images/works/agency.jpg" alt="Munister Agency" loading="lazy"></div>
         </div>
         <div class="meta"><span class="t">agency.munister.com.ua</span><span class="s" data-i18n="agencyS">Студія</span></div>
       </a>
@@ -298,6 +300,7 @@ a.card:hover .arrow{opacity:1;transform:none}
         <div class="shot on-dark" style="background:linear-gradient(150deg,#1b3b6f,#08111f 75%)">
           <h3>Blue Ferret</h3>
           <p data-i18n="bfD">Видавництво настільних ігор — сайт і власна CMS на Node + SQLite з автобекапом</p>
+          <div class="frame"><span class="chrome"><i></i><i></i><i></i></span><img src="images/works/blueferret.jpg" alt="Blue Ferret" loading="lazy"></div>
         </div>
         <div class="meta"><span class="t">blueferret.com.ua</span><span class="s">Node · SQLite CMS</span></div>
       </a>
@@ -307,7 +310,7 @@ a.card:hover .arrow{opacity:1;transform:none}
     <div class="cell">
       <a class="card" href="italy/">
         <span class="arrow">↗</span>
-        <div class="shot tall on-dark" style="background:#111 url('images/case-architecture.jpg') center/cover">
+        <div class="shot tall on-dark" style="background:linear-gradient(180deg,rgba(10,8,6,.72),rgba(10,8,6,.25) 55%,rgba(10,8,6,.55)),#111 url('images/works/italy.jpg') center/cover">
           <h3 data-i18n="italyT">Italy Chapter</h3>
           <p data-i18n="italyD">Авторське візуальне дослідження: архітектура, матерія та історична пам'ять</p>
         </div>
@@ -319,9 +322,10 @@ a.card:hover .arrow{opacity:1;transform:none}
     <div class="cell">
       <a class="card" href="https://poruch.munister.com.ua" target="_blank" rel="noopener">
         <span class="arrow">↗</span>
-        <div class="shot wide" style="background:linear-gradient(140deg,#fff1e6,#ffd9c0 80%)">
+        <div class="shot" style="background:linear-gradient(140deg,#fff1e6,#ffd9c0 80%)">
           <h3>Poruch</h3>
           <p data-i18n="poruchD">Сервіс догляду — лендинг і живий кабінет на Node</p>
+          <div class="frame"><span class="chrome"><i></i><i></i><i></i></span><img src="images/works/poruch.jpg" alt="Poruch" loading="lazy"></div>
         </div>
         <div class="meta"><span class="t">Poruch</span><span class="s">Node · Docker</span></div>
       </a>
@@ -334,6 +338,7 @@ a.card:hover .arrow{opacity:1;transform:none}
         <div class="shot on-dark" style="background:linear-gradient(150deg,#2a1f2e,#0c0910 75%)">
           <h3>Radio Vinnipeg</h3>
           <p data-i18n="radioD">Радіо на Flask + React із прямим ефіром 1→N через WebRTC</p>
+          <div class="frame"><span class="chrome"><i></i><i></i><i></i></span><img src="images/works/radio.jpg" alt="Radio Vinnipeg" loading="lazy"></div>
         </div>
         <div class="meta"><span class="t">radio.munister.com.ua</span><span class="s">WebRTC · Flask</span></div>
       </a>
@@ -343,9 +348,10 @@ a.card:hover .arrow{opacity:1;transform:none}
     <div class="cell">
       <a class="card" href="https://ampublishing.org" target="_blank" rel="noopener">
         <span class="arrow">↗</span>
-        <div class="shot wide" style="background:linear-gradient(140deg,#f6f1e7,#e4d9c3 80%)">
+        <div class="shot" style="background:linear-gradient(140deg,#f6f1e7,#e4d9c3 80%)">
           <h3>AM Publishing</h3>
           <p data-i18n="ampubD">Видавництво — сайт і радіосервіс із живим ефіром</p>
+          <div class="frame"><span class="chrome"><i></i><i></i><i></i></span><img src="images/works/ampub.jpg" alt="AM Publishing" loading="lazy"></div>
         </div>
         <div class="meta"><span class="t">ampublishing.org</span><span class="s" data-i18n="ampubS">React · радіо на Flask</span></div>
       </a>
