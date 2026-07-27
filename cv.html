@@ -98,7 +98,7 @@ a{color:inherit;text-decoration:none}
 .pub p{margin-top:11px;font-size:13.5px;line-height:1.5}
 .pub p em{font-style:italic}
 
-/* education */
+/* languages */
 .education{margin-top:18px;display:grid;grid-template-columns:140px 1fr;gap:10px 16px;font-size:13.5px}
 .education .label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 
@@ -113,28 +113,75 @@ footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);display
   .education{grid-template-columns:1fr;gap:2px 0}
   footer{flex-direction:column;gap:6px}
 }
+
+/*
+  Print gets its own, much plainer layout. The screen version's rounded
+  cards and dark header read as "app", not "document" — and because a
+  browser can only ever break a page between block boxes, a full-bleed
+  card that doesn't fit the remaining space on a sheet jumps whole to
+  the next one, leaving the rest of the previous sheet blank. Six cards
+  doing that in a row is how a one-page CV printed as four. Print styles
+  below flatten every card to plain flow (no forced break-inside on
+  section containers, no backgrounds) so the browser can break wherever
+  it actually needs to, and the type is tightened so the whole thing
+  fits on two sheets like an ordinary resume.
+*/
 @media print{
-  @page{size:A4;margin:14mm 15mm}
-  body{background:#fff}
-  .wrap{max-width:100%;padding:0}
+  @page{size:A4;margin:15mm 17mm}
+  html,body{background:#fff}
+  .wrap{max-width:100%;padding:0;font-size:13px}
   .toolbar{display:none}
+
   .head{
-    background:#0b0b0c!important;
-    -webkit-print-color-adjust:exact;
-    print-color-adjust:exact;
-    color-adjust:exact;
-    padding:22px 24px;
+    background:#fff!important;color:#0b0b0c!important;
+    padding:0 0 14px;margin-bottom:14px;border-radius:0;
+    border-bottom:2px solid #0b0b0c;
   }
-  .head h1,.head p,.head .eyebrow{color:#fff!important}
-  .contact a{background:rgba(255,255,255,.15)!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .section,.job,.project,.capability,.pub{break-inside:avoid}
+  .head .eyebrow{color:#6b7280!important}
+  .head h1{font-size:25px}
+  .head p{color:#3a3d42!important;font-size:11.5px;max-width:100%}
+  .contact{margin-top:10px;gap:4px 14px}
+  .contact a{
+    background:transparent!important;color:#0b0b0c!important;
+    padding:0;border-radius:0;font-size:10.5px;
+  }
+
   .section{
-    background:#fafafa!important;
-    -webkit-print-color-adjust:exact;
-    print-color-adjust:exact;
-    padding:16px 20px;
-    margin-top:10px;
+    background:transparent!important;border:0;border-radius:0;
+    padding:12px 0;margin-top:0;
+    border-top:1px solid #e2e2e6;
+    break-before:auto;break-inside:auto;
   }
+  .section.plain{padding:12px 0;border-top:0}
+  .section-title{font-size:9.5px}
+  .summary{font-size:12.5px}
+
+  .experience{gap:12px}
+  .job{break-inside:avoid}
+  .job h3{font-size:12.5px}
+  .job .date,.job .org{font-size:10.5px}
+  .job ul{padding-left:15px;gap:3px}
+  .job li{font-size:11px;line-height:1.4}
+
+  .projects,.two-col{gap:8px}
+  .project,.capability{
+    break-inside:avoid;background:transparent!important;border:0!important;padding:0;
+  }
+  .project h3,.capability h3{font-size:12px}
+  .project p,.capability p,.project .meta{font-size:10.5px}
+
+  .pubs{gap:8px}
+  .pub{
+    break-inside:avoid;background:transparent!important;border:0!important;
+    padding:0 0 8px;border-bottom:1px solid #ececef;
+  }
+  .pub .jrn{background:transparent!important;color:#3a3f52!important;padding:0;font-size:9.5px}
+  .pub p{font-size:11px}
+
+  .education{font-size:11px;gap:6px 16px}
+  .education .label{font-size:9.5px}
+
+  footer{margin-top:14px;padding-top:10px;font-size:9.5px}
 }
 </style>
 </head>
@@ -155,7 +202,6 @@ footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);display
       <a href="https://munister.com.ua">Portfolio · munister.com.ua</a>
       <a href="https://agency.munister.com.ua">Agency · agency.munister.com.ua</a>
       <a href="https://scholar.google.com/citations?user=kdqMqoQAAAAJ">Google Scholar profile</a>
-      <span>Kyiv region, Ukraine</span>
     </div>
   </header>
 
@@ -168,7 +214,7 @@ footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);display
     <div class="section-title">Selected Experience</div>
     <div class="experience">
       <article class="job">
-        <div class="job-head"><h3>Founder and Product Lead</h3><div class="date">2024 — Present</div></div>
+        <div class="job-head"><h3>Founder and Product Lead</h3><div class="date">2024 – Present</div></div>
         <div class="org"><a href="https://agency.munister.com.ua">Munister Agency</a> / Independent digital product studio</div>
         <ul>
           <li>Lead discovery, product strategy, information architecture, UX direction and production delivery for client and in-house products.</li>
@@ -177,7 +223,7 @@ footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);display
         </ul>
       </article>
       <article class="job">
-        <div class="job-head"><h3>Chief Technology Officer</h3><div class="date">Oct 2025 — Present</div></div>
+        <div class="job-head"><h3>Chief Technology Officer</h3><div class="date">Oct 2025 – Present</div></div>
         <div class="org"><a href="https://teached.tech">TeachED</a> / Workspace for language teachers</div>
         <ul>
           <li>Own product and technology direction for a teaching workspace spanning lesson boards, classroom tools, content generation and learning workflows.</li>
@@ -186,7 +232,7 @@ footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);display
         </ul>
       </article>
       <article class="job">
-        <div class="job-head"><h3>Enterprise Systems Automation Specialist</h3><div class="date">Apr 2026 — Present</div></div>
+        <div class="job-head"><h3>Enterprise Systems Automation Specialist</h3><div class="date">Apr 2026 – Present</div></div>
         <div class="org">LLC Information Technology Solutions / Part-time</div>
         <ul>
           <li>Analyse requirements and business processes for ERP and operational automation initiatives.</li>
@@ -242,10 +288,9 @@ footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);display
   </section>
 
   <section class="section">
-    <div class="section-title">Education and Languages</div>
+    <div class="section-title">Languages &amp; Availability</div>
     <div class="education">
-      <div class="label">Education</div><div>Computer Science / Information Technology, State Tax University, Kyiv region</div>
-      <div class="label">Languages</div><div>Ukrainian — native; English — advanced; Polish — intermediate</div>
+      <div class="label">Languages</div><div>Ukrainian – native; English – advanced; Polish – intermediate</div>
       <div class="label">Working mode</div><div>Product leadership, consulting, research collaboration and selected digital projects</div>
     </div>
   </section>
