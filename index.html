@@ -134,19 +134,18 @@
 
 <style>
 /* ─────────────────────────────────────────────
-   EPRIS design code — same tokens as eprisjournal.com
-   paper #fff · ink #111 · gold #c9a690 · hairlines only
+   Ink on paper. Journal typography, own furniture:
+   a captioned rectangular portrait and a ruled ledger.
    ───────────────────────────────────────────── */
 :root{
   --c-bg:#ffffff;
   --c-accent:#111111;
-  --c-gold:#c9a690;
-  --c-muted:rgba(17,17,17,.58);
-  --c-faint:rgba(17,17,17,.38);
-  --c-rule:rgba(17,17,17,.14);
-  --c-rule-strong:rgba(17,17,17,.25);
+  --c-gold:#a8734f;
+  --c-muted:rgba(17,17,17,.72);
+  --c-faint:rgba(17,17,17,.52);
+  --c-rule:rgba(17,17,17,.16);
+  --c-rule-strong:rgba(17,17,17,.32);
   --font-display:'Playfair Display', Georgia, serif;
-  --font-title:'Crimson Text', Georgia, serif;
   --font-body:'Crimson Text', Georgia, serif;
   --font-mono:'IBM Plex Mono', ui-monospace, monospace;
   --measure:1180px;
@@ -156,7 +155,6 @@ html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{
   background:var(--c-bg);color:var(--c-accent);
   font-family:var(--font-body);font-size:18px;line-height:1.6;
-  letter-spacing:.005em;
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
   text-rendering:optimizeLegibility;
   overflow-x:hidden;
@@ -165,177 +163,146 @@ a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 h1,h2,h3,h4{text-wrap:balance;font-weight:400}
 p{text-wrap:pretty}
-::selection{background:rgba(201,166,144,.35)}
+::selection{background:rgba(168,115,79,.22)}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(17,17,17,.2);border-radius:10px}
 *{scrollbar-width:thin;scrollbar-color:rgba(17,17,17,.2) transparent}
 
-.mono{font-family:var(--font-mono);font-size:9px;line-height:1.4;letter-spacing:.16em;text-transform:uppercase;color:var(--c-muted)}
+.mono{font-family:var(--font-mono);font-size:10px;line-height:1.5;letter-spacing:.13em;text-transform:uppercase;color:var(--c-muted)}
 .shell{max-width:var(--measure);margin-inline:auto;padding-inline:clamp(20px,4vw,48px)}
 
-/* a hairline that carries a small centred label, the journal's own device */
-.rule-label{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px}
-.rule-label::before,.rule-label::after{content:'';height:1px;background:var(--c-rule)}
-
-/* ── fixed masthead bar ── */
+/* ── fixed bar ── */
 .site-head{
-  position:fixed;inset:0 0 auto 0;z-index:40;height:4rem;
+  position:fixed;inset:0 0 auto 0;z-index:40;height:3.6rem;
   display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;
   padding-inline:clamp(16px,4vw,48px);
-  background:rgba(255,255,255,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  background:rgba(255,255,255,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   border-bottom:1px solid var(--c-rule-strong);
 }
-.site-head nav{grid-column:1;display:flex;gap:22px}
-.site-head nav a{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--c-muted);transition:color .2s}
-.site-head nav a:hover{color:var(--c-accent)}
-.wordmark{grid-column:2;font-family:var(--font-display);font-size:19px;letter-spacing:.28em;text-transform:uppercase;white-space:nowrap}
+.site-head nav{grid-column:1;display:flex;gap:24px}
+.site-head nav a{font-family:var(--font-mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--c-muted);transition:color .2s}
+.site-head nav a:hover{color:var(--c-gold)}
+.wordmark{grid-column:2;font-family:var(--font-display);font-size:18px;letter-spacing:.26em;text-transform:uppercase;white-space:nowrap}
 .head-right{grid-column:3;display:flex;justify-content:flex-end;gap:10px}
-.pill{
-  display:inline-flex;align-items:center;justify-content:center;gap:6px;
-  height:34px;padding:0 16px;border:1px solid var(--c-rule-strong);
-  font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--c-muted);
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;height:34px;padding:0 16px;
+  border:1px solid var(--c-rule-strong);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--c-muted);
   transition:background-color .2s,color .2s,border-color .2s;
 }
-.pill:hover{background:var(--c-accent);color:var(--c-bg);border-color:var(--c-accent)}
-.site-head .pill{height:30px;padding:0 13px}
-.site-main{padding-top:max(6rem,calc(4rem + env(safe-area-inset-top)))}
+.btn:hover{background:var(--c-accent);color:var(--c-bg);border-color:var(--c-accent)}
+.btn--solid{background:var(--c-accent);color:var(--c-bg);border-color:var(--c-accent)}
+.btn--solid:hover{background:transparent;color:var(--c-accent);border-color:var(--c-rule-strong)}
+.site-head .btn{height:29px;padding:0 13px}
+.site-main{padding-top:max(5.6rem,calc(3.6rem + env(safe-area-inset-top)))}
 
-/* ══ frontispiece ══ */
-.front{text-align:center;padding-bottom:clamp(2.5rem,4vw,3.5rem)}
-.front .dateline{margin-bottom:clamp(2rem,4vw,3rem)}
-.portrait{
-  width:170px;height:170px;margin:0 auto;border-radius:50%;object-fit:cover;object-position:50% 24%;
-  border:1px solid var(--c-rule);
-}
-.front .name{
-  margin-top:26px;font-family:var(--font-display);
-  font-size:clamp(40px,7.4vw,86px);line-height:.95;letter-spacing:-.02em;
-}
-.front .name em{font-style:italic;font-weight:400}
-.front .role{margin-top:20px}
-.front .tagline{
-  margin:16px auto 0;max-width:36ch;font-family:var(--font-title);
-  font-size:clamp(19px,2.1vw,23px);line-height:1.45;color:var(--c-muted);
-}
-.front .side-links{margin-top:26px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-
-/* ══ opening statement ══ */
+/* ══ opening: plate on the left, the claim on the right ══ */
 .opening{
-  border-top:1px solid var(--c-accent);border-bottom:1px solid var(--c-rule);
-  padding:clamp(2.2rem,4vw,3.2rem) 0 clamp(2.4rem,4vw,3.4rem);
-  margin-bottom:clamp(3rem,5vw,4.5rem);
+  display:grid;grid-template-columns:280px minmax(0,1fr);gap:clamp(28px,5vw,72px);
+  align-items:start;padding-bottom:clamp(2.4rem,4vw,3.4rem);
+  border-bottom:1px solid var(--c-accent);margin-bottom:clamp(2.6rem,4vw,3.6rem);
 }
-.opening .lede{
-  max-width:20ch;margin:0 auto;text-align:center;
-  font-family:var(--font-display);font-size:clamp(38px,6vw,72px);line-height:1.02;letter-spacing:-.02em;
+.plate img{width:100%;aspect-ratio:4/5;height:auto;object-fit:cover;object-position:50% 22%}
+.plate figcaption{
+  margin-top:10px;padding-top:9px;border-top:1px solid var(--c-rule);
+  display:flex;justify-content:space-between;gap:12px;
 }
-.opening .lede em{font-style:italic}
-.opening .cols{
-  margin-top:clamp(2rem,3.4vw,2.8rem);
-  columns:2;column-gap:clamp(28px,4vw,56px);max-width:760px;margin-inline:auto;
+h1.name{font-family:var(--font-display);font-size:clamp(34px,4.4vw,54px);line-height:1;letter-spacing:-.02em}
+.claim{
+  margin-top:20px;font-family:var(--font-display);
+  font-size:clamp(24px,3.1vw,38px);line-height:1.18;letter-spacing:-.01em;max-width:22ch;
 }
-.opening .cols p{font-size:18px;line-height:1.65;color:rgba(17,17,17,.72)}
-.opening .cols p + p{margin-top:1em}
-.opening .cols p:first-child::first-letter{
-  float:left;font-family:var(--font-display);font-size:3.3em;line-height:.82;
-  padding:.06em .12em 0 0;color:var(--c-accent);
-}
-.tagrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:clamp(1.8rem,3vw,2.4rem)}
-.tagrow span{display:inline-flex;align-items:center;height:34px;padding:0 16px;
-  font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
-  border:1px solid var(--c-rule);color:var(--c-muted)}
+.claim em{font-style:italic}
+.support{margin-top:20px;max-width:52ch;color:var(--c-muted)}
+.facts{margin-top:26px;border-top:1px solid var(--c-rule);display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.facts div{padding:14px 18px 0 0;border-right:1px solid var(--c-rule)}
+.facts div:last-child{border-right:0;padding-right:0}
+.facts b{display:block;margin-top:6px;font-weight:400;font-size:17px}
+.opening .actions{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
 
 /* ══ section headers ══ */
-.sec{margin-bottom:clamp(3.5rem,6vw,6rem)}
+.sec{margin-bottom:clamp(3.2rem,5.5vw,5rem)}
 .sec-head{
   display:flex;align-items:baseline;justify-content:space-between;gap:20px;
-  padding-bottom:.8rem;border-bottom:1px solid var(--c-accent);margin-bottom:clamp(1.8rem,3vw,2.6rem);
+  padding-bottom:.7rem;border-bottom:1px solid var(--c-accent);margin-bottom:clamp(1.6rem,2.6vw,2.2rem);
 }
-.sec-head h2{font-family:var(--font-display);font-size:clamp(28px,3.6vw,44px);line-height:1.05;letter-spacing:-.01em}
-.sec-head h2 em{font-style:italic}
-.sec-num{color:var(--c-gold)}
+.sec-head h2{font-family:var(--font-display);font-size:clamp(24px,2.8vw,34px);line-height:1.08;letter-spacing:-.01em}
 
-/* ══ two editorial notes ══ */
-.notes{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px)}
-.note{border-top:1px solid var(--c-rule);padding-top:1.1rem}
-.note ol{list-style:none;margin-top:16px}
-.note li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--c-rule);
-  font-family:var(--font-title);font-size:22px}
-.note li i{font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;color:var(--c-gold);font-style:normal}
-.note > p:not(.pull){margin-top:18px;color:var(--c-muted);font-size:16.5px}
-.statement p.pull,.note p.pull,.pull{
-  font-family:var(--font-display);font-style:italic;
-  font-size:clamp(23px,2.7vw,32px);line-height:1.26;margin-top:16px;
+/* ══ three featured works ══ */
+.featured{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(22px,3vw,40px)}
+.feat{display:flex;flex-direction:column}
+.feat .shot{aspect-ratio:16/10;overflow:hidden;border:1px solid var(--c-rule);background:#f4f2f0}
+.feat .shot img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.feat:hover .shot img{transform:scale(1.035)}
+.feat h3{font-family:var(--font-display);font-size:26px;line-height:1.12;margin-top:16px;letter-spacing:-.01em}
+.feat .role{margin-top:10px;color:var(--c-gold)}
+.feat p{margin-top:8px;color:var(--c-muted);font-size:16.5px;line-height:1.5;flex:1}
+.feat .meta{display:flex;justify-content:space-between;gap:12px;margin-top:16px;padding-top:11px;border-top:1px solid var(--c-rule)}
+.feat:hover .meta .t{color:var(--c-gold)}
+.feat .meta .t{transition:color .2s}
+
+/* ══ ledger: everything else, as rows ══ */
+.ledger{border-top:1px solid var(--c-rule)}
+.row{
+  display:grid;grid-template-columns:2.2fr 1.5fr 3fr auto;gap:clamp(14px,2.4vw,32px);align-items:baseline;
+  padding:18px 0;border-bottom:1px solid var(--c-rule);transition:padding-left .25s ease;
 }
-.pull + small{display:block;margin-top:16px}
-.pull-mark{width:34px;height:1px;background:var(--c-gold);margin-top:18px}
+.row:hover{padding-left:10px}
+.row .name{font-family:var(--font-display);font-size:22px;line-height:1.15;letter-spacing:-.01em}
+.row .what{color:var(--c-muted);font-size:16.5px;line-height:1.45}
+.row .arrow{color:var(--c-faint);transition:color .2s}
+.row:hover .arrow,.row:hover .role{color:var(--c-gold)}
+.row .role{transition:color .2s}
 
-/* ══ essays ══ */
-.essays{display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,4vw,64px)}
-.essay .cover{aspect-ratio:16/10;overflow:hidden;background:#f2f0ee}
-.essay .cover img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
-.essay:hover .cover img{transform:scale(1.035)}
-.essay .kicker{margin-top:16px}
-.essay h3{font-family:var(--font-display);font-size:clamp(24px,2.7vw,32px);line-height:1.14;margin-top:12px;letter-spacing:-.01em}
-.essay .row{display:flex;justify-content:space-between;gap:14px;margin-top:16px;padding-top:13px;border-top:1px solid var(--c-rule)}
-.essay .go{color:var(--c-accent);transition:color .2s}
-.essay:hover .go{color:var(--c-gold)}
+/* ══ writing ══ */
+.writing{border-top:1px solid var(--c-rule)}
+.writing a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:baseline;
+  padding:16px 0;border-bottom:1px solid var(--c-rule);transition:padding-left .25s ease}
+.writing a:hover{padding-left:10px}
+.writing h3{font-family:var(--font-display);font-size:23px;line-height:1.16;letter-spacing:-.01em}
+.writing .sub{margin-top:6px}
+.writing a:hover .go{color:var(--c-gold)}
 
-/* ══ works index ══ */
-.works{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(26px,3.4vw,48px) clamp(22px,3vw,40px)}
-.work{display:flex;flex-direction:column;border-top:1px solid var(--c-rule);padding-top:.9rem}
-.work .num{color:var(--c-gold);margin-bottom:12px}
-.work .shot{
-  aspect-ratio:16/10;overflow:hidden;background:#f4f2f0;
-  border:1px solid var(--c-rule);padding:0;position:relative;
-}
-.work .shot img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
-.work:hover .shot img{transform:scale(1.035)}
-.work:hover .shot{border-color:var(--c-rule-strong)}
-.work h3{font-family:var(--font-display);font-size:25px;line-height:1.12;margin-top:16px;letter-spacing:-.01em}
-.work p{margin-top:10px;color:var(--c-muted);font-size:16px;line-height:1.5;flex:1}
-.work .meta{display:flex;justify-content:space-between;gap:12px;margin-top:18px;padding-top:12px;border-top:1px solid var(--c-rule)}
-.work .meta .t{transition:color .2s}
-.work:hover .meta .t{color:var(--c-gold)}
-.work.wide{grid-column:span 3;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:clamp(22px,4vw,56px);align-items:center;border-top:1px solid var(--c-accent);padding-top:1.1rem}
-.work.wide .shot{aspect-ratio:21/9}
-.work.wide h3{font-size:clamp(32px,4.2vw,52px);margin-top:14px;line-height:1}
-.work.wide .inner{display:flex;flex-direction:column}
-.work.wide p{font-size:18px;margin-top:14px;flex:0}
-.work.wide .meta{margin-top:26px}
+/* ══ practice note ══ */
+.practice{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px);align-items:start}
+.practice ol{list-style:none;margin-top:14px}
+.practice li{display:flex;gap:14px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--c-rule);font-size:20px}
+.practice li i{font-family:var(--font-mono);font-size:10px;letter-spacing:.13em;color:var(--c-gold);font-style:normal}
+.practice > div > p{margin-top:16px;color:var(--c-muted);font-size:16.5px}
+.practice p.pull,.pull{font-family:var(--font-display);font-style:italic;font-size:clamp(22px,2.5vw,29px);line-height:1.28;margin-top:14px}
+.pull-mark{width:34px;height:1px;background:var(--c-gold);margin-top:16px}
+.pull-mark + small{display:block;margin-top:14px}
 
-/* ══ positions + contact ══ */
-.closing{display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,4vw,64px);align-items:start}
-.closing h3{font-family:var(--font-display);font-size:clamp(24px,2.8vw,32px);line-height:1.14;margin-top:14px;letter-spacing:-.01em}
-.closing p{margin-top:16px;color:var(--c-muted);font-size:17px}
-.closing .tagrow{justify-content:flex-start;margin-top:24px}
-.contact{border:1px solid var(--c-accent);padding:clamp(26px,3.4vw,42px);transition:background-color .3s,color .3s}
-.contact h3{font-family:var(--font-display);font-size:clamp(24px,3vw,36px);word-break:break-word;margin-top:16px}
-.contact:hover{background:var(--c-accent);color:var(--c-bg)}
-.contact:hover .mono,.contact:hover p{color:rgba(255,255,255,.66)}
+/* ══ contact ══ */
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px);align-items:end;
+  padding-top:clamp(1.6rem,2.6vw,2.2rem);border-top:1px solid var(--c-accent)}
+.contact .mail{font-family:var(--font-display);font-size:clamp(26px,3.4vw,42px);line-height:1.05;letter-spacing:-.01em;margin-top:12px;word-break:break-word}
+.contact .mail:hover{color:var(--c-gold)}
+.contact p{margin-top:12px;color:var(--c-muted)}
+.contact .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 
-/* ══ colophon ══ */
-.foot{
-  margin-top:clamp(3rem,5vw,5rem);padding:2.4rem 0 3.4rem;
-  border-top:1px solid var(--c-accent);text-align:center;
-}
-.foot .mark{font-family:var(--font-display);font-size:15px;letter-spacing:.28em;text-transform:uppercase}
-.foot .lines{margin-top:16px;display:flex;justify-content:center;gap:22px;flex-wrap:wrap}
+.foot{margin-top:clamp(2.6rem,4vw,4rem);padding:1.4rem 0 3rem;border-top:1px solid var(--c-rule);
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .foot a:hover{color:var(--c-gold)}
 
 @media (max-width:980px){
-  .works{grid-template-columns:repeat(2,1fr)}
-  .work.wide{grid-column:span 2;grid-template-columns:1fr}
+  .opening{grid-template-columns:220px minmax(0,1fr)}
+  .featured{grid-template-columns:1fr 1fr}
+  .row{grid-template-columns:1.6fr 1.2fr auto;}
+  .row .what{grid-column:1 / -1;margin-top:4px}
 }
 @media (max-width:720px){
   .site-head nav{display:none}
   .wordmark{font-size:16px;letter-spacing:.2em}
-  .portrait{width:132px;height:132px}
-  .opening .cols{columns:1}
-  .notes,.essays,.closing{grid-template-columns:1fr}
-  .works{grid-template-columns:1fr}
-  .work.wide{grid-column:span 1}
+  .opening{grid-template-columns:1fr;gap:24px}
+  .plate img{aspect-ratio:3/2;object-position:50% 20%}
+  .facts{grid-template-columns:1fr}
+  .facts div{border-right:0;border-bottom:1px solid var(--c-rule);padding:12px 0}
+  .facts div:last-child{border-bottom:0}
+  .featured{grid-template-columns:1fr}
+  .practice,.contact{grid-template-columns:1fr}
+  .contact .actions{justify-content:flex-start}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -347,253 +314,197 @@ p{text-wrap:pretty}
 
 <header class="site-head">
   <nav>
-    <a href="#essays">Essays</a>
-    <a href="#works">Works</a>
-    <a href="#positions">Positions</a>
+    <a href="#work">Work</a>
+    <a href="#writing">Writing</a>
+    <a href="#contact">Contact</a>
   </nav>
   <a class="wordmark" href="/">Munister</a>
   <div class="head-right">
-    <a class="pill" href="cv.html" data-i18n="cv">CV</a>
+    <a class="btn" href="cv.html">CV</a>
   </div>
 </header>
 
 <main class="site-main">
 <div class="shell">
 
-  <!-- ══════════ FRONTISPIECE ══════════ -->
-  <section class="front">
-    <div class="dateline rule-label"><span class="mono">Independent practice · Europe / remote · MMXXVI</span></div>
-    <img class="portrait" src="images/munister-2026.jpg" alt="Viacheslav Munister" width="600" height="600" fetchpriority="high" decoding="async">
-    <h1 class="name" data-i18n="name">Viacheslav<br>Munister</h1>
-    <p class="role mono" data-i18n="role">Writer · researcher · digital maker</p>
-    <p class="tagline" data-i18n="bio">I collect traces of places, objects and people, then give them a form that can be entered.</p>
-    <div class="side-links">
-      <a class="pill" href="mailto:munister@outlook.com" data-i18n="email">Email</a>
-      <a class="pill" href="https://agency.munister.com.ua/" target="_blank" rel="noopener">Agency</a>
-    </div>
-  </section>
-
-  <!-- ══════════ OPENING STATEMENT ══════════ -->
+  <!-- ══════════ OPENING ══════════ -->
   <section class="opening">
-    <h2 class="lede" data-i18n="practiceT">Making room for <em>memory</em>.</h2>
-    <div class="cols">
-      <p data-i18n="practiceD">I turn traces of place, material and lived experience into essays, archives, visual atlases and digital instruments that leave space for attention.</p>
-      <p data-i18n="practiceD2">Some of it becomes an essay, some an archive, some a quiet instrument that another person can walk into. The work keeps the same question in every form: what is worth keeping legible.</p>
-    </div>
-    <div class="tagrow">
-      <span data-i18n="practiceM1">Heritage</span><span data-i18n="practiceM2">Digital art</span><span data-i18n="practiceM3">Systems</span>
+    <figure class="plate">
+      <img src="images/munister-2026.jpg" alt="Viacheslav Munister" width="600" height="600" fetchpriority="high" decoding="async">
+      <figcaption class="mono"><span>Viacheslav Munister</span><span>2026</span></figcaption>
+    </figure>
+
+    <div>
+      <p class="mono">Independent practice · Europe / remote</p>
+      <h1 class="name">Viacheslav Munister</h1>
+      <p class="claim">I build editorial platforms, retail systems and teaching tools, and I write about <em>heritage</em>.</p>
+      <p class="support">A small number of things, each run end to end: the software, the editorial system around it, and the writing that comes out of both.</p>
+
+      <div class="facts">
+        <div><span class="mono">Since Oct 2025</span><b>CTO, TeachEd</b></div>
+        <div><span class="mono">Since 2024</span><b>Founder, Munister Agency</b></div>
+        <div><span class="mono">Since Jul 2025</span><b>Editorial platform, EPRIS Journal</b></div>
+      </div>
+
+      <div class="actions">
+        <a class="btn btn--solid" href="mailto:munister@outlook.com">Email me</a>
+        <a class="btn" href="cv.html">Full CV</a>
+        <a class="btn" href="https://agency.munister.com.ua/" target="_blank" rel="noopener">Agency</a>
+      </div>
     </div>
   </section>
 
-  <!-- ══════════ AFFILIATIONS + METHOD ══════════ -->
-  <section class="sec notes">
-    <div class="note">
-      <div class="mono" data-i18n="memK">Staying close</div>
+  <!-- ══════════ THREE FEATURED ══════════ -->
+  <section class="sec" id="work">
+    <div class="sec-head">
+      <h2>Work I run end to end</h2>
+      <span class="mono">Three of nine</span>
+    </div>
+    <div class="featured">
+
+      <a class="feat" href="https://eprisjournal.com/" target="_blank" rel="noopener">
+        <div class="shot"><img src="images/works/epris.jpg" alt="EPRIS Journal" width="1600" height="1000" decoding="async"></div>
+        <h3>EPRIS Journal</h3>
+        <div class="role mono">Editorial platform · design and code</div>
+        <p>An independent journal on design, art and architecture. I built the publishing system behind it: article structures, translation workflow, admin, deployment.</p>
+        <div class="meta mono"><span class="t">eprisjournal.com</span><span>↗</span></div>
+      </a>
+
+      <a class="feat" href="https://teached.tech/" target="_blank" rel="noopener">
+        <div class="shot"><img src="images/works/teached.jpg" alt="TeachEd" width="1600" height="1000" decoding="async"></div>
+        <h3>TeachEd</h3>
+        <div class="role mono">CTO · product and technology</div>
+        <p>A workspace for language teachers with 51 tools: lesson boards, exercise generation, video turned into class material. I own the roadmap, architecture and release pipeline.</p>
+        <div class="meta mono"><span class="t">teached.tech</span><span>↗</span></div>
+      </a>
+
+      <a class="feat" href="italy/">
+        <div class="shot"><img src="images/works/italy.jpg" alt="Italy Chapter" width="1000" height="625" decoding="async"></div>
+        <h3>Italy Chapter</h3>
+        <div class="role mono">Author · research, text, interface</div>
+        <p>The visual code of Italy in proportion, light and material. A bilingual long-read with an atlas, a timeline and side-by-side comparisons, written and built alone.</p>
+        <div class="meta mono"><span class="t">munister.com.ua/italy</span><span>↗</span></div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ══════════ LEDGER ══════════ -->
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Also built</h2>
+      <span class="mono">Six entries</span>
+    </div>
+    <div class="ledger">
+
+      <a class="row" href="https://shop.maniagroup.com.ua/" target="_blank" rel="noopener">
+        <span class="name">Mania Group</span>
+        <span class="role mono">ERP and storefront</span>
+        <span class="what">Size matrices, price-list import, stock accounting and orders for a fashion retailer, on a system built from scratch.</span>
+        <span class="arrow mono">↗</span>
+      </a>
+
+      <a class="row" href="https://eprisjournal.com/showcase/" target="_blank" rel="noopener">
+        <span class="name">EPRIS Showcase</span>
+        <span class="role mono">Editorial index</span>
+        <span class="what">A vitrine of scenography and conceptual art: open call, editorial selection and its own publishing pipeline.</span>
+        <span class="arrow mono">↗</span>
+      </a>
+
+      <a class="row" href="https://agency.munister.com.ua" target="_blank" rel="noopener">
+        <span class="name">Munister Agency</span>
+        <span class="role mono">Founder</span>
+        <span class="what">A studio for digital products, editorial platforms and operational systems. Ten live projects, interface in four languages.</span>
+        <span class="arrow mono">↗</span>
+      </a>
+
+      <a class="row" href="https://ampublishing.org/#de" target="_blank" rel="noopener">
+        <span class="name">AM Publishing</span>
+        <span class="role mono">Platform and radio</span>
+        <span class="what">A publishing house: multilingual catalogue, author pages, book purchase, and a broadcast station of its own.</span>
+        <span class="arrow mono">↗</span>
+      </a>
+
+      <a class="row" href="https://radio.munister.com.ua" target="_blank" rel="noopener">
+        <span class="name">Radio Vinnipeg</span>
+        <span class="role mono">Browser radio</span>
+        <span class="what">Rooms, chat, background playback and live broadcasting from a browser tab to several listeners at once.</span>
+        <span class="arrow mono">↗</span>
+      </a>
+
+      <a class="row" href="os.html">
+        <span class="name">ARM OS</span>
+        <span class="role mono">Interface experiment</span>
+        <span class="what">A financial desktop environment in a single HTML file: window manager, dock, live exchange rates.</span>
+        <span class="arrow mono">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ══════════ WRITING ══════════ -->
+  <section class="sec" id="writing">
+    <div class="sec-head">
+      <h2>Writing</h2>
+      <span class="mono">Published in EPRIS Journal</span>
+    </div>
+    <div class="writing">
+      <a href="https://eprisjournal.com/article/the-threshold-of-time" target="_blank" rel="noopener">
+        <span>
+          <h3>The Threshold of Time</h3>
+          <span class="sub mono">Restoration · heritage · urban memory</span>
+        </span>
+        <span class="go mono">Read ↗</span>
+      </a>
+      <a href="https://eprisjournal.com/article/the-sacred-spring-a-portrait-of-the-vienna-secession" target="_blank" rel="noopener">
+        <span>
+          <h3>The Sacred Spring: A Portrait of the Vienna Secession</h3>
+          <span class="sub mono">Vienna · Secession · 1897</span>
+        </span>
+        <span class="go mono">Read ↗</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ══════════ PRACTICE ══════════ -->
+  <section class="sec practice">
+    <div>
+      <div class="mono">Staying close</div>
       <ol>
         <li><i>01</i>En Quête de Patrimoine</li>
         <li><i>02</i>Histoire dʼen Parler</li>
       </ol>
-      <p data-i18n="memD">Французькі асоціації, що досліджують і популяризують культурну спадщину.</p>
+      <p>French associations researching and keeping cultural heritage close to lived places and public conversation.</p>
     </div>
-    <div class="note">
-      <div class="mono" data-i18n="archiveK">Notes from the archive</div>
-      <p class="pull" data-i18n="archiveD">A good archive does not close the past. It lets a detail catch the light, and gives someone else a way in.</p>
-      <div class="pull-mark"></div>
-      <small class="mono" data-i18n="archiveM">place / object / memory / interface</small>
-    </div>
-  </section>
-
-  <!-- ══════════ ESSAYS ══════════ -->
-  <section class="sec" id="essays">
-    <div class="sec-head">
-      <h2><span class="sec-num">I.</span> Essays</h2>
-      <span class="mono">EPRIS Journal</span>
-    </div>
-    <div class="essays">
-      <a class="essay" href="https://eprisjournal.com/article/the-threshold-of-time" target="_blank" rel="noopener">
-        <div class="cover"><img src="images/works/article-threshold.jpg" alt="The Threshold of Time" width="1000" height="562" decoding="async" loading="lazy"></div>
-        <div class="kicker mono" data-i18n="artK1">Есей · EPRIS Journal</div>
-        <h3>The Threshold of Time</h3>
-        <div class="row mono"><span data-i18n="artM1">Реставрація · спадщина · міська памʼять</span><span class="go" data-i18n="read">Читати ↗</span></div>
-      </a>
-      <a class="essay" href="https://eprisjournal.com/article/the-sacred-spring-a-portrait-of-the-vienna-secession" target="_blank" rel="noopener">
-        <div class="cover"><img src="images/works/article-secession.jpg" alt="The Sacred Spring: A Portrait of the Vienna Secession" width="1000" height="562" decoding="async" loading="lazy"></div>
-        <div class="kicker mono" data-i18n="artK2">Есей · EPRIS Journal</div>
-        <h3>The Sacred Spring: A Portrait of the Vienna Secession</h3>
-        <div class="row mono"><span data-i18n="artM2">Відень · сецесія · 1897</span><span class="go" data-i18n="read2">Читати ↗</span></div>
-      </a>
-    </div>
-  </section>
-
-  <!-- ══════════ WORKS ══════════ -->
-  <section class="sec" id="works">
-    <div class="sec-head">
-      <h2><span class="sec-num">II.</span> <span data-i18n="selected">Selected / collected / built</span></h2>
-      <span class="mono">Nine entries</span>
-    </div>
-    <div class="works">
-
-      <a class="work wide" href="italy/">
-        <div class="shot"><img src="images/works/italy.jpg" alt="Italy Chapter" width="1600" height="686" decoding="async" loading="lazy"></div>
-        <div class="inner">
-          <div class="num mono">01</div>
-          <div class="mono" data-i18n="italyMs">Авторський проєкт</div>
-          <h3 data-i18n="italyT">Italy Chapter</h3>
-          <p data-i18n="italyD">Візуальний код Італії: пропорція, світло, матеріал. Атлас, хронологія та порівняння в двомовному лонгріді</p>
-          <div class="meta mono"><span class="t" data-i18n="italyMt">Візуальне дослідження</span><span>↗</span></div>
-        </div>
-      </a>
-
-      <a class="work" href="https://eprisjournal.com/showcase/" target="_blank" rel="noopener">
-        <div class="num mono">02</div>
-        <div class="shot"><img src="images/works/epris-showcase.jpg" alt="EPRIS Showcase" width="1600" height="1000" decoding="async" loading="lazy"></div>
-        <h3>EPRIS Showcase</h3>
-        <p data-i18n="showcaseD">Вітрина сценографії та концептуального мистецтва: відкритий call, редакційний відбір, власний конвеєр публікації</p>
-        <div class="meta mono"><span class="t">eprisjournal.com/showcase</span><span data-i18n="mIndex">Редакційний індекс</span></div>
-      </a>
-
-      <a class="work" href="https://eprisjournal.com/" target="_blank" rel="noopener">
-        <div class="num mono">03</div>
-        <div class="shot"><img src="images/works/epris.jpg" alt="EPRIS Journal" width="1600" height="1000" decoding="async" loading="lazy"></div>
-        <h3>EPRIS Journal</h3>
-        <p data-i18n="eprisD">Журнал про дизайн, мистецтво й архітектуру: власна редакційна система, переклади, магазин постерів</p>
-        <div class="meta mono"><span class="t">eprisjournal.com</span><span data-i18n="mMedia">Медіа</span></div>
-      </a>
-
-      <a class="work" href="https://teached.tech/" target="_blank" rel="noopener">
-        <div class="num mono">04</div>
-        <div class="shot"><img src="images/works/teached.jpg" alt="TeachEd" width="1600" height="1000" decoding="async" loading="lazy"></div>
-        <h3>TeachEd</h3>
-        <p data-i18n="teachedD">51 інструмент для вчителів англійської: дошки уроків, генерація вправ, відео як завдання</p>
-        <div class="meta mono"><span class="t">teached.tech</span><span data-i18n="mCto">EdTech · CTO</span></div>
-      </a>
-
-      <a class="work" href="https://agency.munister.com.ua" target="_blank" rel="noopener">
-        <div class="num mono">05</div>
-        <div class="shot"><img src="images/works/agency.jpg" alt="Munister Agency" width="1600" height="1000" decoding="async" loading="lazy"></div>
-        <h3>Munister Agency</h3>
-        <p data-i18n="agencyD">Студія повного циклу: веб, ERP, автоматизація. Десять живих проєктів, інтерфейс чотирма мовами</p>
-        <div class="meta mono"><span class="t">agency.munister.com.ua</span><span data-i18n="mFounder">Засновник</span></div>
-      </a>
-
-      <a class="work" href="https://shop.maniagroup.com.ua/" target="_blank" rel="noopener">
-        <div class="num mono">06</div>
-        <div class="shot"><img src="images/works/mania.jpg" alt="Mania Group" width="1600" height="1000" decoding="async" loading="lazy"></div>
-        <h3>Mania Group</h3>
-        <p data-i18n="maniaD">Магазин брендового одягу на власній ERP: матриця розмірів, імпорт прайсів, облік складу</p>
-        <div class="meta mono"><span class="t">Mania Group</span><span data-i18n="mErp">Торгівля та ERP</span></div>
-      </a>
-
-      <a class="work" href="os.html">
-        <div class="num mono">07</div>
-        <div class="shot"><img src="images/works/armos.jpg" alt="ARM OS" width="1600" height="1000" decoding="async" loading="lazy"></div>
-        <h3>ARM OS</h3>
-        <p data-i18n="armosD">Фінансове середовище в одному HTML-файлі: менеджер вікон, док, живі курси валют</p>
-        <div class="meta mono"><span class="t">ARM OS</span><span data-i18n="mExp">Інтерфейсний експеримент</span></div>
-      </a>
-
-      <a class="work" href="https://radio.munister.com.ua" target="_blank" rel="noopener">
-        <div class="num mono">08</div>
-        <div class="shot"><img src="images/works/radio.jpg" alt="Radio Vinnipeg" width="1600" height="1000" decoding="async" loading="lazy"></div>
-        <h3>Radio Vinnipeg</h3>
-        <p data-i18n="radioD">Браузерне радіо: кімнати, чат, фонове відтворення і прямий ефір на кілька слухачів</p>
-        <div class="meta mono"><span class="t">radio.munister.com.ua</span><span data-i18n="mMedia2">Медіа</span></div>
-      </a>
-
-      <a class="work" href="https://ampublishing.org/#de" target="_blank" rel="noopener">
-        <div class="num mono">09</div>
-        <div class="shot"><img src="images/works/ampub.jpg" alt="AM Publishing" width="1600" height="1000" decoding="async" loading="lazy"></div>
-        <h3>AM Publishing</h3>
-        <p data-i18n="ampubD">Видавництво: мультимовний каталог, сторінки авторів, купівля книжок і власне радіо</p>
-        <div class="meta mono"><span class="t">ampublishing.org</span><span data-i18n="mPub">Видавництво</span></div>
-      </a>
-
-    </div>
-  </section>
-
-  <!-- ══════════ POSITIONS + CONTACT ══════════ -->
-  <section class="sec closing" id="positions">
     <div>
-      <div class="mono" data-i18n="expK">Позиції</div>
-      <h3 data-i18n="expT">CTO TeachEd · засновник Munister Agency · фахівець з АСУП</h3>
-      <p data-i18n="expD">Технологічний напрям TeachEd з жовтня 2025. Редакційна платформа EPRIS Journal з липня 2025. Аналіз процесів і проєктування ERP у ТОВ «ІТР» з квітня 2026.</p>
-      <div class="tagrow">
-        <span data-i18n="tgSA">Системний аналіз</span><span data-i18n="tgArch">Архітектура систем</span>
-        <span>IIoT · Edge</span><span data-i18n="tgML">Машинне навчання</span><span>ERP / АСУП</span>
-      </div>
+      <div class="mono">Notes from the archive</div>
+      <p class="pull">A good archive does not close the past. It lets a detail catch the light, and gives someone else a way in.</p>
+      <div class="pull-mark"></div>
+      <small class="mono">Place / object / memory / interface</small>
     </div>
-    <a class="contact" href="mailto:munister@outlook.com">
-      <div class="mono" data-i18n="ctK">Контакт</div>
-      <h3>munister@outlook.com</h3>
-      <p data-i18n="ctD">Відкритий до продуктових проєктів і консультацій</p>
-    </a>
   </section>
 
-  <footer class="foot">
-    <div class="mark">Munister</div>
-    <div class="lines mono">
-      <span>© <span id="y"></span> <span data-i18n="footName">Вʼячеслав Муністер</span></span>
-      <span><a href="cv.html" data-i18n="cv2">Резюме</a> · <a href="mailto:munister@outlook.com">munister@outlook.com</a></span>
+  <!-- ══════════ CONTACT ══════════ -->
+  <section class="contact" id="contact">
+    <div>
+      <div class="mono">Open to product work and consulting</div>
+      <a class="mail" href="mailto:munister@outlook.com">munister@outlook.com</a>
+      <p>Systems analysis, systems architecture, ERP design, editorial platforms, IIoT and edge, machine learning.</p>
     </div>
+    <div class="actions">
+      <a class="btn btn--solid" href="mailto:munister@outlook.com">Email me</a>
+      <a class="btn" href="cv.html">Full CV</a>
+    </div>
+  </section>
+
+  <footer class="foot mono">
+    <span>© <span id="y"></span> Viacheslav Munister</span>
+    <span><a href="cv.html">CV</a> · <a href="mailto:munister@outlook.com">munister@outlook.com</a></span>
   </footer>
 
 </div>
 </main>
 
-<script src="site-protection.js"></script>
-<script>
-document.getElementById('y').textContent = new Date().getFullYear();
-
-var EN = {
-  name: "Viacheslav<br>Munister",
-  role: "Writer · researcher · digital maker",
-  bio: 'I collect traces of places, objects and people, then give them a form that can be entered.',
-  cv: "CV", cv2: "CV", cv3: "CV", email: "Email",
-  practiceK: "A way of looking · 01",
-  practiceT: "Making room for <em>memory</em>.",
-  practiceD: "I turn traces of place, material and lived experience into essays, archives, visual atlases and digital instruments that leave space for attention.",
-  practiceD2: "Some of it becomes an essay, some an archive, some a quiet instrument that another person can walk into. The work keeps the same question in every form: what is worth keeping legible.",
-  practiceM1: "Heritage", practiceM2: "Digital art", practiceM3: "Systems",
-  memK: "Staying close",
-  memD: "Research affiliations that keep heritage close to lived places, shared memory and public conversation.",
-  archiveK: "Notes from the archive",
-  archiveD: "A good archive does not close the past. It lets a detail catch the light, and gives someone else a way in.",
-  archiveM: "place / object / memory / interface",
-  artK1: "Essay · EPRIS Journal",
-  artM1: "Restoration · heritage · urban memory",
-  artK2: "Essay · EPRIS Journal",
-  artM2: "Vienna · Secession · 1897",
-  read: "Read ↗", read2: "Read ↗",
-  selected: "Selected / collected / built",
-  armosD: "A financial environment in a single HTML file: window manager, dock, live exchange rates",
-  teachedD: "51 tools for English teachers: lesson boards, exercise generation, video turned into tasks",
-  eprisD: "An independent journal on design, art and architecture: essays, translations and a visual publishing system built around attention.",
-  showcaseD: "A vitrine of scenography and conceptual art: open call, editorial selection, its own publishing pipeline",
-  mIndex: "Editorial index",
-  maniaD: "Fashion store on a custom ERP: size matrices, price-list import, stock accounting",
-  agencyD: "A full-cycle studio for digital products, editorial platforms and operational systems. Strategy, design and delivery stay in one line.",
-  radioD: "Browser radio: rooms, chat, background playback and live broadcasting to several listeners",
-  ampubD: "Publishing house: multilingual catalogue, author pages, book purchase and its own radio",
-  italyT: "Italy Chapter",
-  italyD: "The visual code of Italy: proportion, light, material. An atlas, a timeline and comparisons in a bilingual long-read",
-  italyMt: "Visual research", italyMs: "Authorial project",
-  mFin: "FinTech", mExp: "Interface experiment", mCto: "EdTech · CTO", mMedia: "Media",
-  mErp: "Retail and ERP", mFounder: "Founder", mMedia2: "Media", mService: "Service", mPub: "Publishing",
-  expK: "Positions",
-  expT: "CTO at TeachEd · founder of Munister Agency · enterprise automation specialist",
-  expD: "Technology direction at TeachEd since Oct 2025. Editorial platform of EPRIS Journal since Jul 2025. Process analysis and ERP design at ITS LLC since Apr 2026.",
-  tgSA: "Systems analysis", tgArch: "Systems architecture", tgML: "Machine learning",
-  ctK: "Contact",
-  ctD: "Open to product work and consulting",
-  footName: "Viacheslav Munister"
-};
-
-document.querySelectorAll('[data-i18n]').forEach(function(el){
-  var value = EN[el.dataset.i18n];
-  if (value !== undefined) el.innerHTML = value;
-});
-document.documentElement.lang = 'en';
-document.title = 'Viacheslav Munister · Heritage, digital art & working systems';
-</script>
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script>
 </body>
 </html>
