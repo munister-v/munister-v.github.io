@@ -174,18 +174,21 @@ p{text-wrap:pretty}
 .mono{font-family:var(--font-mono);font-size:9px;line-height:1.4;letter-spacing:.16em;text-transform:uppercase;color:var(--c-muted)}
 .shell{max-width:var(--measure);margin-inline:auto;padding-inline:clamp(20px,4vw,48px)}
 
+/* a hairline that carries a small centred label, the journal's own device */
+.rule-label{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px}
+.rule-label::before,.rule-label::after{content:'';height:1px;background:var(--c-rule)}
+
 /* ── fixed masthead bar ── */
 .site-head{
   position:fixed;inset:0 0 auto 0;z-index:40;height:4rem;
   display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;
   padding-inline:clamp(16px,4vw,48px);
-  background:rgba(255,255,255,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  background:rgba(255,255,255,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   border-bottom:1px solid var(--c-rule-strong);
 }
-.site-head nav{display:flex;gap:22px}
+.site-head nav{grid-column:1;display:flex;gap:22px}
 .site-head nav a{font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--c-muted);transition:color .2s}
 .site-head nav a:hover{color:var(--c-accent)}
-.site-head nav{grid-column:1}
 .wordmark{grid-column:2;font-family:var(--font-display);font-size:19px;letter-spacing:.28em;text-transform:uppercase;white-space:nowrap}
 .head-right{grid-column:3;display:flex;justify-content:flex-end;gap:10px}
 .pill{
@@ -196,92 +199,138 @@ p{text-wrap:pretty}
 .pill:hover{background:var(--c-accent);color:var(--c-bg);border-color:var(--c-accent)}
 .site-main{padding-top:max(6rem,calc(4rem + env(safe-area-inset-top)))}
 
-/* ── section headers, EPRIS rule style ── */
-.sec{margin-bottom:clamp(3.5rem,6vw,5.5rem)}
-.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:20px;
-  padding-bottom:.7rem;border-bottom:1px solid var(--c-rule-strong);margin-bottom:2rem}
-.sec-head h2{font-family:var(--font-title);font-size:clamp(26px,3vw,36px);line-height:1.1}
+/* ══ frontispiece ══ */
+.front{text-align:center;padding-bottom:clamp(2.5rem,4vw,3.5rem)}
+.front .dateline{margin-bottom:clamp(2rem,4vw,3rem)}
+.portrait{
+  width:170px;height:170px;margin:0 auto;border-radius:50%;object-fit:cover;object-position:50% 24%;
+  border:1px solid var(--c-rule);
+}
+.front .name{
+  margin-top:26px;font-family:var(--font-display);
+  font-size:clamp(40px,7.4vw,86px);line-height:.95;letter-spacing:-.02em;
+}
+.front .name em{font-style:italic;font-weight:400}
+.front .role{margin-top:20px}
+.front .tagline{
+  margin:14px auto 0;max-width:34ch;font-family:var(--font-title);font-style:italic;
+  font-size:clamp(19px,2.2vw,24px);line-height:1.35;color:var(--c-muted);
+}
+.front .side-links{margin-top:26px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
-/* ── masthead / portrait ── */
-.masthead{display:grid;grid-template-columns:300px 1fr;gap:clamp(28px,5vw,64px);align-items:start;
-  padding-bottom:clamp(3rem,5vw,4.5rem);border-bottom:1px solid var(--c-rule-strong);margin-bottom:clamp(3rem,5vw,4.5rem)}
-.portrait{width:190px;height:190px;border-radius:50%;object-fit:cover;object-position:50% 26%;border:1px solid var(--c-rule)}
-.name{margin-top:22px;font-family:var(--font-display);font-size:clamp(34px,4vw,46px);line-height:1;letter-spacing:-.01em}
-.role{margin-top:14px}
-.bio{margin-top:16px;color:var(--c-muted);font-size:15.5px;max-width:30ch}
-.side-links{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
-.side-foot{margin-top:20px}
-
-.lede{max-width:36ch}
-.lede h3{font-family:var(--font-display);font-size:clamp(38px,5.4vw,64px);line-height:1.02;letter-spacing:-.015em;margin-top:14px;max-width:11ch}
-.statement{margin-top:26px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,4vw,48px);max-width:none}
-.statement p{color:var(--c-muted);font-size:16px}
-.tagrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+/* ══ opening statement ══ */
+.opening{
+  border-top:1px solid var(--c-accent);border-bottom:1px solid var(--c-rule);
+  padding:clamp(2.2rem,4vw,3.2rem) 0 clamp(2.4rem,4vw,3.4rem);
+  margin-bottom:clamp(3rem,5vw,4.5rem);
+}
+.opening .lede{
+  max-width:20ch;margin:0 auto;text-align:center;
+  font-family:var(--font-display);font-size:clamp(38px,6vw,72px);line-height:1.02;letter-spacing:-.02em;
+}
+.opening .lede em{font-style:italic}
+.opening .cols{
+  margin-top:clamp(2rem,3.4vw,2.8rem);
+  columns:2;column-gap:clamp(28px,4vw,56px);max-width:760px;margin-inline:auto;
+}
+.opening .cols p{font-size:16.5px;line-height:1.62;color:rgba(17,17,17,.72)}
+.opening .cols p + p{margin-top:1em}
+.opening .cols p:first-child::first-letter{
+  float:left;font-family:var(--font-display);font-size:3.3em;line-height:.82;
+  padding:.06em .12em 0 0;color:var(--c-accent);
+}
+.tagrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:clamp(1.8rem,3vw,2.4rem)}
 .tagrow span{font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
-  border:1px solid var(--c-rule);padding:7px 10px;color:var(--c-muted)}
+  border:1px solid var(--c-rule);padding:8px 12px;color:var(--c-muted)}
 
-/* ── two editorial notes ── */
-.notes{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px)}
+/* ══ section headers ══ */
+.sec{margin-bottom:clamp(3.5rem,6vw,6rem)}
+.sec-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:20px;
+  padding-bottom:.8rem;border-bottom:1px solid var(--c-accent);margin-bottom:clamp(1.8rem,3vw,2.6rem);
+}
+.sec-head h2{font-family:var(--font-display);font-size:clamp(28px,3.6vw,44px);line-height:1.05;letter-spacing:-.01em}
+.sec-head h2 em{font-style:italic}
+.sec-num{color:var(--c-gold)}
+
+/* ══ two editorial notes ══ */
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px)}
 .note{border-top:1px solid var(--c-rule);padding-top:1.1rem}
-.note ol{list-style:none;margin-top:14px}
-.note li{display:flex;gap:12px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--c-rule);
-  font-family:var(--font-title);font-size:20px}
+.note ol{list-style:none;margin-top:16px}
+.note li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--c-rule);
+  font-family:var(--font-title);font-size:21px}
 .note li i{font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;color:var(--c-gold);font-style:normal}
-.note > p:not(.pull){margin-top:16px;color:var(--c-muted);font-size:15px}
-.statement p.pull,.note p.pull,.pull{font-family:var(--font-display);font-size:clamp(22px,2.6vw,30px);line-height:1.24;margin-top:14px}
-.pull + small{display:block;margin-top:14px}
+.note > p:not(.pull){margin-top:18px;color:var(--c-muted);font-size:15px}
+.statement p.pull,.note p.pull,.pull{
+  font-family:var(--font-display);font-style:italic;
+  font-size:clamp(23px,2.7vw,32px);line-height:1.26;margin-top:16px;
+}
+.pull + small{display:block;margin-top:16px}
+.pull-mark{width:34px;height:1px;background:var(--c-gold);margin-top:18px}
 
-/* ── essays ── */
-.essays{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px)}
+/* ══ essays ══ */
+.essays{display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,4vw,64px)}
 .essay .cover{aspect-ratio:16/10;overflow:hidden;background:#f2f0ee}
-.essay .cover img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
-.essay:hover .cover img{transform:scale(1.03)}
-.essay h3{font-family:var(--font-title);font-size:clamp(22px,2.4vw,28px);line-height:1.16;margin-top:14px}
-.essay .kicker{margin-top:14px}
-.essay .row{display:flex;justify-content:space-between;gap:14px;margin-top:14px;padding-top:12px;border-top:1px solid var(--c-rule)}
-.essay .go{color:var(--c-accent)}
+.essay .cover img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.essay:hover .cover img{transform:scale(1.035)}
+.essay .kicker{margin-top:16px}
+.essay h3{font-family:var(--font-display);font-size:clamp(24px,2.7vw,32px);line-height:1.14;margin-top:12px;letter-spacing:-.01em}
+.essay .row{display:flex;justify-content:space-between;gap:14px;margin-top:16px;padding-top:13px;border-top:1px solid var(--c-rule)}
+.essay .go{color:var(--c-accent);transition:color .2s}
 .essay:hover .go{color:var(--c-gold)}
 
-/* ── works index ── */
-.works{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(22px,3vw,42px) clamp(22px,3vw,40px)}
-.work{display:flex;flex-direction:column;border-top:1px solid var(--c-rule);padding-top:1rem}
-.work .shot{aspect-ratio:4/3;overflow:hidden;background:#f4f2f0;border:1px solid var(--c-rule)}
-.work .shot img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
-.work:hover .shot img{transform:scale(1.03)}
-.work h3{font-family:var(--font-title);font-size:23px;line-height:1.15;margin-top:14px}
-.work p{margin-top:8px;color:var(--c-muted);font-size:14.5px;flex:1}
-.work .meta{display:flex;justify-content:space-between;gap:12px;margin-top:16px;padding-top:11px;border-top:1px solid var(--c-rule)}
-.work:hover .meta .t{color:var(--c-gold)}
+/* ══ works index ══ */
+.works{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(26px,3.4vw,48px) clamp(22px,3vw,40px)}
+.work{display:flex;flex-direction:column;border-top:1px solid var(--c-rule);padding-top:.9rem}
+.work .num{color:var(--c-gold);margin-bottom:12px}
+.work .shot{
+  aspect-ratio:16/10;overflow:hidden;background:#f4f2f0;
+  border:1px solid var(--c-rule);padding:0;position:relative;
+}
+.work .shot img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.work:hover .shot img{transform:scale(1.035)}
+.work:hover .shot{border-color:var(--c-rule-strong)}
+.work h3{font-family:var(--font-display);font-size:25px;line-height:1.12;margin-top:16px;letter-spacing:-.01em}
+.work p{margin-top:9px;color:var(--c-muted);font-size:14.5px;flex:1}
+.work .meta{display:flex;justify-content:space-between;gap:12px;margin-top:18px;padding-top:12px;border-top:1px solid var(--c-rule)}
 .work .meta .t{transition:color .2s}
-.work.wide{grid-column:span 3;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:center}
+.work:hover .meta .t{color:var(--c-gold)}
+.work.wide{grid-column:span 3;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:clamp(22px,4vw,56px);align-items:center;border-top:1px solid var(--c-accent);padding-top:1.1rem}
 .work.wide .shot{aspect-ratio:21/9}
-.work.wide h3{font-family:var(--font-display);font-size:clamp(28px,3.4vw,40px);margin-top:0}
+.work.wide h3{font-size:clamp(32px,4.2vw,52px);margin-top:14px;line-height:1}
 .work.wide .inner{display:flex;flex-direction:column}
+.work.wide p{font-size:16px;margin-top:14px;flex:0}
+.work.wide .meta{margin-top:26px}
 
-/* ── positions + contact ── */
-.closing{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);align-items:start}
-.closing h3{font-family:var(--font-title);font-size:clamp(22px,2.4vw,27px);line-height:1.2;margin-top:14px}
-.closing p{margin-top:14px;color:var(--c-muted);font-size:15.5px}
-.contact{border:1px solid var(--c-rule-strong);padding:clamp(24px,3vw,36px);transition:background-color .25s,color .25s}
-.contact h3{font-family:var(--font-display);font-size:clamp(24px,2.8vw,32px);word-break:break-word}
+/* ══ positions + contact ══ */
+.closing{display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,4vw,64px);align-items:start}
+.closing h3{font-family:var(--font-display);font-size:clamp(24px,2.8vw,32px);line-height:1.14;margin-top:14px;letter-spacing:-.01em}
+.closing p{margin-top:16px;color:var(--c-muted);font-size:15.5px}
+.closing .tagrow{justify-content:flex-start;margin-top:24px}
+.contact{border:1px solid var(--c-accent);padding:clamp(26px,3.4vw,42px);transition:background-color .3s,color .3s}
+.contact h3{font-family:var(--font-display);font-size:clamp(24px,3vw,36px);word-break:break-word;margin-top:16px}
 .contact:hover{background:var(--c-accent);color:var(--c-bg)}
-.contact:hover .mono,.contact:hover p{color:rgba(255,255,255,.62)}
+.contact:hover .mono,.contact:hover p{color:rgba(255,255,255,.66)}
 
-.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  margin-top:clamp(3rem,5vw,4.5rem);padding:1.4rem 0 3rem;border-top:1px solid var(--c-rule-strong)}
+/* ══ colophon ══ */
+.foot{
+  margin-top:clamp(3rem,5vw,5rem);padding:2.4rem 0 3.4rem;
+  border-top:1px solid var(--c-accent);text-align:center;
+}
+.foot .mark{font-family:var(--font-display);font-size:15px;letter-spacing:.28em;text-transform:uppercase}
+.foot .lines{margin-top:16px;display:flex;justify-content:center;gap:22px;flex-wrap:wrap}
 .foot a:hover{color:var(--c-gold)}
 
 @media (max-width:980px){
-  .masthead{grid-template-columns:1fr;gap:32px}
-  .portrait{width:150px;height:150px}
-  .lede h3{max-width:none}
   .works{grid-template-columns:repeat(2,1fr)}
   .work.wide{grid-column:span 2;grid-template-columns:1fr}
 }
 @media (max-width:720px){
   .site-head nav{display:none}
   .wordmark{font-size:16px;letter-spacing:.2em}
-  .statement,.notes,.essays,.closing{grid-template-columns:1fr}
+  .portrait{width:132px;height:132px}
+  .opening .cols{columns:1}
+  .notes,.essays,.closing{grid-template-columns:1fr}
   .works{grid-template-columns:1fr}
   .work.wide{grid-column:span 1}
 }
@@ -308,40 +357,33 @@ p{text-wrap:pretty}
 <main class="site-main">
 <div class="shell">
 
-  <!-- ══════════ MASTHEAD ══════════ -->
-  <section class="masthead">
-    <div>
-      <img class="portrait" src="images/munister-2026.jpg" alt="Viacheslav Munister" width="600" height="600" fetchpriority="high" decoding="async">
-      <h1 class="name" data-i18n="name">Viacheslav<br>Munister</h1>
-      <p class="role mono" data-i18n="role">Writer · researcher · digital maker</p>
-      <p class="bio" data-i18n="bio">I collect traces of places, objects and people, then give them a form that can be entered. Some become essays, some become archives, some become quiet digital instruments.</p>
-      <div class="side-links">
-        <a class="pill" href="mailto:munister@outlook.com" data-i18n="email">Email</a>
-        <a class="pill" href="https://agency.munister.com.ua/" target="_blank" rel="noopener">Agency</a>
-      </div>
-      <p class="side-foot mono">Independent practice · Europe / remote</p>
-    </div>
-
-    <div>
-      <div class="lede">
-        <div class="mono" data-i18n="practiceK">A way of looking · 01</div>
-        <h3 data-i18n="practiceT">Making room for memory.</h3>
-      </div>
-      <div class="statement">
-        <p data-i18n="practiceD">I turn traces of place, material and lived experience into essays, archives, visual atlases and digital instruments that leave space for attention.</p>
-        <div>
-          <div class="mono" data-i18n="archiveK">Notes from the archive</div>
-          <p class="pull" data-i18n="archiveD">A good archive does not close the past. It lets a detail catch the light, and gives someone else a way in.</p>
-          <small class="mono" data-i18n="archiveM">place / object / memory / interface</small>
-        </div>
-      </div>
-      <div class="tagrow">
-        <span data-i18n="practiceM1">Heritage</span><span data-i18n="practiceM2">Digital art</span><span data-i18n="practiceM3">Systems</span>
-      </div>
+  <!-- ══════════ FRONTISPIECE ══════════ -->
+  <section class="front">
+    <div class="dateline rule-label"><span class="mono">Independent practice · Europe / remote · MMXXVI</span></div>
+    <img class="portrait" src="images/munister-2026.jpg" alt="Viacheslav Munister" width="600" height="600" fetchpriority="high" decoding="async">
+    <h1 class="name" data-i18n="name">Viacheslav<br>Munister</h1>
+    <p class="role mono" data-i18n="role">Writer · researcher · digital maker</p>
+    <p class="tagline" data-i18n="bio">I collect traces of places, objects and people, then give them a form that can be entered.</p>
+    <div class="side-links">
+      <a class="pill" href="mailto:munister@outlook.com" data-i18n="email">Email</a>
+      <a class="pill" href="cv.html" data-i18n="cv3">CV</a>
+      <a class="pill" href="https://agency.munister.com.ua/" target="_blank" rel="noopener">Agency</a>
     </div>
   </section>
 
-  <!-- ══════════ AFFILIATIONS ══════════ -->
+  <!-- ══════════ OPENING STATEMENT ══════════ -->
+  <section class="opening">
+    <h2 class="lede" data-i18n="practiceT">Making room for <em>memory</em>.</h2>
+    <div class="cols">
+      <p data-i18n="practiceD">I turn traces of place, material and lived experience into essays, archives, visual atlases and digital instruments that leave space for attention.</p>
+      <p data-i18n="practiceD2">Some of it becomes an essay, some an archive, some a quiet instrument that another person can walk into. The work keeps the same question in every form: what is worth keeping legible.</p>
+    </div>
+    <div class="tagrow">
+      <span data-i18n="practiceM1">Heritage</span><span data-i18n="practiceM2">Digital art</span><span data-i18n="practiceM3">Systems</span>
+    </div>
+  </section>
+
+  <!-- ══════════ AFFILIATIONS + METHOD ══════════ -->
   <section class="sec notes">
     <div class="note">
       <div class="mono" data-i18n="memK">Staying close</div>
@@ -352,16 +394,17 @@ p{text-wrap:pretty}
       <p data-i18n="memD">Французькі асоціації, що досліджують і популяризують культурну спадщину.</p>
     </div>
     <div class="note">
-      <div class="mono">Method</div>
-      <p class="pull">Place, object and memory become an interface only when the detail is allowed to stay legible.</p>
-      <small class="mono">Research · editorial · engineering</small>
+      <div class="mono" data-i18n="archiveK">Notes from the archive</div>
+      <p class="pull" data-i18n="archiveD">A good archive does not close the past. It lets a detail catch the light, and gives someone else a way in.</p>
+      <div class="pull-mark"></div>
+      <small class="mono" data-i18n="archiveM">place / object / memory / interface</small>
     </div>
   </section>
 
   <!-- ══════════ ESSAYS ══════════ -->
   <section class="sec" id="essays">
     <div class="sec-head">
-      <h2>Essays</h2>
+      <h2><span class="sec-num">I.</span> Essays</h2>
       <span class="mono">EPRIS Journal</span>
     </div>
     <div class="essays">
@@ -383,14 +426,15 @@ p{text-wrap:pretty}
   <!-- ══════════ WORKS ══════════ -->
   <section class="sec" id="works">
     <div class="sec-head">
-      <h2 data-i18n="selected">Selected / collected / built</h2>
-      <span class="mono">Index</span>
+      <h2><span class="sec-num">II.</span> <span data-i18n="selected">Selected / collected / built</span></h2>
+      <span class="mono">Nine entries</span>
     </div>
     <div class="works">
 
       <a class="work wide" href="italy/">
         <div class="shot"><img src="images/works/italy.jpg" alt="Italy Chapter" width="1600" height="686" decoding="async" loading="lazy"></div>
         <div class="inner">
+          <div class="num mono">01</div>
           <div class="mono" data-i18n="italyMs">Авторський проєкт</div>
           <h3 data-i18n="italyT">Italy Chapter</h3>
           <p data-i18n="italyD">Візуальний код Італії: пропорція, світло, матеріал. Атлас, хронологія та порівняння в двомовному лонгріді</p>
@@ -399,56 +443,64 @@ p{text-wrap:pretty}
       </a>
 
       <a class="work" href="https://eprisjournal.com/showcase/" target="_blank" rel="noopener">
-        <div class="shot"><img src="images/works/epris-showcase.jpg" alt="EPRIS Showcase" width="1000" height="625" decoding="async" loading="lazy"></div>
+        <div class="num mono">02</div>
+        <div class="shot"><img src="images/works/epris-showcase.jpg" alt="EPRIS Showcase" width="1600" height="1000" decoding="async" loading="lazy"></div>
         <h3>EPRIS Showcase</h3>
         <p data-i18n="showcaseD">Вітрина сценографії та концептуального мистецтва: відкритий call, редакційний відбір, власний конвеєр публікації</p>
         <div class="meta mono"><span class="t">eprisjournal.com/showcase</span><span data-i18n="mIndex">Редакційний індекс</span></div>
       </a>
 
       <a class="work" href="https://eprisjournal.com/" target="_blank" rel="noopener">
-        <div class="shot"><img src="images/works/epris.jpg" alt="EPRIS Journal" width="1000" height="625" decoding="async" loading="lazy"></div>
+        <div class="num mono">03</div>
+        <div class="shot"><img src="images/works/epris.jpg" alt="EPRIS Journal" width="1600" height="1000" decoding="async" loading="lazy"></div>
         <h3>EPRIS Journal</h3>
         <p data-i18n="eprisD">Журнал про дизайн, мистецтво й архітектуру: власна редакційна система, переклади, магазин постерів</p>
         <div class="meta mono"><span class="t">eprisjournal.com</span><span data-i18n="mMedia">Медіа</span></div>
       </a>
 
       <a class="work" href="https://teached.tech/" target="_blank" rel="noopener">
-        <div class="shot"><img src="images/works/teached.jpg" alt="TeachEd" width="1000" height="625" decoding="async" loading="lazy"></div>
+        <div class="num mono">04</div>
+        <div class="shot"><img src="images/works/teached.jpg" alt="TeachEd" width="1600" height="1000" decoding="async" loading="lazy"></div>
         <h3>TeachEd</h3>
         <p data-i18n="teachedD">51 інструмент для вчителів англійської: дошки уроків, генерація вправ, відео як завдання</p>
         <div class="meta mono"><span class="t">teached.tech</span><span data-i18n="mCto">EdTech · CTO</span></div>
       </a>
 
       <a class="work" href="https://agency.munister.com.ua" target="_blank" rel="noopener">
-        <div class="shot"><img src="images/works/agency.jpg" alt="Munister Agency" width="1000" height="625" decoding="async" loading="lazy"></div>
+        <div class="num mono">05</div>
+        <div class="shot"><img src="images/works/agency.jpg" alt="Munister Agency" width="1600" height="1000" decoding="async" loading="lazy"></div>
         <h3>Munister Agency</h3>
         <p data-i18n="agencyD">Студія повного циклу: веб, ERP, автоматизація. Десять живих проєктів, інтерфейс чотирма мовами</p>
         <div class="meta mono"><span class="t">agency.munister.com.ua</span><span data-i18n="mFounder">Засновник</span></div>
       </a>
 
       <a class="work" href="https://shop.maniagroup.com.ua/" target="_blank" rel="noopener">
-        <div class="shot"><img src="images/works/mania.jpg" alt="Mania Group" width="1000" height="625" decoding="async" loading="lazy"></div>
+        <div class="num mono">06</div>
+        <div class="shot"><img src="images/works/mania.jpg" alt="Mania Group" width="1600" height="1000" decoding="async" loading="lazy"></div>
         <h3>Mania Group</h3>
         <p data-i18n="maniaD">Магазин брендового одягу на власній ERP: матриця розмірів, імпорт прайсів, облік складу</p>
         <div class="meta mono"><span class="t">Mania Group</span><span data-i18n="mErp">Торгівля та ERP</span></div>
       </a>
 
       <a class="work" href="os.html">
-        <div class="shot"><img src="images/works/armos.jpg" alt="ARM OS" width="1000" height="625" decoding="async" loading="lazy"></div>
+        <div class="num mono">07</div>
+        <div class="shot"><img src="images/works/armos.jpg" alt="ARM OS" width="1600" height="1000" decoding="async" loading="lazy"></div>
         <h3>ARM OS</h3>
         <p data-i18n="armosD">Фінансове середовище в одному HTML-файлі: менеджер вікон, док, живі курси валют</p>
         <div class="meta mono"><span class="t">ARM OS</span><span data-i18n="mExp">Інтерфейсний експеримент</span></div>
       </a>
 
       <a class="work" href="https://radio.munister.com.ua" target="_blank" rel="noopener">
-        <div class="shot"><img src="images/works/radio.jpg" alt="Radio Vinnipeg" width="1000" height="625" decoding="async" loading="lazy"></div>
+        <div class="num mono">08</div>
+        <div class="shot"><img src="images/works/radio.jpg" alt="Radio Vinnipeg" width="1600" height="1000" decoding="async" loading="lazy"></div>
         <h3>Radio Vinnipeg</h3>
         <p data-i18n="radioD">Браузерне радіо: кімнати, чат, фонове відтворення і прямий ефір на кілька слухачів</p>
         <div class="meta mono"><span class="t">radio.munister.com.ua</span><span data-i18n="mMedia2">Медіа</span></div>
       </a>
 
       <a class="work" href="https://ampublishing.org/#de" target="_blank" rel="noopener">
-        <div class="shot"><img src="images/works/ampub.jpg" alt="AM Publishing" width="1000" height="625" decoding="async" loading="lazy"></div>
+        <div class="num mono">09</div>
+        <div class="shot"><img src="images/works/ampub.jpg" alt="AM Publishing" width="1600" height="1000" decoding="async" loading="lazy"></div>
         <h3>AM Publishing</h3>
         <p data-i18n="ampubD">Видавництво: мультимовний каталог, сторінки авторів, купівля книжок і власне радіо</p>
         <div class="meta mono"><span class="t">ampublishing.org</span><span data-i18n="mPub">Видавництво</span></div>
@@ -475,9 +527,12 @@ p{text-wrap:pretty}
     </a>
   </section>
 
-  <footer class="foot mono">
-    <span>© <span id="y"></span> <span data-i18n="footName">Вʼячеслав Муністер</span></span>
-    <span><a href="cv.html" data-i18n="cv2">Резюме</a> · <a href="mailto:munister@outlook.com">munister@outlook.com</a></span>
+  <footer class="foot">
+    <div class="mark">Munister</div>
+    <div class="lines mono">
+      <span>© <span id="y"></span> <span data-i18n="footName">Вʼячеслав Муністер</span></span>
+      <span><a href="cv.html" data-i18n="cv2">Резюме</a> · <a href="mailto:munister@outlook.com">munister@outlook.com</a></span>
+    </div>
   </footer>
 
 </div>
@@ -490,11 +545,12 @@ document.getElementById('y').textContent = new Date().getFullYear();
 var EN = {
   name: "Viacheslav<br>Munister",
   role: "Writer · researcher · digital maker",
-  bio: 'I collect traces of places, objects and people, then give them a form that can be entered. Some become essays, some become archives, some become quiet digital instruments.',
-  cv: "CV", cv2: "CV", email: "Email",
+  bio: 'I collect traces of places, objects and people, then give them a form that can be entered.',
+  cv: "CV", cv2: "CV", cv3: "CV", email: "Email",
   practiceK: "A way of looking · 01",
-  practiceT: "Making room for memory.",
+  practiceT: "Making room for <em>memory</em>.",
   practiceD: "I turn traces of place, material and lived experience into essays, archives, visual atlases and digital instruments that leave space for attention.",
+  practiceD2: "Some of it becomes an essay, some an archive, some a quiet instrument that another person can walk into. The work keeps the same question in every form: what is worth keeping legible.",
   practiceM1: "Heritage", practiceM2: "Digital art", practiceM3: "Systems",
   memK: "Staying close",
   memD: "Research affiliations that keep heritage close to lived places, shared memory and public conversation.",
