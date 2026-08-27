@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Чому не працює — NetLab</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles/netlab.css?v=4">
+<style>
+  .case{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-top:12px}
+  .case .story{font-size:15px;line-height:1.6}
+  .facts{margin-top:12px;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  .facts .f-row{display:grid;grid-template-columns:190px 1fr;gap:0;border-bottom:1px solid var(--line);font-size:13px}
+  .facts .f-row:last-child{border-bottom:0}
+  .facts .k{padding:9px 12px;background:#FAF8F4;font-weight:700;font-size:12px;color:var(--ink-2)}
+  .facts .v{padding:9px 12px;font-family:var(--mono);font-size:12.5px}
+  .opts{display:grid;gap:8px;margin-top:14px}
+  .opt{border:1px solid var(--line-2);background:#fff;border-radius:11px;padding:12px 14px;
+       font-size:14px;font-weight:600;cursor:pointer;text-align:left;line-height:1.4}
+  .opt:hover{background:#FAF8F4}
+  .opt.right{background:rgba(31,122,70,.12);border-color:rgba(31,122,70,.45);color:var(--green)}
+  .opt.wrong{background:rgba(179,38,30,.1);border-color:rgba(179,38,30,.4);color:var(--red)}
+  .why{margin-top:14px;font-size:13.5px;line-height:1.6}
+  .why code{font-family:var(--mono);background:rgba(32,32,44,.06);padding:1px 5px;border-radius:5px}
+  .why .fix{margin-top:8px;padding:10px 12px;background:var(--accent-soft);border-radius:10px;color:#123E7E}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="window">
+    <div class="titlebar">
+      <span class="lights"><i></i><i></i><i></i></span>
+      <h1>Чому не працює</h1>
+      <span class="sub">розбір несправностей за фактами</span>
+    </div>
+    <div class="win-body">
+      <h2 class="page">Діагностичні випадки</h2>
+      <p class="lede">Дано скаргу і показання команд. Треба назвати причину — не «перезавантажити», а що саме зламано. Кожен випадок узятий із того, що студенти ламають самі.</p>
+
+      <div class="row no-print">
+        <button class="btn primary" id="next">Наступний випадок</button>
+        <span style="flex:1"></span>
+        <span class="lede" style="margin:0">правильно <b id="ok">0</b> з <b id="total">0</b></span>
+      </div>
+
+      <div id="case"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/shell.js?v=4"></script>
+<script src="js/api.js?v=4"></script>
+<script>
+NL.mount("Чому не працює");
+const $ = id => document.getElementById(id);
+
+/* ── Випадки ──────────────────────────────────────────────────────────────
+   Кожен випадок — скарга, показання команд і чотири версії. Хибні версії
+   правдоподібні: це типові відповіді «навмання», які треба відсікти саме
+   фактами з таблиці, а не інтуїцією. */
+const CASES = [
+  {
+    story: "Студент каже: «Інтернету немає, сайти не відкриваються». Пінг на 8.8.8.8 при цьому проходить.",
+    facts: [["ping 8.8.8.8", "4 пакети, 0 втрат"], ["ping ya.ua", "не вдалося знайти вузол"], ["ipconfig /all → DNS", "10.0.0.250 (не відповідає)"], ["Шлюз", "10.0.0.1, доступний"]],
+    right: "Не працює DNS: адреси пінгуються, імена — ні",
+    wrong: ["Обірваний кабель до комутатора", "Неправильна маска підмережі", "Не піднятий інтерфейс роутера"],
+    why: "Пінг за IP іде, пінг за іменем — ні. Мережевий рівень цілий, ламається саме розв'язання імен.",
+    fix: "Перевірити доступність DNS-сервера, тимчасово прописати інший (наприклад 1.1.1.1) і скинути кеш: <code>ipconfig /flushdns</code>.",
+  },
+  {
+    story: "Два ПК в одному кабінеті не бачать одне одного, хоча обидва підключені до одного комутатора.",
+    facts: [["ПК1", "192.168.10.5 / 255.255.255.0"], ["ПК2", "192.168.11.7 / 255.255.255.0"], ["ping ПК1 → ПК2", "destination host unreachable"], ["Комутатор", "усі порти в одному VLAN"]],
+    right: "Вони в різних підмережах, а маршрутизатора між ними немає",
+    wrong: ["Порти в різних VLAN", "Збігаються MAC-адреси", "Треба кросовер замість прямого кабелю"],
+    why: "З маскою /24 адреси 192.168.10.5 і 192.168.11.7 лежать у різних мережах: 192.168.10.0/24 і 192.168.11.0/24. Комутатор мережі не з'єднує — це робота третього рівня.",
+    fix: "Або привести обидва ПК до однієї підмережі, або поставити між мережами маршрутизатор і прописати шлюзи.",
+  },
+  {
+    story: "Після заміни кабелю ПК отримав адресу 169.254.14.88 і нікуди не ходить.",
+    facts: [["IP", "169.254.14.88"], ["Маска", "255.255.0.0"], ["Шлюз", "порожньо"], ["DHCP-сервер", "на місці, інші ПК адреси отримують"]],
+    right: "Клієнт не отримав відповіді від DHCP і призначив собі APIPA-адресу",
+    wrong: ["Адресу вручну прописав попередній власник", "Конфлікт IP-адрес у мережі", "Вимкнено мережеву картку"],
+    why: "169.254.0.0/16 — це APIPA: адреса, яку Windows дає собі сама, коли DHCP мовчить. Шлюз при цьому порожній завжди.",
+    fix: "Перевірити лінк і порт комутатора, потім <code>ipconfig /release</code> та <code>/renew</code>. Якщо решта ПК адреси отримують — справа в цьому порту чи кабелі.",
+  },
+  {
+    story: "Сервер відповідає на пінг, але сайт на ньому не відкривається.",
+    facts: [["ping сервера", "0 втрат"], ["telnet сервер 80", "з'єднання відхилено"], ["telnet сервер 22", "працює"], ["На сервері", "служба веб не запущена"]],
+    right: "Служба на 80-му порту не працює, мережа тут ні до чого",
+    wrong: ["Неправильний шлюз на клієнті", "Зламаний DNS", "Кабель у напівдуплексі"],
+    why: "Мережевий і транспортний рівні живі: пінг іде, 22-й порт відповідає. Відмова саме на 80-му означає, що ніхто його не слухає.",
+    fix: "Запустити службу на сервері й перевірити, чи не ріже 80-й порт локальний фаєрвол.",
+  },
+  {
+    story: "Новий комп'ютер у мережі 192.168.5.0/24 ходить у сусідні кабінети, але не в інтернет.",
+    facts: [["IP", "192.168.5.90 / 255.255.255.0"], ["Шлюз", "192.168.5.1"], ["ping 192.168.5.1", "проходить"], ["ping 8.8.8.8", "час очікування вичерпано"], ["На роутері", "немає маршруту за замовчуванням"]],
+    right: "На роутері немає маршруту за замовчуванням",
+    wrong: ["На ПК неправильний шлюз", "Не той VLAN на порту", "Маска має бути /16"],
+    why: "До шлюза пакети доходять — отже локальна частина ціла. Далі роутер не знає, куди слати те, що не належить відомим йому мережам.",
+    fix: "Прописати на роутері <code>ip route 0.0.0.0 0.0.0.0 &lt;адреса провайдера&gt;</code>.",
+  },
+  {
+    story: "Ноутбук підключили до порту, який учора працював. Лінк не піднімається, лампочка не горить.",
+    facts: [["show interface", "Gi0/5 is administratively down"], ["Кабель", "перевірено на іншому порту, працює"], ["Мережева картка", "бачить інші мережі по Wi-Fi"], ["Інші порти", "у стані up"]],
+    right: "Порт вимкнено адміністративно командою shutdown",
+    wrong: ["Обірвано кабель", "Згоріла мережева картка", "Порт заблокував STP"],
+    why: "«Administratively down» — це не збій, а свідомо вимкнений порт. Апаратна несправність показала б «down/down» без слова administratively.",
+    fix: "На комутаторі: <code>interface gi0/5</code>, потім <code>no shutdown</code>.",
+  },
+  {
+    story: "Половина класу втратила мережу після того, як студент з'єднав два комутатори другим кабелем.",
+    facts: [["Індикатори", "блимають безперервно на всіх портах"], ["Завантаження комутатора", "99%"], ["STP", "вимкнено"], ["Пінги", "губляться пачками"]],
+    right: "Комутаційна петля: кадри ходять по колу й забивають мережу",
+    wrong: ["Вірус на одному з ПК", "Перевантажений DHCP-сервер", "Несправний блок живлення комутатора"],
+    why: "Два з'єднання між тими самими комутаторами без STP замикають кільце. Широкомовний кадр повертається сам до себе й розмножується, поки не з'їсть усю смугу.",
+    fix: "Прибрати другий кабель і увімкнути STP, щоб надлишкове з'єднання блокувалося автоматично.",
+  },
+  {
+    story: "Студент прописав адресу вручну, і тепер у нього зникла мережа, а в сусіда почалися розриви.",
+    facts: [["Повідомлення Windows", "виявлено конфлікт IP-адрес"], ["IP студента", "192.168.1.20"], ["IP сусіда", "192.168.1.20"], ["Режим", "у сусіда адреса від DHCP"]],
+    right: "Дві машини з однаковою адресою: вручну задану взято з пулу DHCP",
+    wrong: ["Однакові імена комп'ютерів", "Збіг MAC-адрес", "Неправильний DNS-суфікс"],
+    why: "Ручні адреси треба брати поза діапазоном, який роздає DHCP, інакше сервер видасть ту саму адресу комусь іще.",
+    fix: "Або повернути отримання адреси автоматично, або задати адресу за межами пулу і зарезервувати її на DHCP.",
+  },
+];
+
+let stats = { ok: 0, total: 0 }, current = null, answered = false;
+let queue = [];
+
+function nextCase() {
+  if (!queue.length) queue = NL.shuffle(CASES.slice());
+  current = queue.pop();
+  answered = false;
+  const options = NL.shuffle([current.right, ...current.wrong]);
+  $("case").innerHTML = `
+    <div class="case">
+      <div class="story">${current.story}</div>
+      <div class="facts">
+        ${current.facts.map(([k, v]) => `<div class="f-row"><div class="k">${NL.esc(k)}</div><div class="v">${NL.esc(v)}</div></div>`).join("")}
+      </div>
+      <div class="opts">${options.map(o => `<button class="opt" data-a="${NL.esc(o)}">${NL.esc(o)}</button>`).join("")}</div>
+      <div class="why" id="why" style="display:none"></div>
+    </div>`;
+}
+
+$("case").addEventListener("click", e => {
+  const b = e.target.closest(".opt");
+  if (!b || answered) return;
+  answered = true;
+  const right = b.getAttribute("data-a") === current.right;
+  stats.total++;
+  if (right) stats.ok++;
+  document.querySelectorAll(".opt").forEach(o => {
+    if (o.getAttribute("data-a") === current.right) o.classList.add("right");
+    else if (o === b) o.classList.add("wrong");
+  });
+  $("why").style.display = "";
+  $("why").innerHTML = (right ? "<b>Правильно.</b> " : "<b>Не те. </b>") + current.why +
+    `<div class="fix"><b>Що робити:</b> ${current.fix}</div>`;
+  $("ok").textContent = stats.ok;
+  $("total").textContent = stats.total;
+  if (window.API && stats.total % 5 === 0) API.sendResult("cases", stats.ok, stats.total, "діагностика");
+});
+
+$("next").addEventListener("click", nextCase);
+document.addEventListener("keydown", e => { if (e.key === "Enter" && answered) nextCase(); });
+
+nextCase();
+</script>
+</body>
+</html>

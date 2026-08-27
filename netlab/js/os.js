@@ -13,6 +13,7 @@
   "use strict";
 
   const POS_KEY = "netlab.os.windows.v1";
+  const SESSION_KEY = "netlab.os.session.v1";
   const wins = new Map();          // id → { el, app, minimized, maximized, prev }
   let zTop = 100;
   let cascade = 0;
@@ -26,6 +27,8 @@
     osi:       { title: "Модель OSI",     sub: "гра",                                     url: "games/osi.html",    w: 760, h: 560, icon: "layers", lime: true },
     ports:     { title: "Порти",          sub: "гра",                                     url: "games/ports.html",  w: 760, h: 560, icon: "plug",   lime: true },
     cables:    { title: "Кабелі",         sub: "гра",                                     url: "games/cables.html", w: 760, h: 560, icon: "cable",  lime: true },
+    routing:   { title: "Маршрутизація",  sub: "таблиця маршрутів, найдовший префікс",    url: "routing.html",  w: 1000, h: 700, icon: "route",  lime: false },
+    cases:     { title: "Чому не працює", sub: "розбір несправностей",                    url: "cases.html",    w: 780, h: 660, icon: "alert",   lime: true  },
     handouts:  { title: "Друковані завдання", sub: "варіант і ключ",                      url: "handouts.html", w: 900, h: 700, icon: "sheet",   lime: false },
     cheatsheet:{ title: "Шпаргалки",      sub: "маски, порти, рівні, команди",            url: "cheatsheet.html", w: 1080, h: 700, icon: "book",  lime: false },
     account:   { title: "Кабінет викладача", sub: "групи, завдання, журнал",              url: "account.html",  w: 1080, h: 700, icon: "journal", lime: false },
@@ -40,6 +43,8 @@
     layers: '<path d="M4 7h16M4 12h16M4 17h16"/>',
     plug:   '<rect x="3.5" y="6.5" width="17" height="11" rx="2"/><path d="M7 10.5h3M7 14h6M15 10.5h2"/>',
     cable:  '<path d="M7 3.5v6H5v5a4 4 0 0 0 4 4h1v2"/><path d="M17 20.5v-6h2v-5a4 4 0 0 0-4-4h-1v-2"/>',
+    route:  '<circle cx="5.5" cy="6" r="2.2"/><circle cx="18.5" cy="18" r="2.2"/><path d="M7.7 6h6.3a3 3 0 0 1 0 6H10a3 3 0 0 0 0 6h6.3"/>',
+    alert:  '<path d="M12 4.5 3.5 19h17z"/><path d="M12 10v4.2M12 16.6h.01"/>',
     sheet:  '<path d="M6.5 3.5h11v17h-11z"/><path d="M9 8h6M9 12h6M9 16h4"/>',
     book:   '<path d="M4.5 5.5h6a2 2 0 0 1 2 2v11a2 2 0 0 0-2-2h-6z"/><path d="M19.5 5.5h-6a2 2 0 0 0-2 2v11a2 2 0 0 1 2-2h6z"/>',
     journal:'<path d="M6.5 4.5h11a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-11a1.5 1.5 0 0 1 0-3h11"/><path d="M6.5 4.5v13M10 8.5h5"/>',
@@ -59,6 +64,21 @@
     try { localStorage.setItem(POS_KEY, JSON.stringify(all)); } catch { /* приватний режим */ }
   }
 
+  // Сеанс: список відкритих вікон і те, згорнуті вони чи ні. Робочий стіл,
+  // який після перезавантаження зустрічає порожнечею, доводиться щоразу
+  // збирати заново — а на парі це півхвилини, яких немає.
+  function rememberSession() {
+    const open_ = [];
+    wins.forEach((w, id) => open_.push({ id, minimized: !!w.minimized }));
+    try { localStorage.setItem(SESSION_KEY, JSON.stringify(open_)); } catch { /* приватний режим */ }
+  }
+  function savedSession() {
+    try {
+      const list = JSON.parse(localStorage.getItem(SESSION_KEY) || "[]");
+      return Array.isArray(list) ? list.filter(x => x && APPS[x.id]) : [];
+    } catch { return []; }
+  }
+
   /* ── Відкриття ──────────────────────────────────────────────────────────── */
   function open(id) {
     const app = APPS[id];
@@ -70,6 +90,7 @@
       existing.minimized = false;
       focus(id);
       markDock();
+      rememberSession();
       return;
     }
 
@@ -106,6 +127,7 @@
     wire(id, el);
     focus(id);
     markDock();
+    rememberSession();
   }
 
   function close(id) {
@@ -116,6 +138,7 @@
     w.el.remove();
     wins.delete(id);
     markDock();
+    rememberSession();
   }
 
   function focus(id) {
@@ -132,6 +155,7 @@
     w.minimized = true;
     w.el.classList.add("minimized");
     markDock();
+    rememberSession();
   }
 
   function maximize(id) {
@@ -211,8 +235,8 @@
   }
 
   /* ── Стіл і док ─────────────────────────────────────────────────────────── */
-  const DESKTOP = ["subnet", "trainer", "ipv6", "topology", "osi", "ports", "cables", "handouts", "cheatsheet", "account", "join"];
-  const DOCK = ["subnet", "trainer", "topology", "osi", "ports", "cables", "|", "handouts", "cheatsheet", "|", "account", "join"];
+  const DESKTOP = ["subnet", "trainer", "ipv6", "routing", "topology", "cases", "osi", "ports", "cables", "handouts", "cheatsheet", "account", "join"];
+  const DOCK = ["subnet", "trainer", "routing", "topology", "|", "cases", "osi", "ports", "cables", "|", "handouts", "cheatsheet", "|", "account", "join"];
 
   function renderDesktop() {
     const d = document.getElementById("desktop");
@@ -270,7 +294,16 @@
 
     document.addEventListener("click", e => {
       const open_ = e.target.closest("[data-open]");
-      if (open_) { open(open_.getAttribute("data-open")); closeMenus(); return; }
+      if (open_) {
+        const id = open_.getAttribute("data-open");
+        const w = wins.get(id);
+        // Повторний клац по значку в доку ховає вікно, яке зараз зверху:
+        // так само поводиться док у системі, і рука цього очікує.
+        if (w && open_.hasAttribute("data-di") && !w.minimized && w.el.classList.contains("focused")) minimize(id);
+        else open(id);
+        closeMenus();
+        return;
+      }
       const menu = e.target.closest("[data-menu]");
       if (menu) {
         const target = document.getElementById(menu.getAttribute("data-menu"));
@@ -292,13 +325,27 @@
     // Посилання виду /netlab/#subnet відкриває потрібний інструмент одразу:
     // так на пару можна дати адресу конкретного вікна.
     const wanted = (location.hash || "").replace("#", "");
-    if (APPS[wanted]) open(wanted);
-    else open("subnet");
+    // Просили конкретне вікно посиланням — відкриваємо саме його, вчорашній
+    // стіл при цьому не відновлюємо.
+    if (APPS[wanted]) { open(wanted); return; }
+
+    const session = savedSession();
+    if (session.length) {
+      session.forEach(item => {
+        open(item.id);
+        if (item.minimized) minimize(item.id);
+      });
+      return;
+    }
+    open("subnet");
   }
 
   function closeMenus() {
     document.querySelectorAll(".mb-menu.open").forEach(m => m.classList.remove("open"));
   }
 
-  global.OS = { APPS, open, close, focus, minimize, maximize, toast, svg, boot };
+  function minimizeAll() { wins.forEach((w, id) => minimize(id)); }
+  function closeAll() { [...wins.keys()].forEach(close); }
+
+  global.OS = { APPS, open, close, focus, minimize, maximize, minimizeAll, closeAll, toast, svg, boot };
 })(window);

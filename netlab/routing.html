@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Маршрутизація — NetLab</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles/netlab.css?v=4">
+<style>
+  .rt td.hit{background:rgba(31,122,70,.14);font-weight:700}
+  .rt td.miss{color:var(--ink-3)}
+  .rt tr.chosen td{background:rgba(31,122,70,.12)}
+  .q{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-top:12px}
+  .q .task{font-size:16px;font-weight:700}
+  .opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:10px}
+  .opt{border:1px solid var(--line-2);background:#fff;border-radius:11px;padding:11px 13px;
+       font-family:var(--mono);font-size:13.5px;font-weight:600;cursor:pointer;text-align:left}
+  .opt:hover{background:#FAF8F4}
+  .opt.right{background:rgba(31,122,70,.12);border-color:rgba(31,122,70,.45);color:var(--green)}
+  .opt.wrong{background:rgba(179,38,30,.1);border-color:rgba(179,38,30,.4);color:var(--red)}
+  .why{margin-top:12px;font-size:13px;line-height:1.55}
+  .why code{font-family:var(--mono);background:rgba(32,32,44,.06);padding:1px 5px;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="shell wide">
+  <div class="window">
+    <div class="titlebar">
+      <span class="lights"><i></i><i></i><i></i></span>
+      <h1>Маршрутизація</h1>
+      <span class="sub">таблиця маршрутів і правило найдовшого префікса</span>
+    </div>
+    <div class="win-body">
+      <h2 class="page">Куди піде пакет</h2>
+      <p class="lede">Маршрутизатор обирає не перший відповідний рядок, а найточніший — з найдовшим префіксом. Тут це видно на таблиці: підходящі рядки підсвічуються, обраний виділений.</p>
+
+      <h3 class="sec">Таблиця маршрутів</h3>
+      <div class="table-wrap">
+        <table class="rt">
+          <thead><tr><th>Мережа призначення</th><th>Маска</th><th>Наступний крок</th><th>Інтерфейс</th><th></th></tr></thead>
+          <tbody id="routes"></tbody>
+        </table>
+      </div>
+      <div class="row no-print" style="margin-top:10px">
+        <input id="r-net" class="mono" type="text" placeholder="10.0.0.0/8" style="width:180px">
+        <input id="r-via" class="mono" type="text" placeholder="192.168.1.254" style="width:170px">
+        <input id="r-if" type="text" placeholder="Gi0/1" style="width:110px">
+        <button class="btn" id="r-add">Додати маршрут</button>
+        <button class="btn" id="r-reset">Типова таблиця</button>
+      </div>
+
+      <h3 class="sec">Перевірка адреси</h3>
+      <div class="row no-print">
+        <div style="flex:1;min-width:220px">
+          <label class="f" for="probe">Адреса призначення</label>
+          <input id="probe" class="mono" type="text" value="10.5.7.9" style="width:100%">
+        </div>
+        <div style="align-self:flex-end"><button class="btn primary" id="lookup">Знайти маршрут</button></div>
+      </div>
+      <div id="verdict"></div>
+
+      <h3 class="sec">Тренування</h3>
+      <p class="lede">Таблиця генерується заново, ваша справа — сказати, який рядок спрацює.</p>
+      <div class="row no-print"><button class="btn" id="drill">Нова задача</button>
+        <span style="flex:1"></span>
+        <span class="lede" style="margin:0">правильно <b id="ok">0</b> з <b id="total">0</b></span></div>
+      <div id="q"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/netcore.js?v=4"></script>
+<script src="js/shell.js?v=4"></script>
+<script src="js/api.js?v=4"></script>
+<script>
+NL.mount("Маршрутизація");
+const $ = id => document.getElementById(id);
+const N = NetCore;
+
+/* ── Таблиця ──────────────────────────────────────────────────────────────
+   Маршрут за замовчуванням — це 0.0.0.0/0: він підходить завжди, тому в
+   змаганні найдовших префіксів програє будь-якому іншому збігу. Саме тому
+   він і працює як «усе інше — туди». */
+const DEFAULT_TABLE = [
+  { net: "192.168.1.0", prefix: 24, via: "напряму", iface: "Gi0/0" },
+  { net: "10.0.0.0", prefix: 8, via: "192.168.1.254", iface: "Gi0/1" },
+  { net: "10.5.0.0", prefix: 16, via: "192.168.1.253", iface: "Gi0/1" },
+  { net: "10.5.7.0", prefix: 24, via: "192.168.1.252", iface: "Gi0/2" },
+  { net: "172.16.0.0", prefix: 12, via: "192.168.1.250", iface: "Gi0/1" },
+  { net: "0.0.0.0", prefix: 0, via: "192.168.1.1", iface: "Gi0/0" },
+];
+let table = DEFAULT_TABLE.map(r => ({ ...r }));
+
+function matches(route, ip) {
+  const mask = N.maskFromPrefix(route.prefix);
+  const netInt = N.ipToInt(route.net);
+  if (netInt === null) return false;
+  return ((ip & mask) >>> 0) === ((netInt & mask) >>> 0);
+}
+
+// Найдовший префікс: серед усіх збігів виграє той, у кого більше одиниць у
+// масці. За рівних префіксів перемагає той, що вище в таблиці.
+function lookup(ipText) {
+  const ip = N.ipToInt(String(ipText).trim());
+  if (ip === null) return { error: "Адреса не схожа на IPv4" };
+  const hits = table.filter(r => matches(r, ip));
+  if (!hits.length) return { ip, hits: [], best: null };
+  const best = hits.reduce((a, b) => (b.prefix > a.prefix ? b : a));
+  return { ip, hits, best };
+}
+
+function drawTable(result) {
+  $("routes").innerHTML = table.map((r, i) => {
+    const hit = result && result.hits && result.hits.includes(r);
+    const best = result && result.best === r;
+    return `<tr class="${best ? "chosen" : ""}">
+      <td class="${hit ? "hit" : "miss"}">${r.net}/${r.prefix}</td>
+      <td class="${hit ? "hit" : "miss"}">${N.intToIp(N.maskFromPrefix(r.prefix))}</td>
+      <td>${NL.esc(r.via)}</td>
+      <td>${NL.esc(r.iface)}</td>
+      <td class="txt">${best ? '<span class="chip ok">обрано</span>' : hit ? '<span class="chip">підходить</span>' : ""}
+        <button class="btn" data-del="${i}" style="padding:3px 8px;font-size:11px">×</button></td>
+    </tr>`;
+  }).join("");
+}
+
+function doLookup() {
+  const r = lookup($("probe").value);
+  if (r.error) { $("verdict").innerHTML = `<div class="err">${NL.esc(r.error)}</div>`; drawTable(null); return; }
+  drawTable(r);
+  $("verdict").innerHTML = r.best
+    ? `<div class="note">Підходять ${r.hits.length} ${r.hits.length === 1 ? "рядок" : "рядки"}, спрацює
+        <b>${NL.esc(r.best.net)}/${r.best.prefix}</b> — у нього найдовший префікс.
+        Пакет піде ${r.best.via === "напряму" ? "напряму в мережу" : "через " + NL.esc(r.best.via)}, інтерфейс ${NL.esc(r.best.iface)}.</div>`
+    : `<div class="err">Жоден маршрут не підходить, і маршруту за замовчуванням у таблиці немає — пакет відкидається з повідомленням «destination unreachable».</div>`;
+}
+
+$("lookup").addEventListener("click", doLookup);
+$("probe").addEventListener("keydown", e => { if (e.key === "Enter") doLookup(); });
+
+$("r-add").addEventListener("click", () => {
+  const parsed = N.parseCidr($("r-net").value);
+  if (parsed.error) { NL.toast(parsed.error); return; }
+  table.push({
+    net: N.intToIp((parsed.ip & N.maskFromPrefix(parsed.prefix)) >>> 0),
+    prefix: parsed.prefix,
+    via: $("r-via").value.trim() || "напряму",
+    iface: $("r-if").value.trim() || "Gi0/0",
+  });
+  $("r-net").value = ""; $("r-via").value = ""; $("r-if").value = "";
+  doLookup();
+});
+$("r-reset").addEventListener("click", () => { table = DEFAULT_TABLE.map(r => ({ ...r })); doLookup(); });
+$("routes").addEventListener("click", e => {
+  const b = e.target.closest("[data-del]");
+  if (!b) return;
+  table.splice(Number(b.getAttribute("data-del")), 1);
+  doLookup();
+});
+
+/* ── Тренування ───────────────────────────────────────────────────────────── */
+let stats = { ok: 0, total: 0 }, drillAnswer = null, answered = false;
+
+function makeDrill() {
+  // Будуємо вкладені мережі навколо однієї адреси: /8, /16, /24 і дефолт.
+  const a = NL.rnd(11, 172), b = NL.rnd(0, 255), c = NL.rnd(0, 255), d = NL.rnd(1, 254);
+  const rows = [
+    { net: a + ".0.0.0", prefix: 8, via: "10.0.0.2", iface: "Gi0/1" },
+    { net: a + "." + b + ".0.0", prefix: 16, via: "10.0.0.3", iface: "Gi0/2" },
+    { net: a + "." + b + "." + c + ".0", prefix: 24, via: "10.0.0.4", iface: "Gi0/3" },
+    { net: "0.0.0.0", prefix: 0, via: "10.0.0.1", iface: "Gi0/0" },
+  ];
+  // Половину задач робимо такими, де точного /24 немає — щоб перемагав /16.
+  const trim = Math.random() < 0.4;
+  const shown = trim ? rows.filter(r => r.prefix !== 24) : rows;
+  const probe = a + "." + b + "." + c + "." + d;
+  const best = shown.filter(r => matches(r, N.ipToInt(probe))).reduce((x, y) => (y.prefix > x.prefix ? y : x));
+  return { rows: shown, probe, best };
+}
+
+function drawDrill() {
+  const t = makeDrill();
+  drillAnswer = t.best;
+  answered = false;
+  $("q").innerHTML = `
+    <div class="q">
+      <div class="task">Пакет на адресу <b class="mono">${t.probe}</b>. Який рядок спрацює?</div>
+      <div class="table-wrap" style="margin-top:10px"><table>
+        <thead><tr><th>Мережа</th><th>Наступний крок</th><th>Інтерфейс</th></tr></thead>
+        <tbody>${t.rows.map(r => `<tr><td>${r.net}/${r.prefix}</td><td>${r.via}</td><td>${r.iface}</td></tr>`).join("")}</tbody>
+      </table></div>
+      <div class="opts">${NL.shuffle(t.rows).map(r =>
+        `<button class="opt" data-a="${r.net}/${r.prefix}">${r.net}/${r.prefix}</button>`).join("")}</div>
+      <div class="why" id="why" style="display:none"></div>
+    </div>`;
+}
+
+$("q").addEventListener("click", e => {
+  const b = e.target.closest(".opt");
+  if (!b || answered) return;
+  answered = true;
+  const right = b.getAttribute("data-a") === drillAnswer.net + "/" + drillAnswer.prefix;
+  stats.total++;
+  if (right) stats.ok++;
+  document.querySelectorAll(".opt").forEach(o => {
+    if (o.getAttribute("data-a") === drillAnswer.net + "/" + drillAnswer.prefix) o.classList.add("right");
+    else if (o === b) o.classList.add("wrong");
+  });
+  $("why").style.display = "";
+  $("why").innerHTML = (right ? "<b>Правильно.</b> " : `<b>Правильна відповідь — ${drillAnswer.net}/${drillAnswer.prefix}.</b> `) +
+    `Перемагає найдовший префікс серед тих, що підходять: <code>/${drillAnswer.prefix}</code>. Маршрут за замовчуванням <code>0.0.0.0/0</code> підходить завжди, тому програє будь-якому конкретнішому.`;
+  $("ok").textContent = stats.ok;
+  $("total").textContent = stats.total;
+  if (window.API && stats.total % 10 === 0) API.sendResult("routing", stats.ok, stats.total, "маршрутизація");
+});
+
+$("drill").addEventListener("click", drawDrill);
+document.addEventListener("keydown", e => { if (e.key === "Enter" && answered) drawDrill(); });
+
+doLookup();
+drawDrill();
+</script>
+</body>
+</html>
