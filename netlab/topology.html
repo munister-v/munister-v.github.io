@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Схема сети — NetLab</title>
+<title>Схема мережі — NetLab</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles/netlab.css?v=1">
+<link rel="stylesheet" href="styles/netlab.css?v=3">
 <style>
   .canvas-wrap{border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden;margin-top:12px}
   svg#board{display:block;width:100%;height:min(66vh,620px);touch-action:none;cursor:default;background:
@@ -36,24 +36,24 @@
   <div class="window">
     <div class="titlebar">
       <span class="lights"><i></i><i></i><i></i></span>
-      <h1>Схема сети</h1>
-      <span class="sub" id="crumb">новая схема</span>
+      <h1>Схема мережі</h1>
+      <span class="sub" id="crumb">нова схема</span>
     </div>
     <div class="win-body">
-      <h2 class="page">Конструктор топологии</h2>
-      <p class="lede">Добавьте устройство, тяните мышью. Чтобы соединить — щёлкните по одному узлу, потом по второму. Двойной щелчок по связи её удаляет.</p>
+      <h2 class="page">Конструктор топології</h2>
+      <p class="lede">Додайте пристрій і тягніть мишею. Щоб з'єднати — клацніть по одному вузлу, потім по другому. Подвійне клацання по зв'язку його видаляє.</p>
 
       <div class="palette no-print">
         <button class="btn" data-add="router"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M8 10h8M8 14h8M10 8l-2 2 2 2M14 16l2-2-2-2"/></svg>Роутер</button>
-        <button class="btn" data-add="switch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 12h2M11 12h2M15 12h2"/></svg>Коммутатор</button>
+        <button class="btn" data-add="switch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 12h2M11 12h2M15 12h2"/></svg>Комутатор</button>
         <button class="btn" data-add="pc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="11" rx="2"/><path d="M9 19h6M12 16v3"/></svg>ПК</button>
         <button class="btn" data-add="server"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="4" width="16" height="7" rx="1.6"/><rect x="4" y="13" width="16" height="7" rx="1.6"/><path d="M7.5 7.5h.01M7.5 16.5h.01"/></svg>Сервер</button>
-        <button class="btn" data-add="cloud"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 18h10a4 4 0 0 0 .4-8A6 6 0 0 0 6 10.5 3.75 3.75 0 0 0 7 18z"/></svg>Интернет</button>
+        <button class="btn" data-add="cloud"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 18h10a4 4 0 0 0 .4-8A6 6 0 0 0 6 10.5 3.75 3.75 0 0 0 7 18z"/></svg>Інтернет</button>
         <span style="flex:1"></span>
-        <button class="btn" id="autoip">Раздать адреса</button>
-        <button class="btn" id="save">Сохранить</button>
-        <button class="btn" id="png">Экспорт PNG</button>
-        <button class="btn" id="clear">Очистить</button>
+        <button class="btn" id="autoip">Роздати адреси</button>
+        <button class="btn" id="save">Зберегти</button>
+        <button class="btn" id="png">Експорт PNG</button>
+        <button class="btn" id="clear">Очистити</button>
       </div>
 
       <div class="side">
@@ -64,13 +64,13 @@
               <g id="nodes"></g>
             </svg>
           </div>
-          <div class="hint no-print">Delete — удалить выбранное · перетаскивание — мышью или пальцем · схема живёт в этом браузере</div>
+          <div class="hint no-print">Delete — видалити вибране · перетягування — мишею або пальцем · схема живе в цьому браузері</div>
         </div>
 
         <div class="panel no-print" id="panel">
-          <h4>Выбранный узел</h4>
-          <div id="panel-body"><p class="lede" style="margin:0">Ничего не выбрано.</p></div>
-          <h4 style="margin-top:16px">Сохранённые схемы</h4>
+          <h4>Вибраний вузол</h4>
+          <div id="panel-body"><p class="lede" style="margin:0">Нічого не вибрано.</p></div>
+          <h4 style="margin-top:16px">Збережені схеми</h4>
           <div id="works"></div>
         </div>
       </div>
@@ -78,23 +78,23 @@
   </div>
 </div>
 
-<script src="js/netcore.js?v=1"></script>
-<script src="js/shell.js?v=1"></script>
+<script src="js/netcore.js?v=3"></script>
+<script src="js/shell.js?v=3"></script>
 <script>
-NL.mount("Схема сети");
+NL.mount("Схема мережі");
 const $ = id => document.getElementById(id);
 const SVG = "http://www.w3.org/2000/svg";
 
 /* ── Модель ───────────────────────────────────────────────────────────────
-   Узлы и связи — обычные объекты; SVG перерисовывается из них целиком.
-   Схема маленькая (десятки узлов), поэтому полная перерисовка проще и
-   надёжнее ручной синхронизации DOM с моделью. */
+   Вузли та зв'язки — звичайні об'єкти; SVG перемальовується з них цілком.
+   Схема маленька (десятки вузлів), тому повне перемальовування простіше й
+   надійніше за ручну синхронізацію DOM із моделлю. */
 const KINDS = {
   router: { label: "R", name: "Роутер", shape: "circle" },
-  switch: { label: "SW", name: "Коммутатор", shape: "rect" },
+  switch: { label: "SW", name: "Комутатор", shape: "rect" },
   pc: { label: "PC", name: "ПК", shape: "rect" },
   server: { label: "SRV", name: "Сервер", shape: "rect" },
-  cloud: { label: "NET", name: "Интернет", shape: "cloud" },
+  cloud: { label: "NET", name: "Інтернет", shape: "cloud" },
 };
 let model = { nodes: [], links: [], seq: 1 };
 let selected = null;       // {type:"node"|"link", id}
@@ -121,11 +121,11 @@ function addNode(kind, x, y) {
 function addLink(a, b) {
   if (a === b) return;
   if (model.links.some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a))) {
-    NL.toast("Такая связь уже есть"); return;
+    NL.toast("Такий зв'язок уже є"); return;
   }
   const kindA = nodeById(a).kind, kindB = nodeById(b).kind;
-  // Последовательный линк рисуем пунктиром: маршрутизатор-маршрутизатор и
-  // выход в облако обычно и есть WAN.
+  // Послідовний лінк малюємо пунктиром: маршрутизатор-маршрутизатор і вихід
+  // у хмару зазвичай і є WAN.
   const serial = (kindA === "router" && kindB === "router") || kindA === "cloud" || kindB === "cloud";
   model.links.push({ id: "l" + model.seq++, a, b, serial, label: "" });
   draw();
@@ -148,7 +148,7 @@ function select(type, id) {
   drawPanel();
 }
 
-/* ── Рисование ────────────────────────────────────────────────────────────── */
+/* ── Малювання ────────────────────────────────────────────────────────────── */
 function draw() {
   const gl = $("links"), gn = $("nodes");
   gl.innerHTML = ""; gn.innerHTML = "";
@@ -211,19 +211,19 @@ function draw() {
 
 function drawPanel() {
   const body = $("panel-body");
-  if (!selected) { body.innerHTML = `<p class="lede" style="margin:0">Ничего не выбрано.</p>`; return; }
+  if (!selected) { body.innerHTML = `<p class="lede" style="margin:0">Нічого не вибрано.</p>`; return; }
   if (selected.type === "link") {
     const l = model.links.find(x => x.id === selected.id);
     if (!l) return;
     body.innerHTML = `
-      <label class="f">Подпись связи</label>
+      <label class="f">Підпис зв'язку</label>
       <input id="p-llabel" type="text" value="${NL.esc(l.label)}" placeholder="Fa0/1 — Gi0/0">
       <label class="f">Тип</label>
       <select id="p-lkind">
         <option value="eth" ${l.serial ? "" : "selected"}>Ethernet (сплошная)</option>
         <option value="ser" ${l.serial ? "selected" : ""}>Serial / WAN (пунктир)</option>
       </select>
-      <button class="btn" id="p-ldel" style="width:100%">Удалить связь</button>`;
+      <button class="btn" id="p-ldel" style="width:100%">Видалити зв'язок</button>`;
     $("p-llabel").addEventListener("input", e => { l.label = e.target.value; draw(); });
     $("p-lkind").addEventListener("change", e => { l.serial = e.target.value === "ser"; draw(); });
     $("p-ldel").addEventListener("click", removeSelected);
@@ -232,21 +232,21 @@ function drawPanel() {
   const n = nodeById(selected.id);
   if (!n) return;
   body.innerHTML = `
-    <label class="f">Название</label>
+    <label class="f">Назва</label>
     <input id="p-name" type="text" value="${NL.esc(n.name)}">
-    <label class="f">Адрес</label>
+    <label class="f">Адреса</label>
     <input id="p-addr" class="mono" type="text" value="${NL.esc(n.addr)}" placeholder="192.168.1.1/24">
-    <label class="f">Тип устройства</label>
+    <label class="f">Тип пристрою</label>
     <select id="p-kind">${Object.entries(KINDS).map(([k, v]) =>
       `<option value="${k}" ${k === n.kind ? "selected" : ""}>${v.name}</option>`).join("")}</select>
-    <button class="btn" id="p-del" style="width:100%">Удалить узел</button>`;
+    <button class="btn" id="p-del" style="width:100%">Видалити вузол</button>`;
   $("p-name").addEventListener("input", e => { n.name = e.target.value; draw(); });
   $("p-addr").addEventListener("input", e => { n.addr = e.target.value; draw(); });
   $("p-kind").addEventListener("change", e => { n.kind = e.target.value; draw(); });
   $("p-del").addEventListener("click", removeSelected);
 }
 
-/* ── Мышь и палец ─────────────────────────────────────────────────────────── */
+/* ── Миша і палець ────────────────────────────────────────────────────────── */
 function svgPoint(evt) {
   const svg = $("board");
   const r = svg.getBoundingClientRect();
@@ -263,7 +263,7 @@ $("board").addEventListener("pointerdown", e => {
   const linkEl = e.target.closest("[data-link]");
   if (nodeEl) {
     const id = nodeEl.dataset.node;
-    if (pendingLink && pendingLink !== id) { addLink(pendingLink, id); pendingLink = null; NL.toast("Связь добавлена"); }
+    if (pendingLink && pendingLink !== id) { addLink(pendingLink, id); pendingLink = null; NL.toast("Зв'язок додано"); }
     else if (pendingLink === id) { pendingLink = null; }
     select("node", id);
     const p = svgPoint(e), n = nodeById(id);
@@ -292,11 +292,11 @@ $("board").addEventListener("pointermove", e => {
 });
 
 $("board").addEventListener("pointerup", e => {
-  // Щелчок без перетаскивания = «взять узел в связь». Так соединение делается
-  // двумя кликами и не мешает обычному перетаскиванию.
+  // Клац без перетягування = «взяти вузол у зв'язок». Так з'єднання робиться
+  // двома клацаннями і не заважає звичайному перетягуванню.
   if (drag && !drag.moved) {
     pendingLink = pendingLink === drag.id ? null : drag.id;
-    NL.toast(pendingLink ? "Теперь щёлкните по второму узлу" : "Выбор связи отменён");
+    NL.toast(pendingLink ? "Тепер клацніть по другому вузлу" : "Вибір зв'язку скасовано");
   }
   drag = null;
 });
@@ -317,18 +317,18 @@ document.addEventListener("keydown", e => {
 document.querySelectorAll("[data-add]").forEach(b =>
   b.addEventListener("click", () => addNode(b.getAttribute("data-add"))));
 
-// Раздача адресов: каждый роутер держит свою /24, всё, что висит на нём
-// напрямую или через коммутаторы, получает адреса из этой сети.
+// Роздача адрес: кожен роутер тримає свою /24, і все, що висить на ньому
+// напряму або через комутатори, отримує адреси з цієї мережі.
 $("autoip").addEventListener("click", () => {
   const routers = model.nodes.filter(n => n.kind === "router");
-  if (!routers.length) { NL.toast("Сначала добавьте хотя бы один роутер"); return; }
+  if (!routers.length) { NL.toast("Спершу додайте хоча б один роутер"); return; }
   const seen = new Set();
   routers.forEach((r, i) => {
     const net = "192.168." + (i + 1);
     r.addr = net + ".1/24";
     seen.add(r.id);
     let host = 10;
-    // обход в ширину от роутера, не проходя через другие роутеры
+    // обхід у ширину від роутера, не проходячи крізь інші роутери
     const queue = [r.id];
     while (queue.length) {
       const cur = queue.shift();
@@ -344,27 +344,27 @@ $("autoip").addEventListener("click", () => {
     }
   });
   draw();
-  NL.toast("Адреса раздал: по /24 на роутер");
+  NL.toast("Адреси роздано: по /24 на роутер");
 });
 
 $("clear").addEventListener("click", () => {
-  if (model.nodes.length && !confirm("Очистить схему?")) return;
+  if (model.nodes.length && !confirm("Очистити схему?")) return;
   model = { nodes: [], links: [], seq: 1 };
   selected = null; pendingLink = null;
   draw(); drawPanel();
 });
 
 $("save").addEventListener("click", () => {
-  const name = prompt("Название схемы", $("crumb").textContent === "новая схема" ? "Схема класса" : $("crumb").textContent);
+  const name = prompt("Назва схеми", $("crumb").textContent === "нова схема" ? "Схема класу" : $("crumb").textContent);
   if (!name) return;
   NL.works.save("topology", name, model);
   $("crumb").textContent = name;
-  NL.toast("Сохранено в этом браузере");
+  NL.toast("Збережено в цьому браузері");
   drawWorks();
 });
 
-// PNG: сериализуем SVG и рисуем его на канве. Внешних библиотек не берём —
-// одна страница без зависимостей переживает любой рефактор.
+// PNG: серіалізуємо SVG і малюємо його на канві. Зовнішніх бібліотек не
+// беремо — одна сторінка без залежностей переживає будь-який рефактор.
 $("png").addEventListener("click", () => {
   const svg = $("board").cloneNode(true);
   svg.setAttribute("xmlns", SVG);
@@ -393,9 +393,9 @@ $("png").addEventListener("click", () => {
     a.download = "netlab-topology.png";
     a.href = c.toDataURL("image/png");
     a.click();
-    NL.toast("PNG сохранён");
+    NL.toast("PNG збережено");
   };
-  img.onerror = () => NL.toast("Не удалось собрать PNG");
+  img.onerror = () => NL.toast("Не вдалося зібрати PNG");
   img.src = url;
 });
 
@@ -405,7 +405,7 @@ function drawWorks() {
     ? list.map(w => `<div class="row" style="margin-bottom:6px">
         <button class="btn" data-open="${w.id}" style="flex:1;text-align:left">${NL.esc(w.name)}</button>
         <button class="btn" data-del="${w.id}">×</button></div>`).join("")
-    : `<p class="lede" style="margin:0">Пока пусто.</p>`;
+    : `<p class="lede" style="margin:0">Поки порожньо.</p>`;
 }
 $("works").addEventListener("click", e => {
   const open = e.target.closest("[data-open]");
@@ -417,7 +417,7 @@ $("works").addEventListener("click", e => {
   if (del) { NL.works.remove(del.getAttribute("data-del")); drawWorks(); }
 });
 
-/* ── Стартовая схема, чтобы страница не встречала пустотой ────────────────── */
+/* ── Стартова схема, щоб сторінка не зустрічала порожнечею ────────────────── */
 (function seed() {
   const cloud = addNode("cloud", 200, 120);
   const r = addNode("router", 500, 200);

@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Тренажёр по подсетям — NetLab</title>
+<title>Тренажер з адресації — NetLab</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles/netlab.css?v=1">
+<link rel="stylesheet" href="styles/netlab.css?v=3">
 <style>
   .q{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-top:14px}
   .q .task{font-size:17px;font-weight:700;letter-spacing:-.01em}
   .q .given{font-family:var(--mono);font-size:20px;font-weight:700;margin:8px 0 14px;color:var(--accent)}
-  .q input{font-family:var(--mono);font-size:16px;width:230px}
   .opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:6px}
   .opt{border:1px solid var(--line-2);background:#fff;border-radius:11px;padding:11px 13px;
        font-family:var(--mono);font-size:14px;font-weight:600;cursor:pointer;text-align:left}
@@ -28,18 +27,18 @@
   <div class="window">
     <div class="titlebar">
       <span class="lights"><i></i><i></i><i></i></span>
-      <h1>Тренажёр</h1>
-      <span class="sub">задачи генерируются заново каждый раз</span>
+      <h1>Тренажер</h1>
+      <span class="sub">задачі генеруються щоразу заново</span>
     </div>
     <div class="win-body">
-      <h2 class="page">Тренажёр по адресации</h2>
-      <p class="lede">Выберите темы и решайте, пока не станет скучно. Ответ проверяется сразу, с разбором — не просто «неверно».</p>
+      <h2 class="page">Тренажер з адресації</h2>
+      <p class="lede">Оберіть теми й розв'язуйте, поки не набридне. Відповідь перевіряється одразу, з розбором — не просто «неправильно».</p>
 
       <div class="row no-print" id="topics"></div>
       <div class="row no-print" style="margin-top:10px">
-        <button class="btn primary" id="next">Следующая задача</button>
+        <button class="btn primary" id="next">Наступна задача</button>
         <span class="spacer" style="flex:1"></span>
-        <span class="score">верно <b id="ok">0</b> из <b id="total">0</b> · серия <b id="streak">0</b></span>
+        <span class="score">правильно <b id="ok">0</b> з <b id="total">0</b> · серія <b id="streak">0</b></span>
       </div>
 
       <div id="q"></div>
@@ -47,20 +46,20 @@
   </div>
 </div>
 
-<script src="js/netcore.js?v=1"></script>
-<script src="js/shell.js?v=2"></script>
-<script src="js/api.js?v=2"></script>
+<script src="js/netcore.js?v=3"></script>
+<script src="js/shell.js?v=3"></script>
+<script src="js/api.js?v=3"></script>
 <script>
-NL.mount("Тренажёр");
+NL.mount("Тренажер");
 const $ = id => document.getElementById(id);
 const N = NetCore;
 let stats = { ok: 0, total: 0, streak: 0 }, current = null, answered = false;
 let sent = { ok: 0, total: 0 };
 
-/* ── Темы ─────────────────────────────────────────────────────────────────
-   Каждая тема — функция, возвращающая задачу: текст, что дано, правильный
-   ответ, варианты (если выбор) и разбор. Добавить тему — дописать функцию,
-   всё остальное работает само. */
+/* ── Теми ─────────────────────────────────────────────────────────────────
+   Кожна тема — функція, що повертає задачу: текст, що дано, правильну
+   відповідь, варіанти та розбір. Додати тему — дописати функцію, решта
+   працює сама. */
 function randIp(prefixRange) {
   const prefix = NL.rnd(prefixRange[0], prefixRange[1]);
   const base = NL.pick([
@@ -72,9 +71,8 @@ function randIp(prefixRange) {
   return N.subnet(base, prefix);
 }
 
-// Неправильные варианты берём осмысленные: соседняя сеть, бродкаст вместо
-// сети, маска на бит длиннее. На таких и ошибаются, случайный мусор ничему
-// не учит.
+// Хибні варіанти беремо осмислені: сусідня мережа, бродкаст замість мережі,
+// маска на біт довша. На таких і помиляються, випадкове сміття нічого не вчить.
 function near(s, kind) {
   const alt = [];
   if (kind === "net") {
@@ -91,13 +89,13 @@ function near(s, kind) {
 
 const TOPICS = {
   net: {
-    label: "Адрес сети",
+    label: "Адреса мережі",
     make() {
       const s = randIp([16, 30]);
       return {
-        task: "Какой адрес сети?", given: s.ipText + "/" + s.prefix,
+        task: "Яка адреса мережі?", given: s.ipText + "/" + s.prefix,
         answer: s.networkText, options: NL.shuffle([s.networkText, ...near(s, "net")]),
-        why: `Маска <code>${s.maskText}</code>: младшие ${32 - s.prefix} бит адреса обнуляются, старшие ${s.prefix} остаются. Получается <code>${s.networkText}</code>.`,
+        why: `Маска <code>${s.maskText}</code>: молодші ${32 - s.prefix} біт адреси обнуляються, старші ${s.prefix} лишаються. Виходить <code>${s.networkText}</code>.`,
       };
     },
   },
@@ -106,37 +104,37 @@ const TOPICS = {
     make() {
       const s = randIp([16, 30]);
       return {
-        task: "Какой широковещательный адрес?", given: s.ipText + "/" + s.prefix,
+        task: "Яка широкомовна адреса?", given: s.ipText + "/" + s.prefix,
         answer: s.broadcastText, options: NL.shuffle([s.broadcastText, ...near(s, "bcast")]),
-        why: `В бродкасте все ${32 - s.prefix} бит хоста — единицы: <code>${s.broadcastText}</code>. Последний хост на единицу меньше: <code>${s.lastHostText}</code>.`,
+        why: `У бродкасті всі ${32 - s.prefix} біт хоста — одиниці: <code>${s.broadcastText}</code>. Останній хост на одиницю менший: <code>${s.lastHostText}</code>.`,
       };
     },
   },
   mask: {
-    label: "Маска по префиксу",
+    label: "Маска за префіксом",
     make() {
       const s = randIp([8, 30]);
       return {
-        task: "Какая маска соответствует префиксу?", given: "/" + s.prefix,
+        task: "Яка маска відповідає префіксу?", given: "/" + s.prefix,
         answer: s.maskText, options: NL.shuffle([s.maskText, ...near(s, "mask")]),
-        why: `${s.prefix} единиц подряд, остальное нули: <code>${s.maskBinary.join(".")}</code> = <code>${s.maskText}</code>.`,
+        why: `${s.prefix} одиниць поспіль, решта нулі: <code>${s.maskBinary.join(".")}</code> = <code>${s.maskText}</code>.`,
       };
     },
   },
   hosts: {
-    label: "Число хостов",
+    label: "Кількість хостів",
     make() {
       const s = randIp([18, 30]);
       const wrong = [s.total, Math.max(s.usable - 1, 1), s.usable * 2];
       return {
-        task: "Сколько адресов достанется хостам?", given: s.networkText + "/" + s.prefix,
+        task: "Скільки адрес дістанеться хостам?", given: s.networkText + "/" + s.prefix,
         answer: String(s.usable), options: NL.shuffle([String(s.usable), ...wrong.map(String)]),
-        why: `2<sup>${32 - s.prefix}</sup> = ${s.total} адресов, минус адрес сети и бродкаст → <code>${s.usable}</code>.`,
+        why: `2<sup>${32 - s.prefix}</sup> = ${s.total} адрес, мінус адреса мережі та бродкаст → <code>${s.usable}</code>.`,
       };
     },
   },
   belongs: {
-    label: "Своя или чужая сеть",
+    label: "Своя чи чужа мережа",
     make() {
       const s = randIp([20, 28]);
       const inside = Math.random() < 0.5;
@@ -145,35 +143,35 @@ const TOPICS = {
         ? N.intToIp((s.network + NL.rnd(1, Math.max(size - 2, 1))) >>> 0)
         : N.intToIp((s.network + size + NL.rnd(1, Math.max(size - 2, 1))) >>> 0);
       return {
-        task: `Адрес ${probe} принадлежит этой сети?`, given: s.networkText + "/" + s.prefix,
-        answer: inside ? "Да" : "Нет", options: ["Да", "Нет"],
-        why: `Диапазон сети — <code>${s.networkText}</code> … <code>${s.broadcastText}</code>. Адрес <code>${probe}</code> ${inside ? "попадает внутрь" : "лежит за границей"}.`,
+        task: `Чи належить адреса ${probe} цій мережі?`, given: s.networkText + "/" + s.prefix,
+        answer: inside ? "Так" : "Ні", options: ["Так", "Ні"],
+        why: `Діапазон мережі — <code>${s.networkText}</code> … <code>${s.broadcastText}</code>. Адреса <code>${probe}</code> ${inside ? "потрапляє всередину" : "лежить за межею"}.`,
       };
     },
   },
   binary: {
-    label: "Двоичный код",
+    label: "Двійковий код",
     make() {
       const octet = NL.rnd(0, 255);
       const right = octet.toString(2).padStart(8, "0");
       const wrong = [NL.rnd(0, 255), NL.rnd(0, 255), NL.rnd(0, 255)].map(v => v.toString(2).padStart(8, "0"));
       return {
-        task: "Как выглядит этот октет в двоичном виде?", given: String(octet),
+        task: "Як виглядає цей октет у двійковому вигляді?", given: String(octet),
         answer: right, options: NL.shuffle([right, ...wrong]),
-        why: `Веса битов: 128 64 32 16 8 4 2 1. ${octet} = ${right.split("").map((b, i) => b === "1" ? Math.pow(2, 7 - i) : null).filter(Boolean).join(" + ") || "0"}.`,
+        why: `Ваги бітів: 128 64 32 16 8 4 2 1. ${octet} = ${right.split("").map((b, i) => b === "1" ? Math.pow(2, 7 - i) : null).filter(Boolean).join(" + ") || "0"}.`,
       };
     },
   },
   prefix: {
-    label: "Префикс по маске",
+    label: "Префікс за маскою",
     make() {
       const s = randIp([8, 30]);
       const right = "/" + s.prefix;
       const wrong = ["/" + Math.min(s.prefix + 1, 32), "/" + Math.max(s.prefix - 1, 0), "/" + Math.min(s.prefix + 8, 32)];
       return {
-        task: "Какой префикс у этой маски?", given: s.maskText,
+        task: "Який префікс у цієї маски?", given: s.maskText,
         answer: right, options: NL.shuffle([right, ...new Set(wrong)]),
-        why: `Считаем единицы: <code>${s.maskBinary.join(".")}</code> — их ${s.prefix}.`,
+        why: `Рахуємо одиниці: <code>${s.maskBinary.join(".")}</code> — їх ${s.prefix}.`,
       };
     },
   },
@@ -188,7 +186,7 @@ $("topics").addEventListener("click", e => {
   if (!b) return;
   const k = b.getAttribute("data-topic");
   if (chosen.has(k)) {
-    if (chosen.size === 1) { NL.toast("Хотя бы одна тема нужна"); return; }
+    if (chosen.size === 1) { NL.toast("Потрібна хоча б одна тема"); return; }
     chosen.delete(k); b.classList.remove("lime");
   } else { chosen.add(k); b.classList.add("lime"); }
 });
@@ -222,11 +220,11 @@ $("q").addEventListener("click", e => {
   });
   const why = $("why");
   why.style.display = "";
-  why.innerHTML = (right ? "<b>Верно.</b> " : `<b>Правильный ответ — ${NL.esc(current.answer)}.</b> `) + current.why;
+  why.innerHTML = (right ? "<b>Правильно.</b> " : `<b>Правильна відповідь — ${NL.esc(current.answer)}.</b> `) + current.why;
   $("ok").textContent = stats.ok;
   $("total").textContent = stats.total;
   $("streak").textContent = stats.streak;
-  // Срез в журнал каждые десять задач: одна строка на подход, а не на ответ.
+  // Зріз у журнал кожні десять задач: один рядок на підхід, а не на відповідь.
   if (window.API && stats.total % 10 === 0) {
     API.sendResult("trainer", stats.ok - sent.ok, stats.total - sent.total, [...chosen].join(","));
     sent = { ok: stats.ok, total: stats.total };

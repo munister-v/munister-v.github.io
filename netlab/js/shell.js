@@ -1,13 +1,12 @@
 /*
   NetLab — общая оболочка страниц
 
-  Полоса меню, тосты и хранилище работ. Каждый инструмент подключает этот
-  файл и вызывает NL.mount("Название") — дальше страница занимается только
-  своим делом.
+  Смуга меню, тости і сховище робіт. Кожен інструмент підключає цей файл
+  і викликає NL.mount("Назва") — далі сторінка займається лише своєю справою.
 
-  Работы пока лежат в localStorage. Слой намеренно узкий (list/save/remove):
-  когда появится вход и серверная база, меняется только он, а инструменты
-  остаются как есть.
+  Роботи поки лежать у localStorage. Шар навмисне вузький (list/save/remove):
+  коли з'явиться вхід і серверна база, змінюється тільки він, а інструменти
+  лишаються як є.
 */
 (function (global) {
   "use strict";
@@ -22,6 +21,14 @@
   }
 
   function mount(title) {
+    // Усередині вікна робочого столу сторінка не малює власну смугу меню й
+    // шапку: рамка вже є в самого вікна, друга виглядала б як вкладений сайт.
+    const inWindow = window.self !== window.top || /[?&]win=1\b/.test(location.search);
+    if (inWindow) {
+      document.body.classList.add("in-window");
+      document.body.append(el("div", { id: "toast" }));
+      return;
+    }
     const base = location.pathname.includes("/games/") ? "../" : "./";
     const bar = el("div", { id: "menubar" });
     bar.innerHTML = `
@@ -30,8 +37,8 @@
       </a>
       <span class="crumb">${title ? title.replace(/[<>]/g, "") : ""}</span>
       <span class="spacer"></span>
-      <a class="bar-btn" href="${base}index.html">Все инструменты</a>
-      <button class="bar-btn" id="nl-print">Печать</button>`;
+      <a class="bar-btn" href="${base}index.html">Усі інструменти</a>
+      <button class="bar-btn" id="nl-print">Друк</button>`;
     document.body.prepend(bar);
     document.body.append(el("div", { id: "toast" }));
     document.getElementById("nl-print").addEventListener("click", () => window.print());
@@ -64,12 +71,12 @@
     },
     remove(id) {
       const all = works.list().filter(w => w.id !== id);
-      try { localStorage.setItem(STORE, JSON.stringify(all)); } catch { /* приватный режим */ }
+      try { localStorage.setItem(STORE, JSON.stringify(all)); } catch { /* приватний режим */ }
     },
   };
 
-  // Задания и ключи к ним шарятся ссылкой: состояние пакуется в hash, чтобы
-  // ничего не хранить на сервере и не заводить аккаунт ради одного листа.
+  // Завдання і ключі до них передаються посиланням: стан пакується в hash,
+  // щоб нічого не тримати на сервері й не заводити акаунт заради аркуша.
   const link = {
     write(obj) {
       try { return "#" + btoa(unescape(encodeURIComponent(JSON.stringify(obj)))); }

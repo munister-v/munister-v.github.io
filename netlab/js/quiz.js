@@ -1,13 +1,12 @@
 /*
   NetLab — движок игр
 
-  Три игры (уровни OSI, порты, кабели) отличаются только материалом, поэтому
-  логика одна: банк вопросов, режим «на скорость» или «на всё», мгновенная
-  проверка и разбор.
+  Три гри (рівні OSI, порти, кабелі) відрізняються лише матеріалом, тому
+  логіка одна: банк питань, режим «на час» або «без таймера», миттєва
+  перевірка й розбір.
 
-  Проверка ответа показывается сразу, в момент выбора — как в TeachEd:
-  отложенная кнопка «проверить» превращает тренировку в экзамен и убивает
-  смысл повторения.
+  Вердикт показується одразу, у мить вибору — як у TeachEd: відкладена кнопка
+  «перевірити» перетворює тренування на іспит і вбиває сенс повторення.
 */
 (function (global) {
   "use strict";
@@ -25,10 +24,10 @@
     function head() {
       return `<div class="row no-print" style="margin-bottom:12px">
         <button class="btn ${timed ? "" : "lime"}" data-mode="free">Без таймера</button>
-        <button class="btn ${timed ? "lime" : ""}" data-mode="timed">На время · 90 сек</button>
+        <button class="btn ${timed ? "lime" : ""}" data-mode="timed">На час · 90 с</button>
         <span style="flex:1"></span>
-        <span class="score">верно <b>${stats.ok}</b> из <b>${stats.total}</b>
-          · серия <b>${stats.streak}</b>${timed ? ` · осталось <b>${left}</b> сек` : ""}</span>
+        <span class="score">правильно <b>${stats.ok}</b> з <b>${stats.total}</b>
+          · серія <b>${stats.streak}</b>${timed ? ` · осталось <b>${left}</b> сек` : ""}</span>
       </div>`;
     }
 
@@ -66,11 +65,11 @@
       });
       const why = document.getElementById("why");
       why.style.display = "";
-      why.innerHTML = (right ? "<b>Верно.</b> " : `<b>Правильно — ${NL.esc(current.a)}.</b> `) + (current.why || "");
+      why.innerHTML = (right ? "<b>Правильно.</b> " : `<b>Правильно — ${NL.esc(current.a)}.</b> `) + (current.why || "");
       root.querySelector(".score").innerHTML =
-        `верно <b>${stats.ok}</b> из <b>${stats.total}</b> · серия <b>${stats.streak}</b>${timed ? ` · осталось <b>${left}</b> сек` : ""}`;
-      // Преподавателю уходит не каждый ответ, а срез каждые десять: журнал
-      // читают глазами, и сотня строк на одного студента там лишняя.
+        `правильно <b>${stats.ok}</b> з <b>${stats.total}</b> · серія <b>${stats.streak}</b>${timed ? ` · осталось <b>${left}</b> сек` : ""}`;
+      // Викладачу йде не кожна відповідь, а зріз кожні десять: журнал читають
+      // очима, і сотня рядків на одного студента там зайва.
       if (window.API && stats.total % 10 === 0) {
         API.sendResult(config.kind || "quiz", stats.ok - sent.ok, stats.total - sent.total, config.title || "");
         sent = { ok: stats.ok, total: stats.total };
@@ -95,10 +94,10 @@
             sent = { ok: stats.ok, total: stats.total };
           }
           root.innerHTML = `<div class="q" style="text-align:center">
-            <div class="task">Время вышло</div>
-            <div class="given">${stats.ok} из ${stats.total}</div>
-            <p class="lede">Лучшая серия подряд — ${stats.best}.</p>
-            <button class="btn primary" data-mode="timed">Ещё раз</button>
+            <div class="task">Час вийшов</div>
+            <div class="given">${stats.ok} з ${stats.total}</div>
+            <p class="lede">Найкраща серія поспіль — ${stats.best}.</p>
+            <button class="btn primary" data-mode="timed">Ще раз</button>
             <button class="btn" data-mode="free">Без таймера</button>
           </div>`;
         }

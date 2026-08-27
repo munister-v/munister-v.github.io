@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Вход по коду группы — NetLab</title>
+<title>Вхід за кодом групи — NetLab</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles/netlab.css?v=2">
+<link rel="stylesheet" href="styles/netlab.css?v=3">
 <style>
   .box{max-width:420px}
   .box input{width:100%;margin-bottom:12px}
@@ -22,41 +22,41 @@
   <div class="window">
     <div class="titlebar">
       <span class="lights"><i></i><i></i><i></i></span>
-      <h1>Вход для студента</h1>
+      <h1>Вхід для студента</h1>
       <span class="sub" id="whoami"></span>
       <span class="spacer"></span>
-      <button class="bar-btn no-print" id="logout" style="display:none">Выйти</button>
+      <button class="bar-btn no-print" id="logout" style="display:none">Вийти</button>
     </div>
     <div class="win-body">
 
       <div id="gate">
-        <h2 class="page">Код группы</h2>
-        <p class="lede">Пароль не нужен. Код продиктует преподаватель, имя пишите так, как значитесь в списке группы.</p>
+        <h2 class="page">Код групи</h2>
+        <p class="lede">Пароль не потрібен. Код продиктує викладач, ім'я пишіть так, як зазначені в списку групи.</p>
         <div class="box">
-          <label class="f">Код группы</label>
+          <label class="f">Код групи</label>
           <input id="code" type="text" maxlength="6" autocomplete="off" placeholder="ABC123">
-          <label class="f">Имя и фамилия</label>
-          <input id="name" type="text" autocomplete="name" placeholder="Иван Ковальчук">
-          <button class="btn primary" id="go" style="width:100%">Войти в группу</button>
+          <label class="f">Ім'я та прізвище</label>
+          <input id="name" type="text" autocomplete="name" placeholder="Іван Ковальчук">
+          <button class="btn primary" id="go" style="width:100%">Увійти до групи</button>
           <div class="err" id="err" style="display:none"></div>
         </div>
       </div>
 
       <div id="app" style="display:none">
-        <h2 class="page" id="hello">Вы в группе</h2>
-        <p class="lede">Результаты тренажёра и игр уходят преподавателю автоматически, пока вы не вышли.</p>
+        <h2 class="page" id="hello">Ви в групі</h2>
+        <p class="lede">Результати тренажера та ігор ідуть викладачу автоматично, поки ви не вийшли.</p>
 
-        <h3 class="sec">Задания</h3>
+        <h3 class="sec">Завдання</h3>
         <div id="assignments"></div>
 
-        <h3 class="sec">Чем заняться</h3>
+        <h3 class="sec">Чим зайнятися</h3>
         <div class="task-links">
-          <a href="trainer.html">Тренажёр по адресации<span>маски, сети, бродкаст, хосты</span></a>
-          <a href="games/osi.html">Модель OSI<span>семь уровней и что на них живёт</span></a>
-          <a href="games/ports.html">Порты и протоколы<span>номера служб</span></a>
-          <a href="games/cables.html">Кабели и обжим<span>T568A, T568B, витая пара</span></a>
-          <a href="subnet.html">Калькулятор подсетей<span>проверить себя</span></a>
-          <a href="cheatsheet.html">Шпаргалки<span>маски, порты, уровни, команды</span></a>
+          <a href="trainer.html">Тренажер з адресації<span>маски, мережі, бродкаст, хости</span></a>
+          <a href="games/osi.html">Модель OSI<span>сім рівнів і що на них живе</span></a>
+          <a href="games/ports.html">Порти і протоколи<span>номери служб</span></a>
+          <a href="games/cables.html">Кабелі й обтиск<span>T568A, T568B, кручена пара</span></a>
+          <a href="subnet.html">Калькулятор підмереж<span>перевірити себе</span></a>
+          <a href="cheatsheet.html">Шпаргалки<span>маски, порти, рівні, команди</span></a>
         </div>
       </div>
 
@@ -64,15 +64,15 @@
   </div>
 </div>
 
-<script src="js/shell.js?v=2"></script>
-<script src="js/api.js?v=2"></script>
+<script src="js/shell.js?v=3"></script>
+<script src="js/api.js?v=3"></script>
 <script>
-NL.mount("Вход студента");
+NL.mount("Вхід студента");
 const $ = id => document.getElementById(id);
 
 function shown(student, groupName) {
   $("whoami").textContent = student.name;
-  $("hello").textContent = groupName ? "Группа " + groupName : "Вы в группе";
+  $("hello").textContent = groupName ? "Група " + groupName : "Ви в групі";
   $("gate").style.display = "none";
   $("app").style.display = "";
   $("logout").style.display = "";
@@ -85,7 +85,7 @@ $("go").addEventListener("click", async () => {
     const r = await API.post("/join", { code: $("code").value, name: $("name").value });
     API.setSession(r.token, { kind: "student", name: r.student.name, group: r.group.name });
     shown(r.student, r.group.name);
-    NL.toast("Готово, можно решать");
+    NL.toast("Готово, можна розв'язувати");
   } catch (e) {
     $("err").style.display = "";
     $("err").textContent = e.message;
@@ -106,9 +106,9 @@ async function loadAssignments() {
       ? data.assignments.map(a => `<div class="row" style="border-bottom:1px solid var(--line);padding:9px 0">
           <b>${NL.esc(a.title)}</b>
           ${a.dueAt ? `<span class="chip blue">до ${NL.esc(a.dueAt)}</span>` : ""}
-          ${a.link ? `<a href="${NL.esc(a.link)}">открыть</a>` : ""}
+          ${a.link ? `<a href="${NL.esc(a.link)}">відкрити</a>` : ""}
         </div>`).join("")
-      : `<p class="lede" style="margin:0">Заданий пока не выдали.</p>`;
+      : `<p class="lede" style="margin:0">Завдань поки не видали.</p>`;
   } catch (e) {
     $("assignments").innerHTML = `<p class="lede" style="margin:0">${NL.esc(e.message)}</p>`;
   }
@@ -122,7 +122,7 @@ async function loadAssignments() {
       const w = API.who() || {};
       shown(me.student, w.group || "");
     }
-  } catch { /* токен протух — покажем форму */ }
+  } catch { /* токен протух — покажемо форму */ }
 })();
 </script>
 </body>

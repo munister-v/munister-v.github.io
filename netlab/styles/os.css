@@ -1,0 +1,193 @@
+/*
+  NetLab OS — робочий стіл
+
+  Не сторінка з посиланнями, а середовище: шпалери, іконки, док і справжні
+  вікна, які тягнуться, змінюють розмір, згортаються й лягають одне на одне.
+  Кожен інструмент відкривається у своєму вікні, і їх можна тримати кілька
+  водночас: калькулятор поруч зі схемою мережі, журнал поруч із тренажером.
+
+  Мова вікна взята з TeachEd: скло, 46-піксельна шапка, три вогники ліворуч,
+  лаймова смуга меню згори. Акцент свій — синій, колір лінка й трафіку.
+*/
+
+html, body { height: 100%; overflow: hidden; }
+body.os {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse 62% 48% at 16% 12%, rgba(30,111,224,.10) 0%, transparent 60%),
+    radial-gradient(ellipse 54% 44% at 86% 78%, rgba(205,249,64,.20) 0%, transparent 62%),
+    radial-gradient(ellipse 70% 60% at 60% 40%, rgba(194,180,138,.14) 0%, transparent 70%),
+    linear-gradient(160deg, #FBF8F2 0%, #F4F0E6 46%, #ECE7DB 100%);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+/* ── Смуга меню ───────────────────────────────────────────────────────────── */
+#menubar {
+  position: fixed; inset: 0 0 auto 0; height: 44px; z-index: 900;
+  display: flex; align-items: center; gap: 10px; padding: 0 14px;
+  background: var(--lime);
+  border-bottom: 1px solid rgba(32,32,44,.18);
+  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset;
+}
+#menubar .wordmark { font-weight: 800; letter-spacing: -.02em; font-size: 13px; }
+#menubar .wordmark span { font-weight: 500; }
+#menubar .mb-item {
+  font-size: 12.5px; font-weight: 650; padding: 5px 9px; border-radius: 8px;
+  border: 0; background: transparent; cursor: pointer; color: var(--ink);
+}
+#menubar .mb-item:hover { background: rgba(255,255,255,.45); }
+#menubar .spacer { flex: 1; }
+#menubar .mb-meta { font-size: 12px; font-weight: 650; opacity: .72; }
+#menubar .mb-clock { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 12.5px; }
+
+/* Випадне меню «Інструменти» */
+.mb-menu {
+  position: fixed; top: 42px; z-index: 950; min-width: 250px; padding: 6px;
+  background: rgba(255,255,255,.96); border: 1px solid var(--line);
+  border-radius: 14px; box-shadow: var(--shadow); display: none;
+}
+.mb-menu.open { display: block; }
+.mb-menu button {
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+  border: 0; background: transparent; border-radius: 9px; padding: 8px 10px;
+  font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink);
+}
+.mb-menu button:hover { background: var(--accent-soft); }
+.mb-menu .sep { height: 1px; background: var(--line); margin: 5px 8px; }
+.mb-menu svg { width: 17px; height: 17px; flex: 0 0 17px; }
+
+/* ── Іконки на столі ──────────────────────────────────────────────────────── */
+#desktop {
+  position: fixed; inset: 44px 0 96px 0; z-index: 1;
+  display: grid; grid-template-columns: repeat(auto-fill, 108px);
+  grid-auto-rows: 106px; gap: 4px; padding: 22px 18px; align-content: start;
+}
+.dicon {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  padding: 10px 6px; border: 0; background: transparent; border-radius: 12px;
+  cursor: pointer; color: var(--ink); text-align: center;
+}
+.dicon:hover { background: rgba(255,255,255,.5); }
+.dicon:focus-visible { outline: 2px solid var(--accent); }
+.dicon .tile {
+  width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center;
+  background: rgba(255,255,255,.9); border: 1px solid var(--line);
+  box-shadow: 0 6px 16px rgba(0,0,0,.08), 0 1px 0 rgba(255,255,255,.9) inset;
+  color: var(--accent);
+}
+.dicon.lime .tile { background: var(--lime); color: #2F3A00; border-color: rgba(32,32,44,.16); }
+.dicon .tile svg { width: 26px; height: 26px; }
+.dicon .cap { font-size: 11.5px; font-weight: 650; line-height: 1.25; letter-spacing: -.01em; }
+
+/* ── Вікно ────────────────────────────────────────────────────────────────── */
+.win {
+  position: fixed; z-index: 100; display: flex; flex-direction: column;
+  min-width: 340px; min-height: 220px; border-radius: 18px; overflow: hidden;
+  background: rgba(255,255,255,.94);
+  backdrop-filter: blur(30px) saturate(1.7);
+  -webkit-backdrop-filter: blur(30px) saturate(1.7);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 72px rgba(0,0,0,.14), 0 8px 24px rgba(0,0,0,.07), 0 1px 0 rgba(255,255,255,.8) inset;
+  animation: winIn .18s ease-out;
+}
+@keyframes winIn { from { opacity: 0; transform: translateY(8px) scale(.985); } }
+.win.focused { box-shadow: 0 30px 84px rgba(0,0,0,.18), 0 10px 28px rgba(0,0,0,.09), 0 1px 0 rgba(255,255,255,.85) inset; }
+.win.minimized { display: none; }
+.win.dragging, .win.resizing { transition: none; user-select: none; }
+.win.dragging iframe, .win.resizing iframe { pointer-events: none; }
+
+.win-bar {
+  height: 46px; flex: 0 0 46px; display: flex; align-items: center; gap: 10px;
+  padding: 0 14px; cursor: grab;
+  background: rgba(234,228,216,.96);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 1px 0 rgba(255,255,255,.7) inset;
+}
+.win.dragging .win-bar { cursor: grabbing; }
+.win-lights { display: flex; gap: 7px; }
+.win-lights button {
+  width: 12px; height: 12px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+  display: grid; place-items: center; font-size: 8px; color: rgba(0,0,0,.5); line-height: 1;
+}
+.win-lights .c { background: #F0508A; }
+.win-lights .m { background: #FFC44D; }
+.win-lights .z { background: #5BC97E; }
+.win-lights button span { opacity: 0; font-weight: 900; }
+.win-bar:hover .win-lights button span { opacity: 1; }
+.win-title { font-size: 13px; font-weight: 700; letter-spacing: -.01em; }
+.win-sub { font-size: 12px; color: var(--ink-3); }
+.win-bar .spacer { flex: 1; }
+.win-bar a.pop {
+  font-size: 11.5px; font-weight: 700; color: var(--ink-3); text-decoration: none;
+  border: 1px solid var(--line-2); border-radius: 8px; padding: 4px 8px; background: rgba(255,255,255,.6);
+}
+.win-bar a.pop:hover { color: var(--ink); background: #fff; }
+
+.win-body { flex: 1; min-height: 0; background: #fff; }
+.win-body iframe { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+.win-resize {
+  position: absolute; right: 0; bottom: 0; width: 20px; height: 20px; cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, rgba(32,32,44,.22) 50%);
+  border-bottom-right-radius: 18px;
+}
+
+/* ── Док ──────────────────────────────────────────────────────────────────── */
+#dock-wrap { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 800; max-width: 96vw; }
+#dock {
+  display: flex; align-items: flex-end; gap: 7px; padding: 8px 13px 7px;
+  background: rgba(255,255,255,.74);
+  backdrop-filter: blur(42px) saturate(2);
+  -webkit-backdrop-filter: blur(42px) saturate(2);
+  border: 1px solid rgba(255,255,255,.7); border-radius: 22px;
+  box-shadow: 0 16px 56px rgba(94,94,74,.16), 0 4px 14px rgba(0,0,0,.07), inset 0 1.5px 0 rgba(255,255,255,.85);
+  overflow-x: auto; scrollbar-width: none;
+}
+#dock::-webkit-scrollbar { display: none; }
+.di {
+  position: relative; width: 46px; height: 46px; flex: 0 0 46px; border-radius: 14px;
+  border: 1px solid var(--line); background: rgba(255,255,255,.92); cursor: pointer;
+  display: grid; place-items: center; color: var(--accent);
+  transition: transform .16s cubic-bezier(.34,1.56,.64,1);
+}
+.di:hover { transform: translateY(-5px); }
+.di.lime { background: var(--lime); color: #2F3A00; }
+.di svg { width: 23px; height: 23px; }
+.di .dot {
+  position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px; border-radius: 50%; background: var(--ink); opacity: 0;
+}
+.di.running .dot { opacity: .65; }
+.di .tip {
+  position: absolute; bottom: 56px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: #fff; font-size: 11.5px; font-weight: 650;
+  padding: 5px 9px; border-radius: 8px; white-space: nowrap; opacity: 0; pointer-events: none;
+  transition: opacity .14s;
+}
+.di:hover .tip { opacity: 1; }
+.dock-sep { width: 1px; align-self: stretch; background: var(--line-2); margin: 4px 3px; }
+
+/* ── Дрібниці ─────────────────────────────────────────────────────────────── */
+#toast {
+  position: fixed; left: 50%; bottom: 86px; transform: translate(-50%, 16px); z-index: 990;
+  background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 11px;
+  font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none;
+  transition: opacity .2s, transform .2s;
+}
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ── Телефон: вікна стають на весь екран ──────────────────────────────────── */
+@media (max-width: 760px) {
+  #desktop { inset: 44px 0 88px 0; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); padding: 14px 10px; }
+  .dicon .tile { width: 46px; height: 46px; border-radius: 13px; }
+  .win {
+    inset: 44px 0 78px 0 !important; width: auto !important; height: auto !important;
+    border-radius: 0; border-left: 0; border-right: 0;
+  }
+  .win-resize { display: none; }
+  #menubar .mb-meta { display: none; }
+  #dock { padding: 7px 10px 6px; gap: 5px; }
+  .di { width: 42px; height: 42px; flex: 0 0 42px; }
+}

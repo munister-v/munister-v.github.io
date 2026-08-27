@@ -1,12 +1,12 @@
 /*
   NetLab — связь с сервером
 
-  Аккаунты и журнал живут на app.munister.com.ua/netlab-api (отдельный
-  сервис на VPS). Сам сайт при этом остаётся статикой на Pages: без входа
-  все инструменты работают как раньше, просто результаты никуда не уходят.
+  Акаунти і журнал живуть на app.munister.com.ua/netlab-api (окремий сервіс
+  на VPS). Сам сайт лишається статикою на Pages: без входу всі інструменти
+  працюють як раніше, просто результати нікуди не йдуть.
 
-  Токен хранится в localStorage. Преподаватель и студент — разные роли и
-  разные токены, но одновременно в одном браузере они не нужны: ключ один.
+  Токен зберігається в localStorage. Викладач і студент — різні ролі й різні
+  токени, але одночасно в одному браузері вони не потрібні: ключ один.
 */
 (function (global) {
   "use strict";
@@ -22,7 +22,7 @@
     try {
       if (tok) { localStorage.setItem(TOKEN_KEY, tok); localStorage.setItem(WHO_KEY, JSON.stringify(who || {})); }
       else { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(WHO_KEY); }
-    } catch { /* приватный режим */ }
+    } catch { /* приватний режим */ }
   }
   function who() {
     try { return JSON.parse(localStorage.getItem(WHO_KEY) || "null"); } catch { return null; }
@@ -38,9 +38,9 @@
       },
     });
     let data = null;
-    try { data = await res.json(); } catch { /* пустое тело */ }
+    try { data = await res.json(); } catch { /* порожнє тіло */ }
     if (!res.ok || (data && data.ok === false)) {
-      // 401 означает, что токен протух — держать его дальше нет смысла.
+      // 401 означає, що токен протух — тримати його далі немає сенсу.
       if (res.status === 401) setSession(null, null);
       throw new Error((data && data.error) || ("Сервер ответил " + res.status));
     }
@@ -50,8 +50,8 @@
   const get = path => call(path);
   const post = (path, body) => call(path, { method: "POST", body: JSON.stringify(body || {}) });
 
-  // Результат отправляется молча и не мешает игре: не вошёл — просто некуда
-  // отправлять, а упавшая сеть не должна ронять тренажёр.
+  // Результат надсилається мовчки й не заважає грі: не увійшов — просто нікуди
+  // надсилати, а мережа, що впала, не має ронити тренажер.
   function sendResult(kind, ok, total, detail) {
     const w = who();
     if (!token() || !w || w.kind !== "student") return Promise.resolve(null);

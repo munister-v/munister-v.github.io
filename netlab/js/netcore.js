@@ -1,13 +1,13 @@
 /*
   NetLab — сетевая арифметика
 
-  Всё, что считает адреса, живёт здесь и не знает про DOM: одни и те же
-  функции нужны калькулятору, тренажёру, конструктору топологий и генератору
-  печатных листов, и расходиться они не должны.
+  Усе, що рахує адреси, живе тут і не знає про DOM: ті самі функції потрібні
+  калькулятору, тренажеру, конструктору топологій і генератору друкованих
+  аркушів, і розходитися вони не мають права.
 
-  IPv4 держим числом. Осторожно: побитовые операции в JS работают со знаковым
-  32-битным целым, поэтому любой результат прогоняем через `>>> 0`, иначе
-  255.255.255.0 превращается в отрицательное число и всё дальнейшее враньё.
+  IPv4 тримаємо числом. Обережно: порозрядні операції в JS працюють зі знаковим
+  32-бітним цілим, тому будь-який результат женемо через `>>> 0`, інакше
+  255.255.255.0 стає від'ємним числом, і все подальше — брехня.
 */
 (function (global) {
   "use strict";
@@ -35,8 +35,8 @@
     return bits === 0 ? 0 : (0xFFFFFFFF << (32 - bits)) >>> 0;
   }
 
-  // Маска считается корректной, только если единицы идут подряд с начала:
-  // 255.255.254.0 — маска, 255.255.253.0 — опечатка, которую надо поймать.
+  // Маска коректна, лише якщо одиниці йдуть поспіль від початку:
+  // 255.255.254.0 — маска, 255.255.253.0 — одрук, який треба зловити.
   function prefixFromMask(mask) {
     const n = typeof mask === "number" ? mask >>> 0 : ipToInt(mask);
     if (n === null) return null;
@@ -51,7 +51,7 @@
     if (first < 192) return "B";
     if (first < 224) return "C";
     if (first < 240) return "D (multicast)";
-    return "E (экспериментальный)";
+    return "E (експериментальний)";
   }
 
   function isPrivate(n) {
@@ -62,7 +62,7 @@
       || (n >>> 16) === 0xA9FE;                                // 169.254.0.0/16 APIPA
   }
 
-  // Разбор «192.168.1.10/24», «192.168.1.10 255.255.255.0» и просто адреса.
+  // Розбір «192.168.1.10/24», «192.168.1.10 255.255.255.0» і просто адреси.
   function parseCidr(text) {
     const raw = String(text).trim().replace(/\s+/g, " ");
     let ipPart = raw, prefix = null;
@@ -75,9 +75,9 @@
       ipPart = a; prefix = prefixFromMask(b);
     }
     const ip = ipToInt(ipPart);
-    if (ip === null) return { error: "Адрес не похож на IPv4: нужны четыре числа 0–255" };
+    if (ip === null) return { error: "Адреса не схожа на IPv4: потрібні чотири числа 0–255" };
     if (prefix === null || prefix === undefined) prefix = 24;
-    if (!(prefix >= 0 && prefix <= 32)) return { error: "Префикс должен быть от /0 до /32" };
+    if (!(prefix >= 0 && prefix <= 32)) return { error: "Префікс має бути від /0 до /32" };
     return { ip, prefix };
   }
 
@@ -92,8 +92,8 @@
     const network = (ip & mask) >>> 0;
     const broadcast = (network | (~mask >>> 0)) >>> 0;
     const total = Math.pow(2, 32 - prefix);
-    // /31 — линк точка-точка (RFC 3021), /32 — один хост. В обоих случаях
-    // «минус два на сеть и бродкаст» не применяется, и учебники об этом молчат.
+    // /31 — лінк точка-точка (RFC 3021), /32 — один хост. В обоих случаях
+    // «мінус два на мережу і бродкаст» не діє, і підручники про це мовчать.
     const usable = prefix >= 31 ? total : Math.max(total - 2, 0);
     const firstHost = prefix >= 31 ? network : (total > 2 ? network + 1 : null);
     const lastHost = prefix >= 31 ? broadcast : (total > 2 ? broadcast - 1 : null);
@@ -110,18 +110,18 @@
       total, usable,
       network, broadcast,
       cls: ipClass(ip),
-      scope: isPrivate(ip) ? "приватный" : "публичный",
+      scope: isPrivate(ip) ? "приватна" : "публічна",
       binary: intToIp(ip).split(".").map(o => Number(o).toString(2).padStart(8, "0")),
       maskBinary: intToIp(mask).split(".").map(o => Number(o).toString(2).padStart(8, "0")),
     };
   }
 
-  // Нарезка сети на равные куски — то, что в задачах звучит как «разбейте
-  // 192.168.1.0/24 на подсети по /27».
+  // Нарізка мережі на рівні шматки — те, що в задачах звучить як «розбийте
+  // 192.168.1.0/24 на підмережі по /27».
   function split(networkText, fromPrefix, toPrefix, limit = 64) {
     const base = subnet(networkText, fromPrefix);
     if (base.error) return base;
-    if (toPrefix < fromPrefix) return { error: "Новый префикс должен быть больше исходного" };
+    if (toPrefix < fromPrefix) return { error: "Новий префікс має бути більший за початковий" };
     const step = Math.pow(2, 32 - toPrefix);
     const count = Math.pow(2, toPrefix - fromPrefix);
     const out = [];
@@ -131,8 +131,8 @@
     return { count, shown: out.length, subnets: out };
   }
 
-  // VLSM: раздаём куски по убыванию потребности — иначе дырки между блоками
-  // съедают адресное пространство, и задача «не сходится».
+  // VLSM: роздаємо шматки за спаданням потреби — інакше дірки між блоками
+  // з'їдають адресний простір, і задача «не сходиться».
   function vlsm(networkText, prefix, requests) {
     const base = subnet(networkText, prefix);
     if (base.error) return base;
@@ -145,14 +145,14 @@
     const end = base.broadcast;
     const out = [];
     for (const r of wanted) {
-      // +2 — адрес сети и бродкаст, которые хостам не достаются.
+      // +2 — адреса мережі та бродкаст, які хостам не дістаються.
       let bits = 32;
       while (bits > 0 && Math.pow(2, 32 - bits) - 2 < r.need) bits--;
       const size = Math.pow(2, 32 - bits);
-      // Блок обязан начинаться на границе своего размера.
+      // Блок мусить починатися на межі свого розміру.
       const aligned = Math.ceil(cursor / size) * size;
       if (aligned + size - 1 > end) {
-        out.push({ name: r.name, need: r.need, error: "не помещается в исходную сеть" });
+        out.push({ name: r.name, need: r.need, error: "не вміщується у вихідну мережу" });
         continue;
       }
       const s = subnet(aligned >>> 0, bits);
@@ -168,8 +168,8 @@
   }
 
   /* ── IPv6 ───────────────────────────────────────────────────────────────── */
-  // Разворачиваем :: и ведущие нули — студенты чаще всего ошибаются именно
-  // на переходе между сжатой и полной записью.
+  // Розгортаємо :: і провідні нулі — студенти найчастіше помиляються саме
+  // на переході між стислим і повним записом.
   function v6Expand(addr) {
     let a = String(addr).trim().toLowerCase();
     if (!a) return null;
@@ -211,12 +211,12 @@
     if (/^fe80:/.test(full)) return "link-local (fe80::/10)";
     if (/^f[cd]/.test(full)) return "unique local (fc00::/7)";
     if (/^ff/.test(full)) return "multicast (ff00::/8)";
-    if (/^2001:0db8:/.test(full)) return "документационный (2001:db8::/32)";
+    if (/^2001:0db8:/.test(full)) return "документаційна (2001:db8::/32)";
     if (/^2/.test(full) || /^3/.test(full)) return "global unicast (2000::/3)";
-    return "прочий";
+    return "інша";
   }
 
-  /* ── Системы счисления ──────────────────────────────────────────────────── */
+  /* ── Системи числення ───────────────────────────────────────────────────── */
   function bases(value, from) {
     const n = parseInt(String(value).trim(), from);
     if (isNaN(n) || n < 0) return null;

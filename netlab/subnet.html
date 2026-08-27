@@ -1,70 +1,70 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Подсети IPv4 — NetLab</title>
+<title>Підмережі IPv4 — NetLab</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles/netlab.css?v=1">
+<link rel="stylesheet" href="styles/netlab.css?v=3">
 </head>
 <body>
 <div class="shell wide">
   <div class="window">
     <div class="titlebar">
       <span class="lights"><i></i><i></i><i></i></span>
-      <h1>Подсети IPv4</h1>
-      <span class="sub">калькулятор, побитовая раскладка, нарезка и VLSM</span>
+      <h1>Підмережі IPv4</h1>
+      <span class="sub">калькулятор, порозрядна розкладка, нарізка і VLSM</span>
     </div>
     <div class="win-body">
-      <h2 class="page">Калькулятор подсети</h2>
-      <p class="lede">Принимает «192.168.1.10/24», «10.0.0.1 255.255.0.0» и просто адрес — тогда префикс считается /24.</p>
+      <h2 class="page">Калькулятор підмережі</h2>
+      <p class="lede">Приймає «192.168.1.10/24», «10.0.0.1 255.255.0.0» і просто адресу — тоді префікс вважається /24.</p>
 
       <div class="row no-print">
         <div style="flex:1;min-width:260px">
-          <label class="f" for="cidr">Адрес с префиксом или маской</label>
+          <label class="f" for="cidr">Адреса з префіксом або маскою</label>
           <input id="cidr" class="mono" type="text" value="192.168.1.10/24" style="width:100%" spellcheck="false">
         </div>
         <div>
-          <label class="f" for="pfx">Префикс</label>
+          <label class="f" for="pfx">Префікс</label>
           <select id="pfx"></select>
         </div>
         <div style="align-self:flex-end;display:flex;gap:8px">
-          <button class="btn primary" id="calc">Посчитать</button>
-          <button class="btn" id="example">Пример</button>
+          <button class="btn primary" id="calc">Порахувати</button>
+          <button class="btn" id="example">Приклад</button>
         </div>
       </div>
 
       <div id="out"></div>
 
-      <h3 class="sec">Нарезать на равные подсети</h3>
+      <h3 class="sec">Нарізати на рівні підмережі</h3>
       <div class="row no-print">
-        <div><label class="f" for="split-to">Новый префикс</label><select id="split-to"></select></div>
-        <div style="align-self:flex-end"><button class="btn" id="do-split">Разбить</button></div>
+        <div><label class="f" for="split-to">Новий префікс</label><select id="split-to"></select></div>
+        <div style="align-self:flex-end"><button class="btn" id="do-split">Розбіти</button></div>
       </div>
       <div id="split-out"></div>
 
-      <h3 class="sec">VLSM — блоки под разные отделы</h3>
-      <p class="lede">Сколько хостов нужно каждой группе. Блоки раздаются от большего к меньшему, иначе пространство рвётся на дырки.</p>
+      <h3 class="sec">VLSM — блоки під різні відділи</h3>
+      <p class="lede">Скільки хостів потрібно кожній групі. Блоки роздаються від більшого до меншого, інакше простір рветься на дірки.</p>
       <div id="vlsm-rows" class="no-print"></div>
       <div class="row no-print" style="margin-top:8px">
-        <button class="btn" id="add-row">Добавить отдел</button>
-        <button class="btn primary" id="do-vlsm">Рассчитать VLSM</button>
+        <button class="btn" id="add-row">Додати відділ</button>
+        <button class="btn primary" id="do-vlsm">Розрахувати VLSM</button>
       </div>
       <div id="vlsm-out"></div>
     </div>
   </div>
 </div>
 
-<script src="js/netcore.js?v=1"></script>
-<script src="js/shell.js?v=1"></script>
+<script src="js/netcore.js?v=3"></script>
+<script src="js/shell.js?v=3"></script>
 <script>
-NL.mount("Подсети IPv4");
+NL.mount("Підмережі IPv4");
 
 const $ = id => document.getElementById(id);
 const N = NetCore;
 
-// Списки префиксов: /0 бессмысленно предлагать в нарезке, но в калькуляторе
-// он законен, поэтому наборы разные.
+// Списки префіксів: /0 безглуздо пропонувати в нарізці, але в калькуляторі
+// він законний, тому набори різні.
 for (let i = 0; i <= 32; i++) {
   $("pfx").append(new Option("/" + i + "  ·  " + N.intToIp(N.maskFromPrefix(i)), i, false, i === 24));
   if (i > 0) $("split-to").append(new Option("/" + i, i, false, i === 26));
@@ -74,8 +74,8 @@ function card(k, v) {
   return `<div class="res"><div class="k">${NL.esc(k)}</div><div class="v">${NL.esc(v)}</div></div>`;
 }
 
-// Побитовая раскладка: видно, где кончается сеть и начинается хост — ради
-// этой картинки тема обычно и объясняется.
+// Побітовая раскладка: видно, где кончается сеть и начинается хост — ради
+// заради цієї картинки тема зазвичай і пояснюється.
 function bitsRow(s) {
   const flat = s.binary.join("");
   const net = flat.slice(0, s.prefix);
@@ -84,7 +84,7 @@ function bitsRow(s) {
   return `<div class="note" style="background:#fff;border-color:var(--line);color:var(--ink)">
     <div class="bits"><b>${group(net)}</b>${net.length % 8 ? "" : " "}<i>${group(host)}</i></div>
     <div style="font-size:11.5px;color:var(--ink-3);margin-top:6px">
-      синим — ${s.prefix} бит сети, серым — ${32 - s.prefix} бит хоста
+      синім — ${s.prefix} біт мережі, сірим — ${32 - s.prefix} біт хоста
     </div>
   </div>`;
 }
@@ -95,21 +95,21 @@ function calc() {
   $("pfx").value = String(s.prefix);
   $("out").innerHTML = `
     <div class="cards" style="margin-top:14px">
-      ${card("Адрес", s.ipText + "/" + s.prefix)}
-      ${card("Сеть", s.networkText)}
+      ${card("Адреса", s.ipText + "/" + s.prefix)}
+      ${card("Мережа", s.networkText)}
       ${card("Бродкаст", s.broadcastText)}
-      ${card("Первый хост", s.firstHostText)}
-      ${card("Последний хост", s.lastHostText)}
+      ${card("Перший хост", s.firstHostText)}
+      ${card("Останній хост", s.lastHostText)}
       ${card("Маска", s.maskText)}
       ${card("Wildcard", s.wildcardText)}
-      ${card("Адресов всего", s.total.toLocaleString("ru-RU"))}
-      ${card("Хостов", s.usable.toLocaleString("ru-RU"))}
+      ${card("Адреса усього", s.total.toLocaleString("ru-RU"))}
+      ${card("Хостів", s.usable.toLocaleString("ru-RU"))}
     </div>
     <div class="row" style="margin-top:10px">
-      <span class="chip blue">класс ${NL.esc(s.cls)}</span>
+      <span class="chip blue">клас ${NL.esc(s.cls)}</span>
       <span class="chip">${NL.esc(s.scope)}</span>
-      ${s.prefix === 31 ? '<span class="chip ok">/31 — линк точка-точка, RFC 3021</span>' : ""}
-      ${s.prefix === 32 ? '<span class="chip ok">/32 — один адрес</span>' : ""}
+      ${s.prefix === 31 ? '<span class="chip ok">/31 — лінк точка-точка, RFC 3021</span>' : ""}
+      ${s.prefix === 32 ? '<span class="chip ok">/32 — одна адреса</span>' : ""}
     </div>
     ${bitsRow(s)}`;
   return s;
@@ -122,10 +122,10 @@ function doSplit() {
   const r = N.split(s.networkText, s.prefix, to);
   if (r.error) { $("split-out").innerHTML = `<div class="err">${NL.esc(r.error)}</div>`; return; }
   $("split-out").innerHTML = `
-    <div class="note">Из ${NL.esc(s.networkText)}/${s.prefix} получается <b>${r.count}</b> подсетей /${to}
-      по ${r.subnets[0].usable} хостов${r.shown < r.count ? `; показаны первые ${r.shown}` : ""}.</div>
+    <div class="note">З ${NL.esc(s.networkText)}/${s.prefix} виходить <b>${r.count}</b> підмереж /${to}
+      по ${r.subnets[0].usable} хостів${r.shown < r.count ? `; показані перші ${r.shown}` : ""}.</div>
     <div class="table-wrap"><table>
-      <thead><tr><th>#</th><th>Сеть</th><th>Диапазон хостов</th><th>Бродкаст</th><th>Хостов</th></tr></thead>
+      <thead><tr><th>#</th><th>Мережа</th><th>Діапазон хостів</th><th>Бродкаст</th><th>Хостів</th></tr></thead>
       <tbody>${r.subnets.map((x, i) => `<tr>
         <td>${i + 1}</td><td>${x.networkText}/${x.prefix}</td>
         <td>${x.firstHostText} — ${x.lastHostText}</td><td>${x.broadcastText}</td><td>${x.usable}</td>
@@ -133,13 +133,13 @@ function doSplit() {
 }
 
 /* ── VLSM ─────────────────────────────────────────────────────────────────── */
-const defaults = [["Бухгалтерия", 50], ["Учебный класс", 100], ["Серверная", 12], ["Линк до роутера", 2]];
+const defaults = [["Бухгалтерія", 50], ["Навчальний клас", 100], ["Серверна", 12], ["Лінк до роутера", 2]];
 function rowHtml(name, hosts) {
   return `<div class="row vlsm-row" style="margin-top:8px">
-    <input type="text" class="v-name" value="${NL.esc(name)}" placeholder="Отдел" style="flex:1;min-width:180px">
+    <input type="text" class="v-name" value="${NL.esc(name)}" placeholder="Відділ" style="flex:1;min-width:180px">
     <input type="number" class="v-hosts" value="${hosts}" min="1" max="65534" style="width:120px">
-    <span class="chip">хостов</span>
-    <button class="btn v-del" title="Убрать строку">×</button>
+    <span class="chip">хостів</span>
+    <button class="btn v-del" title="Прибрати рядок">×</button>
   </div>`;
 }
 $("vlsm-rows").innerHTML = defaults.map(d => rowHtml(d[0], d[1])).join("");
@@ -148,27 +148,27 @@ function doVlsm() {
   const s = calc();
   if (!s) return;
   const reqs = [...document.querySelectorAll(".vlsm-row")].map(r => ({
-    name: r.querySelector(".v-name").value.trim() || "без названия",
+    name: r.querySelector(".v-name").value.trim() || "без назви",
     hosts: Number(r.querySelector(".v-hosts").value),
   })).filter(r => r.hosts > 0);
-  if (!reqs.length) { $("vlsm-out").innerHTML = `<div class="err">Нужен хотя бы один отдел</div>`; return; }
+  if (!reqs.length) { $("vlsm-out").innerHTML = `<div class="err">Потрібен хоча б один відділ</div>`; return; }
 
   const r = N.vlsm(s.networkText, s.prefix, reqs);
   if (r.error) { $("vlsm-out").innerHTML = `<div class="err">${NL.esc(r.error)}</div>`; return; }
   $("vlsm-out").innerHTML = `
     <div class="table-wrap"><table>
-      <thead><tr><th>Отдел</th><th>Нужно</th><th>Сеть</th><th>Маска</th><th>Диапазон</th><th>Бродкаст</th><th>Даёт</th></tr></thead>
+      <thead><tr><th>Відділ</th><th>Потрібно</th><th>Мережа</th><th>Маска</th><th>Діапазон</th><th>Бродкаст</th><th>Такє</th></tr></thead>
       <tbody>${r.blocks.map(b => b.error
         ? `<tr><td class="txt">${NL.esc(b.name)}</td><td>${b.need}</td><td colspan="5" class="txt"><span class="chip no">${NL.esc(b.error)}</span></td></tr>`
         : `<tr><td class="txt">${NL.esc(b.name)}</td><td>${b.need}</td><td>${b.networkText}/${b.prefix}</td>
            <td>${b.maskText}</td><td>${b.firstHostText} — ${b.lastHostText}</td><td>${b.broadcastText}</td><td>${b.usable}</td></tr>`
       ).join("")}</tbody></table></div>
     ${r.freeFrom
-      ? `<div class="note">Свободно с ${NL.esc(r.freeFrom)} — ещё ${r.freeCount.toLocaleString("ru-RU")} адресов.</div>`
-      : `<div class="note">Свободных адресов в этой сети не осталось.</div>`}`;
+      ? `<div class="note">Вільно з ${NL.esc(r.freeFrom)} — ще ${r.freeCount.toLocaleString("ru-RU")} адрес.</div>`
+      : `<div class="note">Вільних адрес у цій мережі не лишилось.</div>`}`;
 }
 
-/* ── События ──────────────────────────────────────────────────────────────── */
+/* ── Події ────────────────────────────────────────────────────────────────── */
 $("calc").addEventListener("click", calc);
 $("cidr").addEventListener("keydown", e => { if (e.key === "Enter") calc(); });
 $("pfx").addEventListener("change", () => {
