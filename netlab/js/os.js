@@ -15,7 +15,7 @@
   // Версія статики: та сама, що в ?v= на сторінках. Підставляється в адресу
   // кожного iframe, інакше після деплою вікно показує вчорашній інструмент із
   // кешу браузера, поки сторінка навколо вже нова.
-  const V = "5";
+  const V = "6";
   const POS_KEY = "netlab.os.windows.v1";
   const SESSION_KEY = "netlab.os.session.v1";
   const wins = new Map();          // id → { el, app, minimized, maximized, prev }
