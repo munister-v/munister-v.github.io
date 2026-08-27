@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вход по коду группы — NetLab</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles/netlab.css?v=2">
+<style>
+  .box{max-width:420px}
+  .box input{width:100%;margin-bottom:12px}
+  #code{font-family:var(--mono);font-size:22px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;text-align:center}
+  .task-links a{display:block;background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;margin-bottom:8px;text-decoration:none;color:inherit;font-weight:700}
+  .task-links a:hover{background:#FAF8F4}
+  .task-links span{display:block;font-size:12px;font-weight:600;color:var(--ink-3);margin-top:2px}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="window">
+    <div class="titlebar">
+      <span class="lights"><i></i><i></i><i></i></span>
+      <h1>Вход для студента</h1>
+      <span class="sub" id="whoami"></span>
+      <span class="spacer"></span>
+      <button class="bar-btn no-print" id="logout" style="display:none">Выйти</button>
+    </div>
+    <div class="win-body">
+
+      <div id="gate">
+        <h2 class="page">Код группы</h2>
+        <p class="lede">Пароль не нужен. Код продиктует преподаватель, имя пишите так, как значитесь в списке группы.</p>
+        <div class="box">
+          <label class="f">Код группы</label>
+          <input id="code" type="text" maxlength="6" autocomplete="off" placeholder="ABC123">
+          <label class="f">Имя и фамилия</label>
+          <input id="name" type="text" autocomplete="name" placeholder="Иван Ковальчук">
+          <button class="btn primary" id="go" style="width:100%">Войти в группу</button>
+          <div class="err" id="err" style="display:none"></div>
+        </div>
+      </div>
+
+      <div id="app" style="display:none">
+        <h2 class="page" id="hello">Вы в группе</h2>
+        <p class="lede">Результаты тренажёра и игр уходят преподавателю автоматически, пока вы не вышли.</p>
+
+        <h3 class="sec">Задания</h3>
+        <div id="assignments"></div>
+
+        <h3 class="sec">Чем заняться</h3>
+        <div class="task-links">
+          <a href="trainer.html">Тренажёр по адресации<span>маски, сети, бродкаст, хосты</span></a>
+          <a href="games/osi.html">Модель OSI<span>семь уровней и что на них живёт</span></a>
+          <a href="games/ports.html">Порты и протоколы<span>номера служб</span></a>
+          <a href="games/cables.html">Кабели и обжим<span>T568A, T568B, витая пара</span></a>
+          <a href="subnet.html">Калькулятор подсетей<span>проверить себя</span></a>
+          <a href="cheatsheet.html">Шпаргалки<span>маски, порты, уровни, команды</span></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="js/shell.js?v=2"></script>
+<script src="js/api.js?v=2"></script>
+<script>
+NL.mount("Вход студента");
+const $ = id => document.getElementById(id);
+
+function shown(student, groupName) {
+  $("whoami").textContent = student.name;
+  $("hello").textContent = groupName ? "Группа " + groupName : "Вы в группе";
+  $("gate").style.display = "none";
+  $("app").style.display = "";
+  $("logout").style.display = "";
+  loadAssignments();
+}
+
+$("go").addEventListener("click", async () => {
+  $("err").style.display = "none";
+  try {
+    const r = await API.post("/join", { code: $("code").value, name: $("name").value });
+    API.setSession(r.token, { kind: "student", name: r.student.name, group: r.group.name });
+    shown(r.student, r.group.name);
+    NL.toast("Готово, можно решать");
+  } catch (e) {
+    $("err").style.display = "";
+    $("err").textContent = e.message;
+  }
+});
+$("name").addEventListener("keydown", e => { if (e.key === "Enter") $("go").click(); });
+
+$("logout").addEventListener("click", async () => {
+  try { await API.post("/auth/logout", {}); } catch { /* уже неактуальна */ }
+  API.setSession(null, null);
+  location.reload();
+});
+
+async function loadAssignments() {
+  try {
+    const data = await API.get("/assignments");
+    $("assignments").innerHTML = data.assignments.length
+      ? data.assignments.map(a => `<div class="row" style="border-bottom:1px solid var(--line);padding:9px 0">
+          <b>${NL.esc(a.title)}</b>
+          ${a.dueAt ? `<span class="chip blue">до ${NL.esc(a.dueAt)}</span>` : ""}
+          ${a.link ? `<a href="${NL.esc(a.link)}">открыть</a>` : ""}
+        </div>`).join("")
+      : `<p class="lede" style="margin:0">Заданий пока не выдали.</p>`;
+  } catch (e) {
+    $("assignments").innerHTML = `<p class="lede" style="margin:0">${NL.esc(e.message)}</p>`;
+  }
+}
+
+(async function boot() {
+  if (!API.token()) return;
+  try {
+    const me = await API.get("/me");
+    if (me.kind === "student") {
+      const w = API.who() || {};
+      shown(me.student, w.group || "");
+    }
+  } catch { /* токен протух — покажем форму */ }
+})();
+</script>
+</body>
+</html>

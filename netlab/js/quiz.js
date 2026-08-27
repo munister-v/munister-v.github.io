@@ -17,6 +17,7 @@
     const bank = config.questions;
     let queue = [], current = null, answered = false;
     let stats = { ok: 0, total: 0, streak: 0, best: 0 };
+    let sent = { ok: 0, total: 0 };
     let timer = null, left = 0;
     const TIMED_SECONDS = 90;
     let timed = false;
@@ -68,6 +69,12 @@
       why.innerHTML = (right ? "<b>Верно.</b> " : `<b>Правильно — ${NL.esc(current.a)}.</b> `) + (current.why || "");
       root.querySelector(".score").innerHTML =
         `верно <b>${stats.ok}</b> из <b>${stats.total}</b> · серия <b>${stats.streak}</b>${timed ? ` · осталось <b>${left}</b> сек` : ""}`;
+      // Преподавателю уходит не каждый ответ, а срез каждые десять: журнал
+      // читают глазами, и сотня строк на одного студента там лишняя.
+      if (window.API && stats.total % 10 === 0) {
+        API.sendResult(config.kind || "quiz", stats.ok - sent.ok, stats.total - sent.total, config.title || "");
+        sent = { ok: stats.ok, total: stats.total };
+      }
       if (!timed) setTimeout(() => { if (answered) nextQuestion(); }, 1400);
       else nextQuestion();
     }
@@ -83,6 +90,10 @@
         if (s) s.textContent = left;
         if (left <= 0) {
           clearInterval(timer);
+          if (window.API && stats.total > sent.total) {
+            API.sendResult(config.kind || "quiz", stats.ok - sent.ok, stats.total - sent.total, config.title || "");
+            sent = { ok: stats.ok, total: stats.total };
+          }
           root.innerHTML = `<div class="q" style="text-align:center">
             <div class="task">Время вышло</div>
             <div class="given">${stats.ok} из ${stats.total}</div>

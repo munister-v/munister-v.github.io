@@ -48,12 +48,14 @@
 </div>
 
 <script src="js/netcore.js?v=1"></script>
-<script src="js/shell.js?v=1"></script>
+<script src="js/shell.js?v=2"></script>
+<script src="js/api.js?v=2"></script>
 <script>
 NL.mount("Тренажёр");
 const $ = id => document.getElementById(id);
 const N = NetCore;
 let stats = { ok: 0, total: 0, streak: 0 }, current = null, answered = false;
+let sent = { ok: 0, total: 0 };
 
 /* ── Темы ─────────────────────────────────────────────────────────────────
    Каждая тема — функция, возвращающая задачу: текст, что дано, правильный
@@ -224,6 +226,11 @@ $("q").addEventListener("click", e => {
   $("ok").textContent = stats.ok;
   $("total").textContent = stats.total;
   $("streak").textContent = stats.streak;
+  // Срез в журнал каждые десять задач: одна строка на подход, а не на ответ.
+  if (window.API && stats.total % 10 === 0) {
+    API.sendResult("trainer", stats.ok - sent.ok, stats.total - sent.total, [...chosen].join(","));
+    sent = { ok: stats.ok, total: stats.total };
+  }
 });
 
 $("next").addEventListener("click", nextQuestion);

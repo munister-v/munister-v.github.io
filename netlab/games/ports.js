@@ -47,4 +47,4 @@ questions.push(
   { q: "Сколько всего портов у TCP?", a: "65536", wrong: ["1024", "32768", "4096"], why: "Поле порта 16-битное: от 0 до 65535." },
 );
 
-Quiz.run({ questions });
+Quiz.run({ questions, kind: "ports", title: "Порты и протоколы" });

@@ -50,4 +50,4 @@ const questions = [
     why: "Экранированный вариант — STP/FTP." },
 ];
 
-Quiz.run({ questions });
+Quiz.run({ questions, kind: "cables", title: "Кабели и обжим" });

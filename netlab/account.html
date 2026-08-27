@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Кабинет преподавателя — NetLab</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles/netlab.css?v=2">
+<style>
+  .two{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
+  @media (max-width:860px){.two{grid-template-columns:1fr}}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .panel h3{margin:0 0 12px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+  .panel input,.panel select{width:100%;margin-bottom:10px}
+  .code{font-family:var(--mono);font-size:20px;font-weight:800;letter-spacing:.12em;color:var(--accent)}
+  .grow{width:100%}
+  .glist button{width:100%;text-align:left;margin-bottom:6px}
+  .glist .sel{border-color:var(--accent);background:var(--accent-soft)}
+</style>
+</head>
+<body>
+<div class="shell wide">
+  <div class="window">
+    <div class="titlebar">
+      <span class="lights"><i></i><i></i><i></i></span>
+      <h1>Кабинет преподавателя</h1>
+      <span class="sub" id="whoami">не выполнен вход</span>
+      <span class="spacer"></span>
+      <button class="bar-btn no-print" id="logout" style="display:none">Выйти</button>
+    </div>
+    <div class="win-body">
+
+      <div id="gate">
+        <h2 class="page">Вход</h2>
+        <p class="lede">Группы, задания и журнал хранятся на сервере. Студентам аккаунт не нужен — они заходят по коду группы.</p>
+        <div class="two">
+          <div class="panel">
+            <h3>Войти</h3>
+            <label class="f">Логин</label><input id="l-login" type="text" autocomplete="username">
+            <label class="f">Пароль</label><input id="l-pass" type="password" autocomplete="current-password">
+            <button class="btn primary grow" id="l-go">Войти</button>
+            <div class="err" id="l-err" style="display:none"></div>
+          </div>
+          <div class="panel">
+            <h3>Завести аккаунт</h3>
+            <p class="lede">Нужен код приглашения — он у владельца сервера.</p>
+            <label class="f">Код приглашения</label><input id="r-invite" type="text">
+            <label class="f">Имя</label><input id="r-name" type="text">
+            <label class="f">Логин</label><input id="r-login" type="text" autocomplete="username">
+            <label class="f">Пароль (от 8 символов)</label><input id="r-pass" type="password" autocomplete="new-password">
+            <button class="btn grow" id="r-go">Создать</button>
+            <div class="err" id="r-err" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="app" style="display:none">
+        <h2 class="page">Группы и журнал</h2>
+        <p class="lede">Продиктуйте код группы — студенты откроют <b>munister.com.ua/netlab/join.html</b>, введут код и имя. Дальше их результаты падают сюда сами.</p>
+        <div class="two">
+          <div>
+            <div class="panel">
+              <h3>Мои группы</h3>
+              <div class="glist" id="groups"></div>
+              <label class="f" style="margin-top:12px">Новая группа</label>
+              <input id="g-name" type="text" placeholder="ИС-21, вторник">
+              <button class="btn primary grow" id="g-add">Создать группу</button>
+            </div>
+            <div class="panel" style="margin-top:14px">
+              <h3>Выдать задание</h3>
+              <input id="a-title" type="text" placeholder="Название">
+              <select id="a-kind">
+                <option value="trainer">Тренажёр по адресации</option>
+                <option value="osi">Игра: модель OSI</option>
+                <option value="ports">Игра: порты</option>
+                <option value="cables">Игра: кабели</option>
+                <option value="handout">Печатный лист</option>
+                <option value="topology">Схема сети</option>
+              </select>
+              <input id="a-link" type="text" placeholder="Ссылка (необязательно)">
+              <input id="a-due" type="date">
+              <button class="btn grow" id="a-add">Выдать</button>
+            </div>
+          </div>
+
+          <div>
+            <div class="panel">
+              <h3 id="j-title">Журнал</h3>
+              <div id="journal"></div>
+            </div>
+            <div class="panel" style="margin-top:14px">
+              <h3>Задания группы</h3>
+              <div id="assignments"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="js/shell.js?v=2"></script>
+<script src="js/api.js?v=2"></script>
+<script>
+NL.mount("Кабинет");
+const $ = id => document.getElementById(id);
+let groups = [], currentGroup = null;
+
+function showError(id, msg) {
+  const box = $(id);
+  box.style.display = msg ? "" : "none";
+  box.textContent = msg || "";
+}
+
+async function enter(data) {
+  API.setSession(data.token, { kind: "teacher", name: data.teacher.name });
+  $("whoami").textContent = data.teacher.name;
+  $("gate").style.display = "none";
+  $("app").style.display = "";
+  $("logout").style.display = "";
+  await loadGroups();
+}
+
+$("l-go").addEventListener("click", async () => {
+  showError("l-err", "");
+  try { await enter(await API.post("/auth/login", { login: $("l-login").value, password: $("l-pass").value })); }
+  catch (e) { showError("l-err", e.message); }
+});
+$("l-pass").addEventListener("keydown", e => { if (e.key === "Enter") $("l-go").click(); });
+
+$("r-go").addEventListener("click", async () => {
+  showError("r-err", "");
+  try {
+    await enter(await API.post("/auth/register", {
+      invite: $("r-invite").value, name: $("r-name").value,
+      login: $("r-login").value, password: $("r-pass").value,
+    }));
+  } catch (e) { showError("r-err", e.message); }
+});
+
+$("logout").addEventListener("click", async () => {
+  try { await API.post("/auth/logout", {}); } catch { /* сессия и так истекла */ }
+  API.setSession(null, null);
+  location.reload();
+});
+
+async function loadGroups() {
+  const data = await API.get("/groups");
+  groups = data.groups;
+  $("groups").innerHTML = groups.length
+    ? groups.map(g => `<button class="btn ${currentGroup === g.id ? "sel" : ""}" data-g="${g.id}">
+        ${NL.esc(g.name)}
+        <div style="font-size:11px;color:var(--ink-3);font-weight:600">код <span class="code" style="font-size:13px">${g.code}</span> · ${g.students} чел.</div>
+      </button>`).join("")
+    : `<p class="lede" style="margin:0">Групп пока нет.</p>`;
+  if (!currentGroup && groups.length) selectGroup(groups[0].id);
+  else if (currentGroup) await loadJournal();
+}
+
+async function selectGroup(id) {
+  currentGroup = id;
+  await loadGroups();
+  await loadJournal();
+  await loadAssignments();
+}
+
+$("groups").addEventListener("click", e => {
+  const b = e.target.closest("[data-g]");
+  if (b) selectGroup(b.getAttribute("data-g"));
+});
+
+$("g-add").addEventListener("click", async () => {
+  const name = $("g-name").value.trim();
+  if (!name) { NL.toast("Введите название"); return; }
+  try {
+    const r = await API.post("/groups", { name });
+    $("g-name").value = "";
+    NL.toast("Группа создана, код " + r.group.code);
+    await selectGroup(r.group.id);
+  } catch (e) { NL.toast(e.message); }
+});
+
+async function loadJournal() {
+  if (!currentGroup) { $("journal").innerHTML = `<p class="lede" style="margin:0">Выберите группу.</p>`; return; }
+  try {
+    const data = await API.get("/journal?groupId=" + encodeURIComponent(currentGroup));
+    $("j-title").textContent = "Журнал · " + data.group.name + " · код " + data.group.code;
+    $("journal").innerHTML = data.rows.length
+      ? `<div class="table-wrap" style="margin-top:0"><table>
+          <thead><tr><th>Студент</th><th>Попыток</th><th>Верно</th><th>Процент</th><th>Последний раз</th></tr></thead>
+          <tbody>${data.rows.map(r => `<tr>
+            <td class="txt">${NL.esc(r.name)}</td>
+            <td>${r.attempts}</td>
+            <td>${r.ok} / ${r.total}</td>
+            <td>${r.percent == null ? "—" : `<span class="chip ${r.percent >= 70 ? "ok" : r.percent >= 40 ? "" : "no"}">${r.percent}%</span>`}</td>
+            <td>${r.lastAt ? new Date(r.lastAt).toLocaleString("ru-RU", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "—"}</td>
+          </tr>`).join("")}</tbody></table></div>`
+      : `<p class="lede" style="margin:0">В группе пока никого. Продиктуйте код — студенты появятся сами.</p>`;
+  } catch (e) { $("journal").innerHTML = `<div class="err">${NL.esc(e.message)}</div>`; }
+}
+
+async function loadAssignments() {
+  try {
+    const data = await API.get("/assignments");
+    const list = data.assignments.filter(a => a.groupId === currentGroup);
+    $("assignments").innerHTML = list.length
+      ? list.map(a => `<div class="row" style="border-bottom:1px solid var(--line);padding:8px 0">
+          <b>${NL.esc(a.title)}</b><span class="chip">${NL.esc(a.kind)}</span>
+          ${a.dueAt ? `<span class="chip blue">до ${NL.esc(a.dueAt)}</span>` : ""}
+          ${a.link ? `<a href="${NL.esc(a.link)}" target="_blank" rel="noreferrer">ссылка</a>` : ""}
+        </div>`).join("")
+      : `<p class="lede" style="margin:0">Заданий нет.</p>`;
+  } catch (e) { $("assignments").innerHTML = `<div class="err">${NL.esc(e.message)}</div>`; }
+}
+
+$("a-add").addEventListener("click", async () => {
+  if (!currentGroup) { NL.toast("Сначала выберите группу"); return; }
+  try {
+    await API.post("/assignments", {
+      groupId: currentGroup, title: $("a-title").value,
+      kind: $("a-kind").value, link: $("a-link").value, dueAt: $("a-due").value,
+    });
+    $("a-title").value = ""; $("a-link").value = "";
+    NL.toast("Задание выдано");
+    await loadAssignments();
+  } catch (e) { NL.toast(e.message); }
+});
+
+// Уже вошедшего не спрашиваем заново.
+(async function boot() {
+  if (!API.token()) return;
+  try {
+    const me = await API.get("/me");
+    if (me.kind !== "teacher") return;
+    $("whoami").textContent = me.teacher.name;
+    $("gate").style.display = "none";
+    $("app").style.display = "";
+    $("logout").style.display = "";
+    await loadGroups();
+  } catch { /* токен протух — покажем форму входа */ }
+})();
+</script>
+</body>
+</html>

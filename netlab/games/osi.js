@@ -52,4 +52,4 @@ const reverse = [
   { q: "Какой уровень OSI отсутствует в модели TCP/IP как отдельный?", a: "Сеансовый", wrong: ["Сетевой", "Транспортный", "Канальный"], why: "Сеансовый и представления входят в прикладной уровень TCP/IP." },
 ];
 
-Quiz.run({ questions: questions.concat(reverse) });
+Quiz.run({ questions: questions.concat(reverse), kind: "osi", title: "Модель OSI" });
