@@ -15,7 +15,7 @@
   // Версія статики: та сама, що в ?v= на сторінках. Підставляється в адресу
   // кожного iframe, інакше після деплою вікно показує вчорашній інструмент із
   // кешу браузера, поки сторінка навколо вже нова.
-  const V = "6";
+  const V = "7";
   const POS_KEY = "netlab.os.windows.v1";
   const SESSION_KEY = "netlab.os.session.v1";
   const wins = new Map();          // id → { el, app, minimized, maximized, prev }
@@ -32,6 +32,7 @@
     ports:     { title: "Порти",          sub: "гра",                                     url: "games/ports.html",  w: 760, h: 560, icon: "plug",   lime: true },
     cables:    { title: "Кабелі",         sub: "гра",                                     url: "games/cables.html", w: 760, h: 560, icon: "cable",  lime: true },
     routing:   { title: "Маршрутизація",  sub: "таблиця маршрутів, найдовший префікс",    url: "routing.html",  w: 1000, h: 700, icon: "route",  lime: false },
+    packet:    { title: "Шлях пакета",    sub: "покроково: маска, ARP, маршрут, TTL",     url: "packet.html",   w: 1140, h: 760, icon: "packet", lime: true  },
     cases:     { title: "Чому не працює", sub: "розбір несправностей",                    url: "cases.html",    w: 780, h: 660, icon: "alert",   lime: true  },
     handouts:  { title: "Друковані завдання", sub: "варіант і ключ",                      url: "handouts.html", w: 900, h: 700, icon: "sheet",   lime: false },
     cheatsheet:{ title: "Шпаргалки",      sub: "маски, порти, рівні, команди",            url: "cheatsheet.html", w: 1080, h: 700, icon: "book",  lime: false },
@@ -47,6 +48,7 @@
     layers: '<path d="M4 7h16M4 12h16M4 17h16"/>',
     plug:   '<rect x="3.5" y="6.5" width="17" height="11" rx="2"/><path d="M7 10.5h3M7 14h6M15 10.5h2"/>',
     cable:  '<path d="M7 3.5v6H5v5a4 4 0 0 0 4 4h1v2"/><path d="M17 20.5v-6h2v-5a4 4 0 0 0-4-4h-1v-2"/>',
+    packet: '<rect x="3.5" y="9" width="5" height="6" rx="1.2"/><path d="M8.5 12h5.5"/><path d="M11.5 9.5 14 12l-2.5 2.5"/><circle cx="19" cy="12" r="2.2"/>',
     route:  '<circle cx="5.5" cy="6" r="2.2"/><circle cx="18.5" cy="18" r="2.2"/><path d="M7.7 6h6.3a3 3 0 0 1 0 6H10a3 3 0 0 0 0 6h6.3"/>',
     alert:  '<path d="M12 4.5 3.5 19h17z"/><path d="M12 10v4.2M12 16.6h.01"/>',
     sheet:  '<path d="M6.5 3.5h11v17h-11z"/><path d="M9 8h6M9 12h6M9 16h4"/>',

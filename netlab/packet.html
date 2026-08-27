@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Шлях пакета — NetLab</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles/netlab.css?v=7">
+<style>
+  .pk-wrap{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+  @media (max-width:1000px){.pk-wrap{grid-template-columns:1fr}}
+  .map{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .map svg{display:block;width:100%;height:auto;background:
+    linear-gradient(0deg,rgba(32,32,44,.045) 1px,transparent 1px) 0 0/100% 24px,
+    linear-gradient(90deg,rgba(32,32,44,.045) 1px,transparent 1px) 0 0/24px 100%}
+  .dev rect,.dev circle{fill:#fff;stroke:var(--ink);stroke-width:1.6}
+  .dev.router circle{fill:#FAF8F4}
+  .dev.on rect,.dev.on circle{stroke:var(--green);stroke-width:2.6}
+  .dev.bad rect,.dev.bad circle{stroke:var(--red);stroke-width:2.6}
+  .dev text.nm{font-size:11.5px;font-weight:700;fill:var(--ink)}
+  .dev text.ip{font-family:var(--mono);font-size:10.5px;fill:var(--ink-3)}
+  .lk{stroke:var(--ink-3);stroke-width:2}
+  .lk.serial{stroke-dasharray:6 4}
+  .lk.on{stroke:var(--green);stroke-width:3.4}
+  .pkt{fill:var(--lime);stroke:var(--ink);stroke-width:1.4}
+  .steps{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .step{border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 13px;cursor:pointer}
+  .step.now{border-color:var(--ink);box-shadow:0 2px 0 var(--ink)}
+  .step.done{opacity:.62}
+  .step .t{font-size:13.5px;font-weight:700}
+  .step .d{font-size:12.5px;line-height:1.5;color:var(--ink-2);margin-top:3px}
+  .step .k{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3)}
+  .verdict{border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.55;margin-top:12px}
+  .verdict.ok{background:rgba(31,122,70,.12);border:1px solid rgba(31,122,70,.4);color:var(--green)}
+  .verdict.bad{background:rgba(179,38,30,.1);border:1px solid rgba(179,38,30,.4);color:var(--red)}
+  .side{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+  .side h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin:0 0 8px}
+  .side .row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+  .side label{font-size:12px;color:var(--ink-2);min-width:88px}
+  .side input,.side select{flex:1;min-width:0;height:32px;border:1px solid var(--line-2);border-radius:8px;
+    padding:0 8px;font-family:var(--mono);font-size:12.5px;background:#fff}
+  .rt2{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;margin-top:6px}
+  .rt2 th{text-align:left;font-family:var(--sans);font-size:10px;text-transform:uppercase;
+    letter-spacing:.06em;color:var(--ink-3);padding:3px 4px;border-bottom:1px solid var(--line)}
+  .rt2 td{padding:3px 4px;border-bottom:1px solid var(--line)}
+  .rt2 tr.win td{background:rgba(31,122,70,.13);font-weight:700}
+  .rt2 tr.fit td{background:rgba(32,32,44,.05)}
+  .hintbox{font-size:12px;line-height:1.5;color:var(--ink-3);margin-top:10px}
+</style>
+</head>
+<body>
+<div class="shell wide">
+  <div class="window">
+    <div class="titlebar">
+      <span class="lights"><i></i><i></i><i></i></span>
+      <h1>Шлях пакета</h1>
+      <span class="sub">від «своя чи чужа мережа» до останнього переходу</span>
+    </div>
+    <div class="win-body">
+      <h2 class="page">Що насправді відбувається</h2>
+      <p class="lede">Оберіть, звідки й куди, і пройдіть крок за кроком. На кожному кроці видно рішення: порівняння з маскою, запит ARP, вибраний рядок таблиці маршрутів, TTL. Змініть маску або приберіть шлюз — і побачите не «не пінгується», а точну причину.</p>
+
+      <div class="toolbar">
+        <select id="preset"></select>
+        <span class="spacer"></span>
+        <button class="btn" id="back">← Крок</button>
+        <button class="btn" id="fwd">Крок →</button>
+        <button class="btn primary" id="play">Прогнати</button>
+      </div>
+
+      <div class="pk-wrap">
+        <div>
+          <div class="map"><svg id="svg" viewBox="0 0 720 380" preserveAspectRatio="xMidYMid meet"></svg></div>
+          <div id="verdict"></div>
+          <div class="steps" id="steps"></div>
+        </div>
+
+        <div>
+          <div class="side">
+            <h3>Пакет</h3>
+            <div class="row"><label>Звідки</label><select id="src"></select></div>
+            <div class="row"><label>Куди</label><input id="dst" placeholder="192.168.2.20"></div>
+            <div class="hintbox">Адресу призначення можна вписати будь-яку — саме так і перевіряють, що буде з пакетом «у нікуди».</div>
+          </div>
+
+          <div class="side" style="margin-top:12px">
+            <h3>Налаштування пристрою</h3>
+            <div class="row"><label>Пристрій</label><select id="devsel"></select></div>
+            <div id="devcfg"></div>
+          </div>
+
+          <div class="side" style="margin-top:12px">
+            <h3>Таблиця маршрутів</h3>
+            <div id="rtbox"><p class="hintbox">Оберіть маршрутизатор, щоб побачити таблицю.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/netcore.js?v=7"></script>
+<script src="js/packetcore.js?v=7"></script>
+<script src="js/shell.js?v=7"></script>
+<script>
+NL.mount("Шлях пакета");
+
+const $ = id => document.getElementById(id);
+
+/* ── Сценарії ─────────────────────────────────────────────────────────────
+   Кожен — окрема схема з координатами. Зламані варіанти тут навмисне: саме
+   вони й перетворюють інструмент з ілюстрації на заняття. */
+function twoSubnets() {
+  return {
+    name: "Дві мережі й один роутер",
+    dst: "192.168.2.20",
+    src: "pc1",
+    devices: [
+      { id:"pc1", kind:"pc", name:"ПК 1", x:70, y:90, gw:"192.168.1.1", ifaces:[{name:"eth0", ip:"192.168.1.10", prefix:24}] },
+      { id:"sw1", kind:"switch", name:"SW 1", x:230, y:90, ifaces:[{name:"p1"},{name:"p2"},{name:"p3"}] },
+      { id:"pc3", kind:"pc", name:"ПК 3", x:70, y:230, gw:"192.168.1.1", ifaces:[{name:"eth0", ip:"192.168.1.11", prefix:24}] },
+      { id:"r1", kind:"router", name:"Роутер", x:380, y:90, ifaces:[
+          {name:"g0/0", ip:"192.168.1.1", prefix:24},
+          {name:"g0/1", ip:"192.168.2.1", prefix:24}], routes:[] },
+      { id:"sw2", kind:"switch", name:"SW 2", x:530, y:90, ifaces:[{name:"p1"},{name:"p2"}] },
+      { id:"pc2", kind:"pc", name:"ПК 2", x:650, y:90, gw:"192.168.2.1", ifaces:[{name:"eth0", ip:"192.168.2.20", prefix:24}] },
+    ],
+    links: [
+      { a:{dev:"pc1",iface:"eth0"}, b:{dev:"sw1",iface:"p1"} },
+      { a:{dev:"pc3",iface:"eth0"}, b:{dev:"sw1",iface:"p3"} },
+      { a:{dev:"sw1",iface:"p2"},   b:{dev:"r1",iface:"g0/0"} },
+      { a:{dev:"r1",iface:"g0/1"},  b:{dev:"sw2",iface:"p1"} },
+      { a:{dev:"sw2",iface:"p2"},   b:{dev:"pc2",iface:"eth0"} },
+    ],
+  };
+}
+
+function threeRouters() {
+  return {
+    name: "Три мережі, статичні маршрути",
+    dst: "192.168.3.30",
+    src: "pc1",
+    devices: [
+      { id:"pc1", kind:"pc", name:"ПК 1", x:60, y:90, gw:"192.168.1.1", ifaces:[{name:"eth0", ip:"192.168.1.10", prefix:24}] },
+      { id:"r1", kind:"router", name:"R1", x:210, y:90, ifaces:[
+          {name:"g0/0", ip:"192.168.1.1", prefix:24},
+          {name:"s0/0", ip:"10.0.0.1", prefix:30}],
+        routes:[{net:"192.168.3.0", prefix:24, via:"10.0.0.2", iface:"s0/0"}] },
+      { id:"r2", kind:"router", name:"R2", x:380, y:90, ifaces:[
+          {name:"s0/0", ip:"10.0.0.2", prefix:30},
+          {name:"s0/1", ip:"10.0.0.5", prefix:30}],
+        routes:[
+          {net:"192.168.1.0", prefix:24, via:"10.0.0.1", iface:"s0/0"},
+          {net:"192.168.3.0", prefix:24, via:"10.0.0.6", iface:"s0/1"}] },
+      { id:"r3", kind:"router", name:"R3", x:550, y:90, ifaces:[
+          {name:"s0/1", ip:"10.0.0.6", prefix:30},
+          {name:"g0/0", ip:"192.168.3.1", prefix:24}],
+        routes:[{net:"0.0.0.0", prefix:0, via:"10.0.0.5", iface:"s0/1"}] },
+      { id:"pc2", kind:"pc", name:"ПК 2", x:660, y:230, gw:"192.168.3.1", ifaces:[{name:"eth0", ip:"192.168.3.30", prefix:24}] },
+    ],
+    links: [
+      { a:{dev:"pc1",iface:"eth0"}, b:{dev:"r1",iface:"g0/0"} },
+      { a:{dev:"r1",iface:"s0/0"},  b:{dev:"r2",iface:"s0/0"}, serial:true },
+      { a:{dev:"r2",iface:"s0/1"},  b:{dev:"r3",iface:"s0/1"}, serial:true },
+      { a:{dev:"r3",iface:"g0/0"},  b:{dev:"pc2",iface:"eth0"} },
+    ],
+  };
+}
+
+const PRESETS = {
+  ok2:   { title: "Працює: дві мережі", build: twoSubnets },
+  mask:  { title: "Зламано: маска /16 на ПК 1", build: () => { const m = twoSubnets(); m.devices[0].ifaces[0].prefix = 16; return m; } },
+  nogw:  { title: "Зламано: немає шлюзу", build: () => { const m = twoSubnets(); m.devices[0].gw = ""; return m; } },
+  badgw: { title: "Зламано: шлюз із чужої мережі", build: () => { const m = twoSubnets(); m.devices[0].gw = "192.168.9.1"; return m; } },
+  ok3:   { title: "Працює: три мережі", build: threeRouters },
+  noroute:{ title: "Зламано: на R2 немає маршруту", build: () => { const m = threeRouters(); m.devices[2].routes = m.devices[2].routes.filter(r => r.net !== "192.168.3.0"); return m; } },
+  cable: { title: "Зламано: немає лінка R2–R3", build: () => { const m = threeRouters(); m.links = m.links.filter(l => !(l.a.dev === "r2" && l.b.dev === "r3")); return m; } },
+};
+
+let model = null, result = null, at = 0, timer = null;
+
+function load(key) {
+  const p = PRESETS[key] || PRESETS.ok2;
+  const built = p.build();
+  model = { devices: built.devices, links: built.links };
+  $("dst").value = built.dst;
+  fillSelect($("src"), model.devices.filter(d => d.kind !== "switch").map(d => [d.id, d.name]), built.src);
+  fillSelect($("devsel"), model.devices.filter(d => d.kind !== "switch").map(d => [d.id, d.name]), built.src);
+  run();
+  drawCfg();
+}
+
+function fillSelect(sel, pairs, value) {
+  sel.innerHTML = pairs.map(([v, t]) => `<option value="${v}">${t}</option>`).join("");
+  if (value != null) sel.value = value;
+}
+
+/* ── Прогін ─────────────────────────────────────────────────────────────── */
+function run(keepAt) {
+  result = PacketCore.trace(model, $("src").value, $("dst").value.trim());
+  at = keepAt ? Math.min(at, result.steps.length) : result.steps.length;
+  render();
+}
+
+function render() {
+  drawMap();
+  drawSteps();
+  drawVerdict();
+  drawRoutes();
+}
+
+/* ── Схема ──────────────────────────────────────────────────────────────── */
+const posOf = id => { const d = model.devices.find(x => x.id === id); return d ? { x: d.x, y: d.y } : null; };
+
+/** Пари «пристрій → пристрій», якими пакет уже пройшов до кроку `at`. */
+function traveled() {
+  const hops = [];
+  for (let i = 0; i < at && i < result.steps.length; i++) {
+    const s = result.steps[i];
+    if (s.kind === "arp" && s.to) hops.push([s.dev, s.to]);
+  }
+  return hops;
+}
+
+function drawMap() {
+  const svg = $("svg");
+  const hops = traveled();
+  const lit = new Set(hops.flat());
+  const badDev = !result.ok && at >= result.steps.length && result.steps.length
+    ? result.steps[result.steps.length - 1].dev : null;
+
+  let out = "";
+
+  for (const l of model.links) {
+    const a = posOf(l.a.dev), b = posOf(l.b.dev);
+    if (!a || !b) continue;
+    // Лінк підсвічується, якщо пакет пройшов саме між цими пристроями. Ланцюг
+    // через комутатор малюється як два лінки, тому перевіряємо обидві половини.
+    const on = hops.some(([f, t]) =>
+      (f === l.a.dev || t === l.a.dev || f === l.b.dev || t === l.b.dev) &&
+      onPath(hops, l.a.dev, l.b.dev));
+    out += `<line class="lk${l.serial ? " serial" : ""}${on ? " on" : ""}"
+      x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
+  }
+
+  for (const d of model.devices) {
+    const cls = `dev ${d.kind}${lit.has(d.id) ? " on" : ""}${badDev === d.id ? " bad" : ""}`;
+    const ips = d.ifaces.filter(i => i.ip).map(i => `${i.ip}/${i.prefix}`);
+    const shape = d.kind === "router"
+      ? `<circle cx="${d.x}" cy="${d.y}" r="21"/>`
+      : `<rect x="${d.x - 24}" y="${d.y - 17}" width="48" height="34" rx="7"/>`;
+    out += `<g class="${cls}">${shape}
+      <text class="nm" x="${d.x}" y="${d.y + 4}" text-anchor="middle">${d.kind === "switch" ? "SW" : d.name}</text>
+      ${ips.map((t, k) => `<text class="ip" x="${d.x}" y="${d.y + 32 + k * 13}" text-anchor="middle">${t}</text>`).join("")}
+    </g>`;
+  }
+
+  // Пакет стоїть на пристрої, до якого дійшов останній зроблений крок.
+  const cur = at > 0 ? result.steps[Math.min(at, result.steps.length) - 1] : null;
+  const where = cur ? posOf(cur.to || cur.dev) : posOf($("src").value);
+  if (where) out += `<circle class="pkt" cx="${where.x}" cy="${where.y - 30}" r="7"/>`;
+
+  svg.innerHTML = out;
+}
+
+/** Чи є перехід між цими двома пристроями серед пройдених. */
+function onPath(hops, a, b) {
+  return hops.some(([f, t]) => (f === a && t === b) || (f === b && t === a))
+      // Кадр через комутатор: перехід записаний як pc→router, а лінків два.
+      || hops.some(([f, t]) => bridged(f, t, a, b));
+}
+function bridged(f, t, a, b) {
+  const sw = model.devices.filter(d => d.kind === "switch").map(d => d.id);
+  if (!sw.includes(a) && !sw.includes(b)) return false;
+  const swId = sw.includes(a) ? a : b;
+  const other = swId === a ? b : a;
+  return (f === other || t === other) && (touches(swId, f) || touches(swId, t));
+}
+function touches(swId, devId) {
+  return model.links.some(l =>
+    (l.a.dev === swId && l.b.dev === devId) || (l.b.dev === swId && l.a.dev === devId));
+}
+
+/* ── Кроки й вердикт ────────────────────────────────────────────────────── */
+const KIND = { decide: "рішення", gw: "шлюз", arp: "arp", route: "маршрут", ok: "готово" };
+
+function drawSteps() {
+  $("steps").innerHTML = result.steps.map((s, i) => `
+    <div class="step ${i + 1 === at ? "now" : i + 1 < at ? "done" : ""}" data-i="${i + 1}">
+      <div class="k">${i + 1}. ${KIND[s.kind] || s.kind}</div>
+      <div class="t">${s.title}</div>
+      <div class="d">${s.detail}</div>
+    </div>`).join("") || `<p class="hintbox">Кроків немає — перевірте адреси.</p>`;
+}
+
+function drawVerdict() {
+  const done = at >= result.steps.length;
+  if (!done) { $("verdict").innerHTML = ""; return; }
+  $("verdict").innerHTML = result.ok
+    ? `<div class="verdict ok">Пакет дійшов.</div>`
+    : `<div class="verdict bad"><b>Не дійшов.</b> ${result.error || ""}</div>`;
+}
+
+/* ── Таблиця маршрутів обраного пристрою ────────────────────────────────── */
+function drawRoutes() {
+  const d = model.devices.find(x => x.id === $("devsel").value);
+  if (!d || d.kind !== "router") {
+    $("rtbox").innerHTML = `<p class="hintbox">Таблиця маршрутів є лише в маршрутизатора.</p>`;
+    return;
+  }
+  const { rows, matched, chosen } = PacketCore.pickRoute(d, $("dst").value.trim() || "0.0.0.0");
+  const fits = new Set(matched.map(r => `${r.net}/${r.prefix}`));
+  $("rtbox").innerHTML = `
+    <table class="rt2">
+      <thead><tr><th>Мережа</th><th>Через</th><th>Інтерф.</th></tr></thead>
+      <tbody>${rows.map(r => {
+        const key = `${r.net}/${r.prefix}`;
+        const cls = chosen && key === `${chosen.net}/${chosen.prefix}` ? "win" : fits.has(key) ? "fit" : "";
+        return `<tr class="${cls}"><td>${r.prefix === 0 ? "0.0.0.0/0" : key}</td>
+          <td>${r.via || "прямо"}</td><td>${r.iface}</td></tr>`;
+      }).join("")}</tbody>
+    </table>
+    <div class="hintbox">Підсвічені — ті, що підходять; виділений — з найдовшим префіксом. Під'єднані мережі в таблиці з'являються самі, від адреси на інтерфейсі.</div>`;
+}
+
+/* ── Налаштування пристрою ──────────────────────────────────────────────── */
+function drawCfg() {
+  const d = model.devices.find(x => x.id === $("devsel").value);
+  if (!d) { $("devcfg").innerHTML = ""; return; }
+  let html = d.ifaces.filter(i => i.ip !== undefined).map((i, k) => `
+    <div class="row"><label>${i.name}</label>
+      <input data-if="${k}" data-f="ip" value="${i.ip || ""}" placeholder="адреса">
+      <input data-if="${k}" data-f="prefix" value="${i.prefix ?? ""}" style="max-width:56px" placeholder="/nn">
+    </div>`).join("");
+  if (d.kind !== "router") {
+    html += `<div class="row"><label>Шлюз</label><input data-f="gw" value="${d.gw || ""}" placeholder="порожньо = немає"></div>`;
+  }
+  $("devcfg").innerHTML = html || `<p class="hintbox">У комутатора немає адрес — він не приймає рішень щодо IP.</p>`;
+
+  $("devcfg").querySelectorAll("input").forEach(inp => {
+    inp.addEventListener("change", () => {
+      const f = inp.dataset.f;
+      if (f === "gw") d.gw = inp.value.trim();
+      else {
+        const i = d.ifaces.filter(x => x.ip !== undefined)[Number(inp.dataset.if)];
+        if (f === "prefix") {
+          const n = Number(inp.value);
+          i.prefix = n >= 0 && n <= 32 ? n : i.prefix;
+          inp.value = i.prefix;
+        } else i.ip = inp.value.trim();
+      }
+      run();
+      NL.toast("Змінено — прогін оновлено");
+    });
+  });
+  drawRoutes();
+}
+
+/* ── Керування ──────────────────────────────────────────────────────────── */
+$("preset").innerHTML = Object.entries(PRESETS).map(([k, p]) => `<option value="${k}">${p.title}</option>`).join("");
+$("preset").addEventListener("change", () => load($("preset").value));
+$("src").addEventListener("change", () => { run(); });
+$("dst").addEventListener("change", () => run());
+$("devsel").addEventListener("change", drawCfg);
+
+$("fwd").addEventListener("click", () => { if (at < result.steps.length) { at++; render(); } });
+$("back").addEventListener("click", () => { if (at > 0) { at--; render(); } });
+$("play").addEventListener("click", () => {
+  clearInterval(timer);
+  at = 0; render();
+  timer = setInterval(() => {
+    if (at >= result.steps.length) { clearInterval(timer); return; }
+    at++; render();
+  }, 800);
+});
+$("steps").addEventListener("click", (e) => {
+  const s = e.target.closest(".step");
+  if (s) { at = Number(s.dataset.i); render(); }
+});
+
+load("ok2");
+</script>
+</body>
+</html>
