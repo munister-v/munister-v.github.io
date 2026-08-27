@@ -126,7 +126,14 @@ p{text-wrap:pretty}
 
 /* The ledger is intentionally quiet. */
 .ledger{border-top:1px solid var(--c-rule)}
-.row{display:grid;grid-template-columns:minmax(160px,1.05fr) minmax(130px,.72fr) minmax(0,1.8fr) auto;gap:clamp(14px,2.6vw,40px);align-items:baseline;padding:21px 0;border-bottom:1px solid var(--c-rule);transition:color .2s ease}
+.row{display:grid;grid-template-columns:56px minmax(160px,1.05fr) minmax(130px,.72fr) minmax(0,1.8fr) auto;gap:clamp(14px,2.6vw,40px);align-items:center;padding:19px 0;border-bottom:1px solid var(--c-rule);transition:color .2s ease}
+/* Мініатюра рядка «Also built». Рядки й раніше не мали жодного зображення —
+   шість реальних проєктів виглядали як рядки таблиці. Квадрат навмисно
+   маленький: це другий ешелон вітрини (три featured вище лишаються головними),
+   зображення тут — впізнаваність, не демонстрація. */
+.row .thumb{width:56px;height:56px;overflow:hidden;background:var(--c-paper-deep);align-self:center}
+.row .thumb img{width:100%;height:100%;object-fit:cover;filter:saturate(.94);transition:filter .2s ease}
+.row:hover .thumb img{filter:saturate(1.05)}
 .row .name{font-family:var(--font-head);font-size:25px;line-height:1.05}
 .row .what{color:var(--c-muted);font-size:16px;line-height:1.4}
 .row .arrow{color:var(--c-faint);transition:color .2s ease}
@@ -142,7 +149,10 @@ p{text-wrap:pretty}
 .pub:hover .arrow{color:var(--c-clay)}
 .research-actions,.writing-actions{margin-top:22px}
 .writing{border-top:1px solid var(--c-rule)}
-.writing a{display:grid;grid-template-columns:100px minmax(0,1fr) auto;gap:clamp(14px,2.4vw,32px);align-items:baseline;padding:19px 0;border-bottom:1px solid var(--c-rule);transition:color .2s ease}
+.writing a{display:grid;grid-template-columns:56px 100px minmax(0,1fr) auto;gap:clamp(14px,2.4vw,32px);align-items:center;padding:17px 0;border-bottom:1px solid var(--c-rule);transition:color .2s ease}
+.writing .thumb{width:56px;height:56px;overflow:hidden;background:var(--c-paper-deep);align-self:center}
+.writing .thumb img{width:100%;height:100%;object-fit:cover;filter:saturate(.94);transition:filter .2s ease}
+.writing a:hover .thumb img{filter:saturate(1.05)}
 .writing h3{font-family:var(--font-head);font-size:25px;line-height:1.08}
 .writing .sub{display:block;margin-top:7px;color:var(--c-faint)}
 .writing .go{color:var(--c-faint)}
@@ -199,7 +209,12 @@ p{text-wrap:pretty}
 
 @media (max-width:980px){
   .opening-grid{grid-template-columns:minmax(0,1fr) minmax(150px,.42fr)}.portrait{width:clamp(150px,21vw,184px)}
-  .row{grid-template-columns:1.25fr .9fr auto}.row .what{grid-column:1 / -1;margin-top:-6px}
+  .row{grid-template-columns:56px 1.25fr .9fr auto;grid-template-rows:auto auto}
+    .row .thumb{grid-column:1;grid-row:1 / span 2}
+    .row .name{grid-column:2;grid-row:1}
+    .row .role{grid-column:3;grid-row:1}
+    .row .arrow{grid-column:4;grid-row:1}
+    .row .what{grid-column:2 / -1;grid-row:2;margin-top:-6px}
   .pub{grid-template-columns:62px minmax(0,1fr) auto}.pub .venue{grid-column:2 / -1;margin-top:-5px}
   .stats{grid-template-columns:1fr 1fr}.stats div:nth-child(-n+2){padding-bottom:16px}
 }
@@ -212,9 +227,17 @@ p{text-wrap:pretty}
   .opening-bottom{grid-template-columns:1fr;gap:22px}.support{font-size:17px}
   .sec-head{grid-template-columns:1fr;gap:15px}.sec-head .sec-note{justify-self:start}
   .featured{grid-template-columns:1fr}.feat:first-child{grid-column:auto;display:flex;padding-bottom:16px}.feat:first-child .shot{aspect-ratio:16 / 10}.feat h3{font-size:34px}
-  .row{grid-template-columns:minmax(0,1fr) auto;gap:7px 16px}.row .role{grid-column:1 / -1;grid-row:2}.row .what{grid-column:1 / -1;grid-row:3;margin-top:4px}
+  .row{grid-template-columns:40px minmax(0,1fr) auto;grid-template-rows:auto auto auto;gap:6px 14px}
+  .row .thumb{width:40px;height:40px;grid-column:1;grid-row:1 / span 3}
+  .row .name{grid-column:2;grid-row:1}
+  .row .arrow{grid-column:3;grid-row:1}
+  .row .role{grid-column:2 / -1;grid-row:2}
+  .row .what{grid-column:2 / -1;grid-row:3;margin-top:4px}
   .pub{grid-template-columns:48px minmax(0,1fr) auto;gap:8px 14px}.pub .venue{grid-column:2 / -1}
-  .writing a{grid-template-columns:minmax(0,1fr) auto;gap:8px 16px}.writing .when{grid-column:1 / -1}.writing h3{font-size:23px}
+  .writing a{grid-template-columns:minmax(0,1fr) auto;gap:8px 16px}
+  .writing .thumb{display:none}
+  .writing .when{grid-column:1 / -1}
+  .writing h3{font-size:23px}
   .practice,.contact{grid-template-columns:1fr;gap:32px}.contact .actions{justify-content:flex-start}
   .piece{grid-template-columns:1fr}.piece figure img{min-height:0;aspect-ratio:16/9}
   .platform-note{grid-template-columns:1fr}
