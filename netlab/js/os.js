@@ -12,6 +12,10 @@
 (function (global) {
   "use strict";
 
+  // Версія статики: та сама, що в ?v= на сторінках. Підставляється в адресу
+  // кожного iframe, інакше після деплою вікно показує вчорашній інструмент із
+  // кешу браузера, поки сторінка навколо вже нова.
+  const V = "5";
   const POS_KEY = "netlab.os.windows.v1";
   const SESSION_KEY = "netlab.os.session.v1";
   const wins = new Map();          // id → { el, app, minimized, maximized, prev }
@@ -118,16 +122,100 @@
         <span class="win-title">${app.title}</span>
         <span class="win-sub">${app.sub}</span>
         <span class="spacer"></span>
+        <button class="pop" data-act="addtab" title="Додати вкладку">+</button>
         <a class="pop" href="${app.url}" target="_blank" rel="noreferrer" title="Відкрити окремою сторінкою">↗</a>
       </div>
-      <div class="win-body"><iframe src="${app.url}?win=1" title="${app.title}" loading="lazy"></iframe></div>
+      <div class="win-tabs" hidden></div>
+      <div class="win-body"></div>
       <div class="win-resize" data-act="resize"></div>`;
     document.body.append(el);
-    wins.set(id, { el, app, minimized: false, maximized: false, prev: null });
+    wins.set(id, { el, app, minimized: false, maximized: false, prev: null, tabs: [], active: null });
+    addTab(id, id);
     wire(id, el);
     focus(id);
     markDock();
     rememberSession();
+  }
+
+  /* ── Вкладки ────────────────────────────────────────────────────────────
+     Кожна вкладка — власний iframe, який лишається в DOM і просто ховається.
+     Перемикання не перезавантажує інструмент: набрана в тренажері серія і
+     намальована схема при цьому не зникають. */
+  function addTab(winId, appId) {
+    const w = wins.get(winId);
+    const app = APPS[appId];
+    if (!w || !app) return;
+    if (w.tabs.some(t => t.appId === appId)) { activateTab(winId, appId); return; }
+
+    const frame = document.createElement("iframe");
+    frame.src = app.url + "?win=1&v=" + V;
+    frame.title = app.title;
+    frame.dataset.tab = appId;
+    w.el.querySelector(".win-body").append(frame);
+    w.tabs.push({ appId, frame });
+    activateTab(winId, appId);
+    drawTabs(winId);
+  }
+
+  function closeTab(winId, appId) {
+    const w = wins.get(winId);
+    if (!w) return;
+    if (w.tabs.length <= 1) { close(winId); return; }
+    const at = w.tabs.findIndex(t => t.appId === appId);
+    if (at < 0) return;
+    w.tabs[at].frame.remove();
+    w.tabs.splice(at, 1);
+    if (w.active === appId) activateTab(winId, w.tabs[Math.max(at - 1, 0)].appId);
+    drawTabs(winId);
+  }
+
+  function activateTab(winId, appId) {
+    const w = wins.get(winId);
+    if (!w) return;
+    w.active = appId;
+    w.tabs.forEach(t => { t.frame.style.display = t.appId === appId ? "block" : "none"; });
+    const app = APPS[appId];
+    w.el.querySelector(".win-title").textContent = app.title;
+    w.el.querySelector(".win-sub").textContent = app.sub;
+    const pop = w.el.querySelector("a.pop");
+    if (pop) pop.href = app.url;
+    drawTabs(winId);
+  }
+
+  function drawTabs(winId) {
+    const w = wins.get(winId);
+    if (!w) return;
+    const bar = w.el.querySelector(".win-tabs");
+    // Один інструмент — смуги вкладок немає: зайва лінія в кожному вікні
+    // виглядала б як браузер, а не як вікно застосунку.
+    bar.hidden = w.tabs.length < 2;
+    bar.innerHTML = w.tabs.map(t => `
+      <button class="wtab ${t.appId === w.active ? "on" : ""}" data-tab-go="${t.appId}">
+        ${svg(APPS[t.appId].icon)}<span>${APPS[t.appId].title}</span>
+        <span class="x" data-tab-close="${t.appId}">×</span>
+      </button>`).join("");
+  }
+
+  // Меню вибору інструмента для нової вкладки — той самий реєстр застосунків.
+  function tabPicker(winId, anchor) {
+    closeMenus();
+    const menu = document.createElement("div");
+    menu.className = "mb-menu open tab-picker";
+    menu.innerHTML = Object.keys(APPS).map(a =>
+      `<button data-tab-add="${a}">${svg(APPS[a].icon)}<span>${APPS[a].title}</span></button>`).join("");
+    document.body.append(menu);
+    const r = anchor.getBoundingClientRect();
+    menu.style.top = Math.min(r.bottom + 4, window.innerHeight - 320) + "px";
+    menu.style.left = Math.min(r.left - 200, window.innerWidth - 270) + "px";
+    menu.addEventListener("click", e => {
+      const b = e.target.closest("[data-tab-add]");
+      if (b) { addTab(winId, b.getAttribute("data-tab-add")); menu.remove(); }
+    });
+    setTimeout(() => {
+      document.addEventListener("click", function once(ev) {
+        if (!menu.contains(ev.target)) { menu.remove(); document.removeEventListener("click", once); }
+      });
+    }, 0);
   }
 
   function close(id) {
@@ -186,6 +274,18 @@
       if (kind === "close") close(id);
       if (kind === "min") minimize(id);
       if (kind === "max") maximize(id);
+    });
+
+    el.querySelector('[data-act="addtab"]').addEventListener("click", e => {
+      e.stopPropagation();
+      tabPicker(id, e.currentTarget);
+    });
+
+    el.querySelector(".win-tabs").addEventListener("click", e => {
+      const x = e.target.closest("[data-tab-close]");
+      if (x) { e.stopPropagation(); closeTab(id, x.getAttribute("data-tab-close")); return; }
+      const go = e.target.closest("[data-tab-go]");
+      if (go) activateTab(id, go.getAttribute("data-tab-go"));
     });
 
     bar.addEventListener("dblclick", e => {
@@ -340,6 +440,41 @@
     open("subnet");
   }
 
+  /* ── Міст між інструментами ───────────────────────────────────────────
+     Інструменти живуть у своїх iframe і одне про одного не знають. Стіл
+     працює поштарем: калькулятор просить «віддай це схемі», стіл відкриває
+     схему, якщо вона закрита, і передає повідомлення саме їй.
+
+     Приймаємо лише свій origin: iframe тут наші, а стороннє вікно не має
+     права смикати чужі інструменти. */
+  function frameOf(appId) {
+    for (const [, w] of wins) {
+      const tab = w.tabs && w.tabs.find(t => t.appId === appId);
+      if (tab) return tab.frame;
+    }
+    return null;
+  }
+
+  function deliver(to, payload, tries = 0) {
+    const frame = frameOf(to);
+    if (!frame || !frame.contentWindow) return;
+    // Вікно щойно відкрили — сторінка всередині може ще вантажитись, тож
+    // повторюємо кілька разів, поки інструмент не відзвітує про прийом.
+    frame.contentWindow.postMessage({ netlab: "deliver", payload }, location.origin);
+    if (tries < 12) setTimeout(() => { if (!deliver.done) deliver(to, payload, tries + 1); }, 250);
+  }
+
+  window.addEventListener("message", e => {
+    if (e.origin !== location.origin || !e.data || typeof e.data !== "object") return;
+    if (e.data.netlab === "send" && APPS[e.data.to]) {
+      deliver.done = false;
+      open(e.data.to);
+      deliver(e.data.to, e.data.payload);
+      toast("Надіслано у «" + APPS[e.data.to].title + "»");
+    }
+    if (e.data.netlab === "delivered") deliver.done = true;
+  });
+
   function closeMenus() {
     document.querySelectorAll(".mb-menu.open").forEach(m => m.classList.remove("open"));
   }
@@ -347,5 +482,6 @@
   function minimizeAll() { wins.forEach((w, id) => minimize(id)); }
   function closeAll() { [...wins.keys()].forEach(close); }
 
-  global.OS = { APPS, open, close, focus, minimize, maximize, minimizeAll, closeAll, toast, svg, boot };
+  global.OS = { APPS, open, close, focus, minimize, maximize, minimizeAll, closeAll,
+                addTab, closeTab, activateTab, wins, toast, svg, boot };
 })(window);

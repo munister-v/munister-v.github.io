@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Підмережі IPv4 — NetLab</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles/netlab.css?v=4">
+<link rel="stylesheet" href="styles/netlab.css?v=5">
 </head>
 <body>
 <div class="shell wide">
@@ -31,6 +31,7 @@
         <div style="align-self:flex-end;display:flex;gap:8px">
           <button class="btn primary" id="calc">Порахувати</button>
           <button class="btn" id="example">Приклад</button>
+          <button class="btn" id="to-topology" title="Додати цю мережу у схему">У схему</button>
         </div>
       </div>
 
@@ -55,8 +56,8 @@
   </div>
 </div>
 
-<script src="js/netcore.js?v=4"></script>
-<script src="js/shell.js?v=4"></script>
+<script src="js/netcore.js?v=5"></script>
+<script src="js/shell.js?v=5"></script>
 <script>
 NL.mount("Підмережі IPv4");
 
@@ -183,6 +184,19 @@ $("add-row").addEventListener("click", () => {
 $("vlsm-rows").addEventListener("click", e => {
   if (e.target.classList.contains("v-del")) e.target.closest(".vlsm-row").remove();
 });
+// Кнопка працює лише всередині робочого столу: окремою вкладкою немає кому
+// передавати, тому там її просто ховаємо.
+if (window.parent === window) $("to-topology").style.display = "none";
+$("to-topology").addEventListener("click", () => {
+  const s = calc();
+  if (!s) return;
+  parent.postMessage({
+    netlab: "send", to: "topology",
+    payload: { kind: "subnet", net: s.networkText, prefix: s.prefix, mask: s.maskText,
+               first: s.firstHostText, hosts: s.usable },
+  }, location.origin);
+});
+
 $("example").addEventListener("click", () => {
   const nets = ["10.20.30.44/22", "172.16.14.9/20", "192.168.100.200/26", "203.0.113.5/30", "10.0.0.1/31"];
   $("cidr").value = NL.pick(nets);

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Схема мережі — NetLab</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles/netlab.css?v=4">
+<link rel="stylesheet" href="styles/netlab.css?v=5">
 <style>
   .canvas-wrap{border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden;margin-top:12px}
   svg#board{display:block;width:100%;height:min(66vh,620px);touch-action:none;cursor:default;background:
@@ -78,8 +78,8 @@
   </div>
 </div>
 
-<script src="js/netcore.js?v=4"></script>
-<script src="js/shell.js?v=4"></script>
+<script src="js/netcore.js?v=5"></script>
+<script src="js/shell.js?v=5"></script>
 <script>
 NL.mount("Схема мережі");
 const $ = id => document.getElementById(id);
@@ -415,6 +415,35 @@ $("works").addEventListener("click", e => {
     if (w) { model = w.data; selected = null; $("crumb").textContent = w.name; draw(); drawPanel(); }
   }
   if (del) { NL.works.remove(del.getAttribute("data-del")); drawWorks(); }
+});
+
+/* ── Прийом мережі з калькулятора ─────────────────────────────────────────
+   Приходить готова підмережа — ставимо комутатор із її підписом і одразу
+   вішаємо на нього ПК з першою адресою: саме це малюють на дошці далі. */
+window.addEventListener("message", e => {
+  if (e.origin !== location.origin || !e.data || e.data.netlab !== "deliver") return;
+  const p = e.data.payload || {};
+  if (p.kind !== "subnet" || !p.net) return;
+
+  // Ставимо праворуч і зі зсувом униз за кожну наступну надіслану мережу,
+  // щоб вони не падали одна на одну й на стартову схему.
+  const received = model.nodes.filter(n => n.fromCalc).length;
+  const sw = addNode("switch");
+  sw.fromCalc = true;
+  sw.name = p.net + "/" + p.prefix;
+  sw.addr = "";
+  sw.x = 980;
+  sw.y = 110 + (received % 4) * 160;
+  const pc = addNode("pc");
+  pc.name = "Хост";
+  pc.addr = p.first + "/" + p.prefix;
+  pc.x = sw.x - 150;
+  pc.y = sw.y + 90;
+  addLink(sw.id, pc.id);
+  select("node", sw.id);
+  draw();
+  NL.toast("Мережу " + p.net + "/" + p.prefix + " додано у схему");
+  parent.postMessage({ netlab: "delivered" }, location.origin);
 });
 
 /* ── Стартова схема, щоб сторінка не зустрічала порожнечею ────────────────── */
