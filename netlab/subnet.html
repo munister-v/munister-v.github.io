@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Подсети IPv4 — NetLab</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles/netlab.css?v=1">
+</head>
+<body>
+<div class="shell wide">
+  <div class="window">
+    <div class="titlebar">
+      <span class="lights"><i></i><i></i><i></i></span>
+      <h1>Подсети IPv4</h1>
+      <span class="sub">калькулятор, побитовая раскладка, нарезка и VLSM</span>
+    </div>
+    <div class="win-body">
+      <h2 class="page">Калькулятор подсети</h2>
+      <p class="lede">Принимает «192.168.1.10/24», «10.0.0.1 255.255.0.0» и просто адрес — тогда префикс считается /24.</p>
+
+      <div class="row no-print">
+        <div style="flex:1;min-width:260px">
+          <label class="f" for="cidr">Адрес с префиксом или маской</label>
+          <input id="cidr" class="mono" type="text" value="192.168.1.10/24" style="width:100%" spellcheck="false">
+        </div>
+        <div>
+          <label class="f" for="pfx">Префикс</label>
+          <select id="pfx"></select>
+        </div>
+        <div style="align-self:flex-end;display:flex;gap:8px">
+          <button class="btn primary" id="calc">Посчитать</button>
+          <button class="btn" id="example">Пример</button>
+        </div>
+      </div>
+
+      <div id="out"></div>
+
+      <h3 class="sec">Нарезать на равные подсети</h3>
+      <div class="row no-print">
+        <div><label class="f" for="split-to">Новый префикс</label><select id="split-to"></select></div>
+        <div style="align-self:flex-end"><button class="btn" id="do-split">Разбить</button></div>
+      </div>
+      <div id="split-out"></div>
+
+      <h3 class="sec">VLSM — блоки под разные отделы</h3>
+      <p class="lede">Сколько хостов нужно каждой группе. Блоки раздаются от большего к меньшему, иначе пространство рвётся на дырки.</p>
+      <div id="vlsm-rows" class="no-print"></div>
+      <div class="row no-print" style="margin-top:8px">
+        <button class="btn" id="add-row">Добавить отдел</button>
+        <button class="btn primary" id="do-vlsm">Рассчитать VLSM</button>
+      </div>
+      <div id="vlsm-out"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/netcore.js?v=1"></script>
+<script src="js/shell.js?v=1"></script>
+<script>
+NL.mount("Подсети IPv4");
+
+const $ = id => document.getElementById(id);
+const N = NetCore;
+
+// Списки префиксов: /0 бессмысленно предлагать в нарезке, но в калькуляторе
+// он законен, поэтому наборы разные.
+for (let i = 0; i <= 32; i++) {
+  $("pfx").append(new Option("/" + i + "  ·  " + N.intToIp(N.maskFromPrefix(i)), i, false, i === 24));
+  if (i > 0) $("split-to").append(new Option("/" + i, i, false, i === 26));
+}
+
+function card(k, v) {
+  return `<div class="res"><div class="k">${NL.esc(k)}</div><div class="v">${NL.esc(v)}</div></div>`;
+}
+
+// Побитовая раскладка: видно, где кончается сеть и начинается хост — ради
+// этой картинки тема обычно и объясняется.
+function bitsRow(s) {
+  const flat = s.binary.join("");
+  const net = flat.slice(0, s.prefix);
+  const host = flat.slice(s.prefix);
+  const group = str => (str.match(/.{1,8}/g) || []).join(" ");
+  return `<div class="note" style="background:#fff;border-color:var(--line);color:var(--ink)">
+    <div class="bits"><b>${group(net)}</b>${net.length % 8 ? "" : " "}<i>${group(host)}</i></div>
+    <div style="font-size:11.5px;color:var(--ink-3);margin-top:6px">
+      синим — ${s.prefix} бит сети, серым — ${32 - s.prefix} бит хоста
+    </div>
+  </div>`;
+}
+
+function calc() {
+  const s = N.subnet($("cidr").value.trim());
+  if (s.error) { $("out").innerHTML = `<div class="err">${NL.esc(s.error)}</div>`; return null; }
+  $("pfx").value = String(s.prefix);
+  $("out").innerHTML = `
+    <div class="cards" style="margin-top:14px">
+      ${card("Адрес", s.ipText + "/" + s.prefix)}
+      ${card("Сеть", s.networkText)}
+      ${card("Бродкаст", s.broadcastText)}
+      ${card("Первый хост", s.firstHostText)}
+      ${card("Последний хост", s.lastHostText)}
+      ${card("Маска", s.maskText)}
+      ${card("Wildcard", s.wildcardText)}
+      ${card("Адресов всего", s.total.toLocaleString("ru-RU"))}
+      ${card("Хостов", s.usable.toLocaleString("ru-RU"))}
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span class="chip blue">класс ${NL.esc(s.cls)}</span>
+      <span class="chip">${NL.esc(s.scope)}</span>
+      ${s.prefix === 31 ? '<span class="chip ok">/31 — линк точка-точка, RFC 3021</span>' : ""}
+      ${s.prefix === 32 ? '<span class="chip ok">/32 — один адрес</span>' : ""}
+    </div>
+    ${bitsRow(s)}`;
+  return s;
+}
+
+function doSplit() {
+  const s = calc();
+  if (!s) return;
+  const to = Number($("split-to").value);
+  const r = N.split(s.networkText, s.prefix, to);
+  if (r.error) { $("split-out").innerHTML = `<div class="err">${NL.esc(r.error)}</div>`; return; }
+  $("split-out").innerHTML = `
+    <div class="note">Из ${NL.esc(s.networkText)}/${s.prefix} получается <b>${r.count}</b> подсетей /${to}
+      по ${r.subnets[0].usable} хостов${r.shown < r.count ? `; показаны первые ${r.shown}` : ""}.</div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>#</th><th>Сеть</th><th>Диапазон хостов</th><th>Бродкаст</th><th>Хостов</th></tr></thead>
+      <tbody>${r.subnets.map((x, i) => `<tr>
+        <td>${i + 1}</td><td>${x.networkText}/${x.prefix}</td>
+        <td>${x.firstHostText} — ${x.lastHostText}</td><td>${x.broadcastText}</td><td>${x.usable}</td>
+      </tr>`).join("")}</tbody></table></div>`;
+}
+
+/* ── VLSM ─────────────────────────────────────────────────────────────────── */
+const defaults = [["Бухгалтерия", 50], ["Учебный класс", 100], ["Серверная", 12], ["Линк до роутера", 2]];
+function rowHtml(name, hosts) {
+  return `<div class="row vlsm-row" style="margin-top:8px">
+    <input type="text" class="v-name" value="${NL.esc(name)}" placeholder="Отдел" style="flex:1;min-width:180px">
+    <input type="number" class="v-hosts" value="${hosts}" min="1" max="65534" style="width:120px">
+    <span class="chip">хостов</span>
+    <button class="btn v-del" title="Убрать строку">×</button>
+  </div>`;
+}
+$("vlsm-rows").innerHTML = defaults.map(d => rowHtml(d[0], d[1])).join("");
+
+function doVlsm() {
+  const s = calc();
+  if (!s) return;
+  const reqs = [...document.querySelectorAll(".vlsm-row")].map(r => ({
+    name: r.querySelector(".v-name").value.trim() || "без названия",
+    hosts: Number(r.querySelector(".v-hosts").value),
+  })).filter(r => r.hosts > 0);
+  if (!reqs.length) { $("vlsm-out").innerHTML = `<div class="err">Нужен хотя бы один отдел</div>`; return; }
+
+  const r = N.vlsm(s.networkText, s.prefix, reqs);
+  if (r.error) { $("vlsm-out").innerHTML = `<div class="err">${NL.esc(r.error)}</div>`; return; }
+  $("vlsm-out").innerHTML = `
+    <div class="table-wrap"><table>
+      <thead><tr><th>Отдел</th><th>Нужно</th><th>Сеть</th><th>Маска</th><th>Диапазон</th><th>Бродкаст</th><th>Даёт</th></tr></thead>
+      <tbody>${r.blocks.map(b => b.error
+        ? `<tr><td class="txt">${NL.esc(b.name)}</td><td>${b.need}</td><td colspan="5" class="txt"><span class="chip no">${NL.esc(b.error)}</span></td></tr>`
+        : `<tr><td class="txt">${NL.esc(b.name)}</td><td>${b.need}</td><td>${b.networkText}/${b.prefix}</td>
+           <td>${b.maskText}</td><td>${b.firstHostText} — ${b.lastHostText}</td><td>${b.broadcastText}</td><td>${b.usable}</td></tr>`
+      ).join("")}</tbody></table></div>
+    ${r.freeFrom
+      ? `<div class="note">Свободно с ${NL.esc(r.freeFrom)} — ещё ${r.freeCount.toLocaleString("ru-RU")} адресов.</div>`
+      : `<div class="note">Свободных адресов в этой сети не осталось.</div>`}`;
+}
+
+/* ── События ──────────────────────────────────────────────────────────────── */
+$("calc").addEventListener("click", calc);
+$("cidr").addEventListener("keydown", e => { if (e.key === "Enter") calc(); });
+$("pfx").addEventListener("change", () => {
+  const s = N.parseCidr($("cidr").value);
+  if (!s.error) { $("cidr").value = N.intToIp(s.ip) + "/" + $("pfx").value; calc(); }
+});
+$("do-split").addEventListener("click", doSplit);
+$("do-vlsm").addEventListener("click", doVlsm);
+$("add-row").addEventListener("click", () => {
+  $("vlsm-rows").insertAdjacentHTML("beforeend", rowHtml("", 10));
+});
+$("vlsm-rows").addEventListener("click", e => {
+  if (e.target.classList.contains("v-del")) e.target.closest(".vlsm-row").remove();
+});
+$("example").addEventListener("click", () => {
+  const nets = ["10.20.30.44/22", "172.16.14.9/20", "192.168.100.200/26", "203.0.113.5/30", "10.0.0.1/31"];
+  $("cidr").value = NL.pick(nets);
+  calc();
+});
+
+calc();
+</script>
+</body>
+</html>

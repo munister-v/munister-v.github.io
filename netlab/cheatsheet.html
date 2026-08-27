@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Шпаргалки — NetLab</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles/netlab.css?v=1">
+<style>
+  .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .panel h3{margin:0 0 10px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3)}
+  .panel table{font-size:12.5px}
+  .panel td{padding:6px 8px}
+  .panel th{padding:7px 8px}
+  code{font-family:var(--mono);background:rgba(32,32,44,.06);padding:1px 5px;border-radius:5px;font-size:12.5px}
+  .cmd{font-family:var(--mono);font-size:12.5px;line-height:1.9}
+  .cmd b{color:var(--accent);font-weight:700}
+  @media print{.panel{break-inside:avoid;border-color:#ddd}}
+</style>
+</head>
+<body>
+<div class="shell wide">
+  <div class="window">
+    <div class="titlebar">
+      <span class="lights"><i></i><i></i><i></i></span>
+      <h1>Шпаргалки</h1>
+      <span class="sub">одна страница на печать</span>
+    </div>
+    <div class="win-body">
+      <h2 class="page">Справочник</h2>
+      <p class="lede">То, что спрашивают каждое занятие. Печатается на две страницы и раздаётся на первом уроке.</p>
+
+      <div class="two">
+        <div class="panel">
+          <h3>Маски и размеры сетей</h3>
+          <div class="table-wrap" style="margin-top:0"><table>
+            <thead><tr><th>Префикс</th><th>Маска</th><th>Адресов</th><th>Хостов</th></tr></thead>
+            <tbody id="masks"></tbody>
+          </table></div>
+        </div>
+
+        <div class="panel">
+          <h3>Частные диапазоны и служебные адреса</h3>
+          <div class="table-wrap" style="margin-top:0"><table>
+            <tbody>
+              <tr><td>10.0.0.0/8</td><td class="txt">Частный, класс A</td></tr>
+              <tr><td>172.16.0.0/12</td><td class="txt">Частный, 172.16 – 172.31</td></tr>
+              <tr><td>192.168.0.0/16</td><td class="txt">Частный, класс C</td></tr>
+              <tr><td>127.0.0.0/8</td><td class="txt">Loopback, сам себе</td></tr>
+              <tr><td>169.254.0.0/16</td><td class="txt">APIPA: DHCP не ответил</td></tr>
+              <tr><td>224.0.0.0/4</td><td class="txt">Multicast</td></tr>
+              <tr><td>255.255.255.255</td><td class="txt">Ограниченный бродкаст</td></tr>
+              <tr><td>0.0.0.0/0</td><td class="txt">Маршрут по умолчанию</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+
+        <div class="panel">
+          <h3>Уровни OSI</h3>
+          <div class="table-wrap" style="margin-top:0"><table>
+            <thead><tr><th>№</th><th>Уровень</th><th>Единица</th><th>Пример</th></tr></thead>
+            <tbody>
+              <tr><td>7</td><td class="txt">Прикладной</td><td class="txt">данные</td><td class="txt">HTTP, DNS</td></tr>
+              <tr><td>6</td><td class="txt">Представления</td><td class="txt">данные</td><td class="txt">TLS, JPEG</td></tr>
+              <tr><td>5</td><td class="txt">Сеансовый</td><td class="txt">данные</td><td class="txt">RPC, NetBIOS</td></tr>
+              <tr><td>4</td><td class="txt">Транспортный</td><td class="txt">сегмент</td><td class="txt">TCP, UDP</td></tr>
+              <tr><td>3</td><td class="txt">Сетевой</td><td class="txt">пакет</td><td class="txt">IP, ICMP</td></tr>
+              <tr><td>2</td><td class="txt">Канальный</td><td class="txt">кадр</td><td class="txt">Ethernet, ARP</td></tr>
+              <tr><td>1</td><td class="txt">Физический</td><td class="txt">бит</td><td class="txt">витая пара, оптика</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+
+        <div class="panel">
+          <h3>Порты, которые спрашивают</h3>
+          <div class="table-wrap" style="margin-top:0"><table>
+            <tbody id="ports"></tbody>
+          </table></div>
+        </div>
+
+        <div class="panel">
+          <h3>Базовые команды Cisco IOS</h3>
+          <div class="cmd">
+            <b>enable</b> — привилегированный режим<br>
+            <b>configure terminal</b> — режим конфигурации<br>
+            <b>hostname R1</b> — имя устройства<br>
+            <b>interface gi0/0</b> — перейти к интерфейсу<br>
+            <b>ip address 192.168.1.1 255.255.255.0</b><br>
+            <b>no shutdown</b> — поднять интерфейс<br>
+            <b>ip route 0.0.0.0 0.0.0.0 10.0.0.1</b> — маршрут по умолчанию<br>
+            <b>show ip interface brief</b> — что поднято и с какими адресами<br>
+            <b>show running-config</b> — текущая конфигурация<br>
+            <b>copy running-config startup-config</b> — сохранить<br>
+            <b>show ip route</b> — таблица маршрутизации<br>
+            <b>show mac address-table</b> — таблица MAC коммутатора<br>
+            <b>vlan 10 / name Class</b> — создать VLAN<br>
+            <b>switchport mode access / switchport access vlan 10</b><br>
+            <b>switchport mode trunk</b> — транк между коммутаторами<br>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Диагностика с рабочей станции</h3>
+          <div class="cmd">
+            <b>ping 8.8.8.8</b> — есть ли связь вообще<br>
+            <b>ping ya.ru</b> — работает ли DNS<br>
+            <b>tracert / traceroute</b> — на каком узле обрывается<br>
+            <b>ipconfig /all</b>, <b>ip a</b> — свой адрес, шлюз, DNS<br>
+            <b>ipconfig /release</b> + <b>/renew</b> — перезапросить DHCP<br>
+            <b>ipconfig /flushdns</b> — сбросить кэш имён<br>
+            <b>arp -a</b> — соответствие IP и MAC<br>
+            <b>netstat -an</b> — открытые соединения и порты<br>
+            <b>nslookup ya.ru</b> — что отвечает DNS<br>
+          </div>
+          <div class="note" style="margin-top:12px">Порядок разбора: свой адрес → шлюз → DNS → внешний узел. Обрыв ищется в этом же порядке, а не наугад.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/netcore.js?v=1"></script>
+<script src="js/shell.js?v=1"></script>
+<script>
+NL.mount("Шпаргалки");
+
+// Таблица масок строится из тех же функций, что и калькулятор: одна правда
+// на весь проект, расхождению взяться неоткуда.
+document.getElementById("masks").innerHTML = Array.from({ length: 17 }, (_, i) => 16 + i).map(p => {
+  const s = NetCore.subnet("10.0.0.0", p);
+  return `<tr><td>/${p}</td><td>${s.maskText}</td><td>${s.total.toLocaleString("ru-RU")}</td><td>${s.usable.toLocaleString("ru-RU")}</td></tr>`;
+}).join("");
+
+const ports = [
+  [20, "FTP данные"], [21, "FTP команды"], [22, "SSH"], [23, "Telnet"], [25, "SMTP"],
+  [53, "DNS"], [67, "DHCP сервер"], [68, "DHCP клиент"], [69, "TFTP"], [80, "HTTP"],
+  [110, "POP3"], [123, "NTP"], [143, "IMAP"], [161, "SNMP"], [389, "LDAP"],
+  [443, "HTTPS"], [445, "SMB"], [3306, "MySQL"], [3389, "RDP"], [5432, "PostgreSQL"],
+];
+document.getElementById("ports").innerHTML = ports.map(([n, name]) =>
+  `<tr><td>${n}</td><td class="txt">${name}</td></tr>`).join("");
+</script>
+</body>
+</html>

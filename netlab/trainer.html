@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тренажёр по подсетям — NetLab</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles/netlab.css?v=1">
+<style>
+  .q{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-top:14px}
+  .q .task{font-size:17px;font-weight:700;letter-spacing:-.01em}
+  .q .given{font-family:var(--mono);font-size:20px;font-weight:700;margin:8px 0 14px;color:var(--accent)}
+  .q input{font-family:var(--mono);font-size:16px;width:230px}
+  .opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:6px}
+  .opt{border:1px solid var(--line-2);background:#fff;border-radius:11px;padding:11px 13px;
+       font-family:var(--mono);font-size:14px;font-weight:600;cursor:pointer;text-align:left}
+  .opt:hover{background:#FAF8F4}
+  .opt.right{background:rgba(31,122,70,.12);border-color:rgba(31,122,70,.45);color:var(--green)}
+  .opt.wrong{background:rgba(179,38,30,.1);border-color:rgba(179,38,30,.4);color:var(--red)}
+  .score{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ink-3)}
+  .score b{font-size:18px;color:var(--ink)}
+  .why{margin-top:12px;font-size:13px;line-height:1.55}
+  .why code{font-family:var(--mono);background:rgba(32,32,44,.06);padding:1px 5px;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="window">
+    <div class="titlebar">
+      <span class="lights"><i></i><i></i><i></i></span>
+      <h1>Тренажёр</h1>
+      <span class="sub">задачи генерируются заново каждый раз</span>
+    </div>
+    <div class="win-body">
+      <h2 class="page">Тренажёр по адресации</h2>
+      <p class="lede">Выберите темы и решайте, пока не станет скучно. Ответ проверяется сразу, с разбором — не просто «неверно».</p>
+
+      <div class="row no-print" id="topics"></div>
+      <div class="row no-print" style="margin-top:10px">
+        <button class="btn primary" id="next">Следующая задача</button>
+        <span class="spacer" style="flex:1"></span>
+        <span class="score">верно <b id="ok">0</b> из <b id="total">0</b> · серия <b id="streak">0</b></span>
+      </div>
+
+      <div id="q"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/netcore.js?v=1"></script>
+<script src="js/shell.js?v=1"></script>
+<script>
+NL.mount("Тренажёр");
+const $ = id => document.getElementById(id);
+const N = NetCore;
+let stats = { ok: 0, total: 0, streak: 0 }, current = null, answered = false;
+
+/* ── Темы ─────────────────────────────────────────────────────────────────
+   Каждая тема — функция, возвращающая задачу: текст, что дано, правильный
+   ответ, варианты (если выбор) и разбор. Добавить тему — дописать функцию,
+   всё остальное работает само. */
+function randIp(prefixRange) {
+  const prefix = NL.rnd(prefixRange[0], prefixRange[1]);
+  const base = NL.pick([
+    () => "192.168." + NL.rnd(0, 255) + "." + NL.rnd(1, 254),
+    () => "10." + NL.rnd(0, 255) + "." + NL.rnd(0, 255) + "." + NL.rnd(1, 254),
+    () => "172." + NL.rnd(16, 31) + "." + NL.rnd(0, 255) + "." + NL.rnd(1, 254),
+    () => NL.rnd(1, 223) + "." + NL.rnd(0, 255) + "." + NL.rnd(0, 255) + "." + NL.rnd(1, 254),
+  ])();
+  return N.subnet(base, prefix);
+}
+
+// Неправильные варианты берём осмысленные: соседняя сеть, бродкаст вместо
+// сети, маска на бит длиннее. На таких и ошибаются, случайный мусор ничему
+// не учит.
+function near(s, kind) {
+  const alt = [];
+  if (kind === "net") {
+    alt.push(s.firstHostText, s.broadcastText, N.intToIp((s.network + Math.pow(2, 32 - s.prefix)) >>> 0));
+  } else if (kind === "bcast") {
+    alt.push(s.lastHostText, s.networkText, N.intToIp((s.broadcast + 1) >>> 0));
+  } else if (kind === "mask") {
+    alt.push(N.intToIp(N.maskFromPrefix(Math.min(s.prefix + 1, 32))),
+             N.intToIp(N.maskFromPrefix(Math.max(s.prefix - 1, 0))),
+             s.wildcardText);
+  }
+  return alt;
+}
+
+const TOPICS = {
+  net: {
+    label: "Адрес сети",
+    make() {
+      const s = randIp([16, 30]);
+      return {
+        task: "Какой адрес сети?", given: s.ipText + "/" + s.prefix,
+        answer: s.networkText, options: NL.shuffle([s.networkText, ...near(s, "net")]),
+        why: `Маска <code>${s.maskText}</code>: младшие ${32 - s.prefix} бит адреса обнуляются, старшие ${s.prefix} остаются. Получается <code>${s.networkText}</code>.`,
+      };
+    },
+  },
+  bcast: {
+    label: "Бродкаст",
+    make() {
+      const s = randIp([16, 30]);
+      return {
+        task: "Какой широковещательный адрес?", given: s.ipText + "/" + s.prefix,
+        answer: s.broadcastText, options: NL.shuffle([s.broadcastText, ...near(s, "bcast")]),
+        why: `В бродкасте все ${32 - s.prefix} бит хоста — единицы: <code>${s.broadcastText}</code>. Последний хост на единицу меньше: <code>${s.lastHostText}</code>.`,
+      };
+    },
+  },
+  mask: {
+    label: "Маска по префиксу",
+    make() {
+      const s = randIp([8, 30]);
+      return {
+        task: "Какая маска соответствует префиксу?", given: "/" + s.prefix,
+        answer: s.maskText, options: NL.shuffle([s.maskText, ...near(s, "mask")]),
+        why: `${s.prefix} единиц подряд, остальное нули: <code>${s.maskBinary.join(".")}</code> = <code>${s.maskText}</code>.`,
+      };
+    },
+  },
+  hosts: {
+    label: "Число хостов",
+    make() {
+      const s = randIp([18, 30]);
+      const wrong = [s.total, Math.max(s.usable - 1, 1), s.usable * 2];
+      return {
+        task: "Сколько адресов достанется хостам?", given: s.networkText + "/" + s.prefix,
+        answer: String(s.usable), options: NL.shuffle([String(s.usable), ...wrong.map(String)]),
+        why: `2<sup>${32 - s.prefix}</sup> = ${s.total} адресов, минус адрес сети и бродкаст → <code>${s.usable}</code>.`,
+      };
+    },
+  },
+  belongs: {
+    label: "Своя или чужая сеть",
+    make() {
+      const s = randIp([20, 28]);
+      const inside = Math.random() < 0.5;
+      const size = Math.pow(2, 32 - s.prefix);
+      const probe = inside
+        ? N.intToIp((s.network + NL.rnd(1, Math.max(size - 2, 1))) >>> 0)
+        : N.intToIp((s.network + size + NL.rnd(1, Math.max(size - 2, 1))) >>> 0);
+      return {
+        task: `Адрес ${probe} принадлежит этой сети?`, given: s.networkText + "/" + s.prefix,
+        answer: inside ? "Да" : "Нет", options: ["Да", "Нет"],
+        why: `Диапазон сети — <code>${s.networkText}</code> … <code>${s.broadcastText}</code>. Адрес <code>${probe}</code> ${inside ? "попадает внутрь" : "лежит за границей"}.`,
+      };
+    },
+  },
+  binary: {
+    label: "Двоичный код",
+    make() {
+      const octet = NL.rnd(0, 255);
+      const right = octet.toString(2).padStart(8, "0");
+      const wrong = [NL.rnd(0, 255), NL.rnd(0, 255), NL.rnd(0, 255)].map(v => v.toString(2).padStart(8, "0"));
+      return {
+        task: "Как выглядит этот октет в двоичном виде?", given: String(octet),
+        answer: right, options: NL.shuffle([right, ...wrong]),
+        why: `Веса битов: 128 64 32 16 8 4 2 1. ${octet} = ${right.split("").map((b, i) => b === "1" ? Math.pow(2, 7 - i) : null).filter(Boolean).join(" + ") || "0"}.`,
+      };
+    },
+  },
+  prefix: {
+    label: "Префикс по маске",
+    make() {
+      const s = randIp([8, 30]);
+      const right = "/" + s.prefix;
+      const wrong = ["/" + Math.min(s.prefix + 1, 32), "/" + Math.max(s.prefix - 1, 0), "/" + Math.min(s.prefix + 8, 32)];
+      return {
+        task: "Какой префикс у этой маски?", given: s.maskText,
+        answer: right, options: NL.shuffle([right, ...new Set(wrong)]),
+        why: `Считаем единицы: <code>${s.maskBinary.join(".")}</code> — их ${s.prefix}.`,
+      };
+    },
+  },
+};
+
+const chosen = new Set(["net", "bcast", "mask", "hosts"]);
+$("topics").innerHTML = Object.entries(TOPICS).map(([k, t]) =>
+  `<button class="btn ${chosen.has(k) ? "lime" : ""}" data-topic="${k}">${NL.esc(t.label)}</button>`).join("");
+
+$("topics").addEventListener("click", e => {
+  const b = e.target.closest("[data-topic]");
+  if (!b) return;
+  const k = b.getAttribute("data-topic");
+  if (chosen.has(k)) {
+    if (chosen.size === 1) { NL.toast("Хотя бы одна тема нужна"); return; }
+    chosen.delete(k); b.classList.remove("lime");
+  } else { chosen.add(k); b.classList.add("lime"); }
+});
+
+function nextQuestion() {
+  const key = NL.pick([...chosen]);
+  current = TOPICS[key].make();
+  answered = false;
+  $("q").innerHTML = `
+    <div class="q">
+      <div class="task">${current.task}</div>
+      <div class="given">${NL.esc(current.given)}</div>
+      <div class="opts">${current.options.map(o =>
+        `<button class="opt" data-a="${NL.esc(o)}">${NL.esc(o)}</button>`).join("")}</div>
+      <div class="why" id="why" style="display:none"></div>
+    </div>`;
+}
+
+$("q").addEventListener("click", e => {
+  const b = e.target.closest(".opt");
+  if (!b || answered) return;
+  answered = true;
+  const given = b.getAttribute("data-a");
+  const right = given === current.answer;
+  stats.total++;
+  if (right) { stats.ok++; stats.streak++; } else { stats.streak = 0; }
+  document.querySelectorAll(".opt").forEach(o => {
+    const v = o.getAttribute("data-a");
+    if (v === current.answer) o.classList.add("right");
+    else if (o === b) o.classList.add("wrong");
+  });
+  const why = $("why");
+  why.style.display = "";
+  why.innerHTML = (right ? "<b>Верно.</b> " : `<b>Правильный ответ — ${NL.esc(current.answer)}.</b> `) + current.why;
+  $("ok").textContent = stats.ok;
+  $("total").textContent = stats.total;
+  $("streak").textContent = stats.streak;
+});
+
+$("next").addEventListener("click", nextQuestion);
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && answered) nextQuestion();
+  const n = Number(e.key);
+  if (n >= 1 && n <= 4 && !answered) {
+    const opts = document.querySelectorAll(".opt");
+    if (opts[n - 1]) opts[n - 1].click();
+  }
+});
+
+nextQuestion();
+</script>
+</body>
+</html>

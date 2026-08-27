@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Печатные задания — NetLab</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles/netlab.css?v=1">
+<style>
+  .sheet{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px 28px;margin-top:14px}
+  .sheet h3{margin:0 0 2px;font-size:18px;font-weight:800}
+  .sheet .meta{font-size:12px;color:var(--ink-3);margin-bottom:16px}
+  .task-item{border-bottom:1px dashed var(--line);padding:12px 0}
+  .task-item:last-child{border-bottom:0}
+  .task-item .n{font-weight:800;margin-right:6px}
+  .task-item .given{font-family:var(--mono);font-weight:700}
+  .blanks{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px 16px;margin-top:8px}
+  .blank{font-size:12.5px;color:var(--ink-3);border-bottom:1px solid var(--line-2);padding:9px 0 3px}
+  .key td,.key th{font-size:12px}
+  @media print{
+    .sheet{border:0;border-radius:0;padding:0;margin:0}
+    .page-break{page-break-before:always}
+    .task-item{border-bottom:1px dashed #ccc}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="window">
+    <div class="titlebar">
+      <span class="lights"><i></i><i></i><i></i></span>
+      <h1>Печатные задания</h1>
+      <span class="sub">лист студенту и ключ преподавателю</span>
+    </div>
+    <div class="win-body">
+      <h2 class="page">Лист задач по адресации</h2>
+      <p class="lede">Задачи генерируются случайно. Вариант привязан к номеру: у соседей по парте разные числа, а ключ у вас один.</p>
+
+      <div class="row no-print">
+        <div><label class="f" for="variant">Вариант</label><input id="variant" type="number" value="1" min="1" max="99" style="width:100px"></div>
+        <div><label class="f" for="count">Задач</label><input id="count" type="number" value="8" min="3" max="20" style="width:100px"></div>
+        <div><label class="f" for="level">Сложность</label>
+          <select id="level">
+            <option value="easy">Простая: /24 и /16</option>
+            <option value="mid" selected>Средняя: любые /16–/28</option>
+            <option value="hard">С VLSM и /30</option>
+          </select></div>
+        <div style="align-self:flex-end;display:flex;gap:8px">
+          <button class="btn primary" id="gen">Сгенерировать</button>
+          <button class="btn" id="print2">Печать</button>
+          <button class="btn" id="share">Ссылка на вариант</button>
+        </div>
+      </div>
+
+      <div id="sheet"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/netcore.js?v=1"></script>
+<script src="js/shell.js?v=1"></script>
+<script>
+NL.mount("Печатные задания");
+const $ = id => document.getElementById(id);
+const N = NetCore;
+
+/* Генератор с зерном: один и тот же номер варианта даёт один и тот же лист.
+   Иначе ключ, распечатанный вчера, не сойдётся с листом, распечатанным
+   сегодня — а это ровно то, ради чего лист и делается. */
+function seeded(seed) {
+  let s = seed * 2654435761 % 4294967296;
+  return () => {
+    s = (s * 1664525 + 1013904223) % 4294967296;
+    return s / 4294967296;
+  };
+}
+
+function build(variant, count, level) {
+  const rnd = seeded(variant * 7919 + count * 31 + level.length);
+  const pick = arr => arr[Math.floor(rnd() * arr.length)];
+  const int = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+
+  const prefixRange = level === "easy" ? [16, 24] : level === "mid" ? [16, 28] : [16, 30];
+  const tasks = [];
+  for (let i = 0; i < count; i++) {
+    const prefix = level === "easy" ? pick([16, 24]) : int(prefixRange[0], prefixRange[1]);
+    const ip = pick([
+      () => "192.168." + int(0, 255) + "." + int(1, 254),
+      () => "10." + int(0, 255) + "." + int(0, 255) + "." + int(1, 254),
+      () => "172." + int(16, 31) + "." + int(0, 255) + "." + int(1, 254),
+    ])();
+    tasks.push(N.subnet(ip, prefix));
+  }
+
+  const vlsm = level === "hard"
+    ? N.vlsm("192.168." + int(0, 200) + ".0", 24, [
+        { name: "Класс А", hosts: pick([60, 100, 120]) },
+        { name: "Класс Б", hosts: pick([25, 50, 30]) },
+        { name: "Серверная", hosts: pick([6, 10, 14]) },
+        { name: "Линк", hosts: 2 },
+      ])
+    : null;
+  return { tasks, vlsm };
+}
+
+function render() {
+  const variant = Number($("variant").value) || 1;
+  const count = Number($("count").value) || 8;
+  const level = $("level").value;
+  const { tasks, vlsm } = build(variant, count, level);
+
+  const blanks = ["Адрес сети", "Маска", "Первый хост", "Последний хост", "Бродкаст", "Хостов"];
+  $("sheet").innerHTML = `
+    <div class="sheet">
+      <h3>Адресация IPv4 — вариант ${variant}</h3>
+      <div class="meta">ФИО ____________________________________  Группа ____________  Дата ____________</div>
+      ${tasks.map((t, i) => `
+        <div class="task-item">
+          <div><span class="n">${i + 1}.</span> Дан адрес <span class="given">${t.ipText}/${t.prefix}</span> — заполните таблицу.</div>
+          <div class="blanks">${blanks.map(b => `<div class="blank">${b}: </div>`).join("")}</div>
+        </div>`).join("")}
+      ${vlsm ? `
+        <div class="task-item">
+          <div><span class="n">${tasks.length + 1}.</span> Разбейте сеть <span class="given">${vlsm.blocks[0] && vlsm.blocks[0].networkText ? vlsm.blocks[0].networkText.replace(/\.\d+$/, ".0") : ""}/24</span> методом VLSM под группы:
+            ${vlsm.blocks.map(b => NL.esc(b.name) + " — " + b.need + " хостов").join(", ")}.</div>
+          <div class="blanks">${vlsm.blocks.map(b => `<div class="blank">${NL.esc(b.name)}: </div>`).join("")}</div>
+        </div>` : ""}
+    </div>
+
+    <div class="sheet page-break">
+      <h3>Ключ — вариант ${variant}</h3>
+      <div class="meta">Для преподавателя. Не выдавать вместе с листом.</div>
+      <div class="table-wrap"><table class="key">
+        <thead><tr><th>#</th><th>Дано</th><th>Сеть</th><th>Маска</th><th>Первый</th><th>Последний</th><th>Бродкаст</th><th>Хостов</th></tr></thead>
+        <tbody>${tasks.map((t, i) => `<tr>
+          <td>${i + 1}</td><td>${t.ipText}/${t.prefix}</td><td>${t.networkText}</td><td>${t.maskText}</td>
+          <td>${t.firstHostText}</td><td>${t.lastHostText}</td><td>${t.broadcastText}</td><td>${t.usable}</td>
+        </tr>`).join("")}</tbody>
+      </table></div>
+      ${vlsm ? `<div class="table-wrap" style="margin-top:12px"><table class="key">
+        <thead><tr><th>Группа</th><th>Нужно</th><th>Сеть</th><th>Маска</th><th>Диапазон</th><th>Даёт</th></tr></thead>
+        <tbody>${vlsm.blocks.map(b => `<tr><td class="txt">${NL.esc(b.name)}</td><td>${b.need}</td>
+          <td>${b.networkText || "—"}/${b.prefix || ""}</td><td>${b.maskText || "—"}</td>
+          <td>${b.firstHostText || "—"} — ${b.lastHostText || "—"}</td><td>${b.usable || "—"}</td></tr>`).join("")}</tbody>
+      </table></div>` : ""}
+    </div>`;
+}
+
+$("gen").addEventListener("click", render);
+$("print2").addEventListener("click", () => window.print());
+$("share").addEventListener("click", () => {
+  const url = location.origin + location.pathname + NL.link.write({
+    v: Number($("variant").value), c: Number($("count").value), l: $("level").value });
+  navigator.clipboard ? navigator.clipboard.writeText(url).then(() => NL.toast("Ссылка скопирована"))
+                      : prompt("Ссылка на вариант", url);
+});
+["variant", "count", "level"].forEach(id => $(id).addEventListener("change", render));
+
+const shared = NL.link.read();
+if (shared) {
+  $("variant").value = shared.v || 1;
+  $("count").value = shared.c || 8;
+  $("level").value = shared.l || "mid";
+}
+render();
+</script>
+</body>
+</html>

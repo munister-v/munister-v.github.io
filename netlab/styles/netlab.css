@@ -1,0 +1,169 @@
+/*
+  NetLab — общий язык интерфейса
+
+  Взят у TeachEd: кремовые обои, окна с 46-пиксельной шапкой, лаймовая полоса
+  меню, ink-графит для текста. Отличие — акцент: у TeachEd фиолетовый, здесь
+  сигнальный синий, цвет линка и трафика.
+
+  Файл один на все страницы: рабочий стол, инструменты, игры и печатные листы
+  должны выглядеть одним продуктом, а не пятью соседними сайтами.
+*/
+
+:root{
+  --ink:#20202C;
+  --ink-2:#50505C;
+  --ink-3:#6C6C77;
+  --line:rgba(23,23,25,.10);
+  --line-2:rgba(32,32,44,.16);
+  --lime:#CDF940;
+  --accent:#1E6FE0;
+  --accent-soft:#E4EEFC;
+  --win:rgba(255,255,255,.96);
+  --bar:rgba(234,228,216,.98);
+  --rail:rgba(228,222,210,.92);
+  --radius:18px;
+  --shadow:0 24px 72px rgba(0,0,0,.12), 0 8px 24px rgba(0,0,0,.06), 0 1px 0 rgba(255,255,255,.72) inset;
+  --green:#1F7A46;
+  --amber:#9A6400;
+  --red:#B3261E;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular","SF Mono",ui-monospace,monospace;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;font-family:var(--font);color:var(--ink);
+  background:
+    radial-gradient(ellipse 70% 55% at 18% 14%, rgba(30,111,224,.07) 0%, transparent 62%),
+    radial-gradient(ellipse 58% 46% at 88% 76%, rgba(194,180,138,.16) 0%, transparent 60%),
+    linear-gradient(160deg,#FBF8F2 0%,#F6F2EA 48%,#EFEBE1 100%);
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent)}
+
+/* ── Полоса меню ───────────────────────────────────────────────────────── */
+#menubar{
+  position:sticky;top:0;z-index:60;height:44px;display:flex;align-items:center;gap:10px;
+  padding:0 14px;background:var(--lime);border-bottom:1px solid rgba(32,32,44,.18);
+  box-shadow:0 1px 0 rgba(255,255,255,.35) inset;
+}
+#menubar a.home{display:flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none}
+#menubar .wordmark{font-weight:800;letter-spacing:-.02em;font-size:13px}
+#menubar .wordmark span{font-weight:500}
+#menubar .crumb{font-size:12px;font-weight:600;opacity:.65}
+#menubar .spacer{flex:1}
+.bar-btn{
+  border:1px solid rgba(32,32,44,.22);background:rgba(255,255,255,.55);border-radius:9px;
+  padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;color:var(--ink);
+}
+.bar-btn:hover{background:#fff}
+
+/* ── Окно ──────────────────────────────────────────────────────────────── */
+.shell{max-width:1180px;margin:18px auto 30px;padding:0 16px}
+.shell.wide{max-width:1420px}
+.window{
+  background:var(--win);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.titlebar{
+  height:46px;display:flex;align-items:center;gap:10px;padding:0 14px;
+  background:var(--bar);border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset;
+}
+.lights{display:flex;gap:6px}
+.lights i{width:11px;height:11px;border-radius:50%;display:block;background:var(--line-2)}
+.lights i:first-child{background:#F0508A}
+.lights i:nth-child(2){background:#FFC44D}
+.lights i:nth-child(3){background:#5BC97E}
+.titlebar h1{margin:0;font-size:13px;font-weight:700;letter-spacing:-.01em}
+.titlebar .sub{font-size:12px;color:var(--ink-3)}
+.titlebar .spacer{flex:1}
+.win-body{padding:22px 24px 28px}
+
+h2.page{margin:0 0 4px;font-size:22px;font-weight:800;letter-spacing:-.02em}
+p.lede{margin:0 0 18px;color:var(--ink-3);font-size:13px}
+h3.sec{margin:22px 0 10px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
+
+/* ── Управление ────────────────────────────────────────────────────────── */
+.btn{
+  border:1px solid var(--line-2);background:#fff;border-radius:10px;padding:8px 12px;
+  font-size:13px;font-weight:700;cursor:pointer;
+}
+.btn:hover{background:#FAF8F4}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#1A5FC2}
+.btn.lime{background:var(--lime);border-color:rgba(32,32,44,.2)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+input[type=text],input[type=number],input[type=password],select,textarea{
+  border:1px solid var(--line-2);background:#fff;border-radius:10px;padding:9px 11px;font-size:14px;
+}
+input.mono{font-family:var(--mono)}
+label.f{display:block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
+
+/* ── Карточки рабочего стола ───────────────────────────────────────────── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:14px}
+.app{
+  display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--line);
+  border-radius:14px;padding:16px 18px;transition:transform .16s ease,box-shadow .16s ease;
+}
+.app:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.09)}
+.app .ic{width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;margin-bottom:11px}
+.app .ic svg{width:22px;height:22px}
+.app.lime .ic{background:rgba(205,249,64,.55);color:#3F4A00}
+.app h3{margin:0 0 4px;font-size:15px;font-weight:800;letter-spacing:-.01em}
+.app p{margin:0;font-size:12.5px;color:var(--ink-3);line-height:1.45}
+.app .tag{display:inline-block;margin-top:9px;font-size:10px;font-weight:800;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink-3)}
+
+/* ── Результаты и таблицы ──────────────────────────────────────────────── */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:10px}
+.res{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.res .k{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
+.res .v{font-family:var(--mono);font-size:16px;font-weight:700;margin-top:5px;word-break:break-all}
+.table-wrap{border:1px solid var(--line);border-radius:14px;background:#fff;overflow:auto;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);padding:10px 13px;border-bottom:1px solid var(--line);background:#fff}
+td{padding:10px 13px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12.5px}
+td.txt{font-family:var(--font)}
+tbody tr:last-child td{border-bottom:0}
+.bits{font-family:var(--mono);font-size:13px;letter-spacing:.5px}
+.bits b{color:var(--accent);font-weight:700}
+.bits i{font-style:normal;color:var(--ink-3)}
+.note{background:var(--accent-soft);border:1px solid rgba(30,111,224,.2);border-radius:12px;
+  padding:11px 13px;font-size:12.5px;color:#123E7E;margin-top:12px}
+.err{background:rgba(179,38,30,.08);border:1px solid rgba(179,38,30,.28);border-radius:12px;
+  padding:11px 13px;font-size:13px;color:var(--red);margin-top:12px}
+.chip{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;
+  background:rgba(32,32,44,.08);color:var(--ink-2)}
+.chip.ok{background:rgba(31,122,70,.13);color:var(--green)}
+.chip.no{background:rgba(179,38,30,.12);color:var(--red)}
+.chip.blue{background:var(--accent-soft);color:#1454AF}
+
+/* ── Тосты ─────────────────────────────────────────────────────────────── */
+#toast{
+  position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);z-index:90;
+  background:var(--ink);color:#fff;padding:10px 16px;border-radius:11px;font-size:13px;font-weight:600;
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:720px){
+  .shell{padding:0 10px;margin:10px auto 20px}
+  .win-body{padding:16px 14px 22px}
+  #menubar{padding:0 8px;gap:6px}
+  #menubar .crumb{display:none}
+  .bar-btn{padding:5px 8px;font-size:11px}
+}
+
+@media print{
+  #menubar,.titlebar,.bar-btn,.no-print{display:none !important}
+  body{background:#fff}
+  .shell{margin:0;padding:0;max-width:none}
+  .window{border:0;box-shadow:none;background:#fff}
+  .win-body{padding:0}
+}

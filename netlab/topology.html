@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Схема сети — NetLab</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles/netlab.css?v=1">
+<style>
+  .canvas-wrap{border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden;margin-top:12px}
+  svg#board{display:block;width:100%;height:min(66vh,620px);touch-action:none;cursor:default;background:
+    linear-gradient(rgba(32,32,44,.05) 1px,transparent 1px) 0 0/22px 22px,
+    linear-gradient(90deg,rgba(32,32,44,.05) 1px,transparent 1px) 0 0/22px 22px,#fff}
+  .node rect,.node circle{fill:#fff;stroke:var(--ink);stroke-width:1.6}
+  .node.sel rect,.node.sel circle{stroke:var(--accent);stroke-width:2.6}
+  .node text.label{font:700 12px var(--font);fill:var(--ink);text-anchor:middle}
+  .node text.addr{font:600 10.5px var(--mono);fill:var(--ink-3);text-anchor:middle}
+  .node .glyph{stroke:var(--ink);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .link{stroke:var(--ink-2);stroke-width:2}
+  .link.serial{stroke-dasharray:7 5}
+  .link.sel{stroke:var(--accent);stroke-width:3}
+  .link-label{font:600 10px var(--mono);fill:var(--ink-3);text-anchor:middle}
+  .palette{display:flex;flex-wrap:wrap;gap:8px}
+  .palette .btn{display:flex;align-items:center;gap:7px}
+  .palette .btn svg{width:18px;height:18px}
+  .hint{font-size:12px;color:var(--ink-3);margin-top:8px}
+  .side{display:grid;grid-template-columns:1fr 260px;gap:14px;align-items:start}
+  @media (max-width:860px){.side{grid-template-columns:1fr}}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+  .panel h4{margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+  .panel input,.panel select{width:100%;margin-bottom:9px}
+</style>
+</head>
+<body>
+<div class="shell wide">
+  <div class="window">
+    <div class="titlebar">
+      <span class="lights"><i></i><i></i><i></i></span>
+      <h1>Схема сети</h1>
+      <span class="sub" id="crumb">новая схема</span>
+    </div>
+    <div class="win-body">
+      <h2 class="page">Конструктор топологии</h2>
+      <p class="lede">Добавьте устройство, тяните мышью. Чтобы соединить — щёлкните по одному узлу, потом по второму. Двойной щелчок по связи её удаляет.</p>
+
+      <div class="palette no-print">
+        <button class="btn" data-add="router"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M8 10h8M8 14h8M10 8l-2 2 2 2M14 16l2-2-2-2"/></svg>Роутер</button>
+        <button class="btn" data-add="switch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 12h2M11 12h2M15 12h2"/></svg>Коммутатор</button>
+        <button class="btn" data-add="pc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="11" rx="2"/><path d="M9 19h6M12 16v3"/></svg>ПК</button>
+        <button class="btn" data-add="server"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="4" width="16" height="7" rx="1.6"/><rect x="4" y="13" width="16" height="7" rx="1.6"/><path d="M7.5 7.5h.01M7.5 16.5h.01"/></svg>Сервер</button>
+        <button class="btn" data-add="cloud"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 18h10a4 4 0 0 0 .4-8A6 6 0 0 0 6 10.5 3.75 3.75 0 0 0 7 18z"/></svg>Интернет</button>
+        <span style="flex:1"></span>
+        <button class="btn" id="autoip">Раздать адреса</button>
+        <button class="btn" id="save">Сохранить</button>
+        <button class="btn" id="png">Экспорт PNG</button>
+        <button class="btn" id="clear">Очистить</button>
+      </div>
+
+      <div class="side">
+        <div>
+          <div class="canvas-wrap">
+            <svg id="board" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet">
+              <g id="links"></g>
+              <g id="nodes"></g>
+            </svg>
+          </div>
+          <div class="hint no-print">Delete — удалить выбранное · перетаскивание — мышью или пальцем · схема живёт в этом браузере</div>
+        </div>
+
+        <div class="panel no-print" id="panel">
+          <h4>Выбранный узел</h4>
+          <div id="panel-body"><p class="lede" style="margin:0">Ничего не выбрано.</p></div>
+          <h4 style="margin-top:16px">Сохранённые схемы</h4>
+          <div id="works"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/netcore.js?v=1"></script>
+<script src="js/shell.js?v=1"></script>
+<script>
+NL.mount("Схема сети");
+const $ = id => document.getElementById(id);
+const SVG = "http://www.w3.org/2000/svg";
+
+/* ── Модель ───────────────────────────────────────────────────────────────
+   Узлы и связи — обычные объекты; SVG перерисовывается из них целиком.
+   Схема маленькая (десятки узлов), поэтому полная перерисовка проще и
+   надёжнее ручной синхронизации DOM с моделью. */
+const KINDS = {
+  router: { label: "R", name: "Роутер", shape: "circle" },
+  switch: { label: "SW", name: "Коммутатор", shape: "rect" },
+  pc: { label: "PC", name: "ПК", shape: "rect" },
+  server: { label: "SRV", name: "Сервер", shape: "rect" },
+  cloud: { label: "NET", name: "Интернет", shape: "cloud" },
+};
+let model = { nodes: [], links: [], seq: 1 };
+let selected = null;       // {type:"node"|"link", id}
+let pendingLink = null;    // id узла, ждущего пару
+let drag = null;
+
+const nodeById = id => model.nodes.find(n => n.id === id);
+
+function addNode(kind, x, y) {
+  const n = {
+    id: "n" + model.seq++,
+    kind,
+    name: KINDS[kind].name + " " + (model.nodes.filter(m => m.kind === kind).length + 1),
+    addr: "",
+    x: x != null ? x : 120 + (model.nodes.length % 6) * 170,
+    y: y != null ? y : 120 + Math.floor(model.nodes.length / 6) * 150,
+  };
+  model.nodes.push(n);
+  select("node", n.id);
+  draw();
+  return n;
+}
+
+function addLink(a, b) {
+  if (a === b) return;
+  if (model.links.some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a))) {
+    NL.toast("Такая связь уже есть"); return;
+  }
+  const kindA = nodeById(a).kind, kindB = nodeById(b).kind;
+  // Последовательный линк рисуем пунктиром: маршрутизатор-маршрутизатор и
+  // выход в облако обычно и есть WAN.
+  const serial = (kindA === "router" && kindB === "router") || kindA === "cloud" || kindB === "cloud";
+  model.links.push({ id: "l" + model.seq++, a, b, serial, label: "" });
+  draw();
+}
+
+function removeSelected() {
+  if (!selected) return;
+  if (selected.type === "node") {
+    model.nodes = model.nodes.filter(n => n.id !== selected.id);
+    model.links = model.links.filter(l => l.a !== selected.id && l.b !== selected.id);
+  } else {
+    model.links = model.links.filter(l => l.id !== selected.id);
+  }
+  selected = null;
+  draw();
+}
+
+function select(type, id) {
+  selected = id ? { type, id } : null;
+  drawPanel();
+}
+
+/* ── Рисование ────────────────────────────────────────────────────────────── */
+function draw() {
+  const gl = $("links"), gn = $("nodes");
+  gl.innerHTML = ""; gn.innerHTML = "";
+
+  for (const l of model.links) {
+    const a = nodeById(l.a), b = nodeById(l.b);
+    if (!a || !b) continue;
+    const line = document.createElementNS(SVG, "line");
+    line.setAttribute("x1", a.x); line.setAttribute("y1", a.y);
+    line.setAttribute("x2", b.x); line.setAttribute("y2", b.y);
+    line.setAttribute("class", "link" + (l.serial ? " serial" : "") +
+      (selected && selected.type === "link" && selected.id === l.id ? " sel" : ""));
+    line.dataset.link = l.id;
+    gl.append(line);
+    if (l.label) {
+      const t = document.createElementNS(SVG, "text");
+      t.setAttribute("x", (a.x + b.x) / 2); t.setAttribute("y", (a.y + b.y) / 2 - 6);
+      t.setAttribute("class", "link-label");
+      t.textContent = l.label;
+      gl.append(t);
+    }
+  }
+
+  for (const n of model.nodes) {
+    const g = document.createElementNS(SVG, "g");
+    g.setAttribute("class", "node" + (selected && selected.type === "node" && selected.id === n.id ? " sel" : ""));
+    g.setAttribute("transform", `translate(${n.x},${n.y})`);
+    g.dataset.node = n.id;
+
+    if (KINDS[n.kind].shape === "circle") {
+      const c = document.createElementNS(SVG, "circle");
+      c.setAttribute("r", 30);
+      g.append(c);
+    } else {
+      const r = document.createElementNS(SVG, "rect");
+      r.setAttribute("x", -38); r.setAttribute("y", -26);
+      r.setAttribute("width", 76); r.setAttribute("height", 52); r.setAttribute("rx", 10);
+      g.append(r);
+    }
+
+    const tag = document.createElementNS(SVG, "text");
+    tag.setAttribute("class", "label"); tag.setAttribute("y", 5);
+    tag.textContent = KINDS[n.kind].label;
+    g.append(tag);
+
+    const name = document.createElementNS(SVG, "text");
+    name.setAttribute("class", "label"); name.setAttribute("y", 48);
+    name.textContent = n.name;
+    g.append(name);
+
+    if (n.addr) {
+      const addr = document.createElementNS(SVG, "text");
+      addr.setAttribute("class", "addr"); addr.setAttribute("y", 63);
+      addr.textContent = n.addr;
+      g.append(addr);
+    }
+    gn.append(g);
+  }
+}
+
+function drawPanel() {
+  const body = $("panel-body");
+  if (!selected) { body.innerHTML = `<p class="lede" style="margin:0">Ничего не выбрано.</p>`; return; }
+  if (selected.type === "link") {
+    const l = model.links.find(x => x.id === selected.id);
+    if (!l) return;
+    body.innerHTML = `
+      <label class="f">Подпись связи</label>
+      <input id="p-llabel" type="text" value="${NL.esc(l.label)}" placeholder="Fa0/1 — Gi0/0">
+      <label class="f">Тип</label>
+      <select id="p-lkind">
+        <option value="eth" ${l.serial ? "" : "selected"}>Ethernet (сплошная)</option>
+        <option value="ser" ${l.serial ? "selected" : ""}>Serial / WAN (пунктир)</option>
+      </select>
+      <button class="btn" id="p-ldel" style="width:100%">Удалить связь</button>`;
+    $("p-llabel").addEventListener("input", e => { l.label = e.target.value; draw(); });
+    $("p-lkind").addEventListener("change", e => { l.serial = e.target.value === "ser"; draw(); });
+    $("p-ldel").addEventListener("click", removeSelected);
+    return;
+  }
+  const n = nodeById(selected.id);
+  if (!n) return;
+  body.innerHTML = `
+    <label class="f">Название</label>
+    <input id="p-name" type="text" value="${NL.esc(n.name)}">
+    <label class="f">Адрес</label>
+    <input id="p-addr" class="mono" type="text" value="${NL.esc(n.addr)}" placeholder="192.168.1.1/24">
+    <label class="f">Тип устройства</label>
+    <select id="p-kind">${Object.entries(KINDS).map(([k, v]) =>
+      `<option value="${k}" ${k === n.kind ? "selected" : ""}>${v.name}</option>`).join("")}</select>
+    <button class="btn" id="p-del" style="width:100%">Удалить узел</button>`;
+  $("p-name").addEventListener("input", e => { n.name = e.target.value; draw(); });
+  $("p-addr").addEventListener("input", e => { n.addr = e.target.value; draw(); });
+  $("p-kind").addEventListener("change", e => { n.kind = e.target.value; draw(); });
+  $("p-del").addEventListener("click", removeSelected);
+}
+
+/* ── Мышь и палец ─────────────────────────────────────────────────────────── */
+function svgPoint(evt) {
+  const svg = $("board");
+  const r = svg.getBoundingClientRect();
+  const vb = svg.viewBox.baseVal;
+  const t = evt.touches ? evt.touches[0] : evt;
+  return {
+    x: (t.clientX - r.left) / r.width * vb.width,
+    y: (t.clientY - r.top) / r.height * vb.height,
+  };
+}
+
+$("board").addEventListener("pointerdown", e => {
+  const nodeEl = e.target.closest("[data-node]");
+  const linkEl = e.target.closest("[data-link]");
+  if (nodeEl) {
+    const id = nodeEl.dataset.node;
+    if (pendingLink && pendingLink !== id) { addLink(pendingLink, id); pendingLink = null; NL.toast("Связь добавлена"); }
+    else if (pendingLink === id) { pendingLink = null; }
+    select("node", id);
+    const p = svgPoint(e), n = nodeById(id);
+    drag = { id, dx: p.x - n.x, dy: p.y - n.y, moved: false };
+    $("board").setPointerCapture(e.pointerId);
+    draw();
+  } else if (linkEl) {
+    select("link", linkEl.dataset.link);
+    draw();
+  } else {
+    pendingLink = null;
+    select(null);
+    draw();
+  }
+});
+
+$("board").addEventListener("pointermove", e => {
+  if (!drag) return;
+  const p = svgPoint(e);
+  const n = nodeById(drag.id);
+  if (!n) return;
+  n.x = Math.round(Math.max(50, Math.min(1150, p.x - drag.dx)));
+  n.y = Math.round(Math.max(40, Math.min(650, p.y - drag.dy)));
+  drag.moved = true;
+  draw();
+});
+
+$("board").addEventListener("pointerup", e => {
+  // Щелчок без перетаскивания = «взять узел в связь». Так соединение делается
+  // двумя кликами и не мешает обычному перетаскиванию.
+  if (drag && !drag.moved) {
+    pendingLink = pendingLink === drag.id ? null : drag.id;
+    NL.toast(pendingLink ? "Теперь щёлкните по второму узлу" : "Выбор связи отменён");
+  }
+  drag = null;
+});
+
+$("board").addEventListener("dblclick", e => {
+  const linkEl = e.target.closest("[data-link]");
+  if (linkEl) { model.links = model.links.filter(l => l.id !== linkEl.dataset.link); draw(); }
+});
+
+document.addEventListener("keydown", e => {
+  if ((e.key === "Delete" || e.key === "Backspace") && selected && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) {
+    e.preventDefault();
+    removeSelected();
+  }
+});
+
+/* ── Кнопки ───────────────────────────────────────────────────────────────── */
+document.querySelectorAll("[data-add]").forEach(b =>
+  b.addEventListener("click", () => addNode(b.getAttribute("data-add"))));
+
+// Раздача адресов: каждый роутер держит свою /24, всё, что висит на нём
+// напрямую или через коммутаторы, получает адреса из этой сети.
+$("autoip").addEventListener("click", () => {
+  const routers = model.nodes.filter(n => n.kind === "router");
+  if (!routers.length) { NL.toast("Сначала добавьте хотя бы один роутер"); return; }
+  const seen = new Set();
+  routers.forEach((r, i) => {
+    const net = "192.168." + (i + 1);
+    r.addr = net + ".1/24";
+    seen.add(r.id);
+    let host = 10;
+    // обход в ширину от роутера, не проходя через другие роутеры
+    const queue = [r.id];
+    while (queue.length) {
+      const cur = queue.shift();
+      for (const l of model.links) {
+        const other = l.a === cur ? l.b : (l.b === cur ? l.a : null);
+        if (!other || seen.has(other)) continue;
+        const n = nodeById(other);
+        if (!n || n.kind === "router" || n.kind === "cloud") continue;
+        seen.add(other);
+        if (n.kind === "switch") { queue.push(other); }
+        else { n.addr = net + "." + host++ + "/24"; queue.push(other); }
+      }
+    }
+  });
+  draw();
+  NL.toast("Адреса раздал: по /24 на роутер");
+});
+
+$("clear").addEventListener("click", () => {
+  if (model.nodes.length && !confirm("Очистить схему?")) return;
+  model = { nodes: [], links: [], seq: 1 };
+  selected = null; pendingLink = null;
+  draw(); drawPanel();
+});
+
+$("save").addEventListener("click", () => {
+  const name = prompt("Название схемы", $("crumb").textContent === "новая схема" ? "Схема класса" : $("crumb").textContent);
+  if (!name) return;
+  NL.works.save("topology", name, model);
+  $("crumb").textContent = name;
+  NL.toast("Сохранено в этом браузере");
+  drawWorks();
+});
+
+// PNG: сериализуем SVG и рисуем его на канве. Внешних библиотек не берём —
+// одна страница без зависимостей переживает любой рефактор.
+$("png").addEventListener("click", () => {
+  const svg = $("board").cloneNode(true);
+  svg.setAttribute("xmlns", SVG);
+  svg.setAttribute("width", 1200);
+  svg.setAttribute("height", 700);
+  const style = document.createElementNS(SVG, "style");
+  style.textContent = `
+    .node rect,.node circle{fill:#fff;stroke:#20202C;stroke-width:1.6}
+    .node text.label{font:700 12px sans-serif;fill:#20202C;text-anchor:middle}
+    .node text.addr{font:600 10.5px monospace;fill:#6C6C77;text-anchor:middle}
+    .link{stroke:#50505C;stroke-width:2}
+    .link.serial{stroke-dasharray:7 5}
+    .link-label{font:600 10px monospace;fill:#6C6C77;text-anchor:middle}`;
+  svg.prepend(style);
+  const blob = new Blob([new XMLSerializer().serializeToString(svg)], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement("canvas");
+    c.width = 2400; c.height = 1400;
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+    URL.revokeObjectURL(url);
+    const a = document.createElement("a");
+    a.download = "netlab-topology.png";
+    a.href = c.toDataURL("image/png");
+    a.click();
+    NL.toast("PNG сохранён");
+  };
+  img.onerror = () => NL.toast("Не удалось собрать PNG");
+  img.src = url;
+});
+
+function drawWorks() {
+  const list = NL.works.list("topology");
+  $("works").innerHTML = list.length
+    ? list.map(w => `<div class="row" style="margin-bottom:6px">
+        <button class="btn" data-open="${w.id}" style="flex:1;text-align:left">${NL.esc(w.name)}</button>
+        <button class="btn" data-del="${w.id}">×</button></div>`).join("")
+    : `<p class="lede" style="margin:0">Пока пусто.</p>`;
+}
+$("works").addEventListener("click", e => {
+  const open = e.target.closest("[data-open]");
+  const del = e.target.closest("[data-del]");
+  if (open) {
+    const w = NL.works.list("topology").find(x => x.id === open.getAttribute("data-open"));
+    if (w) { model = w.data; selected = null; $("crumb").textContent = w.name; draw(); drawPanel(); }
+  }
+  if (del) { NL.works.remove(del.getAttribute("data-del")); drawWorks(); }
+});
+
+/* ── Стартовая схема, чтобы страница не встречала пустотой ────────────────── */
+(function seed() {
+  const cloud = addNode("cloud", 200, 120);
+  const r = addNode("router", 500, 200);
+  const sw = addNode("switch", 500, 400);
+  const pc1 = addNode("pc", 300, 570);
+  const pc2 = addNode("pc", 500, 570);
+  const srv = addNode("server", 760, 400);
+  addLink(cloud.id, r.id);
+  addLink(r.id, sw.id);
+  addLink(sw.id, pc1.id);
+  addLink(sw.id, pc2.id);
+  addLink(sw.id, srv.id);
+  select(null);
+  draw();
+  drawWorks();
+})();
+</script>
+</body>
+</html>
