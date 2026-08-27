@@ -15,7 +15,7 @@
   // Версія статики: та сама, що в ?v= на сторінках. Підставляється в адресу
   // кожного iframe, інакше після деплою вікно показує вчорашній інструмент із
   // кешу браузера, поки сторінка навколо вже нова.
-  const V = "7";
+  const V = "8";
   const POS_KEY = "netlab.os.windows.v1";
   const SESSION_KEY = "netlab.os.session.v1";
   const wins = new Map();          // id → { el, app, minimized, maximized, prev }
@@ -337,8 +337,11 @@
   }
 
   /* ── Стіл і док ─────────────────────────────────────────────────────────── */
-  const DESKTOP = ["subnet", "trainer", "ipv6", "routing", "topology", "cases", "osi", "ports", "cables", "handouts", "cheatsheet", "account", "join"];
-  const DOCK = ["subnet", "trainer", "routing", "topology", "|", "cases", "osi", "ports", "cables", "|", "handouts", "cheatsheet", "|", "account", "join"];
+  // Три списки, а не один: реєстр APPS описує застосунки, а DESKTOP і DOCK —
+  // що і в якому порядку показувати. Новий інструмент треба додати в усі три,
+  // інакше він відкривається лише з меню й виглядає «зниклим».
+  const DESKTOP = ["subnet", "trainer", "ipv6", "routing", "packet", "topology", "cases", "osi", "ports", "cables", "handouts", "cheatsheet", "account", "join"];
+  const DOCK = ["subnet", "trainer", "routing", "packet", "topology", "|", "cases", "osi", "ports", "cables", "|", "handouts", "cheatsheet", "|", "account", "join"];
 
   function renderDesktop() {
     const d = document.getElementById("desktop");
