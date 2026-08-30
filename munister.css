@@ -98,9 +98,12 @@ p{text-wrap:pretty}
    левой стоит только год. Здесь то же самое - служебная колонка, заявление,
    портрет. */
 .opening-grid{
-  display:grid;grid-template-columns:clamp(96px,11vw,150px) minmax(0,1fr) minmax(170px,.34fr);
+  display:grid;grid-template-columns:clamp(96px,11vw,150px) minmax(0,1fr) minmax(120px,.26fr);
   gap:0;align-items:stretch;border-top:1px solid var(--c-rule);
 }
+/* Третья ячейка пустая - в кадре музея рядом с заявлением тоже стоит пустое
+   поле, и именно линии делают его частью решётки, а не случайным полем. */
+.opening-grid::after{content:'';border-left:1px solid var(--c-rule)}
 .opening-index{
   display:flex;flex-direction:column;gap:8px;
   padding:clamp(22px,3vw,32px) 16px clamp(24px,4vw,44px) 0;
@@ -110,24 +113,11 @@ p{text-wrap:pretty}
   padding:clamp(22px,3vw,32px) clamp(24px,4vw,54px) clamp(28px,4vw,48px);
   border-right:1px solid var(--c-rule);
 }
-.opening-portrait-cell{
-  display:flex;align-items:flex-start;justify-content:flex-end;
-  padding:clamp(22px,3vw,32px) 0 clamp(28px,4vw,48px) clamp(20px,2.5vw,32px);
-}
+
 .opening-copy{min-width:0}
 .name{font-family:var(--font-display);font-size:clamp(46px,7.4vw,104px);line-height:.82;letter-spacing:-.055em}
 .claim{max-width:15ch;margin-top:clamp(26px,3.4vw,42px);font-family:var(--font-head);font-size:clamp(29px,3.4vw,48px);line-height:1.04;letter-spacing:-.018em}
-/* Круглый портрет - жест профиля из соцсети; в музее и журнале любое
-   изображение стоит прямоугольной плитой в волосяной рамке и подписано. */
-.portrait{
-  position:relative;width:clamp(150px,15vw,206px);aspect-ratio:4 / 5;margin:0;overflow:hidden;
-  justify-self:end;align-self:start;border:1px solid var(--c-rule);border-radius:0;background:var(--c-paper-deep);
-}
-.portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;filter:grayscale(100%) contrast(1.03)}
-.portrait figcaption{
-  display:block;position:absolute;left:0;right:0;bottom:0;padding:7px 9px;
-  color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.66));text-shadow:0 1px 2px rgba(0,0,0,.45);
-}
+
 .opening-bottom{
   display:grid;grid-template-columns:clamp(96px,11vw,150px) minmax(0,1fr) auto;gap:0 clamp(24px,4vw,54px);align-items:end;
   padding-top:22px;border-top:1px solid var(--c-rule);
@@ -246,12 +236,10 @@ p{text-wrap:pretty}
 .skip:focus{left:12px;top:12px}
 
 @media (max-width:980px){
-  /* На средних экранах решётка теряет третью колонку: портрет уходит под
-     заявление и остаётся прижатым вправо, ячейки те же. */
+  /* На средних экранах пустая ячейка не нужна: решётка сжимается до двух. */
   .opening-grid{grid-template-columns:clamp(88px,10vw,120px) minmax(0,1fr)}
-  .opening-portrait-cell{grid-column:1 / -1;padding:0 0 clamp(24px,4vw,36px);border-top:1px solid var(--c-rule)}
+  .opening-grid::after{display:none}
   .opening-copy{border-right:none}
-  .portrait{width:clamp(150px,21vw,184px);margin-top:clamp(18px,3vw,26px)}
   .row{grid-template-columns:1.25fr .9fr auto}.row .what{grid-column:1 / -1;margin-top:-6px}
   .pub{grid-template-columns:62px minmax(0,1fr) auto}.pub .venue{grid-column:2 / -1;margin-top:-5px}
   .stats{grid-template-columns:1fr 1fr}.stats div:nth-child(-n+2){padding-bottom:16px}
@@ -267,10 +255,8 @@ p{text-wrap:pretty}
      горизонтальные линии, как на узких экранах музея. */
   .opening-grid{grid-template-columns:minmax(0,1fr);gap:0;padding-top:0}
   .opening-index{flex-direction:row;gap:18px;padding:14px 0;border-right:none;border-bottom:1px solid var(--c-rule)}
-  .opening-copy{padding:26px 0 28px;border-right:none;border-bottom:1px solid var(--c-rule)}
-  .opening-portrait-cell{padding:20px 0 26px}
+  .opening-copy{padding:26px 0 30px;border-right:none;border-bottom:1px solid var(--c-rule)}
   .name{font-size:clamp(50px,15vw,80px)}.claim{margin-top:24px;font-size:clamp(30px,8.4vw,44px)}
-  .portrait{width:132px;min-height:0;max-height:none;margin-left:auto}.portrait img{min-height:0}
   .opening-bottom{grid-template-columns:1fr;gap:22px}.opening-bottom .support{grid-column:1}.support{font-size:16px}
   .sec-head{grid-template-columns:1fr;gap:15px}.sec-head .sec-note{justify-self:start}
   .featured{grid-template-columns:1fr}.feat:first-child,.feat.feat-wide{grid-column:auto;display:flex;padding-bottom:16px}.feat:first-child .shot,.feat.feat-wide .shot{aspect-ratio:16 / 10}.feat h3{font-size:34px}
