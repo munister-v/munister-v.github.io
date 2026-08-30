@@ -1,18 +1,26 @@
 /*
    Munister is a personal editorial practice, not a product catalogue.
-   The site uses the same restraint as EPRIS, with a looser, more personal
-   composition: ink, warm paper, a single clay accent and generous images.
+   The page speaks the language of the two EPRIS properties it belongs with:
+   museum.eprisjournal.com (white ground, hairline cells, one statement set in
+   the grotesque, pill actions) and eprisjournal.com (serif titles, small
+   letterspaced labels, images framed by a rule). Warm paper and the clay
+   accent are gone: neither reference carries colour, and the work itself is
+   the only colour on the page.
 */
 :root{
-  --c-paper:#f7f5f0;
-  --c-paper-deep:#efebe2;
-  --c-ink:#171513;
-  --c-clay:#955b43;
-  --c-clay-soft:#d8baaa;
-  --c-muted:rgba(23,21,19,.68);
-  --c-faint:rgba(23,21,19,.48);
-  --c-rule:rgba(23,21,19,.15);
-  --c-rule-strong:rgba(23,21,19,.42);
+  --c-paper:#ffffff;
+  --c-paper-deep:#f4f3f1;
+  --c-ink:#121212;
+  /* Удержан как токен, чтобы не переписывать каждое правило: акцент теперь
+     чернила, а иерархию держат размер, регистр и линейка. */
+  --c-clay:#121212;
+  --c-clay-soft:#e6e4e0;
+  --c-muted:rgba(18,18,18,.68);
+  /* В музее служебные подписи набраны #999 (2.9:1). Роль та же, тон чуть
+     плотнее: мелкий текст на сайте должен читаться. */
+  --c-faint:#6e6e6e;
+  --c-rule:rgba(18,18,18,.11);
+  --c-rule-strong:rgba(18,18,18,.30);
   /* типографіка знята з museum.eprisjournal.com: системні гарнітури, без вебшрифтів */
   --font-sans:'KTF Prima','Helvetica Neue',Helvetica,Arial,sans-serif;
   --font-serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
@@ -28,7 +36,7 @@
 html{background:var(--c-paper);scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{
   background:var(--c-paper);color:var(--c-ink);
-  font-family:var(--font-body);font-size:18px;line-height:1.55;letter-spacing:-.004em;
+  font-family:var(--font-body);font-size:17px;line-height:1.55;letter-spacing:-.004em;
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
   text-rendering:optimizeLegibility;overflow-x:hidden;
 }
@@ -42,60 +50,89 @@ p{text-wrap:pretty}
 ::-webkit-scrollbar-thumb{background:rgba(23,21,19,.25);border-radius:999px}
 *{scrollbar-width:thin;scrollbar-color:rgba(23,21,19,.25) transparent}
 
-.mono{font-family:var(--font-mono);font-size:10px;line-height:1.5;letter-spacing:.14em;text-transform:uppercase;color:var(--c-muted)}
+.mono{font-family:var(--font-mono);font-size:9.5px;line-height:1.5;letter-spacing:.2em;text-transform:uppercase;color:var(--c-faint)}
 .shell{max-width:var(--measure);margin-inline:auto;padding-inline:clamp(20px,4vw,54px)}
 
 /* Header: clear navigation without the old boxed-control appearance. */
+/* Верхняя полоса обоих сайтов EPRIS разделена вертикальными волосяными
+   линиями на ячейки: слово, разделы, служебная ссылка. */
 .site-head{
   position:sticky;top:0;z-index:40;height:var(--bar);
-  display:flex;align-items:center;padding-inline:clamp(20px,4vw,54px);
-  background:color-mix(in srgb,var(--c-paper) 94%,transparent);
+  display:flex;align-items:stretch;padding-inline:0;
+  background:color-mix(in srgb,var(--c-paper) 92%,transparent);
   border-bottom:1px solid var(--c-rule);backdrop-filter:blur(14px);
 }
+.site-head > *{display:flex;align-items:center}
+.site-head .wordmark{padding-inline:clamp(20px,4vw,54px) 26px;border-right:1px solid var(--c-rule)}
 .wordmark{
-  font-family:var(--font-display);font-size:17px;letter-spacing:.1em;text-transform:uppercase;
+  font-family:var(--font-display);font-size:15px;letter-spacing:.19em;text-transform:uppercase;
   white-space:nowrap;
 }
-.site-head nav{display:flex;align-items:center;gap:clamp(16px,2vw,30px);margin-left:clamp(28px,5vw,78px)}
+.site-head nav{display:flex;align-items:stretch;gap:0;margin-left:0}
+.site-head nav a{display:flex;align-items:center;padding-inline:clamp(14px,1.8vw,26px);border-right:1px solid var(--c-rule)}
 .site-head nav a,.site-head .head-right a{
-  font-family:var(--font-mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--c-muted);transition:color .2s ease;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--c-muted);transition:color .18s ease,background .18s ease;
 }
-.site-head nav a:hover,.site-head .head-right a:hover{color:var(--c-clay)}
-.head-right{margin-left:auto}
+.site-head nav a:hover{background:var(--c-paper-deep)}
+.site-head nav a:hover,.site-head .head-right a:hover{color:var(--c-ink)}
+.head-right{margin-left:auto;padding-inline:26px clamp(20px,4vw,54px);border-left:1px solid var(--c-rule)}
 .site-main{padding-top:clamp(2.7rem,5vw,5.5rem)}
 
 /* Buttons are editorial labels, not generic rounded controls. */
+/* «Walk the route» / «Visit» в музее - таблетки: залитая чернилами и
+   контурная. Тот же жест здесь. */
 .btn{
-  display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 16px;
-  border:1px solid var(--c-rule-strong);border-radius:0;
-  font-family:var(--font-mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 18px;
+  border:1px solid var(--c-rule-strong);border-radius:999px;
+  font-family:var(--font-body);font-size:12.5px;font-weight:400;letter-spacing:-.005em;text-transform:none;
   color:var(--c-ink);background:transparent;transition:background .2s,color .2s,border-color .2s;
 }
 .btn:hover{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-paper)}
 .btn--solid{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-paper)}
-.btn--solid:hover{background:var(--c-clay);border-color:var(--c-clay);color:#fff}
+.btn--solid:hover{background:#2c2c2c;border-color:#2c2c2c;color:#fff}
 
 /* The opening is a page, rather than a profile card. */
 .opening{margin-bottom:clamp(4.4rem,8vw,8rem)}
+/* Решётка первого экрана музея: тонкие вертикали делят полосу на ячейки, в
+   левой стоит только год. Здесь то же самое - служебная колонка, заявление,
+   портрет. */
 .opening-grid{
-  display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,.34fr);gap:clamp(28px,4vw,60px);
-  align-items:center;padding:clamp(30px,5vw,68px) 0 clamp(28px,4vw,48px);
+  display:grid;grid-template-columns:clamp(96px,11vw,150px) minmax(0,1fr) minmax(170px,.34fr);
+  gap:0;align-items:stretch;border-top:1px solid var(--c-rule);
 }
-.opening-copy{min-width:0;padding-bottom:clamp(4px,1vw,12px)}
-.name{font-family:var(--font-display);font-size:clamp(50px,8.6vw,126px);line-height:.79;letter-spacing:-.065em}
-.claim{max-width:13ch;margin-top:clamp(28px,4vw,50px);font-family:var(--font-head);font-size:clamp(32px,4vw,57px);line-height:.98;letter-spacing:-.026em}
+.opening-index{
+  display:flex;flex-direction:column;gap:8px;
+  padding:clamp(22px,3vw,32px) 16px clamp(24px,4vw,44px) 0;
+  border-right:1px solid var(--c-rule);
+}
+.opening-copy{
+  padding:clamp(22px,3vw,32px) clamp(24px,4vw,54px) clamp(28px,4vw,48px);
+  border-right:1px solid var(--c-rule);
+}
+.opening-portrait-cell{
+  display:flex;align-items:flex-start;justify-content:flex-end;
+  padding:clamp(22px,3vw,32px) 0 clamp(28px,4vw,48px) clamp(20px,2.5vw,32px);
+}
+.opening-copy{min-width:0}
+.name{font-family:var(--font-display);font-size:clamp(46px,7.4vw,104px);line-height:.82;letter-spacing:-.055em}
+.claim{max-width:15ch;margin-top:clamp(26px,3.4vw,42px);font-family:var(--font-head);font-size:clamp(29px,3.4vw,48px);line-height:1.04;letter-spacing:-.018em}
+/* Круглый портрет - жест профиля из соцсети; в музее и журнале любое
+   изображение стоит прямоугольной плитой в волосяной рамке и подписано. */
 .portrait{
-  position:relative;width:clamp(160px,16vw,228px);aspect-ratio:1;margin:0;overflow:hidden;
-  justify-self:end;align-self:center;border:1px solid var(--c-rule-strong);border-radius:50%;background:var(--c-paper-deep);
+  position:relative;width:clamp(150px,15vw,206px);aspect-ratio:4 / 5;margin:0;overflow:hidden;
+  justify-self:end;align-self:start;border:1px solid var(--c-rule);border-radius:0;background:var(--c-paper-deep);
 }
-.portrait::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(156,101,77,.08),transparent 52%);pointer-events:none}
-.portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 23%;filter:grayscale(12%) contrast(1.02)}
-.portrait figcaption{display:none}
+.portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;filter:grayscale(100%) contrast(1.03)}
+.portrait figcaption{
+  display:block;position:absolute;left:0;right:0;bottom:0;padding:7px 9px;
+  color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.66));text-shadow:0 1px 2px rgba(0,0,0,.45);
+}
 .opening-bottom{
-  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(24px,5vw,78px);align-items:end;
-  padding-top:20px;border-top:1px solid var(--c-rule-strong);
+  display:grid;grid-template-columns:clamp(96px,11vw,150px) minmax(0,1fr) auto;gap:0 clamp(24px,4vw,54px);align-items:end;
+  padding-top:22px;border-top:1px solid var(--c-rule);
 }
+.opening-bottom .support{grid-column:2}
 .support{max-width:56ch;color:var(--c-muted);font-size:18px;line-height:1.47}
 .actions,.research-actions,.writing-actions{display:flex;gap:8px;flex-wrap:wrap}
 
@@ -105,7 +142,7 @@ p{text-wrap:pretty}
   display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.38fr);gap:24px;align-items:end;
   padding-bottom:14px;border-bottom:1px solid var(--c-ink);margin-bottom:clamp(1.8rem,3vw,2.7rem);
 }
-.sec-head .eyebrow{display:block;margin-bottom:11px;color:var(--c-clay);letter-spacing:.18em}
+.sec-head .eyebrow{display:block;margin-bottom:11px;color:var(--c-faint);letter-spacing:.2em}
 .sec-head h2{font-family:var(--font-display);font-size:clamp(35px,4.1vw,58px);line-height:.94;letter-spacing:-.04em}
 .sec-head .sec-note{max-width:30ch;justify-self:end;color:var(--c-muted);font-size:16px;line-height:1.37}
 .sec-head > span.mono{align-self:end}
@@ -117,15 +154,17 @@ p{text-wrap:pretty}
   grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,1.38fr) minmax(260px,.62fr);column-gap:clamp(25px,4vw,56px);align-items:start;
   padding-bottom:clamp(28px,4vw,44px);
 }
-.feat .shot{overflow:hidden;background:var(--c-paper-deep);aspect-ratio:16 / 9}
+.feat .shot{overflow:hidden;background:var(--c-paper-deep);border:1px solid var(--c-rule);aspect-ratio:16 / 9}
 .feat .shot img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1),filter .6s ease}
 .feat:hover .shot img{transform:scale(1.025);filter:saturate(.9)}
 .feat:first-child .shot,.feat.feat-wide .shot{grid-row:1 / span 5;aspect-ratio:16 / 8.2}
-.feat .role{order:1;margin-top:17px;color:var(--c-clay);letter-spacing:.18em}
-.feat h3{order:2;margin-top:8px;font-family:var(--font-display);font-size:clamp(27px,2.7vw,40px);line-height:.98;letter-spacing:-.03em}
+.feat .role{order:1;margin-top:17px;color:var(--c-faint);letter-spacing:.2em}
+/* Заголовки работ - антиква, как названия материалов в журнале. */
+.feat h3{order:2;margin-top:9px;font-family:var(--font-head);font-size:clamp(25px,2.4vw,35px);line-height:1.06;letter-spacing:-.014em}
 .feat p{order:3;margin-top:13px;max-width:44ch;color:var(--c-muted);font-size:17px;line-height:1.42}
 .feat .meta{order:4;display:flex;justify-content:space-between;gap:12px;margin-top:24px;padding-top:12px;border-top:1px solid var(--c-rule);color:var(--c-faint)}
-.feat:hover .meta .t{color:var(--c-clay)}
+.feat .meta .t{transition:color .2s ease}
+.feat:hover .meta .t{color:var(--c-ink);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
 
 /* The ledger is intentionally quiet. */
 .ledger{border-top:1px solid var(--c-rule)}
@@ -133,43 +172,46 @@ p{text-wrap:pretty}
 .row .name{font-family:var(--font-head);font-size:25px;line-height:1.05}
 .row .what{color:var(--c-muted);font-size:16px;line-height:1.4}
 .row .arrow{color:var(--c-faint);transition:color .2s ease}
-.row:hover .arrow,.row:hover .role{color:var(--c-clay)}
+.row:hover{background:var(--c-paper-deep)}
+.row:hover .arrow,.row:hover .role{color:var(--c-ink)}
 
 /* Research and writing retain their register logic but gain a calmer scale. */
 .research-support{margin:0 0 26px;max-width:62ch}
 .pubs{border-top:1px solid var(--c-ink)}
 .pub{display:grid;grid-template-columns:62px minmax(0,1fr) 270px auto;gap:clamp(14px,2.4vw,32px);align-items:baseline;padding:18px 0;border-bottom:1px solid var(--c-rule);transition:color .2s ease}
-.pub .yr,.writing .when{color:var(--c-clay)}
+.pub .yr,.writing .when{color:var(--c-faint)}
 .pub .ttl{font-family:var(--font-head);font-size:21px;line-height:1.17}
 .pub .arrow{color:var(--c-faint)}
-.pub:hover .arrow{color:var(--c-clay)}
+.pub:hover{background:var(--c-paper-deep)}
+.pub:hover .arrow{color:var(--c-ink)}
 .research-actions,.writing-actions{margin-top:22px}
 .writing{border-top:1px solid var(--c-rule)}
 .writing a{display:grid;grid-template-columns:56px 100px minmax(0,1fr) auto;gap:clamp(14px,2.4vw,32px);align-items:center;padding:17px 0;border-bottom:1px solid var(--c-rule);transition:color .2s ease}
-.writing .thumb{width:56px;height:56px;overflow:hidden;background:var(--c-paper-deep);align-self:center}
+.writing .thumb{width:56px;height:56px;overflow:hidden;border:1px solid var(--c-rule);background:var(--c-paper-deep);align-self:center}
 .writing .thumb img{width:100%;height:100%;object-fit:cover;filter:saturate(.94);transition:filter .2s ease}
 .writing a:hover .thumb img{filter:saturate(1.05)}
 .writing h3{font-family:var(--font-head);font-size:25px;line-height:1.08}
 .writing .sub{display:block;margin-top:7px;color:var(--c-faint)}
 .writing .go{color:var(--c-faint)}
-.writing a:hover .go{color:var(--c-clay)}
+.writing a:hover{background:var(--c-paper-deep)}
+.writing a:hover .go{color:var(--c-ink)}
 
 .practice{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(30px,8vw,130px);padding:clamp(28px,5vw,62px) 0;border-top:1px solid var(--c-ink);border-bottom:1px solid var(--c-ink)}
 .practice ol{list-style:none;margin-top:16px}
 .practice li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--c-rule);font-family:var(--font-head);font-size:22px;line-height:1.1}
-.practice li i{font-family:var(--font-mono);font-size:10px;letter-spacing:.13em;color:var(--c-clay);font-style:normal}
+.practice li i{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.2em;color:var(--c-faint);font-style:normal}
 .practice > div > p{margin-top:18px;color:var(--c-muted);font-size:17px;line-height:1.45}
 .practice p.pull,.pull{max-width:20ch;font-family:var(--font-display);font-size:clamp(29px,3.5vw,46px);line-height:1.04;color:var(--c-ink)}
-.pull-mark{display:block;width:54px;height:2px;margin-top:26px;background:var(--c-clay)}
+.pull-mark{display:block;width:54px;height:1px;margin-top:26px;background:var(--c-ink)}
 .pull-mark + small{display:block;margin-top:14px}
 
 .contact{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(30px,6vw,100px);align-items:end;padding-top:clamp(2rem,4vw,3.5rem);border-top:1px solid var(--c-ink)}
 .contact .mail{display:inline-block;margin-top:13px;font-family:var(--font-display);font-size:clamp(31px,4.2vw,58px);line-height:.95;letter-spacing:-.04em;word-break:break-word}
-.contact .mail:hover{color:var(--c-clay)}
+.contact .mail:hover{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
 .contact p{max-width:58ch;margin-top:15px;color:var(--c-muted)}
 .contact .actions{justify-content:flex-end}
 .foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:clamp(3rem,5vw,5rem);padding:18px 0 36px;border-top:1px solid var(--c-rule)}
-.foot a:hover{color:var(--c-clay)}
+.foot a:hover{color:var(--c-ink)}
 
 /* Inner pages share the visual language without inheriting the front-page hero. */
 .page-head{padding-bottom:clamp(2rem,4vw,4rem);border-bottom:1px solid var(--c-ink);margin-bottom:clamp(2rem,4vw,4rem)}
@@ -179,15 +221,15 @@ p{text-wrap:pretty}
 .platform-note h2{margin-top:10px;font-family:var(--font-head);font-size:clamp(25px,3vw,34px);line-height:1.08}
 .platform-note p{max-width:65ch;margin-top:12px;color:var(--c-muted)}
 .platform-note .mono{color:var(--c-faint);letter-spacing:.2em}
-.platform-note code{font-family:var(--font-mono);font-size:.86em;color:var(--c-clay)}
+.platform-note code{font-family:var(--font-mono);font-size:.86em;color:var(--c-ink)}
 .pieces{display:flex;flex-direction:column;gap:clamp(22px,3vw,36px)}
 .piece{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);border-bottom:1px solid var(--c-rule-strong)}
-.piece figure{position:relative;margin:0;background:var(--c-paper-deep)}
+.piece figure{position:relative;margin:0;border-right:1px solid var(--c-rule);background:var(--c-paper-deep)}
 .piece figure img{width:100%;height:100%;min-height:260px;object-fit:cover}
 .piece figure figcaption{position:absolute;inset:auto 0 0 0;padding:8px 12px;color:rgba(255,255,255,.86);background:linear-gradient(transparent,rgba(0,0,0,.55))}
 .piece .body{display:flex;flex-direction:column;padding:clamp(20px,2.5vw,34px)}
-.piece .kicker{color:var(--c-clay);letter-spacing:.18em}
-.piece h2{margin-top:12px;font-family:var(--font-display);font-size:clamp(28px,3vw,40px);line-height:1;letter-spacing:-.03em}
+.piece .kicker{color:var(--c-faint);letter-spacing:.2em}
+.piece h2{margin-top:12px;font-family:var(--font-head);font-size:clamp(26px,2.7vw,35px);line-height:1.07;letter-spacing:-.014em}
 .piece .abstract{max-width:62ch;margin-top:14px;color:var(--c-muted);font-size:17px;line-height:1.48}
 .piece .tags{display:flex;flex-wrap:wrap;gap:0 20px;margin-top:18px;margin-bottom:22px}
 .piece .tags span{font-family:var(--font-mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--c-faint)}
@@ -199,23 +241,37 @@ p{text-wrap:pretty}
 .stats div{padding:16px 26px 0 0}.stats b{display:block;margin-top:7px;font-family:var(--font-head);font-size:32px;font-weight:400;line-height:1}
 
 :focus{outline:none}
-:focus-visible{outline:2px solid var(--c-clay);outline-offset:4px}
+:focus-visible{outline:2px solid var(--c-ink);outline-offset:4px}
 .skip{position:absolute;left:-9999px;top:0;z-index:60;display:inline-flex;align-items:center;min-height:38px;padding:0 16px;background:var(--c-ink);color:var(--c-paper);font-family:var(--font-mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase}
 .skip:focus{left:12px;top:12px}
 
 @media (max-width:980px){
-  .opening-grid{grid-template-columns:minmax(0,1fr) minmax(150px,.42fr)}.portrait{width:clamp(150px,21vw,184px)}
+  /* На средних экранах решётка теряет третью колонку: портрет уходит под
+     заявление и остаётся прижатым вправо, ячейки те же. */
+  .opening-grid{grid-template-columns:clamp(88px,10vw,120px) minmax(0,1fr)}
+  .opening-portrait-cell{grid-column:1 / -1;padding:0 0 clamp(24px,4vw,36px);border-top:1px solid var(--c-rule)}
+  .opening-copy{border-right:none}
+  .portrait{width:clamp(150px,21vw,184px);margin-top:clamp(18px,3vw,26px)}
   .row{grid-template-columns:1.25fr .9fr auto}.row .what{grid-column:1 / -1;margin-top:-6px}
   .pub{grid-template-columns:62px minmax(0,1fr) auto}.pub .venue{grid-column:2 / -1;margin-top:-5px}
   .stats{grid-template-columns:1fr 1fr}.stats div:nth-child(-n+2){padding-bottom:16px}
 }
 @media (max-width:760px){
   :root{--bar:52px}
-  .site-head{padding-inline:20px}.site-head nav{display:none}.wordmark{font-size:15px}
+  .site-head{padding-inline:0}.site-head nav{display:none}
+  .site-head .wordmark{border-right:none;padding-inline:20px 0}
+  .head-right{padding-inline:20px;border-left:none}
+  .wordmark{font-size:14px}
   .site-main{padding-top:34px}
-  .opening-grid{grid-template-columns:minmax(0,1fr);gap:26px;padding-top:32px}.name{font-size:clamp(56px,18vw,86px)}.claim{margin-top:28px;font-size:clamp(35px,10vw,49px)}
-  .portrait{width:128px;min-height:0;max-height:none;margin-left:auto}.portrait img{min-height:0}
-  .opening-bottom{grid-template-columns:1fr;gap:22px}.support{font-size:17px}
+  /* На телефоне ячейки складываются в стопку: вертикали превращаются в
+     горизонтальные линии, как на узких экранах музея. */
+  .opening-grid{grid-template-columns:minmax(0,1fr);gap:0;padding-top:0}
+  .opening-index{flex-direction:row;gap:18px;padding:14px 0;border-right:none;border-bottom:1px solid var(--c-rule)}
+  .opening-copy{padding:26px 0 28px;border-right:none;border-bottom:1px solid var(--c-rule)}
+  .opening-portrait-cell{padding:20px 0 26px}
+  .name{font-size:clamp(50px,15vw,80px)}.claim{margin-top:24px;font-size:clamp(30px,8.4vw,44px)}
+  .portrait{width:132px;min-height:0;max-height:none;margin-left:auto}.portrait img{min-height:0}
+  .opening-bottom{grid-template-columns:1fr;gap:22px}.opening-bottom .support{grid-column:1}.support{font-size:16px}
   .sec-head{grid-template-columns:1fr;gap:15px}.sec-head .sec-note{justify-self:start}
   .featured{grid-template-columns:1fr}.feat:first-child,.feat.feat-wide{grid-column:auto;display:flex;padding-bottom:16px}.feat:first-child .shot,.feat.feat-wide .shot{aspect-ratio:16 / 10}.feat h3{font-size:34px}
   .row{grid-template-columns:minmax(0,1fr) auto;gap:7px 16px}.row .role{grid-column:1 / -1;grid-row:2}.row .what{grid-column:1 / -1;grid-row:3;margin-top:4px}
