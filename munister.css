@@ -188,6 +188,20 @@ p{text-wrap:pretty}
 .pub .arrow{color:var(--c-faint)}
 .pub:hover{background:var(--c-paper-deep)}
 .pub:hover .arrow{color:var(--c-ink)}
+
+/* Хто цитує роботу — не сам автор, а Semantic Scholar (той самий граф, що
+   стоїть за Google Scholar і Scopus): рядок з автором цитуючої роботи, а не
+   тільки рік/назва/видання, як у власного списку публікацій. Інакше «мене
+   цитують» лишається твердженням без імені того, хто це зробив. */
+.cite{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:3px clamp(14px,2.4vw,32px);align-items:start;padding:16px 0;border-bottom:1px solid var(--c-rule);transition:background .2s ease}
+.cite:hover{background:var(--c-paper-deep)}
+.cite .yr{color:var(--c-faint);padding-top:3px}
+.cite .body{display:flex;flex-direction:column;gap:3px;min-width:0}
+.cite .au{font-size:13.5px;color:var(--c-muted)}
+.cite .ttl{font-family:var(--font-head);font-size:19px;line-height:1.24}
+.cite .venue{color:var(--c-faint)}
+.cite .arrow{color:var(--c-faint);align-self:start;padding-top:3px;white-space:nowrap}
+.cite:hover .arrow{color:var(--c-ink)}
 .research-actions,.writing-actions{margin-top:22px}
 .writing{border-top:1px solid var(--c-rule)}
 .writing a{display:grid;grid-template-columns:56px 100px minmax(0,1fr) auto;gap:clamp(14px,2.4vw,32px);align-items:center;padding:17px 0;border-bottom:1px solid var(--c-rule);transition:color .2s ease}
@@ -242,6 +256,9 @@ p{text-wrap:pretty}
 .pubs-year{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:26px 0 10px;border-bottom:1px solid var(--c-rule)}
 .pubs-year h2{font-family:var(--font-head);font-size:30px;line-height:1}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:28px;border-top:1px solid var(--c-rule)}
+/* П’ять пунктів на сторінці Research (додано «Cited by») — той самий блок,
+   ширший на одну клітинку; мобільні розкладки нижче перебивають обидва. */
+.stats-5{grid-template-columns:repeat(5,1fr)}
 .stats div{padding:16px 26px 0 0}.stats b{display:block;margin-top:7px;font-family:var(--font-head);font-size:32px;font-weight:400;line-height:1}
 
 :focus{outline:none}
@@ -294,6 +311,7 @@ p{text-wrap:pretty}
   .row{grid-template-columns:1.25fr .9fr auto}.row .what{grid-column:1 / -1;margin-top:-6px}
   .pub{grid-template-columns:62px minmax(0,1fr) auto}.pub .venue{grid-column:2 / -1;margin-top:-5px}
   .stats{grid-template-columns:1fr 1fr}.stats div:nth-child(-n+2){padding-bottom:16px}
+  .stats-5{grid-template-columns:1fr 1fr 1fr}.stats-5 div:nth-child(-n+3){padding-bottom:16px}
 }
 @media (max-width:760px){
   :root{--bar:52px}
@@ -313,6 +331,7 @@ p{text-wrap:pretty}
   .featured{grid-template-columns:1fr}.feat:first-child,.feat.feat-wide{grid-column:auto;display:flex;padding-bottom:16px}.feat:first-child .shot,.feat.feat-wide .shot{aspect-ratio:16 / 10}.feat h3{font-size:34px}
   .row{grid-template-columns:minmax(0,1fr) auto;gap:7px 16px}.row .role{grid-column:1 / -1;grid-row:2}.row .what{grid-column:1 / -1;grid-row:3;margin-top:4px}
   .pub{grid-template-columns:48px minmax(0,1fr) auto;gap:8px 14px}.pub .venue{grid-column:2 / -1}
+  .cite{grid-template-columns:40px minmax(0,1fr) auto;gap:8px 12px}
   .writing a{grid-template-columns:minmax(0,1fr) auto;gap:8px 16px}
   .writing .thumb{display:none}
   .writing .when{grid-column:1 / -1}

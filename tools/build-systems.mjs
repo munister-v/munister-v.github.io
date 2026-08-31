@@ -94,7 +94,7 @@ ${breadcrumb ? `<script type="application/ld+json">
 ${JSON.stringify(breadcrumb, null, 2)}
 </script>
 ` : ''}
-<link rel="stylesheet" href="/munister.css?v=15">
+<link rel="stylesheet" href="/munister.css?v=16">
 <link rel="stylesheet" href="/systems.css?v=4">
 </head>
 <body>
