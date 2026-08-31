@@ -180,3 +180,72 @@
   .sys-list .a{grid-row:1}
   .sys-facts{grid-template-columns:1fr 1fr}
 }
+
+/* ─── СХЕМА ДАНИХ ────────────────────────────────────────────────────────────
+   Реальні поля таблиці чи структури запису, а не переказ своїми словами.
+   Моноширинне ім'я поля — те саме слово, яке стоїть у коді, тип поруч, і
+   коротке пояснення, чому воно таке. Рамка, а не просто список: це довідка,
+   до якої повертаються по одному рядку, а не читають суцільно. */
+.schema{margin-top:clamp(1.6rem,3vw,2.2rem);border:1px solid var(--c-rule-strong)}
+.schema-cap{
+  display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap;
+  padding:10px 16px;border-bottom:1px solid var(--c-rule-strong);background:var(--c-paper-deep);
+}
+.schema-cap b{font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--c-ink)}
+.schema-row{
+  display:grid;grid-template-columns:minmax(120px,.9fr) minmax(70px,.55fr) 1fr;
+  gap:4px 18px;padding:11px 16px;border-top:1px solid var(--c-rule);
+}
+.schema-row:first-of-type{border-top:none}
+.schema-row code{
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:13px;color:var(--c-ink);
+  align-self:start;
+}
+.schema-row .ty{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--c-faint);align-self:start;padding-top:2px;
+}
+.schema-row .ds{font-size:14.5px;line-height:1.5;color:var(--c-muted)}
+
+/* ─── ЯКІСНА ТЕПЛОВА КАРТА ───────────────────────────────────────────────────
+   Не графік вимірів — таких цифр з живої системи публікувати не можна, вони
+   застарівають за день і починають брехати мовчки. Це радше стан-по-годинах:
+   кожна клітина каже «доступний / вичерпаний / вимкнений» за задокументованою
+   в тексті поведінкою, а не за виміряним трафіком. Підпис під картою про це
+   говорить прямо — інакше якісна картинка видає себе за метрику. */
+.heat{margin-top:clamp(1.6rem,3vw,2.2rem);border:1px solid var(--c-rule-strong);overflow-x:auto}
+.heat table{border-collapse:collapse;width:100%;min-width:560px}
+.heat th,.heat td{padding:0;text-align:left}
+.heat thead th{
+  font-family:var(--font-mono);font-size:8.5px;letter-spacing:.06em;color:var(--c-faint);
+  padding:8px 3px 6px;text-align:center;border-bottom:1px solid var(--c-rule-strong);
+}
+.heat thead th:first-child{text-align:left;padding-left:14px}
+.heat tbody th{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;color:var(--c-ink);
+  padding:9px 10px 9px 14px;white-space:nowrap;border-top:1px solid var(--c-rule);
+  text-transform:none;font-weight:500;
+}
+.heat td{border-top:1px solid var(--c-rule);padding:5px 2px;text-align:center}
+.heat .c{
+  display:inline-block;width:15px;height:15px;border-radius:2px;
+  border:1px solid var(--c-rule-strong);
+}
+.heat .c--ok{background:#eaf3ea;border-color:#2f7d32}
+.heat .c--limited{background:var(--c-paper-deep);border-color:var(--c-rule-strong);border-style:dashed}
+.heat .c--down{background:#fbeceb;border-color:#b3261e}
+.heat-cap{
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline;
+  padding:10px 14px;border-top:1px solid var(--c-rule-strong);background:var(--c-paper-deep);
+}
+.heat-cap p{max-width:66ch;font-size:13px;line-height:1.5;color:var(--c-muted)}
+.heat-legend{display:flex;gap:14px;flex:none}
+.heat-legend span{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--font-mono);font-size:9px;letter-spacing:.06em;color:var(--c-faint);white-space:nowrap;
+}
+
+@media (max-width:900px){
+  .schema-row{grid-template-columns:1fr;gap:2px}
+  .schema-row .ty{padding-top:0}
+}

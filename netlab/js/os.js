@@ -125,7 +125,7 @@
         <span class="win-sub">${app.sub}</span>
         <span class="spacer"></span>
         <button class="pop" data-act="addtab" title="Додати вкладку">+</button>
-        <a class="pop" href="${app.url}" target="_blank" rel="noreferrer" title="Відкрити окремою сторінкою">↗</a>
+        <a class="pop" href="${app.url}" target="_blank" rel="noreferrer" title="Відкрити окремою сторінкою">↗︎</a>
       </div>
       <div class="win-tabs" hidden></div>
       <div class="win-body"></div>

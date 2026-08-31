@@ -85,8 +85,8 @@ const head = ({ title, description, canonical, image, jsonld }) => `<!DOCTYPE ht
 ${JSON.stringify(jsonld, null, 2)}
 </script>
 
-<link rel="stylesheet" href="/munister.css?v=14">
-<link rel="stylesheet" href="/systems.css?v=2">
+<link rel="stylesheet" href="/munister.css?v=15">
+<link rel="stylesheet" href="/systems.css?v=3">
 </head>
 <body>
 
@@ -94,12 +94,16 @@ ${JSON.stringify(jsonld, null, 2)}
 
 <header class="site-head">
   <a class="wordmark" href="/">Munister</a>
-  <nav aria-label="Main">
+  <nav aria-label="Main" id="siteNav">
 ${nav('/systems/')}
   </nav>
   <div class="head-right">
     <a href="/cv.html">CV</a>
   </div>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Menu">
+    <svg class="i-open" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    <svg class="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+  </button>
 </header>
 
 <main class="site-main" id="main">
@@ -115,6 +119,7 @@ const foot = `
 </div>
 </main>
 
+<script src="/munister.js?v=2" defer></script>
 </body>
 </html>
 `;
@@ -166,7 +171,7 @@ ${body}
 
   <div class="sys-foot">
     <a class="mono" href="/systems/">← All systems</a>
-${meta.visit ? `    <a class="btn btn--solid" href="${meta.visit[1]}" target="_blank" rel="noopener">${esc(meta.visit[0])} ↗</a>` : ''}
+${meta.visit ? `    <a class="btn btn--solid" href="${meta.visit[1]}" target="_blank" rel="noopener">${esc(meta.visit[0])}<i class="ext" aria-hidden="true"></i></a>` : ''}
   </div>
 ` + foot;
 
