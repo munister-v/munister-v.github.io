@@ -1,0 +1,75 @@
+<!--meta {
+  "slug": "epris-journal",
+  "order": 2,
+  "title": "EPRIS Journal",
+  "kicker": "Editorial infrastructure · Localisation",
+  "headline": "Seven languages, one source of truth",
+  "standfirst": "An independent journal that publishes in seven languages with no translation department. The interesting problem is not translating the text. It is knowing, at any moment, which translations are still telling the truth about the English they came from.",
+  "summary": "A background queue that fingerprints the translatable part of every record, re-translates only what has genuinely fallen behind, and reports honestly when it cannot.",
+  "image": "/images/works/epris.jpg",
+  "about": ["editorial systems", "localisation", "job queues", "idempotency"],
+  "visit": ["Read the journal", "https://eprisjournal.com/"],
+  "facts": [
+    ["Live", "<a href=\"https://eprisjournal.com/\" target=\"_blank\" rel=\"noopener\">eprisjournal.com ↗</a>"],
+    ["Built with", "Vite, React, TypeScript, Node"],
+    ["Languages", "English source, six targets"],
+    ["Role", "Infrastructure, editorial tooling"]
+  ]
+} -->
+
+    <h2>The problem</h2>
+    <p>A journal in seven languages has an obvious job and a hidden one. The obvious job is producing the six translations. The hidden job — the one that decides whether the whole thing is honest — is knowing which of those translations still corresponds to the English text it was made from.</p>
+    <p>English is edited constantly: a correction, a re-ordered paragraph, a sharper closing line. Each edit silently invalidates six other versions. Nobody notices, because a stale translation looks exactly like a fresh one. It is fluent, complete, and wrong in a way no reader of that language can detect, because they never see the English.</p>
+    <p>So the system is not a translation feature. It is a bookkeeping system that happens to call translators.</p>
+
+    <h2>Knowing what is stale</h2>
+    <p>The naive test is timestamps: if the English was modified after the translation, the translation is behind. This is wrong often enough to be useless. Saving a record rewrites its modification time whether or not any translatable text changed — reorder the homepage, replace a cover image, open the editor and press save, and all six languages are declared stale. Re-translating on that signal burns money and rewrites good text.</p>
+    <p>Instead the queue takes a fingerprint of only the translatable part of a record: the fields that carry language and the body blocks, with every housekeeping field deliberately excluded. That fingerprint is stored alongside each finished translation. A translation is behind when, and only when, the fingerprint of today’s English differs from the one recorded when that translation was made.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:epris-translation --><!-- /flow --></div>
+      <figcaption>
+        <p>The sweep runs on the server every fifteen minutes, so the editor can close the tab. Work in progress lives on disk rather than in memory: a restart mid-article resumes at the language it stopped on, instead of starting the article again.</p>
+        <span class="mono">Fig. 1</span>
+      </figcaption>
+    </figure>
+
+    <h3>Three outcomes, not two</h3>
+    <p>A language can be up to date, behind — or <strong>edited by hand</strong>. The third case is the one that makes the design worth having. If someone has improved the Ukrainian text directly, an automatic re-translation would silently destroy that work, and the person who did it would find out weeks later, if ever.</p>
+    <p>The queue detects this by fingerprinting its own output too. If what is in the record no longer matches what the queue wrote, a human has been here. Those languages are not overwritten; they are collected into a short list of decisions, each answered once with either <em>keep mine</em> or <em>redo it</em>. An automatic system that edits published text needs a way to stop and ask, and it needs an undo — the queue keeps the previous version of every language it replaces.</p>
+
+    <h2>Choosing a translator</h2>
+    <p>Four providers sit in a chain, tried in order of quality. Three of them run out: a monthly volume allowance is gone within a week, a public endpoint rate-limits by address, a free model tier resets daily. This is normal and permanent, not an incident.</p>
+    <p>Two consequences follow. First, work picked up automatically refuses to accept the emergency-grade translator — better to wait than to fill a journal with visibly poor text nobody asked for. Work requested by a human accepts anything, because a person is standing there waiting. Second, when a better provider becomes available again, translations made by a worse one are quietly redone. Quality settles upward on its own.</p>
+    <p>The chain also has to survive a provider being <em>almost</em> right. A model given forty strings to translate occasionally returns thirty-nine, having merged two. The wrong response is to fall through to the next provider — that hands the work to something worse over one bad batch. The right response is to split the batch and try again, down to single strings, where miscounting is impossible.</p>
+
+    <h2>Publication</h2>
+    <p>Two independent gates decide whether a reader can reach a piece: a draft flag on the record itself, and a separate visibility map that governs whether its section is shown at all. Both must be open. Clearing one produces the worst possible state — a record that is published, correct, and unreachable.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:epris-publication --><!-- /flow --></div>
+      <figcaption>
+        <p>Two gates, joined by <em>and</em>. The preview link at the bottom opens a single record regardless of both — which makes it the one tool you must not use to check that publishing worked.</p>
+        <span class="mono">Fig. 2</span>
+      </figcaption>
+    </figure>
+
+    <p>The preview token deserves the warning printed on the diagram. It exists so an editor can send a draft to an author, and it does that well. But it bypasses both gates, so opening a preview link proves only that the record exists. More than once, “I published it and it’s fine, look” was demonstrated with a preview link on a piece no reader could reach.</p>
+
+    <div class="lesson">
+      <span class="mono">What it cost to learn</span>
+      <h4>A panel that cries wolf is worse than no panel</h4>
+      <p>The editorial panel showed a health light per provider. Three of the five were red almost permanently, for the ordinary quota reasons above, while translation carried on working through the provider at the top of the chain. Alongside them sat a job log of the last forty runs — twenty-eight of which were a bug, fixed weeks earlier, whose dead entries never expired.</p>
+      <p>The panel was, line by line, accurate. As a whole it said <em>this is broken</em>, and it said it for weeks while nothing was broken. An article translated into all six languages at 09:42 was reported as untranslated at 10:15, and believed, because everything on that screen was red.</p>
+      <p>The repair was not more monitoring. It was one sentence at the top — <strong>translation is working, through this provider</strong> — an exhausted quota rendered amber rather than red, and dead jobs cleared automatically. A signal you have learned to ignore is not a signal; it is decoration that costs you the incident it was built for.</p>
+    </div>
+
+    <h2>What this bought</h2>
+    <ul>
+      <li><strong>The editor can close the tab.</strong> Translation used to run in the browser: six languages, thirteen batches each, twenty minutes with the laptop awake. Losing the network lost the work, silently and halfway.</li>
+      <li><strong>Cost is bounded by change, not by volume.</strong> Only genuinely stale text is re-translated, so an ordinary editing day costs almost nothing.</li>
+      <li><strong>Human work is safe.</strong> Nothing a person wrote is overwritten without being asked first, and every replacement can be undone.</li>
+      <li><strong>Readiness is announced.</strong> When the last language of a piece lands, the editorial chat is told. Nobody has to go and look.</li>
+    </ul>

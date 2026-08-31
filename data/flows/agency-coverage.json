@@ -1,0 +1,21 @@
+{
+  "title": "Munister Agency — computing the working overlap with each US state",
+  "alt": "For each state the browser asks the platform's own time-zone database what the current offset is, using rules that already account for daylight saving. Local working hours are projected onto ours, the overlap in hours is computed, and the map is shaded by the result. Nothing about daylight saving is stored in the site.",
+  "nodes": [
+    { "id": "open",  "col": 0, "row": 1, "kind": "trigger", "icon": "map",    "label": "Visitor opens the map", "sub": "no request sent" },
+    { "id": "geo",   "col": 1, "row": 1, "kind": "store",   "icon": "layers", "label": "State outlines", "sub": "32 kb of geometry" },
+    { "id": "tz",    "col": 2, "row": 1, "icon": "clock",   "label": "Ask the platform", "sub": "iana rules, built in" },
+    { "id": "stale", "col": 3, "row": 0, "kind": "fail",    "icon": "cross",  "label": "A hand-kept table", "sub": "wrong twice a year" },
+    { "id": "calc",  "col": 3, "row": 1, "icon": "scale",   "label": "Project the working day", "sub": "theirs onto ours" },
+    { "id": "hours", "col": 4, "row": 1, "icon": "chart",   "label": "Overlapping hours", "sub": "a number per state" },
+    { "id": "paint", "col": 5, "row": 1, "icon": "grid",    "label": "Shade the map", "sub": "evidence, not decoration" }
+  ],
+  "edges": [
+    { "from": "open",  "to": "geo" },
+    { "from": "geo",   "to": "tz" },
+    { "from": "tz",    "to": "stale", "kind": "fail", "label": "the alternative" },
+    { "from": "tz",    "to": "calc",  "label": "from source" },
+    { "from": "calc",  "to": "hours" },
+    { "from": "hours", "to": "paint" }
+  ]
+}

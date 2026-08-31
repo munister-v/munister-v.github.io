@@ -1,0 +1,182 @@
+/* Раздел «Systems»: разбор одной работы от входа до выката.
+   Наследует munister.css целиком; здесь только то, чего на сайте ещё не было —
+   язык схем и типографика длинного технического текста. */
+
+/* ─── СХЕМА ──────────────────────────────────────────────────────────────────
+   Полотно устроено как рабочая область автоматизации: клетчатый фон, плитки
+   узлов, связи слева направо, инструменты под своим узлом на пунктире.
+
+   Одно расхождение с образцом сознательное. В редакторах автоматизации каждый
+   узел красят в цвет своего сервиса, и на схеме из двадцати узлов получается
+   двадцать цветов — на них уходит всё внимание, хотя значит цвет там только
+   «чей значок». Здесь цвет отдан смыслу и его ровно три: чернила для шага
+   обработки, зелёный контур для входа в конвейер, красный — для отказа и
+   ветки ошибки. Остальное держат форма плитки и значок. Схема из-за этого
+   печатается, читается при дальтонизме и не спорит с остальной страницей,
+   где цвет есть только у снимков работ. */
+.flow-figure{margin:clamp(2rem,4vw,3.2rem) 0;border:1px solid var(--c-rule-strong)}
+.flow-scroll{
+  overflow-x:auto;overflow-y:hidden;
+  background-color:var(--c-paper);
+  /* Клетка полотна. Точки, а не линии: сетка должна читаться как подложка,
+     а не как второй слой схемы. */
+  background-image:radial-gradient(circle at 1px 1px,rgba(18,18,18,.13) 1px,transparent 0);
+  background-size:22px 22px;
+}
+.flow{display:block;min-width:100%;height:auto;padding:6px 0}
+
+.fl-tile{fill:var(--c-paper);stroke:var(--c-ink);stroke-width:1.25}
+.fl-ic{fill:none;stroke:var(--c-ink);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.fl-lb{
+  font-family:var(--font-body);font-size:11.5px;font-weight:500;
+  fill:var(--c-ink);text-anchor:middle;letter-spacing:-.005em;
+}
+.fl-sb{
+  font-family:var(--font-mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;
+  fill:var(--c-faint);text-anchor:middle;
+}
+
+/* Вход в конвейер: левый край плитки скруглён во всю высоту (форма), контур
+   и значок зелёные (цвет). Два признака вместо одного — чтобы «откуда всё
+   начинается» читалось и в чёрно-белой печати. */
+.fl-node--trigger .fl-tile{stroke:#2f7d32;fill:#f4f9f4}
+.fl-node--trigger .fl-ic{stroke:#2f7d32}
+
+/* Отказ, отбраковка, ветка ошибки. */
+.fl-node--fail .fl-tile{stroke:#b3261e;fill:#fdf5f4;stroke-dasharray:5 3}
+.fl-node--fail .fl-ic{stroke:#b3261e}
+.fl-node--fail .fl-lb{fill:#b3261e}
+
+/* Внешняя система: не мой код, у него свои отказы и свои лимиты. Пунктир по
+   контуру — то же самое, что на схемах инфраструктуры означает «граница
+   ответственности». */
+.fl-node--external .fl-tile{stroke-dasharray:6 4;fill:var(--c-paper-deep)}
+
+/* Хранилище: плотная плитка, потому что это единственный узел, который
+   переживает перезапуск всего остального. */
+.fl-node--store .fl-tile{fill:var(--c-paper-deep)}
+
+.fl-edge{fill:none;stroke:rgba(18,18,18,.42);stroke-width:1.25}
+.fl-edge--weak{stroke-dasharray:5 4;stroke:rgba(18,18,18,.3)}
+.fl-edge--fail{stroke:#b3261e;stroke-dasharray:5 4}
+.fl-elb{
+  font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  fill:var(--c-faint);text-anchor:middle;
+  paint-order:stroke;stroke:var(--c-paper);stroke-width:4px;stroke-linejoin:round;
+}
+#fl-arrow path{fill:rgba(18,18,18,.42)}
+
+.fl-tool-link{fill:none;stroke:rgba(18,18,18,.3);stroke-width:1.1;stroke-dasharray:4 4}
+.fl-tool circle{fill:var(--c-paper);stroke:rgba(18,18,18,.38);stroke-width:1.1}
+.fl-tool .fl-ic{stroke:var(--c-muted);stroke-width:1.5}
+.fl-tool-lb{
+  font-family:var(--font-mono);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;
+  fill:var(--c-faint);text-anchor:middle;
+}
+
+.fl-group rect{fill:none;stroke:var(--c-rule-strong);stroke-width:1;stroke-dasharray:3 4}
+.fl-group-t{
+  font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  fill:var(--c-faint);
+}
+
+.flow-figure figcaption{
+  display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
+  padding:11px 16px;border-top:1px solid var(--c-rule-strong);background:var(--c-paper-deep);
+}
+.flow-figure figcaption p{max-width:78ch;font-size:14px;line-height:1.5;color:var(--c-muted)}
+.flow-figure figcaption .mono{white-space:nowrap;padding-top:3px}
+/* На узкой полосе схема шире экрана. Молчаливый горизонтальный скролл читается
+   как обрезанная картинка, поэтому о нём сказано словами. */
+.flow-hint{display:none}
+@media (hover:none),(max-width:900px){
+  .flow-hint{display:block;padding:8px 16px;border-bottom:1px solid var(--c-rule);
+    font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--c-faint)}
+}
+
+/* ─── СТАТЬЯ ────────────────────────────────────────────────────────────────*/
+.sys-head{padding-bottom:clamp(1.6rem,3vw,2.6rem);border-bottom:1px solid var(--c-ink);margin-bottom:clamp(1.8rem,3vw,2.8rem)}
+.sys-head .back{display:block;margin-bottom:20px}
+.sys-head h1{margin-top:14px;font-family:var(--font-display);font-size:clamp(38px,5.4vw,66px);line-height:.95;letter-spacing:-.045em;max-width:19ch}
+.sys-head .standfirst{max-width:60ch;margin-top:20px;font-family:var(--font-head);font-size:clamp(19px,2vw,23px);line-height:1.4;color:var(--c-ink)}
+.sys-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0;margin-top:clamp(1.6rem,3vw,2.4rem);border-top:1px solid var(--c-rule)}
+.sys-facts div{padding:14px 22px 0 0}
+.sys-facts b{display:block;margin-top:6px;font-family:var(--font-body);font-size:15px;font-weight:500;line-height:1.35;color:var(--c-ink)}
+
+/* Колонка сносок слева, текст справа.
+
+   row-gap ноль намеренно. Каждый абзац здесь — отдельная строка грид-раскладки,
+   и общий gap раздвигал их на 52 пикселя: абзацы внутри одной мысли расходились
+   так же далеко, как разделы между собой, и текст переставал читаться связно.
+   Вертикальный ритм задают поля абзацев, а грид отвечает только за колонки. */
+.sys-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.6fr);
+  column-gap:clamp(20px,3vw,52px);row-gap:0}
+.sys-body > h2{
+  grid-column:1;margin-top:clamp(2.2rem,4vw,3.4rem);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--c-faint);
+  position:sticky;top:calc(var(--bar) + 18px);align-self:start;
+}
+.sys-body > *:not(h2){grid-column:2}
+/* Схема — это SVG шириной 1120, а грид-элемент по умолчанию имеет
+   min-width:auto, то есть отказывается сжиматься меньше своего содержимого.
+   На телефоне из-за этого вся колонка становилась шириной со схему, и текст
+   уезжал за экран — при том что overflow-x:hidden на body прятал полосу
+   прокрутки, и выглядело это просто как обрезанные строки. Ноль здесь
+   разрешает колонке быть уже содержимого, а прокрутку берёт на себя
+   .flow-scroll, где ей и место. */
+.sys-body > *{min-width:0}
+.flow-figure,.flow-scroll{min-width:0}
+/* Схема выходит из текстовой колонки во всю полосу набора: внутри колонки в
+   2.6fr она сжимается втрое и требует скролла на каждом шаге, то есть
+   перестаёт быть схемой и становится лентой. Селектор дочерний, а не
+   одиночный класс, — иначе правило выше (специфичность 0,2,1) его перебивает. */
+.sys-body > .flow-figure{grid-column:1 / -1}
+.sys-body > h2 + *{margin-top:clamp(2.2rem,4vw,3.4rem)}
+.sys-body p{max-width:70ch;margin-top:16px;font-size:17px;line-height:1.62;color:var(--c-muted)}
+.sys-body p:first-of-type{margin-top:0}
+.sys-body p strong{color:var(--c-ink);font-weight:500}
+.sys-body h3{margin-top:clamp(1.8rem,3vw,2.4rem);font-family:var(--font-head);font-size:clamp(21px,2.2vw,27px);line-height:1.2;color:var(--c-ink)}
+.sys-body h3 + p{margin-top:12px}
+.sys-body ul{max-width:70ch;margin-top:16px;padding-left:0;list-style:none}
+.sys-body ul li{position:relative;padding-left:22px;margin-top:9px;font-size:17px;line-height:1.55;color:var(--c-muted)}
+.sys-body ul li::before{content:"";position:absolute;left:2px;top:.68em;width:9px;height:1px;background:var(--c-rule-strong)}
+.sys-body code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.86em;color:var(--c-ink);background:var(--c-paper-deep);padding:1px 5px}
+.sys-body a:not(.btn){text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--c-rule-strong)}
+.sys-body a:not(.btn):hover{text-decoration-color:var(--c-ink)}
+
+/* Замечание на полях: то, что стоило дорого и запомнилось. Не врезка ради
+   ритма — если писать нечего, блока быть не должно. */
+.lesson{margin-top:clamp(1.8rem,3vw,2.4rem);padding:clamp(18px,2.2vw,26px);border:1px solid var(--c-ink);background:var(--c-paper-deep)}
+.lesson .mono{color:var(--c-faint)}
+.lesson h4{margin-top:9px;font-family:var(--font-head);font-size:clamp(19px,2vw,23px);line-height:1.25;font-weight:400}
+.lesson p{margin-top:11px;max-width:66ch}
+.lesson p:first-of-type{margin-top:11px}
+
+.sys-foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;
+  margin-top:clamp(2.6rem,5vw,4rem);padding-top:22px;border-top:1px solid var(--c-ink)}
+
+/* ─── ИНДЕКС РАЗДЕЛА ────────────────────────────────────────────────────────*/
+.sys-list{display:flex;flex-direction:column}
+.sys-list a{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1.5fr) auto;
+  gap:6px clamp(18px,3vw,44px);align-items:baseline;
+  padding:clamp(18px,2.4vw,26px) 0;border-bottom:1px solid var(--c-rule-strong);
+  transition:background .16s ease;
+}
+.sys-list a:hover{background:var(--c-paper-deep)}
+.sys-list .n{font-family:var(--font-head);font-size:clamp(23px,2.5vw,31px);line-height:1.08;letter-spacing:-.014em}
+.sys-list .r{grid-column:1;color:var(--c-faint);letter-spacing:.18em}
+.sys-list .w{grid-column:2;grid-row:1 / span 2;font-size:16px;line-height:1.5;color:var(--c-muted);max-width:62ch}
+.sys-list .a{grid-column:3;grid-row:1 / span 2;color:var(--c-faint)}
+
+@media (max-width:900px){
+  .sys-body{grid-template-columns:minmax(0,1fr);gap:0}
+  .sys-body > *:not(h2){grid-column:1}
+  .sys-body > h2{grid-column:1;position:static;margin-top:clamp(2rem,5vw,2.8rem);
+    padding-bottom:9px;border-bottom:1px solid var(--c-rule)}
+  .sys-body > h2 + *{margin-top:18px}
+  .sys-list a{grid-template-columns:minmax(0,1fr) auto}
+  .sys-list .w{grid-column:1 / -1;grid-row:auto;margin-top:6px}
+  .sys-list .a{grid-row:1}
+  .sys-facts{grid-template-columns:1fr 1fr}
+}

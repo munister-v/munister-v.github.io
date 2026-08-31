@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Systems · Viacheslav Munister</title>
+<meta name="description" content="Working notes on how each of these systems actually runs: the data model, the pipeline, the failure it was built around, and what it cost to learn.">
+<link rel="canonical" href="https://munister.com.ua/systems/">
+<link rel="alternate" hreflang="en" href="https://munister.com.ua/systems/">
+<link rel="alternate" hreflang="x-default" href="https://munister.com.ua/systems/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#ffffff">
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://munister.com.ua/systems/">
+<meta property="og:site_name" content="Viacheslav Munister">
+<meta property="og:title" content="Systems · Viacheslav Munister">
+<meta property="og:description" content="Working notes on how each of these systems actually runs: the data model, the pipeline, the failure it was built around, and what it cost to learn.">
+<meta property="og:image" content="https://munister.com.ua/images/og-en.jpg">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Systems · Viacheslav Munister">
+<meta name="twitter:description" content="Working notes on how each of these systems actually runs: the data model, the pipeline, the failure it was built around, and what it cost to learn.">
+<meta name="twitter:image" content="https://munister.com.ua/images/og-en.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Systems",
+  "url": "https://munister.com.ua/systems/",
+  "description": "Algorithmic walkthroughs of live systems: data models, pipelines and the failures they were designed around.",
+  "inLanguage": "en",
+  "hasPart": [
+    {
+      "@type": "TechArticle",
+      "headline": "Mania Group",
+      "url": "https://munister.com.ua/systems/mania-group/",
+      "description": "Supplier spreadsheets normalised into products and size-level variants, an order whose fulfilment and payment are two independent facts, and a payment callback that cannot pay twice."
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "EPRIS Journal",
+      "url": "https://munister.com.ua/systems/epris-journal/",
+      "description": "A background queue that fingerprints the translatable part of every record, re-translates only what has genuinely fallen behind, and reports honestly when it cannot."
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "EPRIS Museum",
+      "url": "https://munister.com.ua/systems/epris-museum/",
+      "description": "Public-domain painting pulled over IIIF, re-encoded and held locally, hung in halls that are stable addresses rather than positions in a scene."
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "TeachEd",
+      "url": "https://munister.com.ua/systems/teached/",
+      "description": "Teaching material modelled as structured lesson objects, so boards, generated worksheets and thirty classroom games are views of one thing rather than fifty separate editors."
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Museum of Donetsk Photography",
+      "url": "https://munister.com.ua/systems/donetsk-photography/",
+      "description": "A three-stage pipeline that de-duplicates by image content, gives each photograph a passport of date, place, author and licence, and refuses to hang anything whose provenance is unclear."
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Winnipeg Nights",
+      "url": "https://munister.com.ua/systems/winnipeg-nights/",
+      "description": "One-to-many WebRTC audio coordinated through an ordinary polled data store instead of a signalling service, with a self-refreshing news feed and on-the-fly speech translation on the same single-core host."
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "ARM CRM",
+      "url": "https://munister.com.ua/systems/arm-crm/",
+      "description": "A lead intake that scores and assigns on arrival, and a CRM placed inside an existing messenger so that recording a conversation happens where the conversation happens."
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Munister Agency",
+      "url": "https://munister.com.ua/systems/munister-agency/",
+      "description": "Working-hour overlap computed per US state from the platform's built-in IANA rules, so daylight saving resolves itself, over a 32 kb geometry model that keeps the page static."
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Blue Ferret",
+      "url": "https://munister.com.ua/systems/blue-ferret/",
+      "description": "A CMS on the live server whose content is snapshotted, diffed and committed to version control every thirty minutes, giving editors an undo history nobody has to remember to create."
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "AM Publishing",
+      "url": "https://munister.com.ua/systems/am-publishing/",
+      "description": "Editorial metadata kept independent of sales channels, with transactional and streaming services separated out so that catalogue, payment and radio can fail without each other."
+    }
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/munister.css?v=14">
+<link rel="stylesheet" href="/systems.css?v=2">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <a class="wordmark" href="/">Munister</a>
+  <nav aria-label="Main">
+    <a href="/#work">Work</a>
+    <a href="/systems/" aria-current="page">Systems</a>
+    <a href="/research/">Research</a>
+    <a href="/writing/">Writing</a>
+    <a href="/#contact">Contact</a>
+  </nav>
+  <div class="head-right">
+    <a href="/cv.html">CV</a>
+  </div>
+</header>
+
+<main class="site-main" id="main">
+<div class="shell">
+
+  <div class="page-head">
+    <span class="mono">Munister / Systems</span>
+    <h1>Systems</h1>
+    <p>Each of these is live, and each is written up the same way: what it is actually for, the shape of the data underneath it, the pipeline drawn step by step, and the thing that went wrong badly enough to change the design. The diagrams are the argument; the prose explains why the arrows go that way.</p>
+  </div>
+
+  <div class="sys-list">
+      <a href="/systems/mania-group/">
+        <span class="n">Mania Group</span>
+        <span class="r mono">Retail operations · Data model</span>
+        <span class="w">Supplier spreadsheets normalised into products and size-level variants, an order whose fulfilment and payment are two independent facts, and a payment callback that cannot pay twice.</span>
+        <span class="a mono">→</span>
+      </a>
+      <a href="/systems/epris-journal/">
+        <span class="n">EPRIS Journal</span>
+        <span class="r mono">Editorial infrastructure · Localisation</span>
+        <span class="w">A background queue that fingerprints the translatable part of every record, re-translates only what has genuinely fallen behind, and reports honestly when it cannot.</span>
+        <span class="a mono">→</span>
+      </a>
+      <a href="/systems/epris-museum/">
+        <span class="n">EPRIS Museum</span>
+        <span class="r mono">Virtual museum · Curation and engineering</span>
+        <span class="w">Public-domain painting pulled over IIIF, re-encoded and held locally, hung in halls that are stable addresses rather than positions in a scene.</span>
+        <span class="a mono">→</span>
+      </a>
+      <a href="/systems/teached/">
+        <span class="n">TeachEd</span>
+        <span class="r mono">Learning systems · Product and technology</span>
+        <span class="w">Teaching material modelled as structured lesson objects, so boards, generated worksheets and thirty classroom games are views of one thing rather than fifty separate editors.</span>
+        <span class="a mono">→</span>
+      </a>
+      <a href="/systems/donetsk-photography/">
+        <span class="n">Museum of Donetsk Photography</span>
+        <span class="r mono">Public archive · Collection and interface</span>
+        <span class="w">A three-stage pipeline that de-duplicates by image content, gives each photograph a passport of date, place, author and licence, and refuses to hang anything whose provenance is unclear.</span>
+        <span class="a mono">→</span>
+      </a>
+      <a href="/systems/winnipeg-nights/">
+        <span class="n">Winnipeg Nights</span>
+        <span class="r mono">Real-time media · Session coordination</span>
+        <span class="w">One-to-many WebRTC audio coordinated through an ordinary polled data store instead of a signalling service, with a self-refreshing news feed and on-the-fly speech translation on the same single-core host.</span>
+        <span class="a mono">→</span>
+      </a>
+      <a href="/systems/arm-crm/">
+        <span class="n">ARM CRM</span>
+        <span class="r mono">Sales operations · Interface placement</span>
+        <span class="w">A lead intake that scores and assigns on arrival, and a CRM placed inside an existing messenger so that recording a conversation happens where the conversation happens.</span>
+        <span class="a mono">→</span>
+      </a>
+      <a href="/systems/munister-agency/">
+        <span class="n">Munister Agency</span>
+        <span class="r mono">Temporal-geographic computation</span>
+        <span class="w">Working-hour overlap computed per US state from the platform's built-in IANA rules, so daylight saving resolves itself, over a 32 kb geometry model that keeps the page static.</span>
+        <span class="a mono">→</span>
+      </a>
+      <a href="/systems/blue-ferret/">
+        <span class="n">Blue Ferret</span>
+        <span class="r mono">Publishing · CMS and operations</span>
+        <span class="w">A CMS on the live server whose content is snapshotted, diffed and committed to version control every thirty minutes, giving editors an undo history nobody has to remember to create.</span>
+        <span class="a mono">→</span>
+      </a>
+      <a href="/systems/am-publishing/">
+        <span class="n">AM Publishing</span>
+        <span class="r mono">Publishing operations · Distributed services</span>
+        <span class="w">Editorial metadata kept independent of sales channels, with transactional and streaming services separated out so that catalogue, payment and radio can fail without each other.</span>
+        <span class="a mono">→</span>
+      </a>
+  </div>
+
+  <footer class="foot mono">
+    <span>© Viacheslav Munister</span>
+    <a href="mailto:munister@outlook.com">munister@outlook.com</a>
+  </footer>
+
+</div>
+</main>
+
+</body>
+</html>

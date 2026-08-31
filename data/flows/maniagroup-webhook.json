@@ -1,0 +1,25 @@
+{
+  "title": "Mania Group — a retried callback must not pay an order twice",
+  "alt": "A payment provider callback is verified, then written to the payments table with an upsert keyed on provider and provider reference. A first delivery inserts a row and moves the order to paid; a retry of the same callback updates that row in place and changes nothing else. The raw payload is kept for disputes.",
+  "nodes": [
+    { "id": "cb",     "col": 0, "row": 1, "kind": "trigger",  "icon": "hook",   "label": "Provider callback", "sub": "may arrive twice" },
+    { "id": "verify", "col": 1, "row": 1, "icon": "shield",   "label": "Verify signature", "sub": "before anything" },
+    { "id": "drop",   "col": 2, "row": 0, "kind": "fail",     "icon": "cross",  "label": "Dropped unread", "sub": "not our provider" },
+    { "id": "upsert", "col": 2, "row": 1, "icon": "key",      "label": "Upsert on the reference", "sub": "provider + ref" },
+    { "id": "raw",    "col": 3, "row": 2, "kind": "store",    "icon": "archive","label": "Raw payload kept", "sub": "for disputes" },
+    { "id": "first",  "col": 3, "row": 0, "icon": "check",    "label": "First delivery", "sub": "row inserted" },
+    { "id": "again",  "col": 3, "row": 1, "icon": "loop",     "label": "Same reference again", "sub": "row updated" },
+    { "id": "status", "col": 4, "row": 0, "icon": "card",     "label": "Order becomes paid", "sub": "one event logged" },
+    { "id": "quiet",  "col": 4, "row": 1, "icon": "eye",      "label": "Nothing else changes", "sub": "no second event" }
+  ],
+  "edges": [
+    { "from": "cb",     "to": "verify" },
+    { "from": "verify", "to": "drop",   "kind": "fail", "label": "bad signature" },
+    { "from": "verify", "to": "upsert", "label": "trusted" },
+    { "from": "upsert", "to": "first",  "label": "unseen ref" },
+    { "from": "upsert", "to": "again",  "label": "known ref" },
+    { "from": "upsert", "to": "raw",    "kind": "weak" },
+    { "from": "first",  "to": "status" },
+    { "from": "again",  "to": "quiet" }
+  ]
+}

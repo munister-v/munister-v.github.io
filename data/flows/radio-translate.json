@@ -1,0 +1,19 @@
+{
+  "title": "Winnipeg Nights — translating speech on one core",
+  "alt": "Audio is cut into short fixed windows and each window is handed to a local speech model asked to translate directly rather than transcribe and then translate. The smallest model is used deliberately, because the host has a single core and a model that cannot keep up with real time produces a translation that falls further behind every minute.",
+  "nodes": [
+    { "id": "on",    "col": 0, "row": 1, "kind": "trigger", "icon": "lang",    "label": "Listener asks for English", "sub": "one button" },
+    { "id": "cut",   "col": 1, "row": 1, "icon": "filter",  "label": "Cut into windows", "sub": "six seconds" },
+    { "id": "model", "col": 2, "row": 1, "icon": "cpu",     "label": "Local speech model", "sub": "smallest on purpose" },
+    { "id": "slow",  "col": 3, "row": 0, "kind": "fail",    "icon": "clock",   "label": "Bigger model falls behind", "sub": "one core, no gpu" },
+    { "id": "trans", "col": 3, "row": 1, "icon": "quote",   "label": "Straight to English", "sub": "one step, not two" },
+    { "id": "show",  "col": 4, "row": 1, "icon": "eye",     "label": "Shown under the player", "sub": "as it arrives" }
+  ],
+  "edges": [
+    { "from": "on",    "to": "cut" },
+    { "from": "cut",   "to": "model" },
+    { "from": "model", "to": "slow",  "kind": "fail", "label": "if oversized" },
+    { "from": "model", "to": "trans", "label": "keeps pace" },
+    { "from": "trans", "to": "show" }
+  ]
+}

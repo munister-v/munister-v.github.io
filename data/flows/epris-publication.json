@@ -1,0 +1,26 @@
+{
+  "title": "EPRIS Journal — two gates stand between a draft and a reader",
+  "alt": "Publishing clears a draft flag on the record, but a separate visibility map decides whether the section is shown at all. Both must open for a reader to see the piece; clearing only one produces a published record nobody can reach. A preview token bypasses both gates for one record, which is why it must never be used to check that publishing worked.",
+  "nodes": [
+    { "id": "press",  "col": 0, "row": 1, "kind": "trigger", "icon": "send",   "label": "Editor publishes", "sub": "one button" },
+    { "id": "flag",   "col": 1, "row": 0, "icon": "file",    "label": "Draft flag cleared", "sub": "on the record" },
+    { "id": "map",    "col": 1, "row": 2, "icon": "eye",     "label": "Visibility map", "sub": "separate document" },
+    { "id": "both",   "col": 2, "row": 1, "icon": "merge",   "label": "Both gates open?", "sub": "and, not or" },
+    { "id": "ghost",  "col": 3, "row": 0, "kind": "fail",    "icon": "cross",  "label": "Published, unreachable", "sub": "one gate shut" },
+    { "id": "live",   "col": 3, "row": 1, "icon": "globe",   "label": "Reader sees it", "sub": "public route" },
+    { "id": "token",  "col": 2, "row": 3, "icon": "key",     "label": "Preview token", "sub": "one record" },
+    { "id": "bypass", "col": 3, "row": 3, "kind": "external","icon": "eye",    "label": "Bypasses both gates", "sub": "proves nothing" }
+  ],
+  "edges": [
+    { "from": "press", "to": "flag" },
+    { "from": "press", "to": "map" },
+    { "from": "flag",  "to": "both" },
+    { "from": "map",   "to": "both" },
+    { "from": "both",  "to": "ghost", "kind": "fail", "label": "either shut" },
+    { "from": "both",  "to": "live",  "label": "both open" },
+    { "from": "token", "to": "bypass", "kind": "weak" }
+  ],
+  "groups": [
+    { "label": "Checking with a preview link hides exactly this bug", "nodes": ["token", "bypass"] }
+  ]
+}

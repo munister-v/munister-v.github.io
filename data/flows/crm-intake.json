@@ -1,0 +1,25 @@
+{
+  "title": "ARM CRM — a lead that arrives at night must be on someone's desk by morning",
+  "alt": "A public endpoint accepts the contact form, rejects malformed and automated submissions, scores the lead, and assigns it to a named owner immediately rather than leaving it in a shared inbox. The lead then appears as a thread in the messenger the team already has open, alongside a thousand existing conversations.",
+  "nodes": [
+    { "id": "form",  "col": 0, "row": 1, "kind": "trigger", "icon": "send",    "label": "Form submitted", "sub": "public site" },
+    { "id": "ep",    "col": 1, "row": 1, "icon": "hook",    "label": "Public endpoint", "sub": "no login by design" },
+    { "id": "guard", "col": 2, "row": 1, "icon": "shield",  "label": "Shape and rate checks", "sub": "before storage" },
+    { "id": "bin",   "col": 3, "row": 0, "kind": "fail",    "icon": "cross",   "label": "Discarded", "sub": "malformed, automated" },
+    { "id": "score", "col": 3, "row": 1, "icon": "chart",   "label": "Scored on entry", "sub": "sorts the queue" },
+    { "id": "own",   "col": 4, "row": 1, "icon": "users",   "label": "Given an owner", "sub": "a person, not a pool" },
+    { "id": "store", "col": 5, "row": 2, "kind": "store",   "icon": "db",      "label": "Lead recorded", "sub": "with its source" },
+    { "id": "thread","col": 5, "row": 1, "icon": "phone",   "label": "Opens as a thread", "sub": "in the messenger" },
+    { "id": "top",   "col": 6, "row": 1, "icon": "bell",    "label": "At the top, not the bottom", "sub": "seen the same day" }
+  ],
+  "edges": [
+    { "from": "form",  "to": "ep" },
+    { "from": "ep",    "to": "guard" },
+    { "from": "guard", "to": "bin",   "kind": "fail", "label": "rejected" },
+    { "from": "guard", "to": "score", "label": "accepted" },
+    { "from": "score", "to": "own" },
+    { "from": "own",   "to": "thread" },
+    { "from": "own",   "to": "store", "kind": "weak" },
+    { "from": "thread","to": "top" }
+  ]
+}

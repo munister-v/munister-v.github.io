@@ -1,0 +1,53 @@
+<!--meta {
+  "slug": "am-publishing",
+  "order": 10,
+  "title": "AM Publishing",
+  "kicker": "Publishing operations · Distributed services",
+  "headline": "Keep the catalogue independent of who is selling the book",
+  "standfirst": "A publisher's site where each title carries a set of offers rather than a link to one shop. Distribution deals change; the writing about the book should not have to be edited when they do.",
+  "summary": "Editorial metadata kept independent of sales channels, with transactional and streaming services separated out so that catalogue, payment and radio can fail without each other.",
+  "image": "/images/og-en.jpg",
+  "about": ["publishing systems", "service boundaries", "static sites", "feature flags"],
+  "visit": ["Open the site", "https://ampublishing.org/"],
+  "facts": [
+    ["Live", "<a href=\"https://ampublishing.org/\" target=\"_blank\" rel=\"noopener\">ampublishing.org ↗</a>"],
+    ["Built with", "React, Vite, static hosting"],
+    ["Alongside", "A separate radio service"],
+    ["Role", "Architecture, implementation"]
+  ]
+} -->
+
+    <h2>One modelling decision</h2>
+    <p>The natural way to build a publisher's catalogue is to give each book a buy button pointing at whichever retailer the publisher currently uses. It works immediately and it is wrong in a way that only shows up later, when the deal changes and a hundred pages need editing — or worse, when the book is available in one region and not another, and the single link is right for some readers and useless for the rest.</p>
+    <p>So a title carries a <strong>set</strong> of offers: which shop, which region, on what terms. The page selects among them. Nothing about the book's description depends on commercial arrangements, which means those arrangements can change without anybody touching editorial text.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:ampublishing-offers --><!-- /flow --></div>
+      <figcaption>
+        <p>The upper branch is what most publisher sites do. The cost is not visible on the day it is built; it is paid every time distribution changes, in edits to pages that are about the writing.</p>
+        <span class="mono">Fig. 1</span>
+      </figcaption>
+    </figure>
+
+    <p>The fallback matters as much as the matching. A reader in a region with no offer is not shown a dead end; they are sent to the publisher's own channel. A catalogue whose answer to <em>can I buy this?</em> is sometimes nothing has failed at the only job the page has.</p>
+
+    <h2>Separate services, deliberately</h2>
+    <p>The public site is static. Transactional checkout and the radio station run as their own services elsewhere. This is more moving parts than one application, and it buys something specific: the failure of any one of them is survivable.</p>
+    <ul>
+      <li><strong>The catalogue survives everything.</strong> It is files. If payment integration breaks, or the radio process dies, the books are still readable and the site is still up.</li>
+      <li><strong>The radio has its own life.</strong> Streaming audio has entirely different uptime and resource characteristics from a catalogue page, and coupling them means the catalogue inherits the streaming service's problems for no benefit.</li>
+      <li><strong>Integrations are off by default.</strong> Shipping and analytics connections are declared in configuration and disabled until deliberately switched on. A half-configured integration that is live is worse than one that does not exist, because it fails in ways that look like the site is broken.</li>
+    </ul>
+
+    <div class="lesson">
+      <span class="mono">What it cost to learn</span>
+      <h4>The client edits the same branch you do</h4>
+      <p>The publisher edits book entries directly in the repository's main branch. That is intentional — they are the authority on their own catalogue and should not need a developer to correct a subtitle.</p>
+      <p>It also means the branch moves under your feet between the moment you start work and the moment you push, so every push begins by fetching and replaying on top of theirs. Forgetting once means either a merge nobody asked for or, if resolved carelessly, quietly reverting their afternoon.</p>
+      <p>The wider point is about <em>who</em> is on the other end. A collaborator who does not use version control cannot be expected to resolve a conflict, and will not know one has happened. The obligation to check sits entirely with the person who does — which makes fetch-before-push a courtesy, not a technicality.</p>
+    </div>
+
+    <h2>A note on rendering prose</h2>
+    <p>One small thing worth recording because it recurs in every editorial system. The editors separate paragraphs by pressing return once. The site was rendering submitted text with whitespace preserved and no paragraph structure at all — visually almost right, structurally a single undifferentiated block, with no paragraph elements for a screen reader or a search engine to work with.</p>
+    <p>The fix understands both conventions: one return or two, both produce real paragraphs. It is worth doing properly because the alternative is asking non-technical writers to format text a particular way, which is a request they will reasonably ignore.</p>

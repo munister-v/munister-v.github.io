@@ -1,0 +1,30 @@
+{
+  "title": "Mania Group — supplier spreadsheet to stored product",
+  "alt": "An import pipeline: a supplier price list arrives, its shape is detected, a known WooCommerce export goes straight to normalisation while an unknown workbook has its columns mapped first; rows that cannot be resolved are held for review rather than guessed, and the rest become products and size-level variants in PostgreSQL.",
+  "nodes": [
+    { "id": "upload", "col": 0, "row": 1, "kind": "trigger",  "icon": "bolt",   "label": "Price list arrives", "sub": "xls · csv" },
+    { "id": "sniff",  "col": 1, "row": 1, "icon": "search",   "label": "Detect shape", "sub": "headers, delimiter" },
+    { "id": "wc",     "col": 2, "row": 0, "kind": "external", "icon": "cart",   "label": "WooCommerce export", "sub": "columns known" },
+    { "id": "xls",    "col": 2, "row": 2, "kind": "external", "icon": "file",   "label": "Supplier workbook", "sub": "columns unknown" },
+    { "id": "map",    "col": 3, "row": 2, "icon": "brain",    "label": "Map columns", "sub": "once per layout",
+      "tools": [
+        { "icon": "lang",  "label": "Header sense" },
+        { "icon": "ruler", "label": "Unit sense" }
+      ] },
+    { "id": "norm",   "col": 4, "row": 1, "icon": "sliders",  "label": "Normalise row", "sub": "price · size · sku" },
+    { "id": "reject", "col": 5, "row": 0, "kind": "fail",     "icon": "cross",  "label": "Held for review", "sub": "not guessed" },
+    { "id": "matrix", "col": 5, "row": 1, "icon": "grid",     "label": "Size matrix", "sub": "product × size" },
+    { "id": "db",     "col": 6, "row": 1, "kind": "store",    "icon": "db",     "label": "Products and variants", "sub": "postgresql" }
+  ],
+  "edges": [
+    { "from": "upload", "to": "sniff" },
+    { "from": "sniff",  "to": "wc",     "label": "recognised" },
+    { "from": "sniff",  "to": "xls",    "label": "unrecognised" },
+    { "from": "wc",     "to": "norm" },
+    { "from": "xls",    "to": "map" },
+    { "from": "map",    "to": "norm" },
+    { "from": "norm",   "to": "reject", "kind": "fail", "label": "ambiguous" },
+    { "from": "norm",   "to": "matrix" },
+    { "from": "matrix", "to": "db" }
+  ]
+}

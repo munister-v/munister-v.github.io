@@ -1,0 +1,23 @@
+{
+  "title": "EPRIS Museum — from a public collection to a hung wall",
+  "alt": "Works are searched in the Art Institute of Chicago's public API, filtered to public domain only, then fetched over IIIF with the identifying header that collection requires. Each image is re-encoded into the sizes the site actually serves and stored locally; curation assigns it to a hall, and a build step writes the whole museum as static files.",
+  "nodes": [
+    { "id": "search", "col": 0, "row": 1, "kind": "trigger",  "icon": "search",  "label": "Search the collection", "sub": "by period, medium" },
+    { "id": "api",    "col": 1, "row": 1, "kind": "external", "icon": "globe",   "label": "Museum API", "sub": "art institute" },
+    { "id": "rights", "col": 2, "row": 1, "icon": "shield",   "label": "Rights check", "sub": "public domain only" },
+    { "id": "drop",   "col": 3, "row": 0, "kind": "fail",     "icon": "cross",   "label": "Not ours to hang", "sub": "dropped" },
+    { "id": "iiif",   "col": 3, "row": 1, "icon": "image",    "label": "Fetch over IIIF", "sub": "identifying header" },
+    { "id": "derive", "col": 4, "row": 1, "icon": "layers",   "label": "Re-encode locally", "sub": "sizes we serve" },
+    { "id": "hall",   "col": 5, "row": 1, "icon": "map",      "label": "Assign a hall", "sub": "curated, not sorted" },
+    { "id": "build",  "col": 6, "row": 1, "kind": "store",    "icon": "box",     "label": "Static museum", "sub": "one build step" }
+  ],
+  "edges": [
+    { "from": "search", "to": "api" },
+    { "from": "api",    "to": "rights" },
+    { "from": "rights", "to": "drop",  "kind": "fail", "label": "restricted" },
+    { "from": "rights", "to": "iiif",  "label": "free to show" },
+    { "from": "iiif",   "to": "derive" },
+    { "from": "derive", "to": "hall" },
+    { "from": "hall",   "to": "build" }
+  ]
+}

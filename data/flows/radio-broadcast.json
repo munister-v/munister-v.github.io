@@ -1,0 +1,23 @@
+{
+  "title": "Winnipeg Nights — one voice to many listeners, without a signalling server",
+  "alt": "The host's browser captures audio and creates a separate peer connection for each listener. The offer and answer are exchanged by writing them into an ordinary polled data store rather than through a dedicated signalling socket. Listeners are never asked for microphone access, because audio only ever travels one way.",
+  "nodes": [
+    { "id": "host",  "col": 0, "row": 1, "kind": "trigger",  "icon": "mic",    "label": "Host goes on air", "sub": "one browser" },
+    { "id": "cap",   "col": 1, "row": 1, "icon": "wave",     "label": "Capture the sound", "sub": "one source" },
+    { "id": "offer", "col": 2, "row": 1, "icon": "send",     "label": "An offer per listener", "sub": "not a broadcast" },
+    { "id": "store", "col": 3, "row": 1, "kind": "store",    "icon": "db",     "label": "Written to a polled store", "sub": "no socket service" },
+    { "id": "ans",   "col": 4, "row": 1, "icon": "loop",     "label": "Listener answers", "sub": "polls, replies" },
+    { "id": "peer",  "col": 5, "row": 1, "icon": "users",    "label": "Direct audio path", "sub": "one way only" },
+    { "id": "nomic", "col": 5, "row": 2, "icon": "shield",   "label": "No microphone asked", "sub": "nothing to permit" },
+    { "id": "ear",   "col": 6, "row": 1, "icon": "phone",    "label": "Listener hears it", "sub": "no install" }
+  ],
+  "edges": [
+    { "from": "host",  "to": "cap" },
+    { "from": "cap",   "to": "offer" },
+    { "from": "offer", "to": "store" },
+    { "from": "store", "to": "ans" },
+    { "from": "ans",   "to": "peer" },
+    { "from": "peer",  "to": "ear" },
+    { "from": "peer",  "to": "nomic", "kind": "weak" }
+  ]
+}

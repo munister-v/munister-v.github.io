@@ -1,0 +1,31 @@
+{
+  "title": "EPRIS Journal — how a translation knows it has fallen behind",
+  "alt": "Every fifteen minutes a sweep fingerprints the translatable part of each record, ignoring housekeeping fields. A fingerprint that still matches the stored stamp is skipped; a translation edited by hand stops and asks; anything genuinely behind is queued and run through a provider chain, then stamped with the source fingerprint and the provider that did the work.",
+  "nodes": [
+    { "id": "save",  "col": 0, "row": 1, "kind": "trigger", "icon": "quote",   "label": "Editor saves English", "sub": "the only source" },
+    { "id": "sweep", "col": 1, "row": 1, "icon": "clock",   "label": "Sweep every 15 min", "sub": "server side" },
+    { "id": "fp",    "col": 2, "row": 1, "icon": "key",     "label": "Fingerprint the text", "sub": "timestamps excluded" },
+    { "id": "skip",  "col": 3, "row": 0, "icon": "check",   "label": "Still matches", "sub": "nothing to do" },
+    { "id": "queue", "col": 3, "row": 1, "kind": "store",   "icon": "archive", "label": "Job queued on disk", "sub": "survives restart" },
+    { "id": "ask",   "col": 3, "row": 2, "icon": "users",   "label": "Edited by hand", "sub": "stops and asks" },
+    { "id": "chain", "col": 4, "row": 1, "icon": "sliders", "label": "Provider chain", "sub": "best first",
+      "tools": [
+        { "icon": "brain", "label": "Model" },
+        { "icon": "lang",  "label": "DeepL" },
+        { "icon": "globe", "label": "Google" },
+        { "icon": "filter", "label": "Stopgap" }
+      ] },
+    { "id": "write", "col": 5, "row": 1, "kind": "store",   "icon": "layers",  "label": "Localised record", "sub": "six languages" },
+    { "id": "stamp", "col": 6, "row": 1, "icon": "tag",     "label": "Stamped", "sub": "hash + provider" }
+  ],
+  "edges": [
+    { "from": "save",  "to": "sweep" },
+    { "from": "sweep", "to": "fp" },
+    { "from": "fp",    "to": "skip",  "label": "unchanged" },
+    { "from": "fp",    "to": "queue", "label": "behind" },
+    { "from": "fp",    "to": "ask",   "kind": "weak", "label": "hand-edited" },
+    { "from": "queue", "to": "chain" },
+    { "from": "chain", "to": "write" },
+    { "from": "write", "to": "stamp" }
+  ]
+}

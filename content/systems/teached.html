@@ -1,0 +1,69 @@
+<!--meta {
+  "slug": "teached",
+  "order": 4,
+  "title": "TeachEd",
+  "kicker": "Learning systems · Product and technology",
+  "headline": "A lesson is a structure, not a document",
+  "standfirst": "Fifty-one tools for language teachers, all reading the same thing. The bet: if a lesson is stored as structure rather than as a printed page, it can be revised, shared and re-run — and one afternoon's preparation stops being disposable.",
+  "summary": "Teaching material modelled as structured lesson objects, so boards, generated worksheets and thirty classroom games are views of one thing rather than fifty separate editors.",
+  "image": "/images/works/teached.jpg",
+  "about": ["educational technology", "document generation", "layout measurement", "product architecture"],
+  "visit": ["Open TeachEd", "https://teached.tech/"],
+  "facts": [
+    ["Live", "<a href=\"https://teached.tech/\" target=\"_blank\" rel=\"noopener\">teached.tech ↗</a>"],
+    ["Scope", "51 tools, 30+ classroom games"],
+    ["Role", "Product model, architecture, releases"],
+    ["Deploys", "Continuously, from main"]
+  ]
+} -->
+
+    <h2>The bet</h2>
+    <p>A teacher prepares a worksheet on Sunday evening. On Monday it is a PDF. By Friday it is a PDF with pen on it, and next term it is prepared again from nothing, because a document cannot be adjusted for a different class without being rebuilt.</p>
+    <p>The alternative is to store what the teacher actually decided — these words, this task, this constraint, this expected answer — and treat the worksheet as one rendering of that. Then the same material becomes a board activity, a game, or a printed page, and changing the class means changing the structure rather than retyping the artefact.</p>
+    <p>That is the whole product thesis, and it is the reason there are fifty-one tools rather than fifty-one products. They are views.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:teached-lesson --><!-- /flow --></div>
+      <figcaption>
+        <p>One structure, three families of output, one export path. A game and a worksheet disagree about presentation and agree completely about what the lesson contains.</p>
+        <span class="mono">Fig. 1</span>
+      </figcaption>
+    </figure>
+
+    <h2>Generated pages have to be measured</h2>
+    <p>A generated worksheet has to fit a sheet of paper. The obvious approach is to estimate: so many characters, so many lines, so much height. This is wrong every single time, because text wraps — and where it wraps depends on the font, the container, the language and the exact words. An estimate is a guess about typesetting made without doing any typesetting.</p>
+    <p>So the worksheet is rendered first and measured afterwards. Not estimated, measured: lay it out, ask the browser what the box actually became, and reflow if it overran.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:teached-measure --><!-- /flow --></div>
+      <figcaption>
+        <p>Render, measure, reflow, measure again. The ceiling on the right exists because a fit loop with no bound will, on some pathological content, keep trying forever.</p>
+        <span class="mono">Fig. 2</span>
+      </figcaption>
+    </figure>
+
+    <p>There is a trap inside the measuring, too. The obvious property for “how tall is this content” reports the height of the scrollable area, which is never smaller than the visible box — so content that comfortably fits reports the box size rather than its own, and the fit loop concludes it is exactly full. Measuring means measuring the right thing, and the right thing is rarely the first property with a promising name.</p>
+
+    <div class="lesson">
+      <span class="mono">What it cost to learn</span>
+      <h4>One modern colour function broke every export</h4>
+      <p>Export to image works by walking the live page and repainting it onto a canvas. The library that does this parses colour values itself, and it predates the colour-mixing functions the redesign had adopted. A single computed <code>color-mix()</code> anywhere in the captured subtree threw — and the whole export failed, not the one element.</p>
+      <p>The instinct is to hunt down and rewrite the offending styles. That is a losing game: the value leaks in through at least five routes, including inherited properties and rules nobody remembers writing, and it comes back the next time someone uses a modern colour. The fix was to intercept style resolution during capture and hand the library a colour it understands, leaving the page itself alone.</p>
+      <p><strong>When a third-party consumer of the DOM cannot cope with something valid, adapt at the boundary.</strong> Editing the whole codebase to suit one library’s parser is a debt that compounds, and it silently forbids a feature of the platform for everyone who works on it later.</p>
+    </div>
+
+    <h2>Saving what actually changed</h2>
+    <p>The board keeps its state by hashing what is on it, and only writing when the hash moves. This is a standard and sensible way to avoid saving constantly.</p>
+    <p>It also had a hole worth describing, because the shape recurs. The hash was computed over the set of cards and their positions — which detects adding a card and moving a card, and does not detect <em>editing the text inside one</em>. A teacher could rewrite a sticky note, see no error, and lose the change. The system was working exactly as written; what was written did not include the most common edit.</p>
+    <p>Any change-detection scheme is a claim about what counts as a change, and that claim is usually made implicitly by whoever wrote the hash. It is worth stating out loud, because the omissions are invisible from the inside — everything looks correct, and the missing case simply never fires.</p>
+
+    <h2>Where the difficulty actually lives</h2>
+    <p>Very little of the hard work in this system is algorithmic. It is in the places where a clean model meets an uncooperative medium.</p>
+    <ul>
+      <li><strong>A card with a fixed height and text that wraps.</strong> This has been repaired four separate times. Height set by constant will meet a longer word, in every language, forever; the layout has to be told to follow its contents rather than be told a number.</li>
+      <li><strong>Elements that clip their own affordances.</strong> A card that hides overflow also hides the resize handle sitting just outside it, and swallows the clicks aimed at it. The visual rule and the interaction rule were the same rule, and nobody thought of it that way until the handle stopped working.</li>
+      <li><strong>A phone is not a narrow desktop.</strong> The mobile layout was assembled from four independent sources of rules that each had an opinion about the same login window. The result was not a bug in any of them.</li>
+      <li><strong>Service workers cache confidently.</strong> Replacing an icon without advancing the version ships the old icon to everyone who has ever visited, and it looks like the replacement failed.</li>
+    </ul>

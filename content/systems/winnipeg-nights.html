@@ -1,0 +1,66 @@
+<!--meta {
+  "slug": "winnipeg-nights",
+  "order": 6,
+  "title": "Winnipeg Nights",
+  "kicker": "Real-time media · Session coordination",
+  "headline": "Live audio on a machine with one core",
+  "standfirst": "A night radio station built as a study in how little infrastructure live audio actually requires. One voice reaches many listeners with no streaming server, no signalling service and no permission dialogue on the way in.",
+  "summary": "One-to-many WebRTC audio coordinated through an ordinary polled data store instead of a signalling service, with a self-refreshing news feed and on-the-fly speech translation on the same single-core host.",
+  "image": "/images/works/radio.jpg",
+  "about": ["WebRTC", "real-time audio", "speech recognition", "constrained hardware"],
+  "visit": ["Tune in", "https://radio.munister.com.ua/"],
+  "facts": [
+    ["Live", "<a href=\"https://radio.munister.com.ua/\" target=\"_blank\" rel=\"noopener\">radio.munister.com.ua ↗</a>"],
+    ["Built with", "Flask, React, WebRTC"],
+    ["Runs on", "One vCPU, no GPU"],
+    ["Role", "Architecture, implementation, design"]
+  ]
+} -->
+
+    <h2>The constraint is the design</h2>
+    <p>The whole station runs on a single-core virtual machine with no graphics hardware. That is not a hardship to be worked around; it is the premise. Every decision below follows from asking what live audio actually needs, rather than what the standard architecture diagram says it needs.</p>
+    <p>The standard answer involves an ingest endpoint, a media server transcoding to several bitrates, a delivery network, and a signalling service maintaining a socket per listener. Each is defensible at scale. At the scale of a night show, each is a service to run, patch, monitor and pay for.</p>
+
+    <h2>Audio without a media server</h2>
+    <p>Audio goes directly from the host's browser to each listener's browser. The host creates one connection per listener — genuinely one each, since there is no server in the middle multiplying the stream — and the audio never touches the machine hosting the site.</p>
+    <p>What a connection like this normally requires is a signalling service: a socket on which the two sides exchange their connection descriptions before they can talk. That service is the piece which is always running, always needs to be up, and is the usual reason a small project like this becomes an operational burden.</p>
+    <p>So there isn't one. The two descriptions are short pieces of text; they are written into an ordinary data store that the site already had, and the other side polls for them. Polling is unfashionable and, for a handful of exchanges lasting a second or two at the start of a session, entirely adequate.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:radio-broadcast --><!-- /flow --></div>
+      <figcaption>
+        <p>Setup runs through a store the site already had; the audio then flows directly. Once a listener is connected, nothing about the exchange is on the critical path any more.</p>
+        <span class="mono">Fig. 1</span>
+      </figcaption>
+    </figure>
+
+    <p>One detail matters more than it looks. <strong>Listeners are never asked for microphone access.</strong> The naive way to set up a peer connection is to request media on both sides out of symmetry, which triggers a browser permission prompt — and a permission prompt on a page whose only offer is <em>listen to some music</em> is where most visitors leave. Audio here travels one way, so the listener side asks for nothing at all. Refusing a permission you do not need is a design feature, not an oversight.</p>
+
+    <h2>Translating a live voice</h2>
+    <p>A button offers English to listeners who do not speak the host's language. The audio is cut into short fixed windows and each window goes to a speech model running locally, asked to translate directly rather than to transcribe and then translate — one step where the obvious pipeline uses two.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:radio-translate --><!-- /flow --></div>
+      <figcaption>
+        <p>The smallest available model is used deliberately. Anything larger is more accurate per sentence and slower than real time, which for a live broadcast is not a trade-off but a failure.</p>
+        <span class="mono">Fig. 2</span>
+      </figcaption>
+    </figure>
+
+    <p>The model choice is the whole lesson. On one core, a better model does not produce better subtitles; it produces subtitles that drift further behind the speaker every minute until they are describing a different part of the show. <strong>For anything live, staying in step is a correctness property</strong>, and it outranks per-sentence quality. Batch work can have the big model. This cannot.</p>
+
+    <h2>Around the live hour</h2>
+    <p>A station that is live for one hour is dark for twenty-three. Two things fill it, both built to need no attention.</p>
+    <ul>
+      <li><strong>A self-refreshing news feed.</strong> A set of North American true-crime programmes are pulled from their public feeds in a background thread inside the existing process — no scheduler, no additional service, no new dependency. Something that runs every few minutes and can be lost without consequence does not need a job system.</li>
+      <li><strong>An announcement that removes itself.</strong> The next broadcast is declared by a single constant holding the airtime, stated explicitly in the station's own timezone. The block appears when there is something to announce and disappears two hours after it ends. Nobody has to remember to take it down — and nobody has to see a site advertising an event from last month, which is the most reliable signal that a project has been abandoned.</li>
+    </ul>
+
+    <div class="lesson">
+      <span class="mono">What it cost to learn</span>
+      <h4>The site rolled back, and nothing had rolled back</h4>
+      <p>The station appeared to revert to an older version. It had not. A stale build directory had been copied over the live one from a different machine, so the served bundle was genuinely old while the source was current — and every check made against the source said everything was fine.</p>
+      <p>Compounding it, a change that switched off a whole section existed only on the server and had never been committed, so the repository disagreed with reality in the other direction too. The habit that came out of it: when behaviour and source disagree, <strong>verify against the artefact actually being served</strong>, not against the code that ought to have produced it.</p>
+    </div>

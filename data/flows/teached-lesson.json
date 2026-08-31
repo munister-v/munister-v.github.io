@@ -1,0 +1,30 @@
+{
+  "title": "TeachEd — one lesson object, many outputs",
+  "alt": "Source material such as a video link or a vocabulary list is turned into structured lesson objects: tasks with constraints and expected outputs. Boards, worksheets and more than thirty classroom games all read that same structure, and a single export path renders it for screen or paper.",
+  "nodes": [
+    { "id": "video", "col": 0, "row": 0, "kind": "trigger", "icon": "video",  "label": "A video link", "sub": "any lesson source" },
+    { "id": "words", "col": 0, "row": 2, "kind": "trigger", "icon": "book",   "label": "Text or word list", "sub": "teacher's own" },
+    { "id": "parse", "col": 1, "row": 1, "icon": "sliders", "label": "Pull out the material", "sub": "transcript, terms" },
+    { "id": "obj",   "col": 2, "row": 1, "kind": "store",   "icon": "layers", "label": "Lesson objects", "sub": "task · constraint · answer" },
+    { "id": "board", "col": 3, "row": 0, "icon": "grid",    "label": "Board", "sub": "arrange, annotate" },
+    { "id": "sheet", "col": 3, "row": 1, "icon": "file",    "label": "Worksheet", "sub": "generated layout" },
+    { "id": "games", "col": 3, "row": 2, "icon": "cpu",     "label": "Classroom games", "sub": "thirty of them" },
+    { "id": "exp",   "col": 4, "row": 1, "icon": "image",   "label": "One export path", "sub": "shared renderer" },
+    { "id": "out",   "col": 5, "row": 1, "icon": "send",    "label": "Screen or paper", "sub": "same lesson" }
+  ],
+  "edges": [
+    { "from": "video", "to": "parse" },
+    { "from": "words", "to": "parse" },
+    { "from": "parse", "to": "obj" },
+    { "from": "obj",   "to": "board" },
+    { "from": "obj",   "to": "sheet" },
+    { "from": "obj",   "to": "games" },
+    { "from": "board", "to": "exp" },
+    { "from": "sheet", "to": "exp" },
+    { "from": "games", "to": "exp" },
+    { "from": "exp",   "to": "out" }
+  ],
+  "groups": [
+    { "label": "Composed once, re-run in any form", "nodes": ["board", "sheet", "games"] }
+  ]
+}

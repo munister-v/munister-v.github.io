@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blue Ferret · Viacheslav Munister</title>
+<meta name="description" content="A CMS on the live server whose content is snapshotted, diffed and committed to version control every thirty minutes, giving editors an undo history nobody has to remember to create.">
+<link rel="canonical" href="https://munister.com.ua/systems/blue-ferret/">
+<link rel="alternate" hreflang="en" href="https://munister.com.ua/systems/blue-ferret/">
+<link rel="alternate" hreflang="x-default" href="https://munister.com.ua/systems/blue-ferret/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#ffffff">
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://munister.com.ua/systems/blue-ferret/">
+<meta property="og:site_name" content="Viacheslav Munister">
+<meta property="og:title" content="Blue Ferret · Viacheslav Munister">
+<meta property="og:description" content="A CMS on the live server whose content is snapshotted, diffed and committed to version control every thirty minutes, giving editors an undo history nobody has to remember to create.">
+<meta property="og:image" content="https://munister.com.ua/images/og-en.jpg">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blue Ferret · Viacheslav Munister">
+<meta name="twitter:description" content="A CMS on the live server whose content is snapshotted, diffed and committed to version control every thirty minutes, giving editors an undo history nobody has to remember to create.">
+<meta name="twitter:image" content="https://munister.com.ua/images/og-en.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Blue Ferret",
+  "description": "A CMS on the live server whose content is snapshotted, diffed and committed to version control every thirty minutes, giving editors an undo history nobody has to remember to create.",
+  "author": {
+    "@type": "Person",
+    "name": "Viacheslav Munister",
+    "url": "https://munister.com.ua/"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Viacheslav Munister"
+  },
+  "inLanguage": "en",
+  "url": "https://munister.com.ua/systems/blue-ferret/",
+  "isPartOf": {
+    "@type": "CollectionPage",
+    "name": "Systems",
+    "url": "https://munister.com.ua/systems/"
+  },
+  "about": [
+    "content management",
+    "backup automation",
+    "reverse proxies",
+    "operations"
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/munister.css?v=14">
+<link rel="stylesheet" href="/systems.css?v=2">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <a class="wordmark" href="/">Munister</a>
+  <nav aria-label="Main">
+    <a href="/#work">Work</a>
+    <a href="/systems/" aria-current="page">Systems</a>
+    <a href="/research/">Research</a>
+    <a href="/writing/">Writing</a>
+    <a href="/#contact">Contact</a>
+  </nav>
+  <div class="head-right">
+    <a href="/cv.html">CV</a>
+  </div>
+</header>
+
+<main class="site-main" id="main">
+<div class="shell">
+
+  <div class="sys-head">
+    <a class="back mono" href="/systems/">← Systems</a>
+    <span class="mono">Publishing · CMS and operations</span>
+    <h1>The site that commits its own history every half hour</h1>
+    <p class="standfirst">A board-game publisher whose editors work directly on the live site. That is normally a recipe for losing an afternoon's work to a typo. Here the running site backs itself into version control twice an hour, which turns editing in production into something you can undo.</p>
+    <div class="sys-facts">
+      <div><span class="mono">Live</span><b><a href="https://blueferret.com.ua/" target="_blank" rel="noopener">blueferret.com.ua ↗</a></b></div>
+      <div><span class="mono">Built with</span><b>Node, SQLite, static output</b></div>
+      <div><span class="mono">Backed up</span><b>Every 30 minutes, to version control</b></div>
+      <div><span class="mono">Role</span><b>CMS, infrastructure, operations</b></div>
+    </div>
+  </div>
+
+  <div class="sys-body">
+<h2>Editing in production, safely</h2>
+    <p>The editors here work on the live site. Not on a staging copy that is later promoted — on the thing the public is reading. For a small publisher this is the right arrangement: a staging workflow costs a review step and a deploy step per typo, and the result is that typos do not get fixed.</p>
+    <p>What makes it defensible is that the site keeps its own history. Every half hour a task snapshots the content, compares it with what is already recorded, and commits if anything moved. Nobody presses save-a-version, because people do not, especially not before the edit that turns out to be the bad one.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:blueferret-backup --><svg class="flow" viewBox="0 0 960 546" width="960" height="546" role="img" xmlns="http://www.w3.org/2000/svg"><title>Blue Ferret — the running site backs itself up every half hour</title><desc>A scheduled task on the server snapshots the live site and its CMS content, compares against what is already stored, and commits only when something actually changed. It pushes with a key scoped to a single repository, and the script itself lives outside the directory it is backing up.</desc><defs><marker id="fl-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z"/></marker><marker id="fl-arrow-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z" fill="#b3261e"/></marker></defs><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 134 232 H 186" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 294 232 H 346" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 468 Q 480 232 480 220 V 76 Q 480 64 492 64 H 506" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 506" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 614 232 H 666" marker-end="url(#fl-arrow)"/><path class="fl-edge fl-edge--weak" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 774 232 H 788 Q 800 232 800 244 V 500 Q 800 512 788 512 H 652 Q 640 512 640 500 V 412 Q 640 400 652 400 H 666" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 774 232 H 826" marker-end="url(#fl-arrow)"/><g class="fl-node fl-node--trigger"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 64 194 H 122 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 64 a 38 38 0 0 1 0 -76 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(75 219) scale(1.0833)"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></g><text class="fl-lb" x="80" y="283">Every thirty minutes</text><text class="fl-sb" x="80" y="297.5">on the server</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 198 194 H 282 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 198 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(227 219) scale(1.0833)"><path d="M4 7h3l1.5-2h7L17 7h3a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 19H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 7z"/><circle cx="12" cy="12.5" r="3.5"/></g><text class="fl-lb" x="240" y="283">Snapshot the live site</text><text class="fl-sb" x="240" y="297.5">content and pages</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 358 194 H 442 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 358 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(387 219) scale(1.0833)"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></g><text class="fl-lb" x="400" y="283">Compare with stored</text><text class="fl-sb" x="400" y="297.5">did anything change</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 26 H 602 a 12 12 0 0 1 12 12 V 90 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 38 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 51) scale(1.0833)"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16 10"/></g><text class="fl-lb" x="560" y="115">Nothing changed</text><text class="fl-sb" x="560" y="129.5">no empty commit</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 194 H 602 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 219) scale(1.0833)"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M6 8.5v7"/><path d="M8.5 6H13a2.5 2.5 0 0 1 2.5 2.5V10"/></g><text class="fl-lb" x="560" y="283">Commit the difference</text><text class="fl-sb" x="560" y="297.5">with a timestamp</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 678 362 H 762 a 12 12 0 0 1 12 12 V 426 a 12 12 0 0 1 -12 12 H 678 a 12 12 0 0 1 -12 -12 V 374 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(707 387) scale(1.0833)"><circle cx="8" cy="12" r="4"/><path d="M12 12h9"/><path d="M17 12v3.5M20 12v2.5"/></g><text class="fl-lb" x="720" y="451">Key scoped to one repo</text><text class="fl-sb" x="720" y="465.5">cannot reach others</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 678 194 H 762 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 678 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(707 219) scale(1.0833)"><path d="M21 3 3 10.5l7 3 3 7z"/><path d="M21 3 10 14"/></g><text class="fl-lb" x="720" y="283">Pushed off the machine</text><text class="fl-sb" x="720" y="297.5">elsewhere by design</text></g><g class="fl-node fl-node--store"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 838 194 H 922 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 838 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(867 219) scale(1.0833)"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></g><text class="fl-lb" x="880" y="283">Editable history</text><text class="fl-sb" x="880" y="297.5">restore any half hour</text></g><text class="fl-elb" x="487" y="151" text-anchor="start">identical</text><text class="fl-elb" x="480" y="223" text-anchor="middle">changed</text></svg><!-- /flow --></div>
+      <figcaption>
+        <p>Compare before committing, or the history fills with empty commits and stops being readable. The credential is scoped to this one repository, and the script lives outside the directory it copies.</p>
+        <span class="mono">Fig. 1</span>
+      </figcaption>
+    </figure>
+
+    <p>Two details are load-bearing, and both are about the backup not being able to hurt anything.</p>
+    <ul>
+      <li><strong>The key can only reach one repository.</strong> A credential sitting on a web server, used unattended by a script, should be able to do exactly one thing. If that machine is ever compromised, the blast radius is a repository of board-game copy.</li>
+      <li><strong>The script lives outside what it backs up.</strong> Otherwise the backup copies itself, and — more to the point — restoring an old snapshot would restore an old version of the tool doing the restoring.</li>
+    </ul>
+
+    <h2>The layer nobody remembers is there</h2>
+    <p>This site sits behind a proxy, and then a web server, and then the application. Most of the genuinely puzzling bugs here have lived in that stack rather than in any code.</p>
+    <p>The clearest example: the public site rewrites some content on the way out, at the web-server layer. That rule was written for the public pages — and it was inherited by the admin panel, which sits under the same host. The panel was therefore being quietly edited in transit, and the symptom was an editor's changes appearing not to save. Nothing in the application was wrong. Nothing in the application could have been wrong.</p>
+
+    <div class="lesson">
+      <span class="mono">What it cost to learn</span>
+      <h4>If it does not reproduce locally, stop reading the code</h4>
+      <p>The pattern repeated often enough here to become a rule. A bug that cannot be reproduced on a local copy is, far more often than not, a bug in something between the browser and the code: a proxy rule, a cache, an inherited configuration block, a compiled bundle that is older than the source.</p>
+      <p>Hours were lost re-reading application logic that was correct, because the search naturally starts where the code is. The corrected habit is to establish <em>which layer</em> before asking <em>which line</em> — and the fastest way to do that is to compare what the server sends with what the code says it should send.</p>
+      <p>A related instance: a build artefact with a stale copy of a data file baked into it kept serving old content after the source had been fixed. Same diagnosis, different layer. <strong>Confirm the layer first.</strong></p>
+    </div>
+
+    <h2>Deployment realities</h2>
+    <p>The mirror on the server is served as static files, which brings one operational footnote worth recording for anyone on a similarly configured host: files copied into place do not automatically inherit the security labels the web server requires to read them. The symptom is a permission error that makes no sense against a configuration that is plainly correct, and the fix is a relabelling command rather than a change to any setting. It is the kind of thing that costs an hour once and five seconds thereafter.</p>
+  </div>
+
+  <div class="sys-foot">
+    <a class="mono" href="/systems/">← All systems</a>
+    <a class="btn btn--solid" href="https://blueferret.com.ua/" target="_blank" rel="noopener">Open the site ↗</a>
+  </div>
+
+  <footer class="foot mono">
+    <span>© Viacheslav Munister</span>
+    <a href="mailto:munister@outlook.com">munister@outlook.com</a>
+  </footer>
+
+</div>
+</main>
+
+</body>
+</html>

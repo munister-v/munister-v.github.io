@@ -1,0 +1,23 @@
+{
+  "title": "Blue Ferret — the running site backs itself up every half hour",
+  "alt": "A scheduled task on the server snapshots the live site and its CMS content, compares against what is already stored, and commits only when something actually changed. It pushes with a key scoped to a single repository, and the script itself lives outside the directory it is backing up.",
+  "nodes": [
+    { "id": "cron",  "col": 0, "row": 1, "kind": "trigger", "icon": "clock",   "label": "Every thirty minutes", "sub": "on the server" },
+    { "id": "snap",  "col": 1, "row": 1, "icon": "camera",  "label": "Snapshot the live site", "sub": "content and pages" },
+    { "id": "diff",  "col": 2, "row": 1, "icon": "search",  "label": "Compare with stored", "sub": "did anything change" },
+    { "id": "none",  "col": 3, "row": 0, "icon": "check",   "label": "Nothing changed", "sub": "no empty commit" },
+    { "id": "commit","col": 3, "row": 1, "icon": "git",     "label": "Commit the difference", "sub": "with a timestamp" },
+    { "id": "key",   "col": 4, "row": 2, "icon": "key",     "label": "Key scoped to one repo", "sub": "cannot reach others" },
+    { "id": "push",  "col": 4, "row": 1, "icon": "send",    "label": "Pushed off the machine", "sub": "elsewhere by design" },
+    { "id": "hist",  "col": 5, "row": 1, "kind": "store",   "icon": "archive", "label": "Editable history", "sub": "restore any half hour" }
+  ],
+  "edges": [
+    { "from": "cron",   "to": "snap" },
+    { "from": "snap",   "to": "diff" },
+    { "from": "diff",   "to": "none",  "label": "identical" },
+    { "from": "diff",   "to": "commit","label": "changed" },
+    { "from": "commit", "to": "push" },
+    { "from": "push",   "to": "key",   "kind": "weak" },
+    { "from": "push",   "to": "hist" }
+  ]
+}

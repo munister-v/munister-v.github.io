@@ -1,0 +1,23 @@
+{
+  "title": "AM Publishing — a book is not tied to one shop",
+  "alt": "Each title carries a set of offers rather than a single hard-coded retailer link. The reader's region selects among them, an unavailable region falls back to the publisher's own channel, and the catalogue text never has to be rewritten when a distribution deal changes.",
+  "nodes": [
+    { "id": "open",  "col": 0, "row": 1, "kind": "trigger", "icon": "book",   "label": "Reader opens a title", "sub": "static page" },
+    { "id": "rec",   "col": 1, "row": 1, "kind": "store",   "icon": "file",   "label": "The title record", "sub": "text and metadata" },
+    { "id": "set",   "col": 2, "row": 1, "icon": "layers",  "label": "Its set of offers", "sub": "shop · region · price" },
+    { "id": "hard",  "col": 3, "row": 0, "kind": "fail",    "icon": "cross",  "label": "One hard-coded link", "sub": "rewrite on every deal" },
+    { "id": "pick",  "col": 3, "row": 1, "icon": "filter",  "label": "Match the region", "sub": "reader's, not ours" },
+    { "id": "none",  "col": 4, "row": 0, "icon": "globe",   "label": "None available", "sub": "publisher's own channel" },
+    { "id": "buy",   "col": 4, "row": 1, "icon": "cart",    "label": "Where to buy it", "sub": "correct locally" },
+    { "id": "meta",  "col": 4, "row": 2, "icon": "quote",   "label": "Text unchanged", "sub": "editorial stays editorial" }
+  ],
+  "edges": [
+    { "from": "open", "to": "rec" },
+    { "from": "rec",  "to": "set" },
+    { "from": "set",  "to": "hard", "kind": "fail", "label": "the usual way" },
+    { "from": "set",  "to": "pick" },
+    { "from": "pick", "to": "none", "label": "no match" },
+    { "from": "pick", "to": "buy",  "label": "matched" },
+    { "from": "pick", "to": "meta", "kind": "weak" }
+  ]
+}

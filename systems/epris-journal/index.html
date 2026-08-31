@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EPRIS Journal · Viacheslav Munister</title>
+<meta name="description" content="A background queue that fingerprints the translatable part of every record, re-translates only what has genuinely fallen behind, and reports honestly when it cannot.">
+<link rel="canonical" href="https://munister.com.ua/systems/epris-journal/">
+<link rel="alternate" hreflang="en" href="https://munister.com.ua/systems/epris-journal/">
+<link rel="alternate" hreflang="x-default" href="https://munister.com.ua/systems/epris-journal/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#ffffff">
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://munister.com.ua/systems/epris-journal/">
+<meta property="og:site_name" content="Viacheslav Munister">
+<meta property="og:title" content="EPRIS Journal · Viacheslav Munister">
+<meta property="og:description" content="A background queue that fingerprints the translatable part of every record, re-translates only what has genuinely fallen behind, and reports honestly when it cannot.">
+<meta property="og:image" content="https://munister.com.ua/images/works/epris.jpg">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="EPRIS Journal · Viacheslav Munister">
+<meta name="twitter:description" content="A background queue that fingerprints the translatable part of every record, re-translates only what has genuinely fallen behind, and reports honestly when it cannot.">
+<meta name="twitter:image" content="https://munister.com.ua/images/works/epris.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "EPRIS Journal",
+  "description": "A background queue that fingerprints the translatable part of every record, re-translates only what has genuinely fallen behind, and reports honestly when it cannot.",
+  "author": {
+    "@type": "Person",
+    "name": "Viacheslav Munister",
+    "url": "https://munister.com.ua/"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Viacheslav Munister"
+  },
+  "inLanguage": "en",
+  "url": "https://munister.com.ua/systems/epris-journal/",
+  "isPartOf": {
+    "@type": "CollectionPage",
+    "name": "Systems",
+    "url": "https://munister.com.ua/systems/"
+  },
+  "about": [
+    "editorial systems",
+    "localisation",
+    "job queues",
+    "idempotency"
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/munister.css?v=14">
+<link rel="stylesheet" href="/systems.css?v=2">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <a class="wordmark" href="/">Munister</a>
+  <nav aria-label="Main">
+    <a href="/#work">Work</a>
+    <a href="/systems/" aria-current="page">Systems</a>
+    <a href="/research/">Research</a>
+    <a href="/writing/">Writing</a>
+    <a href="/#contact">Contact</a>
+  </nav>
+  <div class="head-right">
+    <a href="/cv.html">CV</a>
+  </div>
+</header>
+
+<main class="site-main" id="main">
+<div class="shell">
+
+  <div class="sys-head">
+    <a class="back mono" href="/systems/">← Systems</a>
+    <span class="mono">Editorial infrastructure · Localisation</span>
+    <h1>Seven languages, one source of truth</h1>
+    <p class="standfirst">An independent journal that publishes in seven languages with no translation department. The interesting problem is not translating the text. It is knowing, at any moment, which translations are still telling the truth about the English they came from.</p>
+    <div class="sys-facts">
+      <div><span class="mono">Live</span><b><a href="https://eprisjournal.com/" target="_blank" rel="noopener">eprisjournal.com ↗</a></b></div>
+      <div><span class="mono">Built with</span><b>Vite, React, TypeScript, Node</b></div>
+      <div><span class="mono">Languages</span><b>English source, six targets</b></div>
+      <div><span class="mono">Role</span><b>Infrastructure, editorial tooling</b></div>
+    </div>
+  </div>
+
+  <div class="sys-body">
+<h2>The problem</h2>
+    <p>A journal in seven languages has an obvious job and a hidden one. The obvious job is producing the six translations. The hidden job — the one that decides whether the whole thing is honest — is knowing which of those translations still corresponds to the English text it was made from.</p>
+    <p>English is edited constantly: a correction, a re-ordered paragraph, a sharper closing line. Each edit silently invalidates six other versions. Nobody notices, because a stale translation looks exactly like a fresh one. It is fluent, complete, and wrong in a way no reader of that language can detect, because they never see the English.</p>
+    <p>So the system is not a translation feature. It is a bookkeeping system that happens to call translators.</p>
+
+    <h2>Knowing what is stale</h2>
+    <p>The naive test is timestamps: if the English was modified after the translation, the translation is behind. This is wrong often enough to be useless. Saving a record rewrites its modification time whether or not any translatable text changed — reorder the homepage, replace a cover image, open the editor and press save, and all six languages are declared stale. Re-translating on that signal burns money and rewrites good text.</p>
+    <p>Instead the queue takes a fingerprint of only the translatable part of a record: the fields that carry language and the body blocks, with every housekeeping field deliberately excluded. That fingerprint is stored alongside each finished translation. A translation is behind when, and only when, the fingerprint of today’s English differs from the one recorded when that translation was made.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:epris-translation --><svg class="flow" viewBox="0 0 1120 619" width="1120" height="619" role="img" xmlns="http://www.w3.org/2000/svg"><title>EPRIS Journal — how a translation knows it has fallen behind</title><desc>Every fifteen minutes a sweep fingerprints the translatable part of each record, ignoring housekeeping fields. A fingerprint that still matches the stored stamp is skipped; a translation edited by hand stops and asks; anything genuinely behind is queued and run through a provider chain, then stamped with the source fingerprint and the provider that did the work.</desc><defs><marker id="fl-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z"/></marker><marker id="fl-arrow-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z" fill="#b3261e"/></marker></defs><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 134 232 H 186" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 294 232 H 346" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 468 Q 480 232 480 220 V 76 Q 480 64 492 64 H 506" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 506" marker-end="url(#fl-arrow)"/><path class="fl-edge fl-edge--weak" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 468 Q 480 232 480 244 V 388 Q 480 400 492 400 H 506" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 614 232 H 666" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 774 232 H 826" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 934 232 H 986" marker-end="url(#fl-arrow)"/><path class="fl-tool-link" fill="none" stroke="#9a9a9a" stroke-width="1.1" stroke-dasharray="4 4" d="M 720 270 C 720 514 609 508 609 533"/><g class="fl-tool"><circle cx="609" cy="554" r="21" fill="#ffffff" stroke="#6e6e6e" stroke-width="1.1"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(599.5 544.5) scale(0.7917)"><path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="m18.5 15.5.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></g></g><text class="fl-tool-lb" x="609" y="588">Model</text><path class="fl-tool-link" fill="none" stroke="#9a9a9a" stroke-width="1.1" stroke-dasharray="4 4" d="M 720 270 C 720 514 683 508 683 533"/><g class="fl-tool"><circle cx="683" cy="554" r="21" fill="#ffffff" stroke="#6e6e6e" stroke-width="1.1"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(673.5 544.5) scale(0.7917)"><path d="M3 6h9"/><path d="M7.5 4v2c0 4-2 7-4.5 8.5"/><path d="M5 10c1.4 2.6 3.6 4.2 6 5"/><path d="m12.5 21 4.5-11 4.5 11"/><path d="M14.4 17h5.2"/></g></g><text class="fl-tool-lb" x="683" y="588">DeepL</text><path class="fl-tool-link" fill="none" stroke="#9a9a9a" stroke-width="1.1" stroke-dasharray="4 4" d="M 720 270 C 720 514 757 508 757 533"/><g class="fl-tool"><circle cx="757" cy="554" r="21" fill="#ffffff" stroke="#6e6e6e" stroke-width="1.1"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(747.5 544.5) scale(0.7917)"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></g></g><text class="fl-tool-lb" x="757" y="588">Google</text><path class="fl-tool-link" fill="none" stroke="#9a9a9a" stroke-width="1.1" stroke-dasharray="4 4" d="M 720 270 C 720 514 831 508 831 533"/><g class="fl-tool"><circle cx="831" cy="554" r="21" fill="#ffffff" stroke="#6e6e6e" stroke-width="1.1"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(821.5 544.5) scale(0.7917)"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></g></g><text class="fl-tool-lb" x="831" y="588">Stopgap</text><g class="fl-node fl-node--trigger"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 64 194 H 122 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 64 a 38 38 0 0 1 0 -76 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(75 219) scale(1.0833)"><path d="M9 6c-3 1.5-4.5 4-4.5 7.5A3.5 3.5 0 1 0 8 10"/><path d="M20 6c-3 1.5-4.5 4-4.5 7.5A3.5 3.5 0 1 0 19 10"/></g><text class="fl-lb" x="80" y="283">Editor saves English</text><text class="fl-sb" x="80" y="297.5">the only source</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 198 194 H 282 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 198 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(227 219) scale(1.0833)"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></g><text class="fl-lb" x="240" y="283">Sweep every 15 min</text><text class="fl-sb" x="240" y="297.5">server side</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 358 194 H 442 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 358 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(387 219) scale(1.0833)"><circle cx="8" cy="12" r="4"/><path d="M12 12h9"/><path d="M17 12v3.5M20 12v2.5"/></g><text class="fl-lb" x="400" y="283">Fingerprint the text</text><text class="fl-sb" x="400" y="297.5">timestamps excluded</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 26 H 602 a 12 12 0 0 1 12 12 V 90 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 38 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 51) scale(1.0833)"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16 10"/></g><text class="fl-lb" x="560" y="115">Still matches</text><text class="fl-sb" x="560" y="129.5">nothing to do</text></g><g class="fl-node fl-node--store"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 194 H 602 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 219) scale(1.0833)"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></g><text class="fl-lb" x="560" y="283">Job queued on disk</text><text class="fl-sb" x="560" y="297.5">survives restart</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 362 H 602 a 12 12 0 0 1 12 12 V 426 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 374 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 387) scale(1.0833)"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16.5 5.2a3.5 3.5 0 0 1 0 6.6"/><path d="M18 14.6a6.5 6.5 0 0 1 3.5 5.4"/></g><text class="fl-lb" x="560" y="451">Edited by hand</text><text class="fl-sb" x="560" y="465.5">stops and asks</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 678 194 H 762 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 678 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(707 219) scale(1.0833)"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h13M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></g><text class="fl-lb" x="720" y="283">Provider chain</text><text class="fl-sb" x="720" y="297.5">best first</text></g><g class="fl-node fl-node--store"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 838 194 H 922 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 838 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(867 219) scale(1.0833)"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></g><text class="fl-lb" x="880" y="283">Localised record</text><text class="fl-sb" x="880" y="297.5">six languages</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 998 194 H 1082 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 998 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(1027 219) scale(1.0833)"><path d="M3 11V4h7l10 10-7 7z"/><circle cx="7.5" cy="7.5" r="1.4"/></g><text class="fl-lb" x="1040" y="283">Stamped</text><text class="fl-sb" x="1040" y="297.5">hash + provider</text></g><text class="fl-elb" x="487" y="151" text-anchor="start">unchanged</text><text class="fl-elb" x="480" y="223" text-anchor="middle">behind</text><text class="fl-elb" x="487" y="319" text-anchor="start">hand-edited</text></svg><!-- /flow --></div>
+      <figcaption>
+        <p>The sweep runs on the server every fifteen minutes, so the editor can close the tab. Work in progress lives on disk rather than in memory: a restart mid-article resumes at the language it stopped on, instead of starting the article again.</p>
+        <span class="mono">Fig. 1</span>
+      </figcaption>
+    </figure>
+
+    <h3>Three outcomes, not two</h3>
+    <p>A language can be up to date, behind — or <strong>edited by hand</strong>. The third case is the one that makes the design worth having. If someone has improved the Ukrainian text directly, an automatic re-translation would silently destroy that work, and the person who did it would find out weeks later, if ever.</p>
+    <p>The queue detects this by fingerprinting its own output too. If what is in the record no longer matches what the queue wrote, a human has been here. Those languages are not overwritten; they are collected into a short list of decisions, each answered once with either <em>keep mine</em> or <em>redo it</em>. An automatic system that edits published text needs a way to stop and ask, and it needs an undo — the queue keeps the previous version of every language it replaces.</p>
+
+    <h2>Choosing a translator</h2>
+    <p>Four providers sit in a chain, tried in order of quality. Three of them run out: a monthly volume allowance is gone within a week, a public endpoint rate-limits by address, a free model tier resets daily. This is normal and permanent, not an incident.</p>
+    <p>Two consequences follow. First, work picked up automatically refuses to accept the emergency-grade translator — better to wait than to fill a journal with visibly poor text nobody asked for. Work requested by a human accepts anything, because a person is standing there waiting. Second, when a better provider becomes available again, translations made by a worse one are quietly redone. Quality settles upward on its own.</p>
+    <p>The chain also has to survive a provider being <em>almost</em> right. A model given forty strings to translate occasionally returns thirty-nine, having merged two. The wrong response is to fall through to the next provider — that hands the work to something worse over one bad batch. The right response is to split the batch and try again, down to single strings, where miscounting is impossible.</p>
+
+    <h2>Publication</h2>
+    <p>Two independent gates decide whether a reader can reach a piece: a draft flag on the record itself, and a separate visibility map that governs whether its section is shown at all. Both must be open. Clearing one produces the worst possible state — a record that is published, correct, and unreachable.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:epris-publication --><svg class="flow" viewBox="0 0 640 674" width="640" height="674" role="img" xmlns="http://www.w3.org/2000/svg"><title>EPRIS Journal — two gates stand between a draft and a reader</title><desc>Publishing clears a draft flag on the record, but a separate visibility map decides whether the section is shown at all. Both must open for a reader to see the piece; clearing only one produces a published record nobody can reach. A preview token bypasses both gates for one record, which is why it must never be used to check that publishing worked.</desc><defs><marker id="fl-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z"/></marker><marker id="fl-arrow-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z" fill="#b3261e"/></marker></defs><g class="fl-group"><rect x="326" y="498" width="308" height="128" rx="14" fill="none" stroke="#c9c7c4" stroke-width="1" stroke-dasharray="3 4"/><text class="fl-group-t" x="340" y="513">Checking with a preview link hides exactly this bug</text></g><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 134 232 H 148 Q 160 232 160 220 V 76 Q 160 64 172 64 H 186" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 134 232 H 148 Q 160 232 160 244 V 388 Q 160 400 172 400 H 186" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 294 64 H 308 Q 320 64 320 76 V 220 Q 320 232 332 232 H 346" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 294 400 H 308 Q 320 400 320 388 V 244 Q 320 232 332 232 H 346" marker-end="url(#fl-arrow)"/><path class="fl-edge fl-edge--fail" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 468 Q 480 232 480 220 V 76 Q 480 64 492 64 H 506" marker-end="url(#fl-arrow-fail)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 506" marker-end="url(#fl-arrow)"/><path class="fl-edge fl-edge--weak" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 568 H 506" marker-end="url(#fl-arrow)"/><g class="fl-node fl-node--trigger"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 64 194 H 122 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 64 a 38 38 0 0 1 0 -76 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(75 219) scale(1.0833)"><path d="M21 3 3 10.5l7 3 3 7z"/><path d="M21 3 10 14"/></g><text class="fl-lb" x="80" y="283">Editor publishes</text><text class="fl-sb" x="80" y="297.5">one button</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 198 26 H 282 a 12 12 0 0 1 12 12 V 90 a 12 12 0 0 1 -12 12 H 198 a 12 12 0 0 1 -12 -12 V 38 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(227 51) scale(1.0833)"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></g><text class="fl-lb" x="240" y="115">Draft flag cleared</text><text class="fl-sb" x="240" y="129.5">on the record</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 198 362 H 282 a 12 12 0 0 1 12 12 V 426 a 12 12 0 0 1 -12 12 H 198 a 12 12 0 0 1 -12 -12 V 374 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(227 387) scale(1.0833)"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.7"/></g><text class="fl-lb" x="240" y="451">Visibility map</text><text class="fl-sb" x="240" y="465.5">separate document</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 358 194 H 442 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 358 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(387 219) scale(1.0833)"><path d="M21 12h-5"/><path d="M16 12 9 6H3"/><path d="M16 12 9 18H3"/><path d="m13 9 3 3-3 3"/></g><text class="fl-lb" x="400" y="283">Both gates open?</text><text class="fl-sb" x="400" y="297.5">and, not or</text></g><g class="fl-node fl-node--fail"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 26 H 602 a 12 12 0 0 1 12 12 V 90 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 38 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 51) scale(1.0833)"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></g><text class="fl-lb" x="560" y="115">Published, unreachable</text><text class="fl-sb" x="560" y="129.5">one gate shut</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 194 H 602 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 219) scale(1.0833)"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></g><text class="fl-lb" x="560" y="283">Reader sees it</text><text class="fl-sb" x="560" y="297.5">public route</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 358 530 H 442 a 12 12 0 0 1 12 12 V 594 a 12 12 0 0 1 -12 12 H 358 a 12 12 0 0 1 -12 -12 V 542 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(387 555) scale(1.0833)"><circle cx="8" cy="12" r="4"/><path d="M12 12h9"/><path d="M17 12v3.5M20 12v2.5"/></g><text class="fl-lb" x="400" y="619">Preview token</text><text class="fl-sb" x="400" y="633.5">one record</text></g><g class="fl-node fl-node--external"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 530 H 602 a 12 12 0 0 1 12 12 V 594 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 542 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 555) scale(1.0833)"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.7"/></g><text class="fl-lb" x="560" y="619">Bypasses both gates</text><text class="fl-sb" x="560" y="633.5">proves nothing</text></g><text class="fl-elb" x="487" y="151" text-anchor="start">either shut</text><text class="fl-elb" x="480" y="223" text-anchor="middle">both open</text></svg><!-- /flow --></div>
+      <figcaption>
+        <p>Two gates, joined by <em>and</em>. The preview link at the bottom opens a single record regardless of both — which makes it the one tool you must not use to check that publishing worked.</p>
+        <span class="mono">Fig. 2</span>
+      </figcaption>
+    </figure>
+
+    <p>The preview token deserves the warning printed on the diagram. It exists so an editor can send a draft to an author, and it does that well. But it bypasses both gates, so opening a preview link proves only that the record exists. More than once, “I published it and it’s fine, look” was demonstrated with a preview link on a piece no reader could reach.</p>
+
+    <div class="lesson">
+      <span class="mono">What it cost to learn</span>
+      <h4>A panel that cries wolf is worse than no panel</h4>
+      <p>The editorial panel showed a health light per provider. Three of the five were red almost permanently, for the ordinary quota reasons above, while translation carried on working through the provider at the top of the chain. Alongside them sat a job log of the last forty runs — twenty-eight of which were a bug, fixed weeks earlier, whose dead entries never expired.</p>
+      <p>The panel was, line by line, accurate. As a whole it said <em>this is broken</em>, and it said it for weeks while nothing was broken. An article translated into all six languages at 09:42 was reported as untranslated at 10:15, and believed, because everything on that screen was red.</p>
+      <p>The repair was not more monitoring. It was one sentence at the top — <strong>translation is working, through this provider</strong> — an exhausted quota rendered amber rather than red, and dead jobs cleared automatically. A signal you have learned to ignore is not a signal; it is decoration that costs you the incident it was built for.</p>
+    </div>
+
+    <h2>What this bought</h2>
+    <ul>
+      <li><strong>The editor can close the tab.</strong> Translation used to run in the browser: six languages, thirteen batches each, twenty minutes with the laptop awake. Losing the network lost the work, silently and halfway.</li>
+      <li><strong>Cost is bounded by change, not by volume.</strong> Only genuinely stale text is re-translated, so an ordinary editing day costs almost nothing.</li>
+      <li><strong>Human work is safe.</strong> Nothing a person wrote is overwritten without being asked first, and every replacement can be undone.</li>
+      <li><strong>Readiness is announced.</strong> When the last language of a piece lands, the editorial chat is told. Nobody has to go and look.</li>
+    </ul>
+  </div>
+
+  <div class="sys-foot">
+    <a class="mono" href="/systems/">← All systems</a>
+    <a class="btn btn--solid" href="https://eprisjournal.com/" target="_blank" rel="noopener">Read the journal ↗</a>
+  </div>
+
+  <footer class="foot mono">
+    <span>© Viacheslav Munister</span>
+    <a href="mailto:munister@outlook.com">munister@outlook.com</a>
+  </footer>
+
+</div>
+</main>
+
+</body>
+</html>

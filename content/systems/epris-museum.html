@@ -1,0 +1,63 @@
+<!--meta {
+  "slug": "epris-museum",
+  "order": 3,
+  "title": "EPRIS Museum",
+  "kicker": "Virtual museum · Curation and engineering",
+  "headline": "A building written as geometry, not imported as a model",
+  "standfirst": "A hundred and fifteen paintings drawn from a public collection and hung across ten halls of a building that exists only as code. The engineering question underneath: what has to be true for a room on the internet to be somewhere you can cite?",
+  "summary": "Public-domain painting pulled over IIIF, re-encoded and held locally, hung in halls that are stable addresses rather than positions in a scene.",
+  "image": "/images/works/museum.jpg",
+  "about": ["digital humanities", "IIIF", "WebGL", "static site generation"],
+  "visit": ["Enter the museum", "https://museum.eprisjournal.com/"],
+  "facts": [
+    ["Live", "<a href=\"https://museum.eprisjournal.com/\" target=\"_blank\" rel=\"noopener\">museum.eprisjournal.com ↗</a>"],
+    ["Collection", "115 works, 10 halls"],
+    ["Built with", "three.js, Python build step, static hosting"],
+    ["Role", "Curation, architecture, implementation"]
+  ]
+} -->
+
+    <h2>The premise</h2>
+    <p>Most virtual museums are galleries with a camera. You move, images pass, nothing is anywhere in particular. The moment you want to say “the third wall of the second hall”, you find there is no such place — only a coordinate in a scene that will change next time the layout is adjusted.</p>
+    <p>This one is built the other way round. <strong>A hall is an address.</strong> It has a URL, a fixed wall length, a date span and a list of works, and that list is written in a file which has nothing to do with the geometry. The building can be rebuilt entirely without a single citation breaking, because the citation points at the hall, not at a position in a model.</p>
+    <p>The building itself is written as geometry in code rather than imported as a prepared 3D model. That is a deliberate trade: a model file would look richer, and it would be an opaque binary that nobody can diff, review or adjust without the tool that made it. Concrete described in a hundred lines of arithmetic can be changed by reading it.</p>
+
+    <h2>Getting the pictures</h2>
+    <p>The works come from a major public collection that exposes both a search API and IIIF, the standard for serving images of cultural objects at arbitrary sizes. Two rules govern the intake, and both are about rights and obligations rather than code.</p>
+    <p>Only public-domain works are taken. This is checked per object against the collection’s own rights field, not assumed from age — a photograph of an old painting can carry its own claim, and the field is the only authority worth trusting.</p>
+    <p>And the collection requires requests to identify themselves with a specific header. Omit it and the image endpoint refuses, in a way that looks exactly like a network failure. This is a fair demand: a public institution serving very large images for free is entitled to know who is asking. Anyone building against a cultural API should expect a condition like it and read the terms before the code.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:epris-museum-intake --><!-- /flow --></div>
+      <figcaption>
+        <p>Intake. Images are re-encoded into the sizes the site actually serves and stored locally rather than hot-linked, so the museum does not go dark if the source changes a URL scheme.</p>
+        <span class="mono">Fig. 1</span>
+      </figcaption>
+    </figure>
+
+    <p>The hang is curated, not sorted. Halls carry an argument — a period, a way of handling light, a shared problem — and the order within a hall is chosen. Sorting by date would have been one line of code and would have produced a database listing with walls.</p>
+
+    <h2>The failure that shaped the front end</h2>
+    <p>A browser can take back a hardware drawing surface at any moment: too many tabs, another application demanding the GPU, a laptop deciding to save power. Every serious three-dimensional page must survive this. Without handling, the canvas simply goes blank — no error, no message, a grey rectangle where a room was.</p>
+    <p>Here it was worse than a blank hall. The museum persists across transitions between halls, so a single lost surface followed the visitor everywhere. One hall failed; from then on, every hall was empty. The museum appeared to be entirely broken, and only for the people it had happened to.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:epris-museum-context --><!-- /flow --></div>
+      <figcaption>
+        <p>The recovery path. The loss is caught explicitly, the render loop stopped, and a still photograph of the hall shown in the meantime — so the visitor sees a room rather than a void, and the scene is rebuilt when the surface comes back.</p>
+        <span class="mono">Fig. 2</span>
+      </figcaption>
+    </figure>
+
+    <div class="lesson">
+      <span class="mono">What it cost to learn</span>
+      <h4>The state that outlives the page is the state that hurts</h4>
+      <p>The bug was hard to find because it was not reproducible in the hall where it appeared. Everything about that hall was fine. The damage had been done in a different hall, minutes earlier, and had travelled through the thing designed to make navigation feel smooth: a persistent surface that survives route changes.</p>
+      <p>Every long-lived object bought for performance — a shared canvas, a cached connection, a module-level singleton — is also a channel along which one failure reaches parts of the system that never touched it. It is worth writing down, for each such object, what happens when it dies. Usually nobody has, and the answer turns out to be <em>everything downstream, silently, until reload</em>.</p>
+    </div>
+
+    <h2>How it ships</h2>
+    <p>The whole museum is generated as static files by a single build step and copied to a server. There is no application running behind it. For an archive this is the correct default: nothing to keep patched, nothing to fall over at three in the morning, and a copy of the entire institution can be handed to someone as a folder.</p>
+    <p>Exhibitions are curated through a small admin that sits alongside, and the generator now lives on the server rather than on a laptop. That sounds like a detail and is not: a generator that only exists on one machine means the museum can only be rebuilt by one person, which is a preservation problem dressed as a convenience problem.</p>

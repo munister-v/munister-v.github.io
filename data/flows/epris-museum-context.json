@@ -1,0 +1,23 @@
+{
+  "title": "EPRIS Museum — surviving the loss of the drawing surface",
+  "alt": "A browser may take back a WebGL drawing surface at any time. Without handling, the canvas goes blank and, because the museum persists across page transitions, the blank surface follows the visitor into every other hall. The fix listens for the loss, cancels the render loop, shows a still image of the hall, and rebuilds the scene when the surface is restored.",
+  "nodes": [
+    { "id": "enter",  "col": 0, "row": 1, "kind": "trigger",  "icon": "map",     "label": "Visitor enters a hall", "sub": "route change" },
+    { "id": "scene",  "col": 1, "row": 1, "icon": "cpu",      "label": "Scene on a surface", "sub": "geometry, not a model" },
+    { "id": "lost",   "col": 2, "row": 0, "kind": "external", "icon": "cross",   "label": "Browser takes it back", "sub": "memory pressure" },
+    { "id": "draw",   "col": 2, "row": 2, "icon": "eye",      "label": "Frames drawn", "sub": "normal case" },
+    { "id": "naive",  "col": 3, "row": 0, "kind": "fail",     "icon": "cross",   "label": "Blank in every hall", "sub": "without handling" },
+    { "id": "catch",  "col": 3, "row": 1, "icon": "shield",   "label": "Loss is caught", "sub": "loop stopped" },
+    { "id": "still",  "col": 4, "row": 1, "icon": "image",    "label": "Still of the hall", "sub": "visitor sees a room" },
+    { "id": "back",   "col": 5, "row": 1, "icon": "loop",     "label": "Surface restored", "sub": "scene rebuilt" }
+  ],
+  "edges": [
+    { "from": "enter", "to": "scene" },
+    { "from": "scene", "to": "draw",  "label": "surface held" },
+    { "from": "scene", "to": "lost",  "label": "surface lost" },
+    { "from": "lost",  "to": "naive", "kind": "fail" },
+    { "from": "lost",  "to": "catch" },
+    { "from": "catch", "to": "still" },
+    { "from": "still", "to": "back" }
+  ]
+}

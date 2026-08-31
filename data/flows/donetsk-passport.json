@@ -1,0 +1,23 @@
+{
+  "title": "Museum of Donetsk Photography — giving each photograph a passport",
+  "alt": "Photographs gathered from scattered sources are de-duplicated by image content rather than filename, given a passport recording date, place, author and licence, and only then assigned to a hall. Anything whose provenance cannot be established is held out of the hang rather than published without it.",
+  "nodes": [
+    { "id": "gather", "col": 0, "row": 1, "kind": "trigger", "icon": "folder",  "label": "Gathered images", "sub": "scattered sources" },
+    { "id": "dedupe", "col": 1, "row": 1, "icon": "layers",  "label": "De-duplicate", "sub": "by content, not name" },
+    { "id": "same",   "col": 2, "row": 0, "icon": "loop",    "label": "Same frame again", "sub": "kept once" },
+    { "id": "pass",   "col": 2, "row": 1, "icon": "tag",     "label": "Write a passport", "sub": "date · place · author" },
+    { "id": "unknown","col": 3, "row": 2, "kind": "fail",    "icon": "cross",   "label": "Provenance unclear", "sub": "not hung" },
+    { "id": "lic",    "col": 3, "row": 1, "icon": "shield",  "label": "Licence recorded", "sub": "ours or another's" },
+    { "id": "hall",   "col": 4, "row": 1, "icon": "map",     "label": "Assigned a hall", "sub": "eight of them" },
+    { "id": "build",  "col": 5, "row": 1, "kind": "store",   "icon": "box",     "label": "Museum rebuilt", "sub": "static output" }
+  ],
+  "edges": [
+    { "from": "gather", "to": "dedupe" },
+    { "from": "dedupe", "to": "same",  "kind": "weak", "label": "duplicate" },
+    { "from": "dedupe", "to": "pass",  "label": "new frame" },
+    { "from": "pass",   "to": "unknown", "kind": "fail", "label": "cannot say" },
+    { "from": "pass",   "to": "lic" },
+    { "from": "lic",    "to": "hall" },
+    { "from": "hall",   "to": "build" }
+  ]
+}

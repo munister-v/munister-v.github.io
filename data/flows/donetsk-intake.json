@@ -1,0 +1,25 @@
+{
+  "title": "Museum of Donetsk Photography — accepting photographs from readers",
+  "alt": "Reader submissions are handled by a separate service, not by the site. Files over the size limit are refused outright; those accepted are decoded and re-encoded into a clean image, which discards embedded metadata and anything hidden in the original container. A curator reviews behind a token before anything is hung.",
+  "nodes": [
+    { "id": "send",  "col": 0, "row": 1, "kind": "trigger", "icon": "camera", "label": "Reader sends a photo", "sub": "form on the site" },
+    { "id": "svc",   "col": 1, "row": 1, "kind": "external","icon": "server", "label": "Separate service", "sub": "not the museum" },
+    { "id": "size",  "col": 2, "row": 1, "icon": "scale",   "label": "Size and type limit", "sub": "checked first" },
+    { "id": "no",    "col": 3, "row": 0, "kind": "fail",    "icon": "cross",  "label": "Refused", "sub": "nothing stored" },
+    { "id": "re",    "col": 3, "row": 1, "icon": "image",   "label": "Decode, re-encode", "sub": "a clean new file" },
+    { "id": "strip", "col": 4, "row": 2, "icon": "shield",  "label": "Original discarded", "sub": "and its metadata" },
+    { "id": "hold",  "col": 4, "row": 1, "kind": "store",   "icon": "archive","label": "Held for review", "sub": "never auto-published" },
+    { "id": "cur",   "col": 5, "row": 1, "icon": "key",     "label": "Curator decides", "sub": "behind a token" },
+    { "id": "hall",  "col": 6, "row": 1, "icon": "map",     "label": "Enters the hang", "sub": "with a passport" }
+  ],
+  "edges": [
+    { "from": "send",  "to": "svc" },
+    { "from": "svc",   "to": "size" },
+    { "from": "size",  "to": "no",   "kind": "fail", "label": "too large" },
+    { "from": "size",  "to": "re",   "label": "accepted" },
+    { "from": "re",    "to": "strip", "kind": "weak" },
+    { "from": "re",    "to": "hold" },
+    { "from": "hold",  "to": "cur" },
+    { "from": "cur",   "to": "hall" }
+  ]
+}

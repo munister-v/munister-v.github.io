@@ -1,0 +1,24 @@
+{
+  "title": "TeachEd — a worksheet has to be measured, not predicted",
+  "alt": "Estimating the height of generated content from character counts is always wrong because text wraps. The worksheet is instead rendered, measured for what actually happened, and reflowed if it overruns the page, with a hard ceiling to stop the loop running away.",
+  "nodes": [
+    { "id": "add",   "col": 0, "row": 1, "kind": "trigger", "icon": "file",    "label": "Content added", "sub": "length unknown" },
+    { "id": "guess", "col": 1, "row": 0, "kind": "fail",    "icon": "ruler",   "label": "Estimate from length", "sub": "wrong on every wrap" },
+    { "id": "draw",  "col": 1, "row": 1, "icon": "eye",     "label": "Render it first", "sub": "then look" },
+    { "id": "meas",  "col": 2, "row": 1, "icon": "scale",   "label": "Measure what happened", "sub": "real box, real font" },
+    { "id": "fits",  "col": 3, "row": 0, "icon": "check",   "label": "Fits the page", "sub": "done" },
+    { "id": "over",  "col": 3, "row": 1, "icon": "cross",   "label": "Overruns", "sub": "by how much" },
+    { "id": "again", "col": 4, "row": 1, "icon": "loop",    "label": "Reflow and remeasure", "sub": "not re-estimate" },
+    { "id": "cap",   "col": 5, "row": 1, "icon": "shield",  "label": "Hard ceiling", "sub": "loop cannot run away" }
+  ],
+  "edges": [
+    { "from": "add",   "to": "guess", "kind": "fail", "label": "the tempting way" },
+    { "from": "add",   "to": "draw" },
+    { "from": "draw",  "to": "meas" },
+    { "from": "meas",  "to": "fits",  "label": "within" },
+    { "from": "meas",  "to": "over",  "label": "beyond" },
+    { "from": "over",  "to": "again" },
+    { "from": "again", "to": "meas",  "kind": "weak", "label": "measure again, never guess" },
+    { "from": "again", "to": "cap",   "kind": "weak" }
+  ]
+}

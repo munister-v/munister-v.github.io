@@ -1,0 +1,94 @@
+<!--meta {
+  "slug": "mania-group",
+  "order": 1,
+  "title": "Mania Group",
+  "kicker": "Retail operations · Data model",
+  "headline": "A catalogue is a data model, not a set of pages",
+  "standfirst": "Mania Group sells branded clothing in a trade where the same shoe exists in nine sizes, four of which are out of stock by Friday. The old shop modelled that as pages. Rebuilding it meant deciding, once, what a product actually is.",
+  "summary": "Supplier spreadsheets normalised into products and size-level variants, an order whose fulfilment and payment are two independent facts, and a payment callback that cannot pay twice.",
+  "image": "/images/homepage/maniagroup.jpg",
+  "about": ["e-commerce architecture", "data modelling", "PostgreSQL", "idempotency"],
+  "visit": ["Visit the shop", "https://shop.maniagroup.com.ua/"],
+  "facts": [
+    ["Live", "<a href=\"https://shop.maniagroup.com.ua/\" target=\"_blank\" rel=\"noopener\">shop.maniagroup.com.ua \u2197</a>"],
+    ["Built with", "Next.js, TypeScript, PostgreSQL"],
+    ["Role", "Architecture, implementation, operations"],
+    ["Replaced", "WordPress and WooCommerce"]
+  ]
+} -->
+
+
+    <h2>The problem</h2>
+    <p>The shop that existed worked, in the sense that it served pages and took orders. What it could not do was answer questions. <strong>How many of this jacket are left in 46?</strong> is not a question a page can answer, because in WordPress a product is a document and a size is a word inside it. Stock lived in the supplier’s head and in a spreadsheet emailed on Mondays.</p>
+    <p>Everything downstream inherited that. A price change meant editing pages. A new supplier meant retyping a workbook. Reporting meant counting by hand. None of these are bugs; they are the consequences of one modelling decision made years earlier, and no amount of plugin work reverses it.</p>
+    <p>So the rebuild is not a redesign. The visible shop is the smallest part of it. The work is to say what a product is, what a variant is, what an order is and what payment is — and then to keep those four answers stable while everything else changes around them.</p>
+
+    <h2>Intake</h2>
+    <p>Goods arrive as spreadsheets. Not one format: a WooCommerce export from the legacy system, and workbooks from suppliers who each invented their own column names, in two languages, sometimes with the header on row four.</p>
+    <p>The first instinct is to write a parser per supplier. That scales badly and fails silently — a new column order produces plausible nonsense rather than an error. The pipeline instead tries a rule-based parser first, and only when the file is genuinely unrecognised does it ask a model to map columns onto the schema. The model runs once per layout, not once per row: it is being asked to read a header, which is a job it does well and cheaply, rather than to transform data, which it does expensively and unreliably.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:maniagroup-catalogue --><!-- /flow --></div>
+      <figcaption>
+        <p>Import. A recognised export goes straight to normalisation; an unfamiliar workbook has its columns mapped first. A row whose price or size cannot be resolved is held for review rather than guessed — the one branch that keeps the catalogue trustworthy.</p>
+        <span class="mono">Fig. 1</span>
+      </figcaption>
+    </figure>
+
+    <p>The branch that matters most is the red one. A row that cannot be resolved is <strong>held, not guessed</strong>. This is the whole difference between an import that can be trusted and one that cannot: a pipeline which silently invents a price for an ambiguous row will, sooner or later, sell something for the wrong money, and nobody will know which row did it. Holding a row costs someone five minutes. Guessing costs a reconciliation.</p>
+
+    <h3>What a product turned out to be</h3>
+    <p>Three identifiers that looked like one. The seller’s own internal code, the manufacturer’s factory article, and a barcode — which, in this catalogue, is empty on every single variant. Collapsing them into a single “SKU” field would have been tidy and wrong: matching a supplier’s price list against our catalogue needs the factory article, while a customer’s question about “the code on the tag” needs ours.</p>
+    <p>Stock is held at variant level, as a matrix of product against size. That is the modelling decision the whole system rests on. It is also the one that makes the question at the top of this page answerable at all.</p>
+
+    <h2>The order</h2>
+    <p>An order has two states, and they are not the same state. Whether the parcel has shipped and whether the money has arrived are independent facts, and a shop that stores them in one column starts lying the moment either happens without the other.</p>
+    <p>Cash on delivery is shipped but unpaid for a week. An online prepayment is paid but unshipped until Monday. There is no ordering of these that a single status column can express, and every attempt to force one produces a status list like <code>paid_but_not_shipped</code> that grows a new member every time reality does something new.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:maniagroup-order --><!-- /flow --></div>
+      <figcaption>
+        <p>One order row carrying two independent state machines. Fulfilment and payment advance on their own schedules and write to a single timeline, so the order’s history can be read back in order even though its two halves never move together.</p>
+        <span class="mono">Fig. 2</span>
+      </figcaption>
+    </figure>
+
+    <p>Checkout re-checks the size before it writes anything. The stock a customer saw was read when the page rendered, and between then and the submit button someone else may have bought the last one. Re-checking at the moment of writing is the difference between an oversold order and a polite refusal.</p>
+
+    <h2>Money</h2>
+    <p>Payment providers retry. This is not a failure mode to be defended against grudgingly; it is the documented, correct behaviour of every provider worth using, because the alternative — a callback lost to a network blip and an order never marked paid — is worse. The provider assumes the receiver is idempotent, and if the receiver is not, the provider’s correct behaviour becomes the receiver’s double-payment.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:maniagroup-webhook --><!-- /flow --></div>
+      <figcaption>
+        <p>The callback is written with an upsert keyed on the provider and its own reference for the transaction. A first delivery inserts and moves the order to paid. A retry of the same reference updates that row in place and produces no second event on the timeline.</p>
+        <span class="mono">Fig. 3</span>
+      </figcaption>
+    </figure>
+
+    <p>Idempotency here is not application logic that checks whether it has seen this callback before — that check is a race, and under retries a race is exactly what you get. It is a unique index on the pair of provider and provider reference, with the write expressed as an upsert onto it. The database decides. Two simultaneous deliveries of the same callback cannot both insert, because the index will not let them.</p>
+    <p>The raw callback body is stored alongside, untouched. When a payment is disputed months later, the useful artefact is what the provider actually sent, not our parsed summary of it. Never keep only your own account of someone else’s money.</p>
+
+    <div class="lesson">
+      <span class="mono">What it cost to learn</span>
+      <h4>A forwarded header is user input</h4>
+      <p>The admin panel locks an account after repeated failed logins, keyed by client address. The address came from a forwarded header, which any client can set to anything. The lockout was therefore trivially bypassed by varying it — and worse, could be aimed at someone else by sending their address with bad passwords.</p>
+      <p>The fix was not more application code. Rate limiting moved to the layer that actually knows who is connecting, with the panel and the login endpoint limited separately, and repeat offenders dropped at the firewall. The general lesson has outlived the bug: <strong>anything a client can write is not identity</strong>, no matter how conventional the header name.</p>
+    </div>
+
+    <h2>Operating it</h2>
+    <p>The parts of this system that have cost the most time are not in any of the diagrams above, because they are not features.</p>
+    <ul>
+      <li><strong>The build outgrew the machine.</strong> A production build on a small VPS competes with the running site for memory and loses. The deploy stops the process manager, builds under an explicit heap cap, then starts again — slower, and it finishes.</li>
+      <li><strong>A synchronisation flag deleted the catalogue images.</strong> Mirroring a local directory to the server with deletion enabled removed everything the server had that the laptop did not, which was all the product photography. Deploy scripts now carry their exclusions themselves, rather than depending on whoever runs them remembering.</li>
+      <li><strong>The server is sometimes ahead of the laptop.</strong> Work done directly on the server is real work. Treating the local copy as the source of truth and pushing over the top erases it silently. Every deployment now begins by asking what the difference actually is.</li>
+      <li><strong>A verified backup is one that has been restored.</strong> Checking that a dump decompresses proves the file is not corrupt and nothing else. The recovery procedure here ends in an actual restore into a scratch database, because that is the only test that answers the question being asked.</li>
+    </ul>
+
+    <h2>Where it stands</h2>
+    <p>The shop is live and selling. The catalogue is imported rather than typed, stock is answerable at size level, and orders carry a history that can be read back. The direction of travel is from shop toward back office: the same data model now serves an operations panel where stock, price imports and orders are handled in one place, rather than split between a storefront and a spreadsheet.</p>
+    <p>The measure of the rebuild is not the interface. It is that questions the old system could not answer are now answered by a query.</p>
+

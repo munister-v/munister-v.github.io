@@ -1,0 +1,29 @@
+{
+  "title": "Mania Group — an order and its money are two separate facts",
+  "alt": "Checkout re-checks variant stock, rejects the order if the size has gone, then writes one order row that carries two independent state machines: fulfilment (pending, processing, completed) and payment (unpaid, paid). Both write to a single order events timeline.",
+  "nodes": [
+    { "id": "checkout", "col": 0, "row": 1, "kind": "trigger", "icon": "cart",    "label": "Checkout submitted", "sub": "cart · address" },
+    { "id": "stock",    "col": 1, "row": 1, "icon": "grid",    "label": "Re-check the size", "sub": "variant, not product" },
+    { "id": "gone",     "col": 2, "row": 0, "kind": "fail",    "icon": "cross",   "label": "Size gone since", "sub": "nothing written" },
+    { "id": "order",    "col": 2, "row": 1, "kind": "store",   "icon": "file",    "label": "One order row", "sub": "orders" },
+    { "id": "fulfil",   "col": 3, "row": 0, "icon": "box",     "label": "Fulfilment state", "sub": "pending → completed" },
+    { "id": "pay",      "col": 3, "row": 2, "icon": "card",    "label": "Payment state", "sub": "unpaid → paid" },
+    { "id": "ttn",      "col": 4, "row": 0, "icon": "send",    "label": "Handed to carrier", "sub": "ttn, tracking" },
+    { "id": "paid",     "col": 4, "row": 2, "icon": "check",   "label": "Money confirmed", "sub": "paid_at stamped" },
+    { "id": "events",   "col": 5, "row": 1, "kind": "store",   "icon": "archive", "label": "One timeline", "sub": "order_events" }
+  ],
+  "edges": [
+    { "from": "checkout", "to": "stock" },
+    { "from": "stock",    "to": "gone",  "kind": "fail", "label": "sold out" },
+    { "from": "stock",    "to": "order", "label": "reserved" },
+    { "from": "order",    "to": "fulfil" },
+    { "from": "order",    "to": "pay" },
+    { "from": "fulfil",   "to": "ttn" },
+    { "from": "pay",      "to": "paid" },
+    { "from": "ttn",      "to": "events" },
+    { "from": "paid",     "to": "events" }
+  ],
+  "groups": [
+    { "label": "Two axes, never one column", "nodes": ["fulfil", "pay", "ttn", "paid"] }
+  ]
+}

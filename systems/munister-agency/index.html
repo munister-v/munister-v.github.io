@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Munister Agency · Viacheslav Munister</title>
+<meta name="description" content="Working-hour overlap computed per US state from the platform's built-in IANA rules, so daylight saving resolves itself, over a 32 kb geometry model that keeps the page static.">
+<link rel="canonical" href="https://munister.com.ua/systems/munister-agency/">
+<link rel="alternate" hreflang="en" href="https://munister.com.ua/systems/munister-agency/">
+<link rel="alternate" hreflang="x-default" href="https://munister.com.ua/systems/munister-agency/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#ffffff">
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://munister.com.ua/systems/munister-agency/">
+<meta property="og:site_name" content="Viacheslav Munister">
+<meta property="og:title" content="Munister Agency · Viacheslav Munister">
+<meta property="og:description" content="Working-hour overlap computed per US state from the platform's built-in IANA rules, so daylight saving resolves itself, over a 32 kb geometry model that keeps the page static.">
+<meta property="og:image" content="https://munister.com.ua/images/og-en.jpg">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Munister Agency · Viacheslav Munister">
+<meta name="twitter:description" content="Working-hour overlap computed per US state from the platform's built-in IANA rules, so daylight saving resolves itself, over a 32 kb geometry model that keeps the page static.">
+<meta name="twitter:image" content="https://munister.com.ua/images/og-en.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Munister Agency",
+  "description": "Working-hour overlap computed per US state from the platform's built-in IANA rules, so daylight saving resolves itself, over a 32 kb geometry model that keeps the page static.",
+  "author": {
+    "@type": "Person",
+    "name": "Viacheslav Munister",
+    "url": "https://munister.com.ua/"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Viacheslav Munister"
+  },
+  "inLanguage": "en",
+  "url": "https://munister.com.ua/systems/munister-agency/",
+  "isPartOf": {
+    "@type": "CollectionPage",
+    "name": "Systems",
+    "url": "https://munister.com.ua/systems/"
+  },
+  "about": [
+    "time zones",
+    "geographic visualisation",
+    "static sites",
+    "internationalisation"
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/munister.css?v=14">
+<link rel="stylesheet" href="/systems.css?v=2">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <a class="wordmark" href="/">Munister</a>
+  <nav aria-label="Main">
+    <a href="/#work">Work</a>
+    <a href="/systems/" aria-current="page">Systems</a>
+    <a href="/research/">Research</a>
+    <a href="/writing/">Writing</a>
+    <a href="/#contact">Contact</a>
+  </nav>
+  <div class="head-right">
+    <a href="/cv.html">CV</a>
+  </div>
+</header>
+
+<main class="site-main" id="main">
+<div class="shell">
+
+  <div class="sys-head">
+    <a class="back mono" href="/systems/">← Systems</a>
+    <span class="mono">Temporal-geographic computation</span>
+    <h1>Answering “when are you actually available?” with arithmetic</h1>
+    <p class="standfirst">A studio site whose central feature is a calculation. Instead of claiming to work across US time zones, it shows how many hours of the working day genuinely overlap with each state — computed in the browser from the platform's own time-zone rules.</p>
+    <div class="sys-facts">
+      <div><span class="mono">Live</span><b><a href="https://agency.munister.com.ua/" target="_blank" rel="noopener">agency.munister.com.ua ↗</a></b></div>
+      <div><span class="mono">Languages</span><b>Seven</b></div>
+      <div><span class="mono">Hosting</span><b>Static, no application server</b></div>
+      <div><span class="mono">Role</span><b>Concept, computation, implementation</b></div>
+    </div>
+  </div>
+
+  <div class="sys-body">
+<h2>A claim worth computing</h2>
+    <p>Every remote studio's site says it works across time zones. The statement carries no information, because it is never false and never checked. The client's actual question is narrower and answerable: <em>if I am in Denver, how many hours of my working day can I reach you?</em></p>
+    <p>That has a number for an answer, and the number differs by state, and it changes twice a year. So the site computes it rather than claiming it. The coverage map is shaded by overlapping hours, and a visitor can see, per state, whether the answer is comfortable or marginal.</p>
+
+    <h2>Where daylight saving comes from</h2>
+    <p>The tempting implementation is a table: state, offset, done. This is wrong within months. Offsets shift with daylight saving on dates that differ between countries and change by legislation; parts of Arizona do not observe it at all; several states straddle two zones. A hand-maintained table is a promise to remember something twice a year forever, and it will be wrong the first time nobody does.</p>
+    <p>The browser already contains the full IANA time-zone database, kept current by whoever maintains it. The site asks that, for each zone, what the offset is right now. Daylight saving is never handled, because it is never modelled — it is resolved by the data source that already knows.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:agency-coverage --><svg class="flow" viewBox="0 0 960 338" width="960" height="338" role="img" xmlns="http://www.w3.org/2000/svg"><title>Munister Agency — computing the working overlap with each US state</title><desc>For each state the browser asks the platform's own time-zone database what the current offset is, using rules that already account for daylight saving. Local working hours are projected onto ours, the overlap in hours is computed, and the map is shaded by the result. Nothing about daylight saving is stored in the site.</desc><defs><marker id="fl-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z"/></marker><marker id="fl-arrow-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z" fill="#b3261e"/></marker></defs><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 134 232 H 186" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 294 232 H 346" marker-end="url(#fl-arrow)"/><path class="fl-edge fl-edge--fail" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 468 Q 480 232 480 220 V 76 Q 480 64 492 64 H 506" marker-end="url(#fl-arrow-fail)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 506" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 614 232 H 666" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 774 232 H 826" marker-end="url(#fl-arrow)"/><g class="fl-node fl-node--trigger"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 64 194 H 122 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 64 a 38 38 0 0 1 0 -76 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(75 219) scale(1.0833)"><path d="m3 6.5 6-2.5 6 2.5 6-2.5v14L15 20.5 9 18l-6 2.5z"/><path d="M9 4v14M15 6.5v14"/></g><text class="fl-lb" x="80" y="283">Visitor opens the map</text><text class="fl-sb" x="80" y="297.5">no request sent</text></g><g class="fl-node fl-node--store"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 198 194 H 282 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 198 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(227 219) scale(1.0833)"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></g><text class="fl-lb" x="240" y="283">State outlines</text><text class="fl-sb" x="240" y="297.5">32 kb of geometry</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 358 194 H 442 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 358 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(387 219) scale(1.0833)"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></g><text class="fl-lb" x="400" y="283">Ask the platform</text><text class="fl-sb" x="400" y="297.5">iana rules, built in</text></g><g class="fl-node fl-node--fail"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 26 H 602 a 12 12 0 0 1 12 12 V 90 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 38 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 51) scale(1.0833)"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></g><text class="fl-lb" x="560" y="115">A hand-kept table</text><text class="fl-sb" x="560" y="129.5">wrong twice a year</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 194 H 602 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 219) scale(1.0833)"><path d="M12 3v18"/><path d="M5 7h14"/><path d="m5 7-3 6h6z"/><path d="m19 7-3 6h6z"/></g><text class="fl-lb" x="560" y="283">Project the working day</text><text class="fl-sb" x="560" y="297.5">theirs onto ours</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 678 194 H 762 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 678 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(707 219) scale(1.0833)"><path d="M4 20V4"/><path d="M4 20h16"/><path d="M8 20v-6M12.5 20V8M17 20v-9"/></g><text class="fl-lb" x="720" y="283">Overlapping hours</text><text class="fl-sb" x="720" y="297.5">a number per state</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 838 194 H 922 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 838 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(867 219) scale(1.0833)"><rect x="3.5" y="3.5" width="7" height="7"/><rect x="13.5" y="3.5" width="7" height="7"/><rect x="3.5" y="13.5" width="7" height="7"/><rect x="13.5" y="13.5" width="7" height="7"/></g><text class="fl-lb" x="880" y="283">Shade the map</text><text class="fl-sb" x="880" y="297.5">evidence, not decoration</text></g><text class="fl-elb" x="487" y="151" text-anchor="start">the alternative</text><text class="fl-elb" x="480" y="223" text-anchor="middle">from source</text></svg><!-- /flow --></div>
+      <figcaption>
+        <p>The computation runs in the visitor's browser, against rules their own device maintains. The upper branch is the version that would need maintaining twice a year.</p>
+        <span class="mono">Fig. 1</span>
+      </figcaption>
+    </figure>
+
+    <p>The geography is the other half. A full-detail map of US state boundaries is megabytes, which for a decorative map would be indefensible and for an interactive one is simply slow. The outlines are reduced to about thirty-two kilobytes — enough resolution for a reader to find their state, and small enough that the page stays a plain static file with no server behind it.</p>
+    <p>That is the point worth taking away. <strong>An evidence-based interface does not require an application.</strong> The map is computed on the client, the geometry is small, the page is a file, and the whole thing deploys by copying. Complexity here would have bought nothing except something else to keep running.</p>
+
+    <h2>Seven languages, no framework</h2>
+    <p>The site carries seven languages, prices in dollars, and no runtime dependency to manage them. Each language is a page. This is unfashionable and, at this size, correct: a translation framework would add a build step, a dictionary format and a class of bug where the wrong language appears briefly on load, in exchange for saving duplication that a static site has no trouble carrying.</p>
+
+    <div class="lesson">
+      <span class="mono">Where it connects</span>
+      <h4>The form is the beginning of a pipeline, not the end of a page</h4>
+      <p>The contact form does not send an email. It posts to the intake endpoint of the CRM described elsewhere in this section, where the enquiry is scored, assigned to a person and opened as a thread the same day.</p>
+      <p>An email would have been three lines of configuration and would have put the enquiry into an inbox, which is where enquiries go to be read once and lost. The two systems were built years apart and by intention meet at exactly one documented endpoint — which is the only reason connecting them was an afternoon rather than a project.</p>
+    </div>
+  </div>
+
+  <div class="sys-foot">
+    <a class="mono" href="/systems/">← All systems</a>
+    <a class="btn btn--solid" href="https://agency.munister.com.ua/" target="_blank" rel="noopener">Open the site ↗</a>
+  </div>
+
+  <footer class="foot mono">
+    <span>© Viacheslav Munister</span>
+    <a href="mailto:munister@outlook.com">munister@outlook.com</a>
+  </footer>
+
+</div>
+</main>
+
+</body>
+</html>

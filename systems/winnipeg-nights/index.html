@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Winnipeg Nights · Viacheslav Munister</title>
+<meta name="description" content="One-to-many WebRTC audio coordinated through an ordinary polled data store instead of a signalling service, with a self-refreshing news feed and on-the-fly speech translation on the same single-core host.">
+<link rel="canonical" href="https://munister.com.ua/systems/winnipeg-nights/">
+<link rel="alternate" hreflang="en" href="https://munister.com.ua/systems/winnipeg-nights/">
+<link rel="alternate" hreflang="x-default" href="https://munister.com.ua/systems/winnipeg-nights/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#ffffff">
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://munister.com.ua/systems/winnipeg-nights/">
+<meta property="og:site_name" content="Viacheslav Munister">
+<meta property="og:title" content="Winnipeg Nights · Viacheslav Munister">
+<meta property="og:description" content="One-to-many WebRTC audio coordinated through an ordinary polled data store instead of a signalling service, with a self-refreshing news feed and on-the-fly speech translation on the same single-core host.">
+<meta property="og:image" content="https://munister.com.ua/images/works/radio.jpg">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Winnipeg Nights · Viacheslav Munister">
+<meta name="twitter:description" content="One-to-many WebRTC audio coordinated through an ordinary polled data store instead of a signalling service, with a self-refreshing news feed and on-the-fly speech translation on the same single-core host.">
+<meta name="twitter:image" content="https://munister.com.ua/images/works/radio.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Winnipeg Nights",
+  "description": "One-to-many WebRTC audio coordinated through an ordinary polled data store instead of a signalling service, with a self-refreshing news feed and on-the-fly speech translation on the same single-core host.",
+  "author": {
+    "@type": "Person",
+    "name": "Viacheslav Munister",
+    "url": "https://munister.com.ua/"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Viacheslav Munister"
+  },
+  "inLanguage": "en",
+  "url": "https://munister.com.ua/systems/winnipeg-nights/",
+  "isPartOf": {
+    "@type": "CollectionPage",
+    "name": "Systems",
+    "url": "https://munister.com.ua/systems/"
+  },
+  "about": [
+    "WebRTC",
+    "real-time audio",
+    "speech recognition",
+    "constrained hardware"
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/munister.css?v=14">
+<link rel="stylesheet" href="/systems.css?v=2">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <a class="wordmark" href="/">Munister</a>
+  <nav aria-label="Main">
+    <a href="/#work">Work</a>
+    <a href="/systems/" aria-current="page">Systems</a>
+    <a href="/research/">Research</a>
+    <a href="/writing/">Writing</a>
+    <a href="/#contact">Contact</a>
+  </nav>
+  <div class="head-right">
+    <a href="/cv.html">CV</a>
+  </div>
+</header>
+
+<main class="site-main" id="main">
+<div class="shell">
+
+  <div class="sys-head">
+    <a class="back mono" href="/systems/">← Systems</a>
+    <span class="mono">Real-time media · Session coordination</span>
+    <h1>Live audio on a machine with one core</h1>
+    <p class="standfirst">A night radio station built as a study in how little infrastructure live audio actually requires. One voice reaches many listeners with no streaming server, no signalling service and no permission dialogue on the way in.</p>
+    <div class="sys-facts">
+      <div><span class="mono">Live</span><b><a href="https://radio.munister.com.ua/" target="_blank" rel="noopener">radio.munister.com.ua ↗</a></b></div>
+      <div><span class="mono">Built with</span><b>Flask, React, WebRTC</b></div>
+      <div><span class="mono">Runs on</span><b>One vCPU, no GPU</b></div>
+      <div><span class="mono">Role</span><b>Architecture, implementation, design</b></div>
+    </div>
+  </div>
+
+  <div class="sys-body">
+<h2>The constraint is the design</h2>
+    <p>The whole station runs on a single-core virtual machine with no graphics hardware. That is not a hardship to be worked around; it is the premise. Every decision below follows from asking what live audio actually needs, rather than what the standard architecture diagram says it needs.</p>
+    <p>The standard answer involves an ingest endpoint, a media server transcoding to several bitrates, a delivery network, and a signalling service maintaining a socket per listener. Each is defensible at scale. At the scale of a night show, each is a service to run, patch, monitor and pay for.</p>
+
+    <h2>Audio without a media server</h2>
+    <p>Audio goes directly from the host's browser to each listener's browser. The host creates one connection per listener — genuinely one each, since there is no server in the middle multiplying the stream — and the audio never touches the machine hosting the site.</p>
+    <p>What a connection like this normally requires is a signalling service: a socket on which the two sides exchange their connection descriptions before they can talk. That service is the piece which is always running, always needs to be up, and is the usual reason a small project like this becomes an operational burden.</p>
+    <p>So there isn't one. The two descriptions are short pieces of text; they are written into an ordinary data store that the site already had, and the other side polls for them. Polling is unfashionable and, for a handful of exchanges lasting a second or two at the start of a session, entirely adequate.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:radio-broadcast --><svg class="flow" viewBox="0 0 1120 546" width="1120" height="546" role="img" xmlns="http://www.w3.org/2000/svg"><title>Winnipeg Nights — one voice to many listeners, without a signalling server</title><desc>The host's browser captures audio and creates a separate peer connection for each listener. The offer and answer are exchanged by writing them into an ordinary polled data store rather than through a dedicated signalling socket. Listeners are never asked for microphone access, because audio only ever travels one way.</desc><defs><marker id="fl-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z"/></marker><marker id="fl-arrow-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z" fill="#b3261e"/></marker></defs><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 134 232 H 186" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 294 232 H 346" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 506" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 614 232 H 666" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 774 232 H 826" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 934 232 H 986" marker-end="url(#fl-arrow)"/><path class="fl-edge fl-edge--weak" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 934 232 H 948 Q 960 232 960 244 V 500 Q 960 512 948 512 H 812 Q 800 512 800 500 V 412 Q 800 400 812 400 H 826" marker-end="url(#fl-arrow)"/><g class="fl-node fl-node--trigger"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 64 194 H 122 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 64 a 38 38 0 0 1 0 -76 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(75 219) scale(1.0833)"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3.5"/></g><text class="fl-lb" x="80" y="283">Host goes on air</text><text class="fl-sb" x="80" y="297.5">one browser</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 198 194 H 282 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 198 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(227 219) scale(1.0833)"><path d="M2 12h2.5"/><path d="M7 7v10M11 4.5v15M15 8.5v7M19 10.5v3"/><path d="M21.5 12H22"/></g><text class="fl-lb" x="240" y="283">Capture the sound</text><text class="fl-sb" x="240" y="297.5">one source</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 358 194 H 442 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 358 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(387 219) scale(1.0833)"><path d="M21 3 3 10.5l7 3 3 7z"/><path d="M21 3 10 14"/></g><text class="fl-lb" x="400" y="283">An offer per listener</text><text class="fl-sb" x="400" y="297.5">not a broadcast</text></g><g class="fl-node fl-node--store"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 194 H 602 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 219) scale(1.0833)"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></g><text class="fl-lb" x="560" y="283">Written to a polled store</text><text class="fl-sb" x="560" y="297.5">no socket service</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 678 194 H 762 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 678 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(707 219) scale(1.0833)"><path d="M4 9a8 8 0 0 1 13.5-3.5L20 8"/><path d="M20 4v4h-4"/><path d="M20 15a8 8 0 0 1-13.5 3.5L4 16"/><path d="M4 20v-4h4"/></g><text class="fl-lb" x="720" y="283">Listener answers</text><text class="fl-sb" x="720" y="297.5">polls, replies</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 838 194 H 922 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 838 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(867 219) scale(1.0833)"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16.5 5.2a3.5 3.5 0 0 1 0 6.6"/><path d="M18 14.6a6.5 6.5 0 0 1 3.5 5.4"/></g><text class="fl-lb" x="880" y="283">Direct audio path</text><text class="fl-sb" x="880" y="297.5">one way only</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 838 362 H 922 a 12 12 0 0 1 12 12 V 426 a 12 12 0 0 1 -12 12 H 838 a 12 12 0 0 1 -12 -12 V 374 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(867 387) scale(1.0833)"><path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></g><text class="fl-lb" x="880" y="451">No microphone asked</text><text class="fl-sb" x="880" y="465.5">nothing to permit</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 998 194 H 1082 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 998 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(1027 219) scale(1.0833)"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18.5h2"/></g><text class="fl-lb" x="1040" y="283">Listener hears it</text><text class="fl-sb" x="1040" y="297.5">no install</text></g></svg><!-- /flow --></div>
+      <figcaption>
+        <p>Setup runs through a store the site already had; the audio then flows directly. Once a listener is connected, nothing about the exchange is on the critical path any more.</p>
+        <span class="mono">Fig. 1</span>
+      </figcaption>
+    </figure>
+
+    <p>One detail matters more than it looks. <strong>Listeners are never asked for microphone access.</strong> The naive way to set up a peer connection is to request media on both sides out of symmetry, which triggers a browser permission prompt — and a permission prompt on a page whose only offer is <em>listen to some music</em> is where most visitors leave. Audio here travels one way, so the listener side asks for nothing at all. Refusing a permission you do not need is a design feature, not an oversight.</p>
+
+    <h2>Translating a live voice</h2>
+    <p>A button offers English to listeners who do not speak the host's language. The audio is cut into short fixed windows and each window goes to a speech model running locally, asked to translate directly rather than to transcribe and then translate — one step where the obvious pipeline uses two.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:radio-translate --><svg class="flow" viewBox="0 0 800 338" width="800" height="338" role="img" xmlns="http://www.w3.org/2000/svg"><title>Winnipeg Nights — translating speech on one core</title><desc>Audio is cut into short fixed windows and each window is handed to a local speech model asked to translate directly rather than transcribe and then translate. The smallest model is used deliberately, because the host has a single core and a model that cannot keep up with real time produces a translation that falls further behind every minute.</desc><defs><marker id="fl-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z"/></marker><marker id="fl-arrow-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z" fill="#b3261e"/></marker></defs><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 134 232 H 186" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 294 232 H 346" marker-end="url(#fl-arrow)"/><path class="fl-edge fl-edge--fail" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 468 Q 480 232 480 220 V 76 Q 480 64 492 64 H 506" marker-end="url(#fl-arrow-fail)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 506" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 614 232 H 666" marker-end="url(#fl-arrow)"/><g class="fl-node fl-node--trigger"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 64 194 H 122 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 64 a 38 38 0 0 1 0 -76 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(75 219) scale(1.0833)"><path d="M3 6h9"/><path d="M7.5 4v2c0 4-2 7-4.5 8.5"/><path d="M5 10c1.4 2.6 3.6 4.2 6 5"/><path d="m12.5 21 4.5-11 4.5 11"/><path d="M14.4 17h5.2"/></g><text class="fl-lb" x="80" y="283">Listener asks for English</text><text class="fl-sb" x="80" y="297.5">one button</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 198 194 H 282 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 198 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(227 219) scale(1.0833)"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></g><text class="fl-lb" x="240" y="283">Cut into windows</text><text class="fl-sb" x="240" y="297.5">six seconds</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 358 194 H 442 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 358 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(387 219) scale(1.0833)"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></g><text class="fl-lb" x="400" y="283">Local speech model</text><text class="fl-sb" x="400" y="297.5">smallest on purpose</text></g><g class="fl-node fl-node--fail"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 26 H 602 a 12 12 0 0 1 12 12 V 90 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 38 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 51) scale(1.0833)"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></g><text class="fl-lb" x="560" y="115">Bigger model falls</text><text class="fl-lb" x="560" y="128.5">behind</text><text class="fl-sb" x="560" y="143">one core, no gpu</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 194 H 602 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 219) scale(1.0833)"><path d="M9 6c-3 1.5-4.5 4-4.5 7.5A3.5 3.5 0 1 0 8 10"/><path d="M20 6c-3 1.5-4.5 4-4.5 7.5A3.5 3.5 0 1 0 19 10"/></g><text class="fl-lb" x="560" y="283">Straight to English</text><text class="fl-sb" x="560" y="297.5">one step, not two</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 678 194 H 762 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 678 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(707 219) scale(1.0833)"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.7"/></g><text class="fl-lb" x="720" y="283">Shown under the player</text><text class="fl-sb" x="720" y="297.5">as it arrives</text></g><text class="fl-elb" x="487" y="151" text-anchor="start">if oversized</text><text class="fl-elb" x="480" y="223" text-anchor="middle">keeps pace</text></svg><!-- /flow --></div>
+      <figcaption>
+        <p>The smallest available model is used deliberately. Anything larger is more accurate per sentence and slower than real time, which for a live broadcast is not a trade-off but a failure.</p>
+        <span class="mono">Fig. 2</span>
+      </figcaption>
+    </figure>
+
+    <p>The model choice is the whole lesson. On one core, a better model does not produce better subtitles; it produces subtitles that drift further behind the speaker every minute until they are describing a different part of the show. <strong>For anything live, staying in step is a correctness property</strong>, and it outranks per-sentence quality. Batch work can have the big model. This cannot.</p>
+
+    <h2>Around the live hour</h2>
+    <p>A station that is live for one hour is dark for twenty-three. Two things fill it, both built to need no attention.</p>
+    <ul>
+      <li><strong>A self-refreshing news feed.</strong> A set of North American true-crime programmes are pulled from their public feeds in a background thread inside the existing process — no scheduler, no additional service, no new dependency. Something that runs every few minutes and can be lost without consequence does not need a job system.</li>
+      <li><strong>An announcement that removes itself.</strong> The next broadcast is declared by a single constant holding the airtime, stated explicitly in the station's own timezone. The block appears when there is something to announce and disappears two hours after it ends. Nobody has to remember to take it down — and nobody has to see a site advertising an event from last month, which is the most reliable signal that a project has been abandoned.</li>
+    </ul>
+
+    <div class="lesson">
+      <span class="mono">What it cost to learn</span>
+      <h4>The site rolled back, and nothing had rolled back</h4>
+      <p>The station appeared to revert to an older version. It had not. A stale build directory had been copied over the live one from a different machine, so the served bundle was genuinely old while the source was current — and every check made against the source said everything was fine.</p>
+      <p>Compounding it, a change that switched off a whole section existed only on the server and had never been committed, so the repository disagreed with reality in the other direction too. The habit that came out of it: when behaviour and source disagree, <strong>verify against the artefact actually being served</strong>, not against the code that ought to have produced it.</p>
+    </div>
+  </div>
+
+  <div class="sys-foot">
+    <a class="mono" href="/systems/">← All systems</a>
+    <a class="btn btn--solid" href="https://radio.munister.com.ua/" target="_blank" rel="noopener">Tune in ↗</a>
+  </div>
+
+  <footer class="foot mono">
+    <span>© Viacheslav Munister</span>
+    <a href="mailto:munister@outlook.com">munister@outlook.com</a>
+  </footer>
+
+</div>
+</main>
+
+</body>
+</html>
