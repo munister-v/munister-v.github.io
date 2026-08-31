@@ -30,3 +30,22 @@
   // відкритою рівно на телефоні, а не поплисти на десктопній ширині.
   window.matchMedia('(min-width: 761px)').addEventListener('change', (e) => { if (e.matches) close(); });
 })();
+
+/* Схеми: тінь праворуч показує, що зображення ширше екрана, і зникає сама,
+   коли домальовано до кінця. Ознаку «є ще» дізнаємось з реальних розмірів,
+   а не гадаємо по ширині екрана — той самий контейнер на однаковому екрані
+   буває і скрольовним, і ні, залежно від того, скільки вузлів у схемі. */
+(() => {
+  const boxes = [...document.querySelectorAll('.flow-scroll')];
+  if (!boxes.length) return;
+  const sync = (el) => {
+    const can = el.scrollWidth > el.clientWidth + 2;
+    el.classList.toggle('can-scroll', can);
+    el.classList.toggle('at-end', el.scrollLeft + el.clientWidth >= el.scrollWidth - 2);
+  };
+  boxes.forEach((el) => {
+    sync(el);
+    el.addEventListener('scroll', () => sync(el), { passive: true });
+  });
+  window.addEventListener('resize', () => boxes.forEach(sync));
+})();

@@ -20,11 +20,15 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import url from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 const ROOT = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'content', 'systems');
 const OUT = path.join(ROOT, 'systems');
 const SITE = 'https://munister.com.ua';
+/* Дата фактичної першої публікації розділу — 31.08.2026. Поле modified
+   в конкретній статті переб'є цю дату, коли стаття справді буде правитись. */
+const PUBLISHED_FALLBACK = '2026-08-31';
 
 const esc = (s) => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -51,7 +55,7 @@ const nav = (here) => ['/#work:Work', '/systems/:Systems', '/research/:Research'
     return `    <a href="${href}"${href === here ? ' aria-current="page"' : ''}>${label}</a>`;
   }).join('\n');
 
-const head = ({ title, description, canonical, image, jsonld }) => `<!DOCTYPE html>
+const head = ({ title, description, canonical, image, jsonld, breadcrumb }) => `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -75,6 +79,8 @@ const head = ({ title, description, canonical, image, jsonld }) => `<!DOCTYPE ht
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:image" content="${SITE}${image}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
@@ -84,9 +90,12 @@ const head = ({ title, description, canonical, image, jsonld }) => `<!DOCTYPE ht
 <script type="application/ld+json">
 ${JSON.stringify(jsonld, null, 2)}
 </script>
-
+${breadcrumb ? `<script type="application/ld+json">
+${JSON.stringify(breadcrumb, null, 2)}
+</script>
+` : ''}
 <link rel="stylesheet" href="/munister.css?v=15">
-<link rel="stylesheet" href="/systems.css?v=3">
+<link rel="stylesheet" href="/systems.css?v=4">
 </head>
 <body>
 
@@ -119,7 +128,7 @@ const foot = `
 </div>
 </main>
 
-<script src="/munister.js?v=2" defer></script>
+<script src="/munister.js?v=3" defer></script>
 </body>
 </html>
 `;
@@ -138,20 +147,31 @@ for (const file of files) {
 
   const page = head({
     title: `${meta.title} · Viacheslav Munister`,
-    description: meta.summary,
+    description: meta.description || meta.summary,
     canonical,
     image: meta.image || '/images/og-en.jpg',
     jsonld: {
       '@context': 'https://schema.org',
       '@type': 'TechArticle',
       headline: meta.title,
-      description: meta.summary,
+      description: meta.description || meta.summary,
       author: { '@type': 'Person', name: 'Viacheslav Munister', url: `${SITE}/` },
       publisher: { '@type': 'Person', name: 'Viacheslav Munister' },
       inLanguage: 'en',
       url: canonical,
+      datePublished: meta.published || PUBLISHED_FALLBACK,
+      dateModified: meta.modified || meta.published || PUBLISHED_FALLBACK,
       isPartOf: { '@type': 'CollectionPage', name: 'Systems', url: `${SITE}/systems/` },
       about: meta.about || [],
+    },
+    breadcrumb: {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Munister', item: `${SITE}/` },
+        { '@type': 'ListItem', position: 2, name: 'Systems', item: `${SITE}/systems/` },
+        { '@type': 'ListItem', position: 3, name: meta.title, item: canonical },
+      ],
     },
   })
     + `
@@ -209,6 +229,14 @@ const index = head({
       '@type': 'TechArticle', headline: a.title, url: `${SITE}/systems/${a.slug}/`, description: a.summary,
     })),
   },
+  breadcrumb: {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Munister', item: `${SITE}/` },
+      { '@type': 'ListItem', position: 2, name: 'Systems', item: `${SITE}/systems/` },
+    ],
+  },
 }) + `
   <div class="page-head">
     <span class="mono">Munister / Systems</span>
@@ -223,3 +251,13 @@ ${rows}
 
 fs.writeFileSync(path.join(OUT, 'index.html'), index);
 console.log(`· systems/  (${articles.length} статей)`);
+
+/* Ця збірка пише сторінки статей ЗАНОВО з content/systems/*.html — а джерело
+   несе тільки порожні мітки <!-- flow:id --><!-- /flow -->, самі SVG в ньому
+   свідомо не лежать (див. build-flows.mjs). Тому одноразово забутий другий
+   виклик тут стирав усі схеми з сайту мовчки: сторінка збиралася без жодної
+   помилки, просто з порожнім місцем замість кожної діаграми. Викликаємо
+   build-flows.mjs самі, останнім кроком, — одна команда лишає репозиторій
+   цілим, а не дві команди в правильному порядку, які легко переплутати. */
+console.log('');
+execFileSync(process.execPath, [path.join(ROOT, 'tools', 'build-flows.mjs')], { stdio: 'inherit' });

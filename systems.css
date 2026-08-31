@@ -16,13 +16,30 @@
    где цвет есть только у снимков работ. */
 .flow-figure{margin:clamp(2rem,4vw,3.2rem) 0;border:1px solid var(--c-rule-strong)}
 .flow-scroll{
-  overflow-x:auto;overflow-y:hidden;
+  position:relative;overflow-x:auto;overflow-y:hidden;
   background-color:var(--c-paper);
   /* Клетка полотна. Точки, а не линии: сетка должна читаться как подложка,
      а не как второй слой схемы. */
   background-image:radial-gradient(circle at 1px 1px,rgba(18,18,18,.13) 1px,transparent 0);
   background-size:22px 22px;
 }
+/* Затухання праворуч замість голого «Scroll sideways →».
+
+   Схему свідомо не стискають під ширину телефона: підписи вузлів набрані на
+   реальний розмір, і зменшення вдвічі-втричі робить їх нечитаними — гірший
+   результат, ніж горизонтальний скрол. Але текстова підказка одна на все
+   зображення непомітна, поки не дочитаєш до низу. Тінь із самого краю видно
+   одразу, і вона зникає сама, щойно домальовано до кінця — рівно там, де
+   підказка більше не потрібна. Клас виставляє munister.js; без JS сторінка
+   лишається робочою, просто без цього нюансу. */
+.flow-scroll::after{
+  content:"";position:absolute;top:0;right:0;bottom:0;width:34px;
+  background:linear-gradient(to right,transparent,var(--c-paper) 82%);
+  opacity:0;transition:opacity .2s ease;pointer-events:none;
+}
+.flow-scroll.can-scroll::after{opacity:1}
+.flow-scroll.at-end::after{opacity:0}
+@media (prefers-reduced-motion:reduce){.flow-scroll::after{transition:none}}
 .flow{display:block;min-width:100%;height:auto;padding:6px 0}
 
 .fl-tile{fill:var(--c-paper);stroke:var(--c-ink);stroke-width:1.25}
