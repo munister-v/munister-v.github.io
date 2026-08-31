@@ -90,7 +90,7 @@
 </script>
 
 <link rel="stylesheet" href="/munister.css?v=16">
-<link rel="stylesheet" href="/systems.css?v=4">
+<link rel="stylesheet" href="/systems.css?v=6">
 </head>
 <body>
 
@@ -131,6 +131,7 @@
   </div>
 
   <div class="sys-body">
+    <section class="sys-sec">
 <h2>Editing in production, safely</h2>
     <p>The editors here work on the live site. Not on a staging copy that is later promoted — on the thing the public is reading. For a small publisher this is the right arrangement: a staging workflow costs a review step and a deploy step per typo, and the result is that typos do not get fixed.</p>
     <p>What makes it defensible is that the site keeps its own history. Every half hour a task snapshots the content, compares it with what is already recorded, and commits if anything moved. Nobody presses save-a-version, because people do not, especially not before the edit that turns out to be the bad one.</p>
@@ -149,7 +150,8 @@
       <li><strong>The key can only reach one repository.</strong> A credential sitting on a web server, used unattended by a script, should be able to do exactly one thing. If that machine is ever compromised, the blast radius is a repository of board-game copy.</li>
       <li><strong>The script lives outside what it backs up.</strong> Otherwise the backup copies itself, and — more to the point — restoring an old snapshot would restore an old version of the tool doing the restoring.</li>
     </ul>
-
+    </section>
+    <section class="sys-sec">
     <h2>The layer nobody remembers is there</h2>
     <p>This site sits behind a proxy, and then a web server, and then the application. Most of the genuinely puzzling bugs here have lived in that stack rather than in any code.</p>
     <p>The clearest example: the public site rewrites some content on the way out, at the web-server layer. That rule was written for the public pages — and it was inherited by the admin panel, which sits under the same host. The panel was therefore being quietly edited in transit, and the symptom was an editor's changes appearing not to save. Nothing in the application was wrong. Nothing in the application could have been wrong.</p>
@@ -161,9 +163,11 @@
       <p>Hours were lost re-reading application logic that was correct, because the search naturally starts where the code is. The corrected habit is to establish <em>which layer</em> before asking <em>which line</em> — and the fastest way to do that is to compare what the server sends with what the code says it should send.</p>
       <p>A related instance: a build artefact with a stale copy of a data file baked into it kept serving old content after the source had been fixed. Same diagnosis, different layer. <strong>Confirm the layer first.</strong></p>
     </div>
-
+    </section>
+    <section class="sys-sec">
     <h2>Deployment realities</h2>
     <p>The mirror on the server is served as static files, which brings one operational footnote worth recording for anyone on a similarly configured host: files copied into place do not automatically inherit the security labels the web server requires to read them. The symptom is a permission error that makes no sense against a configuration that is plainly correct, and the fix is a relabelling command rather than a change to any setting. It is the kind of thing that costs an hour once and five seconds thereafter.</p>
+    </section>
   </div>
 
   <div class="sys-foot">

@@ -90,7 +90,7 @@
 </script>
 
 <link rel="stylesheet" href="/munister.css?v=16">
-<link rel="stylesheet" href="/systems.css?v=4">
+<link rel="stylesheet" href="/systems.css?v=6">
 </head>
 <body>
 
@@ -131,11 +131,13 @@
   </div>
 
   <div class="sys-body">
+    <section class="sys-sec">
 <h2>The premise</h2>
     <p>Most virtual museums are galleries with a camera. You move, images pass, nothing is anywhere in particular. The moment you want to say “the third wall of the second hall”, you find there is no such place — only a coordinate in a scene that will change next time the layout is adjusted.</p>
     <p>This one is built the other way round. <strong>A hall is an address.</strong> It has a URL, a fixed wall length, a date span and a list of works, and that list is written in a file which has nothing to do with the geometry. The building can be rebuilt entirely without a single citation breaking, because the citation points at the hall, not at a position in a model.</p>
     <p>The building itself is written as geometry in code rather than imported as a prepared 3D model. That is a deliberate trade: a model file would look richer, and it would be an opaque binary that nobody can diff, review or adjust without the tool that made it. Concrete described in a hundred lines of arithmetic can be changed by reading it.</p>
-
+    </section>
+    <section class="sys-sec">
     <h2>Getting the pictures</h2>
     <p>The works come from a major public collection that exposes both a search API and IIIF, the standard for serving images of cultural objects at arbitrary sizes. Two rules govern the intake, and both are about rights and obligations rather than code.</p>
     <p>Only public-domain works are taken. This is checked per object against the collection’s own rights field, not assumed from age — a photograph of an old painting can carry its own claim, and the field is the only authority worth trusting.</p>
@@ -151,7 +153,8 @@
     </figure>
 
     <p>The hang is curated, not sorted. Halls carry an argument — a period, a way of handling light, a shared problem — and the order within a hall is chosen. Sorting by date would have been one line of code and would have produced a database listing with walls.</p>
-
+    </section>
+    <section class="sys-sec">
     <h2>The failure that shaped the front end</h2>
     <p>A browser can take back a hardware drawing surface at any moment: too many tabs, another application demanding the GPU, a laptop deciding to save power. Every serious three-dimensional page must survive this. Without handling, the canvas simply goes blank — no error, no message, a grey rectangle where a room was.</p>
     <p>Here it was worse than a blank hall. The museum persists across transitions between halls, so a single lost surface followed the visitor everywhere. One hall failed; from then on, every hall was empty. The museum appeared to be entirely broken, and only for the people it had happened to.</p>
@@ -171,10 +174,12 @@
       <p>The bug was hard to find because it was not reproducible in the hall where it appeared. Everything about that hall was fine. The damage had been done in a different hall, minutes earlier, and had travelled through the thing designed to make navigation feel smooth: a persistent surface that survives route changes.</p>
       <p>Every long-lived object bought for performance — a shared canvas, a cached connection, a module-level singleton — is also a channel along which one failure reaches parts of the system that never touched it. It is worth writing down, for each such object, what happens when it dies. Usually nobody has, and the answer turns out to be <em>everything downstream, silently, until reload</em>.</p>
     </div>
-
+    </section>
+    <section class="sys-sec">
     <h2>How it ships</h2>
     <p>The whole museum is generated as static files by a single build step and copied to a server. There is no application running behind it. For an archive this is the correct default: nothing to keep patched, nothing to fall over at three in the morning, and a copy of the entire institution can be handed to someone as a folder.</p>
     <p>Exhibitions are curated through a small admin that sits alongside, and the generator now lives on the server rather than on a laptop. That sounds like a detail and is not: a generator that only exists on one machine means the museum can only be rebuilt by one person, which is a preservation problem dressed as a convenience problem.</p>
+    </section>
   </div>
 
   <div class="sys-foot">

@@ -48,6 +48,31 @@ function parseSource(text, file) {
   return { meta, body: text.slice(m[0].length).trimEnd() };
 }
 
+/* РАЗДЕЛЫ СТАТЬИ — ОТДЕЛЬНЫЕ БЛОКИ, А НЕ ОДНА ПЛОСКАЯ РЕШЁТКА.
+ *
+ * Раньше вся статья была одной grid-раскладкой: подписи разделов в первой
+ * колонке, текст во второй, и подпись держалась на `position: sticky`.
+ * Работало это по-разному и оба раза неправильно.
+ *
+ * Для липкого элемента опорным блоком считается его ячейка сетки — но
+ * согласия между браузерами здесь нет. Chrome ограничивает подпись её
+ * собственной строкой, и она не прилипает вовсе (проверено: уезжает за
+ * верх кадра вместе с текстом). Safari берёт за опору весь контейнер, и
+ * тогда прилипают ВСЕ подписи сразу, в одну и ту же точку, — «Why placement
+ * is the design» ложится поверх соседней, и читается каша из букв. Именно
+ * это и было на присланном скриншоте.
+ *
+ * Лечится не подбором свойств, а структурой: каждый раздел получает свою
+ * обёртку, и опорный блок подписи становится однозначным — её собственный
+ * раздел. Подпись едет вместе с текстом раздела и останавливается на его
+ * границе, одинаково везде. */
+function wrapSections(body) {
+  const parts = body.split(/(?=^\s*<h2>)/m).filter((chunk) => chunk.trim());
+  return parts
+    .map((chunk) => `    <section class="sys-sec">\n${chunk.trimEnd()}\n    </section>`)
+    .join('\n');
+}
+
 const nav = (here) => ['/#work:Work', '/systems/:Systems', '/research/:Research', '/writing/:Writing', '/#contact:Contact']
   .map((pair) => {
     const i = pair.indexOf(':');
@@ -95,7 +120,7 @@ ${JSON.stringify(breadcrumb, null, 2)}
 </script>
 ` : ''}
 <link rel="stylesheet" href="/munister.css?v=16">
-<link rel="stylesheet" href="/systems.css?v=4">
+<link rel="stylesheet" href="/systems.css?v=6">
 </head>
 <body>
 
@@ -186,7 +211,7 @@ ${facts}
   </div>
 
   <div class="sys-body">
-${body}
+${wrapSections(body)}
   </div>
 
   <div class="sys-foot">

@@ -90,7 +90,7 @@
 </script>
 
 <link rel="stylesheet" href="/munister.css?v=16">
-<link rel="stylesheet" href="/systems.css?v=4">
+<link rel="stylesheet" href="/systems.css?v=6">
 </head>
 <body>
 
@@ -131,11 +131,13 @@
   </div>
 
   <div class="sys-body">
+    <section class="sys-sec">
 <h2>The problem</h2>
     <p>The shop that existed worked, in the sense that it served pages and took orders. What it could not do was answer questions. <strong>How many of this jacket are left in 46?</strong> is not a question a page can answer, because in WordPress a product is a document and a size is a word inside it. Stock lived in the supplier’s head and in a spreadsheet emailed on Mondays.</p>
     <p>Everything downstream inherited that. A price change meant editing pages. A new supplier meant retyping a workbook. Reporting meant counting by hand. None of these are bugs; they are the consequences of one modelling decision made years earlier, and no amount of plugin work reverses it.</p>
     <p>So the rebuild is not a redesign. The visible shop is the smallest part of it. The work is to say what a product is, what a variant is, what an order is and what payment is — and then to keep those four answers stable while everything else changes around them.</p>
-
+    </section>
+    <section class="sys-sec">
     <h2>Intake</h2>
     <p>Goods arrive as spreadsheets. Not one format: a WooCommerce export from the legacy system, and workbooks from suppliers who each invented their own column names, in two languages, sometimes with the header on row four.</p>
     <p>The first instinct is to write a parser per supplier. That scales badly and fails silently — a new column order produces plausible nonsense rather than an error. The pipeline instead tries a rule-based parser first, and only when the file is genuinely unrecognised does it ask a model to map columns onto the schema. The model runs once per layout, not once per row: it is being asked to read a header, which is a job it does well and cheaply, rather than to transform data, which it does expensively and unreliably.</p>
@@ -165,7 +167,8 @@
       <div class="schema-row"><code>quantity</code><span class="ty">integer</span><span class="ds">stock count for this exact variant, not the product</span></div>
       <div class="schema-row"><code>base_price</code> / <code>discount_price</code><span class="ty">numeric</span><span class="ds">the second is optional; its absence means no sale, not zero</span></div>
     </div>
-
+    </section>
+    <section class="sys-sec">
     <h2>The order</h2>
     <p>An order has two states, and they are not the same state. Whether the parcel has shipped and whether the money has arrived are independent facts, and a shop that stores them in one column starts lying the moment either happens without the other.</p>
     <p>Cash on delivery is shipped but unpaid for a week. An online prepayment is paid but unshipped until Monday. There is no ordering of these that a single status column can express, and every attempt to force one produces a status list like <code>paid_but_not_shipped</code> that grows a new member every time reality does something new.</p>
@@ -180,7 +183,8 @@
     </figure>
 
     <p>Checkout re-checks the size before it writes anything. The stock a customer saw was read when the page rendered, and between then and the submit button someone else may have bought the last one. Re-checking at the moment of writing is the difference between an oversold order and a polite refusal.</p>
-
+    </section>
+    <section class="sys-sec">
     <h2>Money</h2>
     <p>Payment providers retry. This is not a failure mode to be defended against grudgingly; it is the documented, correct behaviour of every provider worth using, because the alternative — a callback lost to a network blip and an order never marked paid — is worse. The provider assumes the receiver is idempotent, and if the receiver is not, the provider’s correct behaviour becomes the receiver’s double-payment.</p>
 
@@ -216,7 +220,8 @@
       <p>The admin panel locks an account after repeated failed logins, keyed by client address. The address came from a forwarded header, which any client can set to anything. The lockout was therefore trivially bypassed by varying it — and worse, could be aimed at someone else by sending their address with bad passwords.</p>
       <p>The fix was not more application code. Rate limiting moved to the layer that actually knows who is connecting, with the panel and the login endpoint limited separately, and repeat offenders dropped at the firewall. The general lesson has outlived the bug: <strong>anything a client can write is not identity</strong>, no matter how conventional the header name.</p>
     </div>
-
+    </section>
+    <section class="sys-sec">
     <h2>Operating it</h2>
     <p>The parts of this system that have cost the most time are not in any of the diagrams above, because they are not features.</p>
     <ul>
@@ -225,10 +230,12 @@
       <li><strong>The server is sometimes ahead of the laptop.</strong> Work done directly on the server is real work. Treating the local copy as the source of truth and pushing over the top erases it silently. Every deployment now begins by asking what the difference actually is.</li>
       <li><strong>A verified backup is one that has been restored.</strong> Checking that a dump decompresses proves the file is not corrupt and nothing else. The recovery procedure here ends in an actual restore into a scratch database, because that is the only test that answers the question being asked.</li>
     </ul>
-
+    </section>
+    <section class="sys-sec">
     <h2>Where it stands</h2>
     <p>The shop is live and selling. The catalogue is imported rather than typed, stock is answerable at size level, and orders carry a history that can be read back. The direction of travel is from shop toward back office: the same data model now serves an operations panel where stock, price imports and orders are handled in one place, rather than split between a storefront and a spreadsheet.</p>
     <p>The measure of the rebuild is not the interface. It is that questions the old system could not answer are now answered by a query.</p>
+    </section>
   </div>
 
   <div class="sys-foot">

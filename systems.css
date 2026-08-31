@@ -122,18 +122,43 @@
 
 /* Колонка сносок слева, текст справа.
 
+   Решётка теперь у КАЖДОГО раздела своя (.sys-sec), а не одна на всю статью.
+   Причина не в раскладке, а в липкой подписи: опорным блоком для неё должен
+   быть её собственный раздел, иначе браузеры расходятся во мнениях и подписи
+   либо не прилипают, либо прилипают все разом в одну точку и наезжают друг
+   на друга. Подробности — в wrapSections() сборщика.
+
    row-gap ноль намеренно. Каждый абзац здесь — отдельная строка грид-раскладки,
    и общий gap раздвигал их на 52 пикселя: абзацы внутри одной мысли расходились
    так же далеко, как разделы между собой, и текст переставал читаться связно.
    Вертикальный ритм задают поля абзацев, а грид отвечает только за колонки. */
-.sys-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.6fr);
-  column-gap:clamp(20px,3vw,52px);row-gap:0}
-.sys-body > h2{
-  grid-column:1;margin-top:clamp(2.2rem,4vw,3.4rem);
+.sys-sec{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.6fr);
+  column-gap:clamp(20px,3vw,52px);row-gap:0;margin-top:clamp(2.2rem,4vw,3.4rem)}
+.sys-sec:first-child{margin-top:0}
+/* Отступ между разделами держит САМ раздел, а не подпись внутри него:
+   подпись стоит в одной строке решётки с первым абзацем, и поле у неё
+   опустило бы её относительно этого абзаца на те же три сантиметра. */
+/* Подпись раздела НЕ липкая, и это решение, а не упущение.
+
+   Липкой она была, и именно из-за этого статьи ломались: опорным блоком для
+   липкого элемента считается его ячейка сетки, и браузеры понимают это
+   по-разному. Chrome ограничивал подпись первой строкой раздела — она не
+   прилипала вовсе; Safari брал за опору весь контейнер, и тогда прилипали
+   ВСЕ подписи статьи разом в одну точку, наезжая друг на друга: «Why
+   placement is the design» поверх соседней, каша из букв.
+
+   Разделы (.sys-sec) это чинят: подпись больше не может уехать к чужой.
+   Заставить её при этом прилипать в границах своего раздела можно только
+   растянув на все его строки (grid-row: 1 / -1) — но тогда она занимает
+   первую колонку по всей высоте, а схемы здесь намеренно раскрываются во
+   всю полосу набора и легли бы прямо на неё. Схема во всю ширину важнее
+   бегущей подписи, поэтому подпись просто стоит в начале своего раздела. */
+.sys-sec > h2{
+  grid-column:1;margin-top:0;
   font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--c-faint);
-  position:sticky;top:calc(var(--bar) + 18px);align-self:start;
+  align-self:start;
 }
-.sys-body > *:not(h2){grid-column:2}
+.sys-sec > *:not(h2){grid-column:2}
 /* Схема — это SVG шириной 1120, а грид-элемент по умолчанию имеет
    min-width:auto, то есть отказывается сжиматься меньше своего содержимого.
    На телефоне из-за этого вся колонка становилась шириной со схему, и текст
@@ -141,25 +166,25 @@
    прокрутки, и выглядело это просто как обрезанные строки. Ноль здесь
    разрешает колонке быть уже содержимого, а прокрутку берёт на себя
    .flow-scroll, где ей и место. */
-.sys-body > *{min-width:0}
+.sys-sec > *{min-width:0}
 .flow-figure,.flow-scroll{min-width:0}
 /* Схема выходит из текстовой колонки во всю полосу набора: внутри колонки в
    2.6fr она сжимается втрое и требует скролла на каждом шаге, то есть
    перестаёт быть схемой и становится лентой. Селектор дочерний, а не
    одиночный класс, — иначе правило выше (специфичность 0,2,1) его перебивает. */
-.sys-body > .flow-figure{grid-column:1 / -1}
-.sys-body > h2 + *{margin-top:clamp(2.2rem,4vw,3.4rem)}
-.sys-body p{max-width:70ch;margin-top:16px;font-size:17px;line-height:1.62;color:var(--c-muted)}
-.sys-body p:first-of-type{margin-top:0}
-.sys-body p strong{color:var(--c-ink);font-weight:500}
-.sys-body h3{margin-top:clamp(1.8rem,3vw,2.4rem);font-family:var(--font-head);font-size:clamp(21px,2.2vw,27px);line-height:1.2;color:var(--c-ink)}
-.sys-body h3 + p{margin-top:12px}
-.sys-body ul{max-width:70ch;margin-top:16px;padding-left:0;list-style:none}
-.sys-body ul li{position:relative;padding-left:22px;margin-top:9px;font-size:17px;line-height:1.55;color:var(--c-muted)}
-.sys-body ul li::before{content:"";position:absolute;left:2px;top:.68em;width:9px;height:1px;background:var(--c-rule-strong)}
-.sys-body code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.86em;color:var(--c-ink);background:var(--c-paper-deep);padding:1px 5px}
-.sys-body a:not(.btn){text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--c-rule-strong)}
-.sys-body a:not(.btn):hover{text-decoration-color:var(--c-ink)}
+.sys-sec > .flow-figure{grid-column:1 / -1}
+.sys-sec > h2 + *{margin-top:0}
+.sys-sec p{max-width:70ch;margin-top:16px;font-size:17px;line-height:1.62;color:var(--c-muted)}
+.sys-sec p:first-of-type{margin-top:0}
+.sys-sec p strong{color:var(--c-ink);font-weight:500}
+.sys-sec h3{margin-top:clamp(1.8rem,3vw,2.4rem);font-family:var(--font-head);font-size:clamp(21px,2.2vw,27px);line-height:1.2;color:var(--c-ink)}
+.sys-sec h3 + p{margin-top:12px}
+.sys-sec ul{max-width:70ch;margin-top:16px;padding-left:0;list-style:none}
+.sys-sec ul li{position:relative;padding-left:22px;margin-top:9px;font-size:17px;line-height:1.55;color:var(--c-muted)}
+.sys-sec ul li::before{content:"";position:absolute;left:2px;top:.68em;width:9px;height:1px;background:var(--c-rule-strong)}
+.sys-sec code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.86em;color:var(--c-ink);background:var(--c-paper-deep);padding:1px 5px}
+.sys-sec a:not(.btn){text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--c-rule-strong)}
+.sys-sec a:not(.btn):hover{text-decoration-color:var(--c-ink)}
 
 /* Замечание на полях: то, что стоило дорого и запомнилось. Не врезка ради
    ритма — если писать нечего, блока быть не должно. */
@@ -187,11 +212,12 @@
 .sys-list .a{grid-column:3;grid-row:1 / span 2;color:var(--c-faint)}
 
 @media (max-width:900px){
-  .sys-body{grid-template-columns:minmax(0,1fr);gap:0}
-  .sys-body > *:not(h2){grid-column:1}
-  .sys-body > h2{grid-column:1;position:static;margin-top:clamp(2rem,5vw,2.8rem);
+  .sys-sec{grid-template-columns:minmax(0,1fr);gap:0}
+  .sys-sec > *:not(h2){grid-column:1}
+  .sys-sec{margin-top:clamp(2rem,5vw,2.8rem)}
+  .sys-sec > h2{grid-column:1;margin-top:0;
     padding-bottom:9px;border-bottom:1px solid var(--c-rule)}
-  .sys-body > h2 + *{margin-top:18px}
+  .sys-sec > h2 + *{margin-top:18px}
   .sys-list a{grid-template-columns:minmax(0,1fr) auto}
   .sys-list .w{grid-column:1 / -1;grid-row:auto;margin-top:6px}
   .sys-list .a{grid-row:1}

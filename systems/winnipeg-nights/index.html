@@ -90,7 +90,7 @@
 </script>
 
 <link rel="stylesheet" href="/munister.css?v=16">
-<link rel="stylesheet" href="/systems.css?v=4">
+<link rel="stylesheet" href="/systems.css?v=6">
 </head>
 <body>
 
@@ -131,10 +131,12 @@
   </div>
 
   <div class="sys-body">
+    <section class="sys-sec">
 <h2>The constraint is the design</h2>
     <p>The whole station runs on a single-core virtual machine with no graphics hardware. That is not a hardship to be worked around; it is the premise. Every decision below follows from asking what live audio actually needs, rather than what the standard architecture diagram says it needs.</p>
     <p>The standard answer involves an ingest endpoint, a media server transcoding to several bitrates, a delivery network, and a signalling service maintaining a socket per listener. Each is defensible at scale. At the scale of a night show, each is a service to run, patch, monitor and pay for.</p>
-
+    </section>
+    <section class="sys-sec">
     <h2>Audio without a media server</h2>
     <p>Audio goes directly from the host's browser to each listener's browser. The host creates one connection per listener — genuinely one each, since there is no server in the middle multiplying the stream — and the audio never touches the machine hosting the site.</p>
     <p>What a connection like this normally requires is a signalling service: a socket on which the two sides exchange their connection descriptions before they can talk. That service is the piece which is always running, always needs to be up, and is the usual reason a small project like this becomes an operational burden.</p>
@@ -150,7 +152,8 @@
     </figure>
 
     <p>One detail matters more than it looks. <strong>Listeners are never asked for microphone access.</strong> The naive way to set up a peer connection is to request media on both sides out of symmetry, which triggers a browser permission prompt — and a permission prompt on a page whose only offer is <em>listen to some music</em> is where most visitors leave. Audio here travels one way, so the listener side asks for nothing at all. Refusing a permission you do not need is a design feature, not an oversight.</p>
-
+    </section>
+    <section class="sys-sec">
     <h2>Translating a live voice</h2>
     <p>A button offers English to listeners who do not speak the host's language. The audio is cut into short fixed windows and each window goes to a speech model running locally, asked to translate directly rather than to transcribe and then translate — one step where the obvious pipeline uses two.</p>
 
@@ -164,7 +167,8 @@
     </figure>
 
     <p>The model choice is the whole lesson. On one core, a better model does not produce better subtitles; it produces subtitles that drift further behind the speaker every minute until they are describing a different part of the show. <strong>For anything live, staying in step is a correctness property</strong>, and it outranks per-sentence quality. Batch work can have the big model. This cannot.</p>
-
+    </section>
+    <section class="sys-sec">
     <h2>Around the live hour</h2>
     <p>A station that is live for one hour is dark for twenty-three. Two things fill it, both built to need no attention.</p>
     <ul>
@@ -178,6 +182,7 @@
       <p>The station appeared to revert to an older version. It had not. A stale build directory had been copied over the live one from a different machine, so the served bundle was genuinely old while the source was current — and every check made against the source said everything was fine.</p>
       <p>Compounding it, a change that switched off a whole section existed only on the server and had never been committed, so the repository disagreed with reality in the other direction too. The habit that came out of it: when behaviour and source disagree, <strong>verify against the artefact actually being served</strong>, not against the code that ought to have produced it.</p>
     </div>
+    </section>
   </div>
 
   <div class="sys-foot">

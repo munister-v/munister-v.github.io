@@ -90,7 +90,7 @@
 </script>
 
 <link rel="stylesheet" href="/munister.css?v=16">
-<link rel="stylesheet" href="/systems.css?v=4">
+<link rel="stylesheet" href="/systems.css?v=6">
 </head>
 <body>
 
@@ -131,11 +131,13 @@
   </div>
 
   <div class="sys-body">
+    <section class="sys-sec">
 <h2>The problem</h2>
     <p>A journal in seven languages has an obvious job and a hidden one. The obvious job is producing the six translations. The hidden job — the one that decides whether the whole thing is honest — is knowing which of those translations still corresponds to the English text it was made from.</p>
     <p>English is edited constantly: a correction, a re-ordered paragraph, a sharper closing line. Each edit silently invalidates six other versions. Nobody notices, because a stale translation looks exactly like a fresh one. It is fluent, complete, and wrong in a way no reader of that language can detect, because they never see the English.</p>
     <p>So the system is not a translation feature. It is a bookkeeping system that happens to call translators.</p>
-
+    </section>
+    <section class="sys-sec">
     <h2>Knowing what is stale</h2>
     <p>The naive test is timestamps: if the English was modified after the translation, the translation is behind. This is wrong often enough to be useless. Saving a record rewrites its modification time whether or not any translatable text changed — reorder the homepage, replace a cover image, open the editor and press save, and all six languages are declared stale. Re-translating on that signal burns money and rewrites good text.</p>
     <p>Instead the queue takes a fingerprint of only the translatable part of a record: the fields that carry language and the body blocks, with every housekeeping field deliberately excluded. That fingerprint is stored alongside each finished translation. A translation is behind when, and only when, the fingerprint of today’s English differs from the one recorded when that translation was made.</p>
@@ -161,7 +163,8 @@
     <h3>Three outcomes, not two</h3>
     <p>A language can be up to date, behind — or <strong>edited by hand</strong>. The third case is the one that makes the design worth having. If someone has improved the Ukrainian text directly, an automatic re-translation would silently destroy that work, and the person who did it would find out weeks later, if ever.</p>
     <p>The queue detects this by fingerprinting its own output too. If what is in the record no longer matches what the queue wrote, a human has been here. Those languages are not overwritten; they are collected into a short list of decisions, each answered once with either <em>keep mine</em> or <em>redo it</em>. An automatic system that edits published text needs a way to stop and ask, and it needs an undo — the queue keeps the previous version of every language it replaces.</p>
-
+    </section>
+    <section class="sys-sec">
     <h2>Choosing a translator</h2>
     <p>Four providers sit in a chain, tried in order of quality. Three of them run out: a monthly volume allowance is gone within a week, a public endpoint rate-limits by address, a free model tier resets daily. This is normal and permanent, not an incident.</p>
     <p>Two consequences follow. First, work picked up automatically refuses to accept the emergency-grade translator — better to wait than to fill a journal with visibly poor text nobody asked for. Work requested by a human accepts anything, because a person is standing there waiting. Second, when a better provider becomes available again, translations made by a worse one are quietly redone. Quality settles upward on its own.</p>
@@ -188,7 +191,8 @@
         </div>
       </div>
     </div>
-
+    </section>
+    <section class="sys-sec">
     <h2>Publication</h2>
     <p>Two independent gates decide whether a reader can reach a piece: a draft flag on the record itself, and a separate visibility map that governs whether its section is shown at all. Both must be open. Clearing one produces the worst possible state — a record that is published, correct, and unreachable.</p>
 
@@ -210,7 +214,8 @@
       <p>The panel was, line by line, accurate. As a whole it said <em>this is broken</em>, and it said it for weeks while nothing was broken. An article translated into all six languages at 09:42 was reported as untranslated at 10:15, and believed, because everything on that screen was red.</p>
       <p>The repair was not more monitoring. It was one sentence at the top — <strong>translation is working, through this provider</strong> — an exhausted quota rendered amber rather than red, and dead jobs cleared automatically. A signal you have learned to ignore is not a signal; it is decoration that costs you the incident it was built for.</p>
     </div>
-
+    </section>
+    <section class="sys-sec">
     <h2>What this bought</h2>
     <ul>
       <li><strong>The editor can close the tab.</strong> Translation used to run in the browser: six languages, thirteen batches each, twenty minutes with the laptop awake. Losing the network lost the work, silently and halfway.</li>
@@ -218,6 +223,7 @@
       <li><strong>Human work is safe.</strong> Nothing a person wrote is overwritten without being asked first, and every replacement can be undone.</li>
       <li><strong>Readiness is announced.</strong> When the last language of a piece lands, the editorial chat is told. Nobody has to go and look.</li>
     </ul>
+    </section>
   </div>
 
   <div class="sys-foot">

@@ -90,7 +90,7 @@
 </script>
 
 <link rel="stylesheet" href="/munister.css?v=16">
-<link rel="stylesheet" href="/systems.css?v=4">
+<link rel="stylesheet" href="/systems.css?v=6">
 </head>
 <body>
 
@@ -131,10 +131,12 @@
   </div>
 
   <div class="sys-body">
+    <section class="sys-sec">
 <h2>A claim worth computing</h2>
     <p>Every remote studio's site says it works across time zones. The statement carries no information, because it is never false and never checked. The client's actual question is narrower and answerable: <em>if I am in Denver, how many hours of my working day can I reach you?</em></p>
     <p>That has a number for an answer, and the number differs by state, and it changes twice a year. So the site computes it rather than claiming it. The coverage map is shaded by overlapping hours, and a visitor can see, per state, whether the answer is comfortable or marginal.</p>
-
+    </section>
+    <section class="sys-sec">
     <h2>Where daylight saving comes from</h2>
     <p>The tempting implementation is a table: state, offset, done. This is wrong within months. Offsets shift with daylight saving on dates that differ between countries and change by legislation; parts of Arizona do not observe it at all; several states straddle two zones. A hand-maintained table is a promise to remember something twice a year forever, and it will be wrong the first time nobody does.</p>
     <p>The browser already contains the full IANA time-zone database, kept current by whoever maintains it. The site asks that, for each zone, what the offset is right now. Daylight saving is never handled, because it is never modelled — it is resolved by the data source that already knows.</p>
@@ -150,7 +152,8 @@
 
     <p>The geography is the other half. A full-detail map of US state boundaries is megabytes, which for a decorative map would be indefensible and for an interactive one is simply slow. The outlines are reduced to about thirty-two kilobytes — enough resolution for a reader to find their state, and small enough that the page stays a plain static file with no server behind it.</p>
     <p>That is the point worth taking away. <strong>An evidence-based interface does not require an application.</strong> The map is computed on the client, the geometry is small, the page is a file, and the whole thing deploys by copying. Complexity here would have bought nothing except something else to keep running.</p>
-
+    </section>
+    <section class="sys-sec">
     <h2>Seven languages, no framework</h2>
     <p>The site carries seven languages, prices in dollars, and no runtime dependency to manage them. Each language is a page. This is unfashionable and, at this size, correct: a translation framework would add a build step, a dictionary format and a class of bug where the wrong language appears briefly on load, in exchange for saving duplication that a static site has no trouble carrying.</p>
 
@@ -160,6 +163,7 @@
       <p>The contact form does not send an email. It posts to the intake endpoint of the CRM described elsewhere in this section, where the enquiry is scored, assigned to a person and opened as a thread the same day.</p>
       <p>An email would have been three lines of configuration and would have put the enquiry into an inbox, which is where enquiries go to be read once and lost. The two systems were built years apart and by intention meet at exactly one documented endpoint — which is the only reason connecting them was an afternoon rather than a project.</p>
     </div>
+    </section>
   </div>
 
   <div class="sys-foot">
