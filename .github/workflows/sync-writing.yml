@@ -1,0 +1,44 @@
+name: Sync Writing page from EPRIS Journal
+
+# CORS on api.eprisjournal.com only allows eprisjournal.com itself, so a
+# client-side fetch from munister.com.ua would be blocked in the browser -
+# this has to run server-side, on a schedule, and commit the regenerated
+# static HTML instead. See scripts/sync-writing.mjs for the actual logic.
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-writing
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Sync writing/index.html from the live EPRIS content API
+        run: node scripts/sync-writing.mjs
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- writing/index.html; then
+            echo "No changes."
+            exit 0
+          fi
+          git config user.name "munister-writing-sync[bot]"
+          git config user.email "actions@users.noreply.github.com"
+          git add writing/index.html
+          git commit -m "writing: sync articles from EPRIS Journal [auto]"
+          git push
