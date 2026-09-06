@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Regenerates the auto-generated regions of writing/index.html (the piece
-// cards, the JSON-LD hasPart list, and the count-dependent blurbs) from the
-// live EPRIS Journal content API. Run on a schedule via
+// cards, the JSON-LD hasPart list, and the count-dependent blurbs) AND the
+// homepage's own Writing teaser section (index.html, top 5, newest first)
+// from the live EPRIS Journal content API. Run on a schedule via
 // .github/workflows/sync-writing.yml so new articles/reviews by Viacheslav
 // Munister show up here without a manual edit — the API itself doesn't allow
 // this origin to fetch it client-side (CORS is locked to eprisjournal.com),
@@ -12,6 +13,8 @@ import path from 'node:path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FILE = path.join(__dirname, '..', 'writing', 'index.html');
+const HOME_FILE = path.join(__dirname, '..', 'index.html');
+const HOME_TEASER_COUNT = 5;
 const AUTHOR = 'Viacheslav Munister';
 const API = 'https://api.eprisjournal.com/content?lang=EN';
 
@@ -50,6 +53,25 @@ function escapeHtml(s) {
   }[c]));
 }
 
+function titleCase(s) {
+  return String(s || '').split(/\s+/).map((w) => w ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w).join(' ');
+}
+
+// The homepage card line ("Interview · Architecture · Sardinia") used to be
+// hand-written per piece - there is no field in the CMS that spells it out,
+// so this derives the closest mechanical equivalent: the piece's own kind
+// plus, for a review, its subject line; for an article, its first two tags
+// (dropping a tag that just repeats "interview").
+function homeSubline(p) {
+  if (p.kind === 'review') {
+    return ['Review', p.subject].filter(Boolean).join(' · ');
+  }
+  const isInterview = /interview/i.test(p.category);
+  const kind = isInterview ? 'Interview' : 'Essay';
+  const extras = p.tags.filter((t) => !/^interview$/i.test(t)).slice(0, 2).map(titleCase);
+  return [kind, ...extras].join(' · ');
+}
+
 const NUM_WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
   'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen', 'Twenty'];
 function spellCount(n) {
@@ -73,8 +95,15 @@ async function main() {
   if (!res.ok) throw new Error(`content API responded ${res.status}`);
   const data = await res.json();
 
+  // ?lang=EN is the reader-facing feed, but it still hands back drafts and
+  // pieces scheduled for later - a personal site pulling every byline match
+  // regardless would leak unpublished work (a music-desk draft under this
+  // author showed up here this way). Only what a reader could actually open
+  // on eprisjournal.com right now qualifies.
+  const isLive = (x) => !x.draft && (!x.publishAt || new Date(x.publishAt).getTime() <= Date.now());
+
   const articles = (data.articles || [])
-    .filter((a) => a.author === AUTHOR)
+    .filter((a) => a.author === AUTHOR && isLive(a))
     .map((a) => ({
       kind: 'article',
       id: a.id,
@@ -90,7 +119,7 @@ async function main() {
     }));
 
   const reviews = (data.reviews || [])
-    .filter((r) => r.author === AUTHOR)
+    .filter((r) => r.author === AUTHOR && isLive(r))
     .map((r) => ({
       kind: 'review',
       id: r.id,
@@ -100,6 +129,7 @@ async function main() {
       sortDate: new Date(r.date).getTime() || 0,
       category: r.category || '',
       tags: [],
+      subject: r.subject || '',
       role: r.role || 'EPRIS Journal',
       abstract: r.excerpt || truncate(firstText(r.content), 320),
       image: resolveImage(r.imageUrl),
@@ -194,6 +224,46 @@ ${figure}
     console.log(`Synced ${total} piece(s) (${nArticles} article(s), ${nReviews} review(s)).`);
   } else {
     console.log('Already up to date.');
+  }
+
+  // ── Homepage teaser (index.html) ────────────────────────────────────────
+  // Same source, top N newest - the rest stay one click away on /writing/.
+  const homePieces = pieces.slice(0, HOME_TEASER_COUNT);
+  const homeCardsHtml = homePieces.map((p) => {
+    const url = `https://eprisjournal.com/${p.kind === 'review' ? 'review' : 'article'}/${p.slug}`;
+    const img = p.image
+      ? `<span class="thumb"><img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.title)}" width="240" height="240" loading="lazy" decoding="async"></span>\n        `
+      : '';
+    return `      <a href="${url}" target="_blank" rel="noopener">
+        ${img}<span class="mono when">${escapeHtml(p.date)}</span>
+        <div class="body">
+          <h3>${escapeHtml(p.title)}</h3>
+          <span class="sub mono">${escapeHtml(homeSubline(p))}</span>
+        </div>
+        <span class="go mono">Read<i class="ext" aria-hidden="true"></i></span>
+      </a>`;
+  }).join('\n');
+
+  const homeHtml = readFileSync(HOME_FILE, 'utf8');
+  let homeOut = homeHtml;
+  homeOut = homeOut.replace(
+    /(<!-- AUTO:HOME_WRITING_NOTE:START -->)[\s\S]*?(<!-- AUTO:HOME_WRITING_NOTE:END -->)/,
+    `$1Essays, criticism and interviews in EPRIS Journal. ${spellCount(total)} piece${total === 1 ? '' : 's'}, newest first.$2`
+  );
+  homeOut = homeOut.replace(
+    /(<!-- AUTO:HOME_WRITING_CARDS:START -->)[\s\S]*?(<!-- AUTO:HOME_WRITING_CARDS:END -->)/,
+    () => `<!-- AUTO:HOME_WRITING_CARDS:START -->\n${homeCardsHtml}\n<!-- AUTO:HOME_WRITING_CARDS:END -->`
+  );
+  homeOut = homeOut.replace(
+    /(<!-- AUTO:HOME_WRITING_BUTTON:START -->)[\s\S]*?(<!-- AUTO:HOME_WRITING_BUTTON:END -->)/,
+    `$1All ${spellCount(total).toLowerCase()} piece${total === 1 ? '' : 's'}$2`
+  );
+
+  if (homeOut !== homeHtml) {
+    writeFileSync(HOME_FILE, homeOut);
+    console.log(`Synced homepage teaser (${homePieces.length} of ${total} shown).`);
+  } else {
+    console.log('Homepage teaser already up to date.');
   }
 }
 
