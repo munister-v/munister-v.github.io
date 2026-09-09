@@ -350,3 +350,63 @@
 }
 .matrix figcaption p{max-width:72ch;font-size:13.5px;line-height:1.5;color:var(--c-muted)}
 .matrix figcaption .mono{white-space:nowrap;padding-top:2px}
+
+/* ─── АЛГОРИТМ І ІНВАРІАНТИ ──────────────────────────────────────────────────
+   Проза добре пояснює, ЧОМУ кроки саме такі, і погано тримає порядок кроків та
+   їхню ціну. Тому там, де мова заходить про метод, кроки виносяться в
+   нумерований блок: назва кроку, вартість у моношрифті праворуч, під ними
+   пояснення. Це не оформлення заради вигляду, а те, що можна перевірити
+   пунктом: крок або має ціну, або її нема кому написати.
+
+   Інваріанти окремим блоком і навмисне сухо, рядками I1…I5. Інваріант, який
+   не сформульований одним реченням, на практиці не перевіряється: його
+   «пам'ятають». Тут його видно, і видно, ЧИМ він тримається (унікальний
+   індекс, транзакція, перерахунок), бо саме це відрізняє гарантію від
+   домовленості між людьми. */
+.algo{margin:clamp(1.6rem,3vw,2.2rem) 0;border:1px solid var(--c-ink)}
+.algo-cap{
+  display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap;
+  padding:10px 16px;border-bottom:1px solid var(--c-ink);background:var(--c-paper-deep);
+}
+.algo-cap b{font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--c-ink)}
+.algo ol{margin:0;padding:0;list-style:none;counter-reset:algo}
+.algo li{
+  display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:2px 12px;
+  padding:13px 16px;border-top:1px solid var(--c-rule);counter-increment:algo;
+}
+.algo li:first-child{border-top:none}
+.algo li::before{
+  content:counter(algo);grid-column:1;grid-row:1;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;color:var(--c-faint);padding-top:3px;
+}
+.algo .s{grid-column:2;grid-row:1;font-size:15.5px;font-weight:500;color:var(--c-ink)}
+.algo .c{
+  grid-column:3;grid-row:1;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--c-faint);white-space:nowrap;padding-top:4px;
+}
+.algo p{grid-column:2 / -1;grid-row:2;margin-top:5px;max-width:66ch;font-size:14.5px;line-height:1.55;color:var(--c-muted)}
+.algo code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.86em;color:var(--c-ink);background:var(--c-paper);padding:1px 4px}
+
+.inv{margin:clamp(1.6rem,3vw,2.2rem) 0;border:1px solid var(--c-rule-strong)}
+.inv-cap{
+  display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap;
+  padding:10px 16px;border-bottom:1px solid var(--c-rule-strong);background:var(--c-paper-deep);
+}
+.inv-cap b{font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--c-ink)}
+.inv-row{
+  display:grid;grid-template-columns:34px minmax(0,1.35fr) minmax(0,1fr);gap:4px 16px;
+  padding:12px 16px;border-top:1px solid var(--c-rule);
+}
+.inv-row:first-of-type{border-top:none}
+.inv-row .k{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;color:var(--c-faint);padding-top:2px}
+.inv-row .st{font-size:15px;line-height:1.5;color:var(--c-ink)}
+.inv-row .by{font-size:13.5px;line-height:1.5;color:var(--c-muted)}
+.inv-row .by b{font-weight:500;color:var(--c-ink)}
+
+@media (max-width:900px){
+  .algo li{grid-template-columns:22px minmax(0,1fr);gap:2px 10px}
+  .algo .c{grid-column:2;grid-row:2;padding-top:2px}
+  .algo p{grid-row:3}
+  .inv-row{grid-template-columns:30px minmax(0,1fr)}
+  .inv-row .by{grid-column:2}
+}

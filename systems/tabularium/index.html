@@ -21,14 +21,14 @@
 <meta property="og:site_name" content="Viacheslav Munister">
 <meta property="og:title" content="Tabularium · Viacheslav Munister">
 <meta property="og:description" content="An operations core for a clothing retailer: supplier workbooks turned into size-level stock, identity resolved in a fixed order, and stock valuations that carry their own provenance.">
-<meta property="og:image" content="https://munister.com.ua/images/og-en.jpg">
+<meta property="og:image" content="https://munister.com.ua/images/works/tabularium.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Tabularium · Viacheslav Munister">
 <meta name="twitter:description" content="An operations core for a clothing retailer: supplier workbooks turned into size-level stock, identity resolved in a fixed order, and stock valuations that carry their own provenance.">
-<meta name="twitter:image" content="https://munister.com.ua/images/og-en.jpg">
+<meta name="twitter:image" content="https://munister.com.ua/images/works/tabularium.jpg">
 
 <script type="application/ld+json">
 {
@@ -58,7 +58,9 @@
     "retail operations",
     "ERP architecture",
     "data modelling",
-    "identity resolution",
+    "schema matching",
+    "record linkage",
+    "invariants",
     "PostgreSQL",
     "inventory"
   ]
@@ -92,7 +94,7 @@
 </script>
 
 <link rel="stylesheet" href="/munister.css?v=16">
-<link rel="stylesheet" href="/systems.css?v=7">
+<link rel="stylesheet" href="/systems.css?v=8">
 </head>
 <body>
 
@@ -121,7 +123,7 @@
 
   <div class="sys-head">
     <a class="back mono" href="/systems/">← Systems</a>
-    <span class="mono">Retail operations core · Data model and identity</span>
+    <span class="mono">Retail operations core · Method, model, invariants</span>
     <h1>The shop is a view. The operation is the system.</h1>
     <p class="standfirst">Tabularium is the back office behind a clothing retailer: roughly 2,800 products, some 7,100 size-level variants, and a catalogue that arrives as spreadsheets from people who have never agreed on a column name. The client is not named here, and neither is the deployment. What is worth writing down is the part a customer never sees, and the four decisions the rest of it rests on.</p>
     <div class="sys-facts">
@@ -139,6 +141,44 @@
     <p>Retail runs on documents. A workbook from the supplier, a price list, a photograph of a shelf, a message on Friday saying the last two went this morning. Every one of them is true when it is written and slightly wrong an hour later, and not one of them can be asked a question.</p>
     <p>The storefront was the visible half of this job and by some distance the smaller one. A shop can be rebuilt in a season. The operation behind it has to answer the same dull questions every working day: how many of this article are left in 42, what did we pay for it, which supplier was cheaper last spring, what has not moved since March. None of those are design questions. They are questions about whether the business wrote anything down in a form that can be read back.</p>
     <p>So Tabularium moves the source of truth rather than redecorating it. Not a spreadsheet mailed on Mondays, and not a content system in which a product is a document and a size is a word inside it. One relational model: a product, its variants, the movements that changed them, the receipts that paid for them. Everything else, the storefront included, is a view of that model rather than a copy of it. A copy is a thing that drifts.</p>
+    </section>
+    <section class="sys-sec">
+    <h2>Method</h2>
+    <p>Under the retail vocabulary sit three problems that have names of their own, and naming them is what makes the design arguable instead of a matter of taste.</p>
+    <p><strong>Schema matching.</strong> An unknown tabular layout has to be mapped onto a fixed target schema. The awkward part is the asymmetry: the evidence for the mapping lives in a header and a handful of sample values, while the cost of getting it wrong is paid once per row, silently, across the whole file. That asymmetry is the argument for deciding the mapping once per layout and for showing the decision to a person before it is used.</p>
+    <p><strong>Deterministic record linkage.</strong> Each offer row has to be attached to the variant it describes, using identifiers of different scope: one issued per size, one per article by the manufacturer, one per article by us. The linkage is deliberately deterministic rather than probabilistic. A scored guess is a reasonable instrument when the cost of a near miss is small; here a near miss puts a supplier’s quantities on somebody else’s garment, which is not a slightly worse match but a wrong number on a shelf.</p>
+    <p><strong>A materialised aggregate under concurrent writers.</strong> The per-product total is a cached fold over its variants, and every cache of that kind fails the same way: two writers, one stale read, a total that nobody can reproduce. It is kept correct not by careful application code but by structure, which is the general move this whole system is built on. Uniqueness is a constraint in the database, atomicity is a transaction, and the aggregate is recomputed from the rows that own the truth.</p>
+    <p>Everything the system knows arrives as an electronic document: a supplier workbook, a goods receipt, an order, a payment callback. The document is kept as received and the derived record is kept separately, because a document is evidence and a record is an interpretation of it, and the two stop agreeing at different speeds. Reconciliation is then possible at all, which is the practical reason to pay for the duplication.</p>
+    <p>Stated that way, the import is an algorithm rather than a sequence of screens, and each step can carry its cost. Below, <code>n</code> is rows in the file and <code>k</code> is sizes of one article. The number of model calls is a function of layouts, not of <code>n</code>, and that is the single most important line in the table.</p>
+
+    <div class="algo">
+      <div class="algo-cap"><b>Algorithm 1</b><span class="mono">one workbook to committed stock</span></div>
+      <ol>
+        <li><span class="s">Detect the layout</span><span class="c">O(h) over the header</span>
+          <p>Both header rows are read and normalised, then matched against the signatures of layouts already known. One decision per file, taken before a single data row is touched.</p></li>
+        <li><span class="s">Map the columns</span><span class="c">O(1) model calls per layout</span>
+          <p>A known signature maps by rule. An unknown one costs exactly one model call, whose input is the header and whose output is a column map that a person reads on screen before it is applied. Never <code>O(n)</code>, which is what makes the step affordable and reviewable at the same time.</p></li>
+        <li><span class="s">Resolve each row</span><span class="c">≤4 indexed lookups per row</span>
+          <p>The identity ladder is walked in fixed order and stops at the first hit: per-size code, barcode, our article, the manufacturer’s article. Deterministic, so the same file resolves the same way twice, which is what makes a re-run safe.</p></li>
+        <li><span class="s">Group the residue</span><span class="c">one pass, O(n)</span>
+          <p>Rows that resolved to nothing are grouped by the manufacturer’s article, so an article in <code>k</code> sizes becomes one product carrying <code>k</code> variants rather than <code>k</code> products. The descriptive columns of the group are carried into the new product instead of being dropped with the row.</p></li>
+        <li><span class="s">Report the difference</span><span class="c">pure, writes nothing</span>
+          <p>The dry run is a function of the file and the current state that returns counts of created, updated and held. It has no side effects, so it can be run as often as anybody wants to look at it.</p></li>
+        <li><span class="s">Commit</span><span class="c">one transaction</span>
+          <p>Products, variants and movements are written together. Either the file landed or it did not; there is no third state in which half a supplier’s prices are live.</p></li>
+      </ol>
+    </div>
+
+    <p>The invariants below are the part worth arguing about, because each one names the mechanism that holds it. An invariant maintained by discipline is a habit, and habits are not preserved by deployments.</p>
+
+    <div class="inv">
+      <div class="inv-cap"><b>Invariants</b><span class="mono">what holds, and what holds it</span></div>
+      <div class="inv-row"><span class="k">I1</span><span class="st">The product total equals the sum of its variants after every committed movement.</span><span class="by">Held by <b>recomputation inside the same transaction</b> as the movement, and checkable by rebuilding the total from the journal and comparing.</span></div>
+      <div class="inv-row"><span class="k">I2</span><span class="st">Every change of a quantity leaves exactly one journal row, carrying its cause.</span><span class="by">Held by <b>a single write path</b>. Sale, import and hand correction call one function; nothing else may write a quantity.</span></div>
+      <div class="inv-row"><span class="k">I3</span><span class="st">No value used for matching is ever generated by us.</span><span class="by">Held by <b>omission</b>: the barcode generator is never run against real variants, and the size code is computed on read rather than stored.</span></div>
+      <div class="inv-row"><span class="k">I4</span><span class="st">Every reported valuation carries the step that produced it.</span><span class="by">Held by <b>the resolver returning provenance with the number</b>, so a receipt-based cost and a rule-derived one cannot be confused downstream.</span></div>
+      <div class="inv-row"><span class="k">I5</span><span class="st">An ambiguous row is held. It is never completed with a default.</span><span class="by">Held by <b>the absence of a fallback</b> in the parser. There is no default price to fall back to, so no code path can quietly invent one.</span></div>
+    </div>
     </section>
     <section class="sys-sec">
     <h2>Intake</h2>
