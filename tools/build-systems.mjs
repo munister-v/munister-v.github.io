@@ -42,6 +42,11 @@ function parseSource(text, file) {
   let meta;
   try { meta = JSON.parse(m[1]); }
   catch (e) { throw new Error(`${file}: метаданные не разобраны — ${e.message}`); }
+  /* Необов'язкове поле `mark` — знак работы: готовый инлайновый SVG, который
+     встаёт над надзаголовком. Знак есть не у каждой работы и не должен
+     появляться там, где его нет: сюда попадает ровно то, что написано в
+     источнике, без запасного варианта. Подпись рядом берётся из `markLabel`,
+     а если его нет — из title. */
   for (const field of ['slug', 'title', 'headline', 'standfirst', 'kicker', 'summary', 'facts']) {
     if (!meta[field]) throw new Error(`${file}: не хватает поля «${field}»`);
   }
@@ -120,7 +125,7 @@ ${JSON.stringify(breadcrumb, null, 2)}
 </script>
 ` : ''}
 <link rel="stylesheet" href="/munister.css?v=16">
-<link rel="stylesheet" href="/systems.css?v=8">
+<link rel="stylesheet" href="/systems.css?v=9">
 </head>
 <body>
 
@@ -202,7 +207,8 @@ for (const file of files) {
     + `
   <div class="sys-head">
     <a class="back mono" href="/systems/">← Systems</a>
-    <span class="mono">${esc(meta.kicker)}</span>
+${meta.mark ? `    <div class="sys-mark">${meta.mark}<span class="sys-mark-t">${esc(meta.markLabel || meta.title)}</span></div>
+` : ''}    <span class="mono">${esc(meta.kicker)}</span>
     <h1>${meta.headline}</h1>
     <p class="standfirst">${meta.standfirst}</p>
     <div class="sys-facts">

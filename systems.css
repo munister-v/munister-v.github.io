@@ -410,3 +410,64 @@
   .inv-row{grid-template-columns:30px minmax(0,1fr)}
   .inv-row .by{grid-column:2}
 }
+
+/* ─── ЗНАК РАБОТЫ ────────────────────────────────────────────────────────────
+   Знак стоит над надзаголовком и набран тем же способом, что и всё остальное
+   в разделе: обводка в цвет чернил, без заливок и градиентов, вложенные формы
+   и один акцент. Ни один цвет ему не назначен, он наследует currentColor —
+   поэтому одинаково работает на бумаге, в тёмном UI и в печати.
+
+   Размер 30px, а не 48: это подпись работы, а не заголовок. Он должен
+   читаться первым взглядом и не спорить с антиквой титула, которая идёт
+   следом. */
+.sys-mark{display:flex;align-items:center;gap:11px;margin-bottom:16px;color:var(--c-ink)}
+.sys-mark svg{display:block;width:30px;height:30px;flex:none}
+.sys-mark-t{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--c-ink);padding-top:1px;
+}
+
+/* ─── КОД ────────────────────────────────────────────────────────────────────
+   Запрос целиком, а не пересказ запроса. В тексте про конкурентность пересказ
+   бесполезен: весь смысл в том, что проверка и запись стоят в ОДНОМ операторе,
+   и увидеть это можно только в самом операторе.
+
+   Блок прокручивается вбок сам (как схемы), потому что переносить SQL по
+   ширине телефона — значит ломать ровно то, ради чего он здесь: строчная
+   структура запроса. */
+.code{margin:clamp(1.6rem,3vw,2.2rem) 0;border:1px solid var(--c-rule-strong)}
+.code,.code-scroll{min-width:0}
+.code-cap{
+  display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap;
+  padding:10px 16px;border-bottom:1px solid var(--c-rule-strong);background:var(--c-paper-deep);
+}
+.code-cap b{font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--c-ink)}
+.code-scroll{overflow-x:auto}
+.code pre{
+  margin:0;padding:14px 16px;
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12.5px;line-height:1.62;
+  color:var(--c-ink);white-space:pre;
+}
+.code pre .cm{color:var(--c-faint)}
+.code figcaption{padding:10px 16px;border-top:1px solid var(--c-rule);background:var(--c-paper-deep);
+  font-size:13.5px;line-height:1.5;color:var(--c-muted)}
+
+/* ─── ДИАГРАММА ВРЕМЕНИ ──────────────────────────────────────────────────────
+   Схемы выше отвечают на вопрос «что за чем», и на вопрос «что происходит,
+   когда два процесса делают это одновременно» они не отвечают в принципе:
+   у стрелки нет времени. Поэтому у конкурентности свой тип рисунка — две
+   линии жизни и общая строка между ними, время идёт вниз.
+
+   Полосой показана удерживаемая блокировка, пунктиром — ожидание. Красного
+   здесь нет: ожидание это не отказ, а именно то, ради чего блокировка и
+   берётся. */
+.sq-line{stroke:rgba(18,18,18,.28);stroke-width:1;stroke-dasharray:4 4}
+.sq-head{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;fill:var(--c-ink);text-anchor:middle}
+.sq-box{fill:var(--c-paper);stroke:var(--c-ink);stroke-width:1.25}
+.sq-box--wait{fill:var(--c-paper-deep);stroke:rgba(18,18,18,.45);stroke-dasharray:5 3}
+.sq-lb{font-family:var(--font-body);font-size:12px;font-weight:500;fill:var(--c-ink)}
+.sq-sb{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;fill:var(--c-muted)}
+.sq-lock{fill:rgba(18,18,18,.09);stroke:var(--c-ink);stroke-width:1}
+.sq-note{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;fill:var(--c-faint)}
+.sq-arrow{stroke:rgba(18,18,18,.5);stroke-width:1.15;fill:none}
+.sq-t{font-family:var(--font-mono);font-size:9px;letter-spacing:.08em;fill:var(--c-faint);text-anchor:end}
