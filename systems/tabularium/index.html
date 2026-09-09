@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabularium · Viacheslav Munister</title>
+<meta name="description" content="An operations core for a clothing retailer: supplier workbooks turned into size-level stock, identity resolved in a fixed order, and stock valuations that carry their own provenance.">
+<link rel="canonical" href="https://munister.com.ua/systems/tabularium/">
+<link rel="alternate" hreflang="en" href="https://munister.com.ua/systems/tabularium/">
+<link rel="alternate" hreflang="x-default" href="https://munister.com.ua/systems/tabularium/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#ffffff">
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://munister.com.ua/systems/tabularium/">
+<meta property="og:site_name" content="Viacheslav Munister">
+<meta property="og:title" content="Tabularium · Viacheslav Munister">
+<meta property="og:description" content="An operations core for a clothing retailer: supplier workbooks turned into size-level stock, identity resolved in a fixed order, and stock valuations that carry their own provenance.">
+<meta property="og:image" content="https://munister.com.ua/images/og-en.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tabularium · Viacheslav Munister">
+<meta name="twitter:description" content="An operations core for a clothing retailer: supplier workbooks turned into size-level stock, identity resolved in a fixed order, and stock valuations that carry their own provenance.">
+<meta name="twitter:image" content="https://munister.com.ua/images/og-en.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Tabularium",
+  "description": "An operations core for a clothing retailer: supplier workbooks turned into size-level stock, identity resolved in a fixed order, and stock valuations that carry their own provenance.",
+  "author": {
+    "@type": "Person",
+    "name": "Viacheslav Munister",
+    "url": "https://munister.com.ua/"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Viacheslav Munister"
+  },
+  "inLanguage": "en",
+  "url": "https://munister.com.ua/systems/tabularium/",
+  "datePublished": "2026-09-09",
+  "dateModified": "2026-09-09",
+  "isPartOf": {
+    "@type": "CollectionPage",
+    "name": "Systems",
+    "url": "https://munister.com.ua/systems/"
+  },
+  "about": [
+    "retail operations",
+    "ERP architecture",
+    "data modelling",
+    "identity resolution",
+    "PostgreSQL",
+    "inventory"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Munister",
+      "item": "https://munister.com.ua/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Systems",
+      "item": "https://munister.com.ua/systems/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Tabularium",
+      "item": "https://munister.com.ua/systems/tabularium/"
+    }
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/munister.css?v=16">
+<link rel="stylesheet" href="/systems.css?v=7">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <a class="wordmark" href="/">Munister</a>
+  <nav aria-label="Main" id="siteNav">
+    <a href="/#work">Work</a>
+    <a href="/systems/" aria-current="page">Systems</a>
+    <a href="/research/">Research</a>
+    <a href="/writing/">Writing</a>
+    <a href="/#contact">Contact</a>
+  </nav>
+  <div class="head-right">
+    <a href="/cv.html">CV</a>
+  </div>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Menu">
+    <svg class="i-open" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    <svg class="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+  </button>
+</header>
+
+<main class="site-main" id="main">
+<div class="shell">
+
+  <div class="sys-head">
+    <a class="back mono" href="/systems/">← Systems</a>
+    <span class="mono">Retail operations core · Data model and identity</span>
+    <h1>The shop is a view. The operation is the system.</h1>
+    <p class="standfirst">Tabularium is the back office behind a clothing retailer: roughly 2,800 products, some 7,100 size-level variants, and a catalogue that arrives as spreadsheets from people who have never agreed on a column name. The client is not named here, and neither is the deployment. What is worth writing down is the part a customer never sees, and the four decisions the rest of it rests on.</p>
+    <div class="sys-facts">
+      <div><span class="mono">Name</span><b>Tabularium, internal</b></div>
+      <div><span class="mono">Built with</span><b>Next.js, TypeScript, PostgreSQL</b></div>
+      <div><span class="mono">Role</span><b>Architecture, implementation, operations</b></div>
+      <div><span class="mono">Access</span><b>Private deployment, no public address</b></div>
+      <div><span class="mono">Scale</span><b>≈2,800 products, ≈7,100 variants</b></div>
+    </div>
+  </div>
+
+  <div class="sys-body">
+    <section class="sys-sec">
+<h2>The problem</h2>
+    <p>Retail runs on documents. A workbook from the supplier, a price list, a photograph of a shelf, a message on Friday saying the last two went this morning. Every one of them is true when it is written and slightly wrong an hour later, and not one of them can be asked a question.</p>
+    <p>The storefront was the visible half of this job and by some distance the smaller one. A shop can be rebuilt in a season. The operation behind it has to answer the same dull questions every working day: how many of this article are left in 42, what did we pay for it, which supplier was cheaper last spring, what has not moved since March. None of those are design questions. They are questions about whether the business wrote anything down in a form that can be read back.</p>
+    <p>So Tabularium moves the source of truth rather than redecorating it. Not a spreadsheet mailed on Mondays, and not a content system in which a product is a document and a size is a word inside it. One relational model: a product, its variants, the movements that changed them, the receipts that paid for them. Everything else, the storefront included, is a view of that model rather than a copy of it. A copy is a thing that drifts.</p>
+    </section>
+    <section class="sys-sec">
+    <h2>Intake</h2>
+    <p>Goods arrive as files, and the files do not agree with one another. Five shapes so far: an export from the old content system; a master workbook in a legacy single-byte encoding where a size repeated three times means three units on the shelf; an eight-column price list where one row is one offer; a fifty-five-column export whose header is two rows deep, one row of human labels and one of machine codes; and whatever the next supplier invents.</p>
+    <p>The instinct is a parser per supplier. That fails quietly, which is the worst way to fail. A reordered column produces plausible numbers rather than an error, and nobody finds out until a size is sold that does not exist.</p>
+    <p>Detection therefore reads the header, not the rows. A recognised export goes to rule-based mapping. Only a genuinely unfamiliar file is handed to a model, and it is asked to map <strong>columns once per layout</strong>, never rows. That distinction is the entire reason a model is allowed anywhere near this pipeline: four thousand rows would be four thousand chances to invent a price, while one header is a single decision, cheap, repeatable and small enough for a person to read on screen before anything is written. Files mapped that way are badged as machine-read in the panel, because that is something the operator should be told rather than something discovered later.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:tabularium-intake --><svg class="flow" viewBox="0 0 1120 506" width="1120" height="506" role="img" xmlns="http://www.w3.org/2000/svg"><title>Tabularium: a supplier workbook becomes size-level stock</title><desc>An import pipeline. A supplier workbook arrives and its header is read; a recognised export goes straight to rule-based mapping, while an unfamiliar one has its columns mapped by a model once per layout rather than once per row. Every row is then resolved against the identity ladder: matched rows update an existing variant, unmatched rows are grouped by factory article so that one article in seven sizes becomes one product rather than seven. A dry run reports counts before anything is written, the apply step runs as a single transaction, and a row whose size or price cannot be resolved is held for review instead of guessed.</desc><defs><marker id="fl-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z"/></marker><marker id="fl-arrow-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z" fill="#b3261e"/></marker></defs><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 134 232 H 186" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 294 232 H 308 Q 320 232 320 220 V 76 Q 320 64 332 64 H 346" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 294 232 H 346" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 64 H 468 Q 480 64 480 76 V 220 Q 480 232 492 232 H 506" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 506" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 614 232 H 628 Q 640 232 640 220 V 76 Q 640 64 652 64 H 666" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 614 232 H 666" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 774 64 H 788 Q 800 64 800 76 V 220 Q 800 232 812 232 H 826" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 774 232 H 826" marker-end="url(#fl-arrow)"/><path class="fl-edge fl-edge--fail" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 774 232 H 788 Q 800 232 800 244 V 388 Q 800 400 812 400 H 826" marker-end="url(#fl-arrow-fail)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 934 232 H 986" marker-end="url(#fl-arrow)"/><g class="fl-node fl-node--trigger"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 64 194 H 122 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 64 a 38 38 0 0 1 0 -76 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(75 219) scale(1.0833)"><rect x="3.5" y="3.5" width="7" height="7"/><rect x="13.5" y="3.5" width="7" height="7"/><rect x="3.5" y="13.5" width="7" height="7"/><rect x="13.5" y="13.5" width="7" height="7"/></g><text class="fl-lb" x="80" y="283">Supplier workbook</text><text class="fl-sb" x="80" y="297.5">five shapes so far</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 198 194 H 282 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 198 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(227 219) scale(1.0833)"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></g><text class="fl-lb" x="240" y="283">Read the header</text><text class="fl-sb" x="240" y="297.5">two rows of it</text></g><g class="fl-node fl-node--external"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 358 26 H 442 a 12 12 0 0 1 12 12 V 90 a 12 12 0 0 1 -12 12 H 358 a 12 12 0 0 1 -12 -12 V 38 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(387 51) scale(1.0833)"><path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="m18.5 15.5.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></g><text class="fl-lb" x="400" y="115">Model maps columns</text><text class="fl-sb" x="400" y="129.5">once per layout</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 358 194 H 442 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 358 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(387 219) scale(1.0833)"><path d="m8 8-5 4 5 4"/><path d="m16 8 5 4-5 4"/><path d="M13.5 5 10.5 19"/></g><text class="fl-lb" x="400" y="283">Rule-based mapping</text><text class="fl-sb" x="400" y="297.5">known exports</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 194 H 602 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 219) scale(1.0833)"><circle cx="8" cy="12" r="4"/><path d="M12 12h9"/><path d="M17 12v3.5M20 12v2.5"/></g><text class="fl-lb" x="560" y="283">Resolve each row</text><text class="fl-sb" x="560" y="297.5">identity ladder</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 678 26 H 762 a 12 12 0 0 1 12 12 V 90 a 12 12 0 0 1 -12 12 H 678 a 12 12 0 0 1 -12 -12 V 38 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(707 51) scale(1.0833)"><path d="M21 12h-5"/><path d="M16 12 9 6H3"/><path d="M16 12 9 18H3"/><path d="m13 9 3 3-3 3"/></g><text class="fl-lb" x="720" y="115">Group the leftovers</text><text class="fl-sb" x="720" y="129.5">by factory article</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 678 194 H 762 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 678 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(707 219) scale(1.0833)"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.7"/></g><text class="fl-lb" x="720" y="283">Dry run</text><text class="fl-sb" x="720" y="297.5">counts, no writes</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 838 194 H 922 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 838 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(867 219) scale(1.0833)"><path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></g><text class="fl-lb" x="880" y="283">Apply once</text><text class="fl-sb" x="880" y="297.5">single transaction</text></g><g class="fl-node fl-node--fail"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 838 362 H 922 a 12 12 0 0 1 12 12 V 426 a 12 12 0 0 1 -12 12 H 838 a 12 12 0 0 1 -12 -12 V 374 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(867 387) scale(1.0833)"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></g><text class="fl-lb" x="880" y="451">Row held</text><text class="fl-sb" x="880" y="465.5">size or price unclear</text></g><g class="fl-node fl-node--store"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 998 194 H 1082 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 998 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(1027 219) scale(1.0833)"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></g><text class="fl-lb" x="1040" y="283">Products and variants</text><text class="fl-sb" x="1040" y="297.5">the record of stock</text></g><text class="fl-elb" x="327" y="151" text-anchor="start">unfamiliar</text><text class="fl-elb" x="320" y="223" text-anchor="middle">known</text><text class="fl-elb" x="647" y="151" text-anchor="start">no match</text><text class="fl-elb" x="640" y="223" text-anchor="middle">match</text><text class="fl-elb" x="807" y="319" text-anchor="start">unresolved</text></svg><!-- /flow --></div>
+      <figcaption>
+        <p>Import. The header decides the route, and the model is consulted once per layout rather than once per row. Nothing is written until a dry run has reported what will be created, updated and skipped; the apply step is one transaction; and a row whose size or price cannot be resolved is held for a person instead of guessed.</p>
+        <span class="mono">Fig. 1</span>
+      </figcaption>
+    </figure>
+
+    <p>The branch worth defending is the red one. A row that cannot be resolved is <strong>held, not guessed</strong>. A pipeline that invents a price for an ambiguous row will eventually sell something for the wrong money, and nobody will be able to say which row did it. Holding a row costs somebody five minutes. Guessing one costs a reconciliation that was never budgeted for.</p>
+
+    <h3>The unit of meaning is not the row</h3>
+    <p>The step that took the most rewriting is the dull one in the corner. Rows matching nothing in the catalogue used to become new products one at a time, so an article in seven sizes landed as seven near-identical products. An earlier version was worse: it read the descriptive columns, name and brand and colour and composition and country and gender, into the preview grid and then stored none of them, so an unmatched row lost everything except its numbers.</p>
+    <p>Both are the same mistake in different clothes, which is treating the row as the unit of meaning. A row is an offer. The unit of meaning is the article, and the repair was to group unmatched rows by it before creating anything. On the fifty-five-column export that is 4,097 rows becoming 1,622 products, with nothing left unmatched.</p>
+    </section>
+    <section class="sys-sec">
+    <h2>Identity</h2>
+    <p>Three identifiers that look like one, and a fourth that must never be stored at all.</p>
+    <p>Collapsing them into a single tidy field called SKU is the obvious move and the wrong one. Matching a supplier price list needs the manufacturer’s article. A customer holding the garment reads the code on the tag, which is ours. The barcode belongs to whoever printed it. They answer different questions, so they stay different columns, and an imported row walks them in a fixed order until one of them matches.</p>
+
+    <div class="schema">
+      <div class="schema-cap"><b>resolution order</b><span class="mono">how one imported row finds its variant</span></div>
+      <div class="schema-row"><code>offer_code</code><span class="ty">first</span><span class="ds">the supplier’s own per-size code, when the file carries one. The most specific thing in the row</span></div>
+      <div class="schema-row"><code>barcode</code><span class="ty">second</span><span class="ds">EAN. Empty on all ≈7,100 variants in this catalogue, which is a fact about the catalogue rather than a gap to be filled in</span></div>
+      <div class="schema-row"><code>article</code><span class="ty">third</span><span class="ds">our internal code: the one printed on the tag, and the one a customer quotes back on the phone</span></div>
+      <div class="schema-row"><code>factory_article</code><span class="ty">fourth</span><span class="ds">the manufacturer’s article, present on nearly every product. Identifies the article, never a single size</span></div>
+      <div class="schema-row"><code>size code</code><span class="ty">computed</span><span class="ds">internal code plus size, assembled for display and for search, never written to a column</span></div>
+    </div>
+
+    <p>There is a barcode generator in the codebase, and it is deliberately not run against real variants. Generated codes would sit in precisely the field the next supplier file matches on, and the file after that would attach its quantities to values we invented ourselves. An import that matches on a number of our own making is not an import. It is a coin toss that issues a receipt.</p>
+    <p>The size code is the same argument one step further. It is derived from two columns that already exist, so writing it down would create a third place where the truth is kept and a first opportunity for the three to disagree. It is therefore assembled on the way out, for the page and for the search index alike.</p>
+    <p>The retailer’s own rule was blunt and correct: every code a product has must appear on its page, and search must find the product by any of them. Search covers name, brand, internal code, factory article, barcode, offer code, the computed size code and the numeric id. Two of its behaviours look like bugs and are not. A query that exactly equals the code of exactly one product jumps straight to that product; the condition is <strong>one exact match</strong>, not one result, because substring matching drags in other people’s codes and a redirect on “one result” would confidently land on the wrong garment. And codes are never upper-cased in CSS, because thirty-four articles contain lower-case letters, and a code shown in a case it does not have is a code the customer cannot check against the tag in their hand.</p>
+    <p>The legacy names carry the article in brackets on the tail, in 2,642 of them. It is stripped for display at read time and left alone in the database, because search matches on the name column, and cleaning it would break finding a product by the code that used to live there.</p>
+    </section>
+    <section class="sys-sec">
+    <h2>Stock</h2>
+    <p>Stock is held per cell: a matrix of product against size, with the movement that produced each number kept beside it. This is the decision the rest of the system rests on, and it is what makes the questions at the top of this page answerable by a query rather than by a phone call.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:tabularium-stock --><svg class="flow" viewBox="0 0 960 506" width="960" height="506" role="img" xmlns="http://www.w3.org/2000/svg"><title>Tabularium: three writers, one journal, one derived total</title><desc>Three things change stock: a confirmed sale, an applied supplier import and a hand correction made in the panel. All three go through a single stock-change function that writes an append-only movement journal, after which the product total is recomputed as the sum of its variants and mirrored onto the product row. Availability is read from a variant above zero, crossing the low-stock threshold messages the operator, and turnover and dead-stock reports are read from the journal rather than kept as counters of their own.</desc><defs><marker id="fl-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z"/></marker><marker id="fl-arrow-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.4 L 9 5 L 0 8.6 z" fill="#b3261e"/></marker></defs><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 134 64 H 148 Q 160 64 160 76 V 220 Q 160 232 172 232 H 186" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 134 232 H 186" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 134 400 H 148 Q 160 400 160 388 V 244 Q 160 232 172 232 H 186" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 294 232 H 346" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 506" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 614 232 H 666" marker-end="url(#fl-arrow)"/><path class="fl-edge" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 774 232 H 826" marker-end="url(#fl-arrow)"/><path class="fl-edge fl-edge--weak" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 774 232 H 788 Q 800 232 800 220 V 76 Q 800 64 812 64 H 826" marker-end="url(#fl-arrow)"/><path class="fl-edge fl-edge--weak" fill="none" stroke="#6e6e6e" stroke-width="1.25" d="M 454 232 H 628 Q 640 232 640 244 V 388 Q 640 400 652 400 H 826" marker-end="url(#fl-arrow)"/><g class="fl-node fl-node--trigger"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 64 26 H 122 a 12 12 0 0 1 12 12 V 90 a 12 12 0 0 1 -12 12 H 64 a 38 38 0 0 1 0 -76 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(75 51) scale(1.0833)"><circle cx="9.5" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.8l2.5 12h11l2.2-8.5H6.2"/></g><text class="fl-lb" x="80" y="115">Sale confirmed</text><text class="fl-sb" x="80" y="129.5">one order line</text></g><g class="fl-node fl-node--trigger"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 64 194 H 122 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 64 a 38 38 0 0 1 0 -76 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(75 219) scale(1.0833)"><path d="M12 3v8"/><path d="M8.5 7.5 12 11l3.5-3.5"/><path d="M4 13v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></g><text class="fl-lb" x="80" y="283">Import applied</text><text class="fl-sb" x="80" y="297.5">supplier quantities</text></g><g class="fl-node fl-node--trigger"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 64 362 H 122 a 12 12 0 0 1 12 12 V 426 a 12 12 0 0 1 -12 12 H 64 a 38 38 0 0 1 0 -76 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(75 387) scale(1.0833)"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16.5 5.2a3.5 3.5 0 0 1 0 6.6"/><path d="M18 14.6a6.5 6.5 0 0 1 3.5 5.4"/></g><text class="fl-lb" x="80" y="451">Hand correction</text><text class="fl-sb" x="80" y="465.5">operator, with a reason</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 198 194 H 282 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 198 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(227 219) scale(1.0833)"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h13M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></g><text class="fl-lb" x="240" y="283">One stock change</text><text class="fl-sb" x="240" y="297.5">set or delta</text></g><g class="fl-node fl-node--store"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 358 194 H 442 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 358 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(387 219) scale(1.0833)"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></g><text class="fl-lb" x="400" y="283">Movement journal</text><text class="fl-sb" x="400" y="297.5">append only</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 518 194 H 602 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 518 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(547 219) scale(1.0833)"><path d="M12 3v18"/><path d="M5 7h14"/><path d="m5 7-3 6h6z"/><path d="m19 7-3 6h6z"/></g><text class="fl-lb" x="560" y="283">Recompute the product</text><text class="fl-sb" x="560" y="297.5">sum of its variants</text></g><g class="fl-node fl-node--store"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 678 194 H 762 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 678 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(707 219) scale(1.0833)"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></g><text class="fl-lb" x="720" y="283">Mirror on the product</text><text class="fl-sb" x="720" y="297.5">derived, never typed</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 838 26 H 922 a 12 12 0 0 1 12 12 V 90 a 12 12 0 0 1 -12 12 H 838 a 12 12 0 0 1 -12 -12 V 38 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(867 51) scale(1.0833)"><path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/></g><text class="fl-lb" x="880" y="115">Operator is told</text><text class="fl-sb" x="880" y="129.5">low stock message</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 838 194 H 922 a 12 12 0 0 1 12 12 V 258 a 12 12 0 0 1 -12 12 H 838 a 12 12 0 0 1 -12 -12 V 206 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(867 219) scale(1.0833)"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16 10"/></g><text class="fl-lb" x="880" y="283">Availability</text><text class="fl-sb" x="880" y="297.5">a cell above zero</text></g><g class="fl-node"><path class="fl-tile" fill="#ffffff" stroke="#121212" stroke-width="1.25" d="M 838 362 H 922 a 12 12 0 0 1 12 12 V 426 a 12 12 0 0 1 -12 12 H 838 a 12 12 0 0 1 -12 -12 V 374 a 12 12 0 0 1 12 -12 Z"/><g class="fl-ic" fill="none" stroke="#121212" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(867 387) scale(1.0833)"><path d="M4 20V4"/><path d="M4 20h16"/><path d="M8 20v-6M12.5 20V8M17 20v-9"/></g><text class="fl-lb" x="880" y="451">Turnover, dead stock</text><text class="fl-sb" x="880" y="465.5">read, never written</text></g><text class="fl-elb" x="807" y="151" text-anchor="start">below threshold</text><text class="fl-elb" x="647" y="319" text-anchor="start">history</text></svg><!-- /flow --></div>
+      <figcaption>
+        <p>Three things change stock, and all three go through one function that writes an append-only journal. The product total is recomputed from its variants afterwards and mirrored onto the product row, so the mirror has exactly one writer. Availability is read from a cell above zero; turnover and dead stock are read from the journal.</p>
+        <span class="mono">Fig. 2</span>
+      </figcaption>
+    </figure>
+
+    <p>A sale, an applied import and a hand correction are three different stories about the same number, and each of them is somebody’s alibi. Routing all three through one function is not tidiness. It is the only way the journal can be believed: if any path can write a quantity without leaving a movement behind, the journal becomes a partial record, and a partial record of stock is worse than none, because it looks complete.</p>
+    <p>The total on the product row is a mirror, derived and never typed. Keeping it at all is a compromise made on purpose: a catalogue page showing sixty products would otherwise ask for a sum over variants sixty times to decide which cards say “in stock”. A cache is acceptable when it has one writer and a way to be rebuilt from scratch. This one has both.</p>
+
+    <figure class="matrix">
+      <div class="matrix-scroll">
+      <table>
+        <caption>Stock as a matrix, anonymised</caption>
+        <thead>
+          <tr>
+            <th scope="col">Line</th>
+            <th scope="col">36</th><th scope="col">38</th><th scope="col">40</th><th scope="col">42</th>
+            <th scope="col">44</th><th scope="col">46</th><th scope="col">48</th>
+            <th scope="col" class="sum">Mirror</th><th scope="col">On sale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">A·4871 <span>outerwear, brand withheld</span></th>
+            <td><span class="q q--zero">0</span></td><td><span class="q">2</span></td><td><span class="q">5</span></td><td><span class="q">4</span></td>
+            <td><span class="q q--last">1</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td>
+            <td class="sum"><span class="t">12</span></td><td><span class="t">yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">A·5120 <span>outerwear, brand withheld</span></th>
+            <td><span class="q q--last">1</span></td><td><span class="q">3</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td>
+            <td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td>
+            <td class="sum"><span class="t">4</span></td><td><span class="t">yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">B·2287 <span>knitwear, brand withheld</span></th>
+            <td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td>
+            <td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td>
+            <td class="sum"><span class="t t--zero">0</span></td><td><span class="t t--zero">no</span></td>
+          </tr>
+          <tr>
+            <th scope="row">C·9034 <span>shirting, brand withheld</span></th>
+            <td><span class="q">2</span></td><td><span class="q">6</span></td><td><span class="q">9</span></td><td><span class="q">7</span></td>
+            <td><span class="q">5</span></td><td><span class="q">2</span></td><td><span class="q q--last">1</span></td>
+            <td class="sum"><span class="t">32</span></td><td><span class="t">yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">C·9036 <span>shirting, brand withheld</span></th>
+            <td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--last">1</span></td><td><span class="q q--last">1</span></td>
+            <td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td>
+            <td class="sum"><span class="t">2</span></td><td><span class="t">yes</span></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <figcaption>
+        <p>Codes and quantities here are invented, deliberately: the shape is the argument, not the numbers. Availability is a property of a cell. A·5120 is on sale and unavailable in five of its seven sizes. B·2287 is published, priced and photographed while owning nothing at all. A single stock column on the product cannot tell those two apart, and the system this replaced did not.</p>
+        <span class="mono">Fig. 3</span>
+      </figcaption>
+    </figure>
+
+    <div class="schema">
+      <div class="schema-cap"><b>stock</b><span class="mono">the cell, and the reason it changed</span></div>
+      <div class="schema-row"><code>variant.size</code><span class="ty">text</span><span class="ds">the column of the matrix. Seeded from the product’s attributes at zero the first time the matrix is opened, so an untouched size exists rather than being absent</span></div>
+      <div class="schema-row"><code>variant.stock_qty</code><span class="ty">integer</span><span class="ds">the cell. The only quantity in the system that anybody actually counted</span></div>
+      <div class="schema-row"><code>variant.active</code><span class="ty">boolean</span><span class="ds">a size that is not stocked at all, kept distinct from a size that is stocked and currently at zero</span></div>
+      <div class="schema-row"><code>movement.delta</code><span class="ty">integer</span><span class="ds">what changed. Writes are expressed as set or delta and always land here as a signed number</span></div>
+      <div class="schema-row"><code>movement.cause</code><span class="ty">text</span><span class="ds">sale, import, correction. The column that turns a number into an account of itself</span></div>
+      <div class="schema-row"><code>product.stock_qty</code><span class="ty">integer</span><span class="ds">the mirror: sum of the variants, recomputed after every movement, never edited by a person</span></div>
+    </div>
+    </section>
+    <section class="sys-sec">
+    <h2>What it cost</h2>
+    <p>Not one of the five file shapes contains a purchase price. Suppliers send what they would like you to sell at, not what you paid, and the recommended retail price in the workbook is the one number in it that is nobody’s fact.</p>
+    <p>Cost is therefore resolved rather than stored, in a fixed order, and every figure the system reports carries the step that produced it: a weighted average from posted receipts, failing that a figure entered by hand, failing that a value derived by rule from the selling price. Provenance travels with the number because it changes what the number is allowed to decide. <strong>A valuation whose provenance is unknown is not a fact</strong>, and it will be used in a decision anyway. That is the problem.</p>
+    <p>On top of the journal sit the two reports the business acts on. Turnover and dead stock: what has moved, how fast, and what has not been touched since a date the operator picks. Purchase-price history: what different suppliers charged for the same article over time, and how far apart they were. The second is empty until receipts are posted, and it says so plainly instead of averaging what little it has. An average built from two receipts and an assumption looks exactly like an average built from two hundred, and the reader cannot tell which one they are holding.</p>
+    </section>
+    <section class="sys-sec">
+    <h2>Finding one thing</h2>
+    <p>Search here is not a feature, it is how the system is used. Somebody in the shop reads a code off a tag, somebody on the phone repeats half a name, somebody in the office pastes a supplier’s article out of an email. One query language over eight fields, two shapes of query, and one lesson that arrived at production speed.</p>
+
+    <div class="lesson">
+      <span class="mono">What it cost to learn</span>
+      <h4>Two statements, one array of parameters</h4>
+      <p>Listing runs two queries over one array of bound values: the rows, with ordering and limit and offset, and the count, with only the filter. The count took a prefix of that array, computed as its length minus the two parameters belonging to limit and offset. It was correct for months on a coincidence: the ranking parameter also appeared inside the filter, so the arithmetic came out even.</p>
+      <p>Switching off fuzzy trigram matching for code-shaped queries removed that duplicate, and every search by code began returning a server error: <code>bind message supplies 13 parameters, but prepared statement requires 12</code>. The boundary is now recorded as a value the moment the filter is finished, and sort parameters are bound after it. The rule that outlived the bug: when two statements share one array, the boundary between them is a fact to be written down, not arithmetic on the end of it.</p>
+      <p>The second half of it is about testing. The deploy check asked for the home page, which exercises neither branch. Queries here come in two species, word-shaped and code-shaped, and a change to the filter routinely breaks exactly one of them. Both are now in the smoke test by example, not by category.</p>
+    </div>
+    </section>
+    <section class="sys-sec">
+    <h2>Operating it</h2>
+    <p>The parts that have cost the most time appear in neither diagram, because they are not features.</p>
+    <ul>
+      <li><strong>Media became an index, not a directory listing.</strong> Roughly 13,700 image files were being read off the disk on every request that needed to know what existed. They are indexed in the database now and hashed by content, which as a side effect surfaced 527 groups of byte-identical duplicates that nobody had been able to see before.</li>
+      <li><strong>The lockout counted a header the client writes.</strong> Repeated failed logins were counted per client address taken from a forwarded header, which anyone can set to anything. Rate limiting moved to the layer that knows who is actually connected, with the panel and the login endpoint limited separately.</li>
+      <li><strong>A full import still truncates.</strong> Rebuilding the catalogue from a file removes the hand corrections made in the panel since the last one. Until a merge import exists, imports are staged deliberately rather than run casually, and the limitation is written on the screen that runs them rather than in somebody’s memory.</li>
+      <li><strong>A backup is verified by restoring it.</strong> Checking that a dump decompresses proves the file is not corrupt and nothing else. The recovery drill ends in a restore into a scratch database, because that is the only test that answers the question being asked of it.</li>
+    </ul>
+
+    <div class="lesson">
+      <span class="mono">What it nearly cost</span>
+      <h4>An unreferenced file is a claim, not an observation</h4>
+      <p>Part of the media work was a reclaim report: files that nothing in the database points at can be deleted. It listed 394 free files, and among them all 63 brand logos, every one of which was on the live site at that moment. They are referenced as <code>/uploads/brands/name.png?v=2</code>, and comparing paths as exact strings matched none of them.</p>
+      <p>Nothing was deleted, because the list was read before it was acted on, and a category that suspiciously equalled the entire set of brand logos was the tell. Reference matching is normalisation, not equality: strip the query string, and look in every place a path can be written, which here meant the product image documents, the legacy image column, the brand logos and the content store. The same pass also learned that 58 apparently orphaned files were the untrimmed originals of those logos, kept on purpose. <strong>A reclaim job reports a hypothesis</strong>, and it has to be built so the hypothesis is cheap to check and expensive to act on, rather than the other way round.</p>
+    </div>
+    </section>
+    <section class="sys-sec">
+    <h2>Where it stands</h2>
+    <p>Live, and used every working day. The catalogue is imported rather than typed, stock is answerable at size level, cost carries its own provenance, and the storefront reads from the same model instead of keeping a version of the truth of its own.</p>
+    <p>Some of the work was deletion. Feed generators for two marketplaces were removed when the business stopped selling through them, along with the plan that depended on them. A generator nobody reads is not free: it still has to stay correct through every schema change, and it quietly makes every later decision heavier.</p>
+    <p>Next: a merge import that keeps hand corrections, receipts posted so the price history has something to average, and intake by message so that a supplier file becomes a preview without anyone opening the panel at all. The test of a back office is not what it displays. It is whether a question about last spring can be answered without asking anybody to remember.</p>
+    </section>
+  </div>
+
+  <div class="sys-foot">
+    <a class="mono" href="/systems/">← All systems</a>
+
+  </div>
+
+  <footer class="foot mono">
+    <span>© Viacheslav Munister</span>
+    <a href="mailto:munister@outlook.com">munister@outlook.com</a>
+  </footer>
+
+</div>
+</main>
+
+<script src="/munister.js?v=3" defer></script>
+</body>
+</html>

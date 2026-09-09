@@ -1,0 +1,177 @@
+<!--meta {
+  "slug": "tabularium",
+  "order": 2,
+  "title": "Tabularium",
+  "kicker": "Retail operations core · Data model and identity",
+  "headline": "The shop is a view. The operation is the system.",
+  "standfirst": "Tabularium is the back office behind a clothing retailer: roughly 2,800 products, some 7,100 size-level variants, and a catalogue that arrives as spreadsheets from people who have never agreed on a column name. The client is not named here, and neither is the deployment. What is worth writing down is the part a customer never sees, and the four decisions the rest of it rests on.",
+  "summary": "Arbitrary supplier workbooks turned into size-level stock, four identifiers kept apart on purpose, and every number the business acts on derived from something written down once.",
+  "description": "An operations core for a clothing retailer: supplier workbooks turned into size-level stock, identity resolved in a fixed order, and stock valuations that carry their own provenance.",
+  "published": "2026-09-09",
+  "modified": "2026-09-09",
+  "about": ["retail operations", "ERP architecture", "data modelling", "identity resolution", "PostgreSQL", "inventory"],
+  "facts": [
+    ["Name", "Tabularium, internal"],
+    ["Built with", "Next.js, TypeScript, PostgreSQL"],
+    ["Role", "Architecture, implementation, operations"],
+    ["Access", "Private deployment, no public address"],
+    ["Scale", "≈2,800 products, ≈7,100 variants"]
+  ]
+} -->
+
+    <h2>The problem</h2>
+    <p>Retail runs on documents. A workbook from the supplier, a price list, a photograph of a shelf, a message on Friday saying the last two went this morning. Every one of them is true when it is written and slightly wrong an hour later, and not one of them can be asked a question.</p>
+    <p>The storefront was the visible half of this job and by some distance the smaller one. A shop can be rebuilt in a season. The operation behind it has to answer the same dull questions every working day: how many of this article are left in 42, what did we pay for it, which supplier was cheaper last spring, what has not moved since March. None of those are design questions. They are questions about whether the business wrote anything down in a form that can be read back.</p>
+    <p>So Tabularium moves the source of truth rather than redecorating it. Not a spreadsheet mailed on Mondays, and not a content system in which a product is a document and a size is a word inside it. One relational model: a product, its variants, the movements that changed them, the receipts that paid for them. Everything else, the storefront included, is a view of that model rather than a copy of it. A copy is a thing that drifts.</p>
+
+    <h2>Intake</h2>
+    <p>Goods arrive as files, and the files do not agree with one another. Five shapes so far: an export from the old content system; a master workbook in a legacy single-byte encoding where a size repeated three times means three units on the shelf; an eight-column price list where one row is one offer; a fifty-five-column export whose header is two rows deep, one row of human labels and one of machine codes; and whatever the next supplier invents.</p>
+    <p>The instinct is a parser per supplier. That fails quietly, which is the worst way to fail. A reordered column produces plausible numbers rather than an error, and nobody finds out until a size is sold that does not exist.</p>
+    <p>Detection therefore reads the header, not the rows. A recognised export goes to rule-based mapping. Only a genuinely unfamiliar file is handed to a model, and it is asked to map <strong>columns once per layout</strong>, never rows. That distinction is the entire reason a model is allowed anywhere near this pipeline: four thousand rows would be four thousand chances to invent a price, while one header is a single decision, cheap, repeatable and small enough for a person to read on screen before anything is written. Files mapped that way are badged as machine-read in the panel, because that is something the operator should be told rather than something discovered later.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:tabularium-intake --><!-- /flow --></div>
+      <figcaption>
+        <p>Import. The header decides the route, and the model is consulted once per layout rather than once per row. Nothing is written until a dry run has reported what will be created, updated and skipped; the apply step is one transaction; and a row whose size or price cannot be resolved is held for a person instead of guessed.</p>
+        <span class="mono">Fig. 1</span>
+      </figcaption>
+    </figure>
+
+    <p>The branch worth defending is the red one. A row that cannot be resolved is <strong>held, not guessed</strong>. A pipeline that invents a price for an ambiguous row will eventually sell something for the wrong money, and nobody will be able to say which row did it. Holding a row costs somebody five minutes. Guessing one costs a reconciliation that was never budgeted for.</p>
+
+    <h3>The unit of meaning is not the row</h3>
+    <p>The step that took the most rewriting is the dull one in the corner. Rows matching nothing in the catalogue used to become new products one at a time, so an article in seven sizes landed as seven near-identical products. An earlier version was worse: it read the descriptive columns, name and brand and colour and composition and country and gender, into the preview grid and then stored none of them, so an unmatched row lost everything except its numbers.</p>
+    <p>Both are the same mistake in different clothes, which is treating the row as the unit of meaning. A row is an offer. The unit of meaning is the article, and the repair was to group unmatched rows by it before creating anything. On the fifty-five-column export that is 4,097 rows becoming 1,622 products, with nothing left unmatched.</p>
+
+    <h2>Identity</h2>
+    <p>Three identifiers that look like one, and a fourth that must never be stored at all.</p>
+    <p>Collapsing them into a single tidy field called SKU is the obvious move and the wrong one. Matching a supplier price list needs the manufacturer’s article. A customer holding the garment reads the code on the tag, which is ours. The barcode belongs to whoever printed it. They answer different questions, so they stay different columns, and an imported row walks them in a fixed order until one of them matches.</p>
+
+    <div class="schema">
+      <div class="schema-cap"><b>resolution order</b><span class="mono">how one imported row finds its variant</span></div>
+      <div class="schema-row"><code>offer_code</code><span class="ty">first</span><span class="ds">the supplier’s own per-size code, when the file carries one. The most specific thing in the row</span></div>
+      <div class="schema-row"><code>barcode</code><span class="ty">second</span><span class="ds">EAN. Empty on all ≈7,100 variants in this catalogue, which is a fact about the catalogue rather than a gap to be filled in</span></div>
+      <div class="schema-row"><code>article</code><span class="ty">third</span><span class="ds">our internal code: the one printed on the tag, and the one a customer quotes back on the phone</span></div>
+      <div class="schema-row"><code>factory_article</code><span class="ty">fourth</span><span class="ds">the manufacturer’s article, present on nearly every product. Identifies the article, never a single size</span></div>
+      <div class="schema-row"><code>size code</code><span class="ty">computed</span><span class="ds">internal code plus size, assembled for display and for search, never written to a column</span></div>
+    </div>
+
+    <p>There is a barcode generator in the codebase, and it is deliberately not run against real variants. Generated codes would sit in precisely the field the next supplier file matches on, and the file after that would attach its quantities to values we invented ourselves. An import that matches on a number of our own making is not an import. It is a coin toss that issues a receipt.</p>
+    <p>The size code is the same argument one step further. It is derived from two columns that already exist, so writing it down would create a third place where the truth is kept and a first opportunity for the three to disagree. It is therefore assembled on the way out, for the page and for the search index alike.</p>
+    <p>The retailer’s own rule was blunt and correct: every code a product has must appear on its page, and search must find the product by any of them. Search covers name, brand, internal code, factory article, barcode, offer code, the computed size code and the numeric id. Two of its behaviours look like bugs and are not. A query that exactly equals the code of exactly one product jumps straight to that product; the condition is <strong>one exact match</strong>, not one result, because substring matching drags in other people’s codes and a redirect on “one result” would confidently land on the wrong garment. And codes are never upper-cased in CSS, because thirty-four articles contain lower-case letters, and a code shown in a case it does not have is a code the customer cannot check against the tag in their hand.</p>
+    <p>The legacy names carry the article in brackets on the tail, in 2,642 of them. It is stripped for display at read time and left alone in the database, because search matches on the name column, and cleaning it would break finding a product by the code that used to live there.</p>
+
+    <h2>Stock</h2>
+    <p>Stock is held per cell: a matrix of product against size, with the movement that produced each number kept beside it. This is the decision the rest of the system rests on, and it is what makes the questions at the top of this page answerable by a query rather than by a phone call.</p>
+
+    <figure class="flow-figure">
+      <p class="flow-hint">Scroll sideways →</p>
+      <div class="flow-scroll"><!-- flow:tabularium-stock --><!-- /flow --></div>
+      <figcaption>
+        <p>Three things change stock, and all three go through one function that writes an append-only journal. The product total is recomputed from its variants afterwards and mirrored onto the product row, so the mirror has exactly one writer. Availability is read from a cell above zero; turnover and dead stock are read from the journal.</p>
+        <span class="mono">Fig. 2</span>
+      </figcaption>
+    </figure>
+
+    <p>A sale, an applied import and a hand correction are three different stories about the same number, and each of them is somebody’s alibi. Routing all three through one function is not tidiness. It is the only way the journal can be believed: if any path can write a quantity without leaving a movement behind, the journal becomes a partial record, and a partial record of stock is worse than none, because it looks complete.</p>
+    <p>The total on the product row is a mirror, derived and never typed. Keeping it at all is a compromise made on purpose: a catalogue page showing sixty products would otherwise ask for a sum over variants sixty times to decide which cards say “in stock”. A cache is acceptable when it has one writer and a way to be rebuilt from scratch. This one has both.</p>
+
+    <figure class="matrix">
+      <div class="matrix-scroll">
+      <table>
+        <caption>Stock as a matrix, anonymised</caption>
+        <thead>
+          <tr>
+            <th scope="col">Line</th>
+            <th scope="col">36</th><th scope="col">38</th><th scope="col">40</th><th scope="col">42</th>
+            <th scope="col">44</th><th scope="col">46</th><th scope="col">48</th>
+            <th scope="col" class="sum">Mirror</th><th scope="col">On sale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">A·4871 <span>outerwear, brand withheld</span></th>
+            <td><span class="q q--zero">0</span></td><td><span class="q">2</span></td><td><span class="q">5</span></td><td><span class="q">4</span></td>
+            <td><span class="q q--last">1</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td>
+            <td class="sum"><span class="t">12</span></td><td><span class="t">yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">A·5120 <span>outerwear, brand withheld</span></th>
+            <td><span class="q q--last">1</span></td><td><span class="q">3</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td>
+            <td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td>
+            <td class="sum"><span class="t">4</span></td><td><span class="t">yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">B·2287 <span>knitwear, brand withheld</span></th>
+            <td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td>
+            <td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td>
+            <td class="sum"><span class="t t--zero">0</span></td><td><span class="t t--zero">no</span></td>
+          </tr>
+          <tr>
+            <th scope="row">C·9034 <span>shirting, brand withheld</span></th>
+            <td><span class="q">2</span></td><td><span class="q">6</span></td><td><span class="q">9</span></td><td><span class="q">7</span></td>
+            <td><span class="q">5</span></td><td><span class="q">2</span></td><td><span class="q q--last">1</span></td>
+            <td class="sum"><span class="t">32</span></td><td><span class="t">yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">C·9036 <span>shirting, brand withheld</span></th>
+            <td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--last">1</span></td><td><span class="q q--last">1</span></td>
+            <td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td><td><span class="q q--zero">0</span></td>
+            <td class="sum"><span class="t">2</span></td><td><span class="t">yes</span></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <figcaption>
+        <p>Codes and quantities here are invented, deliberately: the shape is the argument, not the numbers. Availability is a property of a cell. A·5120 is on sale and unavailable in five of its seven sizes. B·2287 is published, priced and photographed while owning nothing at all. A single stock column on the product cannot tell those two apart, and the system this replaced did not.</p>
+        <span class="mono">Fig. 3</span>
+      </figcaption>
+    </figure>
+
+    <div class="schema">
+      <div class="schema-cap"><b>stock</b><span class="mono">the cell, and the reason it changed</span></div>
+      <div class="schema-row"><code>variant.size</code><span class="ty">text</span><span class="ds">the column of the matrix. Seeded from the product’s attributes at zero the first time the matrix is opened, so an untouched size exists rather than being absent</span></div>
+      <div class="schema-row"><code>variant.stock_qty</code><span class="ty">integer</span><span class="ds">the cell. The only quantity in the system that anybody actually counted</span></div>
+      <div class="schema-row"><code>variant.active</code><span class="ty">boolean</span><span class="ds">a size that is not stocked at all, kept distinct from a size that is stocked and currently at zero</span></div>
+      <div class="schema-row"><code>movement.delta</code><span class="ty">integer</span><span class="ds">what changed. Writes are expressed as set or delta and always land here as a signed number</span></div>
+      <div class="schema-row"><code>movement.cause</code><span class="ty">text</span><span class="ds">sale, import, correction. The column that turns a number into an account of itself</span></div>
+      <div class="schema-row"><code>product.stock_qty</code><span class="ty">integer</span><span class="ds">the mirror: sum of the variants, recomputed after every movement, never edited by a person</span></div>
+    </div>
+
+    <h2>What it cost</h2>
+    <p>Not one of the five file shapes contains a purchase price. Suppliers send what they would like you to sell at, not what you paid, and the recommended retail price in the workbook is the one number in it that is nobody’s fact.</p>
+    <p>Cost is therefore resolved rather than stored, in a fixed order, and every figure the system reports carries the step that produced it: a weighted average from posted receipts, failing that a figure entered by hand, failing that a value derived by rule from the selling price. Provenance travels with the number because it changes what the number is allowed to decide. <strong>A valuation whose provenance is unknown is not a fact</strong>, and it will be used in a decision anyway. That is the problem.</p>
+    <p>On top of the journal sit the two reports the business acts on. Turnover and dead stock: what has moved, how fast, and what has not been touched since a date the operator picks. Purchase-price history: what different suppliers charged for the same article over time, and how far apart they were. The second is empty until receipts are posted, and it says so plainly instead of averaging what little it has. An average built from two receipts and an assumption looks exactly like an average built from two hundred, and the reader cannot tell which one they are holding.</p>
+
+    <h2>Finding one thing</h2>
+    <p>Search here is not a feature, it is how the system is used. Somebody in the shop reads a code off a tag, somebody on the phone repeats half a name, somebody in the office pastes a supplier’s article out of an email. One query language over eight fields, two shapes of query, and one lesson that arrived at production speed.</p>
+
+    <div class="lesson">
+      <span class="mono">What it cost to learn</span>
+      <h4>Two statements, one array of parameters</h4>
+      <p>Listing runs two queries over one array of bound values: the rows, with ordering and limit and offset, and the count, with only the filter. The count took a prefix of that array, computed as its length minus the two parameters belonging to limit and offset. It was correct for months on a coincidence: the ranking parameter also appeared inside the filter, so the arithmetic came out even.</p>
+      <p>Switching off fuzzy trigram matching for code-shaped queries removed that duplicate, and every search by code began returning a server error: <code>bind message supplies 13 parameters, but prepared statement requires 12</code>. The boundary is now recorded as a value the moment the filter is finished, and sort parameters are bound after it. The rule that outlived the bug: when two statements share one array, the boundary between them is a fact to be written down, not arithmetic on the end of it.</p>
+      <p>The second half of it is about testing. The deploy check asked for the home page, which exercises neither branch. Queries here come in two species, word-shaped and code-shaped, and a change to the filter routinely breaks exactly one of them. Both are now in the smoke test by example, not by category.</p>
+    </div>
+
+    <h2>Operating it</h2>
+    <p>The parts that have cost the most time appear in neither diagram, because they are not features.</p>
+    <ul>
+      <li><strong>Media became an index, not a directory listing.</strong> Roughly 13,700 image files were being read off the disk on every request that needed to know what existed. They are indexed in the database now and hashed by content, which as a side effect surfaced 527 groups of byte-identical duplicates that nobody had been able to see before.</li>
+      <li><strong>The lockout counted a header the client writes.</strong> Repeated failed logins were counted per client address taken from a forwarded header, which anyone can set to anything. Rate limiting moved to the layer that knows who is actually connected, with the panel and the login endpoint limited separately.</li>
+      <li><strong>A full import still truncates.</strong> Rebuilding the catalogue from a file removes the hand corrections made in the panel since the last one. Until a merge import exists, imports are staged deliberately rather than run casually, and the limitation is written on the screen that runs them rather than in somebody’s memory.</li>
+      <li><strong>A backup is verified by restoring it.</strong> Checking that a dump decompresses proves the file is not corrupt and nothing else. The recovery drill ends in a restore into a scratch database, because that is the only test that answers the question being asked of it.</li>
+    </ul>
+
+    <div class="lesson">
+      <span class="mono">What it nearly cost</span>
+      <h4>An unreferenced file is a claim, not an observation</h4>
+      <p>Part of the media work was a reclaim report: files that nothing in the database points at can be deleted. It listed 394 free files, and among them all 63 brand logos, every one of which was on the live site at that moment. They are referenced as <code>/uploads/brands/name.png?v=2</code>, and comparing paths as exact strings matched none of them.</p>
+      <p>Nothing was deleted, because the list was read before it was acted on, and a category that suspiciously equalled the entire set of brand logos was the tell. Reference matching is normalisation, not equality: strip the query string, and look in every place a path can be written, which here meant the product image documents, the legacy image column, the brand logos and the content store. The same pass also learned that 58 apparently orphaned files were the untrimmed originals of those logos, kept on purpose. <strong>A reclaim job reports a hypothesis</strong>, and it has to be built so the hypothesis is cheap to check and expensive to act on, rather than the other way round.</p>
+    </div>
+
+    <h2>Where it stands</h2>
+    <p>Live, and used every working day. The catalogue is imported rather than typed, stock is answerable at size level, cost carries its own provenance, and the storefront reads from the same model instead of keeping a version of the truth of its own.</p>
+    <p>Some of the work was deletion. Feed generators for two marketplaces were removed when the business stopped selling through them, along with the plan that depended on them. A generator nobody reads is not free: it still has to stay correct through every schema change, and it quietly makes every later decision heavier.</p>
+    <p>Next: a merge import that keeps hand corrections, receipts posted so the price history has something to average, and intake by message so that a supplier file becomes a preview without anyone opening the panel at all. The test of a back office is not what it displays. It is whether a question about last spring can be answered without asking anybody to remember.</p>

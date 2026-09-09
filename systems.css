@@ -292,3 +292,61 @@
   .schema-row{grid-template-columns:1fr;gap:2px}
   .schema-row .ty{padding-top:0}
 }
+
+/* ─── МАТРИЦЯ РОЗМІРІВ ───────────────────────────────────────────────────────
+   Знімок адмінки сюди не годиться: там реальні коди, назви й ціни замовника.
+   Тому тут не скріншот, а сама структура: рядок це товар, стовпець розмір,
+   число в клітині це залишок саме цього варіанта, а останній стовпець це
+   дзеркало, яке рахує система, а не людина.
+
+   Коди й кількості вигадані, і про це прямо сказано в підписі. Без такої
+   позначки ілюстрація починає видавати себе за витяг з живої бази, а це вже
+   інший жанр і чужі дані.
+
+   Клітина несе те саме двома засобами: числом і тоном. Нуль світлий і без
+   рамки, останні одиниці пунктиром, робочий залишок суцільною рамкою. Через
+   це таблиця читається у чорно-білому друці й не спирається на колір, як і
+   схеми вище. */
+.matrix{margin:clamp(1.6rem,3vw,2.2rem) 0;border:1px solid var(--c-rule-strong)}
+/* Те саме, що й у схем: елемент грід-розкладки не хоче стискатись менше
+   свого вмісту, і таблиця з min-width розсунула б усю колонку тексту за
+   екран телефона. Нуль дозволяє колонці бути вужчою, а прокрутку бере на
+   себе .matrix-scroll. */
+.matrix,.matrix-scroll{min-width:0}
+.matrix-scroll{overflow-x:auto}
+.matrix table{border-collapse:collapse;width:100%;min-width:600px}
+.matrix caption{
+  padding:10px 16px;border-bottom:1px solid var(--c-rule-strong);background:var(--c-paper-deep);
+  text-align:left;font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--c-faint);
+}
+.matrix thead th{
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;color:var(--c-faint);
+  font-weight:400;padding:9px 4px 8px;text-align:center;border-bottom:1px solid var(--c-rule-strong);
+}
+.matrix thead th:first-child{text-align:left;padding-left:16px}
+.matrix thead .sum{border-left:1px solid var(--c-rule-strong)}
+.matrix tbody th{
+  text-align:left;font-weight:500;padding:10px 14px 10px 16px;border-top:1px solid var(--c-rule);
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12.5px;color:var(--c-ink);white-space:nowrap;
+}
+.matrix tbody th span{
+  display:block;margin-top:3px;font-family:var(--font-body);font-size:12px;font-weight:400;color:var(--c-faint);
+}
+.matrix td{border-top:1px solid var(--c-rule);padding:6px 4px;text-align:center}
+.matrix td.sum{border-left:1px solid var(--c-rule-strong)}
+.matrix .q{
+  display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;
+  border:1px solid var(--c-rule-strong);border-radius:2px;
+  font-family:var(--font-mono);font-size:11px;color:var(--c-ink);
+}
+.matrix .q--zero{border-color:transparent;color:var(--c-faint)}
+.matrix .q--last{border-style:dashed}
+.matrix .t{font-family:var(--font-mono);font-size:11.5px;color:var(--c-ink)}
+.matrix .t--zero{color:#b3261e}
+.matrix figcaption{
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline;
+  padding:11px 16px;border-top:1px solid var(--c-rule-strong);background:var(--c-paper-deep);
+}
+.matrix figcaption p{max-width:72ch;font-size:13.5px;line-height:1.5;color:var(--c-muted)}
+.matrix figcaption .mono{white-space:nowrap;padding-top:2px}

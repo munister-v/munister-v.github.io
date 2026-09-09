@@ -1,0 +1,29 @@
+{
+  "title": "Tabularium: a supplier workbook becomes size-level stock",
+  "alt": "An import pipeline. A supplier workbook arrives and its header is read; a recognised export goes straight to rule-based mapping, while an unfamiliar one has its columns mapped by a model once per layout rather than once per row. Every row is then resolved against the identity ladder: matched rows update an existing variant, unmatched rows are grouped by factory article so that one article in seven sizes becomes one product rather than seven. A dry run reports counts before anything is written, the apply step runs as a single transaction, and a row whose size or price cannot be resolved is held for review instead of guessed.",
+  "nodes": [
+    { "id": "file",    "col": 0, "row": 1, "kind": "trigger",  "icon": "grid",   "label": "Supplier workbook", "sub": "five shapes so far" },
+    { "id": "header",  "col": 1, "row": 1, "icon": "search",   "label": "Read the header", "sub": "two rows of it" },
+    { "id": "model",   "col": 2, "row": 0, "kind": "external", "icon": "brain",  "label": "Model maps columns", "sub": "once per layout" },
+    { "id": "rules",   "col": 2, "row": 1, "icon": "code",     "label": "Rule-based mapping", "sub": "known exports" },
+    { "id": "resolve", "col": 3, "row": 1, "icon": "key",      "label": "Resolve each row", "sub": "identity ladder" },
+    { "id": "group",   "col": 4, "row": 0, "icon": "merge",    "label": "Group the leftovers", "sub": "by factory article" },
+    { "id": "dry",     "col": 4, "row": 1, "icon": "eye",      "label": "Dry run", "sub": "counts, no writes" },
+    { "id": "apply",   "col": 5, "row": 1, "icon": "shield",   "label": "Apply once", "sub": "single transaction" },
+    { "id": "held",    "col": 5, "row": 2, "kind": "fail",     "icon": "cross",  "label": "Row held", "sub": "size or price unclear" },
+    { "id": "store",   "col": 6, "row": 1, "kind": "store",    "icon": "db",     "label": "Products and variants", "sub": "the record of stock" }
+  ],
+  "edges": [
+    { "from": "file",    "to": "header" },
+    { "from": "header",  "to": "model",   "label": "unfamiliar" },
+    { "from": "header",  "to": "rules",   "label": "known" },
+    { "from": "model",   "to": "resolve" },
+    { "from": "rules",   "to": "resolve" },
+    { "from": "resolve", "to": "group",   "label": "no match" },
+    { "from": "resolve", "to": "dry",     "label": "match" },
+    { "from": "group",   "to": "apply" },
+    { "from": "dry",     "to": "apply" },
+    { "from": "dry",     "to": "held",    "kind": "fail", "label": "unresolved" },
+    { "from": "apply",   "to": "store" }
+  ]
+}
