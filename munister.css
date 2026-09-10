@@ -33,7 +33,14 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{background:var(--c-paper);scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+/* Шапка липкая (position:sticky, высота --bar), и поэтому цель любого якоря
+   по умолчанию оказывается ПОД ней: переход по /#contact, по ссылке из меню
+   или по ссылке на конкретный инвариант в разборе системы приводит к тому,
+   что нужная строка спрятана за шапкой, а читатель видит следующую и не
+   понимает, куда попал. scroll-padding на html лечит это один раз для всех
+   якорей — включая те, которых на странице ещё нет. */
+html{background:var(--c-paper);scroll-behavior:smooth;-webkit-text-size-adjust:100%;
+  scroll-padding-top:calc(var(--bar) + 14px)}
 body{
   background:var(--c-paper);color:var(--c-ink);
   font-family:var(--font-body);font-size:17px;line-height:1.55;letter-spacing:-.004em;

@@ -95,11 +95,17 @@ svg.model.has-sel .m-edge.is-on path{stroke:var(--c-ink)}
 .m-col p b{font-weight:500;color:var(--c-ink)}
 .m-col p em{font-style:italic}
 
-.m-f{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:baseline;
+/* Имя поля и тип: имя не сжимается, тип переносится.
+   Было наоборот (1fr под имя, auto под тип), и на единственном длинном
+   типе — перечислении `import | receipt | sale | return | adjust | writeoff` —
+   колонка типа распирала строку, колонка имени сжималась до нуля, и в панели
+   читалось «typeimport | receipt | …» одним слипшимся словом. Тип здесь
+   вторичен: он может занять две строки, имя поля не может пропасть. */
+.m-f{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;align-items:baseline;
   padding:6px 0 6px 17px;border-top:1px solid var(--c-rule);position:relative}
 .m-f:first-of-type{border-top:none}
 .m-f code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;color:var(--c-ink)}
-.m-f .ty{font-size:12px;color:var(--c-faint);text-align:right}
+.m-f .ty{font-size:12px;color:var(--c-faint);text-align:right;overflow-wrap:anywhere}
 /* Метка поля повторяет знак из схемы, чтобы список и картинка читались как
    одно и то же, а не как две разные системы обозначений. */
 .m-f::before{content:'';position:absolute;left:0;top:11px;width:8px;height:8px}
@@ -133,4 +139,39 @@ svg.model.has-sel .m-edge.is-on path{stroke:var(--c-ink)}
   .m-col + .m-col{border-left:none;border-top:1px solid var(--c-rule)}
   .m-inv-row{grid-template-columns:28px minmax(0,1fr);gap:4px 12px}
   .m-inv-row .by{grid-column:2}
+}
+
+/* ── правки 10.09.2026 ──────────────────────────────────────────────────── */
+
+/* Явное закрытие панели.
+   Escape работает и работал, но он невидим: на сенсорном экране его нет
+   вообще, а мышью пользователь ищет крестик, а не догадывается кликнуть по
+   пустому месту схемы. Кнопка стоит в шапке панели, потому что закрывают то,
+   что читают, а читают именно шапку. */
+.m-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.m-close{
+  appearance:none;background:none;border:1px solid var(--c-rule-strong);border-radius:2px;
+  padding:5px 11px;color:var(--c-muted);cursor:pointer;flex:none;
+  font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+}
+.m-close:hover{border-color:var(--c-ink);color:var(--c-ink)}
+.m-panel-head h2:focus{outline:none}
+.m-panel-head h2:focus-visible{outline:2px solid var(--c-ink);outline-offset:4px}
+
+/* Ключ инварианта — ссылка в статью. Подчёркивание тонкое: это сноска, а не
+   призыв к действию, и в таблице из пяти строк пять жирных ссылок читались
+   бы как список ссылок, а не как список инвариантов. */
+.m-inv-row a.k{
+  color:var(--c-faint);text-decoration:underline;text-underline-offset:3px;
+  text-decoration-thickness:1px;text-decoration-color:var(--c-rule-strong);
+}
+.m-inv-row a.k:hover{color:var(--c-ink);text-decoration-color:var(--c-ink)}
+.m-inv-row.is-on a.k{color:var(--c-ink)}
+
+/* Печать. Схема на бумаге осмысленна, подсказка про горизонтальную
+   прокрутку — нет, и панель не должна разрываться на две страницы. */
+@media print{
+  .flow-hint,.m-close{display:none}
+  .m-panel,.m-inv,.m-legend{break-inside:avoid}
+  svg.model.has-sel .m-ent,svg.model.has-sel .m-edge{opacity:1}
 }

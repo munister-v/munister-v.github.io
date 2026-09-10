@@ -105,8 +105,15 @@ function edgePath(from, to, kind, baseY) {
 
 function renderSvg(model, L) {
   const parts = [];
-  parts.push(`<svg class="model" viewBox="0 0 ${L.width} ${L.height}" width="${L.width}" height="${L.height}" role="img" xmlns="http://www.w3.org/2000/svg">`);
-  parts.push(`<title>${esc(model.headline)}</title><desc>${esc(model.alt)}</desc>`);
+  /* role="group", а НЕ role="img".
+     Схемы в статьях — картинки, и там role="img" правильный. Здесь внутри
+     шесть групп с role="button" и tabindex, а role="img" по спецификации
+     делает всё поддерево презентационным: скринридер объявляет одну
+     картинку, а шесть кнопок внутри неё либо не объявляет вовсе, либо
+     объявляет без имени. Имя даётся через aria-labelledby на <title>/<desc>,
+     так что подпись не теряется. */
+  parts.push(`<svg class="model" viewBox="0 0 ${L.width} ${L.height}" width="${L.width}" height="${L.height}" role="group" aria-labelledby="mTitle mDesc" xmlns="http://www.w3.org/2000/svg">`);
+  parts.push(`<title id="mTitle">${esc(model.headline)}</title><desc id="mDesc">${esc(model.alt)}</desc>`);
   parts.push('<defs><marker id="m-tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1.6 L 9 5 L 0 8.4 z" fill="rgba(18,18,18,.55)"/></marker></defs>');
 
   for (const e of model.edges) {                 // связи под коробками
@@ -122,7 +129,7 @@ function renderSvg(model, L) {
 
   for (const e of model.entities) {
     const b = L.pos.get(e.id);
-    parts.push(`<g class="m-ent" data-id="${e.id}" tabindex="0" role="button" aria-label="${esc(e.label)}: ${esc(e.name)}">`);
+    parts.push(`<g class="m-ent" data-id="${e.id}" tabindex="0" role="button" aria-expanded="false" aria-controls="mPanel" aria-label="${esc(e.label)}: ${esc(e.name)}">`);
     parts.push(`<rect class="m-box" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="2"/>`);
     parts.push(`<rect class="m-bar" x="${b.x}" y="${b.y}" width="${b.w}" height="${HEAD_H}"/>`);
     parts.push(`<text class="m-title" x="${b.x + 13}" y="${b.y + 20}">${esc(e.label)}</text>`);
@@ -142,8 +149,11 @@ function renderSvg(model, L) {
 }
 
 function renderPanel(model) {
+  /* Ключ инварианта — ссылка в статью, в тот самый абзац, где он выведен.
+     Схема отвечает «какая таблица его несёт», статья — «почему он вообще
+     такой»; без ссылки читатель ищет это глазами по длинному тексту. */
   const inv = model.invariants.map(([k, st, by]) =>
-    `<div class="m-inv-row" data-inv="${k}"><span class="k mono">${k}</span><span class="st">${st}</span><span class="by">${by}</span></div>`).join('\n      ');
+    `<div class="m-inv-row" data-inv="${k}"><a class="k mono" href="/systems/${model.slug}/#${k.toLowerCase()}">${k}</a><span class="st">${st}</span><span class="by">${by}</span></div>`).join('\n      ');
   const legend = model.legend.map(([k, text]) =>
     `<div class="m-legend-row"><span class="m-key m-key--${k}" aria-hidden="true"></span><b>${esc(k)}</b><span>${text}</span></div>`).join('\n      ');
   return { inv, legend };
@@ -174,7 +184,7 @@ for (const file of files) {
     description: model.description,
     canonical,
     image: `/images/works/${model.slug}-og.jpg`,
-    styles: ['/model.css?v=1'],
+    styles: ['/model.css?v=3'],
     jsonld: {
       '@context': 'https://schema.org',
       '@type': 'TechArticle',
@@ -221,7 +231,7 @@ for (const file of files) {
     <section class="m-panel" id="mPanel" aria-live="polite">
       <div class="m-panel-empty" id="mEmpty">
         <span class="mono">Nothing selected</span>
-        <p>Six tables, and the whole argument of the system is in which of them owns a number. Open one: <button class="m-link" type="button" data-open="variant">the variant</button> is the only quantity anybody counted, <button class="m-link" type="button" data-open="movement">the movement</button> is the account of why it changed, and <button class="m-link" type="button" data-open="product">the product</button> carries a total it is not allowed to type.</p>
+        <p>Six tables, and the whole argument of the system is in which of them owns a number. Open one: <a class="m-link" href="#variant">the variant</a> is the only quantity anybody counted, <a class="m-link" href="#movement">the movement</a> is the account of why it changed, and <a class="m-link" href="#product">the product</a> carries a total it is not allowed to type.</p>
       </div>
       <div class="m-panel-body" id="mBody" hidden></div>
     </section>
@@ -273,7 +283,12 @@ for (const file of files) {
     }).join('');
     var writers = e.writers.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('');
     body.innerHTML =
-      '<div class="m-panel-head"><span class="mono">' + esc(e.name) + '</span><h2>' + esc(e.label) + '</h2><p class="m-sub-t">' + esc(e.sub) + '</p></div>' +
+      '<div class="m-panel-head">' +
+        '<div><span class="mono">' + esc(e.name) + '</span>' +
+        '<h2 id="mHead" tabindex="-1">' + esc(e.label) + '</h2>' +
+        '<p class="m-sub-t">' + esc(e.sub) + '</p></div>' +
+        '<button class="m-close mono" type="button" data-close="1" aria-label="Close the table details">close</button>' +
+      '</div>' +
       '<div class="m-cols">' +
         '<div class="m-col"><span class="mono">Fields</span>' + rows + '</div>' +
         '<div class="m-col"><span class="mono">Why it is shaped this way</span><p>' + e.why + '</p>' +
@@ -289,22 +304,74 @@ for (const file of files) {
 
   function clear() { current = null; body.hidden = true; empty.hidden = false; paint(null); }
 
+  /* Выбранная таблица живёт в адресе страницы.
+     Причина не в красоте ссылки: /model/#movement это то, что можно
+     прислать человеку и попасть туда, где ты сам стоишь, а статья может
+     сослаться прямо на нужную таблицу вместо «откройте схему и найдите».
+     Поэтому переключение идёт через hash, а hashchange остаётся
+     единственным местом, где панель перерисовывается: назад и вперёд
+     в браузере тогда работают сами, без отдельного кода. */
+  function fromHash() {
+    var id = decodeURIComponent(String(location.hash || '').replace('#', ''));
+    return data[id] ? id : null;
+  }
+
+  function render(id, focus) {
+    if (id) show(id); else clear();
+    svg.querySelectorAll('.m-ent').forEach(function (g) {
+      g.setAttribute('aria-expanded', String(g.dataset.id === id));
+    });
+    if (id && focus) {
+      var h = document.getElementById('mHead');
+      if (h) h.focus({ preventScroll: true });
+    }
+  }
+
+  function go(id) {
+    /* replaceState, а не push: перебор шести таблиц не должен набивать
+       историю так, чтобы кнопка «назад» уводила из страницы через шесть
+       нажатий. Ссылки-анкоры (пустое состояние, статья) идут обычным путём
+       и дают hashchange. */
+    var next = id ? '#' + id : location.pathname;
+    if (history.replaceState) history.replaceState(null, '', next);
+    render(id, true);
+  }
+
   svg.addEventListener('click', function (ev) {
     var g = ev.target.closest('.m-ent');
-    if (!g) { clear(); return; }
-    if (g.dataset.id === current) clear(); else show(g.dataset.id);
+    go(g && g.dataset.id !== current ? g.dataset.id : null);
   });
   svg.addEventListener('keydown', function (ev) {
     if (ev.key !== 'Enter' && ev.key !== ' ') return;
     var g = ev.target.closest('.m-ent');
     if (!g) return;
     ev.preventDefault();
-    if (g.dataset.id === current) clear(); else show(g.dataset.id);
+    go(g.dataset.id === current ? null : g.dataset.id);
   });
-  document.querySelectorAll('.m-link').forEach(function (b) {
-    b.addEventListener('click', function () { show(b.dataset.open); });
+  document.addEventListener('click', function (ev) {
+    var c = ev.target.closest('[data-close]');
+    if (!c) return;
+    /* Фокус возвращается на ту таблицу, которую закрыли, а не в начало
+       страницы: иначе клавиатурный читатель после закрытия оказывается
+       неизвестно где и проходит схему заново. Запоминаем до go(null),
+       потому что оно обнуляет current. */
+    var prev = current;
+    go(null);
+    var t = prev && svg.querySelector('.m-ent[data-id="' + prev + '"]');
+    (t || svg).focus({ preventScroll: true });
   });
-  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && current) clear(); });
+  window.addEventListener('hashchange', function () { render(fromHash(), true); });
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && current) go(null); });
+
+  /* Открыли по ссылке на конкретную таблицу: панель ниже схемы и легенды,
+     и без прокрутки читатель увидит пустой экран там, где он ожидал ответ.
+     Фокус при этом не забираем: на загрузке это уводит с начала страницы. */
+  var initial = fromHash();
+  render(initial, false);
+  if (initial) {
+    var p = document.getElementById('mPanel');
+    if (p && p.scrollIntoView) p.scrollIntoView({ block: 'center' });
+  }
 })();
 </script>
 ` + foot;
