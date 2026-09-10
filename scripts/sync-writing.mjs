@@ -30,6 +30,22 @@ function generateSlug(title) {
     .replace(/^-|-$/g, '');
 }
 
+// The journal credits interviews and studio features to two names joined with
+// an ampersand: "Viacheslav Munister & Abbie Downey". The filter below used to
+// compare the whole byline against the author name, so every co-credited piece
+// silently never reached this page - four of sixteen, including the newest
+// interview. Match the parts of the byline, not the byline itself, and keep the
+// other names so the card can say who the piece was written with.
+function bylineNames(author) {
+  return String(author || '')
+    .split(/\s*[&,]\s*/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+const isMine = (x) => bylineNames(x.author).includes(AUTHOR);
+const coauthorsOf = (x) => bylineNames(x.author).filter((n) => n !== AUTHOR);
+const creditLine = (co) => (co.length ? `${AUTHOR} with ${co.join(' and ')}` : AUTHOR);
+
 function firstText(content) {
   const block = (content || []).find((c) => c && c.type === 'text' && c.content);
   return block ? block.content.trim() : '';
@@ -51,6 +67,24 @@ function escapeHtml(s) {
   return String(s || '').replace(/[&<>"']/g, (c) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   }[c]));
+}
+
+// Категории в журнале набраны как попало: «Architecture», «contemporary art»,
+// «ARCHITECTURE & DINING» - на странице из шестнадцати карточек эта разница
+// читается как небрежность верстки, хотя она пришла из данных. Регистр
+// приводится только к показу; в самом журнале ничего не меняется.
+// Даты в журнале набраны в четырёх видах сразу: «Sep 7, 2026»,
+// «September 8, 2026», «SEP 5, 2026», «Aug 2026». В моношрифтовой строке
+// карточки это видно сразу, поэтому дата приводится к одному виду для показа.
+// Но только когда в строке действительно есть день: «Aug 2026» это месяц, и
+// дорисовать ему первое число значит выдумать дату, которой автор не назвал.
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function displayDate(raw) {
+  const str = String(raw || '').trim();
+  if (!/(?:^|[^0-9])([0-9]{1,2})(?:[^0-9]|$)/.test(str)) return str;
+  const d = new Date(str);
+  if (Number.isNaN(d.getTime())) return str;
+  return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
 function titleCase(s) {
@@ -103,11 +137,12 @@ async function main() {
   const isLive = (x) => !x.draft && (!x.publishAt || new Date(x.publishAt).getTime() <= Date.now());
 
   const articles = (data.articles || [])
-    .filter((a) => a.author === AUTHOR && isLive(a))
+    .filter((a) => isMine(a) && isLive(a))
     .map((a) => ({
       kind: 'article',
       id: a.id,
       title: a.title,
+      coauthors: coauthorsOf(a),
       slug: generateSlug(a.title),
       date: a.date,
       sortDate: new Date(a.date).getTime() || 0,
@@ -119,11 +154,12 @@ async function main() {
     }));
 
   const reviews = (data.reviews || [])
-    .filter((r) => r.author === AUTHOR && isLive(r))
+    .filter((r) => isMine(r) && isLive(r))
     .map((r) => ({
       kind: 'review',
       id: r.id,
       title: r.title,
+      coauthors: coauthorsOf(r),
       slug: generateSlug(r.title) || String(r.id),
       date: r.date,
       sortDate: new Date(r.date).getTime() || 0,
@@ -149,7 +185,10 @@ async function main() {
     '@type': p.kind === 'review' ? 'Review' : 'Article',
     headline: p.title,
     datePublished: formatIsoDate(p.date) || undefined,
-    author: { '@type': 'Person', name: AUTHOR, url: 'https://munister.com.ua/' },
+    author: p.coauthors.length
+      ? [{ '@type': 'Person', name: AUTHOR, url: 'https://munister.com.ua/' },
+         ...p.coauthors.map((n) => ({ '@type': 'Person', name: n }))]
+      : { '@type': 'Person', name: AUTHOR, url: 'https://munister.com.ua/' },
     publisher: { '@type': 'Organization', name: 'EPRIS Journal', url: 'https://eprisjournal.com/' },
     url: `https://eprisjournal.com/${p.kind === 'review' ? 'review' : 'article'}/${p.slug}`,
   }));
@@ -177,12 +216,12 @@ async function main() {
     return `    <article class="piece">
 ${figure}
       <div class="body">
-        <p class="mono kicker">${escapeHtml(p.category)}${p.category ? ' · ' : ''}${escapeHtml(p.date)}</p>
+        <p class="mono kicker">${escapeHtml(titleCase(p.category))}${p.category ? ' · ' : ''}${escapeHtml(displayDate(p.date))}</p>
         <h2>${escapeHtml(p.title)}</h2>
         <p class="abstract">${escapeHtml(p.abstract)}</p>
         ${tagsHtml}
         <div class="byline">
-          <span class="mono who">By ${AUTHOR} · ${escapeHtml(p.role)}</span>
+          <span class="mono who">By ${escapeHtml(creditLine(p.coauthors))} · ${escapeHtml(p.role)}</span>
           <a class="btn" href="${url}" target="_blank" rel="noopener">Read<i class="ext" aria-hidden="true"></i></a>
         </div>
       </div>
@@ -235,7 +274,7 @@ ${figure}
       ? `<span class="thumb"><img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.title)}" width="240" height="240" loading="lazy" decoding="async"></span>\n        `
       : '';
     return `      <a href="${url}" target="_blank" rel="noopener">
-        ${img}<span class="mono when">${escapeHtml(p.date)}</span>
+        ${img}<span class="mono when">${escapeHtml(displayDate(p.date))}</span>
         <div class="body">
           <h3>${escapeHtml(p.title)}</h3>
           <span class="sub mono">${escapeHtml(homeSubline(p))}</span>
