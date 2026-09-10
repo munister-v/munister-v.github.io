@@ -1,0 +1,136 @@
+/* Схема модели: /systems/<slug>/model/
+   Правила только для этой страницы. В systems.css им не место — там их
+   грузили бы девять статей из десяти впустую. */
+
+.sys-head--model{padding-bottom:clamp(1.4rem,3vw,2rem)}
+.m-wrap{padding-bottom:clamp(2rem,5vw,3.4rem)}
+.m-figure{margin-top:clamp(1.4rem,3vw,2rem)}
+
+/* ── схема ─────────────────────────────────────────────────────────────── */
+svg.model{display:block;min-width:100%;height:auto;padding:6px 0}
+
+.m-box{fill:var(--c-paper);stroke:var(--c-rule-strong);stroke-width:1}
+.m-bar{fill:var(--c-paper-deep)}
+.m-title{
+  font-family:var(--font-body);font-size:13px;font-weight:500;
+  fill:var(--c-ink);letter-spacing:-.004em;
+}
+.m-sub{font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;fill:var(--c-faint)}
+.m-field{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;fill:var(--c-ink)}
+.m-type{font-family:var(--font-body);font-size:10.5px;fill:var(--c-muted)}
+
+.m-dot--counted{fill:var(--c-ink)}
+.m-dot--derived{fill:none;stroke:var(--c-ink);stroke-width:1}
+.m-dot--identity{fill:none;stroke:var(--c-ink);stroke-width:1.4}
+
+.m-edge path{fill:none;stroke:rgba(18,18,18,.5);stroke-width:1.2}
+.m-edge--weak path{stroke-dasharray:4 3;stroke:rgba(18,18,18,.34)}
+.m-edge--derived path{stroke-dasharray:2 4;stroke:rgba(18,18,18,.42)}
+.m-elabel{
+  font-family:var(--font-mono);font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;
+  fill:var(--c-faint);
+}
+
+/* Таблица кликабельна целиком, поэтому курсор и фокус ставятся на группу.
+   outline на SVG-группе в Safari рисуется по bounding box всех детей и
+   выглядит съехавшим, так что фокус показывается собственной рамкой. */
+.m-ent{cursor:pointer}
+.m-ent:focus{outline:none}
+.m-ent:focus-visible .m-box,.m-ent:hover .m-box{stroke:var(--c-ink);stroke-width:1.6}
+.m-ent:focus-visible .m-bar{fill:var(--c-clay-soft)}
+
+/* Выбор: всё, что не выбрано и не связано с выбранным, уходит на второй план.
+   Гасится непрозрачность, а не цвет: цвет здесь один. */
+svg.model.has-sel .m-ent{opacity:.4;transition:opacity .18s ease}
+svg.model.has-sel .m-ent.is-on{opacity:1}
+svg.model.has-sel .m-ent.is-on .m-box{stroke:var(--c-ink);stroke-width:1.8}
+svg.model.has-sel .m-ent.is-on .m-bar{fill:var(--c-ink)}
+svg.model.has-sel .m-ent.is-on .m-title{fill:var(--c-paper)}
+svg.model.has-sel .m-ent.is-on .m-sub{fill:rgba(255,255,255,.66)}
+svg.model.has-sel .m-edge{opacity:.28;transition:opacity .18s ease}
+svg.model.has-sel .m-edge.is-on{opacity:1}
+svg.model.has-sel .m-edge.is-on path{stroke:var(--c-ink)}
+@media (prefers-reduced-motion:reduce){
+  svg.model.has-sel .m-ent,svg.model.has-sel .m-edge{transition:none}
+}
+
+/* ── легенда ───────────────────────────────────────────────────────────── */
+.m-legend{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  border:1px solid var(--c-rule-strong);border-top:none;
+}
+.m-legend-row{
+  display:grid;grid-template-columns:14px auto;grid-template-areas:'key name' '. text';
+  gap:2px 9px;padding:12px 16px;border-left:1px solid var(--c-rule);
+}
+.m-legend-row:first-child{border-left:none}
+.m-legend-row b{grid-area:name;font-size:13px;font-weight:500;color:var(--c-ink)}
+.m-legend-row span:last-child{grid-area:text;font-size:13px;line-height:1.45;color:var(--c-muted)}
+.m-key{grid-area:key;width:9px;height:9px;margin-top:5px;display:block}
+.m-key--counted{background:var(--c-ink)}
+.m-key--derived{border:1px solid var(--c-ink)}
+.m-key--identity{border:1.4px solid var(--c-ink);border-radius:50%}
+
+/* ── панель подробностей ───────────────────────────────────────────────── */
+.m-panel{margin-top:clamp(1.6rem,3vw,2.2rem);border:1px solid var(--c-ink);min-height:184px}
+.m-panel-empty{padding:clamp(18px,3vw,26px)}
+.m-panel-empty p{margin-top:8px;max-width:70ch;font-size:15.5px;line-height:1.55;color:var(--c-muted)}
+.m-link{
+  appearance:none;border:none;background:none;padding:0;
+  font:inherit;color:var(--c-ink);cursor:pointer;
+  border-bottom:1px solid var(--c-rule-strong);
+}
+.m-link:hover{border-bottom-color:var(--c-ink)}
+
+.m-panel-head{padding:clamp(16px,2.6vw,22px);border-bottom:1px solid var(--c-rule)}
+.m-panel-head h2{margin-top:6px;font-family:var(--font-head);font-size:clamp(21px,2.6vw,27px);font-weight:400;letter-spacing:-.01em}
+.m-sub-t{margin-top:3px;font-size:14px;color:var(--c-muted)}
+
+.m-cols{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr)}
+.m-col{padding:clamp(16px,2.6vw,22px)}
+.m-col + .m-col{border-left:1px solid var(--c-rule)}
+.m-col > .mono{display:block;margin-bottom:9px}
+.m-col > .mono + p,.m-col > .mono + ul{margin-bottom:18px}
+.m-col p{max-width:68ch;font-size:14.5px;line-height:1.55;color:var(--c-muted)}
+.m-col p b{font-weight:500;color:var(--c-ink)}
+.m-col p em{font-style:italic}
+
+.m-f{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:baseline;
+  padding:6px 0 6px 17px;border-top:1px solid var(--c-rule);position:relative}
+.m-f:first-of-type{border-top:none}
+.m-f code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;color:var(--c-ink)}
+.m-f .ty{font-size:12px;color:var(--c-faint);text-align:right}
+/* Метка поля повторяет знак из схемы, чтобы список и картинка читались как
+   одно и то же, а не как две разные системы обозначений. */
+.m-f::before{content:'';position:absolute;left:0;top:11px;width:8px;height:8px}
+.m-f--counted::before{background:var(--c-ink)}
+.m-f--derived::before{border:1px solid var(--c-ink)}
+.m-f--identity::before{border:1.4px solid var(--c-ink);border-radius:50%}
+
+.m-writers{margin:0;padding:0;list-style:none}
+.m-writers li{padding:5px 0 5px 15px;position:relative;font-size:14.5px;line-height:1.5;color:var(--c-muted)}
+.m-writers li::before{content:'';position:absolute;left:0;top:11px;width:6px;height:1px;background:var(--c-rule-strong)}
+.m-carries{margin-top:16px;padding-top:12px;border-top:1px solid var(--c-rule);color:var(--c-faint)}
+
+.m-inv{margin-top:clamp(1.6rem,3vw,2.2rem);border:1px solid var(--c-rule-strong)}
+.m-inv-row{
+  display:grid;grid-template-columns:34px minmax(0,1fr) minmax(0,1fr);gap:14px;
+  padding:12px 16px;border-top:1px solid var(--c-rule);transition:background .18s ease;
+}
+.m-inv-row:first-of-type{border-top:none}
+.m-inv-row .k{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;color:var(--c-faint);padding-top:2px}
+.m-inv-row .st{font-size:15px;line-height:1.5;color:var(--c-ink)}
+.m-inv-row .by{font-size:13.5px;line-height:1.5;color:var(--c-muted)}
+.m-inv-row.is-on{background:var(--c-paper-deep)}
+.m-inv-row.is-on .k{color:var(--c-ink)}
+@media (prefers-reduced-motion:reduce){.m-inv-row{transition:none}}
+
+@media (max-width:900px){
+  .m-legend{grid-template-columns:1fr}
+  .m-legend-row{border-left:none;border-top:1px solid var(--c-rule)}
+  .m-legend-row:first-child{border-top:none}
+  .m-cols{grid-template-columns:1fr}
+  .m-col + .m-col{border-left:none;border-top:1px solid var(--c-rule)}
+  .m-inv-row{grid-template-columns:28px minmax(0,1fr);gap:4px 12px}
+  .m-inv-row .by{grid-column:2}
+}
