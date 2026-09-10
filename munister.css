@@ -115,9 +115,29 @@ p{text-wrap:pretty}
   display:grid;grid-template-columns:clamp(96px,11vw,150px) minmax(0,1fr) minmax(120px,.26fr);
   gap:0;align-items:stretch;border-top:1px solid var(--c-rule);
 }
-/* Третья ячейка пустая - в кадре музея рядом с заявлением тоже стоит пустое
-   поле, и именно линии делают его частью решётки, а не случайным полем. */
-.opening-grid::after{content:'';border-left:1px solid var(--c-rule)}
+/* Третья ячейка - портрет, ради которого решётка и была на три колонки.
+   Круг, а не прямоугольник: прямоугольный кадр рядом с именем читается как
+   вторая картинка страницы и спорит с обложками работ ниже; круг читается
+   как подпись автора и уходит на второй план, куда ему и надо. */
+.opening-portrait{
+  display:flex;align-items:center;justify-content:center;
+  padding:clamp(22px,3vw,32px) 0 clamp(28px,4vw,48px);
+  border-left:1px solid var(--c-rule);
+}
+/* height:auto обязателен: атрибуты width/height на <img> - это
+   презентационные подсказки, они попадают в CSS как height:456px и
+   перебивают aspect-ratio, из-за чего круг превращался в овал во всю
+   высоту ячейки. Атрибуты при этом нужны, они держат место до загрузки. */
+.portrait{
+  width:clamp(88px,9.4vw,132px);height:auto;aspect-ratio:1;border-radius:50%;
+  object-fit:cover;object-position:50% 42%;
+  /* Обесцвечивание держит портрет в одном тоне со страницей независимо от
+     того, какой снимок сюда положат; на текущем чёрно-белом оно ничего не
+     меняет, но и не мешает, а цветной кадр не начнёт спорить с сеткой. */
+  filter:grayscale(1) contrast(1.02);transition:filter .4s ease;
+}
+.opening-portrait:hover .portrait{filter:grayscale(0) contrast(1)}
+@media (prefers-reduced-motion:reduce){.portrait{transition:none}}
 .opening-index{
   display:flex;flex-direction:column;gap:8px;
   padding:clamp(22px,3vw,32px) 16px clamp(24px,4vw,44px) 0;
@@ -304,10 +324,9 @@ p{text-wrap:pretty}
 @media (prefers-reduced-motion:reduce){.site-head nav{transition:none}}
 
 @media (max-width:980px){
-  /* На средних экранах пустая ячейка не нужна: решётка сжимается до двух. */
-  .opening-grid{grid-template-columns:clamp(88px,10vw,120px) minmax(0,1fr)}
-  .opening-grid::after{display:none}
-  .opening-copy{border-right:none}
+  /* Портрет остаётся: в отличие от прежней пустой ячейки, ему есть что
+     показать, поэтому колонка просто сужается вместе с ним. */
+  .opening-grid{grid-template-columns:clamp(88px,10vw,120px) minmax(0,1fr) minmax(96px,.22fr)}
   .row{grid-template-columns:1.25fr .9fr auto}.row .what{grid-column:1 / -1;margin-top:-6px}
   .pub{grid-template-columns:62px minmax(0,1fr) auto}.pub .venue{grid-column:2 / -1;margin-top:-5px}
   .stats{grid-template-columns:1fr 1fr}.stats div:nth-child(-n+2){padding-bottom:16px}
@@ -322,9 +341,14 @@ p{text-wrap:pretty}
   .site-main{padding-top:34px}
   /* На телефоне ячейки складываются в стопку: вертикали превращаются в
      горизонтальные линии, как на узких экранах музея. */
-  .opening-grid{grid-template-columns:minmax(0,1fr);gap:0;padding-top:0}
-  .opening-index{flex-direction:row;gap:18px;padding:14px 0;border-right:none;border-bottom:1px solid var(--c-rule)}
-  .opening-copy{padding:26px 0 30px;border-right:none;border-bottom:1px solid var(--c-rule)}
+  /* Портрет встаёт в служебную строку слева от года, а не отдельным блоком
+     под заявлением: место в разметке у него третье, поэтому ячейки
+     расставлены явно, а не отданы auto-placement. */
+  .opening-grid{grid-template-columns:46px minmax(0,1fr);gap:0 14px;padding-top:0}
+  .opening-portrait{grid-column:1;grid-row:1;padding:12px 0;border-left:none;border-bottom:1px solid var(--c-rule)}
+  .portrait{width:36px}
+  .opening-index{grid-column:2;grid-row:1;flex-direction:row;gap:18px;padding:14px 0;border-right:none;border-bottom:1px solid var(--c-rule)}
+  .opening-copy{grid-column:1 / -1;grid-row:2;padding:26px 0 30px;border-right:none;border-bottom:1px solid var(--c-rule)}
   .name{font-size:clamp(50px,15vw,80px)}.claim{margin-top:24px;font-size:clamp(30px,8.4vw,44px)}
   .opening-bottom{grid-template-columns:1fr;gap:22px}.opening-bottom .support{grid-column:1}.support{font-size:16px}
   .sec-head{grid-template-columns:1fr;gap:15px}.sec-head .sec-note{justify-self:start}
