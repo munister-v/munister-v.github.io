@@ -112,6 +112,11 @@ p{text-wrap:pretty}
 .btn:hover{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-paper)}
 .btn--solid{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-paper)}
 .btn--solid:hover{background:#2c2c2c;border-color:#2c2c2c;color:#fff}
+/* Вторая кнопка без контура: серая заливка, как у второстепенного действия
+   на Doglyad. Рядом с чернильной она читается как «потом», а не как спор. */
+.btn--soft{border-color:transparent;background:rgba(18,18,18,.06);color:var(--c-ink)}
+.btn--soft:hover{border-color:transparent;background:rgba(18,18,18,.11);color:var(--c-ink)}
+.btn--lg{min-height:44px;padding:0 22px;font-size:15px}
 
 /* The opening is a page, rather than a profile card. */
 .opening{margin-bottom:clamp(4.4rem,8vw,8rem)}
@@ -164,6 +169,10 @@ p{text-wrap:pretty}
   padding-top:22px;border-top:1px solid var(--c-rule);
 }
 .opening-bottom .support{grid-column:2}
+/* Действия стоят сразу под текстом, который их объясняет, а не в дальнем
+   правом углу: на широком экране кнопка там терялась в 700px от строки. */
+.opening-bottom{grid-template-columns:clamp(96px,11vw,150px) minmax(0,1fr)}
+.opening-bottom .actions{grid-column:2;margin-top:24px;gap:10px}
 .support{max-width:56ch;color:var(--c-muted);font-size:18px;line-height:1.47}
 .actions,.research-actions,.writing-actions{display:flex;gap:8px;flex-wrap:wrap}
 
@@ -180,15 +189,23 @@ p{text-wrap:pretty}
 
 /* Work gets an image-led sequence instead of a grid of equal cards. */
 .featured{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(28px,4vw,58px) clamp(20px,3vw,42px)}
-.feat{display:flex;flex-direction:column;padding-bottom:16px;border-bottom:1px solid var(--c-rule-strong)}
+.feat{display:flex;flex-direction:column;padding-bottom:16px}
 .feat:first-child,.feat.feat-wide{
   grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,1.38fr) minmax(260px,.62fr);column-gap:clamp(25px,4vw,56px);align-items:start;
   padding-bottom:clamp(28px,4vw,44px);
 }
-.feat .shot{overflow:hidden;background:var(--c-paper-deep);border:1px solid var(--c-rule);aspect-ratio:16 / 9}
+/* Кадр без рамки: мягкий угол и волосяная линия поверх картинки (::after),
+   чтобы белый скриншот не растворялся в белой странице. */
+.feat .shot{position:relative;overflow:hidden;background:var(--c-paper-deep);border-radius:18px;aspect-ratio:16 / 9}
+.feat .shot::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(18,18,18,.07);pointer-events:none}
 .feat .shot img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1),filter .6s ease}
 .feat:hover .shot img{transform:scale(1.025);filter:saturate(.9)}
 .feat:first-child .shot,.feat.feat-wide .shot{grid-row:1 / span 5;aspect-ratio:16 / 8.2}
+/* Широкие карточки чередуют сторону картинки, иначе три подряд читаются
+   как одна и та же вставка. */
+.feat.feat-flip{grid-template-columns:minmax(260px,.62fr) minmax(0,1.38fr)}
+.feat.feat-flip .shot{grid-column:2}
+.feat.feat-flip > :not(.shot){grid-column:1}
 .feat .role{order:1;margin-top:17px;color:var(--c-faint);letter-spacing:.2em}
 /* Заголовки работ - антиква, как названия материалов в журнале. */
 .feat h3{order:2;margin-top:9px;font-family:var(--font-head);font-size:clamp(25px,2.4vw,35px);line-height:1.06;letter-spacing:-.014em}
@@ -232,7 +249,7 @@ p{text-wrap:pretty}
 .research-actions,.writing-actions{margin-top:22px}
 .writing{border-top:1px solid var(--c-rule)}
 .writing a{display:grid;grid-template-columns:56px 100px minmax(0,1fr) auto;gap:clamp(14px,2.4vw,32px);align-items:center;padding:17px 0;border-bottom:1px solid var(--c-rule);transition:color .2s ease}
-.writing .thumb{width:56px;height:56px;overflow:hidden;border:1px solid var(--c-rule);background:var(--c-paper-deep);align-self:center}
+.writing .thumb{width:56px;height:56px;overflow:hidden;border-radius:10px;background:var(--c-paper-deep);align-self:center}
 .writing .thumb img{width:100%;height:100%;object-fit:cover;filter:saturate(.94);transition:filter .2s ease}
 .writing a:hover .thumb img{filter:saturate(1.05)}
 .writing h3{font-family:var(--font-head);font-size:25px;line-height:1.08}
@@ -241,17 +258,29 @@ p{text-wrap:pretty}
 .writing a:hover{background:var(--c-paper-deep)}
 .writing a:hover .go{color:var(--c-ink)}
 
-.practice{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(30px,8vw,130px);padding:clamp(28px,5vw,62px) 0;border-top:1px solid var(--c-ink);border-bottom:1px solid var(--c-ink)}
-.practice ol{list-style:none;margin-top:16px}
-.practice li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--c-rule);font-family:var(--font-head);font-size:22px;line-height:1.1}
-.practice li i{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.2em;color:var(--c-faint);font-style:normal}
-.practice > div > p{margin-top:18px;color:var(--c-muted);font-size:17px;line-height:1.45}
-.practice p.pull,.pull{max-width:20ch;font-family:var(--font-display);font-size:clamp(29px,3.5vw,46px);line-height:1.04;color:var(--c-ink)}
-.pull-mark{display:block;width:54px;height:1px;margin-top:26px;background:var(--c-ink)}
-.pull-mark + small{display:block;margin-top:14px}
 
-.contact{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(30px,6vw,100px);align-items:end;padding-top:clamp(2rem,4vw,3.5rem);border-top:1px solid var(--c-ink)}
-.contact .mail{display:inline-block;margin-top:13px;font-family:var(--font-display);font-size:clamp(31px,4.2vw,58px);line-height:.95;letter-spacing:-.04em;word-break:break-word}
+/* Заявление одно на белом, как на Doglyad: первая фраза чернилами, вторая
+   серым. Серый #8f8d89 на белом 3.3:1, для текста такого кегля хватает. */
+.statement{padding-top:clamp(1rem,3vw,2.5rem)}
+.say{max-width:19ch;font-family:var(--font-display);font-size:clamp(38px,5.4vw,76px);line-height:.96;letter-spacing:-.045em;color:var(--c-ink);text-wrap:balance}
+.say span{color:#8f8d89}
+.say-cap{margin-top:24px;font-family:var(--font-head);font-style:italic;font-size:18px;color:var(--c-faint)}
+.close{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:start;margin-top:clamp(3.2rem,6vw,5.5rem);padding:clamp(24px,3vw,36px);border-radius:24px;background:var(--c-paper-deep)}
+.close p{max-width:40ch;margin-top:12px;color:var(--c-muted);font-size:17px;line-height:1.45}
+.close ol{list-style:none}
+.close li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid rgba(18,18,18,.08);font-family:var(--font-head);font-size:24px;line-height:1.1}
+.close li:first-child{padding-top:0}
+.close li:last-child{border-bottom:0;padding-bottom:0}
+.close li i{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;color:var(--c-faint);font-style:normal}
+
+/* Конец страницы - серая скруглённая панель, как подвал Doglyad, а не ещё
+   одна чернильная линейка. */
+.contact{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(30px,6vw,100px);align-items:end;padding:clamp(28px,4.4vw,56px);border-radius:40px;background:var(--c-paper-deep)}
+.contact .mail{display:inline-block;margin-top:16px;font-family:var(--font-display);font-size:clamp(34px,5vw,72px);line-height:.95;letter-spacing:-.045em;word-break:break-word}
+.contact .btn{min-height:44px;padding:0 22px;font-size:15px}
+.contact .btn:not(.btn--solid){border-color:transparent;background:rgba(18,18,18,.06)}
+.contact .btn:not(.btn--solid):hover{background:rgba(18,18,18,.11);color:var(--c-ink)}
+.contact + .foot{margin-top:0;padding-inline:clamp(28px,4.4vw,56px);border-top:0}
 .contact .mail:hover{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
 .contact p{max-width:58ch;margin-top:15px;color:var(--c-muted)}
 .contact .actions{justify-content:flex-end}
@@ -351,10 +380,10 @@ p{text-wrap:pretty}
   /* Портрет встаёт в служебную строку слева от года, а не отдельным блоком
      под заявлением: место в разметке у него третье, поэтому ячейки
      расставлены явно, а не отданы auto-placement. */
-  .opening-grid{grid-template-columns:46px minmax(0,1fr);gap:0 14px;padding-top:0}
-  .opening-portrait{grid-column:1;grid-row:1;padding:12px 0;border-left:none;border-bottom:1px solid var(--c-rule)}
+  .opening-grid{grid-template-columns:60px minmax(0,1fr);gap:0;padding-top:0}
+  .opening-portrait{grid-column:1;grid-row:1;justify-content:flex-start;padding:12px 0;border-left:none;border-bottom:1px solid var(--c-rule)}
   .portrait{width:36px}
-  .opening-index{grid-column:2;grid-row:1;flex-direction:row;gap:18px;padding:14px 0;border-right:none;border-bottom:1px solid var(--c-rule)}
+  .opening-index{grid-column:2;grid-row:1;flex-direction:row;align-items:center;gap:18px;padding:14px 0;border-right:none;border-bottom:1px solid var(--c-rule)}
   .opening-copy{grid-column:1 / -1;grid-row:2;padding:26px 0 30px;border-right:none;border-bottom:1px solid var(--c-rule)}
   .name{font-size:clamp(50px,15vw,80px)}.claim{margin-top:24px;font-size:clamp(30px,8.4vw,44px)}
   .opening-bottom{grid-template-columns:1fr;gap:22px}.opening-bottom .support{grid-column:1}.support{font-size:16px}
@@ -367,7 +396,15 @@ p{text-wrap:pretty}
   .writing .thumb{display:none}
   .writing .when{grid-column:1 / -1}
   .writing h3{font-size:23px}
-  .practice,.contact{grid-template-columns:1fr;gap:32px}.contact .actions{justify-content:flex-start}
+  .contact{grid-template-columns:1fr;gap:28px;padding:26px 22px;border-radius:28px}
+  .contact .mail{font-size:clamp(24px,7vw,40px);letter-spacing:-.035em}
+  .contact + .foot{padding-inline:22px}.contact .actions{justify-content:flex-start}
+  .close{grid-template-columns:1fr;gap:26px;border-radius:20px}
+  .say-cap{font-size:16px}
+  .opening-bottom{grid-template-columns:1fr}.opening-bottom .actions{grid-column:1;margin-top:0}
+  .feat .shot{border-radius:14px}
+  /* Подписи 9.5px на телефоне ниже порога чтения: чуть крупнее, трекинг уже. */
+  .mono{font-size:10.5px;letter-spacing:.16em}
   .piece{grid-template-columns:1fr}.piece figure img{min-height:0;aspect-ratio:16/9}
   .platform-note{grid-template-columns:1fr}
 }
