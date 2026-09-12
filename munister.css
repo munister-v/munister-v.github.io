@@ -436,39 +436,56 @@ p{text-wrap:pretty}
 .site-head.nav-open .menu-btn .i-close{display:block}
 
 @media (max-width:760px){
-  .menu-btn{display:flex}
+  /* Кнопка держит тот же отступ от края, что и логотип слева: прижатая к
+     самому краю, она читалась как кнопка НЕ этой полосы, а панель под ней
+     была отбита от краёв ещё на десять пикселей - три разных отступа в
+     одном узле. */
+  .menu-btn{display:flex;margin-right:20px}
   .site-head nav{
-    /* align-items у десктопной полосы - center; в колонке это сжимает пункты
-       до ширины слова и выключает всю строку по центру. */
-    display:flex;flex-direction:column;align-items:stretch;
-    position:fixed;top:calc(var(--bar) - 4px);left:10px;right:10px;z-index:1;
+    /* Панель во всю ширину, а не карточка с отбивкой: края совпадают с
+       краями полосы, и меню читается как продолжение шапки. Пункты - строки
+       с линейками, в ту же клетку, что и весь остальной сайт. */
+    display:flex;flex-direction:column;align-items:stretch;gap:0;
+    position:fixed;top:var(--bar);left:0;right:0;z-index:1;
     max-height:0;overflow:hidden;overscroll-behavior:contain;
-    background:var(--c-paper);border-radius:18px;
-    box-shadow:0 1px 0 rgba(18,18,18,.06),0 26px 44px -26px rgba(18,18,18,.45);
-    transition:max-height .24s ease;
+    background:var(--c-paper);
+    border-top:1px solid var(--c-rule);
+    box-shadow:0 22px 40px -28px rgba(18,18,18,.5);
+    transition:max-height .26s cubic-bezier(.22,.7,.24,1);
   }
-  .site-head.nav-open nav{max-height:calc(100vh - var(--bar) - 16px);overflow-y:auto}
+  /* Полоса на скролле ниже на 6px - панель идёт за её нижним краем, иначе
+     в шве видно страницу. */
+  .site-head.is-scrolled nav{top:calc(var(--bar) - 6px)}
+  .site-head.nav-open nav{max-height:calc(100vh - var(--bar));overflow-y:auto}
   /* Пункты въезжают по очереди: панель без этого раскрывается как пустая
      шторка, и список появляется уже готовым, без признака, что он приехал. */
-  .site-head nav a{opacity:0;transform:translateY(-8px);transition:opacity .22s ease,transform .28s cubic-bezier(.22,.7,.24,1)}
+  .site-head nav a{opacity:0;transform:translateY(-6px);transition:opacity .22s ease,transform .28s cubic-bezier(.22,.7,.24,1)}
   .site-head.nav-open nav a{opacity:1;transform:none;transition-delay:calc(40ms * var(--i,0))}
   .nav-mark{display:none}
   /* Затемнение под панелью: страница под открытым меню перестаёт спорить
-     с ним за внимание, а тап по нему закрывает - обработчик уже есть. */
+     с ним за внимание, а тап по нему закрывает - обработчик уже есть.
+     16% на белой бумаге не видно вообще: страница оставалась в полную силу
+     и спорила с меню за внимание. */
   .site-head::after{
     /* backdrop-filter на шапке делает её containing block для fixed-детей:
        inset снизу считается от шапки, а не от окна, и затемнение получало
        нулевую высоту. Поэтому высота задана явно. */
-    content:"";position:fixed;inset:var(--bar) 0 auto 0;height:100vh;background:rgba(18,18,18,.16);
+    content:"";position:fixed;inset:var(--bar) 0 auto 0;height:100vh;background:rgba(18,18,18,.42);
     opacity:0;pointer-events:none;transition:opacity .24s ease;z-index:0;
   }
   .site-head.nav-open::after{opacity:1}
+  /* Разделы набраны своим кеглем, а не служебным: в колонке мелкая разрядка
+     капителью читается как список настроек, тогда как это главная навигация
+     страницы. */
   .site-head nav a{
-    padding:15px 18px;border-radius:12px;margin:4px 6px;
-    font-size:12px;justify-content:flex-start;
+    padding:17px 20px;border-radius:0;margin:0;justify-content:flex-start;
+    font-family:var(--font-display);font-size:21px;letter-spacing:-.01em;
+    text-transform:none;color:var(--c-ink);
   }
-  .site-head nav a:first-child{margin-top:8px}
-  .site-head nav a:last-child{margin-bottom:8px}
+  .site-head nav a + a{box-shadow:inset 0 1px 0 var(--c-rule)}
+  /* Замок страницы: меню живёт только здесь, поэтому на широком экране
+     правило не существует вообще. */
+  html.nav-locked{overflow:hidden}
   .site-head nav a[aria-current="page"],.site-head nav a[aria-current="true"]{color:var(--c-ink);background:var(--c-paper-deep)}
   .head-right{margin-left:0}
 }

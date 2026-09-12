@@ -14,8 +14,20 @@
   const nav = head && head.querySelector('nav');
   if (!head || !btn || !nav) return;
 
-  const close = () => { head.classList.remove('nav-open'); btn.setAttribute('aria-expanded', 'false'); };
-  const open = () => { head.classList.add('nav-open'); btn.setAttribute('aria-expanded', 'true'); };
+  // Замок страницы: без него жест по затемнению прокручивает страницу под
+  // панелью, и читатель закрывает меню не там, где открывал. Класс на html,
+  // а не на body: прокручивает страницу корень, на body overflow не сработал
+  // бы. Правило живёт только в мобильной медиазапросе.
+  const close = () => {
+    head.classList.remove('nav-open');
+    document.documentElement.classList.remove('nav-locked');
+    btn.setAttribute('aria-expanded', 'false');
+  };
+  const open = () => {
+    head.classList.add('nav-open');
+    document.documentElement.classList.add('nav-locked');
+    btn.setAttribute('aria-expanded', 'true');
+  };
 
   btn.addEventListener('click', () => {
     if (head.classList.contains('nav-open')) close(); else open();
