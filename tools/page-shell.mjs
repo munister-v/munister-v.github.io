@@ -66,7 +66,7 @@ ${breadcrumb ? `<script type="application/ld+json">
 ${JSON.stringify(breadcrumb, null, 2)}
 </script>
 ` : ''}
-<link rel="stylesheet" href="/munister.css?v=19">
+<link rel="stylesheet" href="/munister.css?v=22">
 <link rel="stylesheet" href="/systems.css?v=10">
 ${styles.map((href) => `<link rel="stylesheet" href="${href}">\n`).join('')}</head>
 <body>
@@ -100,7 +100,7 @@ export const foot = `
 </div>
 </main>
 
-<script src="/munister.js?v=3" defer></script>
+<script src="/munister.js?v=6" defer></script>
 </body>
 </html>
 `;

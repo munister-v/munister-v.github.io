@@ -143,7 +143,9 @@
     if (!a || phone.matches) { mark.classList.remove('is-on'); return; }
     const n = nav.getBoundingClientRect(), r = a.getBoundingClientRect();
     mark.style.width = r.width + 'px';
+    mark.style.height = r.height + 'px';
     mark.style.setProperty('--x', (r.left - n.left) + 'px');
+    mark.style.setProperty('--y', (r.top - n.top) + 'px');
     mark.classList.add('is-on');
   };
   const rest = () => moveTo(current);
