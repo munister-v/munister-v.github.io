@@ -66,7 +66,7 @@ ${breadcrumb ? `<script type="application/ld+json">
 ${JSON.stringify(breadcrumb, null, 2)}
 </script>
 ` : ''}
-<link rel="stylesheet" href="/munister.css?v=23">
+<link rel="stylesheet" href="/munister.css?v=24">
 <link rel="stylesheet" href="/systems.css?v=10">
 ${styles.map((href) => `<link rel="stylesheet" href="${href}">\n`).join('')}</head>
 <body>
