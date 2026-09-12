@@ -85,12 +85,14 @@
     if (calm.matches) { top = (top + 1) % cards.length; paint(); return; }
     card.classList.add('is-dealt');
     // Карта уходит вправо и возвращается в хвост только после анимации,
-    // иначе она телепортируется вниз стопки на глазах.
+    // иначе она телепортируется вниз стопки на глазах. Ждём дольше самого
+    // долгого перехода (transform .55s) — иначе смена data-pos обрывает
+    // ещё не доигравший уход и карта дёргается назад на глазах.
     window.setTimeout(() => {
       top = (top + 1) % cards.length;
       paint();
       card.classList.remove('is-dealt');
-    }, 340);
+    }, 560);
   };
 
   const stop = () => { if (timer) { window.clearInterval(timer); timer = 0; } };
