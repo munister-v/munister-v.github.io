@@ -49,3 +49,71 @@
   });
   window.addEventListener('resize', () => boxes.forEach(sync));
 })();
+
+/* Колода работ на первом экране. Порядок карт живёт в data-pos, а не в DOM:
+   переставлять узлы на каждой сдаче значило бы терять фокус на карте-ссылке
+   и ломать переход по ней. Автосдача идёт только когда первый экран виден и
+   вкладка активна (IntersectionObserver + visibilitychange): иначе таймер
+   тикает в фоне и читатель возвращается к случайной карте. */
+(() => {
+  const deck = document.querySelector('[data-deck]');
+  if (!deck) return;
+  const cards = [...deck.querySelectorAll('.deck-card')];
+  if (cards.length < 2) return;
+  const counter = document.querySelector('[data-deck-count]');
+  const now = document.querySelector('[data-deck-now]');
+  const next = deck.querySelector('[data-deck-next]');
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const pad = (n) => String(n).padStart(2, '0');
+  let top = 0, timer = 0, visible = true, hovered = false;
+
+  const paint = () => {
+    cards.forEach((card, i) => {
+      const pos = (i - top + cards.length) % cards.length;
+      card.dataset.pos = String(pos);
+      // Из стопки читаемой ссылкой остаётся только верхняя карта: остальные
+      // лежат под ней и по табу их пропускаем.
+      card.tabIndex = pos === 0 ? 0 : -1;
+      card.setAttribute('aria-hidden', pos === 0 ? 'false' : 'true');
+    });
+    if (counter) counter.textContent = pad(top + 1) + ' / ' + pad(cards.length);
+    if (now) now.textContent = cards[top].dataset.title || '';
+  };
+
+  const deal = () => {
+    const card = cards[top];
+    if (calm.matches) { top = (top + 1) % cards.length; paint(); return; }
+    card.classList.add('is-dealt');
+    // Карта уходит вправо и возвращается в хвост только после анимации,
+    // иначе она телепортируется вниз стопки на глазах.
+    window.setTimeout(() => {
+      top = (top + 1) % cards.length;
+      paint();
+      card.classList.remove('is-dealt');
+    }, 340);
+  };
+
+  const stop = () => { if (timer) { window.clearInterval(timer); timer = 0; } };
+  const start = () => {
+    stop();
+    if (calm.matches || !visible || hovered) return;
+    timer = window.setInterval(deal, 4200);
+  };
+
+  next?.addEventListener('click', () => { deal(); start(); });
+  deck.addEventListener('pointerenter', () => { hovered = true; stop(); });
+  deck.addEventListener('pointerleave', () => { hovered = false; start(); });
+  deck.addEventListener('focusin', () => { hovered = true; stop(); });
+  deck.addEventListener('focusout', () => { hovered = false; start(); });
+  document.addEventListener('visibilitychange', () => { visible = !document.hidden; start(); });
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      visible = entries[0].isIntersecting && !document.hidden;
+      start();
+    }, { threshold: 0.25 }).observe(deck);
+  }
+  calm.addEventListener('change', start);
+
+  paint();
+  start();
+})();
