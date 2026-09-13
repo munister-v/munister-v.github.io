@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Мегашпора: бази даних · Munister</title>
+<meta name="description" content="Довідник по всій програмі курсу «Бази та сховища даних» на одному аркуші: моделювання, ERD, нормалізація, перетворення в реляційну схему, SQL DDL/DML/TCL, SELECT, JOIN, агрегування.">
+<link rel="canonical" href="https://munister.com.ua/course/databases/shpora/">
+<link rel="alternate" hreflang="uk" href="https://munister.com.ua/course/databases/shpora/">
+<link rel="alternate" hreflang="x-default" href="https://munister.com.ua/course/databases/shpora/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#ffffff">
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://munister.com.ua/course/databases/shpora/">
+<meta property="og:site_name" content="Munister">
+<meta property="og:title" content="Мегашпора: бази даних">
+<meta property="og:description" content="Моделювання, ERD, нормалізація, SQL DDL/DML/TCL, SELECT, JOIN, агрегування — весь курс «Бази та сховища даних» на одному аркуші.">
+<meta property="og:locale" content="uk_UA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Мегашпора: бази даних">
+<meta name="twitter:description" content="Весь курс «Бази та сховища даних» на одному аркуші: моделювання, ERD, нормалізація, SQL.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LearningResource",
+  "name": "Мегашпора: бази даних",
+  "description": "Довідник по програмі курсу «Бази та сховища даних»: моделювання, ERD, нормалізація, перетворення в реляційну схему, SQL DDL/DML/TCL, SELECT, JOIN, агрегування.",
+  "inLanguage": "uk",
+  "url": "https://munister.com.ua/course/databases/shpora/",
+  "isPartOf": { "@type": "Course", "name": "Бази та сховища даних", "url": "https://munister.com.ua/course/databases/" },
+  "provider": { "@type": "Organization", "name": "Munister", "sameAs": "https://munister.com.ua/" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Munister", "item": "https://munister.com.ua/" },
+    { "@type": "ListItem", "position": 2, "name": "Бази та сховища даних", "item": "https://munister.com.ua/course/databases/" },
+    { "@type": "ListItem", "position": 3, "name": "Мегашпора", "item": "https://munister.com.ua/course/databases/shpora/" }
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/munister.css?v=25">
+<link rel="stylesheet" href="/systems.css?v=10">
+<style>
+/* Мегашпора не входить у структуру статей /systems/: тут немає розбору
+   однієї роботи, а є довідковий аркуш по курсу. Розмітка успадковує
+   sys-head/sys-sec/schema дослівно (той самий довідковий регістр, що на
+   сторінці курсу), локально додано лише те, чого там ще не було — легенду
+   ключів і два типи діаграм (ERD-кардинальність, JOIN). */
+.topic-oa{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-faint)}
+
+.key-legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:clamp(2rem,3.4vw,3rem)}
+.key-legend .k{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-faint)}
+.key-legend .k i{width:9px;height:9px;border-radius:2px;background:var(--c-ink);display:inline-block}
+.key-legend .k.ok i{background:#2f7d32}
+.key-legend .k.opt i{background:transparent;border:1.4px dashed var(--c-faint)}
+
+.schema-row .ds code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.94em;color:var(--c-ink);background:var(--c-paper-deep);padding:0 4px;border-radius:3px}
+
+.sql{grid-column:2;margin-top:14px;border:1px solid var(--c-rule-strong);background:var(--c-paper-deep);padding:12px 15px;overflow-x:auto}
+.sql pre{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12.5px;line-height:1.65;color:var(--c-ink);white-space:pre}
+.sql .kw{font-weight:600}
+.sql .cm{color:var(--c-faint);font-style:italic}
+
+.flow-scroll .erd-legend,.flow-scroll .join-row{padding:18px}
+.erd-legend{display:flex;flex-wrap:wrap;gap:16px 26px}
+.erd-item{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--c-muted);white-space:nowrap}
+.erd-item b{font-weight:500;color:var(--c-ink);min-width:112px;display:inline-block;font-size:12px}
+
+.join-row{display:flex;flex-wrap:wrap;gap:22px 30px}
+.join-item{text-align:center;width:104px}
+.join-item .jn{margin-top:6px;font-family:var(--font-body);font-size:12.5px;font-weight:500;color:var(--c-ink)}
+.join-item code{display:block;margin-top:1px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;color:var(--c-faint)}
+
+@media (max-width:900px){
+  .sql{grid-column:1}
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <a class="wordmark" href="/">Munister</a>
+  <nav aria-label="Main" id="siteNav">
+    <a href="/#work">Work</a>
+    <a href="/systems/">Systems</a>
+    <a href="/research/">Research</a>
+    <a href="/writing/">Writing</a>
+    <a href="/#contact">Contact</a>
+  </nav>
+  <div class="head-right">
+    <a href="/cv.html">CV</a>
+  </div>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Menu">
+    <svg class="i-open" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    <svg class="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+  </button>
+</header>
+
+<main class="site-main" id="main">
+<div class="shell">
+
+  <div class="sys-head">
+    <a class="back mono" href="/course/databases/">← Бази та сховища даних</a>
+    <span class="mono">Мегашпора · IT / Data</span>
+    <h1>Бази та сховища даних</h1>
+    <p class="standfirst">Довідник по всій програмі курсу на одному аркуші: моделювання й ERD, нормалізація, перетворення в реляційну схему, типи даних Oracle і SQL — DDL, DML, TCL, SELECT, JOIN, агрегування.</p>
+    <div class="sys-facts">
+      <div><span class="mono">Розділів</span><b>9</b></div>
+      <div><span class="mono">Лекцій</span><b>19 · ЛК1–ЛК19</b></div>
+      <div><span class="mono">Лабораторних</span><b>14 · ЛР1–ЛР14</b></div>
+      <div><span class="mono">Підсумок</span><b>Іспит: тест + практика</b></div>
+    </div>
+  </div>
+
+  <div class="key-legend">
+    <span class="k"><i></i>стандарт</span>
+    <span class="k ok"><i></i>обов'язково</span>
+    <span class="k opt"><i></i>необов'язково</span>
+  </div>
+
+  <div class="sys-body">
+
+    <section class="sys-sec">
+      <h2>Розділ 1</h2>
+      <h3>СУБД і типи моделей даних</h3>
+      <span class="topic-oa">OA 1-1 – 1-4 · ЛК1–2</span>
+      <p><strong>БД</strong> — структурований набір пов'язаних даних; <strong>СУБД</strong> керує зберіганням, цілісністю та паралельним доступом. На відміну від файлової системи, БД не дублює дані під кожну програму окремо і тримає обмеження цілісності в одному місці. Відправна точка проєктування — <strong>бізнес-вимоги</strong>, словесний опис потреб замовника.</p>
+      <div class="schema">
+        <div class="schema-cap"><b>Типи моделей даних</b><span class="mono">4 типи</span></div>
+        <div class="schema-row"><code>Ієрархічна</code><span class="ty">модель</span><span class="ds">дерево: один предок → багато нащадків</span></div>
+        <div class="schema-row"><code>Мережева</code><span class="ty">модель</span><span class="ds">граф: нащадок може мати кілька предків</span></div>
+        <div class="schema-row"><code>Реляційна</code><span class="ty">модель</span><span class="ds">дані в таблицях, зв'язки через ключі</span></div>
+        <div class="schema-row"><code>Об'єктна</code><span class="ty">модель</span><span class="ds">дані як об'єкти з методами</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Розділ 2</h2>
+      <h3>Три рівні проєктування</h3>
+      <span class="topic-oa">OA 2-1, 2-2 · ЛК3</span>
+      <p>Курс рухається концепт → логіка → фізика → SQL-код, кожен рівень уточнює попередній, не скасовуючи його.</p>
+      <div class="schema">
+        <div class="schema-cap"><b>Рівні моделі</b><span class="mono">3 рівні</span></div>
+        <div class="schema-row"><code>Концептуальний</code><span class="ty">рівень</span><span class="ds">сутності й зв'язки мовою бізнесу, без деталей реалізації</span></div>
+        <div class="schema-row"><code>Логічний</code><span class="ty">рівень</span><span class="ds">атрибути, ідентифікатори, типи зв'язків — ще незалежно від СУБД</span></div>
+        <div class="schema-row"><code>Фізичний</code><span class="ty">рівень</span><span class="ds">таблиці, стовпці, типи даних, ключі, індекси — під конкретну СУБД</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Розділ 2</h2>
+      <h3>Сутності, атрибути, ідентифікатори</h3>
+      <span class="topic-oa">OA 2-3, 2-4 · ЛК4</span>
+      <p><strong>Сутність</strong> — об'єкт предметної області (Студент); <strong>екземпляр</strong> — конкретний рядок; <strong>атрибут</strong> — властивість; <strong>унікальний ідентифікатор (UID)</strong> — те, що однозначно визначає екземпляр.</p>
+      <div class="schema">
+        <div class="schema-cap"><b>Термінологія: модель → фізична БД</b><span class="mono">відображення</span></div>
+        <div class="schema-row"><code>Сутність</code><span class="ty">→</span><span class="ds">Таблиця</span></div>
+        <div class="schema-row"><code>Атрибут</code><span class="ty">→</span><span class="ds">Стовпець (колонка)</span></div>
+        <div class="schema-row"><code>Екземпляр</code><span class="ty">→</span><span class="ds">Рядок (запис)</span></div>
+        <div class="schema-row"><code>UID</code><span class="ty">→</span><span class="ds"><code>PRIMARY KEY</code></span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Розділ 2</h2>
+      <h3>Зв'язки й ERD-нотація</h3>
+      <span class="topic-oa">OA 2-5, 2-6 · ЛК5</span>
+      <p>Кожен зв'язок описується з двох боків: <strong>кардинальність</strong> (один / багато) і <strong>обов'язковість</strong> (мусить / може) — нотація «ворона лапка» (Crow's Foot).</p>
+      <figure class="flow-figure">
+        <div class="flow-scroll">
+          <div class="erd-legend">
+            <div class="erd-item"><b>один, обов'язково</b>
+              <svg width="52" height="18" viewBox="0 0 52 18"><line x1="0" y1="9" x2="52" y2="9" stroke="#2f7d32" stroke-width="1.6"/><line x1="14" y1="3" x2="14" y2="15" stroke="#2f7d32" stroke-width="1.6"/><line x1="19" y1="3" x2="19" y2="15" stroke="#2f7d32" stroke-width="1.6"/></svg>
+            </div>
+            <div class="erd-item"><b>один, необов'язково</b>
+              <svg width="52" height="18" viewBox="0 0 52 18"><line x1="0" y1="9" x2="52" y2="9" stroke="var(--c-faint)" stroke-width="1.4" stroke-dasharray="4 3"/><circle cx="10" cy="9" r="4" fill="var(--c-paper)" stroke="var(--c-faint)" stroke-width="1.4"/><line x1="19" y1="3" x2="19" y2="15" stroke="var(--c-faint)" stroke-width="1.4"/></svg>
+            </div>
+            <div class="erd-item"><b>багато, обов'язково</b>
+              <svg width="52" height="18" viewBox="0 0 52 18"><line x1="0" y1="9" x2="52" y2="9" stroke="#2f7d32" stroke-width="1.6"/><line x1="16" y1="3" x2="16" y2="15" stroke="#2f7d32" stroke-width="1.6"/><path d="M16 9 L38 3 M16 9 L38 15" fill="none" stroke="#2f7d32" stroke-width="1.6"/></svg>
+            </div>
+            <div class="erd-item"><b>багато, необов'язково</b>
+              <svg width="52" height="18" viewBox="0 0 52 18"><line x1="0" y1="9" x2="52" y2="9" stroke="var(--c-faint)" stroke-width="1.4" stroke-dasharray="4 3"/><circle cx="11" cy="9" r="4" fill="var(--c-paper)" stroke="var(--c-faint)" stroke-width="1.4"/><path d="M16 9 L38 3 M16 9 L38 15" fill="none" stroke="var(--c-faint)" stroke-width="1.4"/></svg>
+            </div>
+          </div>
+        </div>
+        <figcaption><p>«Кожен <strong>Студент</strong> мусить бути записаний рівно на один <strong>Факультет</strong>; кожен <strong>Факультет</strong> може мати багато записаних <strong>Студентів</strong>» — суцільна лінія й засічка = обов'язково, пунктир і коло = необов'язково.</p></figcaption>
+      </figure>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Розділ 3</h2>
+      <h3>Супертипи, підтипи, дугові зв'язки</h3>
+      <span class="topic-oa">OA 3.1, 4.1 · ЛК6</span>
+      <p><strong>Відстеження змін</strong> — атрибути-мітки часу/версії для аудиту редагувань запису.</p>
+      <div class="schema">
+        <div class="schema-cap"><b>Конструкції моделювання</b><span class="mono">3 поняття</span></div>
+        <div class="schema-row"><code>Супертип</code><span class="ty">структура</span><span class="ds">узагальнена сутність зі спільними атрибутами (Особа)</span></div>
+        <div class="schema-row"><code>Підтип</code><span class="ty">структура</span><span class="ds">спеціалізація з власними атрибутами (Студент, Викладач)</span></div>
+        <div class="schema-row"><code>Дуговий зв'язок</code><span class="ty">структура</span><span class="ds">сутність пов'язана рівно з одним з кількох варіантів, взаємовиключно</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Розділ 3</h2>
+      <h3>Нормалізація 1НФ – 3НФ</h3>
+      <span class="topic-oa">OA 3.3 · ЛК8</span>
+      <p>Мета — усунути аномалії вставки / оновлення / видалення і дублювання даних. Курс зупиняється на 3НФ.</p>
+      <div class="schema">
+        <div class="schema-cap"><b>Нормальні форми</b><span class="mono">послідовно</span></div>
+        <div class="schema-row"><code>1НФ</code><span class="ty">форма</span><span class="ds">атомарні значення; немає повторюваних груп в одній комірці</span></div>
+        <div class="schema-row"><code>2НФ</code><span class="ty">форма</span><span class="ds">1НФ + немає часткової залежності від частини складеного PK</span></div>
+        <div class="schema-row"><code>3НФ</code><span class="ty">форма</span><span class="ds">2НФ + немає транзитивної залежності між неключовими атрибутами</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Розділ 4</h2>
+      <h3>Логічна → реляційна модель</h3>
+      <span class="topic-oa">Розділ 4 OA · ЛР7</span>
+      <p>Правила перетворення зв'язків логічної моделі в таблиці з ключами:</p>
+      <div class="schema">
+        <div class="schema-cap"><b>Перетворення зв'язків</b><span class="mono">3 правила</span></div>
+        <div class="schema-row"><code>1 : M</code><span class="ty">правило</span><span class="ds"><code>FK</code> додається в таблицю сторони «багато», посилається на <code>PK</code> сторони «один»</span></div>
+        <div class="schema-row"><code>M : M</code><span class="ty">правило</span><span class="ds">створюється проміжна таблиця з двома <code>FK</code>, разом — складений <code>PK</code></span></div>
+        <div class="schema-row"><code>1 : 1</code><span class="ty">правило</span><span class="ds"><code>FK</code> + <code>UNIQUE</code> на необов'язковій стороні, або таблиці зливаються в одну</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Розділ 5</h2>
+      <h3>Типи даних Oracle</h3>
+      <span class="topic-oa">OA 5.1–5.2 · ЛК10</span>
+      <p>Співставлення атрибутів — точне узгодження атрибута логічної моделі з типом і обмеженням стовпця фізичної схеми.</p>
+      <div class="schema">
+        <div class="schema-cap"><b>Основні типи</b><span class="mono">7 типів</span></div>
+        <div class="schema-row"><code>VARCHAR2(n)</code><span class="ty">текст</span><span class="ds">змінної довжини, до n байт</span></div>
+        <div class="schema-row"><code>CHAR(n)</code><span class="ty">текст</span><span class="ds">фіксованої довжини</span></div>
+        <div class="schema-row"><code>NUMBER(p,s)</code><span class="ty">число</span><span class="ds">p — точність, s — розряди після коми</span></div>
+        <div class="schema-row"><code>DATE</code><span class="ty">дата</span><span class="ds">дата + час, до секунди</span></div>
+        <div class="schema-row"><code>TIMESTAMP</code><span class="ty">дата</span><span class="ds">дата + час з частками секунди</span></div>
+        <div class="schema-row"><code>CLOB</code><span class="ty">об'єкт</span><span class="ds">великий текстовий об'єкт</span></div>
+        <div class="schema-row"><code>BLOB</code><span class="ty">об'єкт</span><span class="ds">великий бінарний об'єкт</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Розділ 6</h2>
+      <h3>DDL і обмеження цілісності</h3>
+      <span class="topic-oa">OA 6.1–6.3 · ЛК11–12</span>
+      <div class="sql"><pre><span class="kw">CREATE TABLE</span> student (
+  student_id   NUMBER        <span class="kw">PRIMARY KEY</span>,
+  email        VARCHAR2(60)  <span class="kw">UNIQUE NOT NULL</span>,
+  faculty_id   NUMBER        <span class="kw">REFERENCES</span> faculty(id),
+  gpa          NUMBER(3,2)   <span class="kw">CHECK</span> (gpa &gt;= 0)
+);
+<span class="kw">ALTER TABLE</span> student <span class="kw">ADD</span> phone VARCHAR2(20);
+<span class="kw">DROP TABLE</span> student <span class="kw">CASCADE CONSTRAINTS</span>;</pre></div>
+      <div class="schema">
+        <div class="schema-cap"><b>Обмеження цілісності</b><span class="mono">5 видів</span></div>
+        <div class="schema-row"><code>PRIMARY KEY</code><span class="ty">PK</span><span class="ds">унікальний, не NULL, ідентифікує рядок</span></div>
+        <div class="schema-row"><code>REFERENCES</code><span class="ty">FK</span><span class="ds">посилання на PK іншої таблиці</span></div>
+        <div class="schema-row"><code>UNIQUE</code><span class="ty">UK</span><span class="ds">унікальність без ролі ідентифікатора</span></div>
+        <div class="schema-row"><code>NOT NULL</code><span class="ty">—</span><span class="ds">значення обов'язкове</span></div>
+        <div class="schema-row"><code>CHECK (умова)</code><span class="ty">—</span><span class="ds">довільна умова на значення стовпця</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Розділ 6</h2>
+      <h3>DML і TCL</h3>
+      <span class="topic-oa">OA 6.4–6.5 · ЛК13</span>
+      <div class="sql"><pre><span class="kw">INSERT INTO</span> student (student_id, email)
+  <span class="kw">VALUES</span> (1, 'a@mail.com');
+<span class="kw">UPDATE</span> student <span class="kw">SET</span> gpa = 4.5 <span class="kw">WHERE</span> student_id = 1;
+<span class="kw">DELETE FROM</span> student <span class="kw">WHERE</span> student_id = 1;
+
+<span class="kw">COMMIT</span>;        <span class="cm">-- зберегти транзакцію</span>
+<span class="kw">ROLLBACK</span>;      <span class="cm">-- скасувати транзакцію</span>
+<span class="kw">SAVEPOINT</span> sp1; <span class="kw">ROLLBACK TO</span> sp1;</pre></div>
+      <div class="schema">
+        <div class="schema-cap"><b>Команди</b><span class="mono">DML · TCL</span></div>
+        <div class="schema-row"><code>INSERT / UPDATE / DELETE</code><span class="ty">DML</span><span class="ds">додати, змінити, видалити рядки</span></div>
+        <div class="schema-row"><code>MERGE</code><span class="ty">DML</span><span class="ds">оновити, якщо є, інакше вставити (upsert)</span></div>
+        <div class="schema-row"><code>COMMIT / ROLLBACK</code><span class="ty">TCL</span><span class="ds">зафіксувати або скасувати транзакцію</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Розділ 7</h2>
+      <h3>SELECT, WHERE, оператори</h3>
+      <span class="topic-oa">OA 6.6–6.7 · ЛК14–15</span>
+      <div class="sql"><pre><span class="kw">SELECT</span> DISTINCT name, gpa
+<span class="kw">FROM</span> student
+<span class="kw">WHERE</span> gpa &gt;= 4.0 <span class="kw">AND</span> faculty_id = 3;</pre></div>
+      <div class="schema">
+        <div class="schema-cap"><b>Оператори WHERE</b><span class="mono">6 груп</span></div>
+        <div class="schema-row"><code>= &lt;&gt; &lt; &gt; &lt;= &gt;=</code><span class="ty">порівняння</span><span class="ds">стандартні оператори</span></div>
+        <div class="schema-row"><code>BETWEEN a AND b</code><span class="ty">діапазон</span><span class="ds">включно з межами</span></div>
+        <div class="schema-row"><code>IN (a,b,c)</code><span class="ty">список</span><span class="ds">входить у перелік значень</span></div>
+        <div class="schema-row"><code>LIKE '_a%'</code><span class="ty">шаблон</span><span class="ds"><code>_</code> — 1 символ, <code>%</code> — будь-яка кількість</span></div>
+        <div class="schema-row"><code>IS NULL</code><span class="ty">null</span><span class="ds">перевірка на відсутність значення</span></div>
+        <div class="schema-row"><code>AND / OR / NOT</code><span class="ty">логіка</span><span class="ds">поєднання умов; дужки перекривають пріоритет</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Розділ 8</h2>
+      <h3>ORDER BY і JOIN</h3>
+      <span class="topic-oa">OA 6.8–6.9 · ЛК16–17</span>
+      <div class="sql"><pre><span class="kw">SELECT</span> s.name, f.title
+<span class="kw">FROM</span> student s
+<span class="kw">JOIN</span> faculty f <span class="kw">ON</span> s.faculty_id = f.id
+<span class="kw">ORDER BY</span> s.gpa <span class="kw">DESC</span>;</pre></div>
+      <figure class="flow-figure">
+        <div class="flow-scroll">
+          <div class="join-row">
+            <div class="join-item">
+              <svg width="80" height="40" viewBox="0 0 80 40"><circle cx="30" cy="20" r="16" fill="var(--c-paper)" stroke="var(--c-faint)" stroke-width="1.3"/><circle cx="50" cy="20" r="16" fill="var(--c-paper)" stroke="var(--c-faint)" stroke-width="1.3"/><path d="M40 6 A16 16 0 0 1 40 34 A16 16 0 0 1 40 6Z" fill="#f4f9f4" stroke="#2f7d32" stroke-width="1.4"/></svg>
+              <div class="jn">INNER JOIN</div><code>лише спільне</code>
+            </div>
+            <div class="join-item">
+              <svg width="80" height="40" viewBox="0 0 80 40"><circle cx="30" cy="20" r="16" fill="#f4f9f4" stroke="#2f7d32" stroke-width="1.4"/><circle cx="50" cy="20" r="16" fill="var(--c-paper)" stroke="var(--c-faint)" stroke-width="1.3"/></svg>
+              <div class="jn">LEFT JOIN</div><code>усе зліва</code>
+            </div>
+            <div class="join-item">
+              <svg width="80" height="40" viewBox="0 0 80 40"><circle cx="30" cy="20" r="16" fill="var(--c-paper)" stroke="var(--c-faint)" stroke-width="1.3"/><circle cx="50" cy="20" r="16" fill="#f4f9f4" stroke="#2f7d32" stroke-width="1.4"/></svg>
+              <div class="jn">RIGHT JOIN</div><code>усе справа</code>
+            </div>
+            <div class="join-item">
+              <svg width="80" height="40" viewBox="0 0 80 40"><circle cx="30" cy="20" r="16" fill="#f4f9f4" stroke="#2f7d32" stroke-width="1.4"/><circle cx="50" cy="20" r="16" fill="#f4f9f4" stroke="#2f7d32" stroke-width="1.4"/></svg>
+              <div class="jn">FULL JOIN</div><code>усе з обох</code>
+            </div>
+          </div>
+        </div>
+        <figcaption><p>Заливка позначає рядки, що потраплять у результат. <strong>SELF JOIN</strong> — таблиця з'єднується сама з собою (співробітник → керівник). <strong>CROSS JOIN</strong> — декартів добуток, без <code>ON</code>.</p></figcaption>
+      </figure>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Розділ 8</h2>
+      <h3>Групові функції, GROUP BY / HAVING</h3>
+      <span class="topic-oa">OA 6.9 · ЛР13</span>
+      <div class="sql"><pre><span class="kw">SELECT</span> faculty_id, <span class="kw">COUNT</span>(*), <span class="kw">AVG</span>(gpa)
+<span class="kw">FROM</span> student
+<span class="kw">GROUP BY</span> faculty_id
+<span class="kw">HAVING COUNT</span>(*) &gt; 10;</pre></div>
+      <div class="schema">
+        <div class="schema-cap"><b>Групові функції</b><span class="mono">WHERE vs HAVING</span></div>
+        <div class="schema-row"><code>COUNT(*)</code><span class="ty">функція</span><span class="ds">кількість рядків</span></div>
+        <div class="schema-row"><code>SUM / AVG(col)</code><span class="ty">функція</span><span class="ds">сума / середнє значення</span></div>
+        <div class="schema-row"><code>MIN / MAX(col)</code><span class="ty">функція</span><span class="ds">мінімум / максимум</span></div>
+        <div class="schema-row"><code>WHERE → HAVING</code><span class="ty">порядок</span><span class="ds">WHERE фільтрує рядки до групування, HAVING — вже готові групи</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Огляд</h2>
+      <h3>Бази знань та експертні системи</h3>
+      <span class="topic-oa">Оглядовий розділ · ЛК18–19</span>
+      <p><strong>Експертна система</strong> — ПЗ, що імітує рішення експерта у вузькій галузі: база знань (факти + правила «якщо…, то…»), механізм виведення, інтерфейс користувача.</p>
+      <div class="schema">
+        <div class="schema-cap"><b>БД проти бази знань</b><span class="mono">порівняння</span></div>
+        <div class="schema-row"><code>База даних</code><span class="ty">→</span><span class="ds">факти; запит повертає готові дані</span></div>
+        <div class="schema-row"><code>База знань</code><span class="ty">→</span><span class="ds">факти + правила; запит може дати новий висновок</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Підсумок</h2>
+      <div class="lesson">
+        <span class="mono">На іспиті</span>
+        <h4>Три речі, які найчастіше забувають</h4>
+        <p>1. Спочатку модель словами: сутність → атрибути → зв'язок → кардинальність, і лише потім SQL.</p>
+        <p>2. 1:M — FK на стороні «багато»; M:M — завжди окрема таблиця; забутий цей крок ламає весь DDL.</p>
+        <p>3. HAVING — тільки після GROUP BY і тільки з агрегатними функціями; WHERE агрегати не бачить.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="sys-foot">
+    <a class="mono" href="/course/databases/">← Бази та сховища даних</a>
+    <a class="btn btn--solid" href="mailto:munister@outlook.com">Обговорити курс</a>
+  </div>
+
+  <footer class="foot mono">
+    <span>© Viacheslav Munister</span>
+    <a href="mailto:munister@outlook.com">munister@outlook.com</a>
+  </footer>
+
+</div>
+</main>
+
+<script src="/munister.js?v=6" defer></script>
+</body>
+</html>
