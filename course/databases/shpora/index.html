@@ -117,7 +117,7 @@
     <a class="back mono" href="/course/databases/">← Бази та сховища даних</a>
     <span class="mono">Довідник · IT / Data</span>
     <h1>Бази та сховища даних</h1>
-    <p class="standfirst">Довідник по всій програмі курсу на одному аркуші: моделювання й ERD, нормалізація, перетворення в реляційну схему, типи даних Oracle і SQL — DDL, DML, TCL, SELECT, JOIN, агрегування. Далі — розширена частина поза офіційною програмою: однорядкові функції, підзапити, операції над множинами, послідовності, індекси, представлення, псевдостовпці, права доступу і вступ до PL/SQL.</p>
+    <p class="standfirst">Довідник по всій програмі курсу на одному аркуші: моделювання й ERD, нормалізація, перетворення в реляційну схему, типи даних Oracle і SQL — DDL, DML, TCL, SELECT, JOIN, агрегування. Далі — розширена частина поза офіційною програмою: однорядкові функції, підзапити, операції над множинами, послідовності, індекси, представлення, псевдостовпці, права доступу, вступ до PL/SQL, а також самі інструменти курсу — Oracle APEX і Oracle SQL Developer Data Modeler.</p>
     <div class="sys-facts">
       <div><span class="mono">Розділів</span><b>9</b></div>
       <div><span class="mono">Лекцій</span><b>19 · ЛК1–ЛК19</b></div>
@@ -533,6 +533,72 @@
         <div class="schema-row"><code>BEGIN ... END</code><span class="ty">обов'язково</span><span class="ds">виконувані оператори: SQL, IF, LOOP, присвоєння</span></div>
         <div class="schema-row"><code>EXCEPTION</code><span class="ty">необов'язково</span><span class="ds">обробка помилок часу виконання (наприклад, <code>NO_DATA_FOUND</code>)</span></div>
         <div class="schema-row"><code>%TYPE</code><span class="ty">оголошення</span><span class="ds">тип змінної береться зі стовпця таблиці — не розходиться при зміні схеми</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Oracle</h2>
+      <h3>Oracle APEX: середовище розробки</h3>
+      <span class="topic-oa">Додатково · інструмент курсу (ЛР1, ЛР9, ЛР10, ЛР14)</span>
+      <p><strong>Oracle APEX</strong> (Application Express) — хмарна low-code платформа: пишеш SQL/PL-SQL у браузері, а веб-застосунок поверх бази збирається з готових компонентів, без окремого фронтенд-стеку. Курс використовує APEX і як середовище виконання SQL (замість встановлення власної БД), і як конструктор невеликого застосунку в фінальних лабораторних.</p>
+      <div class="schema">
+        <div class="schema-cap"><b>Структура середовища</b><span class="mono">зверху вниз</span></div>
+        <div class="schema-row"><code>Workspace</code><span class="ty">рівень</span><span class="ds">ізольований логічний простір користувача; всередині — власна схема БД і застосунки</span></div>
+        <div class="schema-row"><code>SQL Workshop</code><span class="ty">розділ</span><span class="ds">SQL Commands, Object Browser, SQL Scripts, Utilities — робота з БД без веб-застосунку</span></div>
+        <div class="schema-row"><code>App Builder</code><span class="ty">розділ</span><span class="ds">створення і редагування самих застосунків (App)</span></div>
+        <div class="schema-row"><code>Application</code><span class="ty">об'єкт</span><span class="ds">набір сторінок, спільних компонентів і налаштувань безпеки</span></div>
+        <div class="schema-row"><code>Page</code><span class="ty">об'єкт</span><span class="ds">один екран застосунку: регіони, елементи, кнопки, процеси</span></div>
+      </div>
+      <div class="schema">
+        <div class="schema-cap"><b>SQL Workshop</b><span class="mono">4 інструменти</span></div>
+        <div class="schema-row"><code>SQL Commands</code><span class="ty">SQL Workshop</span><span class="ds">консоль для одноразових DDL/DML-команд і запитів</span></div>
+        <div class="schema-row"><code>Object Browser</code><span class="ty">SQL Workshop</span><span class="ds">перегляд і редагування таблиць, обмежень, індексів через інтерфейс, без ручного DDL</span></div>
+        <div class="schema-row"><code>SQL Scripts</code><span class="ty">SQL Workshop</span><span class="ds">збереження й пакетний запуск довгих SQL-файлів (наприклад, згенерованого DDL з Data Modeler)</span></div>
+        <div class="schema-row"><code>RESTful Services</code><span class="ty">SQL Workshop</span><span class="ds">публікація SQL-запиту як REST-ендпоїнта, поза програмою курсу</span></div>
+      </div>
+      <div class="schema">
+        <div class="schema-cap"><b>Компоненти сторінки (Page Designer)</b><span class="mono">будівельні блоки</span></div>
+        <div class="schema-row"><code>Region</code><span class="ty">компонент</span><span class="ds">контейнер вмісту: звіт, форма, календар, діаграма</span></div>
+        <div class="schema-row"><code>Interactive Report</code><span class="ty">компонент</span><span class="ds">звіт, який користувач сам сортує, фільтрує й експортує без зміни коду сторінки</span></div>
+        <div class="schema-row"><code>Interactive Grid</code><span class="ty">компонент</span><span class="ds">редагована таблична сітка — рядки можна правити прямо в браузері</span></div>
+        <div class="schema-row"><code>Item</code><span class="ty">компонент</span><span class="ds">поле вводу на сторінці; ім'я завжди <code>P{номер сторінки}_{назва}</code></span></div>
+        <div class="schema-row"><code>Button</code><span class="ty">компонент</span><span class="ds">запускає Process, Dynamic Action або перехід на іншу сторінку</span></div>
+        <div class="schema-row"><code>Process</code><span class="ty">компонент</span><span class="ds">PL/SQL-код, що виконується на сервері (частіше — Before Header, After Submit)</span></div>
+        <div class="schema-row"><code>Dynamic Action</code><span class="ty">компонент</span><span class="ds">реакція в браузері на подію (клік, зміна поля) без перезавантаження сторінки</span></div>
+        <div class="schema-row"><code>Validation</code><span class="ty">компонент</span><span class="ds">перевірка введених даних перед виконанням Process</span></div>
+      </div>
+      <p>Значення елемента сторінки читається в SQL/PL-SQL через <strong>bind-змінну</strong>, а в статичному HTML-тексті — через <strong>рядок підстановки</strong>:</p>
+      <div class="sql"><pre><span class="cm">-- у джерелі звіту / процесі PL/SQL — bind-змінна</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> student <span class="kw">WHERE</span> faculty_id = :P1_FACULTY_ID;
+
+<span class="cm">-- у статичному тексті регіону — рядок підстановки</span>
+Вітаємо, &amp;P1_STUDENT_NAME.!</pre></div>
+      <div class="schema">
+        <div class="schema-cap"><b>Стан і дані сторінки</b><span class="mono">4 поняття</span></div>
+        <div class="schema-row"><code>:P1_ITEM</code><span class="ty">bind-змінна</span><span class="ds">значення елемента в SQL, PL/SQL, умовах відображення</span></div>
+        <div class="schema-row"><code>&amp;P1_ITEM.</code><span class="ty">підстановка</span><span class="ds">значення елемента у статичному HTML/тексті (крапка в кінці обов'язкова)</span></div>
+        <div class="schema-row"><code>Session State</code><span class="ty">поняття</span><span class="ds">значення всіх елементів застосунку, збережені між переходами сторінок</span></div>
+        <div class="schema-row"><code>APEX_APPLICATION</code><span class="ty">пакет PL/SQL</span><span class="ds">службовий пакет: поточний користувач, сторінка, версія застосунку</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Oracle</h2>
+      <h3>Oracle SQL Developer Data Modeler</h3>
+      <span class="topic-oa">Додатково · інструмент курсу (ЛР3–8)</span>
+      <p>Настільний інструмент для ER-моделювання: логічна модель малюється мишею, а фізична схема й готовий DDL-скрипт генеруються з неї автоматично — саме тому в курсі ERD, нормалізація і DDL йдуть послідовно через один інструмент.</p>
+      <div class="schema">
+        <div class="schema-cap"><b>Рівні моделі в інструменті</b><span class="mono">3 подання</span></div>
+        <div class="schema-row"><code>Logical Model</code><span class="ty">подання</span><span class="ds">сутності, атрибути, зв'язки, UID — те саме ERD з нотацією Barker (ворона лапка)</span></div>
+        <div class="schema-row"><code>Relational Model</code><span class="ty">подання</span><span class="ds">таблиці, стовпці, PK/FK — результат команди Engineer</span></div>
+        <div class="schema-row"><code>Physical Model</code><span class="ty">подання</span><span class="ds">схема під конкретну СУБД (Oracle, тип і версія) з точними типами даних</span></div>
+      </div>
+      <div class="schema">
+        <div class="schema-cap"><b>Робочий процес</b><span class="mono">4 кроки</span></div>
+        <div class="schema-row"><code>Engineer to Relational Model</code><span class="ty">команда</span><span class="ds">перетворює Logical Model у Relational Model за правилами з розділу 4 (1:M → FK, M:M → таблиця)</span></div>
+        <div class="schema-row"><code>Attribute Mapping</code><span class="ty">крок</span><span class="ds">узгодження атрибута логічної моделі зі стовпцем і типом даних фізичної (розділ 5)</span></div>
+        <div class="schema-row"><code>DDL Generation</code><span class="ty">команда</span><span class="ds">Physical Model → готовий <code>.sql</code>-файл із CREATE TABLE та обмеженнями</span></div>
+        <div class="schema-row"><code>Domain</code><span class="ty">об'єкт</span><span class="ds">повторно використовуваний тип атрибута (наприклад, «Email» = VARCHAR2(60) + перевірка формату) — задається один раз на всі сутності</span></div>
       </div>
     </section>
 
