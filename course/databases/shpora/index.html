@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Мегашпора: бази даних · Munister</title>
+<title>Довідник курсу: бази даних · Munister</title>
 <meta name="description" content="Довідник по всій програмі курсу «Бази та сховища даних» на одному аркуші: моделювання, ERD, нормалізація, перетворення в реляційну схему, SQL DDL/DML/TCL, SELECT, JOIN, агрегування.">
 <link rel="canonical" href="https://munister.com.ua/course/databases/shpora/">
 <link rel="alternate" hreflang="uk" href="https://munister.com.ua/course/databases/shpora/">
@@ -19,19 +19,19 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://munister.com.ua/course/databases/shpora/">
 <meta property="og:site_name" content="Munister">
-<meta property="og:title" content="Мегашпора: бази даних">
-<meta property="og:description" content="Моделювання, ERD, нормалізація, SQL DDL/DML/TCL, SELECT, JOIN, агрегування — весь курс «Бази та сховища даних» на одному аркуші.">
+<meta property="og:title" content="Довідник курсу: бази даних">
+<meta property="og:description" content="Моделювання, ERD, нормалізація, SQL DDL/DML/TCL, SELECT, JOIN, агрегування, а також розширений довідник з Oracle SQL — функції, підзапити, послідовності, PL/SQL.">
 <meta property="og:locale" content="uk_UA">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Мегашпора: бази даних">
+<meta name="twitter:title" content="Довідник курсу: бази даних">
 <meta name="twitter:description" content="Весь курс «Бази та сховища даних» на одному аркуші: моделювання, ERD, нормалізація, SQL.">
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "LearningResource",
-  "name": "Мегашпора: бази даних",
-  "description": "Довідник по програмі курсу «Бази та сховища даних»: моделювання, ERD, нормалізація, перетворення в реляційну схему, SQL DDL/DML/TCL, SELECT, JOIN, агрегування.",
+  "name": "Довідник курсу: бази даних",
+  "description": "Довідник по програмі курсу «Бази та сховища даних»: моделювання, ERD, нормалізація, перетворення в реляційну схему, SQL DDL/DML/TCL, SELECT, JOIN, агрегування, а також розширена частина з Oracle SQL — функції, підзапити, послідовності, індекси, представлення, PL/SQL.",
   "inLanguage": "uk",
   "url": "https://munister.com.ua/course/databases/shpora/",
   "isPartOf": { "@type": "Course", "name": "Бази та сховища даних", "url": "https://munister.com.ua/course/databases/" },
@@ -45,7 +45,7 @@
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Munister", "item": "https://munister.com.ua/" },
     { "@type": "ListItem", "position": 2, "name": "Бази та сховища даних", "item": "https://munister.com.ua/course/databases/" },
-    { "@type": "ListItem", "position": 3, "name": "Мегашпора", "item": "https://munister.com.ua/course/databases/shpora/" }
+    { "@type": "ListItem", "position": 3, "name": "Довідник", "item": "https://munister.com.ua/course/databases/shpora/" }
   ]
 }
 </script>
@@ -53,7 +53,7 @@
 <link rel="stylesheet" href="/munister.css?v=25">
 <link rel="stylesheet" href="/systems.css?v=10">
 <style>
-/* Мегашпора не входить у структуру статей /systems/: тут немає розбору
+/* Довідник не входить у структуру статей /systems/: тут немає розбору
    однієї роботи, а є довідковий аркуш по курсу. Розмітка успадковує
    sys-head/sys-sec/schema дослівно (той самий довідковий регістр, що на
    сторінці курсу), локально додано лише те, чого там ще не було — легенду
@@ -115,9 +115,9 @@
 
   <div class="sys-head">
     <a class="back mono" href="/course/databases/">← Бази та сховища даних</a>
-    <span class="mono">Мегашпора · IT / Data</span>
+    <span class="mono">Довідник · IT / Data</span>
     <h1>Бази та сховища даних</h1>
-    <p class="standfirst">Довідник по всій програмі курсу на одному аркуші: моделювання й ERD, нормалізація, перетворення в реляційну схему, типи даних Oracle і SQL — DDL, DML, TCL, SELECT, JOIN, агрегування.</p>
+    <p class="standfirst">Довідник по всій програмі курсу на одному аркуші: моделювання й ERD, нормалізація, перетворення в реляційну схему, типи даних Oracle і SQL — DDL, DML, TCL, SELECT, JOIN, агрегування. Далі — розширена частина поза офіційною програмою: однорядкові функції, підзапити, операції над множинами, послідовності, індекси, представлення, псевдостовпці, права доступу і вступ до PL/SQL.</p>
     <div class="sys-facts">
       <div><span class="mono">Розділів</span><b>9</b></div>
       <div><span class="mono">Лекцій</span><b>19 · ЛК1–ЛК19</b></div>
@@ -246,14 +246,19 @@
       <span class="topic-oa">OA 5.1–5.2 · ЛК10</span>
       <p>Співставлення атрибутів — точне узгодження атрибута логічної моделі з типом і обмеженням стовпця фізичної схеми.</p>
       <div class="schema">
-        <div class="schema-cap"><b>Основні типи</b><span class="mono">7 типів</span></div>
-        <div class="schema-row"><code>VARCHAR2(n)</code><span class="ty">текст</span><span class="ds">змінної довжини, до n байт</span></div>
-        <div class="schema-row"><code>CHAR(n)</code><span class="ty">текст</span><span class="ds">фіксованої довжини</span></div>
-        <div class="schema-row"><code>NUMBER(p,s)</code><span class="ty">число</span><span class="ds">p — точність, s — розряди після коми</span></div>
-        <div class="schema-row"><code>DATE</code><span class="ty">дата</span><span class="ds">дата + час, до секунди</span></div>
-        <div class="schema-row"><code>TIMESTAMP</code><span class="ty">дата</span><span class="ds">дата + час з частками секунди</span></div>
-        <div class="schema-row"><code>CLOB</code><span class="ty">об'єкт</span><span class="ds">великий текстовий об'єкт</span></div>
+        <div class="schema-cap"><b>Типи даних Oracle</b><span class="mono">12 типів</span></div>
+        <div class="schema-row"><code>VARCHAR2(n)</code><span class="ty">текст</span><span class="ds">змінної довжини, до n байт (макс. 4000 у таблиці)</span></div>
+        <div class="schema-row"><code>CHAR(n)</code><span class="ty">текст</span><span class="ds">фіксованої довжини, доповнюється пробілами</span></div>
+        <div class="schema-row"><code>NUMBER(p,s)</code><span class="ty">число</span><span class="ds">p — точність (1–38 цифр), s — розряди після коми</span></div>
+        <div class="schema-row"><code>NUMBER</code><span class="ty">число</span><span class="ds">без p,s — довільна точність і масштаб</span></div>
+        <div class="schema-row"><code>DATE</code><span class="ty">дата</span><span class="ds">дата + час, до секунди; завжди зберігає й час, навіть якщо не вказаний</span></div>
+        <div class="schema-row"><code>TIMESTAMP(n)</code><span class="ty">дата</span><span class="ds">дата + час із n знаками частки секунди (0–9)</span></div>
+        <div class="schema-row"><code>INTERVAL YEAR TO MONTH</code><span class="ty">дата</span><span class="ds">проміжок часу в роках і місяцях</span></div>
+        <div class="schema-row"><code>INTERVAL DAY TO SECOND</code><span class="ty">дата</span><span class="ds">проміжок часу в днях, годинах, хвилинах, секундах</span></div>
+        <div class="schema-row"><code>CLOB</code><span class="ty">об'єкт</span><span class="ds">великий текстовий об'єкт, до 128 ТБ</span></div>
         <div class="schema-row"><code>BLOB</code><span class="ty">об'єкт</span><span class="ds">великий бінарний об'єкт</span></div>
+        <div class="schema-row"><code>ROWID</code><span class="ty">службовий</span><span class="ds">фізична адреса рядка в таблиці, унікальна в БД</span></div>
+        <div class="schema-row"><code>LONG</code><span class="ty">застарілий</span><span class="ds">до 2 ГБ тексту; замінений на CLOB, не для нових таблиць</span></div>
       </div>
     </section>
 
@@ -264,15 +269,27 @@
       <div class="sql"><pre><span class="kw">CREATE TABLE</span> student (
   student_id   NUMBER        <span class="kw">PRIMARY KEY</span>,
   email        VARCHAR2(60)  <span class="kw">UNIQUE NOT NULL</span>,
-  faculty_id   NUMBER        <span class="kw">REFERENCES</span> faculty(id),
-  gpa          NUMBER(3,2)   <span class="kw">CHECK</span> (gpa &gt;= 0)
+  faculty_id   NUMBER        <span class="kw">REFERENCES</span> faculty(id) <span class="kw">ON DELETE CASCADE</span>,
+  gpa          NUMBER(3,2)   <span class="kw">DEFAULT</span> 0 <span class="kw">CHECK</span> (gpa &gt;= 0)
+);
+<span class="cm">-- складений первинний ключ (проміжна таблиця M:M)</span>
+<span class="kw">CREATE TABLE</span> enrollment (
+  student_id NUMBER, course_id NUMBER,
+  <span class="kw">CONSTRAINT</span> pk_enrollment <span class="kw">PRIMARY KEY</span> (student_id, course_id)
 );
 <span class="kw">ALTER TABLE</span> student <span class="kw">ADD</span> phone VARCHAR2(20);
-<span class="kw">DROP TABLE</span> student <span class="kw">CASCADE CONSTRAINTS</span>;</pre></div>
+<span class="kw">ALTER TABLE</span> student <span class="kw">MODIFY</span> phone VARCHAR2(30);
+<span class="kw">ALTER TABLE</span> student <span class="kw">DROP COLUMN</span> phone;
+<span class="kw">ALTER TABLE</span> student <span class="kw">RENAME COLUMN</span> gpa <span class="kw">TO</span> avg_score;
+<span class="kw">RENAME</span> student <span class="kw">TO</span> students;
+<span class="kw">TRUNCATE TABLE</span> students;                 <span class="cm">-- очистити всі рядки, без відкату</span>
+<span class="kw">DROP TABLE</span> students <span class="kw">CASCADE CONSTRAINTS</span>;</pre></div>
       <div class="schema">
-        <div class="schema-cap"><b>Обмеження цілісності</b><span class="mono">5 видів</span></div>
-        <div class="schema-row"><code>PRIMARY KEY</code><span class="ty">PK</span><span class="ds">унікальний, не NULL, ідентифікує рядок</span></div>
+        <div class="schema-cap"><b>Обмеження цілісності</b><span class="mono">7 видів</span></div>
+        <div class="schema-row"><code>PRIMARY KEY</code><span class="ty">PK</span><span class="ds">унікальний, не NULL, ідентифікує рядок; може бути складеним</span></div>
         <div class="schema-row"><code>REFERENCES</code><span class="ty">FK</span><span class="ds">посилання на PK іншої таблиці</span></div>
+        <div class="schema-row"><code>ON DELETE CASCADE</code><span class="ty">FK</span><span class="ds">видалення батьківського рядка видаляє й дочірні</span></div>
+        <div class="schema-row"><code>ON DELETE SET NULL</code><span class="ty">FK</span><span class="ds">видалення батьківського рядка обнуляє FK у дочірніх</span></div>
         <div class="schema-row"><code>UNIQUE</code><span class="ty">UK</span><span class="ds">унікальність без ролі ідентифікатора</span></div>
         <div class="schema-row"><code>NOT NULL</code><span class="ty">—</span><span class="ds">значення обов'язкове</span></div>
         <div class="schema-row"><code>CHECK (умова)</code><span class="ty">—</span><span class="ds">довільна умова на значення стовпця</span></div>
@@ -368,6 +385,158 @@
     </section>
 
     <section class="sys-sec">
+      <h2>Oracle</h2>
+      <h3>Однорядкові функції SQL</h3>
+      <span class="topic-oa">Додатково · поза програмою курсу</span>
+      <p>Застосовуються до кожного рядка окремо (на відміну від групових функцій із розділу вище) — у <code>SELECT</code>, <code>WHERE</code>, <code>ORDER BY</code>.</p>
+      <div class="schema">
+        <div class="schema-cap"><b>Символьні функції</b><span class="mono">рядки</span></div>
+        <div class="schema-row"><code>UPPER / LOWER(s)</code><span class="ty">символьна</span><span class="ds">верхній / нижній регістр</span></div>
+        <div class="schema-row"><code>INITCAP(s)</code><span class="ty">символьна</span><span class="ds">перша літера кожного слова — велика</span></div>
+        <div class="schema-row"><code>SUBSTR(s, start, len)</code><span class="ty">символьна</span><span class="ds">підрядок з позиції start довжиною len</span></div>
+        <div class="schema-row"><code>LENGTH(s)</code><span class="ty">символьна</span><span class="ds">довжина рядка в символах</span></div>
+        <div class="schema-row"><code>INSTR(s, sub)</code><span class="ty">символьна</span><span class="ds">позиція першого входження підрядка</span></div>
+        <div class="schema-row"><code>CONCAT(s1, s2)</code><span class="ty">символьна</span><span class="ds">зчеплення рядків, те саме що <code>s1 || s2</code></span></div>
+        <div class="schema-row"><code>TRIM(s)</code><span class="ty">символьна</span><span class="ds">прибрати пробіли з країв</span></div>
+        <div class="schema-row"><code>LPAD / RPAD(s, n, c)</code><span class="ty">символьна</span><span class="ds">доповнити рядок символом c зліва / справа до довжини n</span></div>
+        <div class="schema-row"><code>REPLACE(s, old, new)</code><span class="ty">символьна</span><span class="ds">замінити всі входження old на new</span></div>
+      </div>
+      <div class="schema">
+        <div class="schema-cap"><b>Числові й дата-функції</b><span class="mono">число · дата</span></div>
+        <div class="schema-row"><code>ROUND(n, d)</code><span class="ty">числова</span><span class="ds">округлення до d знаків</span></div>
+        <div class="schema-row"><code>TRUNC(n, d)</code><span class="ty">числова</span><span class="ds">відсікання без округлення</span></div>
+        <div class="schema-row"><code>MOD(m, n)</code><span class="ty">числова</span><span class="ds">залишок від ділення</span></div>
+        <div class="schema-row"><code>SYSDATE</code><span class="ty">дата</span><span class="ds">поточні дата й час сервера</span></div>
+        <div class="schema-row"><code>ADD_MONTHS(d, n)</code><span class="ty">дата</span><span class="ds">дата плюс n місяців</span></div>
+        <div class="schema-row"><code>MONTHS_BETWEEN(d1, d2)</code><span class="ty">дата</span><span class="ds">кількість місяців між датами</span></div>
+        <div class="schema-row"><code>TRUNC(d, 'MM')</code><span class="ty">дата</span><span class="ds">початок місяця (аналогічно 'YYYY', 'DD')</span></div>
+      </div>
+      <div class="schema">
+        <div class="schema-cap"><b>Перетворення й умови</b><span class="mono">conversion</span></div>
+        <div class="schema-row"><code>TO_CHAR(d, 'DD.MM.YYYY')</code><span class="ty">перетворення</span><span class="ds">дата / число → рядок за форматом</span></div>
+        <div class="schema-row"><code>TO_DATE(s, 'DD.MM.YYYY')</code><span class="ty">перетворення</span><span class="ds">рядок → дата за форматом</span></div>
+        <div class="schema-row"><code>TO_NUMBER(s)</code><span class="ty">перетворення</span><span class="ds">рядок → число</span></div>
+        <div class="schema-row"><code>NVL(expr, default)</code><span class="ty">умова</span><span class="ds">якщо expr NULL — підставити default</span></div>
+        <div class="schema-row"><code>NVL2(expr, a, b)</code><span class="ty">умова</span><span class="ds">a якщо NOT NULL, інакше b</span></div>
+        <div class="schema-row"><code>COALESCE(a, b, c)</code><span class="ty">умова</span><span class="ds">перше не-NULL значення зі списку</span></div>
+        <div class="schema-row"><code>DECODE(expr, v1, r1, ..., def)</code><span class="ty">умова</span><span class="ds">Oracle-специфічний аналог <code>CASE</code></span></div>
+        <div class="schema-row"><code>CASE WHEN ... THEN ... END</code><span class="ty">умова</span><span class="ds">стандартний SQL, читається зрозуміліше за DECODE</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Oracle</h2>
+      <h3>Підзапити</h3>
+      <span class="topic-oa">Додатково · поза програмою курсу</span>
+      <p>Запит усередині запиту — у <code>WHERE</code>, <code>FROM</code> або <code>SELECT</code>. Виконується перед зовнішнім, якщо не корельований.</p>
+      <div class="sql"><pre><span class="cm">-- однорядковий: = &gt; &lt; допустимі</span>
+<span class="kw">SELECT</span> name <span class="kw">FROM</span> student
+<span class="kw">WHERE</span> gpa &gt; (<span class="kw">SELECT AVG</span>(gpa) <span class="kw">FROM</span> student);
+
+<span class="cm">-- багаторядковий: потрібні IN / ANY / ALL</span>
+<span class="kw">SELECT</span> name <span class="kw">FROM</span> student
+<span class="kw">WHERE</span> faculty_id <span class="kw">IN</span> (<span class="kw">SELECT</span> id <span class="kw">FROM</span> faculty <span class="kw">WHERE</span> city = 'Київ');
+
+<span class="cm">-- корельований: посилається на зовнішній запит, рахується для кожного рядка</span>
+<span class="kw">SELECT</span> s.name <span class="kw">FROM</span> student s
+<span class="kw">WHERE EXISTS</span> (<span class="kw">SELECT</span> 1 <span class="kw">FROM</span> enrollment e <span class="kw">WHERE</span> e.student_id = s.student_id);</pre></div>
+      <div class="schema">
+        <div class="schema-cap"><b>Типи підзапитів</b><span class="mono">4 типи</span></div>
+        <div class="schema-row"><code>однорядковий</code><span class="ty">підзапит</span><span class="ds">повертає одне значення; працює з <code>= &lt; &gt; &lt;= &gt;=</code></span></div>
+        <div class="schema-row"><code>багаторядковий</code><span class="ty">підзапит</span><span class="ds">повертає список; потрібні <code>IN</code>, <code>ANY</code>, <code>ALL</code></span></div>
+        <div class="schema-row"><code>корельований</code><span class="ty">підзапит</span><span class="ds">використовує стовпець зовнішнього запиту, рахується на кожен рядок</span></div>
+        <div class="schema-row"><code>EXISTS / NOT EXISTS</code><span class="ty">підзапит</span><span class="ds">перевіряє лише наявність рядків, не їхні значення</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Oracle</h2>
+      <h3>Операції над множинами</h3>
+      <span class="topic-oa">Додатково · поза програмою курсу</span>
+      <p>Об'єднують результати двох <code>SELECT</code> з однаковою кількістю й типами стовпців.</p>
+      <div class="schema">
+        <div class="schema-cap"><b>Операції</b><span class="mono">4 оператори</span></div>
+        <div class="schema-row"><code>UNION</code><span class="ty">множини</span><span class="ds">об'єднання без дублікатів (з сортуванням і видаленням копій)</span></div>
+        <div class="schema-row"><code>UNION ALL</code><span class="ty">множини</span><span class="ds">об'єднання з дублікатами — швидше за UNION</span></div>
+        <div class="schema-row"><code>INTERSECT</code><span class="ty">множини</span><span class="ds">лише рядки, спільні для обох запитів</span></div>
+        <div class="schema-row"><code>MINUS</code><span class="ty">множини</span><span class="ds">рядки першого запиту, яких немає в другому</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Oracle</h2>
+      <h3>Послідовності, індекси, представлення</h3>
+      <span class="topic-oa">Додатково · поза програмою курсу</span>
+      <div class="sql"><pre><span class="kw">CREATE SEQUENCE</span> student_seq <span class="kw">START WITH</span> 1 <span class="kw">INCREMENT BY</span> 1;
+<span class="kw">INSERT INTO</span> student (student_id, email)
+  <span class="kw">VALUES</span> (student_seq.<span class="kw">NEXTVAL</span>, 'a@mail.com');
+
+<span class="kw">CREATE INDEX</span> idx_student_email <span class="kw">ON</span> student(email);
+
+<span class="kw">CREATE VIEW</span> honor_students <span class="kw">AS</span>
+  <span class="kw">SELECT</span> student_id, name, gpa <span class="kw">FROM</span> student <span class="kw">WHERE</span> gpa &gt;= 4.5;</pre></div>
+      <div class="schema">
+        <div class="schema-cap"><b>Об'єкти схеми</b><span class="mono">3 типи</span></div>
+        <div class="schema-row"><code>SEQUENCE</code><span class="ty">об'єкт</span><span class="ds">генератор унікальних чисел; <code>NEXTVAL</code> / <code>CURRVAL</code></span></div>
+        <div class="schema-row"><code>INDEX</code><span class="ty">об'єкт</span><span class="ds">прискорює пошук за стовпцем; будується автоматично для PK/UNIQUE</span></div>
+        <div class="schema-row"><code>VIEW</code><span class="ty">об'єкт</span><span class="ds">збережений запит, що виглядає як таблиця</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Oracle</h2>
+      <h3>Псевдостовпці та DUAL</h3>
+      <span class="topic-oa">Додатково · поза програмою курсу</span>
+      <div class="schema">
+        <div class="schema-cap"><b>Псевдостовпці</b><span class="mono">службові значення</span></div>
+        <div class="schema-row"><code>ROWNUM</code><span class="ty">псевдостовпець</span><span class="ds">порядковий номер рядка в результаті, до сортування</span></div>
+        <div class="schema-row"><code>ROWID</code><span class="ty">псевдостовпець</span><span class="ds">фізична адреса рядка в таблиці</span></div>
+        <div class="schema-row"><code>SYSDATE / SYSTIMESTAMP</code><span class="ty">псевдостовпець</span><span class="ds">поточні дата й час сервера</span></div>
+        <div class="schema-row"><code>DUAL</code><span class="ty">таблиця</span><span class="ds">службова таблиця з одним рядком — для <code>SELECT</code> без реальної таблиці</span></div>
+      </div>
+      <div class="sql"><pre><span class="kw">SELECT SYSDATE FROM</span> dual;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> student <span class="kw">WHERE ROWNUM</span> &lt;= 10;</pre></div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Oracle</h2>
+      <h3>Права доступу (DCL)</h3>
+      <span class="topic-oa">Додатково · поза програмою курсу</span>
+      <div class="sql"><pre><span class="kw">GRANT SELECT, INSERT ON</span> student <span class="kw">TO</span> editor_role;
+<span class="kw">REVOKE INSERT ON</span> student <span class="kw">FROM</span> editor_role;</pre></div>
+      <div class="schema">
+        <div class="schema-cap"><b>Команди DCL</b><span class="mono">2 команди</span></div>
+        <div class="schema-row"><code>GRANT</code><span class="ty">DCL</span><span class="ds">надати право (SELECT, INSERT, UPDATE, DELETE, EXECUTE) користувачу чи ролі</span></div>
+        <div class="schema-row"><code>REVOKE</code><span class="ty">DCL</span><span class="ds">забрати раніше надане право</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
+      <h2>Oracle</h2>
+      <h3>Вступ до PL/SQL</h3>
+      <span class="topic-oa">Додатково · поза програмою курсу</span>
+      <p>Процедурне розширення SQL в Oracle: змінні, умови, цикли навколо звичайних SQL-команд. Анонімний блок — найпростіша одиниця виконання.</p>
+      <div class="sql"><pre><span class="kw">DECLARE</span>
+  v_gpa   student.gpa%<span class="kw">TYPE</span>;
+  v_name  VARCHAR2(60) := 'Іванов';
+<span class="kw">BEGIN</span>
+  <span class="kw">SELECT</span> gpa <span class="kw">INTO</span> v_gpa <span class="kw">FROM</span> student <span class="kw">WHERE</span> name = v_name;
+  <span class="kw">IF</span> v_gpa &gt;= 4.5 <span class="kw">THEN</span>
+    DBMS_OUTPUT.PUT_LINE('Відмінник: ' || v_name);
+  <span class="kw">END IF</span>;
+<span class="kw">EXCEPTION</span>
+  <span class="kw">WHEN NO_DATA_FOUND THEN</span> DBMS_OUTPUT.PUT_LINE('Не знайдено');
+<span class="kw">END</span>;</pre></div>
+      <div class="schema">
+        <div class="schema-cap"><b>Структура блоку</b><span class="mono">3 частини</span></div>
+        <div class="schema-row"><code>DECLARE</code><span class="ty">необов'язково</span><span class="ds">оголошення змінних, курсорів, констант</span></div>
+        <div class="schema-row"><code>BEGIN ... END</code><span class="ty">обов'язково</span><span class="ds">виконувані оператори: SQL, IF, LOOP, присвоєння</span></div>
+        <div class="schema-row"><code>EXCEPTION</code><span class="ty">необов'язково</span><span class="ds">обробка помилок часу виконання (наприклад, <code>NO_DATA_FOUND</code>)</span></div>
+        <div class="schema-row"><code>%TYPE</code><span class="ty">оголошення</span><span class="ds">тип змінної береться зі стовпця таблиці — не розходиться при зміні схеми</span></div>
+      </div>
+    </section>
+
+    <section class="sys-sec">
       <h2>Огляд</h2>
       <h3>Бази знань та експертні системи</h3>
       <span class="topic-oa">Оглядовий розділ · ЛК18–19</span>
@@ -383,10 +552,11 @@
       <h2>Підсумок</h2>
       <div class="lesson">
         <span class="mono">На іспиті</span>
-        <h4>Три речі, які найчастіше забувають</h4>
+        <h4>Чотири речі, які найчастіше забувають</h4>
         <p>1. Спочатку модель словами: сутність → атрибути → зв'язок → кардинальність, і лише потім SQL.</p>
         <p>2. 1:M — FK на стороні «багато»; M:M — завжди окрема таблиця; забутий цей крок ламає весь DDL.</p>
         <p>3. HAVING — тільки після GROUP BY і тільки з агрегатними функціями; WHERE агрегати не бачить.</p>
+        <p>4. Підзапит із <code>IN</code> вимагає списку значень (багаторядковий), а з <code>=</code> — рівно одного (однорядковий); переплутати — отримати ORA-01427.</p>
       </div>
     </section>
 
