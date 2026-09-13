@@ -172,6 +172,15 @@
         <div class="schema-row"><code>Реляційна</code><span class="ty">модель</span><span class="ds">дані в таблицях, зв'язки через ключі</span></div>
         <div class="schema-row"><code>Об'єктна</code><span class="ty">модель</span><span class="ds">дані як об'єкти з методами</span></div>
       </div>
+      <div class="schema">
+        <div class="schema-cap"><b>Функції СУБД</b><span class="mono">6 функцій</span></div>
+        <div class="schema-row"><code>Незалежність даних</code><span class="ty">функція</span><span class="ds">зміна фізичної схеми не ламає програми, написані проти логічної</span></div>
+        <div class="schema-row"><code>Цілісність</code><span class="ty">функція</span><span class="ds">автоматична перевірка PK/FK/CHECK при кожній зміні даних</span></div>
+        <div class="schema-row"><code>Паралельний доступ</code><span class="ty">функція</span><span class="ds">блокування рядків так, щоб дві транзакції не зіпсували одна одній дані</span></div>
+        <div class="schema-row"><code>Безпека</code><span class="ty">функція</span><span class="ds">права доступу на рівні користувача, ролі, об'єкта (GRANT/REVOKE)</span></div>
+        <div class="schema-row"><code>Резервне копіювання</code><span class="ty">функція</span><span class="ds">відновлення стану бази після збою без ручного пересклеювання даних</span></div>
+        <div class="schema-row"><code>Оптимізація запитів</code><span class="ty">функція</span><span class="ds">планувальник сам обирає шлях виконання SQL (індекс, порядок з'єднань)</span></div>
+      </div>
     </section>
 
     <section class="sys-sec">
@@ -184,6 +193,12 @@
         <div class="schema-row"><code>Концептуальний</code><span class="ty">рівень</span><span class="ds">сутності й зв'язки мовою бізнесу, без деталей реалізації</span></div>
         <div class="schema-row"><code>Логічний</code><span class="ty">рівень</span><span class="ds">атрибути, ідентифікатори, типи зв'язків — ще незалежно від СУБД</span></div>
         <div class="schema-row"><code>Фізичний</code><span class="ty">рівень</span><span class="ds">таблиці, стовпці, типи даних, ключі, індекси — під конкретну СУБД</span></div>
+      </div>
+      <div class="schema">
+        <div class="schema-cap"><b>Архітектура ANSI-SPARC</b><span class="mono">ЛК3′</span></div>
+        <div class="schema-row"><code>Зовнішній рівень</code><span class="ty">ANSI-SPARC</span><span class="ds">окреме подання даних для конкретного користувача чи застосунку (наприклад, view з обмеженим набором стовпців)</span></div>
+        <div class="schema-row"><code>Концептуальний рівень</code><span class="ty">ANSI-SPARC</span><span class="ds">повна логічна структура всієї бази, спільна для всіх користувачів</span></div>
+        <div class="schema-row"><code>Внутрішній рівень</code><span class="ty">ANSI-SPARC</span><span class="ds">фізичне зберігання: файли, індекси, розподіл на диску</span></div>
       </div>
     </section>
 
@@ -198,6 +213,13 @@
         <div class="schema-row"><code>Атрибут</code><span class="ty">→</span><span class="ds">Стовпець (колонка)</span></div>
         <div class="schema-row"><code>Екземпляр</code><span class="ty">→</span><span class="ds">Рядок (запис)</span></div>
         <div class="schema-row"><code>UID</code><span class="ty">→</span><span class="ds"><code>PRIMARY KEY</code></span></div>
+      </div>
+      <div class="schema">
+        <div class="schema-cap"><b>Класифікація атрибутів</b><span class="mono">4 осі</span></div>
+        <div class="schema-row"><code>простий / складений</code><span class="ty">атрибут</span><span class="ds">«Телефон» проти «Адреса» (вулиця + місто + індекс)</span></div>
+        <div class="schema-row"><code>однозначний / багатозначний</code><span class="ty">атрибут</span><span class="ds">«Дата народження» проти «Номери телефонів» — останній стає окремою таблицею при переході в реляційну модель</span></div>
+        <div class="schema-row"><code>збережений / похідний</code><span class="ty">атрибут</span><span class="ds">«Дата народження» проти «Вік» — похідний рахується, а не зберігається</span></div>
+        <div class="schema-row"><code>ключовий / неключовий</code><span class="ty">атрибут</span><span class="ds">чи входить у UID сутності</span></div>
       </div>
     </section>
 
@@ -225,6 +247,14 @@
         </div>
         <figcaption><p>«Кожен <strong>Студент</strong> мусить бути записаний рівно на один <strong>Факультет</strong>; кожен <strong>Факультет</strong> може мати багато записаних <strong>Студентів</strong>» — суцільна лінія й засічка = обов'язково, пунктир і коло = необов'язково.</p></figcaption>
       </figure>
+      <div class="schema">
+        <div class="schema-cap"><b>Ступінь і тип зв'язку</b><span class="mono">додаткові осі</span></div>
+        <div class="schema-row"><code>унарний</code><span class="ty">ступінь</span><span class="ds">сутність пов'язана сама із собою (Співробітник → керівник-Співробітник)</span></div>
+        <div class="schema-row"><code>бінарний</code><span class="ty">ступінь</span><span class="ds">дві різні сутності — найпоширеніший випадок (Студент — Факультет)</span></div>
+        <div class="schema-row"><code>тернарний</code><span class="ty">ступінь</span><span class="ds">три сутності одним зв'язком (Студент — Курс — Викладач для оцінки)</span></div>
+        <div class="schema-row"><code>ідентифікуючий</code><span class="ty">тип зв'язку</span><span class="ds">дочірня сутність без батька не має власного UID (лінія перекреслює PK)</span></div>
+        <div class="schema-row"><code>неідентифікуючий</code><span class="ty">тип зв'язку</span><span class="ds">дочірня сутність має власний UID незалежно від зв'язку</span></div>
+      </div>
       <div class="lesson">
         <span class="mono">Пастка на іспиті</span>
         <h4>Обов'язковість читається з боку зв'язку, не з боку сутності</h4>
@@ -243,18 +273,26 @@
         <div class="schema-row"><code>Підтип</code><span class="ty">структура</span><span class="ds">спеціалізація з власними атрибутами (Студент, Викладач)</span></div>
         <div class="schema-row"><code>Дуговий зв'язок</code><span class="ty">структура</span><span class="ds">сутність пов'язана рівно з одним з кількох варіантів, взаємовиключно</span></div>
       </div>
+      <div class="schema">
+        <div class="schema-cap"><b>Класифікація підтипів</b><span class="mono">2 осі</span></div>
+        <div class="schema-row"><code>повна (complete)</code><span class="ty">покриття</span><span class="ds">кожен екземпляр супертипу обов'язково належить якомусь підтипу</span></div>
+        <div class="schema-row"><code>неповна (incomplete)</code><span class="ty">покриття</span><span class="ds">можливий екземпляр супертипу без жодного підтипу</span></div>
+        <div class="schema-row"><code>непересічні (disjoint)</code><span class="ty">взаємодія</span><span class="ds">екземпляр належить рівно одному підтипу (Студент XOR Викладач)</span></div>
+        <div class="schema-row"><code>перекривні (overlapping)</code><span class="ty">взаємодія</span><span class="ds">екземпляр може належати кільком підтипам одночасно</span></div>
+      </div>
     </section>
 
     <section class="sys-sec">
       <h2>Розділ 3</h2>
       <h3>Нормалізація 1НФ – 3НФ</h3>
       <span class="topic-oa">OA 3.3 · ЛК8</span>
-      <p>Мета — усунути аномалії вставки / оновлення / видалення і дублювання даних. Курс зупиняється на 3НФ.</p>
+      <p>Мета — усунути аномалії вставки / оновлення / видалення і дублювання даних. В основі кожної форми лежить <strong>функціональна залежність</strong>: атрибут B функціонально залежить від A (<code>A → B</code>), якщо кожному значенню A відповідає рівно одне значення B.</p>
       <div class="schema">
         <div class="schema-cap"><b>Нормальні форми</b><span class="mono">послідовно</span></div>
         <div class="schema-row"><code>1НФ</code><span class="ty">форма</span><span class="ds">атомарні значення; немає повторюваних груп в одній комірці</span></div>
         <div class="schema-row"><code>2НФ</code><span class="ty">форма</span><span class="ds">1НФ + немає часткової залежності від частини складеного PK</span></div>
         <div class="schema-row"><code>3НФ</code><span class="ty">форма</span><span class="ds">2НФ + немає транзитивної залежності між неключовими атрибутами</span></div>
+        <div class="schema-row"><code>НФБК (BCNF)</code><span class="ty">за межами курсу</span><span class="ds">суворіша за 3НФ: кожен визначник функціональної залежності — кандидат-ключ</span></div>
       </div>
       <figure class="flow-figure">
         <div class="flow-scroll">
@@ -387,6 +425,11 @@
         <div class="schema-row"><code>MERGE</code><span class="ty">DML</span><span class="ds">оновити, якщо є, інакше вставити (upsert)</span></div>
         <div class="schema-row"><code>COMMIT / ROLLBACK</code><span class="ty">TCL</span><span class="ds">зафіксувати або скасувати транзакцію</span></div>
       </div>
+      <div class="lesson">
+        <span class="mono">Пастка на іспиті</span>
+        <h4>DDL завжди робить неявний COMMIT</h4>
+        <p>Будь-яка команда <code>CREATE</code>, <code>ALTER</code>, <code>DROP</code> перед своїм виконанням фіксує (<code>COMMIT</code>) усі незбережені DML-зміни в поточній сесії — навіть якщо сама DDL-команда стосується зовсім іншої таблиці. Після цього <code>ROLLBACK</code> уже нічого не поверне.</p>
+      </div>
     </section>
 
     <section class="sys-sec">
@@ -402,7 +445,8 @@
         <div class="schema-row"><code>BETWEEN a AND b</code><span class="ty">діапазон</span><span class="ds">включно з межами</span></div>
         <div class="schema-row"><code>IN (a,b,c)</code><span class="ty">список</span><span class="ds">входить у перелік значень</span></div>
         <div class="schema-row"><code>LIKE '_a%'</code><span class="ty">шаблон</span><span class="ds"><code>_</code> — 1 символ, <code>%</code> — будь-яка кількість</span></div>
-        <div class="schema-row"><code>IS NULL</code><span class="ty">null</span><span class="ds">перевірка на відсутність значення</span></div>
+        <div class="schema-row"><code>IS NULL / IS NOT NULL</code><span class="ty">null</span><span class="ds">єдиний коректний спосіб перевірити NULL</span></div>
+        <div class="schema-row"><code>x = NULL</code><span class="ty">null</span><span class="ds">завжди UNKNOWN, ніколи TRUE — рядок не потрапить у результат, навіть якщо x теж NULL</span></div>
         <div class="schema-row"><code>AND / OR / NOT</code><span class="ty">логіка</span><span class="ds">поєднання умов; дужки перекривають пріоритет</span></div>
       </div>
     </section>
@@ -438,6 +482,12 @@
         </div>
         <figcaption><p>Заливка позначає рядки, що потраплять у результат. <strong>SELF JOIN</strong> — таблиця з'єднується сама з собою (співробітник → керівник). <strong>CROSS JOIN</strong> — декартів добуток, без <code>ON</code>.</p></figcaption>
       </figure>
+      <div class="sql"><pre><span class="cm">-- USING: коротше за ON, коли назва стовпця збігається в обох таблицях</span>
+<span class="kw">SELECT</span> s.name <span class="kw">FROM</span> student s <span class="kw">JOIN</span> faculty <span class="kw">USING</span> (faculty_id);
+
+<span class="cm">-- NATURAL JOIN: сам зіставляє всі однойменні стовпці — ризиковано,</span>
+<span class="cm">-- випадковий збіг імені (наприклад, обидві таблиці мають created_at) зіпсує з'єднання</span>
+<span class="kw">SELECT</span> s.name <span class="kw">FROM</span> student s <span class="kw">NATURAL JOIN</span> faculty;</pre></div>
       <div class="lesson">
         <span class="mono">Пастка на іспиті</span>
         <h4>LEFT JOIN підставляє NULL, а не 0 чи порожній рядок</h4>
@@ -589,7 +639,9 @@
         <div class="schema-cap"><b>Об'єкти схеми</b><span class="mono">3 типи</span></div>
         <div class="schema-row"><code>SEQUENCE</code><span class="ty">об'єкт</span><span class="ds">генератор унікальних чисел; <code>NEXTVAL</code> / <code>CURRVAL</code></span></div>
         <div class="schema-row"><code>INDEX</code><span class="ty">об'єкт</span><span class="ds">прискорює пошук за стовпцем; будується автоматично для PK/UNIQUE</span></div>
-        <div class="schema-row"><code>VIEW</code><span class="ty">об'єкт</span><span class="ds">збережений запит, що виглядає як таблиця</span></div>
+        <div class="schema-row"><code>складений індекс</code><span class="ty">об'єкт</span><span class="ds">індекс на кількох стовпцях одразу; працює, лише якщо запит фільтрує за лівим префіксом стовпців</span></div>
+        <div class="schema-row"><code>VIEW</code><span class="ty">об'єкт</span><span class="ds">збережений запит, що виглядає як таблиця; дані рахуються заново при кожному зверненні</span></div>
+        <div class="schema-row"><code>MATERIALIZED VIEW</code><span class="ty">об'єкт</span><span class="ds">те саме, але результат фізично зберігається й оновлюється окремо (REFRESH) — швидше читати, дані можуть бути застарілими</span></div>
       </div>
     </section>
 
@@ -690,6 +742,14 @@
         <div class="schema-row"><code>Session State</code><span class="ty">поняття</span><span class="ds">значення всіх елементів застосунку, збережені між переходами сторінок</span></div>
         <div class="schema-row"><code>APEX_APPLICATION</code><span class="ty">пакет PL/SQL</span><span class="ds">службовий пакет: поточний користувач, сторінка, версія застосунку</span></div>
       </div>
+      <div class="schema">
+        <div class="schema-cap"><b>Shared Components</b><span class="mono">спільні для всіх сторінок</span></div>
+        <div class="schema-row"><code>LOV (List of Values)</code><span class="ty">компонент</span><span class="ds">джерело значень для випадаючого списку — статичне або SQL-запит</span></div>
+        <div class="schema-row"><code>Theme / Template</code><span class="ty">компонент</span><span class="ds">візуальне оформлення застосунку; курс використовує стандартну Universal Theme</span></div>
+        <div class="schema-row"><code>Authentication Scheme</code><span class="ty">компонент</span><span class="ds">спосіб входу в застосунок (APEX-акаунт, база даних, соцмережа)</span></div>
+        <div class="schema-row"><code>Authorization Scheme</code><span class="ty">компонент</span><span class="ds">умова, що обмежує доступ до сторінки чи кнопки за роллю користувача</span></div>
+        <div class="schema-row"><code>Navigation Menu</code><span class="ty">компонент</span><span class="ds">бічне чи верхнє меню, спільне для всіх сторінок застосунку</span></div>
+      </div>
       <div class="lesson">
         <span class="mono">Пастка на іспиті / в лабораторній</span>
         <h4>Item без префікса сторінки не існує глобально</h4>
@@ -714,6 +774,8 @@
         <div class="schema-row"><code>Attribute Mapping</code><span class="ty">крок</span><span class="ds">узгодження атрибута логічної моделі зі стовпцем і типом даних фізичної (розділ 5)</span></div>
         <div class="schema-row"><code>DDL Generation</code><span class="ty">команда</span><span class="ds">Physical Model → готовий <code>.sql</code>-файл із CREATE TABLE та обмеженнями</span></div>
         <div class="schema-row"><code>Domain</code><span class="ty">об'єкт</span><span class="ds">повторно використовуваний тип атрибута (наприклад, «Email» = VARCHAR2(60) + перевірка формату) — задається один раз на всі сутності</span></div>
+        <div class="schema-row"><code>Reverse Engineering</code><span class="ty">команда</span><span class="ds">імпорт УЖЕ ІСНУЮЧОЇ бази у Relational Model — зворотний напрямок до Engineer</span></div>
+        <div class="schema-row"><code>Compare / Synchronize</code><span class="ty">команда</span><span class="ds">звірка моделі з реальною БД і перенесення розбіжностей у будь-який бік</span></div>
       </div>
     </section>
 
@@ -726,6 +788,18 @@
         <div class="schema-cap"><b>БД проти бази знань</b><span class="mono">порівняння</span></div>
         <div class="schema-row"><code>База даних</code><span class="ty">→</span><span class="ds">факти; запит повертає готові дані</span></div>
         <div class="schema-row"><code>База знань</code><span class="ty">→</span><span class="ds">факти + правила; запит може дати новий висновок</span></div>
+      </div>
+      <div class="schema">
+        <div class="schema-cap"><b>Форми представлення знань</b><span class="mono">4 форми</span></div>
+        <div class="schema-row"><code>Продукційні правила</code><span class="ty">форма</span><span class="ds">«ЯКЩО умова, ТО дія» — найпоширеніша форма в експертних системах</span></div>
+        <div class="schema-row"><code>Семантична мережа</code><span class="ty">форма</span><span class="ds">граф понять і зв'язків між ними («Студент» — is-a → «Особа»)</span></div>
+        <div class="schema-row"><code>Фрейми</code><span class="ty">форма</span><span class="ds">структура-шаблон об'єкта зі слотами значень і значеннями за замовчуванням</span></div>
+        <div class="schema-row"><code>Логічні формули</code><span class="ty">форма</span><span class="ds">формальний запис у численні предикатів — точний, але важко читається людиною</span></div>
+      </div>
+      <div class="schema">
+        <div class="schema-cap"><b>Методи логічного виведення</b><span class="mono">2 напрямки</span></div>
+        <div class="schema-row"><code>Прямий ланцюжок (forward chaining)</code><span class="ty">метод</span><span class="ds">від відомих фактів до всіх можливих висновків — «що з цього випливає?»</span></div>
+        <div class="schema-row"><code>Зворотний ланцюжок (backward chaining)</code><span class="ty">метод</span><span class="ds">від гіпотези назад до фактів, що її підтверджують — «чи правда це, і чому?»</span></div>
       </div>
     </section>
 
