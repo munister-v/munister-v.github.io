@@ -1,5 +1,5 @@
 // Left sidebar: filterable table list
-import { t, onLang } from './i18n.js?v=202609171543';
+import { t, onLang } from './i18n.js?v=202609171817';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
@@ -10,6 +10,7 @@ export class Sidebar {
       <div class="sb-tabs" role="tablist">
         <button data-tab="tables" class="on"><span data-i18n="sb.tables"></span><span class="sb-count" data-count="tables"></span></button>
         <button data-tab="relations"><span data-i18n="sb.relations"></span><span class="sb-count" data-count="relations"></span></button>
+        <button data-tab="objects"><span data-i18n="sb.objects"></span><span class="sb-count" data-count="objects"></span></button>
       </div>
       <div class="sb-head">
         <button class="ic" data-action="table" data-i18n-title="tb.table.t"><svg viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></svg></button>
@@ -29,6 +30,10 @@ export class Sidebar {
     this.list.addEventListener('click', e => {
       const fk = e.target.closest('[data-fk]');
       if (fk) { this.onPickFk?.(fk.dataset.fk); return; }
+      const add = e.target.closest('[data-add-obj]');
+      if (add) { this.onAddObject?.(add.dataset.addObj); return; }
+      const obj = e.target.closest('[data-obj]');
+      if (obj) { this.onPickObject?.(obj.dataset.kind, obj.dataset.obj); return; }
       const li = e.target.closest('[data-id]');
       if (li) this.onPick(li.dataset.id);
     });
@@ -62,6 +67,19 @@ export class Sidebar {
     }).join('');
   }
 
+  renderObjects() {
+    const { model, selection } = this.store;
+    const q = this.query;
+    const match = x => !q || x.name.includes(q);
+    const group = (kind, title, list, meta) => `
+      <li class="sb-group"><span>${title}</span><button class="ic" data-add-obj="${kind}" title="+">＋</button></li>
+      ${list.filter(match).map(x => `<li data-obj="${x.id}" data-kind="${kind}" class="obj-item${selection?.kind === kind && selection.id === x.id ? ' on' : ''}">
+        <span class="obj-ic ${kind}">${kind === 'view' ? 'V' : 'S'}</span><span class="nm">${esc(x.name)}</span><span class="meta">${meta(x)}</span></li>`).join('')
+        || `<li class="sb-empty small">${t('p.none')}</li>`}`;
+    this.list.innerHTML = group('view', 'VIEWS', model.views || [], v => this.store.viewSources(v).length)
+      + group('seq', 'SEQUENCES', model.sequences || [], x => this.store.sequenceUsers(x).length || '');
+  }
+
   focus() { this.input.focus(); this.input.select(); }
 
   render() {
@@ -69,7 +87,9 @@ export class Sidebar {
     this.input.placeholder = t('sb.search');
     this.el.querySelector('[data-count="tables"]').textContent = model.tables.length;
     this.el.querySelector('[data-count="relations"]').textContent = model.fks.length;
+    this.el.querySelector('[data-count="objects"]').textContent = (model.views?.length || 0) + (model.sequences?.length || 0);
     if (this.tab === 'relations') return this.renderRelations();
+    if (this.tab === 'objects') return this.renderObjects();
     const fkCount = id => model.fks.filter(f => f.fromTable === id || f.toTable === id).length;
     const items = model.tables
       .filter(x => !this.query || x.name.includes(this.query) || x.columns.some(c => c.name.includes(this.query)))

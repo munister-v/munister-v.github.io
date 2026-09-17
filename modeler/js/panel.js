@@ -1,9 +1,20 @@
 // Properties panel: model, table (columns, keys, indexes) or foreign key
-import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609171543';
-import { t, getLang, onLang } from './i18n.js?v=202609171543';
-import { COLUMN_PRESETS } from './templates.js?v=202609171543';
+import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609171817';
+import { sequenceDDL } from './ddl-gen.js?v=202609171817';
+import { t, getLang, onLang } from './i18n.js?v=202609171817';
+import { COLUMN_PRESETS } from './templates.js?v=202609171817';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+const CHECK_TEMPLATES = [
+  { id: 'in', label: 'ck.in', expr: c => `${c} IN ('A', 'B', 'C')` },
+  { id: 'pos', label: 'ck.pos', expr: c => `${c} > 0` },
+  { id: 'between', label: 'ck.between', expr: c => `${c} BETWEEN 0 AND 100` },
+  { id: 'yn', label: 'ck.yn', expr: c => `${c} IN ('Y', 'N')` },
+  { id: 'email', label: 'ck.email', expr: c => `REGEXP_LIKE(${c}, '^[^@ ]+@[^@ ]+\\.[a-z]{2,}$', 'i')` },
+  { id: 'dates', label: 'ck.dates', expr: () => 'END_DATE >= START_DATE' },
+  { id: 'len', label: 'ck.len', expr: c => `LENGTH(TRIM(${c})) > 0` },
+  { id: 'custom', label: 'ck.custom', expr: () => '' },
+];
 const upper = v => v.trim().toUpperCase().replace(/\s+/g, '_');
 const ICON = {
   more: '<svg viewBox="0 0 16 16" width="14" height="14"><circle cx="3.5" cy="8" r="1.3"/><circle cx="8" cy="8" r="1.3"/><circle cx="12.5" cy="8" r="1.3"/></svg>',
@@ -27,6 +38,8 @@ export class Panel {
     const s = this.store.selection;
     if (!s) return this.renderModel();
     if (s.kind === 'fk') return this.renderFk(this.store.model.fks.find(f => f.id === s.id));
+    if (s.kind === 'view') return this.renderView(this.store.view(s.id));
+    if (s.kind === 'seq') return this.renderSeq(this.store.sequence(s.id));
     this.renderTable(this.store.table(s.id));
   }
 
@@ -69,6 +82,8 @@ export class Panel {
         <div class="col-more">
           <label class="field">DEFAULT<input class="mono" data-f="col.default" value="${esc(c.default)}" placeholder="${t('p.default.ph')}" ${c.identity ? 'disabled' : ''}></label>
           <label class="check"><input type="checkbox" data-f="col.identity" ${c.identity ? 'checked' : ''}> ${t('p.identity')}</label>
+          ${m.sequences?.length ? `<label class="field">${t('p.seqDefault')}<select data-f="col.seq"><option value="">—</option>${m.sequences.map(q => `<option value="${esc(q.name)}" ${new RegExp(`^${q.name}\\.NEXTVAL$`, 'i').test(c.default || '') ? 'selected' : ''}>${esc(q.name)}.NEXTVAL</option>`).join('')}</select></label>` : ''}
+          <label class="field">${t('p.virtual')}<input class="mono" data-f="col.virtual" value="${esc(c.virtual)}" placeholder="${t('p.virtual.ph')}"></label>
           <label class="field">${t('p.comment')}<input data-f="col.comment" value="${esc(c.comment)}"></label>
         </div>
       </div>`).join('');
@@ -118,10 +133,69 @@ export class Panel {
       <h3>${t('p.indexes')} <span class="count">${tb.indexes.length}</span><button class="pill small" data-a="idx-add">${ICON.plus}</button></h3>
       ${keyList(tb.indexes, 'idx') || none}
 
+      <h3>${t('p.checks')} <span class="count">${(tb.checks || []).length}</span>
+        <select class="ck-add" data-a-change="ck-add" title="${t('p.ck.add')}">
+          <option value="">+ ${t('p.ck.add')}</option>
+          ${CHECK_TEMPLATES.map(x => `<option value="${x.id}">${esc(t(x.label))}</option>`).join('')}
+        </select></h3>
+      ${(tb.checks || []).map(k => `
+        <div class="key-card" data-ck="${k.id}">
+          <div class="key-top"><input class="mono" data-f="ck.name" value="${esc(k.name)}" spellcheck="false">
+            <button class="ic" data-a="ck-del" title="${t('p.del.t')}">${ICON.del}</button></div>
+          <textarea class="mono ck-expr" data-f="ck.expr" rows="2" spellcheck="false" placeholder="STATUS IN ('NEW', 'DONE')">${esc(k.expr)}</textarea>
+        </div>`).join('') || none}
+
       <h3>${t('p.relations')}</h3>
       ${fks ? `<ul class="fklist">${fks}</ul>` : none}
 
+      <details class="phys"${tb.tablespace || tb.partition?.type ? ' open' : ''}>
+        <summary>${t('p.physical')}${tb.partition?.type ? ` <span class="count">${tb.partition.type}</span>` : ''}</summary>
+        <label class="field">TABLESPACE<input class="mono" data-f="table.tablespace" value="${esc(tb.tablespace)}" placeholder="USERS" spellcheck="false"></label>
+        <div class="grid2">
+          <label class="field">${t('p.partition')}<select data-f="part.type">
+            ${['', 'RANGE', 'LIST', 'HASH'].map(v => `<option value="${v}" ${(tb.partition?.type || '') === v ? 'selected' : ''}>${v || t('p.partNone')}</option>`).join('')}
+          </select></label>
+          <label class="field">${t('p.partKey')}<input class="mono" data-f="part.columns" value="${esc(tb.partition?.columns)}" list="cols-${tb.id}" ${tb.partition?.type ? '' : 'disabled'} spellcheck="false"></label>
+        </div>
+        <datalist id="cols-${tb.id}">${tb.columns.map(c => `<option value="${esc(c.name)}">`).join('')}</datalist>
+        ${tb.partition?.type === 'RANGE' ? `<label class="field">INTERVAL<input class="mono" data-f="part.interval" value="${esc(tb.partition.interval)}" placeholder="NUMTOYMINTERVAL(1, 'MONTH')" spellcheck="false"></label>` : ''}
+        ${tb.partition?.type === 'HASH' ? `<label class="field">PARTITIONS<input class="mono" type="number" min="1" data-f="part.count" value="${esc(tb.partition.count)}" placeholder="8"></label>` : ''}
+        ${tb.partition?.type && tb.partition.type !== 'HASH' ? `<label class="field">${t('p.partDefs')}<textarea class="mono" rows="3" data-f="part.definitions" spellcheck="false" placeholder="${tb.partition.type === 'RANGE' ? "PARTITION p0 VALUES LESS THAN (DATE '2025-01-01')" : "PARTITION p_ua VALUES ('UA'), PARTITION p_other VALUES (DEFAULT)"}">${esc(tb.partition.definitions)}</textarea></label>` : ''}
+      </details>
+
       <h3>${t('p.tableDDL')}<button class="pill small" data-a="table-ddl">${t('cm.ddl')}</button></h3>`;
+  }
+
+  renderView(v) {
+    const sources = this.store.viewSources(v);
+    this.el.innerHTML = `
+      ${this.head('VIEW', v.name, 'view-del')}
+      <label class="field">${t('p.name')}<input class="mono" data-f="view.name" value="${esc(v.name)}" spellcheck="false"></label>
+      <label class="field">${t('p.comment')}<textarea data-f="view.comment" rows="2">${esc(v.comment)}</textarea></label>
+      <div class="field">${t('p.color')}
+        <div class="swatches">${TABLE_COLORS.map(c => `<button class="sw${c ? ` c-${c}` : ''}${(v.color || '') === c ? ' on' : ''}" data-a="view-color" data-color="${c}" aria-label="${c || 'none'}"></button>`).join('')}</div>
+      </div>
+      <h3>SQL</h3>
+      <textarea class="mono sql-edit" data-f="view.sql" rows="12" spellcheck="false">${esc(v.sql)}</textarea>
+      <h3>${t('p.viewSources')} <span class="count">${sources.length}</span></h3>
+      ${sources.length ? `<ul class="fklist">${sources.map(x => `<li><a data-a="goto-table" data-id="${x.id}">${esc(x.name)}</a><span>${x.columns.length} ${t('tb.cols')}</span></li>`).join('')}</ul>` : `<p class="none">${t('p.none')}</p>`}`;
+  }
+
+  renderSeq(q) {
+    const users = this.store.sequenceUsers(q);
+    const num = (f, label, ph = '') => `<label class="field">${label}<input class="mono" data-f="seq.${f}" value="${esc(q[f])}" placeholder="${ph}" inputmode="numeric"></label>`;
+    this.el.innerHTML = `
+      ${this.head('SEQUENCE', q.name, 'seq-del')}
+      <label class="field">${t('p.name')}<input class="mono" data-f="seq.name" value="${esc(q.name)}" spellcheck="false"></label>
+      <div class="grid2">${num('start', 'START WITH', '1')}${num('increment', 'INCREMENT BY', '1')}</div>
+      <div class="grid2">${num('minvalue', 'MINVALUE', '—')}${num('maxvalue', 'MAXVALUE', '—')}</div>
+      <div class="grid2">${num('cache', 'CACHE', '20')}<div class="field">&nbsp;
+        <label class="check"><input type="checkbox" data-f="seq.cycle" ${q.cycle ? 'checked' : ''}> CYCLE</label>
+        <label class="check"><input type="checkbox" data-f="seq.order" ${q.order ? 'checked' : ''}> ORDER</label></div></div>
+      <label class="field">${t('p.comment')}<textarea data-f="seq.comment" rows="2">${esc(q.comment)}</textarea></label>
+      <h3>${t('p.seqUsers')} <span class="count">${users.length}</span></h3>
+      ${users.length ? `<ul class="fklist">${users.map(u => `<li><a data-a="goto-table" data-id="${u.table.id}">${esc(u.table.name)}.${esc(u.column.name)}</a><span>DEFAULT</span></li>`).join('')}</ul>` : `<p class="none">${t('p.seqUnused')}</p>`}
+      <pre class="code mini">${esc(sequenceDDL(q))}</pre>`;
   }
 
   renderFk(f) {
@@ -151,11 +225,22 @@ export class Panel {
       idxId: target.closest('[data-idx]')?.dataset.idx,
       tableId: s?.kind === 'table' ? s.id : null,
       fkId: s?.kind === 'fk' ? s.id : null,
+      viewId: s?.kind === 'view' ? s.id : null,
+      seqId: s?.kind === 'seq' ? s.id : null,
+      ckId: target.closest('[data-ck]')?.dataset.ck,
     };
   }
 
   onChange(e) {
     const el = e.target, f = el.dataset.f;
+    if (el.dataset.aChange === 'ck-add') {
+      const tpl = CHECK_TEMPLATES.find(x => x.id === el.value);
+      const tb = this.store.table(this.store.selection.id);
+      if (!tpl || !tb) return;
+      const col = tb.columns.find(x => !x.pk && !x.virtual) || tb.columns[0];
+      this.store.update(m => { tb.checks ||= []; tb.checks.push({ id: uid('k'), name: uniqueName(m, `${tb.name}_CK`), expr: tpl.expr(col?.name || 'COL') }); });
+      return;
+    }
     if (!f) return;
     const c = this.ctx(el);
     const val = el.type === 'checkbox' ? el.checked : el.value;
@@ -166,7 +251,30 @@ export class Panel {
       const uk = tb && c.ukId && tb.uniques.find(x => x.id === c.ukId);
       const idx = tb && c.idxId && tb.indexes.find(x => x.id === c.idxId);
       const fk = c.fkId && m.fks.find(x => x.id === c.fkId);
+      const view = c.viewId && m.views.find(x => x.id === c.viewId);
+      const seq = c.seqId && m.sequences.find(x => x.id === c.seqId);
+      const ck = tb && c.ckId && tb.checks.find(x => x.id === c.ckId);
+      const part = () => (tb.partition ||= { type: '', columns: '', interval: '', count: '', definitions: '' });
       switch (f) {
+        case 'col.virtual': col.virtual = val.trim(); if (col.virtual) { col.identity = false; col.default = ''; col.pk = false; } rerender = true; break;
+        case 'col.seq': col.default = val ? `${val}.NEXTVAL` : ''; if (val) col.identity = false; rerender = true; break;
+        case 'ck.name': ck.name = el.value = upper(val) || ck.name; break;
+        case 'ck.expr': ck.expr = val.trim(); rerender = true; break;
+        case 'table.tablespace': tb.tablespace = el.value = val.trim().toUpperCase(); rerender = true; break;
+        case 'part.type': part().type = val; if (val && !tb.partition.columns) tb.partition.columns = tb.columns.find(x => x.pk)?.name || ''; if (!val) tb.partition = null; rerender = true; break;
+        case 'part.columns': part().columns = el.value = val.toUpperCase().replace(/\s*,\s*/g, ', ').trim(); break;
+        case 'part.interval': part().interval = val.trim(); break;
+        case 'part.count': part().count = val.trim(); break;
+        case 'part.definitions': part().definitions = val.trim(); break;
+        case 'view.name': view.name = el.value = upper(val) || view.name; rerender = true; break;
+        case 'view.comment': view.comment = val; break;
+        case 'view.sql': view.sql = val; rerender = true; break;
+        case 'seq.name': seq.name = el.value = upper(val) || seq.name; rerender = true; break;
+        case 'seq.start': case 'seq.increment': case 'seq.minvalue': case 'seq.maxvalue': case 'seq.cache':
+          seq[f.slice(4)] = el.value = val.trim().replace(/[^0-9-]/g, ''); rerender = true; break;
+        case 'seq.cycle': seq.cycle = val; rerender = true; break;
+        case 'seq.order': seq.order = val; rerender = true; break;
+        case 'seq.comment': seq.comment = val; break;
         case 'model.name': m.name = val; rerender = true; break;
         case 'table.name': tb.name = el.value = upper(val) || tb.name; rerender = true; break;
         case 'table.schema': tb.schema = el.value = upper(val); break;
@@ -191,7 +299,9 @@ export class Panel {
           break;
         }
       }
-    }, rerender ? 'change' : 'panel');
+    }, 'panel');
+    // the reason is known only after the edit ran
+    if (rerender) this.render();
   }
 
   onClick(e) {
@@ -221,6 +331,10 @@ export class Panel {
         break;
       }
       case 'table-ddl': this.hooks?.copyTableDDL?.(tb.id); break;
+      case 'ck-del': st.update(() => { tb.checks = tb.checks.filter(x => x.id !== c.ckId); }); break;
+      case 'view-del': st.deleteView(c.viewId); break;
+      case 'seq-del': st.deleteSequence(c.seqId); break;
+      case 'view-color': st.update(m => { m.views.find(x => x.id === c.viewId).color = btn.dataset.color; }); break;
       case 'col-add': {
         const col = newColumn(tb.columns.length ? `COLUMN_${tb.columns.length + 1}` : 'ID', tb.columns.length ? 'VARCHAR2(100 CHAR)' : 'NUMBER');
         if (!tb.columns.length) { col.pk = true; col.identity = true; col.nullable = false; }

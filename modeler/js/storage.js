@@ -8,7 +8,7 @@
 //   schemata:settings         UI settings
 //   schemata-lang             interface language (kept from earlier versions)
 
-export const MODEL_VERSION = 2;
+export const MODEL_VERSION = 3;
 const P = 'schemata:';
 const MAX_SNAPSHOTS = 25;
 const QUOTA_BYTES = 5 * 1024 * 1024;
@@ -48,11 +48,11 @@ function pruneSnapshots() {
 // ---------- model format ----------
 export function migrateModel(m) {
   if (!m || !Array.isArray(m.tables)) throw new Error('bad model');
-  m.fks ||= [];
+  m.fks ||= []; m.sequences ||= []; m.views ||= [];
   m.tables.forEach(t => {
-    t.uniques ||= []; t.indexes ||= []; t.columns ||= [];
+    t.uniques ||= []; t.indexes ||= []; t.columns ||= []; t.checks ||= []; t.tablespace ??= ''; t.partition ??= null;
     t.color ??= ''; t.schema ??= ''; t.comment ??= '';
-    t.columns.forEach(c => { c.default ??= ''; c.comment ??= ''; c.identity ??= false; c.nullable ??= true; });
+    t.columns.forEach(c => { c.default ??= ''; c.comment ??= ''; c.identity ??= false; c.nullable ??= true; c.virtual ??= ''; });
   });
   m.format = 'schemata-model';
   m.version = MODEL_VERSION;

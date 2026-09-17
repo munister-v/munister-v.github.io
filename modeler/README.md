@@ -5,6 +5,7 @@ Schemata is an open-source browser data modeller for **Oracle Database**. Plain 
 Live: https://munister.com.ua/modeler/
 
 ## Features
+- Oracle objects beyond tables: sequences (with `DEFAULT seq.NEXTVAL` wiring), views drawn on the diagram with dependency lines, CHECK constraints with ready-made patterns, virtual columns, tablespaces and RANGE / LIST / HASH / interval partitioning — all imported, generated, diffed into migrations and documented
 - Migrations: compare the model with a saved version or with DDL exported from the database and get an ordered ALTER script (drops commented out unless enabled) plus a change list with warnings
 - Data dictionary export as a standalone HTML page (printable to PDF) or Markdown
 - Projects: any number of models in the browser, with search, rename, duplicate, delete, full backup / restore

@@ -9,6 +9,8 @@ export const TEMPLATES = [
     name: { uk: 'Інтернет-магазин', en: 'Online store' },
     desc: { uk: 'Покупці, адреси, товари, категорії, замовлення, оплати', en: 'Customers, addresses, products, categories, orders, payments' },
     ddl: `
+CREATE SEQUENCE order_no_seq START WITH 100000 INCREMENT BY 1 CACHE 50 NOCYCLE;
+
 CREATE TABLE customers (
   customer_id ${ID},
   email VARCHAR2(255 CHAR) NOT NULL,
@@ -49,19 +51,25 @@ CREATE TABLE products (
   stock_qty NUMBER(10) DEFAULT 0 NOT NULL,
   attributes JSON,
   CONSTRAINT products_pk PRIMARY KEY (product_id),
-  CONSTRAINT products_sku_un UNIQUE (sku)
+  CONSTRAINT products_sku_un UNIQUE (sku),
+  CONSTRAINT products_price_ck CHECK (price >= 0)
 );
 COMMENT ON TABLE products IS 'Товари';
 
 CREATE TABLE orders (
   order_id ${ID},
+  order_no NUMBER DEFAULT order_no_seq.NEXTVAL NOT NULL,
   customer_id NUMBER NOT NULL,
   address_id NUMBER NOT NULL,
   status VARCHAR2(20 CHAR) DEFAULT 'NEW' NOT NULL,
   total NUMBER(12,2) NOT NULL,
   ordered_at DATE DEFAULT SYSDATE NOT NULL,
-  CONSTRAINT orders_pk PRIMARY KEY (order_id)
-);
+  CONSTRAINT orders_pk PRIMARY KEY (order_id),
+  CONSTRAINT orders_no_un UNIQUE (order_no),
+  CONSTRAINT orders_status_ck CHECK (status IN ('NEW', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'))
+)
+PARTITION BY RANGE (ordered_at) INTERVAL (NUMTOYMINTERVAL(1, 'MONTH'))
+(PARTITION p_start VALUES LESS THAN (DATE '2025-01-01'));
 COMMENT ON TABLE orders IS 'Замовлення';
 
 CREATE TABLE order_items (
@@ -70,7 +78,9 @@ CREATE TABLE order_items (
   product_id NUMBER NOT NULL,
   quantity NUMBER(6) NOT NULL,
   unit_price NUMBER(12,2) NOT NULL,
-  CONSTRAINT order_items_pk PRIMARY KEY (order_id, line_no)
+  line_total NUMBER(14,2) GENERATED ALWAYS AS (quantity * unit_price) VIRTUAL,
+  CONSTRAINT order_items_pk PRIMARY KEY (order_id, line_no),
+  CONSTRAINT order_items_qty_ck CHECK (quantity > 0)
 );
 COMMENT ON TABLE order_items IS 'Позиції замовлення';
 
@@ -94,6 +104,16 @@ ALTER TABLE order_items ADD CONSTRAINT order_items_products_fk FOREIGN KEY (prod
 ALTER TABLE payments ADD CONSTRAINT payments_orders_fk FOREIGN KEY (order_id) REFERENCES orders (order_id);
 CREATE INDEX orders_customer_idx ON orders (customer_id);
 CREATE INDEX products_category_idx ON products (category_id);
+
+CREATE OR REPLACE VIEW v_customer_sales AS
+SELECT c.customer_id,
+       c.full_name,
+       COUNT(o.order_id) AS orders_count,
+       NVL(SUM(o.total), 0) AS revenue
+  FROM customers c
+  LEFT JOIN orders o ON o.customer_id = c.customer_id AND o.status <> 'CANCELLED'
+ GROUP BY c.customer_id, c.full_name;
+COMMENT ON TABLE v_customer_sales IS 'Продажі по покупцях';
 `,
   },
   {

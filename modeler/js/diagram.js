@@ -1,5 +1,5 @@
 // SVG diagram: tables, relations, pan/zoom, drag, relation mode
-import { t as tr } from './i18n.js?v=202609171543';
+import { t as tr } from './i18n.js?v=202609171817';
 
 const NS = 'http://www.w3.org/2000/svg';
 const HEADER = 38, ROW = 24, PAD = 14;
@@ -35,12 +35,22 @@ function textW(str, font) {
 export function tableSize(t) {
   const cols = visibleColumns(t);
   const nameW = Math.max(0, ...cols.map(c => textW(c.name, c.pk || !c.nullable ? FONT.colNN : FONT.col)));
-  const typeW = OPTS.showTypes ? Math.max(0, ...cols.map(c => textW(c.type || '', FONT.type))) : 0;
-  const titleW = textW(t.name, FONT.title) + (t.schema ? textW(t.schema.toUpperCase(), FONT.schema) * 1.15 + 20 : 0);
+  const typeW = OPTS.showTypes ? Math.max(0, ...cols.map(c => textW(c.virtual ? `= ${c.virtual.slice(0, 22)}` : c.type || '', FONT.type))) : 0;
+  const badges = [t.schema, t.partition?.type && `⧉ ${t.partition.type}`, t.checks?.length && `✓${t.checks.length}`].filter(Boolean).join(' · ');
+  const titleW = textW(t.name, FONT.title) + (badges ? textW(badges.toUpperCase(), FONT.schema) * 1.15 + 20 : 0);
   return {
     w: Math.ceil(Math.max(210, PAD + 28 + nameW + 28 + typeW + PAD, PAD * 2 + titleW + 30)),
     h: HEADER + Math.max(1, cols.length) * ROW + 8,
   };
+}
+
+const VIEW_LINES = 7;
+const viewLines = v => (v.sql || '').replace(/\t/g, '  ').split('\n').map(l => l.replace(/\s+$/, '')).filter(l => l.trim()).slice(0, VIEW_LINES)
+  .map(l => l.length > 48 ? `${l.slice(0, 47)}…` : l);
+export function viewSize(v) {
+  const lines = viewLines(v);
+  const w = Math.max(220, PAD * 2 + textW(v.name, FONT.title) + 70, PAD * 2 + Math.max(0, ...lines.map(l => textW(l, FONT.type))));
+  return { w: Math.ceil(w), h: HEADER + Math.max(1, lines.length) * 16 + 14 };
 }
 
 export class Diagram {
@@ -87,9 +97,12 @@ export class Diagram {
     } else if (selection?.kind === 'fk') {
       const f = model.fks.find(x => x.id === selection.id);
       if (f) this.related = new Set([f.fromTable, f.toTable]);
+    } else if (selection?.kind === 'view') {
+      const v = this.store.view(selection.id);
+      if (v) this.related = new Set([v.id, ...this.store.viewSources(v).map(x => x.id)]);
     }
     this.svg.classList.toggle('focus', !!this.related);
-    this.gTables.innerHTML = model.tables.map(t => this.tableSVG(t, selection)).join('');
+    this.gTables.innerHTML = model.tables.map(t => this.tableSVG(t, selection)).join('') + (model.views || []).map(v => this.viewSVG(v, selection)).join('');
     this.renderRelations();
     this.applyView();
   }
@@ -107,8 +120,8 @@ export class Diagram {
         : fk ? `<rect class="kbg fk" x="${PAD - 3}" y="${top + 5}" width="22" height="12" rx="3"/><text x="${PAD + 8}" y="${y - 1}" class="key fk" text-anchor="middle">FK</text>` : '';
       const nn = !c.nullable || c.pk ? ' nn' : '';
       return `${i % 2 && OPTS.zebra ? `<rect class="zebra" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>` : ''}<rect class="row-hit" data-col="${c.id}" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>${key}
-        <text x="${PAD + 28}" y="${y}" class="col${nn}">${esc(c.name)}</text>
-        ${OPTS.showTypes ? `<text x="${w - PAD}" y="${y}" class="type" text-anchor="end">${esc(c.type)}</text>` : ''}`;
+        <text x="${PAD + 28}" y="${y}" class="col${nn}${c.virtual ? ' virtual' : ''}">${esc(c.name)}</text>
+        ${OPTS.showTypes ? `<text x="${w - PAD}" y="${y}" class="type${c.virtual ? ' virtual' : ''}" text-anchor="end">${c.virtual ? `= ${esc(c.virtual.length > 22 ? `${c.virtual.slice(0, 21)}…` : c.virtual)}` : esc(c.type)}</text>` : ''}`;
     }).join('');
     const cls = ['table', selected && 'selected', relSrc && 'rel-src', this.related?.has(t.id) && 'related', t.color && `c-${t.color}`].filter(Boolean).join(' ');
     return `<g class="${cls}" data-id="${t.id}" transform="translate(${t.x},${t.y})">
@@ -117,12 +130,30 @@ export class Diagram {
       <path class="head" d="M0 10a10 10 0 0 1 10-10h${w - 20}a10 10 0 0 1 10 10v${HEADER - 10}h-${w}z"/>
       <rect class="accent" x="0" y="${HEADER - 2}" width="${w}" height="2"/>
       <text x="${PAD}" y="25" class="title">${esc(t.name)}</text>
-      ${t.schema ? `<text x="${w - PAD}" y="24" class="schema" text-anchor="end">${esc(t.schema.toUpperCase())}</text>` : `<text x="${w - PAD}" y="24" class="schema" text-anchor="end">${t.columns.length}</text>`}
+      <text x="${w - PAD}" y="24" class="schema" text-anchor="end">${[t.schema && esc(t.schema.toUpperCase()), t.partition?.type && `⧉ ${t.partition.type}`, t.checks?.length && `✓${t.checks.length}`].filter(Boolean).join(' · ') || t.columns.length}</text>
       ${cols.length ? rows : `<text x="${PAD}" y="${HEADER + 19}" class="empty">${tr('d.noColumns')}</text>`}
       <rect class="head-hit" data-head="1" width="${w}" height="${HEADER}"/>
       <rect class="outline" x="-3" y="-3" width="${w + 6}" height="${h + 6}" rx="13"/>
       ${selected ? `<g class="add-field" data-add="1" transform="translate(0,${h + 8})"><rect width="${w}" height="26" rx="8"/><text x="${w / 2}" y="17" text-anchor="middle">+ ${tr('d.addField')}</text></g>` : ''}
       ${t.comment ? `<title>${esc(t.comment)}</title>` : ''}
+    </g>`;
+  }
+
+  viewSVG(v, sel) {
+    const { w, h } = viewSize(v);
+    const selected = sel?.kind === 'view' && sel.id === v.id;
+    const lines = viewLines(v);
+    const cls = ['view', selected && 'selected', this.related?.has(v.id) && 'related', v.color && `c-${v.color}`].filter(Boolean).join(' ');
+    return `<g class="${cls}" data-view="${v.id}" transform="translate(${v.x},${v.y})">
+      <rect class="shadow" y="2" width="${w}" height="${h}" rx="10"/>
+      <rect class="body" width="${w}" height="${h}" rx="10"/>
+      <rect class="vbadge" x="${w - PAD - 36}" y="12" width="36" height="16" rx="4"/><text x="${w - PAD - 18}" y="24" class="vbadge-t" text-anchor="middle">VIEW</text>
+      <text x="${PAD}" y="25" class="title">${esc(v.name)}</text>
+      <line class="rule" x1="${PAD}" y1="${HEADER}" x2="${w - PAD}" y2="${HEADER}"/>
+      ${lines.map((l, i) => `<text x="${PAD}" y="${HEADER + 18 + i * 16}" class="sql">${esc(l)}</text>`).join('') || `<text x="${PAD}" y="${HEADER + 18}" class="empty">SELECT …</text>`}
+      <rect class="head-hit" data-head="1" width="${w}" height="${h}" fill="transparent"/>
+      <rect class="outline" x="-3" y="-3" width="${w + 6}" height="${h + 6}" rx="13"/>
+      ${v.comment ? `<title>${esc(v.comment)}</title>` : ''}
     </g>`;
   }
 
@@ -144,9 +175,23 @@ export class Diagram {
         <path class="mark" d="${lines}"/><path class="ring" d="${rings}"/>
         <title>${esc(f.name)}</title></g>`;
     }).join('');
-    // Обновить позицию таблиц, если это drag
+    // view dependencies: dashed lines from source tables
+    this.gRels.innerHTML += (model.views || []).map(v => {
+      const vs = viewSize(v);
+      const on = selection?.kind === 'view' && selection.id === v.id;
+      return this.store.viewSources(v).map(t => {
+        const ts = tableSize(t);
+        const right = t.x + ts.w < v.x;
+        const x1 = right ? t.x + ts.w : t.x, y1 = t.y + 19;
+        const x2 = right ? v.x : v.x + vs.w, y2 = v.y + 19;
+        const dx = Math.max(40, Math.abs(x2 - x1) / 2) * (right ? 1 : -1);
+        return `<path class="dep${on ? ' on' : ''}" d="M${x1} ${y1} C${x1 + dx} ${y1} ${x2 - dx} ${y2} ${x2} ${y2}"/>`;
+      }).join('');
+    }).join('');
+    // keep positions in sync while dragging
+    const views = Object.fromEntries((model.views || []).map(v => [v.id, v]));
     for (const g of this.gTables.children) {
-      const t = byId[g.dataset.id];
+      const t = byId[g.dataset.id] || views[g.dataset.view];
       if (t) g.setAttribute('transform', `translate(${t.x},${t.y})`);
     }
   }
@@ -164,6 +209,15 @@ export class Diagram {
       if (e.button !== 0) return;
       const tg = e.target.closest('.table');
       const rg = e.target.closest('.rel');
+      const vg = e.target.closest('.view');
+      if (vg) {
+        if (this.mode === 'relation') return;
+        this.store.select({ kind: 'view', id: vg.dataset.view });
+        const v = this.store.view(vg.dataset.view), p = this.toWorld(e);
+        drag = { kind: 'table', t: v, dx: p.x - v.x, dy: p.y - v.y, moved: false };
+        svg.setPointerCapture(e.pointerId);
+        return;
+      }
       if (tg && e.target.closest('[data-add]')) { this.hooks.onAddField?.(tg.dataset.id); return; }
       if (tg) {
         const id = tg.dataset.id;
@@ -207,6 +261,8 @@ export class Diagram {
     svg.addEventListener('pointercancel', end);
 
     svg.addEventListener('dblclick', e => {
+      const vg = e.target.closest('.view');
+      if (vg) { this.hooks.onEditView?.(vg.dataset.view); return; }
       const tg = e.target.closest('.table');
       if (tg) {
         const row = e.target.closest('[data-col]');
@@ -266,7 +322,11 @@ export class Diagram {
       const on = sel?.kind === 'table' && sel.id === t.id;
       return `<rect class="mm-t${t.color ? ` c-${t.color}` : ''}${on ? ' on' : ''}" x="${(t.x * k + ox).toFixed(1)}" y="${(t.y * k + oy).toFixed(1)}" width="${Math.max(2, s.w * k).toFixed(1)}" height="${Math.max(2, s.h * k).toFixed(1)}" rx="1.5"/>`;
     }).join('');
-    mm.innerHTML = `${rects}<rect class="mm-view" x="${(vx1 * k + ox).toFixed(1)}" y="${(vy1 * k + oy).toFixed(1)}" width="${((vx2 - vx1) * k).toFixed(1)}" height="${((vy2 - vy1) * k).toFixed(1)}" rx="3"/>`;
+    const vrects = (this.store.model.views || []).map(v => {
+      const s = viewSize(v);
+      return `<rect class="mm-v" x="${(v.x * k + ox).toFixed(1)}" y="${(v.y * k + oy).toFixed(1)}" width="${Math.max(2, s.w * k).toFixed(1)}" height="${Math.max(2, s.h * k).toFixed(1)}" rx="1.5"/>`;
+    }).join('');
+    mm.innerHTML = `${rects}${vrects}<rect class="mm-view" x="${(vx1 * k + ox).toFixed(1)}" y="${(vy1 * k + oy).toFixed(1)}" width="${((vx2 - vx1) * k).toFixed(1)}" height="${((vy2 - vy1) * k).toFixed(1)}" rx="3"/>`;
   }
 
   bindMinimap() {
@@ -298,18 +358,18 @@ export class Diagram {
   }
 
   centerOn(id) {
-    const t = this.store.table(id);
+    const t = this.store.table(id) || this.store.view(id);
     if (!t) return;
-    const s = tableSize(t), r = this.svg.getBoundingClientRect();
+    const s = t.sql !== undefined ? viewSize(t) : tableSize(t), r = this.svg.getBoundingClientRect();
     const k = Math.max(this.view.k, 0.8);
     this.animateTo({ k, x: r.width / 2 - (t.x + s.w / 2) * k, y: r.height / 2 - (t.y + s.h / 2) * k });
   }
 
   bounds() {
-    const ts = this.store.model.tables;
+    const ts = [...this.store.model.tables, ...(this.store.model.views || [])];
     if (!ts.length) return null;
     let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
-    ts.forEach(t => { const s = tableSize(t); x1 = Math.min(x1, t.x); y1 = Math.min(y1, t.y); x2 = Math.max(x2, t.x + s.w); y2 = Math.max(y2, t.y + s.h); });
+    ts.forEach(t => { const s = t.sql !== undefined ? viewSize(t) : tableSize(t); x1 = Math.min(x1, t.x); y1 = Math.min(y1, t.y); x2 = Math.max(x2, t.x + s.w); y2 = Math.max(y2, t.y + s.h); });
     return { x1, y1, x2, y2 };
   }
 

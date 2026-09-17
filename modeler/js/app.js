@@ -1,18 +1,18 @@
-import { Store, newTable, nextTableName, newColumn, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609171543';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609171543';
-import { checkModel, fixFkIndexes } from './checks.js?v=202609171543';
-import { Diagram, tableSize } from './diagram.js?v=202609171543';
-import { Panel } from './panel.js?v=202609171543';
-import { Sidebar } from './sidebar.js?v=202609171543';
-import { Palette } from './palette.js?v=202609171543';
-import { generateDDL } from './ddl-gen.js?v=202609171543';
-import { parseDDL } from './ddl-parse.js?v=202609171543';
-import { SAMPLE_DDL } from './sample.js?v=202609171543';
-import { initWorkspace } from './workspace.js?v=202609171543';
-import { diffModels } from './diff.js?v=202609171543';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609171543';
-import { migrateModel, listSnapshots } from './storage.js?v=202609171543';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609171543';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609171817';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609171817';
+import { checkModel, fixFkIndexes } from './checks.js?v=202609171817';
+import { Diagram, tableSize, viewSize } from './diagram.js?v=202609171817';
+import { Panel } from './panel.js?v=202609171817';
+import { Sidebar } from './sidebar.js?v=202609171817';
+import { Palette } from './palette.js?v=202609171817';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609171817';
+import { parseDDL } from './ddl-parse.js?v=202609171817';
+import { SAMPLE_DDL } from './sample.js?v=202609171817';
+import { initWorkspace } from './workspace.js?v=202609171817';
+import { diffModels } from './diff.js?v=202609171817';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609171817';
+import { migrateModel, listSnapshots } from './storage.js?v=202609171817';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609171817';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -24,12 +24,15 @@ const diagram = new Diagram($('#canvas'), store, {
   onAddField: id => openFieldEditor(id, null),
   onEditColumn: (id, colId) => openFieldEditor(id, colId),
   onRenameTable: id => openRenameTable(id),
+  onEditView: id => { store.select({ kind: 'view', id }); setTimeout(() => $('#panel .sql-edit')?.focus()); },
   onZoom: k => { $('#zoom').textContent = `${Math.round(k * 100)}%`; },
   minimap: $('#minimap'),
 });
 const panel = new Panel($('#panel'), store, { toast: (m, e) => toast(m, e), copyTableDDL: id => copyTableDDL(id) });
 const pick = id => { store.select({ kind: 'table', id }); diagram.centerOn(id); };
 const sidebar = new Sidebar($('#sidebar'), store, { onPick: pick });
+sidebar.onPickObject = (kind, id) => { store.select({ kind, id }); if (kind === 'view') diagram.centerOn(id); };
+sidebar.onAddObject = kind => kind === 'view' ? addView() : addSequence();
 sidebar.onPickFk = id => { const f = store.model.fks.find(x => x.id === id); store.select({ kind: 'fk', id }); if (f) diagram.centerOn(f.fromTable); };
 
 // ---------- model name + saved indicator ----------
@@ -135,7 +138,7 @@ function showDDL() {
 }
 
 function importDDL(text, replace) {
-  const base = replace ? { tables: [], fks: [] } : structuredClone({ tables: store.model.tables, fks: store.model.fks });
+  const base = replace ? { tables: [], fks: [], views: [], sequences: [] } : structuredClone({ tables: store.model.tables, fks: store.model.fks, views: store.model.views || [], sequences: store.model.sequences || [] });
   const before = new Set(base.tables.map(x => x.id));
   const { model, warnings, created } = parseDDL(text, base);
   store.update(m => {
@@ -148,7 +151,15 @@ function importDDL(text, replace) {
       const offX = Math.max(0, ...m.tables.map(x => x.x + tableSize(x).w)) + 160;
       fresh.forEach(x => x.x += offX);
     }
-    m.tables = model.tables; m.fks = model.fks;
+    // views without a position go to the right of everything
+    const placed = new Set(replace ? [] : (m.views || []).map(v => v.id));
+    const freshViews = model.views.filter(v => !placed.has(v.id));
+    if (freshViews.length) {
+      let y = 40;
+      const x = Math.max(0, ...model.tables.map(t => t.x + tableSize(t).w), ...(replace ? [] : m.views || []).map(v => v.x + viewSize(v).w)) + 160;
+      freshViews.forEach(v => { v.x = x; v.y = y; y += viewSize(v).h + 48; });
+    }
+    m.tables = model.tables; m.fks = model.fks; m.views = model.views; m.sequences = model.sequences;
   }, 'load');
   store.select(null);
   requestAnimationFrame(() => diagram.fit());
@@ -201,6 +212,7 @@ const palette = new Palette(store, {
     ['table', 'tb.table', 'T'], ['relation', 'tb.relation', 'R'], ['layout', 'tb.layout'], ['fit', 'tb.fit.t', 'F'],
     ['ddl', 'tb.ddl.t'], ['import', 'tb.import'], ['svg', 'tb.svg.t'],
     ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
+    ['newView', 'cm.newView'], ['newSequence', 'cm.newSeq'],
     ['migrate', 'tb.migrate.t'], ['export', 'tb.export.t'],
     ['projects', 'ws.projects'], ['history', 'ws.history'], ['snapshot', 'ws.saveVersion'], ['settings', 'ws.settings'], ['shortcuts', 'ws.shortcuts', '?'],
     ['save', 'tb.save', '⌘S'], ['open', 'tb.open'],
@@ -235,12 +247,12 @@ document.addEventListener('keydown', e => {
   else if (mod && e.code === 'KeyS') { e.preventDefault(); actions.save(); }
   else if (mod && e.code === 'KeyD' && !typing) { e.preventDefault(); actions.duplicate(); }
   else if (mod && e.code === 'KeyC' && !typing && store.selection?.kind === 'table' && !getSelection().toString()) { copyTables([store.selection.id]); }
-  else if (e.key.startsWith('Arrow') && !typing && !mod && store.selection?.kind === 'table' && !document.querySelector('dialog[open]')) {
+  else if (e.key.startsWith('Arrow') && !typing && !mod && ['table', 'view'].includes(store.selection?.kind) && !document.querySelector('dialog[open]')) {
     e.preventDefault();
     const step = e.shiftKey ? 50 : 10;
     const dx = e.key === 'ArrowLeft' ? -step : e.key === 'ArrowRight' ? step : 0;
     const dy = e.key === 'ArrowUp' ? -step : e.key === 'ArrowDown' ? step : 0;
-    const tb = store.table(store.selection.id);
+    const tb = store.table(store.selection.id) || store.view(store.selection.id);
     store.update(() => { tb.x += dx; tb.y += dy; }, 'move');
   }
   else if (e.key === 'Escape' && diagram.mode === 'relation') setRelationMode(false);
@@ -248,6 +260,8 @@ document.addEventListener('keydown', e => {
   else if ((e.key === 'Delete' || e.key === 'Backspace') && !typing && store.selection) {
     const s = store.selection;
     if (s.kind === 'table') store.deleteTable(s.id);
+    else if (s.kind === 'view') store.deleteView(s.id);
+    else if (s.kind === 'seq') store.deleteSequence(s.id);
     else { store.update(m => { m.fks = m.fks.filter(f => f.id !== s.id); }); store.select(null); }
   } else if (!typing && !mod && !document.querySelector('dialog[open]')) {
     // e.code keeps shortcuts working on the Ukrainian layout
@@ -315,6 +329,8 @@ $('#chk-list').addEventListener('click', e => {
   if (!li) return;
   $('#check-dialog').close();
   if (li.dataset.kind === 'table') pick(li.dataset.id);
+  else if (li.dataset.kind === 'view') { store.select({ kind: 'view', id: li.dataset.id }); diagram.centerOn(li.dataset.id); }
+  else if (li.dataset.kind === 'seq') store.select({ kind: 'seq', id: li.dataset.id });
   else {
     const f = store.model.fks.find(x => x.id === li.dataset.id);
     store.select({ kind: 'fk', id: li.dataset.id });
@@ -410,6 +426,38 @@ function copyTableDDL(id) {
   const sql = generateDDL({ name: store.model.name, tables: [tb], fks: store.model.fks.filter(f => f.fromTable === id) });
   navigator.clipboard.writeText(sql.split('\n').slice(4).join('\n')).then(() => toast(t('t.ddlCopied')));
 }
+
+// ---------- views & sequences ----------
+function uniqueObjectName(base) {
+  const taken = new Set([...store.model.tables, ...(store.model.views || []), ...(store.model.sequences || [])].map(x => x.name));
+  let name = base, i = 2;
+  while (taken.has(name)) name = `${base}_${i++}`;
+  return name;
+}
+function addView(at = diagram.center(), fromTableId = null) {
+  const src = fromTableId && store.table(fromTableId);
+  const sql = src
+    ? `SELECT ${src.columns.filter(c => !c.virtual).map(c => c.name.toLowerCase()).join(',\n       ')}\n  FROM ${src.name.toLowerCase()}`
+    : 'SELECT *\n  FROM ';
+  const v = newView(uniqueObjectName(src ? `V_${src.name}` : 'V_NEW'), sql, Math.round(at.x / 10) * 10, Math.round(at.y / 10) * 10);
+  store.update(m => { (m.views ||= []).push(v); });
+  store.select({ kind: 'view', id: v.id });
+  setTimeout(() => $('#panel .sql-edit')?.focus());
+}
+function addSequence(forTableId = null) {
+  const tb = forTableId && store.table(forTableId);
+  const q = newSequence(uniqueObjectName(tb ? `${tb.name}_SEQ` : 'NEW_SEQ'));
+  store.update(m => {
+    (m.sequences ||= []).push(q);
+    // wire the single-column primary key to the new sequence
+    const pk = tb?.columns.filter(c => c.pk);
+    if (pk?.length === 1) Object.assign(pk[0], { identity: false, default: `${q.name}.NEXTVAL` });
+  });
+  store.select({ kind: 'seq', id: q.id });
+  toast(t('t.seqCreated', { n: q.name }));
+}
+actions.newView = () => addView();
+actions.newSequence = () => addSequence();
 
 // ---------- relations ----------
 function createRelation(child, parent, opts) {
@@ -644,6 +692,9 @@ function tableMenu(id, at) {
     '-',
     { label: t('cm.relTo'), icon: '⟜', sub: () => tableList(id, pid => openMenu(at.cx, at.cy, relationTypeItems(id, pid))) },
     { label: t('cm.mnWith'), icon: '⋈', sub: () => tableList(id, pid => createJunction(id, pid)) },
+    { label: t('cm.viewFrom'), icon: 'V', run: () => addView({ x: tb.x + tableSize(tb).w + 80, y: tb.y }, id) },
+    { label: t('cm.seqFor'), icon: 'S', disabled: tb.columns.filter(c => c.pk).length !== 1, run: () => addSequence(id) },
+    { label: t('cm.addCheck'), icon: '✓', run: () => { store.update(m => { tb.checks ||= []; tb.checks.push({ id: uid('k'), name: uniqueName(m, `${tb.name}_CK`), expr: '' }); }); } },
     { label: t('cm.relFrom'), icon: '↗', kbd: 'R', run: () => { setRelationMode(true); diagram.relFrom = id; diagram.render(); } },
     '-',
     { colors: true, value: tb.color || '', run: c => store.update(() => { tb.color = c; }) },
@@ -676,6 +727,7 @@ function columnMenu(id, colId, at) {
       if (isUnique) t2.uniques = t2.uniques.filter(u => !single(u));
       else t2.uniques.push({ id: uid('u'), name: uniqueName(m, `${t2.name}_${c.name}_UN`), columns: [c.id] });
     }) },
+    { label: t('cm.colCheck'), icon: '✓', run: () => store.update(m => { tb.checks ||= []; tb.checks.push({ id: uid('k'), name: uniqueName(m, `${tb.name}_${col.name}_CK`), expr: /CHAR/.test(col.type) ? `${col.name} IN ('A', 'B')` : `${col.name} > 0` }); }) },
     { label: t('cm.index'), checked: isIndexed, run: () => colOp(id, colId, (t2, c, _, m) => {
       if (isIndexed) t2.indexes = t2.indexes.filter(ix => ix.columns[0] !== c.id);
       else t2.indexes.push({ id: uid('i'), name: uniqueName(m, `${t2.name}_${c.name}_IDX`), unique: false, columns: [c.id] });
@@ -742,6 +794,20 @@ function applyPreset(tableId, preset) {
 $('#canvas').addEventListener('contextmenu', e => {
   e.preventDefault();
   if (!editor.hidden) commitEditor(false);
+  const vg = e.target.closest('.view');
+  if (vg) {
+    const id = vg.dataset.view, v = store.view(id);
+    store.select({ kind: 'view', id });
+    openMenu(e.clientX, e.clientY, [
+      { header: `VIEW ${v.name}` },
+      { label: t('cm.editSql'), icon: '✎', kbd: '2×', run: () => setTimeout(() => $('#panel .sql-edit')?.focus()) },
+      { colors: true, value: v.color || '', run: c => store.update(() => { v.color = c; }) },
+      '-',
+      { label: t('cm.ddl'), icon: '⌨', run: () => navigator.clipboard.writeText(viewDDL(v)).then(() => toast(t('t.ddlCopied'))) },
+      { label: t('cm.delete'), icon: '🗑', danger: true, run: () => store.deleteView(id) },
+    ]);
+    return;
+  }
   const tg = e.target.closest('.table'), row = e.target.closest('[data-col]'), rel = e.target.closest('.rel');
   const w = diagram.toWorld(e);
   const at = { x: w.x, y: w.y, cx: e.clientX, cy: e.clientY };
@@ -751,6 +817,8 @@ $('#canvas').addEventListener('contextmenu', e => {
   else if (rel) { store.select({ kind: 'fk', id: rel.dataset.id }); openMenu(e.clientX, e.clientY, relationMenu(rel.dataset.id)); }
   else openMenu(e.clientX, e.clientY, [
     { label: t('cm.newTable'), icon: '＋', kbd: 'T', run: () => addTable(at) },
+    { label: t('cm.newView'), icon: 'V', run: () => addView(at) },
+    { label: t('cm.newSeq'), icon: 'S', run: () => addSequence() },
     { label: t('tb.templates.t'), icon: '▦', run: () => openTemplates() },
     { label: t('cm.paste'), icon: '⎘', kbd: '⌘V', disabled: !clipboard, run: () => pasteTables(clipboard, at) },
     '-',
@@ -816,6 +884,9 @@ function templateModel(tp) {
   const m = { ...emptyModel(), ...model, name: tp.name[getLang()] || tp.name.en };
   autoLayout(m);
   m.tables.forEach((x, i) => { x.color = TABLE_COLORS[(i % 6) + 1]; });
+  let vy = 40;
+  const vx = Math.max(0, ...m.tables.map(x => x.x + tableSize(x).w)) + 160;
+  m.views.forEach(v => { v.x = vx; v.y = vy; vy += viewSize(v).h + 48; });
   return m;
 }
 renderLang();

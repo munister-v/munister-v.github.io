@@ -1,5 +1,5 @@
 // Модель данных + история (undo/redo) + автосохранение
-import { t } from './i18n.js?v=202609171543';
+import { t } from './i18n.js?v=202609171817';
 
 let seq = Date.now();
 export const uid = (p = 'id') => `${p}${(seq++).toString(36)}`;
@@ -15,18 +15,26 @@ export const ORACLE_TYPES = [
 
 export const TABLE_COLORS = ['', 'blue', 'violet', 'green', 'amber', 'rose', 'teal'];
 
+export function newSequence(name) {
+  return { id: uid('s'), name, schema: '', start: '1', increment: '1', minvalue: '', maxvalue: '', cache: '20', cycle: false, order: false, comment: '' };
+}
+
+export function newView(name, sql, x = 40, y = 40) {
+  return { id: uid('v'), name, schema: '', sql, comment: '', color: '', x, y };
+}
+
 export function emptyModel() {
-  return { format: 'schemata-model', version: 1, name: t('model.default'), tables: [], fks: [] };
+  return { format: 'schemata-model', version: 2, name: t('model.default'), tables: [], fks: [], sequences: [], views: [] };
 }
 
 export function newColumn(name = 'COLUMN_1', type = 'VARCHAR2(100 CHAR)') {
-  return { id: uid('c'), name, type, pk: false, nullable: true, identity: false, default: '', comment: '' };
+  return { id: uid('c'), name, type, pk: false, nullable: true, identity: false, virtual: '', default: '', comment: '' };
 }
 
 export function newTable(name, x = 40, y = 40) {
   return {
     id: uid('t'), name, schema: '', x, y, comment: '',
-    color: '', columns: [], uniques: [], indexes: [],
+    color: '', columns: [], uniques: [], indexes: [], checks: [], tablespace: '', partition: null,
   };
 }
 
@@ -85,11 +93,25 @@ export class Store {
   fixSelection() {
     const s = this.selection;
     if (!s) return;
-    const ok = s.kind === 'table' ? this.table(s.id) : this.model.fks.find(f => f.id === s.id);
+    const ok = s.kind === 'table' ? this.table(s.id) : s.kind === 'view' ? this.view(s.id) : s.kind === 'seq' ? this.sequence(s.id) : this.model.fks.find(f => f.id === s.id);
     if (!ok) this.selection = null;
   }
 
   table(id) { return this.model.tables.find(t => t.id === id); }
+  view(id) { return this.model.views?.find(v => v.id === id); }
+  sequence(id) { return this.model.sequences?.find(q => q.id === id); }
+  deleteView(id) { this.update(m => { m.views = m.views.filter(v => v.id !== id); }); this.selection = null; this.emit('select'); }
+  deleteSequence(id) { this.update(m => { m.sequences = m.sequences.filter(q => q.id !== id); }); this.selection = null; this.emit('select'); }
+  // tables a view reads from: table names that occur as words in its SQL
+  viewSources(v) {
+    const sql = ` ${(v.sql || '').toUpperCase().replace(/"/g, '')} `;
+    return this.model.tables.filter(t => new RegExp(`[^A-Z0-9_$#.]${t.name.replace(/[$#]/g, '\\$&')}[^A-Z0-9_$#]`).test(sql));
+  }
+  // columns whose DEFAULT uses the sequence
+  sequenceUsers(q) {
+    const re = new RegExp(`(^|[^A-Z0-9_$#])${q.name.replace(/[$#]/g, '\\$&')}\\.NEXTVAL`, 'i');
+    return this.model.tables.flatMap(t => t.columns.filter(c => re.test(c.default || '')).map(c => ({ table: t, column: c })));
+  }
   tableByName(name) {
     const n = name.toUpperCase();
     return this.model.tables.find(t => t.name.toUpperCase() === n);
