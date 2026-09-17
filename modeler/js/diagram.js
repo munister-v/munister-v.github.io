@@ -96,7 +96,7 @@ export class Diagram {
         : c.pk ? `<rect class="kbg pk" x="${PAD - 3}" y="${top + 5}" width="22" height="12" rx="3"/><text x="${PAD + 8}" y="${y - 1}" class="key pk" text-anchor="middle">PK</text>`
         : fk ? `<rect class="kbg fk" x="${PAD - 3}" y="${top + 5}" width="22" height="12" rx="3"/><text x="${PAD + 8}" y="${y - 1}" class="key fk" text-anchor="middle">FK</text>` : '';
       const nn = !c.nullable || c.pk ? ' nn' : '';
-      return `${i % 2 ? `<rect class="zebra" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>` : ''}${key}
+      return `${i % 2 ? `<rect class="zebra" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>` : ''}<rect class="row-hit" data-col="${c.id}" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>${key}
         <text x="${PAD + 28}" y="${y}" class="col${nn}">${esc(c.name)}</text>
         <text x="${w - PAD}" y="${y}" class="type" text-anchor="end">${esc(c.type)}</text>`;
     }).join('');
@@ -109,7 +109,9 @@ export class Diagram {
       <text x="${PAD}" y="25" class="title">${esc(t.name)}</text>
       ${t.schema ? `<text x="${w - PAD}" y="24" class="schema" text-anchor="end">${esc(t.schema.toUpperCase())}</text>` : `<text x="${w - PAD}" y="24" class="schema" text-anchor="end">${t.columns.length}</text>`}
       ${t.columns.length ? rows : `<text x="${PAD}" y="${HEADER + 19}" class="empty">${tr('d.noColumns')}</text>`}
+      <rect class="head-hit" data-head="1" width="${w}" height="${HEADER}"/>
       <rect class="outline" x="-3" y="-3" width="${w + 6}" height="${h + 6}" rx="13"/>
+      ${selected ? `<g class="add-field" data-add="1" transform="translate(0,${h + 8})"><rect width="${w}" height="26" rx="8"/><text x="${w / 2}" y="17" text-anchor="middle">+ ${tr('d.addField')}</text></g>` : ''}
       ${t.comment ? `<title>${esc(t.comment)}</title>` : ''}
     </g>`;
   }
@@ -121,12 +123,15 @@ export class Diagram {
       const a = byId[f.fromTable], b = byId[f.toTable];
       if (!a || !b) return '';
       const d = relationPath(a, b, f);
+      const kind = this.store.relationKind(f);
+      const lines = (kind.oneToOne ? barAt(d.ax, d.ay, d.adir, 10) : crowAt(d.ax, d.ay, d.adir))
+        + barAt(d.bx, d.by, d.bdir, 8) + (kind.mandatory ? barAt(d.bx, d.by, d.bdir, 14) : '');
+      const rings = circleAt(d.ax, d.ay, d.adir, 16) + (kind.mandatory ? '' : circleAt(d.bx, d.by, d.bdir, 14));
       const sel = selection?.kind === 'fk' && selection.id === f.id
         || selection?.kind === 'table' && (f.fromTable === selection.id || f.toTable === selection.id);
-      const mandatory = f.columns.every(p => a.columns.find(c => c.id === p.from)?.nullable === false);
-      return `<g class="rel${sel ? ' selected' : ''}${mandatory ? '' : ' optional'}" data-id="${f.id}">
+      return `<g class="rel${sel ? ' selected' : ''}${kind.mandatory ? '' : ' optional'}${kind.identifying ? ' ident' : ''}" data-id="${f.id}">
         <path class="hit" d="${d.path}"/><path class="line" d="${d.path}"/>
-        <path class="mark" d="${d.many}"/><path class="mark" d="${d.one}"/>
+        <path class="mark" d="${lines}"/><path class="ring" d="${rings}"/>
         <title>${esc(f.name)}</title></g>`;
     }).join('');
     // Обновить позицию таблиц, если это drag
@@ -149,11 +154,12 @@ export class Diagram {
       if (e.button !== 0) return;
       const tg = e.target.closest('.table');
       const rg = e.target.closest('.rel');
+      if (tg && e.target.closest('[data-add]')) { this.hooks.onAddField?.(tg.dataset.id); return; }
       if (tg) {
         const id = tg.dataset.id;
         if (this.mode === 'relation') {
           if (!this.relFrom) { this.relFrom = id; this.render(); }
-          else { this.hooks.onRelation(this.relFrom, id); this.relFrom = null; }
+          else { const from = this.relFrom; this.relFrom = null; this.render(); this.hooks.onRelation(from, id, e); }
           return;
         }
         this.store.select({ kind: 'table', id });
@@ -190,7 +196,15 @@ export class Diagram {
     svg.addEventListener('pointercancel', end);
 
     svg.addEventListener('dblclick', e => {
-      if (e.target.closest('.table') || e.target.closest('.rel')) return;
+      const tg = e.target.closest('.table');
+      if (tg) {
+        const row = e.target.closest('[data-col]');
+        if (row) this.hooks.onEditColumn?.(tg.dataset.id, row.dataset.col);
+        else if (e.target.closest('[data-head]')) this.hooks.onRenameTable?.(tg.dataset.id);
+        else this.hooks.onAddField?.(tg.dataset.id);
+        return;
+      }
+      if (e.target.closest('.rel')) return;
       this.hooks.onAddTable(this.toWorld(e));
     });
 
@@ -333,7 +347,7 @@ function relationPath(child, parent, f) {
     const x = child.x + a.w;
     return {
       path: `M${x} ${ay} h30 V${child.y - 20} H${child.x + a.w / 2} V${child.y}`,
-      many: crow(x, ay, 1), one: bar(child.x + a.w / 2, child.y, 0, -1),
+      ax: x, ay, adir: 1, bx: child.x + a.w / 2, by: child.y, bdir: 0,
     };
   }
   const aCx = child.x + a.w / 2, bCx = parent.x + b.w / 2;
@@ -345,12 +359,17 @@ function relationPath(child, parent, f) {
 
   const off = Math.max(40, Math.abs(bx - ax) / 2);
   const c1 = ax + adir * off, c2 = bx + bdir * off;
-  const s1 = ax + adir * 14, s2 = bx + bdir * 10;
+  const s1 = ax + adir * 26, s2 = bx + bdir * 22;
   return {
     path: `M${ax} ${ay} H${s1} C${c1} ${ay} ${c2} ${by} ${s2} ${by} H${bx}`,
-    many: crow(ax, ay, adir),
-    one: `M${bx + bdir * 6} ${by - 6} v12`,
+    ax, ay, adir, bx, by, bdir,
   };
 }
-const crow = (x, y, dir) => `M${x} ${y - 6} L${x + dir * 12} ${y} L${x} ${y + 6} M${x + dir * 14} ${y - 6} v12`;
-const bar = (x, y) => `M${x - 6} ${y - 6} h12`;
+// Crow's-foot marks at an endpoint; dir points away from the table, off = distance from the edge.
+// dir 0 means a vertical approach from above (self-reference).
+const crowAt = (x, y, dir) => dir ? `M${x} ${y - 7} L${x + dir * 12} ${y} L${x} ${y + 7}` : `M${x - 7} ${y} L${x} ${y - 12} L${x + 7} ${y}`;
+const barAt = (x, y, dir, off) => dir ? `M${x + dir * off} ${y - 7} v14` : `M${x - 7} ${y - off} h14`;
+const circleAt = (x, y, dir, off) => {
+  const cx = dir ? x + dir * (off + 4) : x, cy = dir ? y : y - off - 4;
+  return `M${cx - 4} ${cy} a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0`;
+};

@@ -113,32 +113,79 @@ export class Store {
     });
   }
 
-  // Связь как в Data Modeler: в дочернюю таблицу добавляются колонки PK родителя
-  addRelation(childId, parentId) {
+  // Relation the Data Modeler way: the parent's PK columns are carried into the child.
+  // opts.kind: '1n' | '11'; opts.identifying: FK becomes part of the child PK; opts.mandatory: NOT NULL
+  addRelation(childId, parentId, opts = {}) {
+    const { kind = '1n', identifying = false, mandatory = false, columnId = null } = opts;
     const parent = this.table(parentId);
     const child = this.table(childId);
     const pkCols = parent.columns.filter(c => c.pk);
     if (!pkCols.length) throw new Error(t('e.noPk', { t: parent.name }));
     let fkId;
     this.update(m => {
-      const c = m.tables.find(t => t.id === childId);
-      const pairs = pkCols.map(pc => {
-        let colName = pc.name === 'ID' ? `${parent.name}_ID` : pc.name;
-        if (childId === parentId) colName = `PARENT_${colName}`;
+      const c = m.tables.find(x => x.id === childId);
+      const pairs = pkCols.map((pc, i) => {
+        // an explicit child column (e.g. from the column context menu) is used for single-column keys
+        if (columnId && pkCols.length === 1) {
+          const col = c.columns.find(x => x.id === columnId);
+          if (col) return { from: col.id, to: pc.id };
+        }
+        const base = pc.name === 'ID' ? `${parent.name.replace(/S$/, '')}_ID` : pc.name;
+        let colName = childId === parentId ? `PARENT_${base}` : base;
         const existing = c.columns.find(x => x.name.toUpperCase() === colName.toUpperCase());
-        if (existing && !existing.pk) return { from: existing.id, to: pc.id };
-        if (existing) colName = `${colName}_${c.columns.length}`;
+        const used = m.fks.some(f => f.fromTable === childId && f.columns.some(p => p.from === existing?.id));
+        if (existing && !used && (!existing.pk || identifying)) return { from: existing.id, to: pc.id };
+        let n = 2;
+        while (c.columns.some(x => x.name === colName)) colName = `${base}_${n++}`;
         const col = newColumn(colName, pc.type);
-        c.columns.push(col);
+        // keep FK columns right after the key columns
+        const at = c.columns.filter(x => x.pk).length;
+        c.columns.splice(at + i, 0, col);
         return { from: col.id, to: pc.id };
       });
+      for (const p of pairs) {
+        const col = c.columns.find(x => x.id === p.from);
+        if (identifying) { col.pk = true; col.nullable = false; }
+        else if (mandatory) col.nullable = false;
+      }
+      if (kind === '11' && !identifying) {
+        c.uniques.push({ id: uid('u'), name: uniqueName(m, `${child.name}_${parent.name}_UN`), columns: pairs.map(p => p.from) });
+      }
       fkId = uid('f');
       m.fks.push({
         id: fkId, name: uniqueName(m, `${child.name}_${parent.name}_FK`),
-        fromTable: childId, toTable: parentId, columns: pairs, onDelete: '',
+        fromTable: childId, toTable: parentId, columns: pairs, onDelete: identifying ? 'CASCADE' : '',
       });
     });
     return fkId;
+  }
+
+  // M:N — a junction table with an identifying FK to each side
+  addJunction(aId, bId) {
+    const a = this.table(aId), b = this.table(bId);
+    for (const x of [a, b]) if (!x.columns.some(c => c.pk)) throw new Error(t('e.noPk', { t: x.name }));
+    let name = `${a.name}_${b.name}`, n = 2;
+    while (this.model.tables.some(x => x.name === name)) name = `${a.name}_${b.name}_${n++}`;
+    const j = newTable(name, Math.round((a.x + b.x) / 2 / 10) * 10, Math.round((Math.max(a.y, b.y) + 260) / 10) * 10);
+    j.comment = `${a.name} ↔ ${b.name}`;
+    this.update(m => m.tables.push(j));
+    this.addRelation(j.id, aId, { identifying: true });
+    this.addRelation(j.id, bId, { identifying: true });
+    return j.id;
+  }
+
+  relationKind(f) {
+    const child = this.table(f.fromTable);
+    if (!child) return {};
+    const cols = f.columns.map(p => child.columns.find(c => c.id === p.from)).filter(Boolean);
+    const ids = cols.map(c => c.id);
+    const same = list => list.length === ids.length && ids.every(id => list.includes(id));
+    const pkIds = child.columns.filter(c => c.pk).map(c => c.id);
+    return {
+      identifying: cols.length > 0 && cols.every(c => c.pk),
+      mandatory: cols.length > 0 && cols.every(c => c.pk || !c.nullable),
+      oneToOne: same(pkIds) || child.uniques.some(u => same(u.columns)),
+    };
   }
 
   persist() {

@@ -5,6 +5,9 @@ Schemata is an open-source browser data modeller for **Oracle Database**. Plain 
 Live: https://munister.com.ua/modeler/
 
 ## Features
+- Inline field editing on the diagram: double-click a table to add fields (Enter adds the next one), a field to edit it; types are guessed from names, and `CUSTOMER_ID` automatically becomes a foreign key to `CUSTOMERS`
+- Right-click menus for tables, fields and relations: 1:N, 1:1, identifying and M:N (junction table) relations, PK / NOT NULL / unique / index toggles, field types, ordering, ON DELETE
+- Crow's-foot notation with optionality circles and one-to-one bars
 - Seven ready-made schemas: online store, HR, university, bank, blog/CMS, warehouse, clinic — open or merge into the current model
 - Column presets (ID, audit, status, money, contacts, soft delete) and bulk column entry as text
 - Model check: missing primary keys, unindexed foreign keys (one-click fix), reserved words, type mismatches, long names
@@ -32,7 +35,8 @@ python3 -m http.server 8765
 | `V` / `T` / `R` / `F` | select / table / relation mode / fit |
 | `⌘D` / `⌘C` / `⌘V` | duplicate / copy / paste table |
 | arrows (`⇧` ×5) | move selected table |
-| right click | context menu |
+| right click | context menu (table, field, relation, canvas) |
+| double-click table / field | add field / edit field |
 | `Del` | delete selection |
 | `⌘Z` / `⌘⇧Z` | undo / redo |
 | `⌘S` | save JSON |

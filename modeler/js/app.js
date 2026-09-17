@@ -1,5 +1,5 @@
 import { Store, newTable, nextTableName, newColumn, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js';
-import { TEMPLATES } from './templates.js';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js';
 import { checkModel, fixFkIndexes } from './checks.js';
 import { Diagram, tableSize } from './diagram.js';
 import { Panel } from './panel.js';
@@ -16,13 +16,10 @@ const store = new Store();
 
 const diagram = new Diagram($('#canvas'), store, {
   onAddTable: p => addTable(p),
-  onRelation: (child, parent) => {
-    try {
-      const id = store.addRelation(child, parent);
-      store.select({ kind: 'fk', id });
-      toast(t('t.relCreated'));
-    } catch (e) { toast(e.message, true); }
-  },
+  onRelation: (child, parent, e) => openMenu(e.clientX, e.clientY, relationTypeItems(child, parent)),
+  onAddField: id => openFieldEditor(id, null),
+  onEditColumn: (id, colId) => openFieldEditor(id, colId),
+  onRenameTable: id => openRenameTable(id),
   onZoom: k => { $('#zoom').textContent = `${Math.round(k * 100)}%`; },
   minimap: $('#minimap'),
 });
@@ -414,53 +411,366 @@ function copyTableDDL(id) {
   navigator.clipboard.writeText(sql.split('\n').slice(4).join('\n')).then(() => toast(t('t.ddlCopied')));
 }
 
+// ---------- relations ----------
+function createRelation(child, parent, opts) {
+  try {
+    const id = store.addRelation(child, parent, opts);
+    store.select({ kind: 'fk', id });
+    toast(t('t.relCreated'));
+  } catch (e) { toast(e.message, true); }
+}
+function createJunction(a, b) {
+  try {
+    const id = store.addJunction(a, b);
+    store.select({ kind: 'table', id });
+    toast(t('t.junction', { t: store.table(id).name }));
+  } catch (e) { toast(e.message, true); }
+}
+function relationTypeItems(child, parent, extra = {}) {
+  const a = store.table(child), b = store.table(parent);
+  return [
+    { header: t('rel.pick', { a: a.name, b: b.name }) },
+    { label: t('rel.1n'), icon: '⟜', run: () => createRelation(child, parent, extra) },
+    { label: t('rel.1nm'), icon: '⊸', run: () => createRelation(child, parent, { ...extra, mandatory: true }) },
+    { label: t('rel.11'), icon: '─', run: () => createRelation(child, parent, { ...extra, kind: '11' }) },
+    { label: t('rel.ident'), icon: '⊷', run: () => createRelation(child, parent, { ...extra, identifying: true }) },
+    ...(child !== parent ? ['-', { label: t('rel.mn'), icon: '⋈', run: () => createJunction(child, parent) }] : []),
+  ];
+}
+
+// ---------- inline field editor ----------
+const guessType = name => {
+  const n = name.toUpperCase();
+  if (/(^|_)ID$/.test(n)) return 'NUMBER';
+  if (/_AT$|TIMESTAMP/.test(n)) return 'TIMESTAMP';
+  if (/_(DATE|ON)$|^DATE_|BIRTH/.test(n)) return 'DATE';
+  if (/^(IS|HAS|CAN)_/.test(n)) return 'CHAR(1)';
+  if (/EMAIL/.test(n)) return 'VARCHAR2(255 CHAR)';
+  if (/PHONE/.test(n)) return 'VARCHAR2(20 CHAR)';
+  if (/PRICE|AMOUNT|TOTAL|SUM|BALANCE|SALARY|COST/.test(n)) return 'NUMBER(12,2)';
+  if (/QTY|QUANTITY|COUNT|NUMBER|_NO$|YEAR|AGE/.test(n)) return 'NUMBER(10)';
+  if (/DESCRIPTION|NOTE|COMMENT|TEXT|BODY/.test(n)) return 'VARCHAR2(4000 CHAR)';
+  if (/CODE|STATUS|TYPE|KIND/.test(n)) return 'VARCHAR2(30 CHAR)';
+  if (/CURRENCY/.test(n)) return 'CHAR(3)';
+  if (/JSON|ATTRIBUTES|PAYLOAD/.test(n)) return 'JSON';
+  return 'VARCHAR2(100 CHAR)';
+};
+// CUSTOMER_ID → CUSTOMERS / CUSTOMER table with a single-column PK
+function findParentFor(tableId, name) {
+  const m = name.toUpperCase().match(/^(.+)_ID$/);
+  if (!m) return null;
+  const base = m[1];
+  const cands = [base, `${base}S`, `${base}ES`, base.replace(/Y$/, 'IES')];
+  return store.model.tables.find(x => x.id !== tableId && cands.includes(x.name.toUpperCase()) && x.columns.filter(c => c.pk).length === 1) || null;
+}
+
+const editor = document.createElement('div');
+editor.className = 'field-editor';
+editor.hidden = true;
+editor.innerHTML = `
+  <div class="fe-row">
+    <input class="fe-name mono" spellcheck="false" autocomplete="off">
+    <input class="fe-type mono" list="oracle-types" spellcheck="false" autocomplete="off">
+    <label class="tog" title="PK"><input type="checkbox" class="fe-pk"><span>PK</span></label>
+    <label class="tog" title="NOT NULL"><input type="checkbox" class="fe-nn"><span>NN</span></label>
+  </div>
+  <div class="fe-hint"></div>`;
+document.querySelector('.stage').append(editor);
+const fe = { name: editor.querySelector('.fe-name'), type: editor.querySelector('.fe-type'), pk: editor.querySelector('.fe-pk'), nn: editor.querySelector('.fe-nn'), hint: editor.querySelector('.fe-hint') };
+let feState = null;
+
+function placeEditor(tb, rowIndex, header = false) {
+  const s = tableSize(tb), k = diagram.view.k;
+  const x = diagram.view.x + tb.x * k, y = diagram.view.y + (tb.y + (header ? 4 : 42 + rowIndex * 24)) * k;
+  editor.style.left = `${Math.max(8, x - 6)}px`;
+  editor.style.top = `${Math.max(8, y - 6)}px`;
+  editor.style.minWidth = `${Math.max(300, s.w * k + 12)}px`;
+}
+function openFieldEditor(tableId, colId, insertAt = null) {
+  const tb = store.table(tableId);
+  if (!tb) return;
+  closeCtx();
+  store.select({ kind: 'table', id: tableId });
+  const col = colId && tb.columns.find(c => c.id === colId);
+  const index = col ? tb.columns.indexOf(col) : (insertAt ?? tb.columns.length);
+  feState = { tableId, colId: col?.id || null, index, typeTouched: !!col, mode: 'field' };
+  editor.classList.remove('rename');
+  fe.name.value = col?.name || '';
+  fe.name.placeholder = t('ie.name');
+  fe.type.value = col?.type || '';
+  fe.type.placeholder = t('ie.type');
+  fe.pk.checked = !!col?.pk; fe.nn.checked = col ? (!col.nullable || col.pk) : false;
+  fe.hint.textContent = col ? t('ie.hintEdit') : t('ie.hint');
+  placeEditor(tb, index);
+  editor.hidden = false;
+  requestAnimationFrame(() => { fe.name.focus(); fe.name.select(); });
+}
+function openRenameTable(tableId) {
+  const tb = store.table(tableId);
+  closeCtx();
+  store.select({ kind: 'table', id: tableId });
+  feState = { tableId, mode: 'rename' };
+  editor.classList.add('rename');
+  fe.name.value = tb.name;
+  fe.hint.textContent = t('ie.hintEdit');
+  placeEditor(tb, 0, true);
+  editor.hidden = false;
+  requestAnimationFrame(() => { fe.name.focus(); fe.name.select(); });
+}
+function closeEditor() { editor.hidden = true; feState = null; }
+
+function commitEditor(next) {
+  const st = feState;
+  if (!st) return;
+  const tb = store.table(st.tableId);
+  const name = fe.name.value.trim().toUpperCase().replace(/\s+/g, '_');
+  if (st.mode === 'rename') {
+    if (name && tb) store.update(() => { tb.name = name; });
+    closeEditor();
+    return;
+  }
+  if (!name) { closeEditor(); return; }
+  const type = (fe.type.value.trim() || guessType(name)).toUpperCase();
+  let autoParent = null;
+  if (st.colId) {
+    const col = tb.columns.find(c => c.id === st.colId);
+    store.update(() => {
+      Object.assign(col, { name, type, pk: fe.pk.checked });
+      col.nullable = !(fe.nn.checked || fe.pk.checked);
+    });
+    closeEditor();
+    return;
+  }
+  const col = newColumn(name, type);
+  col.pk = fe.pk.checked;
+  col.nullable = !(fe.nn.checked || fe.pk.checked);
+  autoParent = findParentFor(tb.id, name);
+  if (autoParent && !fe.type.value.trim()) col.type = autoParent.columns.find(c => c.pk).type;
+  store.update(() => tb.columns.splice(st.index, 0, col));
+  if (autoParent && !store.model.fks.some(f => f.fromTable === tb.id && f.toTable === autoParent.id)) {
+    store.addRelation(tb.id, autoParent.id, { columnId: col.id, mandatory: !col.nullable });
+    toast(t('t.autoFk', { c: name, t: autoParent.name }));
+  }
+  if (next) openFieldEditor(tb.id, null, st.index + 1);
+  else closeEditor();
+}
+fe.name.addEventListener('input', () => {
+  if (feState?.mode === 'field' && !feState.typeTouched) fe.type.placeholder = guessType(fe.name.value || 'X');
+});
+fe.type.addEventListener('input', () => { if (feState) feState.typeTouched = true; });
+editor.addEventListener('keydown', e => {
+  e.stopPropagation();
+  if (e.key === 'Enter') { e.preventDefault(); commitEditor(!feState?.colId && feState?.mode === 'field'); }
+  else if (e.key === 'Escape') { e.preventDefault(); closeEditor(); }
+});
+document.addEventListener('pointerdown', e => { if (!editor.hidden && !editor.contains(e.target)) commitEditor(false); }, true);
+$('#canvas').addEventListener('wheel', () => { if (!editor.hidden) closeEditor(); });
+
+// ---------- column operations ----------
+function colOp(tableId, colId, fn) {
+  const tb = store.table(tableId);
+  const i = tb.columns.findIndex(c => c.id === colId);
+  if (i >= 0) store.update(m => fn(tb, tb.columns[i], i, m));
+}
+
 // ---------- context menu ----------
 const ctx = $('#ctx');
-function closeCtx() { ctx.hidden = true; }
+let ctxSub = null;
+function closeCtx() { ctx.hidden = true; ctxSub?.remove(); ctxSub = null; }
+
+function renderMenu(el, items) {
+  el.innerHTML = items.map((it, i) => {
+    if (it === '-') return '<hr>';
+    if (it.header) return `<div class="ctx-head">${esc(it.header)}</div>`;
+    if (it.colors) return `<div class="ctx-colors">${TABLE_COLORS.map(c => `<button class="sw${c ? ` c-${c}` : ''}${it.value === c ? ' on' : ''}" data-color="${c}" data-i="${i}"></button>`).join('')}</div>`;
+    if (it.note) return `<div class="ctx-note">${esc(it.note)}</div>`;
+    const check = it.checked !== undefined ? `<span class="ctx-check">${it.checked ? '✓' : ''}</span>` : `<span class="ctx-ic">${it.icon || ''}</span>`;
+    return `<button data-i="${i}" class="${it.danger ? 'danger' : ''}${it.sub ? ' has-sub' : ''}"${it.disabled ? ' disabled' : ''}>${check}<span class="ctx-label">${esc(it.label)}</span>${it.kbd ? `<kbd>${it.kbd}</kbd>` : ''}${it.sub ? '<i class="ctx-arrow">›</i>' : ''}</button>`;
+  }).join('');
+}
+function positionMenu(el, x, y) {
+  const r = el.getBoundingClientRect();
+  el.style.left = `${Math.max(8, Math.min(x, innerWidth - r.width - 8))}px`;
+  el.style.top = `${Math.max(8, Math.min(y, innerHeight - r.height - 8))}px`;
+}
+function openMenu(x, y, items) {
+  closeCtx();
+  renderMenu(ctx, items);
+  ctx.hidden = false;
+  positionMenu(ctx, x, y);
+  const act = (menuEl, list, ev) => {
+    const b = ev.target.closest('[data-i]');
+    if (!b || b.disabled) return;
+    const it = list[+b.dataset.i];
+    if (it.colors) { closeCtx(); it.run(b.dataset.color); return; }
+    if (it.sub) return;
+    closeCtx(); it.run?.();
+  };
+  ctx.onclick = ev => act(ctx, items, ev);
+  ctx.onpointerover = ev => {
+    const b = ev.target.closest('button[data-i]');
+    if (!b) return;
+    const it = items[+b.dataset.i];
+    if (!it?.sub) { if (ctxSub && !b.classList.contains('open')) { ctxSub.remove(); ctxSub = null; ctx.querySelector('.open')?.classList.remove('open'); } return; }
+    if (b.classList.contains('open')) return;
+    ctx.querySelector('.open')?.classList.remove('open');
+    ctxSub?.remove();
+    b.classList.add('open');
+    const sub = typeof it.sub === 'function' ? it.sub() : it.sub;
+    ctxSub = document.createElement('div');
+    ctxSub.className = 'ctx sub';
+    renderMenu(ctxSub, sub);
+    document.body.append(ctxSub);
+    const r = b.getBoundingClientRect();
+    const w = ctxSub.getBoundingClientRect().width;
+    positionMenu(ctxSub, r.right + w + 12 > innerWidth ? r.left - w - 4 : r.right + 2, r.top - 5);
+    ctxSub.onclick = ev => act(ctxSub, sub, ev);
+  };
+}
+
+const tablesWithPk = exceptId => store.model.tables.filter(x => x.id !== exceptId && x.columns.some(c => c.pk)).sort((a, b) => a.name.localeCompare(b.name));
+const tableList = (exceptId, run) => {
+  const list = tablesWithPk(exceptId).map(x => ({ label: x.name, icon: `<span class="dot${x.color ? ` c-${x.color}` : ''}"></span>`, run: () => run(x.id) }));
+  return list.length ? list : [{ note: t('cm.noTables') }];
+};
+
+function tableMenu(id, at) {
+  const tb = store.table(id);
+  return [
+    { header: tb.name },
+    { label: t('cm.addField'), icon: '＋', kbd: '2×', run: () => openFieldEditor(id, null) },
+    { label: t('cm.quick'), icon: '⚡', sub: () => COLUMN_PRESETS.map(p => ({ label: p.label[getLang()] || p.label.en, run: () => applyPreset(id, p) })) },
+    { label: t('cm.rename'), icon: '✎', run: () => openRenameTable(id) },
+    '-',
+    { label: t('cm.relTo'), icon: '⟜', sub: () => tableList(id, pid => openMenu(at.cx, at.cy, relationTypeItems(id, pid))) },
+    { label: t('cm.mnWith'), icon: '⋈', sub: () => tableList(id, pid => createJunction(id, pid)) },
+    { label: t('cm.relFrom'), icon: '↗', kbd: 'R', run: () => { setRelationMode(true); diagram.relFrom = id; diagram.render(); } },
+    '-',
+    { colors: true, value: tb.color || '', run: c => store.update(() => { tb.color = c; }) },
+    '-',
+    { label: t('cm.duplicate'), icon: '⧉', kbd: '⌘D', run: () => duplicateTable(id) },
+    { label: t('cm.copy'), icon: '⎘', kbd: '⌘C', run: () => copyTables([id]) },
+    { label: t('cm.ddl'), icon: '⌨', run: () => copyTableDDL(id) },
+    '-',
+    { label: t('cm.delete'), icon: '🗑', kbd: 'Del', danger: true, run: () => store.deleteTable(id) },
+  ];
+}
+
+function columnMenu(id, colId, at) {
+  const tb = store.table(id);
+  const col = tb.columns.find(c => c.id === colId);
+  const i = tb.columns.indexOf(col);
+  const single = u => u.columns.length === 1 && u.columns[0] === colId;
+  const isUnique = tb.uniques.some(single);
+  const isIndexed = tb.indexes.some(ix => ix.columns[0] === colId);
+  const fk = store.model.fks.find(f => f.fromTable === id && f.columns.some(p => p.from === colId));
+  const TYPES = ['NUMBER', 'NUMBER(10)', 'NUMBER(12,2)', 'VARCHAR2(100 CHAR)', 'VARCHAR2(255 CHAR)', 'VARCHAR2(4000 CHAR)', 'CHAR(1)', 'DATE', 'TIMESTAMP', 'CLOB', 'BLOB', 'JSON', 'BOOLEAN'];
+  return [
+    { header: `${tb.name}.${col.name}` },
+    { label: t('cm.editCol'), icon: '✎', kbd: '2×', run: () => openFieldEditor(id, colId) },
+    { label: `${t('cm.type')}: ${col.type}`, icon: 'Aa', sub: TYPES.map(ty => ({ label: ty, checked: col.type === ty, run: () => colOp(id, colId, (_, c) => { c.type = ty; }) })) },
+    '-',
+    { label: t('cm.pk'), checked: col.pk, run: () => colOp(id, colId, (_, c) => { c.pk = !c.pk; if (c.pk) c.nullable = false; }) },
+    { label: t('cm.nn'), checked: !col.nullable || col.pk, disabled: col.pk, run: () => colOp(id, colId, (_, c) => { c.nullable = !c.nullable; }) },
+    { label: t('cm.unique'), checked: isUnique, run: () => colOp(id, colId, (t2, c, _, m) => {
+      if (isUnique) t2.uniques = t2.uniques.filter(u => !single(u));
+      else t2.uniques.push({ id: uid('u'), name: uniqueName(m, `${t2.name}_${c.name}_UN`), columns: [c.id] });
+    }) },
+    { label: t('cm.index'), checked: isIndexed, run: () => colOp(id, colId, (t2, c, _, m) => {
+      if (isIndexed) t2.indexes = t2.indexes.filter(ix => ix.columns[0] !== c.id);
+      else t2.indexes.push({ id: uid('i'), name: uniqueName(m, `${t2.name}_${c.name}_IDX`), unique: false, columns: [c.id] });
+    }) },
+    fk
+      ? { label: `FK → ${store.table(fk.toTable)?.name}`, icon: '⟜', run: () => { store.select({ kind: 'fk', id: fk.id }); } }
+      : { label: t('cm.fkTo'), icon: '⟜', sub: () => tableList(id, pid => {
+          const parent = store.table(pid);
+          if (parent.columns.filter(c => c.pk).length !== 1) return createRelation(id, pid, {});
+          createRelation(id, pid, { columnId: colId, mandatory: !col.nullable });
+        }) },
+    '-',
+    { label: t('cm.insAbove'), icon: '⤒', run: () => openFieldEditor(id, null, i) },
+    { label: t('cm.insBelow'), icon: '⤓', run: () => openFieldEditor(id, null, i + 1) },
+    { label: t('cm.up'), icon: '↑', disabled: i === 0, run: () => colOp(id, colId, (t2, c, j) => { t2.columns.splice(j, 1); t2.columns.splice(j - 1, 0, c); }) },
+    { label: t('cm.down'), icon: '↓', disabled: i === tb.columns.length - 1, run: () => colOp(id, colId, (t2, c, j) => { t2.columns.splice(j, 1); t2.columns.splice(j + 1, 0, c); }) },
+    { label: t('cm.dupCol'), icon: '⧉', run: () => colOp(id, colId, (t2, c, j) => {
+      let name = `${c.name}_2`, n = 3;
+      while (t2.columns.some(x => x.name === name)) name = `${c.name}_${n++}`;
+      t2.columns.splice(j + 1, 0, { ...structuredClone(c), id: uid('c'), name, pk: false });
+    }) },
+    '-',
+    { label: t('cm.delCol'), icon: '🗑', danger: true, run: () => store.deleteColumn(id, colId) },
+  ];
+}
+
+function relationMenu(fid) {
+  const f = store.model.fks.find(x => x.id === fid);
+  const kind = store.relationKind(f);
+  const child = store.table(f.fromTable), parent = store.table(f.toTable);
+  const childCols = () => f.columns.map(p => child.columns.find(c => c.id === p.from)).filter(Boolean);
+  const setFk = fn => store.update(m => { const ff = m.fks.find(x => x.id === fid); fn(ff, m); });
+  return [
+    { header: `${child.name} → ${parent.name}` },
+    { label: t('cm.mandatory'), checked: kind.mandatory, disabled: kind.identifying, run: () => store.update(() => childCols().forEach(c => { if (!c.pk) c.nullable = kind.mandatory; })) },
+    { label: t('cm.identifying'), checked: kind.identifying, run: () => store.update(() => childCols().forEach(c => { c.pk = !kind.identifying; if (c.pk) c.nullable = false; })) },
+    { label: t('cm.oneToOne'), checked: kind.oneToOne, disabled: kind.identifying, run: () => store.update(m => {
+      const ids = f.columns.map(p => p.from);
+      const same = u => u.columns.length === ids.length && ids.every(x => u.columns.includes(x));
+      if (kind.oneToOne) child.uniques = child.uniques.filter(u => !same(u));
+      else child.uniques.push({ id: uid('u'), name: uniqueName(m, `${child.name}_${parent.name}_UN`), columns: ids });
+    }) },
+    { label: `${t('cm.onDelete')}: ${f.onDelete || 'NO ACTION'}`, icon: '⌫', sub: [['', 'NO ACTION'], ['CASCADE', 'CASCADE'], ['SET NULL', 'SET NULL']].map(([v, l]) => ({ label: l, checked: (f.onDelete || '') === v, run: () => setFk(ff => { ff.onDelete = v; }) })) },
+    '-',
+    { label: t('cm.goParent'), icon: '↑', run: () => pick(parent.id) },
+    { label: t('cm.goChild'), icon: '↓', run: () => pick(child.id) },
+    '-',
+    { label: t('cm.delRel'), icon: '🗑', danger: true, run: () => { store.update(m => { m.fks = m.fks.filter(x => x.id !== fid); }); store.select(null); } },
+  ];
+}
+
+function applyPreset(tableId, preset) {
+  const tb = store.table(tableId);
+  const taken = new Set(tb.columns.map(x => x.name));
+  const add = preset.cols.filter(x => !taken.has(x.name) && !(x.pk && tb.columns.some(y => y.pk)));
+  if (!add.length) return;
+  store.update(() => add.forEach(x => {
+    const col = { ...newColumn(x.name, x.type), ...x, nullable: x.nullable ?? true, default: x.default || '' };
+    if (x.pk) tb.columns.unshift(col); else tb.columns.push(col);
+  }));
+  toast(t('t.colsAdded', { n: add.length }));
+}
+
 $('#canvas').addEventListener('contextmenu', e => {
   e.preventDefault();
-  const tg = e.target.closest('.table');
-  const at = diagram.toWorld(e);
-  const item = (label, run, cls = '', kbd = '') => ({ label, run, cls, kbd });
-  let items;
-  if (tg) {
-    const id = tg.dataset.id;
-    store.select({ kind: 'table', id });
-    items = [
-      item(t('cm.addCol'), () => { const tb = store.table(id); store.update(() => tb.columns.push(newColumn(`COLUMN_${tb.columns.length + 1}`))); }),
-      item(t('cm.relFrom'), () => { setRelationMode(true); diagram.relFrom = id; diagram.render(); }, '', 'R'),
-      '-',
-      item(t('cm.duplicate'), () => duplicateTable(id), '', '⌘D'),
-      item(t('cm.copy'), () => copyTables([id]), '', '⌘C'),
-      item(t('cm.ddl'), () => copyTableDDL(id)),
-      { colors: id },
-      '-',
-      item(t('cm.delete'), () => store.deleteTable(id), 'danger', 'Del'),
-    ];
-  } else {
-    items = [
-      item(t('cm.newTable'), () => addTable(at), '', 'T'),
-      item(t('cm.paste'), () => clipboard && pasteTables(clipboard, at), clipboard ? '' : 'disabled', '⌘V'),
-      '-',
-      item(t('cm.layout'), actions.layout),
-      item(t('cm.fit'), actions.fit, '', 'F'),
-    ];
-  }
-  ctx.innerHTML = items.map((it, i) => it === '-' ? '<hr>'
-    : it.colors ? `<div class="ctx-colors">${TABLE_COLORS.map(c => `<button class="sw${c ? ` c-${c}` : ''}${(store.table(it.colors).color || '') === c ? ' on' : ''}" data-color="${c}"></button>`).join('')}</div>`
-    : `<button data-i="${i}" class="${it.cls}"${it.cls === 'disabled' ? ' disabled' : ''}><span>${esc(it.label)}</span>${it.kbd ? `<kbd>${it.kbd}</kbd>` : ''}</button>`).join('');
-  ctx.onclick = ev => {
-    const sw = ev.target.closest('[data-color]');
-    if (sw) { const tb = store.table(tg.dataset.id); store.update(() => { tb.color = sw.dataset.color; }); closeCtx(); return; }
-    const b = ev.target.closest('[data-i]');
-    if (b) { closeCtx(); items[+b.dataset.i].run(); }
-  };
-  ctx.hidden = false;
-  const r = ctx.getBoundingClientRect();
-  ctx.style.left = `${Math.min(e.clientX, innerWidth - r.width - 8)}px`;
-  ctx.style.top = `${Math.min(e.clientY, innerHeight - r.height - 8)}px`;
+  if (!editor.hidden) commitEditor(false);
+  const tg = e.target.closest('.table'), row = e.target.closest('[data-col]'), rel = e.target.closest('.rel');
+  const w = diagram.toWorld(e);
+  const at = { x: w.x, y: w.y, cx: e.clientX, cy: e.clientY };
+  if (diagram.mode === 'relation') setRelationMode(false);
+  if (tg && row) { store.select({ kind: 'table', id: tg.dataset.id }); openMenu(e.clientX, e.clientY, columnMenu(tg.dataset.id, row.dataset.col, at)); }
+  else if (tg) { store.select({ kind: 'table', id: tg.dataset.id }); openMenu(e.clientX, e.clientY, tableMenu(tg.dataset.id, at)); }
+  else if (rel) { store.select({ kind: 'fk', id: rel.dataset.id }); openMenu(e.clientX, e.clientY, relationMenu(rel.dataset.id)); }
+  else openMenu(e.clientX, e.clientY, [
+    { label: t('cm.newTable'), icon: '＋', kbd: 'T', run: () => addTable(at) },
+    { label: t('tb.templates.t'), icon: '▦', run: () => openTemplates() },
+    { label: t('cm.paste'), icon: '⎘', kbd: '⌘V', disabled: !clipboard, run: () => pasteTables(clipboard, at) },
+    '-',
+    { label: t('cm.layout'), icon: '⊞', run: actions.layout },
+    { label: t('cm.fit'), icon: '⤢', kbd: 'F', run: actions.fit },
+    { label: t('cm.check'), icon: '✓', run: actions.check },
+  ]);
 });
-document.addEventListener('pointerdown', e => { if (!ctx.hidden && !ctx.contains(e.target)) closeCtx(); });
+// right-click on the sidebar list opens the same table menu
+$('#sidebar').addEventListener('contextmenu', e => {
+  const li = e.target.closest('[data-id]');
+  if (!li) return;
+  e.preventDefault();
+  pick(li.dataset.id);
+  openMenu(e.clientX, e.clientY, tableMenu(li.dataset.id, { cx: e.clientX, cy: e.clientY }));
+});
+document.addEventListener('pointerdown', e => {
+  if (ctx.hidden || ctx.contains(e.target) || ctxSub?.contains(e.target)) return;
+  closeCtx();
+});
 window.addEventListener('blur', closeCtx);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCtx(); }, true);
 
