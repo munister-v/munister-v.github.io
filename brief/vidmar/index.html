@@ -27,10 +27,9 @@
 .b-stat{white-space:nowrap}
 .b-stat b{color:var(--c-ink);font-weight:400;font-variant-numeric:tabular-nums}
 .b-jump{display:flex;gap:0;overflow-x:auto;width:100%;scrollbar-width:thin}
-.b-jump a{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;min-height:34px;padding:0 14px 0 0;
+.b-jump a{flex:0 0 auto;display:inline-flex;align-items:center;min-height:32px;padding:0 18px 0 0;
   font-family:var(--font-mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--c-faint)}
 .b-jump a:hover{color:var(--c-ink)}
-.b-jump a i{font-style:normal;color:var(--c-rule-strong)}
 @media (max-width:620px){
   .b-track{flex:1 1 56px;min-width:44px}
   .b-stat{font-size:9px;letter-spacing:.14em}
@@ -39,7 +38,7 @@
 
 /* ── раздел ─────────────────────────────────────────────── */
 .b-sec{padding-top:clamp(2rem,4vw,3.4rem)}
-.b-sec-head{display:flex;align-items:baseline;gap:14px;padding-bottom:16px;border-bottom:1px solid var(--c-ink)}
+.b-sec-head{padding-bottom:14px;border-bottom:1px solid var(--c-ink)}
 .b-sec-head h2{font-family:var(--font-display);font-size:clamp(30px,3.6vw,50px);line-height:.96;letter-spacing:-.04em}
 
 /* ── вопрос ─────────────────────────────────────────────── */
@@ -51,8 +50,6 @@
 .b-hint{margin-top:12px;color:var(--c-muted);font-size:14.5px;line-height:1.5;max-width:44ch}
 .b-ex{margin-top:12px;font-family:var(--font-head);font-style:italic;font-size:14.5px;line-height:1.45;
   color:var(--c-faint);max-width:44ch;white-space:pre-wrap}
-.b-ex b{display:block;font-family:var(--font-mono);font-style:normal;font-size:9px;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--c-rule-strong);margin-bottom:5px;font-weight:400}
 @media (max-width:860px){.b-q{grid-template-columns:1fr;gap:16px}}
 
 /* ── варианты: настоящие чекбоксы, без рамок и заливок ──── */
@@ -214,7 +211,7 @@
     <div class="b-bar-in">
       <div class="b-track" id="track" role="progressbar" aria-label="Заповнено питань" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="fill"></i></div>
       <span class="b-stat mono" id="count"><b>0</b> / 22</span>
-      <span class="b-stat mono" id="saved">чернетка не збережена</span>
+      <span class="b-stat mono" id="saved"></span>
       <nav class="b-jump mono" id="jump" aria-label="Розділи анкети"></nav>
     </div>
   </div>
@@ -396,9 +393,9 @@
   function save(){
     try{
       localStorage.setItem(KEY, JSON.stringify(A));
-      savedEl.textContent = "чернетку збережено";
+      savedEl.textContent = "збережено";
       clearTimeout(saveTimer);
-      saveTimer = setTimeout(function(){ savedEl.textContent = "чернетка в цьому браузері"; }, 1700);
+      saveTimer = setTimeout(function(){ savedEl.textContent = ""; }, 1700);
     }catch(e){
       savedEl.textContent = "збереження недоступне";
     }
@@ -501,12 +498,7 @@
     title.id = "qt-" + q.id;
     ask.appendChild(title);
     if(q.hint) ask.appendChild(el("p", "b-hint", q.hint));
-    if(q.ex){
-      var ex = el("p", "b-ex");
-      ex.appendChild(el("b", null, "приклад"));
-      ex.appendChild(document.createTextNode(q.ex));
-      ask.appendChild(ex);
-    }
+    if(q.ex) ask.appendChild(el("p", "b-ex", q.ex));
     card.appendChild(ask);
 
     var body = el("div", "b-answer");
@@ -710,7 +702,6 @@
     var sec = el("section", "b-sec");
     sec.id = s.id;
     var head = el("div", "b-sec-head");
-    head.appendChild(el("span", "mono", s.num));
     head.appendChild(el("h2", null, s.title));
     sec.appendChild(head);
 
@@ -722,7 +713,7 @@
       lay.appendChild(list);
       var aside = el("aside", "b-aside");
       var cap = el("p", "mono");
-      cap.appendChild(document.createTextNode("Специмен · "));
+
       var capName = el("span"); capName.id = "specName";
       cap.appendChild(capName);
       aside.appendChild(cap);
@@ -746,14 +737,13 @@
 
     var a = document.createElement("a");
     a.href = "#" + s.id;
-    a.appendChild(el("i", null, s.num));
-    a.appendChild(document.createTextNode(s.title));
+    a.textContent = s.title;
     jump.appendChild(a);
   });
 
   syncMock();
   updateProgress();
-  savedEl.textContent = Object.keys(A).length ? "чернетка в цьому браузері" : "чернетка не збережена";
+  savedEl.textContent = "";
 
   function buildText(){
     var L = [];
@@ -763,7 +753,7 @@
     L.push("");
     var i = 0;
     SECTIONS.forEach(function(s){
-      L.push("=== " + s.num + ". " + s.title.toUpperCase() + " ===");
+      L.push("=== " + s.title.toUpperCase() + " ===");
       s.qs.forEach(function(q){
         i++;
         var v = A[q.id], out;
