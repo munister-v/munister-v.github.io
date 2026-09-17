@@ -1,6 +1,6 @@
-# Ferret Data Modeler
+# Schemata
 
-Open-source browser data modeller for **Oracle Database**. Plain HTML5 and ES modules: no build step, no dependencies, no backend. Interface in Ukrainian and English.
+Schemata is an open-source browser data modeller for **Oracle Database**. Plain HTML5 and ES modules: no build step, no dependencies, no backend. Interface in Ukrainian and English.
 
 Live: https://munister.com.ua/modeler/
 
@@ -10,6 +10,7 @@ Live: https://munister.com.ua/modeler/
 - Oracle DDL generation: `CREATE TABLE`, identity columns, defaults, constraints, `CREATE INDEX`, `COMMENT ON`, `ON DELETE`
 - DDL import (scripts from SQL Developer or `DBMS_METADATA.GET_DDL`)
 - JSON model files that diff cleanly in Git, autosave in the browser
+- Table list with filter, minimap, command palette (⌘K), table colours, relation highlighting
 - Undo / redo, auto layout, SVG export
 
 ## Run locally
@@ -22,7 +23,9 @@ python3 -m http.server 8765
 | Key | Action |
 |---|---|
 | double-click | new table |
-| `T` / `R` / `F` | table / relation mode / fit |
+| `⌘K` | command palette |
+| `/` | filter tables |
+| `V` / `T` / `R` / `F` | select / table / relation mode / fit |
 | `Del` | delete selection |
 | `⌘Z` / `⌘⇧Z` | undo / redo |
 | `⌘S` | save JSON |
@@ -32,6 +35,8 @@ python3 -m http.server 8765
 js/model.js      model, undo/redo, autosave
 js/diagram.js    SVG diagram, pan/zoom, drag
 js/panel.js      properties panel
+js/sidebar.js    table list
+js/palette.js    command palette
 js/ddl-gen.js    Oracle DDL generator
 js/ddl-parse.js  Oracle DDL importer
 js/i18n.js       Ukrainian / English strings

@@ -3,87 +3,110 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ferret Data Modeler</title>
-  <meta name="description" content="Open-source browser data modeller for Oracle Database: diagrams, DDL generation and DDL import.">
+  <title>Schemata — Oracle data modeler</title>
+  <meta name="description" content="Schemata: open-source browser data modeler for Oracle Database. ER diagrams, DDL generation and DDL import.">
   <meta name="theme-color" content="#ffffff">
   <meta name="color-scheme" content="light only">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='16' fill='%23121212'/><rect x='8' y='9' width='16' height='14' rx='1.5' fill='none' stroke='white' stroke-width='1.6'/><path d='M8 13.5h16' stroke='white' stroke-width='1.6'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%236366f1'/><stop offset='1' stop-color='%238b5cf6'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='url(%23g)'/><rect x='6' y='7' width='9' height='8' rx='2' fill='white'/><rect x='17' y='17' width='9' height='8' rx='2' fill='white' fill-opacity='.85'/><path d='M15 11h3.5a1.5 1.5 0 0 1 1.5 1.5V17' fill='none' stroke='white' stroke-width='1.6'/></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="bar">
-    <a class="brand" href="./" aria-label="Ferret Data Modeler">
-      <span class="mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30"><rect width="32" height="32" rx="16" fill="#121212"/><rect x="8" y="9" width="16" height="14" rx="1.5" fill="none" stroke="#fff" stroke-width="1.6"/><path d="M8 13.5h16" stroke="#fff" stroke-width="1.6"/></svg></span>
-      <span class="brand-text"><span class="brand-name">Ferret</span><span class="eyebrow" data-i18n="app.tagline"></span></span>
-    </a>
+  <header class="top">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="6" y="7" width="9" height="8" rx="2" fill="#fff"/><rect x="17" y="17" width="9" height="8" rx="2" fill="#fff" fill-opacity=".85"/><path d="M15 11h3.5a1.5 1.5 0 0 1 1.5 1.5V17" fill="none" stroke="#fff" stroke-width="1.6"/></svg></span>
+      <span class="brand-name">Schemata</span>
+      <span class="crumb-sep">/</span>
+      <input id="model-name" class="model-name" spellcheck="false" data-i18n-label="model.name.t">
+      <span class="saved" id="saved"><i></i><span data-i18n="st.saved"></span></span>
+    </div>
 
-    <nav class="tools" aria-label="Toolbar">
-      <div class="seg">
-        <button data-action="new" data-i18n-title="tb.new.t"><svg viewBox="0 0 16 16"><path d="M4 1.5h5.5L13 5v9.5H4z M9.5 1.5V5H13"/></svg><span data-i18n="tb.new"></span></button>
-        <button data-action="open" data-i18n-title="tb.open.t"><svg viewBox="0 0 16 16"><path d="M1.5 4V13h13V5.5H7.5L6 4z"/></svg><span data-i18n="tb.open"></span></button>
-        <button data-action="save" data-i18n-title="tb.save.t"><svg viewBox="0 0 16 16"><path d="M8 2v8M4.5 7L8 10.5 11.5 7M2.5 13.5h11"/></svg><span data-i18n="tb.save"></span></button>
-      </div>
-      <div class="seg">
-        <button data-action="table" data-i18n-title="tb.table.t"><svg viewBox="0 0 16 16"><path d="M2 3h12v10H2zM2 6.5h12"/></svg><span data-i18n="tb.table"></span></button>
-        <button data-action="relation" data-i18n-title="tb.relation.t"><svg viewBox="0 0 16 16"><path d="M2 12c5 0 5-8 12-8M2 9.5L4.5 12 2 14.5M11 4h3"/></svg><span data-i18n="tb.relation"></span></button>
-        <button data-action="layout" data-i18n-title="tb.layout.t"><svg viewBox="0 0 16 16"><path d="M2 2.5h5v4H2zM9 9.5h5v4H9zM9 2.5h5v4H9zM7 4.5h2M11.5 6.5v3"/></svg><span data-i18n="tb.layout"></span></button>
-      </div>
-      <div class="seg">
-        <button data-action="undo" data-i18n-title="tb.undo.t" class="icon-only"><svg viewBox="0 0 16 16"><path d="M5.5 3L2.5 6l3 3M2.5 6H10a3.5 3.5 0 010 7H7"/></svg></button>
-        <button data-action="redo" data-i18n-title="tb.redo.t" class="icon-only"><svg viewBox="0 0 16 16"><path d="M10.5 3l3 3-3 3M13.5 6H6a3.5 3.5 0 000 7h3"/></svg></button>
-      </div>
-      <div class="seg">
-        <button data-action="import" data-i18n-title="tb.import.t"><svg viewBox="0 0 16 16"><path d="M8 10V2M4.5 5.5L8 2l3.5 3.5M2.5 13.5h11"/></svg><span data-i18n="tb.import"></span></button>
-        <button data-action="svg" data-i18n-title="tb.svg.t"><svg viewBox="0 0 16 16"><path d="M2 2.5h12v11H2zM2 10.5l3.5-3 3 2.5 2-1.5 3.5 3"/></svg><span data-i18n="tb.svg"></span></button>
-      </div>
-    </nav>
+    <button class="cmdk" data-action="palette">
+      <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>
+      <span data-i18n="cmd.open"></span>
+      <kbd>⌘K</kbd>
+    </button>
 
-    <div class="bar-end">
-      <div class="lang" role="group" aria-label="Language">
-        <button data-lang="uk">UK</button><button data-lang="en">EN</button>
+    <div class="top-end">
+      <div class="btn-group">
+        <button class="tb" data-action="new" data-i18n-title="tb.new.t"><svg viewBox="0 0 16 16"><path d="M4 1.75h5.25L12.5 5v9.25H4z M9 1.75V5.25h3.5"/></svg></button>
+        <button class="tb" data-action="open" data-i18n-title="tb.open.t"><svg viewBox="0 0 16 16"><path d="M1.75 4.25v8.5h12.5v-7H7.5L6 4.25z"/></svg></button>
+        <button class="tb" data-action="save" data-i18n-title="tb.save.t"><svg viewBox="0 0 16 16"><path d="M8 2.5v7.5M5 7l3 3 3-3M2.75 13.25h10.5"/></svg></button>
       </div>
-      <button class="pill solid" data-action="ddl" data-i18n-title="tb.ddl.t"><span data-i18n="tb.ddl"></span> <svg viewBox="0 0 16 16"><path d="M5 4L1.5 8 5 12M11 4l3.5 4L11 12"/></svg></button>
+      <div class="btn-group">
+        <button class="tb text" data-action="import" data-i18n-title="tb.import.t"><svg viewBox="0 0 16 16"><path d="M8 10V2.5M5 5.5l3-3 3 3M2.75 13.25h10.5"/></svg><span data-i18n="tb.import"></span></button>
+        <button class="tb text" data-action="svg" data-i18n-title="tb.svg.t"><svg viewBox="0 0 16 16"><rect x="2" y="2.5" width="12" height="11" rx="2"/><path d="M2.5 11l3.5-3 2.5 2 2-1.5 3 2.5"/></svg><span data-i18n="tb.svg"></span></button>
+      </div>
+      <div class="lang" role="group" aria-label="Language"><button data-lang="uk">UK</button><button data-lang="en">EN</button></div>
+      <button class="primary" data-action="ddl" data-i18n-title="tb.ddl.t"><svg viewBox="0 0 16 16"><path d="M5.5 4.5L2 8l3.5 3.5M10.5 4.5L14 8l-3.5 3.5"/></svg><span>Oracle DDL</span></button>
     </div>
   </header>
 
-  <main>
-    <div class="stage">
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="stage">
       <svg id="canvas" data-i18n-label="canvas.label"></svg>
-      <div class="mode-hint" id="mode-hint" hidden></div>
-      <div class="zoom">
-        <button data-action="zoom-out" data-i18n-title="tb.zoomOut.t"><svg viewBox="0 0 16 16"><path d="M3 8h10"/></svg></button>
-        <span id="zoom">100%</span>
-        <button data-action="zoom-in" data-i18n-title="tb.zoomIn.t"><svg viewBox="0 0 16 16"><path d="M3 8h10M8 3v10"/></svg></button>
+      <div class="mode-hint" id="mode-hint" hidden><span class="pulse"></span><span id="mode-hint-text"></span><kbd>esc</kbd></div>
+
+      <div class="dock" role="toolbar">
+        <button data-action="select" data-i18n-title="tb.select.t" class="on"><svg viewBox="0 0 16 16"><path d="M3.5 2.5l9 5.2-4 .9-2 3.9z"/></svg></button>
+        <button data-action="table" data-i18n-title="tb.table.t"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="2"/><path d="M2 6.75h12M6.5 6.75V13"/></svg></button>
+        <button data-action="relation" data-i18n-title="tb.relation.t"><svg viewBox="0 0 16 16"><circle cx="3.5" cy="12.5" r="1.75"/><circle cx="12.5" cy="3.5" r="1.75"/><path d="M5 11l6-6"/></svg></button>
         <i></i>
-        <button data-action="fit" data-i18n-title="tb.fit.t"><svg viewBox="0 0 16 16"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg></button>
+        <button data-action="layout" data-i18n-title="tb.layout.t"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1.2"/><rect x="9" y="2" width="5" height="5" rx="1.2"/><rect x="9" y="9" width="5" height="5" rx="1.2"/><path d="M7 4.5h2M11.5 7v2"/></svg></button>
+        <button data-action="fit" data-i18n-title="tb.fit.t"><svg viewBox="0 0 16 16"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10"/></svg></button>
+        <i></i>
+        <button data-action="undo" data-i18n-title="tb.undo.t"><svg viewBox="0 0 16 16"><path d="M5.5 3L2.5 6l3 3M2.5 6H10a3.5 3.5 0 010 7H7"/></svg></button>
+        <button data-action="redo" data-i18n-title="tb.redo.t"><svg viewBox="0 0 16 16"><path d="M10.5 3l3 3-3 3M13.5 6H6a3.5 3.5 0 000 7h3"/></svg></button>
       </div>
-    </div>
-    <aside id="panel"></aside>
-  </main>
+
+      <div class="nav-card">
+        <svg id="minimap" data-i18n-label="mm.label"></svg>
+        <div class="zoom">
+          <button data-action="zoom-out" data-i18n-title="tb.zoomOut.t"><svg viewBox="0 0 16 16"><path d="M3.5 8h9"/></svg></button>
+          <button id="zoom" data-action="zoom-reset">100%</button>
+          <button data-action="zoom-in" data-i18n-title="tb.zoomIn.t"><svg viewBox="0 0 16 16"><path d="M3.5 8h9M8 3.5v9"/></svg></button>
+        </div>
+      </div>
+    </main>
+
+    <aside id="panel" class="panel"></aside>
+  </div>
 
   <dialog id="ddl-dialog">
     <form method="dialog">
-      <header><div><span class="eyebrow">Oracle Database</span><h2 data-i18n="ddl.title"></h2></div><button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></header>
+      <header>
+        <span class="dlg-ic"><svg viewBox="0 0 16 16"><path d="M5.5 4.5L2 8l3.5 3.5M10.5 4.5L14 8l-3.5 3.5"/></svg></span>
+        <div><h2 data-i18n="ddl.title"></h2><p class="sub">Oracle Database 19c · 23ai</p></div>
+        <button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </header>
       <div class="opts">
-        <label class="check"><input type="checkbox" id="opt-comments" checked> <span data-i18n="ddl.comments"></span></label>
-        <label class="check"><input type="checkbox" id="opt-drop"> <span data-i18n="ddl.drop"></span></label>
+        <label class="switch"><input type="checkbox" id="opt-comments" checked><span></span><b data-i18n="ddl.comments"></b></label>
+        <label class="switch"><input type="checkbox" id="opt-drop"><span></span><b data-i18n="ddl.drop"></b></label>
       </div>
-      <textarea id="ddl-out" readonly spellcheck="false"></textarea>
-      <footer><button class="pill" id="ddl-copy" data-i18n="ddl.copy"></button><button class="pill solid" id="ddl-download" data-i18n="ddl.download"></button></footer>
+      <pre class="code" id="ddl-code"></pre>
+      <textarea id="ddl-out" hidden></textarea>
+      <footer><button class="secondary" id="ddl-copy" data-i18n="ddl.copy"></button><button class="primary" id="ddl-download" data-i18n="ddl.download"></button></footer>
     </form>
   </dialog>
 
   <dialog id="import-dialog">
     <form method="dialog">
-      <header><div><span class="eyebrow">Oracle Database</span><h2 data-i18n="imp.title"></h2></div><button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></header>
-      <p class="muted" data-i18n="imp.desc"></p>
-      <textarea id="import-text" spellcheck="false" placeholder="CREATE TABLE …"></textarea>
+      <header>
+        <span class="dlg-ic"><svg viewBox="0 0 16 16"><path d="M8 10V2.5M5 5.5l3-3 3 3M2.75 13.25h10.5"/></svg></span>
+        <div><h2 data-i18n="imp.title"></h2><p class="sub" data-i18n="imp.desc"></p></div>
+        <button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </header>
+      <textarea id="import-text" class="code-input" spellcheck="false" placeholder="CREATE TABLE …"></textarea>
       <div id="import-log"></div>
       <footer>
-        <label class="check"><input type="checkbox" id="import-replace"> <span data-i18n="imp.replace"></span></label>
-        <button class="pill" id="import-file" type="button" data-i18n="imp.file"></button>
-        <button class="pill" type="button" data-action="sample" data-i18n="imp.sample"></button>
-        <button class="pill solid" id="import-run" data-i18n="imp.run"></button>
+        <label class="switch"><input type="checkbox" id="import-replace"><span></span><b data-i18n="imp.replace"></b></label>
+        <button class="secondary" id="import-file" type="button" data-i18n="imp.file"></button>
+        <button class="secondary" type="button" data-action="sample" data-i18n="imp.sample"></button>
+        <button class="primary" id="import-run" data-i18n="imp.run"></button>
       </footer>
     </form>
   </dialog>

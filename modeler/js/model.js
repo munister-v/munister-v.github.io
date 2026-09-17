@@ -13,8 +13,10 @@ export const ORACLE_TYPES = [
   'CLOB', 'NCLOB', 'BLOB', 'RAW(16)', 'BOOLEAN', 'JSON', 'XMLTYPE', 'ROWID',
 ];
 
+export const TABLE_COLORS = ['', 'blue', 'violet', 'green', 'amber', 'rose', 'teal'];
+
 export function emptyModel() {
-  return { format: 'ferret-model', version: 1, name: t('model.default'), tables: [], fks: [] };
+  return { format: 'schemata-model', version: 1, name: t('model.default'), tables: [], fks: [] };
 }
 
 export function newColumn(name = 'COLUMN_1', type = 'VARCHAR2(100 CHAR)') {
@@ -24,7 +26,7 @@ export function newColumn(name = 'COLUMN_1', type = 'VARCHAR2(100 CHAR)') {
 export function newTable(name, x = 40, y = 40) {
   return {
     id: uid('t'), name, schema: '', x, y, comment: '',
-    columns: [], uniques: [], indexes: [],
+    color: '', columns: [], uniques: [], indexes: [],
   };
 }
 
@@ -140,11 +142,11 @@ export class Store {
   }
 
   persist() {
-    try { localStorage.setItem('ferret-model', JSON.stringify(this.model)); } catch {}
+    try { localStorage.setItem('schemata-model', JSON.stringify(this.model)); } catch {}
   }
   restore() {
     try {
-      const raw = localStorage.getItem('ferret-model');
+      const raw = localStorage.getItem('schemata-model') || localStorage.getItem('ferret-model');
       if (raw) { this.model = JSON.parse(raw); return true; }
     } catch {}
     return false;

@@ -1,5 +1,5 @@
 // Properties panel: model, table (columns, keys, indexes) or foreign key
-import { ORACLE_TYPES, newColumn, uid, uniqueName } from './model.js';
+import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js';
 import { t, onLang } from './i18n.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -39,7 +39,7 @@ export class Panel {
   renderModel() {
     const m = this.store.model;
     this.el.innerHTML = `
-      ${this.head('Ferret / Oracle', m.name)}
+      ${this.head(t('p.model'), m.name)}
       <label class="field">${t('p.name')}<input data-f="model.name" value="${esc(m.name)}"></label>
       <div class="stats">
         <div><b>${m.tables.length}</b>${t('p.stat.tables')}</div>
@@ -95,6 +95,9 @@ export class Panel {
         <label class="field">${t('p.schema')}<input class="mono" data-f="table.schema" value="${esc(tb.schema)}" placeholder="—" spellcheck="false"></label>
       </div>
       <label class="field">${t('p.comment')}<textarea data-f="table.comment" rows="2">${esc(tb.comment)}</textarea></label>
+      <div class="field">${t('p.color')}
+        <div class="swatches">${TABLE_COLORS.map(c => `<button class="sw${c ? ` c-${c}` : ''}${(tb.color || '') === c ? ' on' : ''}" data-a="color" data-color="${c}" aria-label="${c || 'none'}"></button>`).join('')}</div>
+      </div>
 
       <h3>${t('p.columns')} <span class="count">${tb.columns.length}</span><button class="pill small" data-a="col-add">${ICON.plus} ${t('p.addColumn')}</button></h3>
       <div class="cols">${cols}</div>
@@ -186,6 +189,7 @@ export class Panel {
     const tb = c.tableId && st.table(c.tableId);
     switch (a) {
       case 'table-del': st.deleteTable(c.tableId); break;
+      case 'color': st.update(() => { tb.color = btn.dataset.color; }); break;
       case 'col-add': {
         const col = newColumn(tb.columns.length ? `COLUMN_${tb.columns.length + 1}` : 'ID', tb.columns.length ? 'VARCHAR2(100 CHAR)' : 'NUMBER');
         if (!tb.columns.length) { col.pk = true; col.identity = true; col.nullable = false; }
