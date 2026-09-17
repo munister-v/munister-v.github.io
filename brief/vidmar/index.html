@@ -26,10 +26,6 @@
 .b-track i{display:block;height:100%;width:0;background:var(--c-ink);transition:width .3s ease}
 .b-stat{white-space:nowrap}
 .b-stat b{color:var(--c-ink);font-weight:400;font-variant-numeric:tabular-nums}
-.b-jump{display:flex;gap:0;overflow-x:auto;width:100%;scrollbar-width:thin}
-.b-jump a{flex:0 0 auto;display:inline-flex;align-items:center;min-height:32px;padding:0 18px 0 0;
-  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--c-faint)}
-.b-jump a:hover{color:var(--c-ink)}
 @media (max-width:620px){
   .b-track{flex:1 1 56px;min-width:44px}
   .b-stat{font-size:9px;letter-spacing:.14em}
@@ -212,7 +208,6 @@
       <div class="b-track" id="track" role="progressbar" aria-label="Заповнено питань" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="fill"></i></div>
       <span class="b-stat mono" id="count"><b>0</b> / 22</span>
       <span class="b-stat mono" id="saved"></span>
-      <nav class="b-jump mono" id="jump" aria-label="Розділи анкети"></nav>
     </div>
   </div>
 
@@ -696,7 +691,6 @@
   }
 
   var form = document.getElementById("form");
-  var jump = document.getElementById("jump");
   var n = 0;
   SECTIONS.forEach(function(s){
     var sec = el("section", "b-sec");
@@ -734,11 +728,6 @@
     }
 
     form.appendChild(sec);
-
-    var a = document.createElement("a");
-    a.href = "#" + s.id;
-    a.textContent = s.title;
-    jump.appendChild(a);
   });
 
   syncMock();
