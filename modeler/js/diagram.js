@@ -1,13 +1,38 @@
-// SVG-диаграмма: таблицы, связи, pan/zoom, drag, режим создания связи
+// SVG diagram: tables, relations, pan/zoom, drag, relation mode
+import { t as tr } from './i18n.js';
+
 const NS = 'http://www.w3.org/2000/svg';
-const HEADER = 30, ROW = 20, PAD = 8, CH = 7.3;
+const HEADER = 40, ROW = 22, PAD = 12;
+const FONT = {
+  title: "500 15px 'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif",
+  col: "13px 'Helvetica Neue',Helvetica,Arial,sans-serif",
+  colNN: "600 13px 'Helvetica Neue',Helvetica,Arial,sans-serif",
+  type: "11px ui-monospace,'SF Mono',Menlo,Consolas,monospace",
+  schema: "10px ui-monospace,'SF Mono',Menlo,Consolas,monospace",
+};
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
+// Ширина тексту через canvas, з кешем
+const measureCtx = typeof document !== 'undefined' ? document.createElement('canvas').getContext('2d') : null;
+const measureCache = new Map();
+function textW(str, font) {
+  const key = font + '|' + str;
+  let w = measureCache.get(key);
+  if (w === undefined) {
+    if (measureCtx) { measureCtx.font = font; w = measureCtx.measureText(str).width; } else w = str.length * 7.5;
+    measureCache.set(key, w);
+  }
+  return w;
+}
+
 export function tableSize(t) {
-  const nameW = Math.max(...t.columns.map(c => c.name.length), 4) * CH;
-  const typeW = Math.max(...t.columns.map(c => (c.type || '').length), 4) * CH;
-  const titleW = (t.name.length + (t.schema ? t.schema.length + 1 : 0)) * 8 + 24;
-  return { w: Math.round(Math.max(180, 26 + nameW + 18 + typeW + PAD, titleW)), h: HEADER + Math.max(1, t.columns.length) * ROW + 6 };
+  const nameW = Math.max(0, ...t.columns.map(c => textW(c.name, c.pk || !c.nullable ? FONT.colNN : FONT.col)));
+  const typeW = Math.max(0, ...t.columns.map(c => textW(c.type || '', FONT.type)));
+  const titleW = textW(t.name, FONT.title) + (t.schema ? textW(t.schema.toUpperCase(), FONT.schema) * 1.15 + 20 : 0);
+  return {
+    w: Math.ceil(Math.max(200, 34 + nameW + 24 + typeW + PAD, PAD * 2 + titleW)),
+    h: HEADER + Math.max(1, t.columns.length) * ROW + 8,
+  };
 }
 
 export class Diagram {
@@ -17,8 +42,8 @@ export class Diagram {
     this.mode = 'select'; // 'select' | 'relation'
     this.relFrom = null;
     svg.innerHTML = `
-      <defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-        <circle cx="1" cy="1" r="1" class="grid-dot"/></pattern></defs>
+      <defs><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+        <circle cx="1" cy="1" r=".9" class="grid-dot"/></pattern></defs>
       <rect class="bg" width="100%" height="100%" fill="url(#grid)"/>
       <g class="viewport"><g class="rels"></g><g class="tables"></g></g>`;
     this.vp = svg.querySelector('.viewport');
@@ -54,19 +79,22 @@ export class Diagram {
     const selected = sel?.kind === 'table' && sel.id === t.id;
     const relSrc = this.relFrom === t.id;
     const rows = t.columns.map((c, i) => {
-      const y = HEADER + i * ROW + 14;
+      const top = HEADER + 4 + i * ROW, y = top + 15;
       const fk = this.store.isFkColumn(t.id, c.id);
-      const icon = c.pk ? `<text x="10" y="${y}" class="ico pk">PK</text>` : fk ? `<text x="10" y="${y}" class="ico fk">FK</text>` : '';
+      const key = c.pk ? `<text x="${PAD}" y="${y - 1}" class="key pk">PK</text>`
+        : fk ? `<text x="${PAD}" y="${y - 1}" class="key fk">FK</text>` : '';
       const nn = !c.nullable || c.pk ? ' nn' : '';
-      return `${icon}<text x="30" y="${y}" class="col${nn}">${esc(c.name)}${!c.nullable || c.pk ? '' : ''}</text>
+      return `${i % 2 ? `<rect class="zebra" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>` : ''}${key}
+        <text x="${PAD + 22}" y="${y}" class="col${nn}">${esc(c.name)}</text>
         <text x="${w - PAD}" y="${y}" class="type" text-anchor="end">${esc(c.type)}</text>`;
     }).join('');
-    const title = (t.schema ? `<tspan class="schema">${esc(t.schema)}.</tspan>` : '') + esc(t.name);
     return `<g class="table${selected ? ' selected' : ''}${relSrc ? ' rel-src' : ''}" data-id="${t.id}" transform="translate(${t.x},${t.y})">
-      <rect class="body" width="${w}" height="${h}" rx="6"/>
-      <path class="head" d="M0 6a6 6 0 0 1 6-6h${w - 12}a6 6 0 0 1 6 6v${HEADER - 6}h-${w}z"/>
-      <text x="10" y="20" class="title">${title}</text>
-      ${t.columns.length ? rows : `<text x="10" y="${HEADER + 14}" class="empty">нет колонок</text>`}
+      <rect class="shadow" x="3" y="3" width="${w}" height="${h}" rx="3"/>
+      <rect class="body" width="${w}" height="${h}" rx="3"/>
+      <text x="${PAD}" y="26" class="title">${esc(t.name)}</text>
+      ${t.schema ? `<text x="${w - PAD}" y="25" class="schema" text-anchor="end">${esc(t.schema.toUpperCase())}</text>` : ''}
+      <line class="rule" x1="0" y1="${HEADER}" x2="${w}" y2="${HEADER}"/>
+      ${t.columns.length ? rows : `<text x="${PAD}" y="${HEADER + 19}" class="empty">${tr('d.noColumns')}</text>`}
       ${t.comment ? `<title>${esc(t.comment)}</title>` : ''}
     </g>`;
   }
@@ -192,15 +220,10 @@ export class Diagram {
       x1 = Math.min(...ts.map(t => t.x)) - 20; y1 = Math.min(...ts.map(t => t.y)) - 20;
       x2 = Math.max(...ts.map(t => t.x + tableSize(t).w)) + 20; y2 = Math.max(...ts.map(t => t.y + tableSize(t).h)) + 20;
     }
-    const css = getComputedStyle(document.documentElement);
-    const v = n => css.getPropertyValue(n).trim();
-    const style = `
-      .body{fill:${v('--tbl-bg')};stroke:${v('--tbl-border')}} .head{fill:${v('--tbl-head')}}
-      text{font:12px ui-monospace,Menlo,Consolas,monospace;fill:${v('--text')}} .title{font-weight:700;font-size:13px;fill:${v('--tbl-head-text')}}
-      .schema{opacity:.7} .type{fill:${v('--muted')}} .ico{font-size:9px;font-weight:700} .pk{fill:${v('--pk')}} .fk{fill:${v('--fk')}}
-      .col.nn{font-weight:700} .line,.mark{fill:none;stroke:${v('--rel')};stroke-width:1.4} .optional .line{stroke-dasharray:5 4} .hit,.empty{display:none}`;
+    const style = [...document.styleSheets].flatMap(sh => { try { return [...sh.cssRules]; } catch { return []; } })
+      .map(r => r.cssText).filter(c => /\.(table|rel|key|col|type|title|schema|rule|zebra|shadow|body|line|mark|hit|empty)\b/.test(c) || c.startsWith(':root')).join('\n');
     return `<svg xmlns="${NS}" viewBox="${x1} ${y1} ${x2 - x1} ${y2 - y1}" width="${x2 - x1}" height="${y2 - y1}">
-      <style>${style}</style><rect x="${x1}" y="${y1}" width="100%" height="100%" fill="${v('--canvas')}"/>
+      <style>${style}</style><rect x="${x1}" y="${y1}" width="100%" height="100%" fill="#ffffff"/>
       ${this.gRels.outerHTML}${this.gTables.outerHTML}</svg>`;
   }
 }
@@ -210,7 +233,7 @@ function relationPath(child, parent, f) {
   const a = tableSize(child), b = tableSize(parent);
   const rowY = (t, colId) => {
     const i = t.columns.findIndex(c => c.id === colId);
-    return t.y + (i < 0 ? HEADER / 2 : HEADER + i * ROW + ROW / 2);
+    return t.y + (i < 0 ? HEADER / 2 : HEADER + 4 + i * ROW + ROW / 2);
   };
   const ay = rowY(child, f.columns[0]?.from), by = rowY(parent, f.columns[0]?.to);
 

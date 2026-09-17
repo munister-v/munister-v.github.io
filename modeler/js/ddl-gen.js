@@ -1,4 +1,5 @@
-// Генерация Oracle DDL из модели
+// Oracle DDL generator
+import { t as tr } from './i18n.js';
 const RESERVED = new Set(`ACCESS ADD ALL ALTER AND ANY AS ASC AUDIT BETWEEN BY CHAR CHECK CLUSTER COLUMN COMMENT
 COMPRESS CONNECT CREATE CURRENT DATE DECIMAL DEFAULT DELETE DESC DISTINCT DROP ELSE EXCLUSIVE EXISTS FILE FLOAT
 FOR FROM GRANT GROUP HAVING IDENTIFIED IMMEDIATE IN INCREMENT INDEX INITIAL INSERT INTEGER INTERSECT INTO IS
@@ -20,7 +21,7 @@ export function generateDDL(model, { comments = true, drop = false } = {}) {
   const byId = Object.fromEntries(model.tables.map(t => [t.id, t]));
   const col = (t, id) => t.columns.find(c => c.id === id);
 
-  out.push(`-- Сгенерировано Ferret Data Modeler`, `-- Модель: ${model.name}`, `-- ${new Date().toISOString()}`, '');
+  out.push(`-- ${tr('ddl.header')}`, `-- ${tr('ddl.model')}: ${model.name}`, `-- ${new Date().toISOString()}`, '');
 
   if (drop) {
     model.tables.forEach(t => out.push(`DROP TABLE ${qname(t)} CASCADE CONSTRAINTS PURGE;`));

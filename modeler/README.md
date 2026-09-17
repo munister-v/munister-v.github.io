@@ -1,40 +1,42 @@
 # Ferret Data Modeler
 
-Open-source веб-модельер данных для **Oracle Database**. Чистый HTML5 + ES-модули: без сборки, без зависимостей, без бэкенда.
+Open-source browser data modeller for **Oracle Database**. Plain HTML5 and ES modules: no build step, no dependencies, no backend. Interface in Ukrainian and English.
 
-## Возможности (MVP)
-- ER-диаграмма: таблицы, колонки, PK / UK / индексы, внешние ключи (нотация «воронья лапка»)
-- Создание связи в стиле Oracle Data Modeler: колонки PK родителя добавляются в дочернюю таблицу
-- Генерация Oracle DDL: `CREATE TABLE`, IDENTITY, DEFAULT, constraints, `CREATE INDEX`, `COMMENT ON`, `ON DELETE`
-- Импорт DDL-скрипта (в т.ч. из SQL Developer / `DBMS_METADATA.GET_DDL`)
-- Сохранение модели в JSON (удобно хранить в Git), автосохранение в браузере
-- Undo/redo, авто-раскладка, экспорт в SVG, светлая/тёмная тема
+Live: https://munister.com.ua/modeler/
 
-## Запуск
-ES-модули не работают через `file://`, нужен любой статический сервер:
+## Features
+- ER diagram: tables, columns, primary / unique keys, indexes, foreign keys (crow's foot notation)
+- Relations the Oracle Data Modeler way: the parent key is carried into the child table
+- Oracle DDL generation: `CREATE TABLE`, identity columns, defaults, constraints, `CREATE INDEX`, `COMMENT ON`, `ON DELETE`
+- DDL import (scripts from SQL Developer or `DBMS_METADATA.GET_DDL`)
+- JSON model files that diff cleanly in Git, autosave in the browser
+- Undo / redo, auto layout, SVG export
+
+## Run locally
+ES modules do not load over `file://`, so serve the folder with any static server:
 ```bash
 python3 -m http.server 8765
 ```
-и откройте http://localhost:8765
 
-## Горячие клавиши
-| Клавиша | Действие |
+## Shortcuts
+| Key | Action |
 |---|---|
-| двойной клик | новая таблица |
-| `T` / `R` / `F` | таблица / режим связи / показать всё |
-| `Del` | удалить выбранное |
-| `⌘Z` / `⌘⇧Z` | отмена / повтор |
-| `⌘S` | сохранить JSON |
+| double-click | new table |
+| `T` / `R` / `F` | table / relation mode / fit |
+| `Del` | delete selection |
+| `⌘Z` / `⌘⇧Z` | undo / redo |
+| `⌘S` | save JSON |
 
-## Структура
+## Layout
 ```
-js/model.js      модель, undo/redo, автосохранение
-js/diagram.js    SVG-диаграмма, pan/zoom, drag
-js/panel.js      панель свойств
-js/ddl-gen.js    генерация Oracle DDL
-js/ddl-parse.js  импорт Oracle DDL
-js/app.js        UI, тулбар, диалоги
+js/model.js      model, undo/redo, autosave
+js/diagram.js    SVG diagram, pan/zoom, drag
+js/panel.js      properties panel
+js/ddl-gen.js    Oracle DDL generator
+js/ddl-parse.js  Oracle DDL importer
+js/i18n.js       Ukrainian / English strings
+js/app.js        toolbar, dialogs, wiring
 ```
 
-## Лицензия
+## License
 MIT

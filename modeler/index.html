@@ -1,80 +1,94 @@
 <!doctype html>
-<html lang="ru">
+<html lang="uk">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ferret Data Modeler</title>
-  <meta name="description" content="Open-source веб-модельер данных для Oracle Database: диаграммы, генерация и импорт DDL.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%232563eb'/><rect x='6' y='8' width='20' height='16' rx='2' fill='white'/><rect x='6' y='8' width='20' height='5' fill='%2393c5fd'/></svg>">
+  <meta name="description" content="Open-source browser data modeller for Oracle Database: diagrams, DDL generation and DDL import.">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light only">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='16' fill='%23121212'/><rect x='8' y='9' width='16' height='14' rx='1.5' fill='none' stroke='white' stroke-width='1.6'/><path d='M8 13.5h16' stroke='white' stroke-width='1.6'/></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="toolbar">
-    <div class="brand">
-      <svg viewBox="0 0 32 32" width="22" height="22"><rect width="32" height="32" rx="7" fill="#2563eb"/><rect x="6" y="8" width="20" height="16" rx="2" fill="#fff"/><rect x="6" y="8" width="20" height="5" fill="#93c5fd"/></svg>
-      <span>Ferret <b>Data Modeler</b></span>
-    </div>
-    <div class="group">
-      <button data-action="new" title="Новая модель">Новая</button>
-      <button data-action="open" title="Открыть .json">Открыть</button>
-      <button data-action="save" title="Сохранить .json (⌘S)">Сохранить</button>
-    </div>
-    <div class="group">
-      <button data-action="import" title="Импорт из DDL-скрипта">Импорт DDL</button>
-      <button data-action="ddl" class="primary" title="Сгенерировать Oracle DDL">Генерировать DDL</button>
-      <button data-action="svg" title="Экспорт диаграммы в SVG">SVG</button>
-    </div>
-    <div class="group">
-      <button data-action="table" title="Новая таблица (T)">+ Таблица</button>
-      <button data-action="relation" title="Связь FK (R)">↗ Связь</button>
-      <button data-action="layout" title="Авто-раскладка">Раскладка</button>
-    </div>
-    <div class="group">
-      <button data-action="undo" title="Отменить (⌘Z)">↶</button>
-      <button data-action="redo" title="Повторить (⌘⇧Z)">↷</button>
-    </div>
-    <div class="group right">
-      <button data-action="zoom-out" title="Уменьшить">−</button>
-      <span id="zoom">100%</span>
-      <button data-action="zoom-in" title="Увеличить">+</button>
-      <button data-action="fit" title="Показать всё (F)">⤢</button>
-      <button data-action="theme" title="Тема">◐</button>
+  <header class="bar">
+    <a class="brand" href="./" aria-label="Ferret Data Modeler">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30"><rect width="32" height="32" rx="16" fill="#121212"/><rect x="8" y="9" width="16" height="14" rx="1.5" fill="none" stroke="#fff" stroke-width="1.6"/><path d="M8 13.5h16" stroke="#fff" stroke-width="1.6"/></svg></span>
+      <span class="brand-text"><span class="brand-name">Ferret</span><span class="eyebrow" data-i18n="app.tagline"></span></span>
+    </a>
+
+    <nav class="tools" aria-label="Toolbar">
+      <div class="seg">
+        <button data-action="new" data-i18n-title="tb.new.t"><svg viewBox="0 0 16 16"><path d="M4 1.5h5.5L13 5v9.5H4z M9.5 1.5V5H13"/></svg><span data-i18n="tb.new"></span></button>
+        <button data-action="open" data-i18n-title="tb.open.t"><svg viewBox="0 0 16 16"><path d="M1.5 4V13h13V5.5H7.5L6 4z"/></svg><span data-i18n="tb.open"></span></button>
+        <button data-action="save" data-i18n-title="tb.save.t"><svg viewBox="0 0 16 16"><path d="M8 2v8M4.5 7L8 10.5 11.5 7M2.5 13.5h11"/></svg><span data-i18n="tb.save"></span></button>
+      </div>
+      <div class="seg">
+        <button data-action="table" data-i18n-title="tb.table.t"><svg viewBox="0 0 16 16"><path d="M2 3h12v10H2zM2 6.5h12"/></svg><span data-i18n="tb.table"></span></button>
+        <button data-action="relation" data-i18n-title="tb.relation.t"><svg viewBox="0 0 16 16"><path d="M2 12c5 0 5-8 12-8M2 9.5L4.5 12 2 14.5M11 4h3"/></svg><span data-i18n="tb.relation"></span></button>
+        <button data-action="layout" data-i18n-title="tb.layout.t"><svg viewBox="0 0 16 16"><path d="M2 2.5h5v4H2zM9 9.5h5v4H9zM9 2.5h5v4H9zM7 4.5h2M11.5 6.5v3"/></svg><span data-i18n="tb.layout"></span></button>
+      </div>
+      <div class="seg">
+        <button data-action="undo" data-i18n-title="tb.undo.t" class="icon-only"><svg viewBox="0 0 16 16"><path d="M5.5 3L2.5 6l3 3M2.5 6H10a3.5 3.5 0 010 7H7"/></svg></button>
+        <button data-action="redo" data-i18n-title="tb.redo.t" class="icon-only"><svg viewBox="0 0 16 16"><path d="M10.5 3l3 3-3 3M13.5 6H6a3.5 3.5 0 000 7h3"/></svg></button>
+      </div>
+      <div class="seg">
+        <button data-action="import" data-i18n-title="tb.import.t"><svg viewBox="0 0 16 16"><path d="M8 10V2M4.5 5.5L8 2l3.5 3.5M2.5 13.5h11"/></svg><span data-i18n="tb.import"></span></button>
+        <button data-action="svg" data-i18n-title="tb.svg.t"><svg viewBox="0 0 16 16"><path d="M2 2.5h12v11H2zM2 10.5l3.5-3 3 2.5 2-1.5 3.5 3"/></svg><span data-i18n="tb.svg"></span></button>
+      </div>
+    </nav>
+
+    <div class="bar-end">
+      <div class="lang" role="group" aria-label="Language">
+        <button data-lang="uk">UK</button><button data-lang="en">EN</button>
+      </div>
+      <button class="pill solid" data-action="ddl" data-i18n-title="tb.ddl.t"><span data-i18n="tb.ddl"></span> <svg viewBox="0 0 16 16"><path d="M5 4L1.5 8 5 12M11 4l3.5 4L11 12"/></svg></button>
     </div>
   </header>
 
   <main>
-    <svg id="canvas" aria-label="Диаграмма модели"></svg>
+    <div class="stage">
+      <svg id="canvas" data-i18n-label="canvas.label"></svg>
+      <div class="mode-hint" id="mode-hint" hidden></div>
+      <div class="zoom">
+        <button data-action="zoom-out" data-i18n-title="tb.zoomOut.t"><svg viewBox="0 0 16 16"><path d="M3 8h10"/></svg></button>
+        <span id="zoom">100%</span>
+        <button data-action="zoom-in" data-i18n-title="tb.zoomIn.t"><svg viewBox="0 0 16 16"><path d="M3 8h10M8 3v10"/></svg></button>
+        <i></i>
+        <button data-action="fit" data-i18n-title="tb.fit.t"><svg viewBox="0 0 16 16"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg></button>
+      </div>
+    </div>
     <aside id="panel"></aside>
   </main>
 
   <dialog id="ddl-dialog">
     <form method="dialog">
-      <header><h2>Oracle DDL</h2><button value="close" class="icon">✕</button></header>
+      <header><div><span class="eyebrow">Oracle Database</span><h2 data-i18n="ddl.title"></h2></div><button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></header>
       <div class="opts">
-        <label class="check"><input type="checkbox" id="opt-comments" checked> COMMENT ON</label>
-        <label class="check"><input type="checkbox" id="opt-drop"> DROP TABLE перед созданием</label>
+        <label class="check"><input type="checkbox" id="opt-comments" checked> <span data-i18n="ddl.comments"></span></label>
+        <label class="check"><input type="checkbox" id="opt-drop"> <span data-i18n="ddl.drop"></span></label>
       </div>
       <textarea id="ddl-out" readonly spellcheck="false"></textarea>
-      <footer><button id="ddl-copy">Копировать</button><button id="ddl-download" class="primary">Скачать .sql</button></footer>
+      <footer><button class="pill" id="ddl-copy" data-i18n="ddl.copy"></button><button class="pill solid" id="ddl-download" data-i18n="ddl.download"></button></footer>
     </form>
   </dialog>
 
   <dialog id="import-dialog">
     <form method="dialog">
-      <header><h2>Импорт DDL</h2><button value="close" class="icon">✕</button></header>
-      <p class="muted">Поддерживается: CREATE TABLE, ALTER TABLE … ADD CONSTRAINT (PK / UK / FK), CREATE [UNIQUE] INDEX, COMMENT ON. Прочие команды пропускаются.</p>
-      <textarea id="import-text" spellcheck="false" placeholder="CREATE TABLE ..."></textarea>
+      <header><div><span class="eyebrow">Oracle Database</span><h2 data-i18n="imp.title"></h2></div><button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></header>
+      <p class="muted" data-i18n="imp.desc"></p>
+      <textarea id="import-text" spellcheck="false" placeholder="CREATE TABLE …"></textarea>
       <div id="import-log"></div>
       <footer>
-        <label class="check"><input type="checkbox" id="import-replace"> Заменить текущую модель</label>
-        <button id="import-file" type="button">Из файла…</button>
-        <button type="button" data-action="sample">Демо-схема</button>
-        <button id="import-run" class="primary">Импортировать</button>
+        <label class="check"><input type="checkbox" id="import-replace"> <span data-i18n="imp.replace"></span></label>
+        <button class="pill" id="import-file" type="button" data-i18n="imp.file"></button>
+        <button class="pill" type="button" data-action="sample" data-i18n="imp.sample"></button>
+        <button class="pill solid" id="import-run" data-i18n="imp.run"></button>
       </footer>
     </form>
   </dialog>
 
-  <div id="toast"></div>
+  <div id="toast" role="status"></div>
   <script type="module" src="js/app.js"></script>
 </body>
 </html>

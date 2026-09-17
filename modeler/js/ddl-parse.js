@@ -1,5 +1,6 @@
-// Импорт Oracle DDL: CREATE TABLE, ALTER TABLE ... ADD CONSTRAINT, CREATE INDEX, COMMENT ON
+// Import Oracle DDL: CREATE TABLE, ALTER TABLE ... ADD CONSTRAINT, CREATE INDEX, COMMENT ON
 import { newTable, newColumn, uid } from './model.js';
+import { t as tr } from './i18n.js';
 
 function tokenize(src) {
   const toks = [];
@@ -64,7 +65,7 @@ class Cursor {
     if (vs.every((v, o) => this.is(v, o))) { this.i += vs.length; return true; }
     return false;
   }
-  expect(v) { if (!this.accept(v)) throw new Error(`Ожидалось ${v}, получено ${this.peek()?.raw ?? 'конец'}`); }
+  expect(v) { if (!this.accept(v)) throw new Error(tr('w.expected', { a: v, b: this.peek()?.raw ?? tr('w.end') })); }
   // Сбалансированная группа в скобках → массив токенов внутри
   group() {
     this.expect('(');
@@ -74,12 +75,12 @@ class Cursor {
       if (k.t === 'p' && k.v === '(') depth++;
       if (k.t === 'p' && k.v === ')' && --depth === 0) return this.toks.slice(start, this.i - 1);
     }
-    throw new Error('Незакрытая скобка');
+    throw new Error(tr('w.paren'));
   }
   // Имя вида [schema.]name
   qname() {
     const a = this.next();
-    if (!a || a.t !== 'id') throw new Error(`Ожидалось имя, получено ${a?.raw ?? 'конец'}`);
+    if (!a || a.t !== 'id') throw new Error(tr('w.expectedName', { b: a?.raw ?? tr('w.end') }));
     if (this.is('.')) { this.next(); const b = this.next(); return { schema: a.v, name: b.v }; }
     return { schema: '', name: a.v };
   }
@@ -142,7 +143,7 @@ export function parseDDL(src, existing = { tables: [], fks: [] }) {
         if (c.accept('INDEX')) { parseIndex(c, unique); continue; }
       } else if (c.accept('ALTER', 'TABLE')) {
         const t = findTable(c.qname());
-        if (!t) { warnings.push('ALTER TABLE: таблица не найдена'); continue; }
+        if (!t) { warnings.push(tr('w.alterNoTable')); continue; }
         while (c.accept('ADD')) {
           if (c.is('(')) { c.group(); continue; }
           parseConstraint(c, t);
@@ -166,17 +167,17 @@ export function parseDDL(src, existing = { tables: [], fks: [] }) {
       }
       const head = stmt.slice(0, 4).map(k => k.raw).join(' ');
       if (!/^(CREATE (OR REPLACE )?(SEQUENCE|VIEW|TRIGGER|SYNONYM|PACKAGE|PROCEDURE|FUNCTION)|DROP|GRANT|PROMPT|SET|INSERT|BEGIN|END)/i.test(head))
-        warnings.push(`Пропущено: ${head}…`);
+        warnings.push(tr('w.skipped', { s: head }));
     } catch (e) {
-      warnings.push(`${e.message} в «${stmt.slice(0, 4).map(k => k.raw).join(' ')}…»`);
+      warnings.push(tr('w.in', { m: e.message, s: stmt.slice(0, 4).map(k => k.raw).join(' ') }));
     }
   }
 
   function parseCreateTable(c) {
     const q = c.qname();
     let t = findTable(q);
-    if (t) { warnings.push(`Таблица ${q.name} уже есть — заменена`); model.tables = model.tables.filter(x => x !== t); model.fks = model.fks.filter(f => f.fromTable !== t.id && f.toTable !== t.id); }
-    if (!c.is('(')) { warnings.push(`${q.name}: CREATE TABLE без списка колонок пропущен`); return; }
+    if (t) { warnings.push(tr('w.replaced', { t: q.name })); model.tables = model.tables.filter(x => x !== t); model.fks = model.fks.filter(f => f.fromTable !== t.id && f.toTable !== t.id); }
+    if (!c.is('(')) { warnings.push(tr('w.noCols', { t: q.name })); return; }
     t = newTable(q.name); t.schema = q.schema;
     model.tables.push(t); created++;
     for (const part of splitCommas(c.group())) {
@@ -251,19 +252,19 @@ export function parseDDL(src, existing = { tables: [], fks: [] }) {
     const ixName = c.qname().name;
     c.expect('ON');
     const t = findTable(c.qname());
-    if (!t) { warnings.push(`Индекс ${ixName}: таблица не найдена`); return; }
+    if (!t) { warnings.push(tr('w.idxNoTable', { i: ixName })); return; }
     const cols = splitCommas(c.group()).map(p => findCol(t, p[0]?.v)).filter(Boolean);
-    if (!cols.length) { warnings.push(`Индекс ${ixName}: функциональные индексы пока не поддерживаются`); return; }
+    if (!cols.length) { warnings.push(tr('w.idxFunc', { i: ixName })); return; }
     t.indexes.push({ id: uid('i'), name: ixName, unique, columns: cols.map(x => x.id) });
   }
 
   // FK разрешаем в конце, когда все таблицы известны
   for (const p of pendingFks) {
     const to = findTable(p.ref);
-    if (!to) { warnings.push(`FK ${p.name || p.t.name}: таблица ${p.ref.name} не найдена`); continue; }
+    if (!to) { warnings.push(tr('w.fkNoTable', { f: p.name || p.t.name, t: p.ref.name })); continue; }
     const toCols = p.toCols.length ? p.toCols : to.columns.filter(x => x.pk).map(x => x.name);
     const columns = p.fromCols.map((n, i) => ({ from: findCol(p.t, n)?.id, to: findCol(to, toCols[i])?.id }));
-    if (columns.some(x => !x.from || !x.to)) { warnings.push(`FK ${p.name || p.t.name}: колонки не найдены`); continue; }
+    if (columns.some(x => !x.from || !x.to)) { warnings.push(tr('w.fkNoCols', { f: p.name || p.t.name })); continue; }
     model.fks.push({ id: uid('f'), name: p.name || `${p.t.name}_${to.name}_FK`.toUpperCase(), fromTable: p.t.id, toTable: to.id, columns, onDelete: p.onDelete });
   }
 

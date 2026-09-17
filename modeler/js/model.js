@@ -1,4 +1,6 @@
 // Модель данных + история (undo/redo) + автосохранение
+import { t } from './i18n.js';
+
 let seq = Date.now();
 export const uid = (p = 'id') => `${p}${(seq++).toString(36)}`;
 
@@ -12,7 +14,7 @@ export const ORACLE_TYPES = [
 ];
 
 export function emptyModel() {
-  return { format: 'ferret-model', version: 1, name: 'Новая модель', tables: [], fks: [] };
+  return { format: 'ferret-model', version: 1, name: t('model.default'), tables: [], fks: [] };
 }
 
 export function newColumn(name = 'COLUMN_1', type = 'VARCHAR2(100 CHAR)') {
@@ -65,7 +67,7 @@ export class Store {
     this.fixSelection(); this.emit('load');
   }
   load(model) {
-    if (!model || !Array.isArray(model.tables)) throw new Error('Неверный формат модели');
+    if (!model || !Array.isArray(model.tables)) throw new Error(t('e.format'));
     model.fks ||= [];
     model.tables.forEach(t => { t.uniques ||= []; t.indexes ||= []; });
     this.checkpoint();
@@ -114,7 +116,7 @@ export class Store {
     const parent = this.table(parentId);
     const child = this.table(childId);
     const pkCols = parent.columns.filter(c => c.pk);
-    if (!pkCols.length) throw new Error(`У таблицы ${parent.name} нет первичного ключа`);
+    if (!pkCols.length) throw new Error(t('e.noPk', { t: parent.name }));
     let fkId;
     this.update(m => {
       const c = m.tables.find(t => t.id === childId);
