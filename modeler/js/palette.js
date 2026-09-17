@@ -47,7 +47,7 @@ export class Palette {
       .filter(x => match(x.name) || match(`${x.schema}.${x.name}`))
       .sort((a, b) => a.name.localeCompare(b.name))
       .slice(0, 30)
-      .map(x => ({ label: x.name, hint: `${x.columns.length} col`, icon: 'table', color: x.color, run: () => this.onPick(x.id), group: t('cmd.tables') }));
+      .map(x => ({ label: x.name, hint: `${x.columns.length} ${t('tb.cols')}`, icon: 'table', color: x.color, run: () => this.onPick(x.id), group: t('cmd.tables') }));
     // table matches first when the user is searching
     return q ? [...tables, ...acts] : [...acts, ...tables];
   }

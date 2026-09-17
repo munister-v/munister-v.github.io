@@ -1,6 +1,25 @@
 // Локализация: українська та English
 const DICT = {
   uk: {
+    'tb.ddlBtn': 'Згенерувати DDL', 'tb.templates': 'Шаблони', 'tb.templates.t': 'Готові схеми', 'tb.check': 'Перевірка', 'tb.check.t': 'Перевірка моделі',
+    'tb.png': 'PNG', 'tb.png.t': 'Експорт діаграми в PNG', 'tb.cols': 'кол.',
+    'tpl.title': 'Шаблони', 'tpl.sub': 'Готові схеми Oracle з коментарями українською. Відкрийте як нову модель або додайте до поточної.',
+    'tpl.open': 'Відкрити', 'tpl.add': 'Додати до моделі', 'tpl.tables': '{n} таблиць', 'tpl.blank': 'Порожня модель', 'tpl.blankDesc': 'Почати з чистого аркуша',
+    't.tplLoaded': 'Шаблон «{n}» завантажено',
+    'chk.title': 'Перевірка моделі', 'chk.sub': 'Типові помилки Oracle-моделей. Клік по рядку — перейти до обʼєкта.',
+    'chk.ok': 'Проблем не знайдено', 'chk.error': 'Помилки', 'chk.warn': 'Попередження', 'chk.info': 'Поради',
+    'chk.fixIdx': 'Створити індекси для всіх FK', 'chk.fixed': 'Створено індексів: {n}',
+    'chk.dupTable': 'Таблиця {t} оголошена двічі', 'chk.noCols': 'Таблиця {t} не має колонок', 'chk.noPk': 'Таблиця {t} не має первинного ключа',
+    'chk.reserved': '{n} — зарезервоване слово Oracle', 'chk.reservedCol': '{t}.{c} — зарезервоване слово Oracle',
+    'chk.quoted': 'Імʼя {n} доведеться брати в лапки', 'chk.long': 'Імʼя {n} довше за 30 символів (до Oracle 12.2 не працює)',
+    'chk.dupCol': 'Колонка {t}.{c} повторюється', 'chk.noType': 'Колонка {t}.{c} без типу', 'chk.varcharLen': '{t}.{c}: VARCHAR2 без довжини',
+    'chk.legacyType': '{t}.{c}: тип {ty} застарілий, краще VARCHAR2 або CLOB', 'chk.noComment': 'Таблиця {t} без коментаря',
+    'chk.fkType': '{f}: типи {a} і {b} не збігаються', 'chk.fkIndex': '{f}: немає індексу на FK-колонках у {t}',
+    'cm.duplicate': 'Дублювати', 'cm.copy': 'Копіювати', 'cm.paste': 'Вставити', 'cm.delete': 'Видалити', 'cm.addCol': 'Додати колонку',
+    'cm.relFrom': 'Звʼязок від цієї таблиці', 'cm.ddl': 'Копіювати DDL таблиці', 'cm.newTable': 'Нова таблиця тут', 'cm.layout': 'Розкласти все', 'cm.fit': 'Показати все',
+    'p.presets': 'Швидко додати', 'p.bulk': 'Кілька колонок текстом', 'p.bulk.ph': 'NAME VARCHAR2(100 CHAR) NOT NULL\nPRICE NUMBER(12,2)\nCREATED_AT DATE DEFAULT SYSDATE', 'p.bulk.add': 'Додати колонки', 'p.tableDDL': 'DDL таблиці',
+    't.duplicated': 'Таблицю продубльовано', 't.pasted': 'Вставлено таблиць: {n}', 't.copiedTables': 'Таблицю скопійовано', 't.ddlCopied': 'DDL таблиці скопійовано',
+    't.dropHint': 'Відпустіть файл .sql або .json', 't.colsAdded': 'Додано колонок: {n}',
     'tb.select': 'Вибір', 'tb.select.t': 'Вибір і переміщення (V)',
     'tb.more.t': 'Файл',
     'cmd.open': 'Пошук або команда', 'cmd.ph': 'Введіть команду або назву таблиці…',
@@ -70,6 +89,25 @@ const DICT = {
     'w.fkNoCols': 'FK {f}: колонки не знайдено',
   },
   en: {
+    'tb.ddlBtn': 'Generate DDL', 'tb.templates': 'Templates', 'tb.templates.t': 'Ready-made schemas', 'tb.check': 'Check', 'tb.check.t': 'Check the model',
+    'tb.png': 'PNG', 'tb.png.t': 'Export diagram as PNG', 'tb.cols': 'col',
+    'tpl.title': 'Templates', 'tpl.sub': 'Ready-made Oracle schemas. Open one as a new model or add it to the current one.',
+    'tpl.open': 'Open', 'tpl.add': 'Add to model', 'tpl.tables': '{n} tables', 'tpl.blank': 'Blank model', 'tpl.blankDesc': 'Start from scratch',
+    't.tplLoaded': 'Template “{n}” loaded',
+    'chk.title': 'Model check', 'chk.sub': 'Common Oracle modelling mistakes. Click a row to jump to the object.',
+    'chk.ok': 'No problems found', 'chk.error': 'Errors', 'chk.warn': 'Warnings', 'chk.info': 'Suggestions',
+    'chk.fixIdx': 'Create indexes for all FKs', 'chk.fixed': 'Indexes created: {n}',
+    'chk.dupTable': 'Table {t} is declared twice', 'chk.noCols': 'Table {t} has no columns', 'chk.noPk': 'Table {t} has no primary key',
+    'chk.reserved': '{n} is an Oracle reserved word', 'chk.reservedCol': '{t}.{c} is an Oracle reserved word',
+    'chk.quoted': 'Name {n} will need quotes', 'chk.long': 'Name {n} is longer than 30 characters (fails before Oracle 12.2)',
+    'chk.dupCol': 'Column {t}.{c} is repeated', 'chk.noType': 'Column {t}.{c} has no type', 'chk.varcharLen': '{t}.{c}: VARCHAR2 without a length',
+    'chk.legacyType': '{t}.{c}: type {ty} is legacy, prefer VARCHAR2 or CLOB', 'chk.noComment': 'Table {t} has no comment',
+    'chk.fkType': '{f}: types of {a} and {b} differ', 'chk.fkIndex': '{f}: FK columns in {t} are not indexed',
+    'cm.duplicate': 'Duplicate', 'cm.copy': 'Copy', 'cm.paste': 'Paste', 'cm.delete': 'Delete', 'cm.addCol': 'Add column',
+    'cm.relFrom': 'Relation from this table', 'cm.ddl': 'Copy table DDL', 'cm.newTable': 'New table here', 'cm.layout': 'Arrange all', 'cm.fit': 'Fit to screen',
+    'p.presets': 'Quick add', 'p.bulk': 'Several columns as text', 'p.bulk.ph': 'NAME VARCHAR2(100 CHAR) NOT NULL\nPRICE NUMBER(12,2)\nCREATED_AT DATE DEFAULT SYSDATE', 'p.bulk.add': 'Add columns', 'p.tableDDL': 'Table DDL',
+    't.duplicated': 'Table duplicated', 't.pasted': 'Tables pasted: {n}', 't.copiedTables': 'Table copied', 't.ddlCopied': 'Table DDL copied',
+    't.dropHint': 'Drop a .sql or .json file', 't.colsAdded': 'Columns added: {n}',
     'tb.select': 'Select', 'tb.select.t': 'Select and move (V)',
     'tb.more.t': 'File',
     'cmd.open': 'Search or run a command', 'cmd.ph': 'Type a command or a table name…',
@@ -142,8 +180,7 @@ const DICT = {
 
 function detect() {
   try { const saved = localStorage.getItem('schemata-lang') || localStorage.getItem('ferret-lang'); if (DICT[saved]) return saved; } catch {}
-  const nav = typeof navigator !== 'undefined' ? navigator.languages || [navigator.language] : [];
-  return nav.some(l => /^(uk|ru|be)/i.test(l)) ? 'uk' : 'en';
+  return 'uk';
 }
 
 let lang = detect();

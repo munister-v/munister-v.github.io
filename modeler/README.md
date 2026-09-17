@@ -5,6 +5,10 @@ Schemata is an open-source browser data modeller for **Oracle Database**. Plain 
 Live: https://munister.com.ua/modeler/
 
 ## Features
+- Seven ready-made schemas: online store, HR, university, bank, blog/CMS, warehouse, clinic — open or merge into the current model
+- Column presets (ID, audit, status, money, contacts, soft delete) and bulk column entry as text
+- Model check: missing primary keys, unindexed foreign keys (one-click fix), reserved words, type mismatches, long names
+- Duplicate / copy / paste tables, context menu, arrow-key nudging, drag-and-drop of `.sql` / `.json` files, PNG export
 - ER diagram: tables, columns, primary / unique keys, indexes, foreign keys (crow's foot notation)
 - Relations the Oracle Data Modeler way: the parent key is carried into the child table
 - Oracle DDL generation: `CREATE TABLE`, identity columns, defaults, constraints, `CREATE INDEX`, `COMMENT ON`, `ON DELETE`
@@ -26,6 +30,9 @@ python3 -m http.server 8765
 | `⌘K` | command palette |
 | `/` | filter tables |
 | `V` / `T` / `R` / `F` | select / table / relation mode / fit |
+| `⌘D` / `⌘C` / `⌘V` | duplicate / copy / paste table |
+| arrows (`⇧` ×5) | move selected table |
+| right click | context menu |
 | `Del` | delete selection |
 | `⌘Z` / `⌘⇧Z` | undo / redo |
 | `⌘S` | save JSON |
@@ -40,6 +47,8 @@ js/palette.js    command palette
 js/ddl-gen.js    Oracle DDL generator
 js/ddl-parse.js  Oracle DDL importer
 js/i18n.js       Ukrainian / English strings
+js/templates.js  ready-made schemas and column presets
+js/checks.js     model validation
 js/app.js        toolbar, dialogs, wiring
 ```
 

@@ -1,6 +1,7 @@
 // Properties panel: model, table (columns, keys, indexes) or foreign key
 import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js';
-import { t, onLang } from './i18n.js';
+import { t, getLang, onLang } from './i18n.js';
+import { COLUMN_PRESETS } from './templates.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 const upper = v => v.trim().toUpperCase().replace(/\s+/g, '_');
@@ -12,8 +13,8 @@ const ICON = {
 };
 
 export class Panel {
-  constructor(el, store) {
-    this.el = el; this.store = store;
+  constructor(el, store, hooks = {}) {
+    this.el = el; this.store = store; this.hooks = hooks;
     store.subscribe(r => { if (r !== 'panel' && r !== 'move') this.render(); });
     onLang(() => this.render());
     el.addEventListener('change', e => this.onChange(e));
@@ -101,6 +102,15 @@ export class Panel {
 
       <h3>${t('p.columns')} <span class="count">${tb.columns.length}</span><button class="pill small" data-a="col-add">${ICON.plus} ${t('p.addColumn')}</button></h3>
       <div class="cols">${cols}</div>
+      <div class="presets">
+        <span class="presets-label">${t('p.presets')}</span>
+        ${COLUMN_PRESETS.map(p => `<button class="chip" data-a="preset" data-preset="${p.id}">+ ${esc(p.label[getLang()] || p.label.en)}</button>`).join('')}
+      </div>
+      <details class="bulk"${this.bulkOpen ? ' open' : ''}>
+        <summary>${t('p.bulk')}</summary>
+        <textarea class="mono" rows="4" placeholder="${esc(t('p.bulk.ph').replace(/\\n/g, '\n'))}" spellcheck="false"></textarea>
+        <button class="pill small" data-a="bulk-add">${ICON.plus} ${t('p.bulk.add')}</button>
+      </details>
 
       <h3>${t('p.uniques')} <span class="count">${tb.uniques.length}</span><button class="pill small" data-a="uk-add">${ICON.plus}</button></h3>
       ${keyList(tb.uniques, 'uk') || none}
@@ -109,7 +119,9 @@ export class Panel {
       ${keyList(tb.indexes, 'idx') || none}
 
       <h3>${t('p.relations')}</h3>
-      ${fks ? `<ul class="fklist">${fks}</ul>` : none}`;
+      ${fks ? `<ul class="fklist">${fks}</ul>` : none}
+
+      <h3>${t('p.tableDDL')}<button class="pill small" data-a="table-ddl">${t('cm.ddl')}</button></h3>`;
   }
 
   renderFk(f) {
@@ -190,6 +202,25 @@ export class Panel {
     switch (a) {
       case 'table-del': st.deleteTable(c.tableId); break;
       case 'color': st.update(() => { tb.color = btn.dataset.color; }); break;
+      case 'preset': {
+        const preset = COLUMN_PRESETS.find(p => p.id === btn.dataset.preset);
+        const taken = new Set(tb.columns.map(x => x.name));
+        const add = preset.cols.filter(x => !taken.has(x.name) && !(x.pk && tb.columns.some(y => y.pk)));
+        if (!add.length) break;
+        st.update(() => add.forEach(x => tb.columns.push({ ...newColumn(x.name, x.type), ...x, nullable: x.nullable ?? true, default: x.default || '' })));
+        this.hooks?.toast?.(t('t.colsAdded', { n: add.length }));
+        break;
+      }
+      case 'bulk-add': {
+        const ta = this.el.querySelector('.bulk textarea');
+        const cols = parseColumnLines(ta.value, tb.columns.map(x => x.name));
+        this.bulkOpen = true;
+        if (!cols.length) break;
+        st.update(() => tb.columns.push(...cols));
+        this.hooks?.toast?.(t('t.colsAdded', { n: cols.length }));
+        break;
+      }
+      case 'table-ddl': this.hooks?.copyTableDDL?.(tb.id); break;
       case 'col-add': {
         const col = newColumn(tb.columns.length ? `COLUMN_${tb.columns.length + 1}` : 'ID', tb.columns.length ? 'VARCHAR2(100 CHAR)' : 'NUMBER');
         if (!tb.columns.length) { col.pk = true; col.identity = true; col.nullable = false; }
@@ -214,4 +245,28 @@ export class Panel {
       case 'goto-table': st.select({ kind: 'table', id: btn.dataset.id }); break;
     }
   }
+}
+
+// "NAME TYPE [NOT NULL] [DEFAULT expr] [PK]" per line; commas and trailing punctuation are tolerated
+export function parseColumnLines(text, existing = []) {
+  const taken = new Set(existing.map(x => x.toUpperCase()));
+  const cols = [];
+  for (let line of text.split(/\n/)) {
+    line = line.trim().replace(/,$/, '');
+    if (!line || line.startsWith('--')) continue;
+    const m = line.match(/^"?([\p{L}_][\p{L}\p{N}_$#]*)"?\s*(.*)$/u);
+    if (!m) continue;
+    const name = m[1].toUpperCase();
+    if (taken.has(name)) continue;
+    let rest = m[2];
+    const col = newColumn(name, '');
+    if (/\bPRIMARY\s+KEY\b|\bPK\b/i.test(rest)) { col.pk = true; col.nullable = false; rest = rest.replace(/\bPRIMARY\s+KEY\b|\bPK\b/ig, ''); }
+    if (/\bNOT\s+NULL\b/i.test(rest)) { col.nullable = false; rest = rest.replace(/\bNOT\s+NULL\b/ig, ''); }
+    const def = rest.match(/\bDEFAULT\s+(.+)$/i);
+    if (def) { col.default = def[1].trim(); rest = rest.slice(0, def.index); }
+    col.type = rest.trim().replace(/\s+/g, ' ').toUpperCase() || 'VARCHAR2(100 CHAR)';
+    taken.add(name);
+    cols.push(col);
+  }
+  return cols;
 }
