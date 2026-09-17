@@ -46,36 +46,29 @@
 .b-q{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr);gap:clamp(18px,4vw,54px);
   padding:clamp(22px,3vw,34px) 0;border-bottom:1px solid var(--c-rule)}
 .b-ask{position:relative}
-.b-num{display:flex;align-items:center;gap:9px;margin-bottom:11px}
-.b-num i{font-style:normal;width:7px;height:7px;border:1px solid var(--c-rule-strong);flex:0 0 auto}
-.b-q.is-done .b-num i{background:var(--c-ink);border-color:var(--c-ink)}
+.b-num{margin-bottom:10px}
 .b-q h3{font-family:var(--font-head);font-size:clamp(21px,2.3vw,28px);line-height:1.1;letter-spacing:-.012em}
 .b-hint{margin-top:12px;color:var(--c-muted);font-size:14.5px;line-height:1.5;max-width:44ch}
-.b-ex{margin-top:14px;padding-left:14px;border-left:1px solid var(--c-rule-strong);
-  font-family:var(--font-head);font-style:italic;font-size:14.5px;line-height:1.45;
+.b-ex{margin-top:12px;font-family:var(--font-head);font-style:italic;font-size:14.5px;line-height:1.45;
   color:var(--c-faint);max-width:44ch;white-space:pre-wrap}
 .b-ex b{display:block;font-family:var(--font-mono);font-style:normal;font-size:9px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--c-rule-strong);margin-bottom:5px;font-weight:400}
 @media (max-width:860px){.b-q{grid-template-columns:1fr;gap:16px}}
 
-/* ── ячейки вариантов ───────────────────────────────────── */
-.b-cells{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));
-  border-top:1px solid var(--c-rule);border-left:1px solid var(--c-rule)}
-.b-cells.b-one{grid-template-columns:1fr}
-.b-cell{display:flex;align-items:flex-start;gap:11px;text-align:left;cursor:pointer;
-  background:var(--c-paper);border:0;border-right:1px solid var(--c-rule);border-bottom:1px solid var(--c-rule);
-  padding:13px 15px;min-height:50px;font-family:var(--font-body);font-size:15.5px;line-height:1.4;
-  color:var(--c-ink);letter-spacing:-.004em;transition:background .18s ease,color .18s ease}
-.b-cell:hover{background:var(--c-paper-deep)}
-.b-cell[aria-pressed="true"]{background:var(--c-ink);color:var(--c-paper)}
-.b-cell span.b-mk{font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;color:var(--c-faint);
-  flex:0 0 auto;padding-top:5px}
-.b-cell[aria-pressed="true"] span.b-mk{color:rgba(255,255,255,.62)}
+/* ── варианты: настоящие чекбоксы, без рамок и заливок ──── */
+.b-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,225px),1fr));gap:0 28px}
+.b-opts.b-one{grid-template-columns:1fr}
+.b-opt{display:flex;align-items:flex-start;gap:11px;padding:7px 0;cursor:pointer;
+  font-size:15.5px;line-height:1.4;letter-spacing:-.004em}
+.b-chk{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:15px;height:15px;margin:4px 0 0;
+  border:1px solid var(--c-rule-strong);background:var(--c-paper);cursor:pointer;position:relative}
+.b-chk:checked{background:var(--c-ink);border-color:var(--c-ink)}
+.b-chk:checked::after{content:"";position:absolute;left:4.5px;top:1px;width:4px;height:8px;
+  border:solid var(--c-paper);border-width:0 1.5px 1.5px 0;transform:rotate(43deg)}
+.b-chk:focus-visible{outline:2px solid var(--c-ink);outline-offset:2px}
 
 /* ── фокус: свои контролы не наследуют стили сайта ───────── */
-.b-cell:focus-visible,.b-dir:focus-visible,.b-frame:focus-visible,
-.b-mv button:focus-visible,.b-q textarea:focus-visible{
-  outline:2px solid var(--c-ink);outline-offset:2px}
+.b-mv button:focus-visible,.b-q textarea:focus-visible{outline:2px solid var(--c-ink);outline-offset:2px}
 
 /* ── текст ──────────────────────────────────────────────── */
 .b-q textarea{width:100%;font-family:var(--font-body);font-size:16px;line-height:1.5;color:var(--c-ink);
@@ -85,56 +78,46 @@
 .b-q textarea::placeholder{color:var(--c-faint);font-family:var(--font-head);font-style:italic}
 
 /* ── каркасы сайта ──────────────────────────────────────── */
-.b-frames{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));
-  border-top:1px solid var(--c-rule);border-left:1px solid var(--c-rule)}
-.b-frame{cursor:pointer;text-align:left;background:var(--c-paper);border:0;
-  border-right:1px solid var(--c-rule);border-bottom:1px solid var(--c-rule);
-  padding:16px 18px 18px;display:flex;flex-direction:column;gap:11px;color:var(--c-ink);
-  transition:background .18s ease}
-.b-frame:hover{background:var(--c-paper-deep)}
-.b-frame[aria-pressed="true"]{background:var(--c-ink);color:var(--c-paper)}
+.b-frames{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px}
+.b-frame{border:1px solid var(--c-rule);padding:15px 17px 17px;display:flex;flex-direction:column;gap:10px;
+  cursor:pointer;transition:border-color .18s ease}
+.b-frame:hover{border-color:var(--c-rule-strong)}
+.b-frame.is-on{border-color:var(--c-ink)}
+.b-frame .b-top{display:flex;align-items:flex-start;gap:11px}
 .b-frame b{font-family:var(--font-head);font-weight:400;font-size:20px;line-height:1.1}
 .b-frame pre{margin:0;font-family:var(--font-mono);font-size:11.5px;line-height:1.75;
   letter-spacing:0;text-transform:none;color:var(--c-muted);white-space:pre;overflow-x:auto}
-.b-frame[aria-pressed="true"] pre{color:rgba(255,255,255,.76)}
 .b-frame .b-cost{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;color:var(--c-faint)}
-.b-frame[aria-pressed="true"] .b-cost{color:rgba(255,255,255,.55)}
 
 /* ── порядок ────────────────────────────────────────────── */
 .b-order{border-top:1px solid var(--c-rule)}
-.b-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--c-rule)}
+.b-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--c-rule)}
 .b-row .b-i{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.18em;color:var(--c-faint);
   flex:0 0 26px;font-variant-numeric:tabular-nums}
 .b-row .b-l{flex:1;font-size:15px;line-height:1.35}
 .b-mv{display:flex;gap:6px;flex:0 0 auto}
-.b-mv button{cursor:pointer;width:32px;height:30px;line-height:1;background:transparent;
-  border:1px solid var(--c-rule);color:var(--c-ink);font-size:13px;transition:border-color .18s,background .18s}
-.b-mv button:hover{border-color:var(--c-ink);background:var(--c-paper-deep)}
-.b-mv button:disabled{opacity:.25;cursor:default}
+.b-mv button{cursor:pointer;width:30px;height:30px;line-height:1;background:transparent;border:0;
+  color:var(--c-faint);font-size:14px;transition:color .18s}
+.b-mv button:hover{color:var(--c-ink)}
+.b-mv button:disabled{opacity:.22;cursor:default}
 
 /* ── направления: целые предложения, а не токены ─────────── */
-.b-dirs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));
-  border-top:1px solid var(--c-rule);border-left:1px solid var(--c-rule)}
-.b-dir{cursor:pointer;text-align:left;background:var(--c-paper);border:0;padding:0;color:var(--c-ink);
-  border-right:1px solid var(--c-rule);border-bottom:1px solid var(--c-rule);
-  display:flex;flex-direction:column;transition:background .18s ease}
-.b-dir:hover{background:var(--c-paper-deep)}
-.b-dir[aria-pressed="true"]{background:var(--c-ink);color:var(--c-paper)}
-.b-dt{padding:13px 15px 16px}
+.b-dirs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:12px}
+.b-dir{border:1px solid var(--c-rule);cursor:pointer;display:flex;flex-direction:column;
+  transition:border-color .18s ease}
+.b-dir:hover{border-color:var(--c-rule-strong)}
+.b-dir.is-on{border-color:var(--c-ink)}
+.b-dt{padding:13px 15px 15px;display:flex;align-items:flex-start;gap:11px}
 .b-dt b{display:block;font-family:var(--font-head);font-weight:400;font-size:19px;line-height:1.12}
 .b-dt span{display:block;margin-top:5px;font-size:13.5px;line-height:1.42;color:var(--c-muted)}
-.b-dir[aria-pressed="true"] .b-dt span{color:rgba(255,255,255,.72)}
-.b-dt em{display:block;margin-top:9px;font-style:normal;font-family:var(--font-mono);font-size:9.5px;
-  letter-spacing:.1em;text-transform:none;color:var(--c-faint)}
-.b-dir[aria-pressed="true"] .b-dt em{color:rgba(255,255,255,.55)}
-
+.b-dt em{display:block;margin-top:8px;font-style:normal;font-family:var(--font-mono);font-size:9.5px;
+  letter-spacing:.1em;color:var(--c-faint)}
 .b-dir--none{grid-column:1/-1}
 .b-dir--none .b-dt b{font-size:17px}
 
 .b-mini{--d-bg:#0D1017;--d-fg:#E9E4D6;--d-acc:#C9A24A;--d-soft:#1A2130;--d-rad:2px;
   --d-disp:'Iowan Old Style',Palatino,Georgia,serif;--d-body:'Helvetica Neue',Helvetica,Arial,sans-serif;
-  background:var(--d-bg);color:var(--d-fg);font-family:var(--d-body);padding:14px;display:block;
-  border-bottom:1px solid var(--c-rule)}
+  background:var(--d-bg);color:var(--d-fg);font-family:var(--d-body);padding:14px;display:block}
 .b-mini .b-mini-bar{font-family:var(--d-disp);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--d-acc)}
 .b-mini .b-mini-cover{margin-top:11px;height:96px;border-radius:var(--d-rad);display:grid;place-items:center;
   border:1px solid color-mix(in srgb,var(--d-acc) 35%,transparent);
@@ -470,6 +453,12 @@
     if(txt !== undefined) e.textContent = txt;
     return e;
   }
+  function checkbox(){
+    var c = document.createElement("input");
+    c.type = "checkbox";
+    c.className = "b-chk";
+    return c;
+  }
   function repaintAll(box){
     Array.prototype.forEach.call(box.children, function(ch){ ch.dispatchEvent(new Event("repaint")); });
   }
@@ -533,27 +522,20 @@
       var arr = q.type === "multi" ? arrOf(q.id) : pair(q.id).l;
       var longest = 0;
       q.opts.forEach(function(o){ longest = Math.max(longest, o.length); });
-      var box = el("div", "b-cells" + (longest > 40 ? " b-one" : ""));
+      var box = el("div", "b-opts" + (longest > 40 ? " b-one" : ""));
       box.setAttribute("role", "group");
       box.setAttribute("aria-labelledby", "qt-" + q.id);
       q.opts.forEach(function(o){
-        var b = el("button", "b-cell"); b.type = "button";
-        var m = el("span", "b-mk");
-        b.appendChild(m);
-        b.appendChild(el("span", null, o));
-        function paint(){
-          var on = arr.indexOf(o) > -1;
-          b.setAttribute("aria-pressed", on ? "true" : "false");
-          m.textContent = on ? "[×]" : "[ ]";
-        }
-        paint();
-        b.addEventListener("repaint", paint);
-        b.addEventListener("click", function(){
+        var lab = el("label", "b-opt");
+        var c = checkbox();
+        c.checked = arr.indexOf(o) > -1;
+        lab.appendChild(c);
+        lab.appendChild(el("span", null, o));
+        c.addEventListener("change", function(){
           toggle(arr, o);
-          repaintAll(box);
           mark();
         });
-        box.appendChild(b);
+        box.appendChild(lab);
       });
       body.appendChild(box);
 
@@ -564,7 +546,7 @@
         extra.placeholder = q.ph || "";
         extra.setAttribute("aria-label", q.q + " — деталі");
         extra.value = pair(q.id).t;
-        extra.style.marginTop = "12px";
+        extra.style.marginTop = "14px";
         extra.addEventListener("input", function(){ pair(q.id).t = extra.value; mark(); });
         body.appendChild(extra);
       }
@@ -585,8 +567,25 @@
       var dg = el("div", "b-dirs");
       dg.setAttribute("role", "group");
       dg.setAttribute("aria-labelledby", "qt-" + q.id);
+
+      function dirCard(label, note, mini){
+        var lab = el("label", "b-dir" + (mini ? "" : " b-dir--none"));
+        if(mini) lab.appendChild(mini);
+        var t = el("div", "b-dt");
+        var c = checkbox();
+        t.appendChild(c);
+        var txt = el("div");
+        txt.appendChild(el("b", null, label));
+        if(note) txt.appendChild(el("span", null, note));
+        t.appendChild(txt);
+        lab.appendChild(t);
+        lab.chk = c;
+        lab.txt = txt;
+        return lab;
+      }
+
+      var cards = [];
       DIRECTIONS.forEach(function(d){
-        var btn = el("button", "b-dir"); btn.type = "button";
         var mini = el("div", "b-mini");
         mini.style.setProperty("--d-bg", d.bg);
         mini.style.setProperty("--d-fg", d.fg);
@@ -600,41 +599,41 @@
           '<div class="b-mini-cover"><span>Обкладинка</span></div>' +
           '<div class="b-mini-t">Херсонський знатник</div>' +
           '<div class="b-mini-row"><span>540 ₴</span><span class="b-mini-cta">Забрати книгу</span></div>';
-        btn.appendChild(mini);
-        var t = el("div", "b-dt");
-        t.appendChild(el("b", null, d.nm));
-        t.appendChild(el("span", null, d.ds));
-        t.appendChild(el("em", null, d.cost));
-        btn.appendChild(t);
-        function paint(){ btn.setAttribute("aria-pressed", arrOf("direction").indexOf(d.nm) > -1 ? "true" : "false"); }
-        paint();
-        btn.addEventListener("repaint", paint);
-        btn.addEventListener("click", function(){
-          var arr = arrOf("direction");
-          var i = arr.indexOf(NONE);
-          if(i > -1) arr.splice(i, 1);
-          toggle(arr, d.nm);
-          repaintAll(dg); syncMock(); mark();
-        });
-        dg.appendChild(btn);
+        var card = dirCard(d.nm, d.ds, mini);
+        card.txt.appendChild(el("em", null, d.cost));
+        card.value = d.nm;
+        cards.push(card);
+        dg.appendChild(card);
       });
 
-      // Отказ — тоже ответ, и он должен быть кнопкой, а не строчкой
-      // в подсказке: иначе человек выберет «наименее чужое» и промолчит.
-      var none = el("button", "b-dir b-dir--none"); none.type = "button";
-      var nt = el("div", "b-dt");
-      nt.appendChild(el("b", null, NONE));
-      nt.appendChild(el("span", null, "Готуємо другий показ."));
-      none.appendChild(nt);
-      function paintNone(){ none.setAttribute("aria-pressed", arrOf("direction").indexOf(NONE) > -1 ? "true" : "false"); }
-      paintNone();
-      none.addEventListener("repaint", paintNone);
-      none.addEventListener("click", function(){
-        // Отказ не сочетается с выбором: он обнуляет остальные.
-        A.direction = (arrOf("direction").indexOf(NONE) > -1) ? [] : [NONE];
-        repaintAll(dg); syncMock(); mark();
+      // Отказ — тоже ответ, и он обнуляет остальные отметки.
+      var noneCard = dirCard(NONE, "Готуємо другий показ.", null);
+      noneCard.value = NONE;
+      cards.push(noneCard);
+      dg.appendChild(noneCard);
+
+      function paintDirs(){
+        var picked = arrOf("direction");
+        cards.forEach(function(card){
+          var on = picked.indexOf(card.value) > -1;
+          card.chk.checked = on;
+          card.classList.toggle("is-on", on);
+        });
+      }
+      paintDirs();
+      cards.forEach(function(card){
+        card.chk.addEventListener("change", function(){
+          var picked = arrOf("direction");
+          if(card.value === NONE){
+            A.direction = card.chk.checked ? [NONE] : [];
+          } else {
+            var i = picked.indexOf(NONE);
+            if(i > -1) picked.splice(i, 1);
+            toggle(picked, card.value);
+          }
+          paintDirs(); syncMock(); mark();
+        });
       });
-      dg.appendChild(none);
 
       body.appendChild(dg);
     }
@@ -643,16 +642,34 @@
       var fg = el("div", "b-frames");
       fg.setAttribute("role", "group");
       fg.setAttribute("aria-labelledby", "qt-" + q.id);
+      var fcards = [];
       FRAMES.forEach(function(fr){
-        var b = el("button", "b-frame"); b.type = "button";
-        b.appendChild(el("b", null, fr.nm));
-        b.appendChild(el("pre", null, fr.tree));
-        b.appendChild(el("div", "b-cost", fr.cost));
-        function paint(){ b.setAttribute("aria-pressed", arrOf("frame").indexOf(fr.nm) > -1 ? "true" : "false"); }
-        paint();
-        b.addEventListener("repaint", paint);
-        b.addEventListener("click", function(){ toggle(arrOf("frame"), fr.nm); repaintAll(fg); mark(); });
-        fg.appendChild(b);
+        var lab = el("label", "b-frame");
+        var top = el("div", "b-top");
+        var c = checkbox();
+        top.appendChild(c);
+        top.appendChild(el("b", null, fr.nm));
+        lab.appendChild(top);
+        lab.appendChild(el("pre", null, fr.tree));
+        lab.appendChild(el("div", "b-cost", fr.cost));
+        lab.chk = c; lab.value = fr.nm;
+        fcards.push(lab);
+        fg.appendChild(lab);
+      });
+      function paintFrames(){
+        var picked = arrOf("frame");
+        fcards.forEach(function(card){
+          var on = picked.indexOf(card.value) > -1;
+          card.chk.checked = on;
+          card.classList.toggle("is-on", on);
+        });
+      }
+      paintFrames();
+      fcards.forEach(function(card){
+        card.chk.addEventListener("change", function(){
+          toggle(arrOf("frame"), card.value);
+          paintFrames(); mark();
+        });
       });
       body.appendChild(fg);
     }
