@@ -164,7 +164,8 @@
 .b-fin .btn:hover{background:var(--c-paper);border-color:var(--c-paper);color:var(--c-ink)}
 .b-fin .btn--solid{background:var(--c-paper);border-color:var(--c-paper);color:var(--c-ink)}
 .b-fin .btn--solid:hover{background:#e6e4e0;border-color:#e6e4e0;color:var(--c-ink)}
-.b-out{margin-top:22px;white-space:pre-wrap;font-family:var(--font-mono);font-size:12px;line-height:1.7;
+.b-said{margin-top:18px;font-size:15px;line-height:1.5;color:rgba(255,255,255,.9);max-width:52ch}
+.b-out{margin-top:18px;white-space:pre-wrap;font-family:var(--font-mono);font-size:12px;line-height:1.7;
   letter-spacing:0;text-transform:none;color:rgba(255,255,255,.82);background:#1d1d1d;
   border:1px solid rgba(255,255,255,.18);padding:16px 18px;max-height:360px;overflow:auto}
 
@@ -215,13 +216,12 @@
 
   <section class="b-fin" aria-labelledby="fin">
     <h2 id="fin">Зібрати відповіді</h2>
-    <p>Текст брифу можна скопіювати або зберегти файлом і надіслати нам.</p>
+    <p>Відповіді підуть одразу до нас.</p>
     <div class="b-acts">
-      <button class="btn btn--solid btn--lg" id="collect" type="button">Зібрати відповіді</button>
-      <button class="btn btn--lg" id="copy" type="button">Скопіювати</button>
-      <button class="btn btn--lg" id="download" type="button">Зберегти файлом</button>
+      <button class="btn btn--solid btn--lg" id="send" type="button">Надіслати</button>
       <button class="btn btn--lg" id="reset" type="button">Очистити</button>
     </div>
+    <p class="b-said" id="said" hidden></p>
     <pre class="b-out" id="out" hidden></pre>
   </section>
 
@@ -775,34 +775,72 @@
     return L.join("\n");
   }
 
+  /* Ответ уходит в EPRIS Forms API — туда же, куда анкеты авторов журнала,
+     и оттуда же приходит уведомление в телеграм. Публичный маршрут: анкета
+     открыта по ссылке, ответы наружу сервис не отдаёт никогда. */
+  var ENDPOINT = "https://api.eprisjournal.com/forms/public/vidmar/submit";
+
+  function payload(){
+    var answers = {};
+    SECTIONS.forEach(function(sec){
+      sec.qs.forEach(function(q){
+        var v = A[q.id];
+        if(q.type === "multi" || q.type === "frames" || q.type === "direction"){
+          answers[q.id] = Array.isArray(v) ? v : [];
+        } else if(q.type === "multitext"){
+          var box = (v && typeof v === "object") ? v : {l:[], t:""};
+          answers[q.id] = Array.isArray(box.l) ? box.l : [];
+          answers[q.id + "_note"] = box.t || "";
+        } else if(q.type === "order"){
+          var order = Array.isArray(v) ? v : q.items;
+          answers[q.id] = order.map(function(item, i){ return (i + 1) + ". " + item; }).join("\n");
+        } else {
+          answers[q.id] = v || "";
+        }
+      });
+    });
+    return { website: "", answers: answers };
+  }
+
   var out = document.getElementById("out");
-  document.getElementById("collect").addEventListener("click", function(){
-    out.textContent = buildText();
-    out.hidden = false;
-    out.scrollIntoView({behavior:"smooth", block:"nearest"});
+  var said = document.getElementById("said");
+  var sendBtn = document.getElementById("send");
+
+  function say(text){ said.textContent = text; said.hidden = false; }
+
+  sendBtn.addEventListener("click", function(){
+    var answered = 0;
+    ALL.forEach(function(q){ if(A[q.id] !== undefined) answered++; });
+    sendBtn.disabled = true;
+    sendBtn.textContent = "Надсилаємо…";
+    out.hidden = true;
+    said.hidden = true;
+
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload())
+    }).then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(data){ return {ok: r.ok, data: data}; });
+    }).then(function(res){
+      if(res.ok && res.data && res.data.ok){
+        sendBtn.textContent = "Надіслано";
+        say(res.data.thankYou || "Дякуємо, бриф у нас.");
+        try{ localStorage.removeItem(KEY); }catch(e){}
+        return;
+      }
+      throw new Error((res.data && res.data.error) || "не вийшло");
+    }).catch(function(){
+      // Отправка может не дойти — тогда ответы не должны пропасть вместе с ней.
+      sendBtn.disabled = false;
+      sendBtn.textContent = "Спробувати ще раз";
+      say("Не вийшло надіслати. Скопіюйте текст нижче й надішліть нам у будь-який месенджер.");
+      out.textContent = buildText();
+      out.hidden = false;
+      if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(out.textContent).catch(function(){});
+    });
   });
-  document.getElementById("copy").addEventListener("click", function(){
-    var t = buildText(), btn = this, old = btn.textContent;
-    out.textContent = t; out.hidden = false;
-    function say(msg){
-      btn.textContent = msg;
-      setTimeout(function(){ btn.textContent = old; }, 2200);
-    }
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(t).then(function(){ say("Скопійовано"); },
-                                           function(){ say("Не вийшло — текст нижче"); });
-    } else {
-      say("Не вийшло — текст нижче");
-    }
-  });
-  document.getElementById("download").addEventListener("click", function(){
-    var blob = new Blob([buildText()], {type:"text/plain;charset=utf-8"});
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url; a.download = "vidmar-brief.txt";
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-  });
+
   document.getElementById("reset").addEventListener("click", function(){
     if(!confirm("Очистити всі відповіді? Дію не можна скасувати.")) return;
     try{ localStorage.removeItem(KEY); }catch(e){}
