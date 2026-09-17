@@ -1,5 +1,5 @@
 // Модель данных + история (undo/redo) + автосохранение
-import { t } from './i18n.js?v=202609171530';
+import { t } from './i18n.js?v=202609171538';
 
 let seq = Date.now();
 export const uid = (p = 'id') => `${p}${(seq++).toString(36)}`;
@@ -39,7 +39,11 @@ export class Store {
     this.selection = null; // {kind:'table'|'fk', id}
   }
   subscribe(fn) { this.listeners.add(fn); }
-  emit(reason) { this.listeners.forEach(fn => fn(reason)); this.persist(); }
+  emit(reason) {
+    this.listeners.forEach(fn => fn(reason));
+    // selection changes and in-progress drags are not edits
+    if (reason !== 'select' && reason !== 'move') this.persist();
+  }
 
   // Все мутации — через update(), чтобы работал undo
   update(fn, reason = 'change') {
@@ -188,15 +192,17 @@ export class Store {
     };
   }
 
+  // Debounced save; the host sets onPersist (see app.js)
   persist() {
-    try { localStorage.setItem('schemata-model', JSON.stringify(this.model)); } catch {}
+    this.dirty = true;
+    clearTimeout(this.saveTimer);
+    this.saveTimer = setTimeout(() => this.flush(), 400);
   }
-  restore() {
-    try {
-      const raw = localStorage.getItem('schemata-model') || localStorage.getItem('ferret-model');
-      if (raw) { this.model = JSON.parse(raw); return true; }
-    } catch {}
-    return false;
+  flush() {
+    clearTimeout(this.saveTimer);
+    if (!this.dirty) return;
+    this.dirty = false;
+    this.onPersist?.(this.model);
   }
 }
 

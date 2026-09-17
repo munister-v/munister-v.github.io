@@ -1,6 +1,30 @@
 // Локализация: українська та English
 const DICT = {
   uk: {
+    'ws.projects': 'Проєкти', 'ws.projectsSub': 'Усі моделі зберігаються в цьому браузері. Робіть резервну копію, щоб перенести їх на інший пристрій.',
+    'ws.search': 'Пошук проєкту', 'ws.importBackup': 'Імпорт', 'ws.exportBackup': 'Резервна копія', 'ws.newProject': 'Новий проєкт',
+    'ws.current': 'відкрито', 'ws.meta': '{t} табл. · {r} звʼязк.', 'ws.copySuffix': '(копія)', 'ws.opened': 'Проєкт відкрито', 'ws.created': 'Створено новий проєкт',
+    'ws.confirmDelete': 'Видалити проєкт «{n}» разом з історією версій? Це не можна скасувати.', 'ws.missing': 'Проєкт не знайдено',
+    'ws.restored': 'Відновлено проєктів: {n}', 'ws.usage': 'Використано {u} з ~{q} сховища браузера',
+    'ws.history': 'Історія версій', 'ws.historySub': 'Автоматичні знімки кожні 5 хвилин і перед відкриттям іншого проєкту. Іменовані версії не видаляються автоматично.',
+    'ws.versionName': 'Назва версії, напр. «Перед нормалізацією»', 'ws.saveVersion': 'Зберегти версію', 'ws.snapSaved': 'Версію збережено',
+    'ws.autoSnap': 'Автозбереження', 'ws.manualSnap': 'Версія', 'ws.restore': 'Відновити', 'ws.noSnaps': 'Версій поки немає',
+    'ws.confirmRestore': 'Відновити цю версію? Поточний стан буде збережено в історії.', 'ws.beforeRestore': 'Перед відновленням', 'ws.restoredSnap': 'Версію відновлено',
+    'ws.sameTables': 'ті самі таблиці',
+    'ws.settings': 'Налаштування', 'ws.settingsSub': 'Зберігаються в цьому браузері.',
+    'ws.setDiagram': 'Діаграма', 'ws.setTypes': 'Типи колонок', 'ws.setTypesD': 'Показувати тип праворуч від імені',
+    'ws.setCompact': 'Компактний режим', 'ws.setCompactD': 'Лише ключові колонки (PK і FK)', 'ws.setZebra': 'Смуги в рядках', 'ws.setZebraD': 'Чергування фону для читабельності',
+    'ws.setSnap': 'Привʼязка до сітки', 'ws.setSnapD': 'Крок 10 px під час перетягування',
+    'ws.setData': 'Дані', 'ws.setAuto': 'Автоматичні версії', 'ws.setAutoD': 'Знімок моделі кожні 5 хвилин, якщо були зміни',
+    'ws.setClear': 'Історія версій', 'ws.setClearD': 'Видалити всі знімки в усіх проєктах', 'ws.clear': 'Очистити',
+    'ws.confirmClearHist': 'Видалити історію версій усіх проєктів?', 'ws.histCleared': 'Історію очищено',
+    'ws.shortcuts': 'Гарячі клавіші', 'ws.keyDbl': 'По таблиці — нове поле, по полю — редагувати', 'ws.keyEnter': 'Зберегти поле й додати наступне',
+    'ws.keyCopy': 'Копіювати / вставити таблицю або DDL', 'ws.keyArrows': 'Зсунути таблицю (з ⇧ — більше)', 'ws.keyZoom': 'Масштаб',
+    'ws.savedAt': 'Збережено о {t}', 'ws.saving': 'Зберігається…', 'ws.saveErr': 'Не збережено', 'ws.saveFail': 'Не вдалося зберегти: сховище браузера заповнене. Звільніть місце в Проєктах.',
+    'ws.stat': '{t} таблиць · {c} колонок · {r} звʼязків', 'ws.offline': 'Офлайн',
+    'ws.conflict': 'Модель змінено в іншій вкладці. Ваші незбережені зміни мають пріоритет.', 'ws.synced': 'Оновлено з іншої вкладки',
+    'ws.update': 'Доступна нова версія Schemata', 'ws.updateNow': 'Оновити',
+    'sb.relations': 'Звʼязки', 'sb.noRels': 'Звʼязків ще немає',
     'd.addField': 'Додати поле',
     'ie.name': 'імʼя поля', 'ie.type': 'тип', 'ie.hint': 'Enter — зберегти й далі · Tab — до типу · Esc — закрити', 'ie.hintEdit': 'Enter — зберегти · Esc — скасувати',
     'rel.pick': 'Тип звʼязку {a} → {b}', 'rel.1n': 'Один-до-багатьох (1:N)', 'rel.1nm': 'Один-до-багатьох, обовʼязковий', 'rel.11': 'Один-до-одного (1:1)',
@@ -99,6 +123,30 @@ const DICT = {
     'w.fkNoCols': 'FK {f}: колонки не знайдено',
   },
   en: {
+    'ws.projects': 'Projects', 'ws.projectsSub': 'All models are stored in this browser. Make a backup to move them to another device.',
+    'ws.search': 'Search projects', 'ws.importBackup': 'Import', 'ws.exportBackup': 'Backup', 'ws.newProject': 'New project',
+    'ws.current': 'open', 'ws.meta': '{t} tables · {r} relations', 'ws.copySuffix': '(copy)', 'ws.opened': 'Project opened', 'ws.created': 'New project created',
+    'ws.confirmDelete': 'Delete project “{n}” with its version history? This cannot be undone.', 'ws.missing': 'Project not found',
+    'ws.restored': 'Projects restored: {n}', 'ws.usage': '{u} of ~{q} browser storage used',
+    'ws.history': 'Version history', 'ws.historySub': 'Automatic snapshots every 5 minutes and before switching projects. Named versions are never trimmed automatically.',
+    'ws.versionName': 'Version name, e.g. “Before normalisation”', 'ws.saveVersion': 'Save version', 'ws.snapSaved': 'Version saved',
+    'ws.autoSnap': 'Autosave', 'ws.manualSnap': 'Version', 'ws.restore': 'Restore', 'ws.noSnaps': 'No versions yet',
+    'ws.confirmRestore': 'Restore this version? The current state is kept in the history.', 'ws.beforeRestore': 'Before restore', 'ws.restoredSnap': 'Version restored',
+    'ws.sameTables': 'same tables',
+    'ws.settings': 'Settings', 'ws.settingsSub': 'Stored in this browser.',
+    'ws.setDiagram': 'Diagram', 'ws.setTypes': 'Column types', 'ws.setTypesD': 'Show the type next to the name',
+    'ws.setCompact': 'Compact mode', 'ws.setCompactD': 'Key columns only (PK and FK)', 'ws.setZebra': 'Striped rows', 'ws.setZebraD': 'Alternate row backgrounds',
+    'ws.setSnap': 'Snap to grid', 'ws.setSnapD': '10 px steps while dragging',
+    'ws.setData': 'Data', 'ws.setAuto': 'Automatic versions', 'ws.setAutoD': 'Snapshot the model every 5 minutes when it changed',
+    'ws.setClear': 'Version history', 'ws.setClearD': 'Delete all snapshots in all projects', 'ws.clear': 'Clear',
+    'ws.confirmClearHist': 'Delete the version history of every project?', 'ws.histCleared': 'History cleared',
+    'ws.shortcuts': 'Keyboard shortcuts', 'ws.keyDbl': 'On a table — new field, on a field — edit', 'ws.keyEnter': 'Save the field and add the next',
+    'ws.keyCopy': 'Copy / paste a table or DDL', 'ws.keyArrows': 'Nudge a table (⇧ for more)', 'ws.keyZoom': 'Zoom',
+    'ws.savedAt': 'Saved at {t}', 'ws.saving': 'Saving…', 'ws.saveErr': 'Not saved', 'ws.saveFail': 'Could not save: browser storage is full. Free some space in Projects.',
+    'ws.stat': '{t} tables · {c} columns · {r} relations', 'ws.offline': 'Offline',
+    'ws.conflict': 'The model changed in another tab. Your unsaved edits win.', 'ws.synced': 'Updated from another tab',
+    'ws.update': 'A new version of Schemata is available', 'ws.updateNow': 'Update',
+    'sb.relations': 'Relations', 'sb.noRels': 'No relations yet',
     'd.addField': 'Add field',
     'ie.name': 'field name', 'ie.type': 'type', 'ie.hint': 'Enter — save & next · Tab — to type · Esc — close', 'ie.hintEdit': 'Enter — save · Esc — cancel',
     'rel.pick': 'Relation type {a} → {b}', 'rel.1n': 'One-to-many (1:N)', 'rel.1nm': 'One-to-many, mandatory', 'rel.11': 'One-to-one (1:1)',
@@ -225,5 +273,6 @@ export function applyStatic(root = document) {
   document.documentElement.lang = lang;
   root.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   root.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.dataset.i18nTitle); el.setAttribute('aria-label', el.title); });
+  root.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   root.querySelectorAll('[data-i18n-label]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nLabel)));
 }

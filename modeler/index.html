@@ -6,12 +6,15 @@
   <title>Schemata — Oracle data modeler</title>
   <meta name="description" content="Schemata: open-source browser data modeler for Oracle Database. ER diagrams, DDL generation and DDL import.">
   <meta name="theme-color" content="#ffffff">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="color-scheme" content="light only">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%236366f1'/><stop offset='1' stop-color='%238b5cf6'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='url(%23g)'/><rect x='6' y='7' width='9' height='8' rx='2' fill='white'/><rect x='17' y='17' width='9' height='8' rx='2' fill='white' fill-opacity='.85'/><path d='M15 11h3.5a1.5 1.5 0 0 1 1.5 1.5V17' fill='none' stroke='white' stroke-width='1.6'/></svg>">
-  <link rel="stylesheet" href="style.css?v=202609171530">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%230f766e'/><stop offset='1' stop-color='%2314b8a6'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='url(%23g)'/><rect x='6' y='7' width='9' height='8' rx='2' fill='white'/><rect x='17' y='17' width='9' height='8' rx='2' fill='white' fill-opacity='.85'/><path d='M15 11h3.5a1.5 1.5 0 0 1 1.5 1.5V17' fill='none' stroke='white' stroke-width='1.6'/></svg>">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css?v=202609171538">
 </head>
 <body>
   <header class="top">
@@ -20,7 +23,6 @@
       <span class="brand-name">Schemata</span>
       <span class="crumb-sep">/</span>
       <input id="model-name" class="model-name" spellcheck="false" data-i18n-label="model.name.t">
-      <span class="saved" id="saved"><i></i><span data-i18n="st.saved"></span></span>
     </div>
 
     <button class="cmdk" data-action="palette">
@@ -32,7 +34,8 @@
     <div class="top-end">
       <div class="btn-group">
         <button class="tb" data-action="new" data-i18n-title="tb.new.t"><svg viewBox="0 0 16 16"><path d="M4 1.75h5.25L12.5 5v9.25H4z M9 1.75V5.25h3.5"/></svg></button>
-        <button class="tb" data-action="open" data-i18n-title="tb.open.t"><svg viewBox="0 0 16 16"><path d="M1.75 4.25v8.5h12.5v-7H7.5L6 4.25z"/></svg></button>
+        <button class="tb" data-action="projects" data-i18n-title="ws.projects"><svg viewBox="0 0 16 16"><path d="M1.75 4.25v8.5h12.5v-7H7.5L6 4.25z"/></svg></button>
+        <button class="tb" data-action="history" data-i18n-title="ws.history"><svg viewBox="0 0 16 16"><path d="M2.5 8a5.5 5.5 0 1 0 1.6-3.9M2.5 2.5v2.2h2.2M8 5v3.2l2 1.3"/></svg></button>
         <button class="tb" data-action="save" data-i18n-title="tb.save.t"><svg viewBox="0 0 16 16"><path d="M8 2.5v7.5M5 7l3 3 3-3M2.75 13.25h10.5"/></svg></button>
       </div>
       <div class="btn-group">
@@ -80,6 +83,8 @@
 
     <aside id="panel" class="panel"></aside>
   </div>
+  <footer class="statusbar" id="statusbar"></footer>
+  <div class="update-bar" id="update-bar" hidden><span class="pulse"></span><span data-i18n="ws.update"></span><button data-i18n="ws.updateNow"></button></div>
 
   <dialog id="ddl-dialog">
     <form method="dialog">
@@ -139,6 +144,87 @@
     </form>
   </dialog>
 
+  <dialog id="projects-dialog" class="wide">
+    <form method="dialog">
+      <header>
+        <span class="dlg-ic"><svg viewBox="0 0 16 16"><path d="M1.75 4.25v8.5h12.5v-7H7.5L6 4.25z"/></svg></span>
+        <div><h2 data-i18n="ws.projects"></h2><p class="sub" data-i18n="ws.projectsSub"></p></div>
+        <button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </header>
+      <div class="proj-tools">
+        <label class="sb-search grow"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg><input id="proj-search" type="search" autocomplete="off" data-i18n-ph="ws.search"></label>
+        <button class="secondary" type="button" id="proj-import"><span data-i18n="ws.importBackup"></span></button>
+        <button class="secondary" type="button" id="proj-export"><span data-i18n="ws.exportBackup"></span></button>
+        <button class="primary" type="button" id="proj-new"><span data-i18n="ws.newProject"></span></button>
+      </div>
+      <div class="proj-list" id="proj-list"></div>
+      <footer class="proj-foot"><span id="proj-usage" class="st-usage"></span></footer>
+    </form>
+  </dialog>
+
+  <dialog id="history-dialog">
+    <form method="dialog">
+      <header>
+        <span class="dlg-ic"><svg viewBox="0 0 16 16"><path d="M2.5 8a5.5 5.5 0 1 0 1.6-3.9M2.5 2.5v2.2h2.2M8 5v3.2l2 1.3"/></svg></span>
+        <div><h2 data-i18n="ws.history"></h2><p class="sub" data-i18n="ws.historySub"></p></div>
+        <button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </header>
+      <div class="hist-new"><input id="hist-label" autocomplete="off" data-i18n-ph="ws.versionName"><button class="primary" type="button" id="hist-save"><span data-i18n="ws.saveVersion"></span></button></div>
+      <ol class="hist-list" id="hist-list"></ol>
+    </form>
+  </dialog>
+
+  <dialog id="settings-dialog">
+    <form method="dialog">
+      <header>
+        <span class="dlg-ic"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.75v1.5M8 12.75v1.5M1.75 8h1.5M12.75 8h1.5M3.6 3.6l1.05 1.05M11.35 11.35l1.05 1.05M3.6 12.4l1.05-1.05M11.35 4.65l1.05-1.05"/></svg></span>
+        <div><h2 data-i18n="ws.settings"></h2><p class="sub" data-i18n="ws.settingsSub"></p></div>
+        <button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </header>
+      <div class="set-group">
+        <h4 data-i18n="ws.setDiagram"></h4>
+        <label class="set-row"><span><b data-i18n="ws.setTypes"></b><small data-i18n="ws.setTypesD"></small></span><span class="switch"><input type="checkbox" id="set-showTypes"><span></span></span></label>
+        <label class="set-row"><span><b data-i18n="ws.setCompact"></b><small data-i18n="ws.setCompactD"></small></span><span class="switch"><input type="checkbox" id="set-compact"><span></span></span></label>
+        <label class="set-row"><span><b data-i18n="ws.setZebra"></b><small data-i18n="ws.setZebraD"></small></span><span class="switch"><input type="checkbox" id="set-zebra"><span></span></span></label>
+        <label class="set-row"><span><b data-i18n="ws.setSnap"></b><small data-i18n="ws.setSnapD"></small></span><span class="switch"><input type="checkbox" id="set-snap"><span></span></span></label>
+      </div>
+      <div class="set-group">
+        <h4 data-i18n="ws.setData"></h4>
+        <label class="set-row"><span><b data-i18n="ws.setAuto"></b><small data-i18n="ws.setAutoD"></small></span><span class="switch"><input type="checkbox" id="set-autoSnapshot"><span></span></span></label>
+        <div class="set-row"><span><b data-i18n="ws.setClear"></b><small data-i18n="ws.setClearD"></small></span><button class="secondary danger-text" type="button" id="set-clear-history" data-i18n="ws.clear"></button></div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="shortcuts-dialog">
+    <form method="dialog">
+      <header>
+        <span class="dlg-ic"><svg viewBox="0 0 16 16"><rect x="1.75" y="4" width="12.5" height="8" rx="1.5"/><path d="M4 6.5h1M7 6.5h1M10 6.5h2M4.5 9.5h7"/></svg></span>
+        <div><h2 data-i18n="ws.shortcuts"></h2></div>
+        <button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </header>
+      <div class="keys">
+        <div><kbd>⌘</kbd><kbd>K</kbd><span data-i18n="cmd.open"></span></div>
+        <div><kbd>/</kbd><span data-i18n="sb.search"></span></div>
+        <div><kbd>T</kbd><span data-i18n="tb.table"></span></div>
+        <div><kbd>R</kbd><span data-i18n="tb.relation"></span></div>
+        <div><kbd>V</kbd><span data-i18n="tb.select"></span></div>
+        <div><kbd>F</kbd><span data-i18n="cm.fit"></span></div>
+        <div><kbd>2×</kbd><span data-i18n="ws.keyDbl"></span></div>
+        <div><kbd>Enter</kbd><span data-i18n="ws.keyEnter"></span></div>
+        <div><kbd>⌘</kbd><kbd>D</kbd><span data-i18n="cm.duplicate"></span></div>
+        <div><kbd>⌘</kbd><kbd>C</kbd> <kbd>⌘</kbd><kbd>V</kbd><span data-i18n="ws.keyCopy"></span></div>
+        <div><kbd>⌘</kbd><kbd>Z</kbd><span data-i18n="tb.undo.t"></span></div>
+        <div><kbd>⌘</kbd><kbd>⇧</kbd><kbd>Z</kbd><span data-i18n="tb.redo.t"></span></div>
+        <div><kbd>⌘</kbd><kbd>S</kbd><span data-i18n="tb.save"></span></div>
+        <div><kbd>←↑→↓</kbd><span data-i18n="ws.keyArrows"></span></div>
+        <div><kbd>Del</kbd><span data-i18n="cm.delete"></span></div>
+        <div><kbd>+</kbd> <kbd>−</kbd><span data-i18n="ws.keyZoom"></span></div>
+        <div><kbd>?</kbd><span data-i18n="ws.shortcuts"></span></div>
+      </div>
+    </form>
+  </dialog>
+
   <div class="ctx" id="ctx" hidden></div>
   <div class="drop" id="drop" hidden><div><svg viewBox="0 0 16 16"><path d="M8 10V2.5M5 5.5l3-3 3 3M2.75 13.25h10.5"/></svg><span data-i18n="t.dropHint"></span></div></div>
   <div id="toast" role="status"></div>
@@ -153,6 +239,6 @@
       document.body.append(d);
     }, 4000);
   </script>
-  <script type="module" src="js/app.js?v=202609171530"></script>
+  <script type="module" src="js/app.js?v=202609171538"></script>
 </body>
 </html>

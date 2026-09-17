@@ -5,6 +5,11 @@ Schemata is an open-source browser data modeller for **Oracle Database**. Plain 
 Live: https://munister.com.ua/modeler/
 
 ## Features
+- Projects: any number of models in the browser, with search, rename, duplicate, delete, full backup / restore
+- Version history: automatic snapshots every 5 minutes, named versions, one-click restore with a safety snapshot
+- Debounced autosave with a status bar (saved time, counts, storage used), quota recovery, cross-tab sync
+- Offline-capable PWA: a service worker caches the app, and a banner offers new releases
+- Settings: column types, compact keys-only view, striped rows, snap to grid
 - Inline field editing on the diagram: double-click a table to add fields (Enter adds the next one), a field to edit it; types are guessed from names, and `CUSTOMER_ID` automatically becomes a foreign key to `CUSTOMERS`
 - Right-click menus for tables, fields and relations: 1:N, 1:1, identifying and M:N (junction table) relations, PK / NOT NULL / unique / index toggles, field types, ordering, ON DELETE
 - Crow's-foot notation with optionality circles and one-to-one bars
@@ -53,7 +58,11 @@ js/ddl-parse.js  Oracle DDL importer
 js/i18n.js       Ukrainian / English strings
 js/templates.js  ready-made schemas and column presets
 js/checks.js     model validation
+js/storage.js    projects, snapshots, settings in localStorage
+js/workspace.js  projects / history / settings UI, status bar, sync, updates
 js/app.js        toolbar, dialogs, wiring
+sw.js            service worker (offline, updates)
+bump-version.sh  stamps a release version on every import and the service worker
 ```
 
 ## License

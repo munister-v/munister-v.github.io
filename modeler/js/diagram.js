@@ -1,5 +1,5 @@
 // SVG diagram: tables, relations, pan/zoom, drag, relation mode
-import { t as tr } from './i18n.js?v=202609171530';
+import { t as tr } from './i18n.js?v=202609171538';
 
 const NS = 'http://www.w3.org/2000/svg';
 const HEADER = 38, ROW = 24, PAD = 14;
@@ -10,6 +10,13 @@ const FONT = {
   type: "11px ui-monospace,'SF Mono',Menlo,Consolas,monospace",
   schema: "10px ui-monospace,'SF Mono',Menlo,Consolas,monospace",
 };
+// display options (set from settings)
+const OPTS = { showTypes: true, compact: false, zebra: true, snap: true };
+let STORE = null;
+export const setDiagramOptions = o => Object.assign(OPTS, o);
+// compact mode keeps only key columns
+export const visibleColumns = t => OPTS.compact && STORE ? t.columns.filter(c => c.pk || STORE.isFkColumn(t.id, c.id)) : t.columns;
+
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
 // Ширина тексту через canvas, з кешем
@@ -26,18 +33,20 @@ function textW(str, font) {
 }
 
 export function tableSize(t) {
-  const nameW = Math.max(0, ...t.columns.map(c => textW(c.name, c.pk || !c.nullable ? FONT.colNN : FONT.col)));
-  const typeW = Math.max(0, ...t.columns.map(c => textW(c.type || '', FONT.type)));
+  const cols = visibleColumns(t);
+  const nameW = Math.max(0, ...cols.map(c => textW(c.name, c.pk || !c.nullable ? FONT.colNN : FONT.col)));
+  const typeW = OPTS.showTypes ? Math.max(0, ...cols.map(c => textW(c.type || '', FONT.type))) : 0;
   const titleW = textW(t.name, FONT.title) + (t.schema ? textW(t.schema.toUpperCase(), FONT.schema) * 1.15 + 20 : 0);
   return {
     w: Math.ceil(Math.max(210, PAD + 28 + nameW + 28 + typeW + PAD, PAD * 2 + titleW + 30)),
-    h: HEADER + Math.max(1, t.columns.length) * ROW + 8,
+    h: HEADER + Math.max(1, cols.length) * ROW + 8,
   };
 }
 
 export class Diagram {
   constructor(svg, store, hooks) {
     this.svg = svg; this.store = store; this.hooks = hooks;
+    STORE = store;
     this.view = { x: 0, y: 0, k: 1 };
     this.mode = 'select'; // 'select' | 'relation'
     this.relFrom = null;
@@ -89,16 +98,17 @@ export class Diagram {
     const { w, h } = tableSize(t);
     const selected = sel?.kind === 'table' && sel.id === t.id;
     const relSrc = this.relFrom === t.id;
-    const rows = t.columns.map((c, i) => {
+    const cols = visibleColumns(t);
+    const rows = cols.map((c, i) => {
       const top = HEADER + 4 + i * ROW, y = top + 16;
       const fk = this.store.isFkColumn(t.id, c.id);
       const key = c.pk && fk ? `<rect class="kbg pk" x="${PAD - 3}" y="${top + 5}" width="22" height="12" rx="3"/><text x="${PAD + 8}" y="${y - 1}" class="key pk" text-anchor="middle">PF</text>`
         : c.pk ? `<rect class="kbg pk" x="${PAD - 3}" y="${top + 5}" width="22" height="12" rx="3"/><text x="${PAD + 8}" y="${y - 1}" class="key pk" text-anchor="middle">PK</text>`
         : fk ? `<rect class="kbg fk" x="${PAD - 3}" y="${top + 5}" width="22" height="12" rx="3"/><text x="${PAD + 8}" y="${y - 1}" class="key fk" text-anchor="middle">FK</text>` : '';
       const nn = !c.nullable || c.pk ? ' nn' : '';
-      return `${i % 2 ? `<rect class="zebra" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>` : ''}<rect class="row-hit" data-col="${c.id}" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>${key}
+      return `${i % 2 && OPTS.zebra ? `<rect class="zebra" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>` : ''}<rect class="row-hit" data-col="${c.id}" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>${key}
         <text x="${PAD + 28}" y="${y}" class="col${nn}">${esc(c.name)}</text>
-        <text x="${w - PAD}" y="${y}" class="type" text-anchor="end">${esc(c.type)}</text>`;
+        ${OPTS.showTypes ? `<text x="${w - PAD}" y="${y}" class="type" text-anchor="end">${esc(c.type)}</text>` : ''}`;
     }).join('');
     const cls = ['table', selected && 'selected', relSrc && 'rel-src', this.related?.has(t.id) && 'related', t.color && `c-${t.color}`].filter(Boolean).join(' ');
     return `<g class="${cls}" data-id="${t.id}" transform="translate(${t.x},${t.y})">
@@ -108,7 +118,7 @@ export class Diagram {
       <rect class="accent" x="0" y="${HEADER - 2}" width="${w}" height="2"/>
       <text x="${PAD}" y="25" class="title">${esc(t.name)}</text>
       ${t.schema ? `<text x="${w - PAD}" y="24" class="schema" text-anchor="end">${esc(t.schema.toUpperCase())}</text>` : `<text x="${w - PAD}" y="24" class="schema" text-anchor="end">${t.columns.length}</text>`}
-      ${t.columns.length ? rows : `<text x="${PAD}" y="${HEADER + 19}" class="empty">${tr('d.noColumns')}</text>`}
+      ${cols.length ? rows : `<text x="${PAD}" y="${HEADER + 19}" class="empty">${tr('d.noColumns')}</text>`}
       <rect class="head-hit" data-head="1" width="${w}" height="${HEADER}"/>
       <rect class="outline" x="-3" y="-3" width="${w + 6}" height="${h + 6}" rx="13"/>
       ${selected ? `<g class="add-field" data-add="1" transform="translate(0,${h + 8})"><rect width="${w}" height="26" rx="8"/><text x="${w / 2}" y="17" text-anchor="middle">+ ${tr('d.addField')}</text></g>` : ''}
@@ -183,7 +193,8 @@ export class Diagram {
         this.view.x = e.clientX - drag.sx; this.view.y = e.clientY - drag.sy; this.applyView();
       } else {
         const p = this.toWorld(e);
-        const nx = Math.round((p.x - drag.dx) / 10) * 10, ny = Math.round((p.y - drag.dy) / 10) * 10;
+        const g = OPTS.snap ? 10 : 1;
+        const nx = Math.round((p.x - drag.dx) / g) * g, ny = Math.round((p.y - drag.dy) / g) * g;
         if (nx === drag.t.x && ny === drag.t.y) return;
         if (!drag.moved) { this.store.checkpoint(); drag.moved = true; }
         const t = drag.t;
@@ -191,7 +202,7 @@ export class Diagram {
       }
     });
 
-    const end = () => { if (drag?.moved) this.store.persist(); drag = null; svg.classList.remove('panning'); };
+    const end = () => { if (drag?.moved) { this.store.persist(); this.store.emit('moved'); } drag = null; svg.classList.remove('panning'); };
     svg.addEventListener('pointerup', end);
     svg.addEventListener('pointercancel', end);
 
@@ -338,7 +349,7 @@ export class Diagram {
 function relationPath(child, parent, f) {
   const a = tableSize(child), b = tableSize(parent);
   const rowY = (t, colId) => {
-    const i = t.columns.findIndex(c => c.id === colId);
+    const i = visibleColumns(t).findIndex(c => c.id === colId);
     return t.y + (i < 0 ? HEADER / 2 : HEADER + 4 + i * ROW + ROW / 2);
   };
   const ay = rowY(child, f.columns[0]?.from), by = rowY(parent, f.columns[0]?.to);

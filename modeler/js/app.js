@@ -1,14 +1,16 @@
-import { Store, newTable, nextTableName, newColumn, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609171530';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609171530';
-import { checkModel, fixFkIndexes } from './checks.js?v=202609171530';
-import { Diagram, tableSize } from './diagram.js?v=202609171530';
-import { Panel } from './panel.js?v=202609171530';
-import { Sidebar } from './sidebar.js?v=202609171530';
-import { Palette } from './palette.js?v=202609171530';
-import { generateDDL } from './ddl-gen.js?v=202609171530';
-import { parseDDL } from './ddl-parse.js?v=202609171530';
-import { SAMPLE_DDL } from './sample.js?v=202609171530';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609171530';
+import { Store, newTable, nextTableName, newColumn, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609171538';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609171538';
+import { checkModel, fixFkIndexes } from './checks.js?v=202609171538';
+import { Diagram, tableSize } from './diagram.js?v=202609171538';
+import { Panel } from './panel.js?v=202609171538';
+import { Sidebar } from './sidebar.js?v=202609171538';
+import { Palette } from './palette.js?v=202609171538';
+import { generateDDL } from './ddl-gen.js?v=202609171538';
+import { parseDDL } from './ddl-parse.js?v=202609171538';
+import { SAMPLE_DDL } from './sample.js?v=202609171538';
+import { initWorkspace } from './workspace.js?v=202609171538';
+import { migrateModel } from './storage.js?v=202609171538';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609171538';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -26,6 +28,7 @@ const diagram = new Diagram($('#canvas'), store, {
 const panel = new Panel($('#panel'), store, { toast: (m, e) => toast(m, e), copyTableDDL: id => copyTableDDL(id) });
 const pick = id => { store.select({ kind: 'table', id }); diagram.centerOn(id); };
 const sidebar = new Sidebar($('#sidebar'), store, { onPick: pick });
+sidebar.onPickFk = id => { const f = store.model.fks.find(x => x.id === id); store.select({ kind: 'fk', id }); if (f) diagram.centerOn(f.fromTable); };
 
 // ---------- model name + saved indicator ----------
 const nameInput = $('#model-name');
@@ -34,14 +37,7 @@ nameInput.addEventListener('change', () => {
   store.update(m => { m.name = v; });
 });
 nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') nameInput.blur(); });
-let savedTimer;
-store.subscribe(r => {
-  if (document.activeElement !== nameInput) nameInput.value = store.model.name;
-  if (r === 'select') return;
-  const el = $('#saved');
-  el.classList.add('show');
-  clearTimeout(savedTimer); savedTimer = setTimeout(() => el.classList.remove('show'), 1600);
-});
+store.subscribe(() => { if (document.activeElement !== nameInput) nameInput.value = store.model.name; });
 
 // ---------- language ----------
 function renderLang() {
@@ -175,7 +171,7 @@ const actions = {
   png: () => exportPNG(),
   duplicate: () => { if (store.selection?.kind === 'table') duplicateTable(store.selection.id); },
   open: async () => {
-    try { store.load(JSON.parse(await readFile('.json,application/json'))); diagram.fit(); toast(t('t.opened')); }
+    try { ws.create(migrateModel(JSON.parse(await readFile('.json,application/json')))); toast(t('t.opened')); }
     catch (e) { toast(t('t.openFail', { e: e.message }), true); }
   },
   save: () => download(fileName('schemata.json'), JSON.stringify(store.model, null, 2), 'application/json'),
@@ -203,6 +199,7 @@ const palette = new Palette(store, {
     ['table', 'tb.table', 'T'], ['relation', 'tb.relation', 'R'], ['layout', 'tb.layout'], ['fit', 'tb.fit.t', 'F'],
     ['ddl', 'tb.ddl.t'], ['import', 'tb.import'], ['svg', 'tb.svg.t'],
     ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
+    ['projects', 'ws.projects'], ['history', 'ws.history'], ['snapshot', 'ws.saveVersion'], ['settings', 'ws.settings'], ['shortcuts', 'ws.shortcuts', '?'],
     ['save', 'tb.save', '⌘S'], ['open', 'tb.open'],
     ['undo', 'tb.undo.t'], ['redo', 'tb.redo.t'],
   ].map(([a, key, hint]) => ({ label: t(key).replace(/\s*\(.*\)$/, ''), hint, svg: ICONS[a], run: actions[a] })),
@@ -254,6 +251,7 @@ document.addEventListener('keydown', e => {
     const map = { KeyT: 'table', KeyR: 'relation', KeyF: 'fit', KeyV: 'select' };
     if (map[e.code]) actions[map[e.code]]();
     if (e.key === '/') { e.preventDefault(); sidebar.focus(); }
+    if (e.key === '?') { e.preventDefault(); actions.shortcuts(); }
     if (e.key === '=' || e.key === '+') actions['zoom-in']();
     if (e.key === '-') actions['zoom-out']();
   }
@@ -286,13 +284,12 @@ $('#tpl-grid').addEventListener('click', e => {
   const open = e.target.closest('[data-tpl]'), add = e.target.closest('[data-tpl-add]');
   if (!open && !add) return;
   $('#tpl-dialog').close();
-  if (open?.dataset.tpl === 'blank') { store.load(emptyModel()); diagram.fit(); return; }
+  if (open?.dataset.tpl === 'blank') { ws.create(emptyModel()); toast(t('ws.created')); return; }
   const tp = TEMPLATES.find(x => x.id === (open || add).dataset[open ? 'tpl' : 'tplAdd']);
   const name = tp.name[getLang()] || tp.name.en;
-  importDDL(tp.ddl, !!open);
-  if (open) store.update(m => { m.name = name; }, 'panel');
+  if (open) { ws.create(templateModel(tp)); toast(t('t.tplLoaded', { n: name })); return; }
+  importDDL(tp.ddl, false);
   // colour tables of a freshly opened template so the diagram reads at a glance
-  if (open) store.update(m => m.tables.forEach((x, i) => { x.color = TABLE_COLORS[(i % 6) + 1]; }), 'load');
   toast(t('t.tplLoaded', { n: name }));
 });
 
@@ -785,7 +782,7 @@ window.addEventListener('drop', async e => {
   if (!file) return;
   const text = await file.text();
   if (/\.json$/i.test(file.name)) {
-    try { store.load(JSON.parse(text)); diagram.fit(); toast(t('t.opened')); } catch (err) { toast(t('t.openFail', { e: err.message }), true); }
+    try { ws.create(migrateModel(JSON.parse(text))); toast(t('t.opened')); } catch (err) { toast(t('t.openFail', { e: err.message }), true); }
   } else importDDL(text, !store.model.tables.length);
 });
 
@@ -810,17 +807,25 @@ function exportPNG() {
 }
 
 // ---------- start ----------
-try { localStorage.removeItem('ferret-theme'); } catch {}
-const restored = store.restore() && store.model.tables;
-renderLang();
-if (restored) { store.emit('load'); requestAnimationFrame(() => diagram.fit(false)); }
-else {
-  // first visit: open the online-store template, coloured
-  const tp = TEMPLATES[0];
-  importDDL(tp.ddl, true);
-  store.model.name = tp.name[getLang()] || tp.name.en;
-  store.model.tables.forEach((x, i) => { x.color = TABLE_COLORS[(i % 6) + 1]; });
-  store.undoStack = [];
-  store.emit('load');
+// Build a coloured, laid-out model from a template without touching the current project
+function templateModel(tp) {
+  const { model } = parseDDL(tp.ddl);
+  const m = { ...emptyModel(), ...model, name: tp.name[getLang()] || tp.name.en };
+  autoLayout(m);
+  m.tables.forEach((x, i) => { x.color = TABLE_COLORS[(i % 6) + 1]; });
+  return m;
 }
+renderLang();
+const ws = initWorkspace({
+  store, diagram, toast, download, readFile,
+  openTemplates: () => openTemplates(),
+  firstModel: blank => blank ? emptyModel() : templateModel(TEMPLATES[0]),
+  afterLoad: () => { nameInput.value = store.model.name; updateCheckBadge(); },
+});
+actions.projects = () => ws.projects();
+actions.history = () => ws.history();
+actions.settings = () => ws.settings();
+actions.shortcuts = () => ws.shortcuts();
+actions.snapshot = () => { ws.snapshot(false); toast(t('ws.snapSaved')); };
+nameInput.addEventListener('change', () => ws.renderStatus());
 window.__schemataReady = true;
