@@ -1,5 +1,5 @@
 // Модель данных + история (undo/redo) + автосохранение
-import { t } from './i18n.js?v=202609171817';
+import { t } from './i18n.js?v=202609172122';
 
 let seq = Date.now();
 export const uid = (p = 'id') => `${p}${(seq++).toString(36)}`;
@@ -23,8 +23,17 @@ export function newView(name, sql, x = 40, y = 40) {
   return { id: uid('v'), name, schema: '', sql, comment: '', color: '', x, y };
 }
 
+export function newDiagram(name = t('diag.main') || 'Main') {
+  return { id: uid('d'), name, tableIds: [], viewIds: [], positions: {}, zones: [], zoom: { x: 0, y: 0, k: 1 } };
+}
+
+export function newZone(name = t('zone.default') || 'Subject Area', color = 'blue', x = 40, y = 40, w = 420, h = 300) {
+  return { id: uid('z'), name, color, x, y, w, h };
+}
+
 export function emptyModel() {
-  return { format: 'schemata-model', version: 2, name: t('model.default'), tables: [], fks: [], sequences: [], views: [] };
+  const d = newDiagram(t('diag.main') || 'Main');
+  return { format: 'schemata-model', version: 4, name: t('model.default'), tables: [], fks: [], sequences: [], views: [], diagrams: [d], activeDiagram: d.id };
 }
 
 export function newColumn(name = 'COLUMN_1', type = 'VARCHAR2(100 CHAR)') {
@@ -93,14 +102,162 @@ export class Store {
   fixSelection() {
     const s = this.selection;
     if (!s) return;
-    const ok = s.kind === 'table' ? this.table(s.id) : s.kind === 'view' ? this.view(s.id) : s.kind === 'seq' ? this.sequence(s.id) : this.model.fks.find(f => f.id === s.id);
+    const ok = s.kind === 'table' ? this.table(s.id) :
+               s.kind === 'view' ? this.view(s.id) :
+               s.kind === 'seq' ? this.sequence(s.id) :
+               s.kind === 'zone' ? this.zone(s.id) :
+               s.kind === 'multi' ? (s.ids && s.ids.length > 0) :
+               this.model.fks.find(f => f.id === s.id);
     if (!ok) this.selection = null;
+  }
+
+  get activeDiagram() {
+    const m = this.model;
+    if (!m.diagrams || !m.diagrams.length) return null;
+    return m.diagrams.find(d => d.id === m.activeDiagram) || m.diagrams[0];
+  }
+
+  posOf(id) {
+    const d = this.activeDiagram;
+    if (d?.positions && d.positions[id]) return d.positions[id];
+    const t = this.table(id) || this.view(id);
+    return { x: t?.x ?? 40, y: t?.y ?? 40 };
+  }
+
+  setPos(id, x, y) {
+    const d = this.activeDiagram;
+    if (d) {
+      d.positions ||= {};
+      d.positions[id] = { x, y };
+    }
+    const t = this.table(id) || this.view(id);
+    if (t) { t.x = x; t.y = y; }
+  }
+
+  isItemOnActiveDiagram(id) {
+    const d = this.activeDiagram;
+    if (!d || !Array.isArray(d.tableIds)) return true;
+    return d.tableIds.includes(id) || (d.viewIds || []).includes(id);
+  }
+
+  addDiagram(name = t('diag.new') || 'Diagram') {
+    let diag;
+    this.update(m => {
+      m.diagrams ||= [];
+      diag = newDiagram(name);
+      m.diagrams.push(diag);
+      m.activeDiagram = diag.id;
+    });
+    return diag;
+  }
+
+  duplicateDiagram(id) {
+    let copy;
+    this.update(m => {
+      const src = m.diagrams.find(d => d.id === id);
+      if (!src) return;
+      copy = structuredClone(src);
+      copy.id = uid('d');
+      copy.name = `${src.name} (${t('diag.copy') || 'copy'})`;
+      m.diagrams.push(copy);
+      m.activeDiagram = copy.id;
+    });
+    return copy;
+  }
+
+  deleteDiagram(id) {
+    this.update(m => {
+      if (!m.diagrams || m.diagrams.length <= 1) return;
+      m.diagrams = m.diagrams.filter(d => d.id !== id);
+      if (m.activeDiagram === id) {
+        m.activeDiagram = m.diagrams[0].id;
+      }
+    });
+    this.selection = null;
+    this.emit('load');
+  }
+
+  renameDiagram(id, name) {
+    this.update(m => {
+      const d = m.diagrams.find(x => x.id === id);
+      if (d) d.name = name;
+    });
+  }
+
+  setActiveDiagram(id) {
+    if (this.model.activeDiagram === id) return;
+    this.model.activeDiagram = id;
+    this.selection = null;
+    this.emit('load');
+  }
+
+  addTableToDiagram(tableId, diagramId = this.model.activeDiagram, pos = null) {
+    this.update(m => {
+      const d = (m.diagrams || []).find(x => x.id === diagramId);
+      if (d && !d.tableIds.includes(tableId)) {
+        d.tableIds.push(tableId);
+        d.positions ||= {};
+        const t = m.tables.find(x => x.id === tableId);
+        d.positions[tableId] = pos ? { ...pos } : { x: t?.x ?? 40, y: t?.y ?? 40 };
+      }
+    });
+  }
+
+  removeTableFromDiagram(tableId, diagramId = this.model.activeDiagram) {
+    this.update(m => {
+      const d = (m.diagrams || []).find(x => x.id === diagramId);
+      if (d) {
+        d.tableIds = d.tableIds.filter(id => id !== tableId);
+        if (d.positions) delete d.positions[tableId];
+      }
+    });
+    if (this.selection?.id === tableId) {
+      this.selection = null;
+      this.emit('select');
+    }
+  }
+
+  addZone(name = t('zone.default') || 'Subject Area', color = 'blue', x = 40, y = 40, w = 420, h = 300) {
+    let zone;
+    this.update(m => {
+      const d = this.activeDiagram;
+      if (!d) return;
+      d.zones ||= [];
+      zone = newZone(name, color, x, y, w, h);
+      d.zones.push(zone);
+    });
+    if (zone) this.select({ kind: 'zone', id: zone.id });
+    return zone;
+  }
+
+  zone(id) {
+    return this.activeDiagram?.zones?.find(z => z.id === id);
+  }
+
+  deleteZone(id) {
+    this.update(m => {
+      const d = this.activeDiagram;
+      if (d && d.zones) d.zones = d.zones.filter(z => z.id !== id);
+    });
+    if (this.selection?.id === id) {
+      this.selection = null;
+      this.emit('select');
+    }
   }
 
   table(id) { return this.model.tables.find(t => t.id === id); }
   view(id) { return this.model.views?.find(v => v.id === id); }
   sequence(id) { return this.model.sequences?.find(q => q.id === id); }
-  deleteView(id) { this.update(m => { m.views = m.views.filter(v => v.id !== id); }); this.selection = null; this.emit('select'); }
+  deleteView(id) {
+    this.update(m => {
+      m.views = m.views.filter(v => v.id !== id);
+      (m.diagrams || []).forEach(d => {
+        d.viewIds = (d.viewIds || []).filter(vid => vid !== id);
+        if (d.positions) delete d.positions[id];
+      });
+    });
+    this.selection = null; this.emit('select');
+  }
   deleteSequence(id) { this.update(m => { m.sequences = m.sequences.filter(q => q.id !== id); }); this.selection = null; this.emit('select'); }
   // tables a view reads from: table names that occur as words in its SQL
   viewSources(v) {
@@ -124,6 +281,10 @@ export class Store {
     this.update(m => {
       m.tables = m.tables.filter(t => t.id !== id);
       m.fks = m.fks.filter(f => f.fromTable !== id && f.toTable !== id);
+      (m.diagrams || []).forEach(d => {
+        d.tableIds = (d.tableIds || []).filter(tid => tid !== id);
+        if (d.positions) delete d.positions[id];
+      });
     });
     this.selection = null; this.emit('select');
   }

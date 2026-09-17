@@ -1,8 +1,8 @@
 // Properties panel: model, table (columns, keys, indexes) or foreign key
-import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609171817';
-import { sequenceDDL } from './ddl-gen.js?v=202609171817';
-import { t, getLang, onLang } from './i18n.js?v=202609171817';
-import { COLUMN_PRESETS } from './templates.js?v=202609171817';
+import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609172122';
+import { sequenceDDL } from './ddl-gen.js?v=202609172122';
+import { t, getLang, onLang } from './i18n.js?v=202609172122';
+import { COLUMN_PRESETS } from './templates.js?v=202609172122';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 const CHECK_TEMPLATES = [
@@ -40,7 +40,44 @@ export class Panel {
     if (s.kind === 'fk') return this.renderFk(this.store.model.fks.find(f => f.id === s.id));
     if (s.kind === 'view') return this.renderView(this.store.view(s.id));
     if (s.kind === 'seq') return this.renderSeq(this.store.sequence(s.id));
+    if (s.kind === 'zone') return this.renderZone(this.store.zone(s.id));
+    if (s.kind === 'multi') return this.renderMulti(s.ids);
     this.renderTable(this.store.table(s.id));
+  }
+
+  renderZone(z) {
+    if (!z) return this.renderModel();
+    const colors = TABLE_COLORS.map(c =>
+      `<button class="sw${c ? ` c-${c}` : ''}${(z.color || '') === c ? ' on' : ''}" data-a="zone-color" data-c="${c}" type="button" aria-label="${c || 'none'}"></button>`
+    ).join('');
+    this.el.innerHTML = `
+      ${this.head(t('p.zone'), z.name, 'zone-del')}
+      <label class="field">${t('zone.name')}<input data-f="zone.name" value="${esc(z.name)}"></label>
+      <div class="field">${t('zone.color')}
+        <div class="swatches">${colors}</div>
+      </div>
+      <div class="grid2">
+        <label class="field">${t('zone.size')} W<input type="number" step="10" data-f="zone.w" value="${z.w}"></label>
+        <label class="field">H<input type="number" step="10" data-f="zone.h" value="${z.h}"></label>
+      </div>
+      <div style="margin-top: 16px"><button class="pill danger" data-a="zone-del">${t('zone.delete')}</button></div>
+    `;
+  }
+
+  renderMulti(ids) {
+    const count = ids?.length || 0;
+    this.el.innerHTML = `
+      <header class="p-head">
+        <div><span class="eyebrow">${t('p.model')}</span><h2>${t('multi.selected', { n: count })}</h2></div>
+        <button class="pill danger" data-a="multi-del">${t('p.delete')}</button>
+      </header>
+      <div style="padding: 16px 0; color: var(--muted); font-size: 13px;">
+        <p>${t('ws.keyArrows')}</p>
+      </div>
+      <div>
+        <button class="pill danger" data-a="multi-del">${t('multi.delete')}</button>
+      </div>
+    `;
   }
 
   head(eyebrow, title, del) {
@@ -293,6 +330,9 @@ export class Panel {
           (uk || idx).columns = [...el.selectedOptions].map(o => o.value); break;
         case 'fk.name': fk.name = el.value = upper(val) || fk.name; rerender = true; break;
         case 'fk.onDelete': fk.onDelete = val; break;
+        case 'zone.name': { const z = st.zone(st.selection?.id); if (z) { z.name = val.trim() || z.name; rerender = true; } break; }
+        case 'zone.w': { const z = st.zone(st.selection?.id); if (z) { z.w = Math.max(160, parseInt(val, 10) || z.w); rerender = true; } break; }
+        case 'zone.h': { const z = st.zone(st.selection?.id); if (z) { z.h = Math.max(100, parseInt(val, 10) || z.h); rerender = true; } break; }
         case 'fk.mandatory': {
           const from = m.tables.find(x => x.id === fk.fromTable);
           fk.columns.forEach(p => { const cc = from.columns.find(x => x.id === p.from); if (cc && !cc.pk) cc.nullable = !val; });
@@ -310,6 +350,25 @@ export class Panel {
     const a = btn.dataset.a, c = this.ctx(btn), st = this.store;
     const tb = c.tableId && st.table(c.tableId);
     switch (a) {
+      case 'zone-color': st.update(() => { const z = st.zone(st.selection?.id); if (z) z.color = btn.dataset.c; }); this.render(); break;
+      case 'zone-del': st.deleteZone(st.selection?.id); break;
+      case 'multi-del': {
+        const ids = [...(st.selection?.ids || [])];
+        st.update(m => {
+          ids.forEach(id => {
+            m.tables = m.tables.filter(t => t.id !== id);
+            m.views = (m.views || []).filter(v => v.id !== id);
+            m.fks = m.fks.filter(f => f.fromTable !== id && f.toTable !== id);
+            (m.diagrams || []).forEach(d => {
+              d.tableIds = (d.tableIds || []).filter(tid => tid !== id);
+              d.viewIds = (d.viewIds || []).filter(vid => vid !== id);
+              if (d.positions) delete d.positions[id];
+            });
+          });
+        });
+        st.select(null);
+        break;
+      }
       case 'table-del': st.deleteTable(c.tableId); break;
       case 'color': st.update(() => { tb.color = btn.dataset.color; }); break;
       case 'preset': {

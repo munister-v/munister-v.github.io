@@ -8,7 +8,7 @@
 //   schemata:settings         UI settings
 //   schemata-lang             interface language (kept from earlier versions)
 
-export const MODEL_VERSION = 3;
+export const MODEL_VERSION = 4;
 const P = 'schemata:';
 const MAX_SNAPSHOTS = 25;
 const QUOTA_BYTES = 5 * 1024 * 1024;
@@ -54,6 +54,33 @@ export function migrateModel(m) {
     t.color ??= ''; t.schema ??= ''; t.comment ??= '';
     t.columns.forEach(c => { c.default ??= ''; c.comment ??= ''; c.identity ??= false; c.nullable ??= true; c.virtual ??= ''; });
   });
+  m.diagrams ||= [];
+  if (!m.diagrams.length) {
+    const mainId = 'd_main';
+    m.diagrams.push({
+      id: mainId,
+      name: 'Main',
+      tableIds: m.tables.map(t => t.id),
+      viewIds: (m.views || []).map(v => v.id),
+      positions: Object.fromEntries([
+        ...m.tables.map(t => [t.id, { x: t.x ?? 40, y: t.y ?? 40 }]),
+        ...(m.views || []).map(v => [v.id, { x: v.x ?? 40, y: v.y ?? 40 }])
+      ]),
+      zones: [],
+      zoom: { x: 0, y: 0, k: 1 }
+    });
+    m.activeDiagram = mainId;
+  }
+  m.diagrams.forEach(d => {
+    d.tableIds ||= [];
+    d.viewIds ||= [];
+    d.positions ||= {};
+    d.zones ||= [];
+    d.zoom ||= { x: 0, y: 0, k: 1 };
+  });
+  if (!m.activeDiagram || !m.diagrams.some(d => d.id === m.activeDiagram)) {
+    m.activeDiagram = m.diagrams[0].id;
+  }
   m.format = 'schemata-model';
   m.version = MODEL_VERSION;
   return m;

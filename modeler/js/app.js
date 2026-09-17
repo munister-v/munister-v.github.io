@@ -1,18 +1,19 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609171817';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609171817';
-import { checkModel, fixFkIndexes } from './checks.js?v=202609171817';
-import { Diagram, tableSize, viewSize } from './diagram.js?v=202609171817';
-import { Panel } from './panel.js?v=202609171817';
-import { Sidebar } from './sidebar.js?v=202609171817';
-import { Palette } from './palette.js?v=202609171817';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609171817';
-import { parseDDL } from './ddl-parse.js?v=202609171817';
-import { SAMPLE_DDL } from './sample.js?v=202609171817';
-import { initWorkspace } from './workspace.js?v=202609171817';
-import { diffModels } from './diff.js?v=202609171817';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609171817';
-import { migrateModel, listSnapshots } from './storage.js?v=202609171817';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609171817';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609172122';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609172122';
+import { checkModel, fixFkIndexes } from './checks.js?v=202609172122';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609172122';
+import { DiagramTabs } from './diagrams-ui.js?v=202609172122';
+import { Panel } from './panel.js?v=202609172122';
+import { Sidebar } from './sidebar.js?v=202609172122';
+import { Palette } from './palette.js?v=202609172122';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609172122';
+import { parseDDL } from './ddl-parse.js?v=202609172122';
+import { SAMPLE_DDL } from './sample.js?v=202609172122';
+import { initWorkspace } from './workspace.js?v=202609172122';
+import { diffModels } from './diff.js?v=202609172122';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609172122';
+import { migrateModel, listSnapshots } from './storage.js?v=202609172122';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609172122';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -27,6 +28,10 @@ const diagram = new Diagram($('#canvas'), store, {
   onEditView: id => { store.select({ kind: 'view', id }); setTimeout(() => $('#panel .sql-edit')?.focus()); },
   onZoom: k => { $('#zoom').textContent = `${Math.round(k * 100)}%`; },
   minimap: $('#minimap'),
+});
+const diagramTabs = new DiagramTabs($('#diagram-tabs'), store, {
+  openMenu: (x, y, items) => openMenu(x, y, items),
+  onSwitch: () => { diagram.render(); diagram.fit(false); },
 });
 const panel = new Panel($('#panel'), store, { toast: (m, e) => toast(m, e), copyTableDDL: id => copyTableDDL(id) });
 const pick = id => { store.select({ kind: 'table', id }); diagram.centerOn(id); };
@@ -69,12 +74,22 @@ function addTable(p = diagram.center()) {
   const id = newColumn('ID', 'NUMBER');
   Object.assign(id, { pk: true, identity: true, nullable: false });
   tb.columns.push(id);
-  store.update(m => m.tables.push(tb));
+  store.update(m => {
+    m.tables.push(tb);
+    const d = m.diagrams?.find(x => x.id === m.activeDiagram) || m.diagrams?.[0];
+    if (d) {
+      d.tableIds ||= [];
+      d.tableIds.push(tb.id);
+      d.positions ||= {};
+      d.positions[tb.id] = { x: tb.x, y: tb.y };
+    }
+  });
   store.select({ kind: 'table', id: tb.id });
   setTimeout(() => $('#panel input[data-f="table.name"]')?.select());
 }
 
-export function autoLayout(model) {
+export function autoLayout(model, st = store) {
+  const visibleTables = st ? model.tables.filter(t => st.isItemOnActiveDiagram(t.id)) : model.tables;
   // Level = longest chain of parents above the table
   const level = new Map();
   const parents = id => model.fks.filter(f => f.fromTable === id && f.toTable !== id).map(f => f.toTable);
@@ -85,13 +100,19 @@ export function autoLayout(model) {
     const d = Math.max(-1, ...parents(id).map(p => depth(p, seen))) + 1;
     level.set(id, d); return d;
   };
-  model.tables.forEach(tb => depth(tb.id));
+  visibleTables.forEach(tb => depth(tb.id));
   const cols = [];
-  model.tables.forEach(tb => (cols[level.get(tb.id)] ||= []).push(tb));
+  visibleTables.forEach(tb => (cols[level.get(tb.id)] ||= []).push(tb));
   let x = 40;
   for (const col of cols.filter(Boolean)) {
     let y = 40, w = 0;
-    for (const tb of col) { const s = tableSize(tb); tb.x = x; tb.y = y; y += s.h + 56; w = Math.max(w, s.w); }
+    for (const tb of col) {
+      const s = tableSize(tb);
+      if (st) st.setPos(tb.id, x, y);
+      else { tb.x = x; tb.y = y; }
+      y += s.h + 56;
+      w = Math.max(w, s.w);
+    }
     x += w + 140;
   }
 }
@@ -194,7 +215,20 @@ const actions = {
   select: () => setRelationMode(false),
   table: () => addTable(),
   relation: () => setRelationMode(diagram.mode !== 'relation'),
-  layout: () => { store.update(m => autoLayout(m), 'load'); diagram.fit(); },
+  zone: () => {
+    const c = diagram.center();
+    store.addZone(t('zone.default'), 'blue', Math.round((c.x - 200) / 10) * 10, Math.round((c.y - 140) / 10) * 10);
+    diagram.render();
+  },
+  'no-overlaps': () => {
+    const visibleTables = store.model.tables.filter(t => store.isItemOnActiveDiagram(t.id));
+    store.checkpoint();
+    resolveOverlaps(visibleTables, id => store.posOf(id), (id, x, y) => store.setPos(id, x, y));
+    store.emit('load');
+    store.persist();
+    toast(t('tb.noOverlaps.t'));
+  },
+  layout: () => { store.update(m => autoLayout(m, store), 'load'); diagram.fit(); },
   undo: () => store.undo(),
   redo: () => store.redo(),
   'zoom-in': () => diagram.zoomBy(1.25),
@@ -209,7 +243,8 @@ const ICONS = Object.fromEntries([...document.querySelectorAll('[data-action] sv
 const palette = new Palette(store, {
   onPick: pick,
   actions: () => [
-    ['table', 'tb.table', 'T'], ['relation', 'tb.relation', 'R'], ['layout', 'tb.layout'], ['fit', 'tb.fit.t', 'F'],
+    ['table', 'tb.table', 'T'], ['relation', 'tb.relation', 'R'], ['zone', 'tb.zone.t', 'Z'],
+    ['layout', 'tb.layout'], ['no-overlaps', 'tb.noOverlaps.t'], ['fit', 'tb.fit.t', 'F'],
     ['ddl', 'tb.ddl.t'], ['import', 'tb.import'], ['svg', 'tb.svg.t'],
     ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
     ['newView', 'cm.newView'], ['newSequence', 'cm.newSeq'],
@@ -247,13 +282,23 @@ document.addEventListener('keydown', e => {
   else if (mod && e.code === 'KeyS') { e.preventDefault(); actions.save(); }
   else if (mod && e.code === 'KeyD' && !typing) { e.preventDefault(); actions.duplicate(); }
   else if (mod && e.code === 'KeyC' && !typing && store.selection?.kind === 'table' && !getSelection().toString()) { copyTables([store.selection.id]); }
-  else if (e.key.startsWith('Arrow') && !typing && !mod && ['table', 'view'].includes(store.selection?.kind) && !document.querySelector('dialog[open]')) {
+  else if (e.key.startsWith('Arrow') && !typing && !mod && ['table', 'view', 'multi'].includes(store.selection?.kind) && !document.querySelector('dialog[open]')) {
     e.preventDefault();
     const step = e.shiftKey ? 50 : 10;
     const dx = e.key === 'ArrowLeft' ? -step : e.key === 'ArrowRight' ? step : 0;
     const dy = e.key === 'ArrowUp' ? -step : e.key === 'ArrowDown' ? step : 0;
-    const tb = store.table(store.selection.id) || store.view(store.selection.id);
-    store.update(() => { tb.x += dx; tb.y += dy; }, 'move');
+    if (store.selection.kind === 'multi') {
+      store.silent(() => {
+        store.selection.ids.forEach(id => {
+          const p = store.posOf(id);
+          store.setPos(id, p.x + dx, p.y + dy);
+        });
+      }, 'move');
+    } else {
+      const id = store.selection.id;
+      const p = store.posOf(id);
+      store.silent(() => { store.setPos(id, p.x + dx, p.y + dy); }, 'move');
+    }
   }
   else if (e.key === 'Escape' && diagram.mode === 'relation') setRelationMode(false);
   else if (e.key === 'Escape' && !typing && store.selection) store.select(null);
@@ -262,6 +307,23 @@ document.addEventListener('keydown', e => {
     if (s.kind === 'table') store.deleteTable(s.id);
     else if (s.kind === 'view') store.deleteView(s.id);
     else if (s.kind === 'seq') store.deleteSequence(s.id);
+    else if (s.kind === 'zone') store.deleteZone(s.id);
+    else if (s.kind === 'multi') {
+      const ids = [...(s.ids || [])];
+      store.update(m => {
+        ids.forEach(id => {
+          m.tables = m.tables.filter(t => t.id !== id);
+          m.views = (m.views || []).filter(v => v.id !== id);
+          m.fks = m.fks.filter(f => f.fromTable !== id && f.toTable !== id);
+          (m.diagrams || []).forEach(d => {
+            d.tableIds = (d.tableIds || []).filter(tid => tid !== id);
+            d.viewIds = (d.viewIds || []).filter(vid => vid !== id);
+            if (d.positions) delete d.positions[id];
+          });
+        });
+      });
+      store.select(null);
+    }
     else { store.update(m => { m.fks = m.fks.filter(f => f.id !== s.id); }); store.select(null); }
   } else if (!typing && !mod && !document.querySelector('dialog[open]')) {
     // e.code keeps shortcuts working on the Ukrainian layout
@@ -386,7 +448,19 @@ function cloneTables(tables, fks, offset = 40) {
   return { tables: out, fks: newFks };
 }
 function insertTables({ tables, fks }) {
-  store.update(m => { m.tables.push(...tables); m.fks.push(...fks); });
+  store.update(m => {
+    m.tables.push(...tables);
+    m.fks.push(...fks);
+    const d = m.diagrams?.find(x => x.id === m.activeDiagram) || m.diagrams?.[0];
+    if (d) {
+      d.tableIds ||= [];
+      d.positions ||= {};
+      tables.forEach(t => {
+        if (!d.tableIds.includes(t.id)) d.tableIds.push(t.id);
+        d.positions[t.id] = { x: t.x, y: t.y };
+      });
+    }
+  });
   if (tables.length) store.select({ kind: 'table', id: tables[0].id });
 }
 function duplicateTable(id) {
@@ -440,7 +514,16 @@ function addView(at = diagram.center(), fromTableId = null) {
     ? `SELECT ${src.columns.filter(c => !c.virtual).map(c => c.name.toLowerCase()).join(',\n       ')}\n  FROM ${src.name.toLowerCase()}`
     : 'SELECT *\n  FROM ';
   const v = newView(uniqueObjectName(src ? `V_${src.name}` : 'V_NEW'), sql, Math.round(at.x / 10) * 10, Math.round(at.y / 10) * 10);
-  store.update(m => { (m.views ||= []).push(v); });
+  store.update(m => {
+    (m.views ||= []).push(v);
+    const d = m.diagrams?.find(x => x.id === m.activeDiagram) || m.diagrams?.[0];
+    if (d) {
+      d.viewIds ||= [];
+      d.viewIds.push(v.id);
+      d.positions ||= {};
+      d.positions[v.id] = { x: v.x, y: v.y };
+    }
+  });
   store.select({ kind: 'view', id: v.id });
   setTimeout(() => $('#panel .sql-edit')?.focus());
 }
@@ -703,6 +786,7 @@ function tableMenu(id, at) {
     { label: t('cm.copy'), icon: '⎘', kbd: '⌘C', run: () => copyTables([id]) },
     { label: t('cm.ddl'), icon: '⌨', run: () => copyTableDDL(id) },
     '-',
+    { label: t('diag.removeFromDiag'), icon: '✕', run: () => store.removeTableFromDiagram(id) },
     { label: t('cm.delete'), icon: '🗑', kbd: 'Del', danger: true, run: () => store.deleteTable(id) },
   ];
 }

@@ -1,5 +1,5 @@
 // Left sidebar: filterable table list
-import { t, onLang } from './i18n.js?v=202609171817';
+import { t, onLang } from './i18n.js?v=202609172122';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
@@ -28,6 +28,15 @@ export class Sidebar {
       if (e.key === 'Escape') { this.input.value = ''; this.query = ''; this.render(); this.input.blur(); }
     });
     this.list.addEventListener('click', e => {
+      const addDiag = e.target.closest('[data-add-to-diag]');
+      if (addDiag) {
+        e.stopPropagation();
+        const id = addDiag.dataset.addToDiag;
+        this.store.addTableToDiagram(id);
+        this.onPick(id);
+        this.render();
+        return;
+      }
       const fk = e.target.closest('[data-fk]');
       if (fk) { this.onPickFk?.(fk.dataset.fk); return; }
       const add = e.target.closest('[data-add-obj]');
@@ -99,12 +108,15 @@ export class Sidebar {
       return;
     }
     const hi = s => this.query ? esc(s).replace(this.query, m => `<mark>${m}</mark>`) : esc(s);
+    const activeDiag = this.store.activeDiagram;
     this.list.innerHTML = items.map(x => {
       const on = (selection?.kind === 'table' && selection.id === x.id) ? ' on' : '';
-      return `<li data-id="${x.id}" class="${on}">
+      const onDiag = !activeDiag || !activeDiag.tableIds || activeDiag.tableIds.includes(x.id);
+      return `<li data-id="${x.id}" class="${on}${onDiag ? '' : ' off-diag'}">
         <span class="dot${x.color ? ` c-${x.color}` : ''}"></span>
         <span class="nm">${x.schema ? `<small>${esc(x.schema)}.</small>` : ''}${hi(x.name)}</span>
         <span class="meta">${fkCount(x.id) ? `<i title="FK">⇄ ${fkCount(x.id)}</i>` : ''}${x.columns.length}</span>
+        ${onDiag ? '' : `<button class="sb-add-diag ic" data-add-to-diag="${x.id}" title="${t('diag.addTable')}"><svg viewBox="0 0 16 16" width="12" height="12"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>`}
       </li>`;
     }).join('');
     this.list.querySelector('.on')?.scrollIntoView({ block: 'nearest' });
