@@ -18,13 +18,6 @@
    странице — специмен работы, то есть макет карточки книги. Классы с
    префиксом b- , чтобы ничего не отобрать у munister.css. */
 
-/* ── шапка страницы ─────────────────────────────────────── */
-.b-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));
-  border-top:1px solid var(--c-ink);margin-top:clamp(22px,3vw,34px)}
-.b-meta div{padding:14px 16px 16px 0;border-bottom:1px solid var(--c-rule)}
-.b-meta dt{margin-bottom:7px}
-.b-meta dd{font-family:var(--font-head);font-size:clamp(18px,2vw,23px);line-height:1.1}
-
 /* ── липкая полоса прогресса ────────────────────────────── */
 .b-bar{position:sticky;top:var(--bar);z-index:20;background:rgba(255,255,255,.94);
   backdrop-filter:blur(8px);border-bottom:1px solid var(--c-rule);margin-bottom:clamp(1.6rem,3vw,2.6rem)}
@@ -38,6 +31,11 @@
   font-family:var(--font-mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--c-faint)}
 .b-jump a:hover{color:var(--c-ink)}
 .b-jump a i{font-style:normal;color:var(--c-rule-strong)}
+@media (max-width:620px){
+  .b-track{flex:1 1 56px;min-width:44px}
+  .b-stat{font-size:9px;letter-spacing:.14em}
+  .b-bar-in{gap:10px;padding:7px 0}
+}
 
 /* ── раздел ─────────────────────────────────────────────── */
 .b-sec{padding-top:clamp(2rem,4vw,3.4rem)}
@@ -77,10 +75,10 @@
   flex:0 0 auto;padding-top:5px}
 .b-cell[aria-pressed="true"] span.b-mk{color:rgba(255,255,255,.62)}
 
-/* ── шкалы ──────────────────────────────────────────────── */
-.b-scale input[type=range]{width:100%;accent-color:var(--c-ink);height:26px}
-.b-ends{display:flex;justify-content:space-between;gap:14px;margin-top:2px}
-.b-ends span:nth-child(2){color:var(--c-ink);font-variant-numeric:tabular-nums}
+/* ── фокус: свои контролы не наследуют стили сайта ───────── */
+.b-cell:focus-visible,.b-dir:focus-visible,.b-frame:focus-visible,
+.b-mv button:focus-visible,.b-q textarea:focus-visible{
+  outline:2px solid var(--c-ink);outline-offset:2px}
 
 /* ── текст ──────────────────────────────────────────────── */
 .b-q textarea{width:100%;font-family:var(--font-body);font-size:16px;line-height:1.5;color:var(--c-ink);
@@ -133,6 +131,9 @@
   letter-spacing:.2em;text-transform:uppercase;color:var(--c-faint)}
 .b-dir[aria-pressed="true"] .b-dt em{color:rgba(255,255,255,.55)}
 
+.b-dir--none{grid-column:1/-1}
+.b-dir--none .b-dt b{font-size:17px}
+
 .b-mini{--d-bg:#0D1017;--d-fg:#E9E4D6;--d-acc:#C9A24A;--d-soft:#1A2130;--d-rad:2px;
   --d-disp:'Iowan Old Style',Palatino,Georgia,serif;--d-body:'Helvetica Neue',Helvetica,Arial,sans-serif;
   background:var(--d-bg);color:var(--d-fg);font-family:var(--d-body);padding:14px;display:block;
@@ -151,7 +152,9 @@
 /* ── специмен ───────────────────────────────────────────── */
 .b-vis{display:grid;grid-template-columns:1fr;gap:clamp(20px,3vw,40px)}
 @media (min-width:1040px){.b-vis{grid-template-columns:minmax(0,1fr) 300px;align-items:start}}
-.b-aside{position:sticky;top:calc(var(--bar) + 58px)}
+/* Полоса прогресса липнет на --bar и вместе с навигацией занимает
+   около 90px: специмен должен начинаться ниже неё, а не под ней. */
+.b-aside{position:sticky;top:calc(var(--bar) + 96px)}
 .b-aside .mono{margin-bottom:10px}
 .b-mock{--p-bg:#0D1017;--p-fg:#E9E4D6;--p-acc:#C9A24A;--p-soft:#1A2130;
   --p-rad:2px;--p-pad:18px;--p-disp:'Iowan Old Style',Palatino,Georgia,serif;
@@ -198,7 +201,7 @@
   border:1px solid rgba(255,255,255,.18);padding:16px 18px;max-height:360px;overflow:auto}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms !important}}
-@media print{.b-bar,.b-acts,.site-head{display:none}.b-fin{background:#fff;color:#000}
+@media print{.b-bar,.b-acts,.site-head,.b-mv{display:none}.b-fin{background:#fff;color:#000}
   .b-fin h2,.b-fin p,.b-steps li{color:#000}.b-q{break-inside:avoid}}
 </style>
 </head>
@@ -300,10 +303,6 @@
      bg:"#101C1A", fg:"#DDE6DF", acc:"#9BA87C", soft:"#1A2A27", rad:10, pad:20,
      disp:"'Iowan Old Style',Palatino,Georgia,serif", body:"'Helvetica Neue',Helvetica,Arial,sans-serif"}
   ];
-  function dirById(id){
-    for(var i = 0; i < DIRECTIONS.length; i++){ if(DIRECTIONS[i].id === id) return DIRECTIONS[i]; }
-    return DIRECTIONS[0];
-  }
   function dirByName(nm){
     for(var i = 0; i < DIRECTIONS.length; i++){ if(DIRECTIONS[i].nm === nm) return DIRECTIONS[i]; }
     return null;
@@ -330,7 +329,7 @@
       {id:"hands", type:"single", q:"Хто обробляє замовлення руками — і скільки витримає",
        hint:"Це, а не мода на кошики, вирішує, скільки автоматики закладати: статуси, листи, накладні, залишки.",
        ex:"«Я сам, і вже не витягую» → автоматичні статуси й лист-підтвердження стають обов’язковими, а не приємним бонусом",
-       opts:["Я сам, кілька замовлень на день — норм","Я сам, і вже не витягую","Є людина, яка цим займається","Хочемо, щоб сайт робив усе без нас"]},
+       opts:["Я сам, і кількох замовлень на день достатньо","Я сам, і вже не витягую","Є людина, яка цим займається","Хочемо, щоб сайт робив усе без нас"]},
       {id:"stock", type:"multi", q:"Що вже існує в матеріальному вигляді",
        hint:"Каталог потрібен тоді, коли є що в нього покласти. Позначте те, що є зараз, а не в планах.",
        ex:"Рукопис готовий, обкладинка намальована, тираж ще не друкувався → сайт на старті живе однією сторінкою книги",
@@ -360,11 +359,11 @@
        opts:["Пошук по каталогу","Фільтри за напрямом","Полиці-підбірки вручну","Кошик","Обране або моя полиця","Кабінет з історією замовлень","Промокоди","Підписка на розсилку","Форма рукописів із файлом","Відгуки з модерацією","Лічильник передзамовлень","Календар подій","Telegram-бот","Перемикач мов"]},
       {id:"hero", type:"multi", q:"Що саме в першому екрані головної",
        hint:"Перший екран — 80% враження. Оберіть два-три елементи, не всі.",
-       ex:"Фраза-манифест, обкладинка новинки, одна кнопка",
-       opts:["Фраза-манифест видавництва","Обкладинка книги-новинки","Символ або сигіл","Фото засновників","Відео чи анімація","Одна кнопка дії","Дві кнопки: купити й дізнатись","Дата виходу з відліком"]},
+       ex:"Фраза-маніфест, обкладинка новинки, одна кнопка",
+       opts:["Фраза-маніфест видавництва","Обкладинка книги-новинки","Символ або сигіл","Фото засновників","Відео чи анімація","Одна кнопка дії","Дві кнопки: купити й дізнатись","Дата виходу з відліком"]},
       {id:"homeorder", type:"order", q:"Порядок блоків на головній",
        hint:"Верхні блоки бачать усі, до нижніх доскролює приблизно кожен п’ятий — тому нижні роблять простіше й дешевше.",
-       ex:"Робочий порядок: манифест → новинка → каталог → хто ми → відгуки → підписка",
+       ex:"Робочий порядок: маніфест → новинка → каталог → хто ми → відгуки → підписка",
        items:["Манифест видавництва","Книга-новинка та передзамовлення","Каталог: 3–6 обкладинок","Хто ми: про ВІДЬМАР і засновників","Напрями: езотерика, містика, проза","Відгуки читачів","Журнал: останні статті","Прийом рукописів","Підписка на новини","Instagram-стрічка"]},
       {id:"bookflow", type:"order", q:"Порядок екранів на сторінці книги",
        hint:"Це шаблон, який повторюється для кожної книги. Що вище — те читач бачить без скролу на телефоні.",
@@ -387,8 +386,8 @@
        ex:"Крафтовий папір, друк у дві фарби, тиснення міддю на палітурці, формат 145×200, обкладинку малювала Марія.",
        ph:"Папір і друк:\nФормат:\nОздоблення (фольга, тиснення, обріз):\nХто малював обкладинку:"},
       {id:"direction", type:"direction", q:"На який із напрямів дивитись далі",
-       hint:"Це чотири різні пропозиції, а не чотири палітри: кожна тягне за собою свій обсяг графіки й свій строк. Оберіть той, у якому хочете бачити свою книгу — праворуч він покажеться більшим.",
-       ex:"Якщо жоден не звучить, оберіть найменш чужий і напишіть у питанні про межі, що саме не так — наступний показ буде точнішим."},
+       hint:"Це чотири різні пропозиції, а не чотири палітри: кожна тягне за собою свій обсяг графіки й свій строк. Оберіть той, у якому хочете бачити свою книгу — поряд він покажеться більшим.",
+       ex:"Якщо не звучить жоден — так і скажіть останнім варіантом, а в питанні про межі напишіть, що саме не так. Наступний показ буде точнішим."},
       {id:"relation", type:"single", q:"Сайт продовжує обкладинку чи відступає вбік",
        hint:"Одне з небагатьох рішень, яке справді за вами: воно визначає, хто головний на екрані — книга або оболонка навколо неї.",
        ex:"«Нейтральне поле» → кожна нова обкладинка виглядає сильно, і сайт не старіє з наступним тиражем",
@@ -449,7 +448,9 @@
     if(v === undefined || v === null) return false;
     if(q.type === "multi") return Array.isArray(v) && v.length > 0;
     if(q.type === "text") return String(v).trim().length > 0;
-    if(q.type === "order") return true;
+    // Порядок по умолчанию — это ещё не ответ: пока список не двигали,
+    // вопрос не заполнен, иначе счётчик показывает работу, которой не было.
+    if(q.type === "order") return v.join("|") !== q.items.join("|");
     return true;
   }
   function updateProgress(){
@@ -458,7 +459,12 @@
     var pct = Math.round(n / ALL.length * 100);
     document.getElementById("fill").style.width = pct + "%";
     document.getElementById("track").setAttribute("aria-valuenow", String(pct));
-    document.getElementById("count").innerHTML = "<b>" + n + "</b> / " + ALL.length;
+    var c = document.getElementById("count");
+    c.textContent = "";
+    var strong = document.createElement("b");
+    strong.textContent = String(n);
+    c.appendChild(strong);
+    c.appendChild(document.createTextNode(" / " + ALL.length));
   }
 
   function el(tag, cls, txt){
@@ -471,10 +477,13 @@
     Array.prototype.forEach.call(box.children, function(ch){ ch.dispatchEvent(new Event("repaint")); });
   }
 
+  var NONE = "Жоден із чотирьох не підходить";
+
   var mock = null;
   function syncMock(){
     if(!mock) return;
-    var d = A.direction ? (dirByName(A.direction) || DIRECTIONS[0]) : DIRECTIONS[0];
+    var picked = A.direction && A.direction !== NONE ? dirByName(A.direction) : null;
+    var d = picked || DIRECTIONS[0];
     mock.style.setProperty("--p-bg", d.bg);
     mock.style.setProperty("--p-fg", d.fg);
     mock.style.setProperty("--p-acc", d.acc);
@@ -484,7 +493,11 @@
     mock.style.setProperty("--p-rad", d.rad + "px");
     mock.style.setProperty("--p-pad", d.pad + "px");
     var cap = document.getElementById("specName");
-    if(cap) cap.textContent = A.direction ? d.nm : d.nm + " (за замовчуванням)";
+    if(cap){
+      if(picked) cap.textContent = d.nm;
+      else if(A.direction === NONE) cap.textContent = "жоден не підходить — покажемо інше";
+      else cap.textContent = d.nm + " · поки не вибрано";
+    }
   }
 
   function renderQ(q, num){
@@ -496,7 +509,9 @@
     nu.appendChild(el("i"));
     nu.appendChild(document.createTextNode("Питання " + String(num).padStart(2, "0")));
     ask.appendChild(nu);
-    ask.appendChild(el("h3", null, q.q));
+    var title = el("h3", null, q.q);
+    title.id = "qt-" + q.id;
+    ask.appendChild(title);
     if(q.hint) ask.appendChild(el("p", "b-hint", q.hint));
     if(q.ex){
       var ex = el("p", "b-ex");
@@ -519,6 +534,8 @@
       var longest = 0;
       q.opts.forEach(function(o){ longest = Math.max(longest, o.length); });
       var box = el("div", "b-cells" + (longest > 40 ? " b-one" : ""));
+      box.setAttribute("role", "group");
+      box.setAttribute("aria-labelledby", "qt-" + q.id);
       if(q.type === "multi" && !Array.isArray(A[q.id])) A[q.id] = A[q.id] ? [A[q.id]] : [];
       q.opts.forEach(function(o){
         var b = el("button", "b-cell"); b.type = "button";
@@ -547,29 +564,6 @@
       body.appendChild(box);
     }
 
-    if(q.type === "slider"){
-      // Значение по умолчанию НЕ пишем в ответы: пока ползунок не тронули,
-      // вопрос считается незаполненным, иначе счётчик врёт при первом заходе.
-      var sc = el("div", "b-scale");
-      var inp = document.createElement("input");
-      inp.type = "range"; inp.min = q.min; inp.max = q.max; inp.step = q.step;
-      inp.value = (A[q.id] === undefined ? q.def : A[q.id]); inp.id = "in-" + q.id;
-      inp.setAttribute("aria-label", q.q);
-      var ends = el("div", "b-ends mono");
-      var val = el("span", null, inp.value + (q.unit || ""));
-      ends.appendChild(el("span", null, q.ends[0]));
-      ends.appendChild(val);
-      ends.appendChild(el("span", null, q.ends[1]));
-      inp.addEventListener("input", function(){
-        A[q.id] = Number(inp.value);
-        val.textContent = inp.value + (q.unit || "");
-        if(q.id === "radius" || q.id === "typescale") syncMock();
-        mark();
-      });
-      sc.appendChild(inp); sc.appendChild(ends);
-      body.appendChild(sc);
-    }
-
     if(q.type === "text"){
       var ta = document.createElement("textarea");
       ta.rows = (q.ph && q.ph.split("\n").length > 3) ? 6 : 4;
@@ -583,6 +577,8 @@
 
     if(q.type === "direction"){
       var dg = el("div", "b-dirs");
+      dg.setAttribute("role", "group");
+      dg.setAttribute("aria-labelledby", "qt-" + q.id);
       DIRECTIONS.forEach(function(d){
         var btn = el("button", "b-dir"); btn.type = "button";
         var mini = el("div", "b-mini");
@@ -613,11 +609,30 @@
         });
         dg.appendChild(btn);
       });
+
+      // Отказ — тоже ответ, и он должен быть кнопкой, а не строчкой
+      // в подсказке: иначе человек выберет «наименее чужое» и промолчит.
+      var none = el("button", "b-dir b-dir--none"); none.type = "button";
+      var nt = el("div", "b-dt");
+      nt.appendChild(el("b", null, NONE));
+      nt.appendChild(el("span", null, "Тоді ми готуємо другий показ — і в питанні про межі важливо написати, що саме не так."));
+      none.appendChild(nt);
+      function paintNone(){ none.setAttribute("aria-pressed", A.direction === NONE ? "true" : "false"); }
+      paintNone();
+      none.addEventListener("repaint", paintNone);
+      none.addEventListener("click", function(){
+        A.direction = (A.direction === NONE) ? undefined : NONE;
+        repaintAll(dg); syncMock(); mark();
+      });
+      dg.appendChild(none);
+
       body.appendChild(dg);
     }
 
     if(q.type === "frames"){
       var fg = el("div", "b-frames");
+      fg.setAttribute("role", "group");
+      fg.setAttribute("aria-labelledby", "qt-" + q.id);
       FRAMES.forEach(function(fr){
         var b = el("button", "b-frame"); b.type = "button";
         b.appendChild(el("b", null, fr.nm));
@@ -730,13 +745,10 @@
         var v = A[q.id], out;
         if(q.type === "multi") out = (Array.isArray(v) && v.length) ? v.join(", ") : "—";
         else if(q.type === "order") out = (v || q.items).map(function(x, k){ return "\n    " + (k + 1) + ") " + x; }).join("");
-        else if(q.type === "slider"){
-          var num2 = (v === undefined ? q.def : v);
-          out = num2 + (q.unit || "") + "   [" + q.ends[0] + " <-> " + q.ends[1] + "]";
-        }
         else if(q.type === "direction"){
-          var d = v ? dirByName(v) : null;
-          out = d ? (d.nm + " — " + d.cost + " (" + d.bg + " / " + d.acc + " / " + d.fg + ")") : "—";
+          var d = v && v !== NONE ? dirByName(v) : null;
+          if(d) out = d.nm + " — " + d.cost + " (" + d.bg + " / " + d.acc + " / " + d.fg + ")";
+          else out = (v === NONE) ? NONE + " — потрібен другий показ" : "—";
         }
         else if(q.type === "text") out = (v && String(v).trim()) ? String(v).trim().split("\n").join("\n    ") : "—";
         else out = (v && String(v).trim()) ? String(v).trim() : "—";
@@ -760,13 +772,15 @@
   document.getElementById("copy").addEventListener("click", function(){
     var t = buildText(), btn = this, old = btn.textContent;
     out.textContent = t; out.hidden = false;
+    function say(msg){
+      btn.textContent = msg;
+      setTimeout(function(){ btn.textContent = old; }, 2200);
+    }
     if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(t).then(function(){
-        btn.textContent = "Скопійовано";
-        setTimeout(function(){ btn.textContent = old; }, 1800);
-      }, function(){ btn.textContent = "Виділіть текст нижче"; });
+      navigator.clipboard.writeText(t).then(function(){ say("Скопійовано"); },
+                                           function(){ say("Не вийшло — текст нижче"); });
     } else {
-      btn.textContent = "Виділіть текст нижче";
+      say("Не вийшло — текст нижче");
     }
   });
   document.getElementById("download").addEventListener("click", function(){
@@ -784,6 +798,17 @@
   });
 
   document.getElementById("y").textContent = new Date().getFullYear();
+
+  // Шапка сайта и полоса прогресса обе липкие, а высота полосы зависит от
+  // ширины экрана. Считаем отступ для якорей по факту, а не на глаз.
+  var bar = document.querySelector(".b-bar");
+  function syncAnchorOffset(){
+    var h = bar ? bar.getBoundingClientRect().height : 0;
+    var top = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--bar")) || 56;
+    document.documentElement.style.scrollPaddingTop = Math.round(top + h + 12) + "px";
+  }
+  syncAnchorOffset();
+  window.addEventListener("resize", syncAnchorOffset);
 })();
 </script>
 <script src="/munister.js?v=6" defer></script>
