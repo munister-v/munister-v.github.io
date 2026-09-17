@@ -1,5 +1,5 @@
 // Left sidebar: filterable table list
-import { t, onLang } from './i18n.js?v=202609171528';
+import { t, onLang } from './i18n.js?v=202609171530';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
