@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ferret Data Modeler</title>
+  <meta name="description" content="Open-source веб-модельер данных для Oracle Database: диаграммы, генерация и импорт DDL.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%232563eb'/><rect x='6' y='8' width='20' height='16' rx='2' fill='white'/><rect x='6' y='8' width='20' height='5' fill='%2393c5fd'/></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="toolbar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" width="22" height="22"><rect width="32" height="32" rx="7" fill="#2563eb"/><rect x="6" y="8" width="20" height="16" rx="2" fill="#fff"/><rect x="6" y="8" width="20" height="5" fill="#93c5fd"/></svg>
+      <span>Ferret <b>Data Modeler</b></span>
+    </div>
+    <div class="group">
+      <button data-action="new" title="Новая модель">Новая</button>
+      <button data-action="open" title="Открыть .json">Открыть</button>
+      <button data-action="save" title="Сохранить .json (⌘S)">Сохранить</button>
+    </div>
+    <div class="group">
+      <button data-action="import" title="Импорт из DDL-скрипта">Импорт DDL</button>
+      <button data-action="ddl" class="primary" title="Сгенерировать Oracle DDL">Генерировать DDL</button>
+      <button data-action="svg" title="Экспорт диаграммы в SVG">SVG</button>
+    </div>
+    <div class="group">
+      <button data-action="table" title="Новая таблица (T)">+ Таблица</button>
+      <button data-action="relation" title="Связь FK (R)">↗ Связь</button>
+      <button data-action="layout" title="Авто-раскладка">Раскладка</button>
+    </div>
+    <div class="group">
+      <button data-action="undo" title="Отменить (⌘Z)">↶</button>
+      <button data-action="redo" title="Повторить (⌘⇧Z)">↷</button>
+    </div>
+    <div class="group right">
+      <button data-action="zoom-out" title="Уменьшить">−</button>
+      <span id="zoom">100%</span>
+      <button data-action="zoom-in" title="Увеличить">+</button>
+      <button data-action="fit" title="Показать всё (F)">⤢</button>
+      <button data-action="theme" title="Тема">◐</button>
+    </div>
+  </header>
+
+  <main>
+    <svg id="canvas" aria-label="Диаграмма модели"></svg>
+    <aside id="panel"></aside>
+  </main>
+
+  <dialog id="ddl-dialog">
+    <form method="dialog">
+      <header><h2>Oracle DDL</h2><button value="close" class="icon">✕</button></header>
+      <div class="opts">
+        <label class="check"><input type="checkbox" id="opt-comments" checked> COMMENT ON</label>
+        <label class="check"><input type="checkbox" id="opt-drop"> DROP TABLE перед созданием</label>
+      </div>
+      <textarea id="ddl-out" readonly spellcheck="false"></textarea>
+      <footer><button id="ddl-copy">Копировать</button><button id="ddl-download" class="primary">Скачать .sql</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="import-dialog">
+    <form method="dialog">
+      <header><h2>Импорт DDL</h2><button value="close" class="icon">✕</button></header>
+      <p class="muted">Поддерживается: CREATE TABLE, ALTER TABLE … ADD CONSTRAINT (PK / UK / FK), CREATE [UNIQUE] INDEX, COMMENT ON. Прочие команды пропускаются.</p>
+      <textarea id="import-text" spellcheck="false" placeholder="CREATE TABLE ..."></textarea>
+      <div id="import-log"></div>
+      <footer>
+        <label class="check"><input type="checkbox" id="import-replace"> Заменить текущую модель</label>
+        <button id="import-file" type="button">Из файла…</button>
+        <button type="button" data-action="sample">Демо-схема</button>
+        <button id="import-run" class="primary">Импортировать</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div id="toast"></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
