@@ -14,7 +14,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%230f766e'/><stop offset='1' stop-color='%2314b8a6'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='url(%23g)'/><rect x='6' y='7' width='9' height='8' rx='2' fill='white'/><rect x='17' y='17' width='9' height='8' rx='2' fill='white' fill-opacity='.85'/><path d='M15 11h3.5a1.5 1.5 0 0 1 1.5 1.5V17' fill='none' stroke='white' stroke-width='1.6'/></svg>">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="style.css?v=202609171538">
+  <link rel="stylesheet" href="style.css?v=202609171543">
 </head>
 <body>
   <header class="top">
@@ -44,8 +44,8 @@
       </div>
       <div class="btn-group">
         <button class="tb text" data-action="import" data-i18n-title="tb.import.t"><svg viewBox="0 0 16 16"><path d="M8 10V2.5M5 5.5l3-3 3 3M2.75 13.25h10.5"/></svg><span data-i18n="tb.import"></span></button>
-        <button class="tb text" data-action="svg" data-i18n-title="tb.svg.t"><svg viewBox="0 0 16 16"><rect x="2" y="2.5" width="12" height="11" rx="2"/><path d="M2.5 11l3.5-3 2.5 2 2-1.5 3 2.5"/></svg><span data-i18n="tb.svg"></span></button>
-        <button class="tb text" data-action="png" data-i18n-title="tb.png.t"><span data-i18n="tb.png"></span></button>
+        <button class="tb text" data-action="migrate" data-i18n-title="tb.migrate.t"><svg viewBox="0 0 16 16"><path d="M2.5 5h9M9 2.5L11.5 5 9 7.5M13.5 11h-9M7 8.5L4.5 11 7 13.5"/></svg><span data-i18n="tb.migrate"></span></button>
+        <button class="tb text" data-action="export" data-i18n-title="tb.export.t"><svg viewBox="0 0 16 16"><rect x="2" y="2.5" width="12" height="11" rx="2"/><path d="M5 8.5l3 3 3-3M8 5v6.5"/></svg><span data-i18n="tb.export"></span><span class="caret">▾</span></button>
       </div>
       <div class="lang" role="group" aria-label="Language"><button data-lang="uk">UK</button><button data-lang="en">EN</button></div>
       <button class="primary" data-action="ddl" data-i18n-title="tb.ddl.t"><svg viewBox="0 0 16 16"><path d="M5.5 4.5L2 8l3.5 3.5M10.5 4.5L14 8l-3.5 3.5"/></svg><span data-i18n="tb.ddlBtn"></span></button>
@@ -225,6 +225,34 @@
     </form>
   </dialog>
 
+  <dialog id="migrate-dialog" class="wide">
+    <form method="dialog">
+      <header>
+        <span class="dlg-ic"><svg viewBox="0 0 16 16"><path d="M2.5 5h9M9 2.5L11.5 5 9 7.5M13.5 11h-9M7 8.5L4.5 11 7 13.5"/></svg></span>
+        <div><h2 data-i18n="mig.title"></h2><p class="sub" data-i18n="mig.sub"></p></div>
+        <button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </header>
+      <div class="mig-grid">
+        <div class="mig-side">
+          <h4 data-i18n="mig.from"></h4>
+          <div class="seg-switch" role="tablist">
+            <button type="button" data-src="snap" class="on" data-i18n="mig.fromSnap"></button>
+            <button type="button" data-src="ddl" data-i18n="mig.fromDDL"></button>
+          </div>
+          <select id="mig-snap" size="8"></select>
+          <textarea id="mig-ddl" class="code-input" spellcheck="false" hidden data-i18n-ph="mig.ddlPh"></textarea>
+          <label class="switch"><input type="checkbox" id="mig-destructive"><span></span><b data-i18n="mig.destructive"></b></label>
+          <h4><span data-i18n="mig.summary"></span> <span class="count" id="mig-count">0</span></h4>
+          <ul class="mig-changes" id="mig-changes"></ul>
+        </div>
+        <div class="mig-main">
+          <pre class="code" id="mig-code"></pre>
+          <footer><button class="secondary" type="button" id="mig-copy" data-i18n="ddl.copy"></button><button class="primary" type="button" id="mig-download" data-i18n="ddl.download"></button></footer>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
   <div class="ctx" id="ctx" hidden></div>
   <div class="drop" id="drop" hidden><div><svg viewBox="0 0 16 16"><path d="M8 10V2.5M5 5.5l3-3 3 3M2.75 13.25h10.5"/></svg><span data-i18n="t.dropHint"></span></div></div>
   <div id="toast" role="status"></div>
@@ -239,6 +267,6 @@
       document.body.append(d);
     }, 4000);
   </script>
-  <script type="module" src="js/app.js?v=202609171538"></script>
+  <script type="module" src="js/app.js?v=202609171543"></script>
 </body>
 </html>

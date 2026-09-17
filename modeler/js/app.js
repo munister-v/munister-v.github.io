@@ -1,16 +1,18 @@
-import { Store, newTable, nextTableName, newColumn, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609171538';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609171538';
-import { checkModel, fixFkIndexes } from './checks.js?v=202609171538';
-import { Diagram, tableSize } from './diagram.js?v=202609171538';
-import { Panel } from './panel.js?v=202609171538';
-import { Sidebar } from './sidebar.js?v=202609171538';
-import { Palette } from './palette.js?v=202609171538';
-import { generateDDL } from './ddl-gen.js?v=202609171538';
-import { parseDDL } from './ddl-parse.js?v=202609171538';
-import { SAMPLE_DDL } from './sample.js?v=202609171538';
-import { initWorkspace } from './workspace.js?v=202609171538';
-import { migrateModel } from './storage.js?v=202609171538';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609171538';
+import { Store, newTable, nextTableName, newColumn, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609171543';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609171543';
+import { checkModel, fixFkIndexes } from './checks.js?v=202609171543';
+import { Diagram, tableSize } from './diagram.js?v=202609171543';
+import { Panel } from './panel.js?v=202609171543';
+import { Sidebar } from './sidebar.js?v=202609171543';
+import { Palette } from './palette.js?v=202609171543';
+import { generateDDL } from './ddl-gen.js?v=202609171543';
+import { parseDDL } from './ddl-parse.js?v=202609171543';
+import { SAMPLE_DDL } from './sample.js?v=202609171543';
+import { initWorkspace } from './workspace.js?v=202609171543';
+import { diffModels } from './diff.js?v=202609171543';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609171543';
+import { migrateModel, listSnapshots } from './storage.js?v=202609171543';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609171543';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -199,6 +201,7 @@ const palette = new Palette(store, {
     ['table', 'tb.table', 'T'], ['relation', 'tb.relation', 'R'], ['layout', 'tb.layout'], ['fit', 'tb.fit.t', 'F'],
     ['ddl', 'tb.ddl.t'], ['import', 'tb.import'], ['svg', 'tb.svg.t'],
     ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
+    ['migrate', 'tb.migrate.t'], ['export', 'tb.export.t'],
     ['projects', 'ws.projects'], ['history', 'ws.history'], ['snapshot', 'ws.saveVersion'], ['settings', 'ws.settings'], ['shortcuts', 'ws.shortcuts', '?'],
     ['save', 'tb.save', '⌘S'], ['open', 'tb.open'],
     ['undo', 'tb.undo.t'], ['redo', 'tb.redo.t'],
@@ -820,9 +823,75 @@ const ws = initWorkspace({
   store, diagram, toast, download, readFile,
   openTemplates: () => openTemplates(),
   firstModel: blank => blank ? emptyModel() : templateModel(TEMPLATES[0]),
+  openMigration: id => openMigration(id),
   afterLoad: () => { nameInput.value = store.model.name; updateCheckBadge(); },
 });
 actions.projects = () => ws.projects();
+
+// ---------- export menu ----------
+actions.export = () => {
+  const b = $('[data-action="export"]').getBoundingClientRect();
+  openMenu(b.left, b.bottom + 6, [
+    { label: t('exp.sql'), icon: '⌨', run: () => download(fileName('sql'), generateDDL(store.model)) },
+    { label: t('exp.html'), icon: '📄', run: () => download(fileName('html'), dictionaryHTML(store.model), 'text/html') },
+    { label: t('exp.md'), icon: 'M↓', run: () => download(fileName('md'), dictionaryMarkdown(store.model), 'text/markdown') },
+    { label: t('exp.print'), icon: '⎙', run: printDocs },
+    '-',
+    { label: t('exp.svg'), icon: '◇', run: actions.svg },
+    { label: t('exp.png'), icon: '▣', run: actions.png },
+    '-',
+    { label: t('exp.json'), icon: '{}', kbd: '⌘S', run: actions.save },
+  ]);
+};
+function printDocs() {
+  const w = window.open(URL.createObjectURL(new Blob([dictionaryHTML(store.model)], { type: 'text/html' })), '_blank');
+  if (w) w.addEventListener('load', () => setTimeout(() => w.print(), 300));
+}
+
+// ---------- migration ----------
+const mig = { src: 'snap', result: null };
+function openMigration(snapId) {
+  const snaps = listSnapshots(ws.id);
+  const fmt = ts => new Date(ts).toLocaleString(getLang() === 'uk' ? 'uk-UA' : 'en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  $('#mig-snap').innerHTML = snaps.length
+    ? snaps.map((sn, i) => `<option value="${sn.id}"${(snapId ? sn.id === snapId : i === 0) ? ' selected' : ''}>${esc(sn.label || (sn.auto ? t('ws.autoSnap') : t('ws.manualSnap')))} · ${fmt(sn.at)} · ${sn.tables}</option>`).join('')
+    : `<option disabled>${esc(t('mig.noSnaps'))}</option>`;
+  setMigSource(snaps.length ? 'snap' : 'ddl');
+  $('#migrate-dialog').showModal();
+  runMigration();
+}
+function setMigSource(src) {
+  mig.src = src;
+  document.querySelectorAll('[data-src]').forEach(b => b.classList.toggle('on', b.dataset.src === src));
+  $('#mig-snap').hidden = src !== 'snap';
+  $('#mig-ddl').hidden = src !== 'ddl';
+}
+function runMigration() {
+  let from = null;
+  if (mig.src === 'snap') {
+    const sn = listSnapshots(ws.id).find(x => x.id === $('#mig-snap').value);
+    if (sn) from = migrateModel(structuredClone(sn.model));
+  } else if ($('#mig-ddl').value.trim()) {
+    from = { name: 'db', ...parseDDL($('#mig-ddl').value).model };
+  }
+  if (!from) { $('#mig-code').textContent = ''; $('#mig-changes').innerHTML = ''; $('#mig-count').textContent = '0'; mig.result = null; return; }
+  const r = diffModels(from, store.model, { destructive: $('#mig-destructive').checked });
+  mig.result = r;
+  $('#mig-code').innerHTML = highlightSQL(r.sql);
+  $('#mig-count').textContent = r.changes.filter(c => c.kind !== 'warn').length;
+  const icon = { add: '+', drop: '−', modify: '~', warn: '!' };
+  $('#mig-changes').innerHTML = r.changes.length
+    ? r.changes.map(c => `<li class="${c.kind}"><i>${icon[c.kind]}</i><span>${esc(c.text)}</span></li>`).join('')
+    : `<li class="none-ok"><i>✓</i><span>${esc(t('mig.none'))}</span></li>`;
+}
+document.querySelectorAll('[data-src]').forEach(b => b.addEventListener('click', () => { setMigSource(b.dataset.src); runMigration(); }));
+$('#mig-snap').addEventListener('change', runMigration);
+$('#mig-destructive').addEventListener('change', runMigration);
+let migTimer;
+$('#mig-ddl').addEventListener('input', () => { clearTimeout(migTimer); migTimer = setTimeout(runMigration, 300); });
+$('#mig-copy').addEventListener('click', () => mig.result && navigator.clipboard.writeText(mig.result.sql).then(() => toast(t('t.copied'))));
+$('#mig-download').addEventListener('click', () => mig.result && download(fileName('migration.sql'), mig.result.sql));
+actions.migrate = () => openMigration();
 actions.history = () => ws.history();
 actions.settings = () => ws.settings();
 actions.shortcuts = () => ws.shortcuts();

@@ -5,6 +5,8 @@ Schemata is an open-source browser data modeller for **Oracle Database**. Plain 
 Live: https://munister.com.ua/modeler/
 
 ## Features
+- Migrations: compare the model with a saved version or with DDL exported from the database and get an ordered ALTER script (drops commented out unless enabled) plus a change list with warnings
+- Data dictionary export as a standalone HTML page (printable to PDF) or Markdown
 - Projects: any number of models in the browser, with search, rename, duplicate, delete, full backup / restore
 - Version history: automatic snapshots every 5 minutes, named versions, one-click restore with a safety snapshot
 - Debounced autosave with a status bar (saved time, counts, storage used), quota recovery, cross-tab sync
@@ -58,6 +60,8 @@ js/ddl-parse.js  Oracle DDL importer
 js/i18n.js       Ukrainian / English strings
 js/templates.js  ready-made schemas and column presets
 js/checks.js     model validation
+js/diff.js       model diff and migration script
+js/docs.js       data dictionary (HTML / Markdown)
 js/storage.js    projects, snapshots, settings in localStorage
 js/workspace.js  projects / history / settings UI, status bar, sync, updates
 js/app.js        toolbar, dialogs, wiring

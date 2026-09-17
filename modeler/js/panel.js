@@ -1,7 +1,7 @@
 // Properties panel: model, table (columns, keys, indexes) or foreign key
-import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609171538';
-import { t, getLang, onLang } from './i18n.js?v=202609171538';
-import { COLUMN_PRESETS } from './templates.js?v=202609171538';
+import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609171543';
+import { t, getLang, onLang } from './i18n.js?v=202609171543';
+import { COLUMN_PRESETS } from './templates.js?v=202609171543';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 const upper = v => v.trim().toUpperCase().replace(/\s+/g, '_');

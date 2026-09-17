@@ -1,13 +1,13 @@
 // Workspace: projects, version history, settings, status bar, cross-tab sync, offline updates
-import * as S from './storage.js?v=202609171538';
-import { setDiagramOptions } from './diagram.js?v=202609171538';
-import { t, getLang, onLang } from './i18n.js?v=202609171538';
+import * as S from './storage.js?v=202609171543';
+import { setDiagramOptions } from './diagram.js?v=202609171543';
+import { t, getLang, onLang } from './i18n.js?v=202609171543';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
 export function initWorkspace(ctx) {
-  const { store, diagram, toast, download, readFile, openTemplates, firstModel, afterLoad } = ctx;
+  const { store, diagram, toast, download, readFile, openTemplates, firstModel, afterLoad, openMigration } = ctx;
   const ws = { id: null, settingsState: S.loadSettings(), savedAt: null, saveError: false, lastSnapshotRaw: null };
   setDiagramOptions(ws.settingsState);
   const bar = $('#statusbar');
@@ -202,6 +202,7 @@ export function initWorkspace(ctx) {
           <b>${s.label ? esc(s.label) : s.auto ? t('ws.autoSnap') : t('ws.manualSnap')}</b>
           <span>${new Date(s.at).toLocaleString(getLang() === 'uk' ? 'uk-UA' : 'en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} · ${t('ws.meta', { t: s.tables, r: s.fks })} · ${diffSummary(s)}</span>
         </div>
+        <button class="secondary" type="button" data-h="alter" title="${t('tb.migrate.t')}">${t('ws.alter')}</button>
         <button class="secondary" type="button" data-h="restore">${t('ws.restore')}</button>
         <button class="ic danger" type="button" data-h="delete" title="${t('cm.delete')}"><svg viewBox="0 0 16 16"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 9h5.8l.6-9"/></svg></button>
       </li>`).join('') : `<li class="empty-note">${t('ws.noSnaps')}</li>`;
@@ -220,6 +221,7 @@ export function initWorkspace(ctx) {
     if (!b || !li) return;
     const snap = S.listSnapshots(ws.id).find(s => s.id === li.dataset.id);
     if (b.dataset.h === 'delete') { S.deleteSnapshot(ws.id, snap.id); renderHistory(); return; }
+    if (b.dataset.h === 'alter') { $('#history-dialog').close(); openMigration?.(snap.id); return; }
     if (!confirm(t('ws.confirmRestore'))) return;
     snapshotIfChanged(false, t('ws.beforeRestore'));
     const model = S.migrateModel(structuredClone(snap.model));
