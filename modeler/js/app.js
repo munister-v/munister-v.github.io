@@ -1,14 +1,14 @@
-import { Store, newTable, nextTableName, newColumn, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js';
-import { checkModel, fixFkIndexes } from './checks.js';
-import { Diagram, tableSize } from './diagram.js';
-import { Panel } from './panel.js';
-import { Sidebar } from './sidebar.js';
-import { Palette } from './palette.js';
-import { generateDDL } from './ddl-gen.js';
-import { parseDDL } from './ddl-parse.js';
-import { SAMPLE_DDL } from './sample.js';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js';
+import { Store, newTable, nextTableName, newColumn, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609171528';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609171528';
+import { checkModel, fixFkIndexes } from './checks.js?v=202609171528';
+import { Diagram, tableSize } from './diagram.js?v=202609171528';
+import { Panel } from './panel.js?v=202609171528';
+import { Sidebar } from './sidebar.js?v=202609171528';
+import { Palette } from './palette.js?v=202609171528';
+import { generateDDL } from './ddl-gen.js?v=202609171528';
+import { parseDDL } from './ddl-parse.js?v=202609171528';
+import { SAMPLE_DDL } from './sample.js?v=202609171528';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609171528';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
