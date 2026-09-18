@@ -56,20 +56,7 @@ export function migrateModel(m) {
   });
   m.diagrams ||= [];
   if (!m.diagrams.length) {
-    const mainId = 'd_main';
-    m.diagrams.push({
-      id: mainId,
-      name: 'Main',
-      tableIds: m.tables.map(t => t.id),
-      viewIds: (m.views || []).map(v => v.id),
-      positions: Object.fromEntries([
-        ...m.tables.map(t => [t.id, { x: t.x ?? 40, y: t.y ?? 40 }]),
-        ...(m.views || []).map(v => [v.id, { x: v.x ?? 40, y: v.y ?? 40 }])
-      ]),
-      zones: [],
-      zoom: { x: 0, y: 0, k: 1 }
-    });
-    m.activeDiagram = mainId;
+    m.diagrams.push({ id: 'd_main', name: 'Main', tableIds: [], viewIds: [], positions: {}, zones: [], zoom: { x: 0, y: 0, k: 1 } });
   }
   m.diagrams.forEach(d => {
     d.tableIds ||= [];
@@ -81,6 +68,21 @@ export function migrateModel(m) {
   if (!m.activeDiagram || !m.diagrams.some(d => d.id === m.activeDiagram)) {
     m.activeDiagram = m.diagrams[0].id;
   }
+  // Tables/views that exist in the model but aren't placed on any diagram yet
+  // (fresh templates, DDL merges, pre-diagram exports) land on the active one.
+  const target = m.diagrams.find(d => d.id === m.activeDiagram);
+  const placedTables = new Set(m.diagrams.flatMap(d => d.tableIds));
+  const placedViews = new Set(m.diagrams.flatMap(d => d.viewIds));
+  m.tables.forEach(tb => {
+    if (placedTables.has(tb.id)) return;
+    target.tableIds.push(tb.id);
+    target.positions[tb.id] ??= { x: tb.x ?? 40, y: tb.y ?? 40 };
+  });
+  m.views.forEach(v => {
+    if (placedViews.has(v.id)) return;
+    target.viewIds.push(v.id);
+    target.positions[v.id] ??= { x: v.x ?? 40, y: v.y ?? 40 };
+  });
   m.format = 'schemata-model';
   m.version = MODEL_VERSION;
   return m;

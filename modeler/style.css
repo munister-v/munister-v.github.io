@@ -82,6 +82,7 @@ kbd { font: 500 10.5px var(--sans); color: var(--muted); background: var(--surfa
 .lang button { height: 26px; padding: 0 9px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: .04em; color: var(--muted); transition: all .15s; }
 .lang button:hover { color: var(--text); }
 .lang button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm), 0 0 0 1px var(--border); }
+.mobile-more { display: none; }
 
 /* layout */
 .app { flex: 1; display: grid; grid-template-columns: 248px minmax(0, 1fr) 360px; min-height: 0; }
@@ -396,7 +397,9 @@ dialog footer .switch { margin-right: auto; }
 }
 @media (max-width: 760px) {
   .top { padding: 0 8px; gap: 6px; }
-  .brand-name, .btn-group, .primary span { display: none; }
+  .brand-name, .btn-group:not(.btn-group-primary), .primary span { display: none; }
+  .btn-group-primary { padding-right: 0; border-right: 0; }
+  .mobile-more { display: inline-flex; }
   .primary { padding: 0 10px; }
   .app { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) 42%; }
   .panel { border-left: 0; border-top: 1px solid var(--border); }
@@ -466,7 +469,8 @@ dialog.wide { width: min(1040px, calc(100vw - 32px)); }
 .bulk .pill { margin-bottom: 10px; }
 @media (max-width: 1320px) { .check-btn .badge { right: -2px; } }
 .tb.text span, .primary span { white-space: nowrap; }
-@media (max-width: 1560px) { .tb[data-action="import"] span { display: none; } .cmdk { width: 260px; } }
+@media (max-width: 1560px) { .tb[data-action="import"] span { display: none; } }
+@media (max-width: 1560px) and (min-width: 1081px) { .cmdk { width: 260px; } }
 @media (max-width: 1320px) { .tb[data-action="png"], .tb[data-action="svg"] { font-size: 11px; } .tb[data-action="png"] span, .tb[data-action="svg"] span { display: inline; } .tb[data-action="templates"] span, .tb[data-action="check"] span { display: none; } }
 
 /* ---------- v6: inline field editing, rich context menus, notation ---------- */

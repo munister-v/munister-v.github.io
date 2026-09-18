@@ -1,19 +1,19 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609172122';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609172122';
-import { checkModel, fixFkIndexes } from './checks.js?v=202609172122';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609172122';
-import { DiagramTabs } from './diagrams-ui.js?v=202609172122';
-import { Panel } from './panel.js?v=202609172122';
-import { Sidebar } from './sidebar.js?v=202609172122';
-import { Palette } from './palette.js?v=202609172122';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609172122';
-import { parseDDL } from './ddl-parse.js?v=202609172122';
-import { SAMPLE_DDL } from './sample.js?v=202609172122';
-import { initWorkspace } from './workspace.js?v=202609172122';
-import { diffModels } from './diff.js?v=202609172122';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609172122';
-import { migrateModel, listSnapshots } from './storage.js?v=202609172122';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609172122';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609181118';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609181118';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609181118';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609181118';
+import { DiagramTabs } from './diagrams-ui.js?v=202609181118';
+import { Panel } from './panel.js?v=202609181118';
+import { Sidebar } from './sidebar.js?v=202609181118';
+import { Palette } from './palette.js?v=202609181118';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609181118';
+import { parseDDL } from './ddl-parse.js?v=202609181118';
+import { SAMPLE_DDL } from './sample.js?v=202609181118';
+import { initWorkspace } from './workspace.js?v=202609181118';
+import { diffModels } from './diff.js?v=202609181118';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609181118';
+import { migrateModel, listSnapshots } from './storage.js?v=202609181118';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609181118';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -181,6 +181,7 @@ function importDDL(text, replace) {
       freshViews.forEach(v => { v.x = x; v.y = y; y += viewSize(v).h + 48; });
     }
     m.tables = model.tables; m.fks = model.fks; m.views = model.views; m.sequences = model.sequences;
+    migrateModel(m); // places any table/view not yet on a diagram onto the active one
   }, 'load');
   store.select(null);
   requestAnimationFrame(() => diagram.fit());
@@ -257,7 +258,7 @@ const palette = new Palette(store, {
 
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-action]');
-  if (b && !b.closest('.palette')) actions[b.dataset.action]?.();
+  if (b && !b.closest('.palette')) actions[b.dataset.action]?.(b);
 });
 
 $('#import-file').addEventListener('click', async () => { $('#import-text').value = await readFile('.sql,.ddl,.txt'); });
@@ -373,6 +374,10 @@ $('#tpl-grid').addEventListener('click', e => {
 });
 
 // ---------- checks ----------
+const CHECK_FIXES = {
+  fkIndex: { label: 'chk.fixIdx', done: 'chk.fixed', run: m => fixFkIndexes(m, uid, uniqueName) },
+  pkNaming: { label: 'chk.fixPk', done: 'chk.fixedPk', run: m => fixPkNaming(m) },
+};
 function renderChecks() {
   const issues = checkModel(store.model);
   const groups = ['error', 'warn', 'info'].map(level => [level, issues.filter(x => x.level === level)]).filter(([, l]) => l.length);
@@ -383,7 +388,8 @@ function renderChecks() {
         <h4><i></i>${t(`chk.${level}`)} <span class="count">${list.length}</span></h4>
         <ul>${list.map(x => `<li data-kind="${x.target.kind}" data-id="${x.target.id}">${esc(x.text)}</li>`).join('')}</ul>
       </section>`).join('');
-  $('#chk-fix').hidden = !issues.some(x => x.text && x.target.kind === 'fk' && /index|індекс/i.test(x.text));
+  const fixes = [...new Set(issues.map(x => x.fix).filter(Boolean))];
+  $('#chk-fixes').innerHTML = fixes.map(id => `<button class="secondary" type="button" data-fix="${id}">${esc(t(CHECK_FIXES[id].label))}</button>`).join('');
   updateCheckBadge(issues);
 }
 $('#chk-list').addEventListener('click', e => {
@@ -399,10 +405,13 @@ $('#chk-list').addEventListener('click', e => {
     if (f) diagram.centerOn(f.fromTable);
   }
 });
-$('#chk-fix').addEventListener('click', () => {
+$('#chk-fixes').addEventListener('click', e => {
+  const btn = e.target.closest('[data-fix]');
+  if (!btn) return;
+  const cfg = CHECK_FIXES[btn.dataset.fix];
   let n = 0;
-  store.update(m => { n = fixFkIndexes(m, uid, uniqueName); });
-  toast(t('chk.fixed', { n }));
+  store.update(m => { n = cfg.run(m); });
+  toast(t(cfg.done, { n }));
   renderChecks();
 });
 let badgeTimer;
@@ -984,9 +993,8 @@ const ws = initWorkspace({
 actions.projects = () => ws.projects();
 
 // ---------- export menu ----------
-actions.export = () => {
-  const b = $('[data-action="export"]').getBoundingClientRect();
-  openMenu(b.left, b.bottom + 6, [
+function exportMenuItems() {
+  return [
     { label: t('exp.sql'), icon: '⌨', run: () => download(fileName('sql'), generateDDL(store.model)) },
     { label: t('exp.html'), icon: '📄', run: () => download(fileName('html'), dictionaryHTML(store.model), 'text/html') },
     { label: t('exp.md'), icon: 'M↓', run: () => download(fileName('md'), dictionaryMarkdown(store.model), 'text/markdown') },
@@ -996,6 +1004,23 @@ actions.export = () => {
     { label: t('exp.png'), icon: '▣', run: actions.png },
     '-',
     { label: t('exp.json'), icon: '{}', kbd: '⌘S', run: actions.save },
+  ];
+}
+actions.export = () => {
+  const b = $('[data-action="export"]').getBoundingClientRect();
+  openMenu(b.left, b.bottom + 6, exportMenuItems());
+};
+// Narrow screens hide the secondary toolbar groups; this puts them behind one button.
+actions.more = btn => {
+  const r = btn.getBoundingClientRect();
+  openMenu(r.right, r.bottom + 6, [
+    { label: t('ws.projects'), icon: ICONS.projects, run: actions.projects },
+    { label: t('ws.history'), icon: ICONS.history, run: actions.history },
+    { label: t('tb.save'), icon: ICONS.save, kbd: '⌘S', run: actions.save },
+    '-',
+    { label: t('tb.import'), icon: ICONS.import, run: actions.import },
+    { label: t('tb.migrate'), icon: ICONS.migrate, run: actions.migrate },
+    { label: t('tb.export'), icon: ICONS.export, sub: exportMenuItems },
   ]);
 };
 function printDocs() {

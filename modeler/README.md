@@ -12,19 +12,21 @@ Live: https://munister.com.ua/modeler/
 - Version history: automatic snapshots every 5 minutes, named versions, one-click restore with a safety snapshot
 - Debounced autosave with a status bar (saved time, counts, storage used), quota recovery, cross-tab sync
 - Offline-capable PWA: a service worker caches the app, and a banner offers new releases
+- Responsive layout: usable down to phone width, with an overflow menu for the less-used toolbar actions
 - Settings: column types, compact keys-only view, striped rows, snap to grid
 - Inline field editing on the diagram: double-click a table to add fields (Enter adds the next one), a field to edit it; types are guessed from names, and `CUSTOMER_ID` automatically becomes a foreign key to `CUSTOMERS`
 - Right-click menus for tables, fields and relations: 1:N, 1:1, identifying and M:N (junction table) relations, PK / NOT NULL / unique / index toggles, field types, ordering, ON DELETE
 - Crow's-foot notation with optionality circles and one-to-one bars
 - Seven ready-made schemas: online store, HR, university, bank, blog/CMS, warehouse, clinic — open or merge into the current model
 - Column presets (ID, audit, status, money, contacts, soft delete) and bulk column entry as text
-- Model check: missing primary keys, unindexed foreign keys (one-click fix), reserved words, type mismatches, long names
+- Model check: missing primary keys, unindexed foreign keys (one-click fix), reserved words, type mismatches, long names, circular FK dependencies, repeating-group columns (1NF), inconsistent primary-key naming (one-click fix)
 - Duplicate / copy / paste tables, context menu, arrow-key nudging, drag-and-drop of `.sql` / `.json` files, PNG export
 - ER diagram: tables, columns, primary / unique keys, indexes, foreign keys (crow's foot notation)
 - Relations the Oracle Data Modeler way: the parent key is carried into the child table
 - Oracle DDL generation: `CREATE TABLE`, identity columns, defaults, constraints, `CREATE INDEX`, `COMMENT ON`, `ON DELETE`
 - DDL import (scripts from SQL Developer or `DBMS_METADATA.GET_DDL`)
 - JSON model files that diff cleanly in Git, autosave in the browser
+- Multiple diagrams per model (subject areas): tabs to split a large schema into focused views, each with its own table set, colour zones, and pan/zoom; marquee and rubber-band selection, drag-to-move zones
 - Table list with filter, minimap, command palette (⌘K), table colours, relation highlighting
 - Undo / redo, auto layout, SVG export
 
@@ -53,6 +55,7 @@ python3 -m http.server 8765
 ```
 js/model.js      model, undo/redo, autosave
 js/diagram.js    SVG diagram, pan/zoom, drag
+js/diagrams-ui.js diagram tabs: multiple diagrams (subject areas) per model
 js/panel.js      properties panel
 js/sidebar.js    table list
 js/palette.js    command palette

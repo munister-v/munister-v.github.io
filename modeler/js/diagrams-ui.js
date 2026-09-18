@@ -1,5 +1,5 @@
 // Diagram tabs UI: manage multiple diagrams, switch, rename, duplicate, delete
-import { t } from './i18n.js?v=202609172122';
+import { t } from './i18n.js?v=202609181118';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
@@ -96,11 +96,11 @@ export class DiagramTabs {
     const items = [
       {
         label: t('diag.rename'),
-        action: () => this.promptRename(id),
+        run: () => this.promptRename(id),
       },
       {
         label: t('diag.duplicate'),
-        action: () => {
+        run: () => {
           const copy = this.store.duplicateDiagram(id);
           this.render();
           this.hooks.onSwitch?.(copy.id);
@@ -108,7 +108,7 @@ export class DiagramTabs {
       },
       {
         label: t('diag.addAllTables'),
-        action: () => {
+        run: () => {
           this.store.update(m => {
             const d = m.diagrams.find(x => x.id === id);
             if (!d) return;
@@ -124,7 +124,7 @@ export class DiagramTabs {
       canDelete ? {
         label: t('diag.delete'),
         danger: true,
-        action: () => {
+        run: () => {
           if (!confirm(t('diag.deleteConfirm', { n: diag.name }))) return;
           this.store.deleteDiagram(id);
           this.render();
