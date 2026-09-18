@@ -46,10 +46,15 @@
 .b-hint{margin-top:12px;color:var(--c-muted);font-size:14.5px;line-height:1.5;max-width:44ch}
 .b-ex{margin-top:12px;font-family:var(--font-head);font-style:italic;font-size:14.5px;line-height:1.45;
   color:var(--c-faint);max-width:44ch;white-space:pre-wrap}
+/* Списки на десяток пунктов и карточки-специмены задыхаются в правой
+   колонке: вопрос уезжает наверх, ответы получают всю ширину. */
+.b-q--wide{grid-template-columns:1fr;gap:18px}
+.b-q--wide .b-ask{max-width:64ch}
 @media (max-width:860px){.b-q{grid-template-columns:1fr;gap:16px}}
 
 /* ── варианты: настоящие чекбоксы, без рамок и заливок ──── */
-.b-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,225px),1fr));gap:0 28px}
+.b-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:0 30px}
+.b-q--wide .b-opts{grid-template-columns:repeat(auto-fit,minmax(min(100%,265px),1fr))}
 .b-opts.b-one{grid-template-columns:1fr}
 .b-opt{display:flex;align-items:flex-start;gap:11px;padding:7px 0;cursor:pointer;
   font-size:15.5px;line-height:1.4;letter-spacing:-.004em}
@@ -71,7 +76,8 @@
 .b-q textarea::placeholder{color:var(--c-faint);font-family:var(--font-head);font-style:italic}
 
 /* ── каркасы сайта ──────────────────────────────────────── */
-.b-frames{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px}
+.b-frames{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:700px){.b-frames{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .b-frame{border:1px solid var(--c-rule);padding:15px 17px 17px;display:flex;flex-direction:column;gap:10px;
   cursor:pointer;transition:border-color .18s ease}
 .b-frame:hover{border-color:var(--c-rule-strong)}
@@ -95,7 +101,9 @@
 .b-mv button:disabled{opacity:.22;cursor:default}
 
 /* ── направления: целые предложения, а не токены ─────────── */
-.b-dirs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:12px}
+.b-dirs{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:640px){.b-dirs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1080px){.b-dirs{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .b-dir{border:1px solid var(--c-rule);cursor:pointer;display:flex;flex-direction:column;
   transition:border-color .18s ease}
 .b-dir:hover{border-color:var(--c-rule-strong)}
@@ -112,7 +120,7 @@
   --d-disp:'Iowan Old Style',Palatino,Georgia,serif;--d-body:'Helvetica Neue',Helvetica,Arial,sans-serif;
   background:var(--d-bg);color:var(--d-fg);font-family:var(--d-body);padding:14px;display:block}
 .b-mini .b-mini-bar{font-family:var(--d-disp);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--d-acc)}
-.b-mini .b-mini-cover{margin-top:11px;height:96px;border-radius:var(--d-rad);display:grid;place-items:center;
+.b-mini .b-mini-cover{margin-top:12px;height:120px;border-radius:var(--d-rad);display:grid;place-items:center;
   border:1px solid color-mix(in srgb,var(--d-acc) 35%,transparent);
   background:linear-gradient(160deg,var(--d-soft),color-mix(in srgb,var(--d-acc) 22%,var(--d-soft)))}
 .b-mini .b-mini-cover span{font-family:var(--d-disp);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--d-acc)}
@@ -122,36 +130,8 @@
 .b-mini .b-mini-cta{background:var(--d-acc);color:var(--d-bg);font-size:9.5px;font-weight:700;
   padding:7px 11px;border-radius:var(--d-rad);white-space:nowrap}
 
-/* ── специмен ───────────────────────────────────────────── */
-.b-vis{display:grid;grid-template-columns:1fr;gap:clamp(20px,3vw,40px)}
-@media (min-width:1040px){.b-vis{grid-template-columns:minmax(0,1fr) 300px;align-items:start}}
-/* Полоса прогресса липнет на --bar и вместе с навигацией занимает
-   около 90px: специмен должен начинаться ниже неё, а не под ней. */
-.b-aside{position:sticky;top:calc(var(--bar) + 96px)}
-.b-aside .mono{margin-bottom:10px}
-.b-mock{--p-bg:#0D1017;--p-fg:#E9E4D6;--p-acc:#C9A24A;--p-soft:#1A2130;
-  --p-rad:2px;--p-pad:18px;--p-disp:'Iowan Old Style',Palatino,Georgia,serif;
-  --p-body:'Helvetica Neue',Helvetica,Arial,sans-serif;
-  background:var(--p-bg);color:var(--p-fg);padding:var(--p-pad);font-family:var(--p-body);
-  /* Светлое направление на белой странице иначе растворяется. */
-  border:1px solid var(--c-rule);transition:background .25s,color .25s}
-.b-mock .b-mbar{display:flex;justify-content:space-between;align-items:center;font-size:9px;
-  letter-spacing:.2em;text-transform:uppercase;opacity:.72}
-.b-mock .b-mbar b{font-family:var(--p-disp);font-size:12px;letter-spacing:.12em;color:var(--p-acc);opacity:1;font-weight:400}
-.b-mock .b-cover{margin-top:calc(var(--p-pad) * .8);aspect-ratio:3/4;border-radius:var(--p-rad);
-  display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--p-acc) 35%,transparent);
-  background:linear-gradient(160deg,var(--p-soft),color-mix(in srgb,var(--p-acc) 22%,var(--p-soft)))}
-.b-mock .b-cover span{font-family:var(--p-disp);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--p-acc)}
-.b-mock h4{font-family:var(--p-disp);font-size:24px;line-height:1.08;margin-top:calc(var(--p-pad) * .8)}
-.b-mock p{margin-top:6px;font-size:11.5px;line-height:1.5;opacity:.72}
-.b-mock .b-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:calc(var(--p-pad) * .6)}
-.b-mock .b-tags i{font-style:normal;font-size:9px;padding:3px 8px;border-radius:99px;opacity:.75;
-  border:1px solid color-mix(in srgb,var(--p-fg) 25%,transparent)}
-.b-mock .b-prow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:calc(var(--p-pad) * .7)}
-.b-mock .b-price{font-family:var(--p-disp);font-size:19px}
-.b-mock .b-cta{background:var(--p-acc);color:var(--p-bg);font-size:11px;font-weight:700;
-  padding:9px 14px;border-radius:var(--p-rad);white-space:nowrap}
-.b-aside p.b-note{margin-top:12px;font-size:13px;line-height:1.45;color:var(--c-faint)}
+/* ── мини-макет внутри карточки направления ─────────────── */
+.b-mini .b-mini-cover{height:120px}
 
 /* ── финал ──────────────────────────────────────────────── */
 .b-fin{background:var(--c-ink);color:var(--c-paper);padding:clamp(26px,4vw,48px);
@@ -340,7 +320,7 @@
        opts:["Порожній каталог або немає результатів пошуку","Книги немає в наявності","Передзамовлення до виходу тиражу","Помилка оплати","Успішне замовлення й лист-підтвердження","Форма з помилками заповнення","Стан завантаження","Сторінка 404","Сайт на технічних роботах"]}
     ]},
 
-    { id:"s4", num:"03", title:"Візуальна система", vis:true, qs:[
+    { id:"s4", num:"03", title:"Візуальна система", qs:[
       {id:"material", type:"multitext", q:"З чого зроблена сама книга",
        hint:"Сайт успадковує видання: колір і фактура беруться з паперу, фарб і оздоблення.",
        opts:["Крафтовий або тонований папір","Білий офсет","Тверда палітурка","М’яка обкладинка","Тиснення або фольга","Друк у дві фарби","Кольоровий обріз","Ляссе","Ілюстрації всередині","Ще не вирішено"],
@@ -463,31 +443,9 @@
 
   var NONE = "Жоден із чотирьох не підходить";
 
-  var mock = null;
-  function syncMock(){
-    if(!mock) return;
-    var chosen = Array.isArray(A.direction) ? A.direction : [];
-    var picked = null;
-    for(var i = 0; i < chosen.length && !picked; i++){ if(chosen[i] !== NONE) picked = dirByName(chosen[i]); }
-    var d = picked || DIRECTIONS[0];
-    mock.style.setProperty("--p-bg", d.bg);
-    mock.style.setProperty("--p-fg", d.fg);
-    mock.style.setProperty("--p-acc", d.acc);
-    mock.style.setProperty("--p-soft", d.soft);
-    mock.style.setProperty("--p-disp", d.disp);
-    mock.style.setProperty("--p-body", d.body);
-    mock.style.setProperty("--p-rad", d.rad + "px");
-    mock.style.setProperty("--p-pad", d.pad + "px");
-    var cap = document.getElementById("specName");
-    if(cap){
-      if(picked) cap.textContent = d.nm;
-      else if(chosen.indexOf(NONE) > -1) cap.textContent = "жоден не підходить — покажемо інше";
-      else cap.textContent = d.nm + " · поки не вибрано";
-    }
-  }
-
   function renderQ(q, num){
-    var card = el("article", "b-q");
+    var wide = q.type === "frames" || q.type === "direction" || (Array.isArray(q.opts) && q.opts.length >= 9);
+    var card = el("article", "b-q" + (wide ? " b-q--wide" : ""));
     card.id = "q-" + q.id;
 
     var ask = el("div", "b-ask");
@@ -515,7 +473,7 @@
       var arr = q.type === "multi" ? arrOf(q.id) : pair(q.id).l;
       var longest = 0;
       q.opts.forEach(function(o){ longest = Math.max(longest, o.length); });
-      var box = el("div", "b-opts" + (longest > 40 ? " b-one" : ""));
+      var box = el("div", "b-opts" + (!wide && longest > 28 ? " b-one" : ""));
       box.setAttribute("role", "group");
       box.setAttribute("aria-labelledby", "qt-" + q.id);
       q.opts.forEach(function(o){
@@ -624,7 +582,7 @@
             if(i > -1) picked.splice(i, 1);
             toggle(picked, card.value);
           }
-          paintDirs(); syncMock(); mark();
+          paintDirs(); mark();
         });
       });
 
@@ -708,35 +666,11 @@
     var list = el("div", "b-qs");
     s.qs.forEach(function(q){ n++; list.appendChild(renderQ(q, n)); });
 
-    if(s.vis){
-      var lay = el("div", "b-vis");
-      lay.appendChild(list);
-      var aside = el("aside", "b-aside");
-      var cap = el("p", "mono");
-
-      var capName = el("span"); capName.id = "specName";
-      cap.appendChild(capName);
-      aside.appendChild(cap);
-      mock = el("div", "b-mock");
-      mock.innerHTML =
-        '<div class="b-mbar"><b>ВІДЬМАР</b><span>каталог</span></div>' +
-        '<div class="b-cover"><span>Обкладинка</span></div>' +
-        '<h4>Херсонський знатник</h4>' +
-        '<p>Українське чаклунство, знахарство та міф — зібране з польових записів і власної практики.</p>' +
-        '<div class="b-tags"><i>езотерика</i><i>міф</i><i>нон-фікшн</i></div>' +
-        '<div class="b-prow"><span class="b-price">540 ₴</span><span class="b-cta">До кошика</span></div>';
-      aside.appendChild(mock);
-      aside.appendChild(el("p", "b-note", "Пропозиція, не фінальний дизайн."));
-      lay.appendChild(aside);
-      sec.appendChild(lay);
-    } else {
-      sec.appendChild(list);
-    }
+    sec.appendChild(list);
 
     form.appendChild(sec);
   });
 
-  syncMock();
   updateProgress();
   savedEl.textContent = "";
 
