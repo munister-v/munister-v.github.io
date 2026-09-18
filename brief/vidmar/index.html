@@ -75,19 +75,6 @@
 .b-q textarea:focus{outline:none;border-color:var(--c-ink)}
 .b-q textarea::placeholder{color:var(--c-faint);font-family:var(--font-head);font-style:italic}
 
-/* ── каркасы сайта ──────────────────────────────────────── */
-.b-frames{display:grid;grid-template-columns:1fr;gap:14px}
-@media (min-width:700px){.b-frames{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.b-frame{border:1px solid var(--c-rule);padding:15px 17px 17px;display:flex;flex-direction:column;gap:10px;
-  cursor:pointer;transition:border-color .18s ease}
-.b-frame:hover{border-color:var(--c-rule-strong)}
-.b-frame.is-on{border-color:var(--c-ink)}
-.b-frame .b-top{display:flex;align-items:flex-start;gap:11px}
-.b-frame b{font-family:var(--font-head);font-weight:400;font-size:20px;line-height:1.1}
-.b-frame pre{margin:0;font-family:var(--font-mono);font-size:11.5px;line-height:1.75;
-  letter-spacing:0;text-transform:none;color:var(--c-muted);white-space:pre;overflow-x:auto}
-.b-frame .b-cost{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;color:var(--c-faint)}
-
 /* ── финал ──────────────────────────────────────────────── */
 .b-fin{background:var(--c-ink);color:var(--c-paper);padding:clamp(26px,4vw,48px);
   margin-top:clamp(2.4rem,5vw,4.4rem)}
@@ -172,18 +159,6 @@
 (function(){
   "use strict";
 
-  var FRAMES = [
-    {nm:"Вітрина видавництва",
-     tree:"/\n├─ Головна\n├─ Каталог\n│   └─ Сторінка книги\n├─ Про ВІДЬМАР\n├─ Автори\n│   └─ Сторінка автора\n├─ Надіслати рукопис\n└─ Контакти · Доставка й оплата",
-     cost:"≈8 шаблонів, замовлення формою · ~4 тижні"},
-    {nm:"Магазин",
-     tree:"/\n├─ Головна\n├─ Каталог (фільтри, полиці)\n│   └─ Книга → Кошик → Оплата\n├─ Про ВІДЬМАР · Автори\n├─ Кабінет: замовлення, полиця\n├─ Рукописи · Оптовим\n└─ FAQ · Доставка · Оферта",
-     cost:"≈14 шаблонів, оплата й накладні · ~7 тижнів"},
-    {nm:"Магазин і журнал",
-     tree:"/\n├─ Головна\n├─ Каталог → Книга → Кошик → Оплата\n├─ Журнал\n│   └─ Стаття · Рубрики\n├─ Події та презентації\n├─ Автори · Про ВІДЬМАР\n├─ Рукописи · Оптовим\n└─ Кабінет · FAQ · Доставка",
-     cost:"≈20 шаблонів, редакція й розсилка · ~10 тижнів"}
-  ];
-
   var SECTIONS = [
     { id:"s1", num:"01", title:"Основа", qs:[
       {id:"domain", type:"multitext", q:"Домен і пошта",
@@ -211,9 +186,10 @@
     ]},
 
     { id:"s3", num:"02", title:"Структура", qs:[
-      {id:"frame", type:"frames", q:"Каркас, найближчий до того, що ви уявляєте",
-       hint:"Три рівні повноцінного сайту. Терміни орієнтовні, від обсягу шаблонів.",
-       ex:"Можна позначити два: вітрина на старті, магазин другим етапом."},
+      {id:"catalogsize", type:"multi", q:"Скільки книг буде на сайті за перший рік",
+       hint:"Від кількості залежить, чи потрібні фільтри, полиці й пошук, чи достатньо простого списку.",
+       ex:"Чотири книги за рік — списком, без фільтрів.",
+       opts:["1–3 книги","4–8 книг","9–20 книг","Більше двадцяти","Ще не знаю"]},
       {id:"pages",
        ex:"Можна позначити два: спершу вітрина, магазин другим етапом.", type:"multi", q:"Сторінки, які потрібні",
        hint:"Кожна сторінка — окремий шаблон. Позначайте й те, що треба на другий етап: закласти зараз дешевше.",
@@ -331,7 +307,7 @@
   function answered(q){
     var v = A[q.id];
     if(v === undefined || v === null) return false;
-    if(q.type === "multi" || q.type === "frames") return Array.isArray(v) && v.length > 0;
+    if(q.type === "multi") return Array.isArray(v) && v.length > 0;
     if(q.type === "multitext") return (Array.isArray(v.l) && v.l.length > 0) || (typeof v.t === "string" && v.t.trim().length > 0);
     if(q.type === "text") return String(v).trim().length > 0;
     return true;
@@ -367,7 +343,7 @@
   }
 
   function renderQ(q, num){
-    var wide = q.type === "frames" || (Array.isArray(q.opts) && q.opts.length >= 9);
+    var wide = Array.isArray(q.opts) && q.opts.length >= 9;
     var card = el("article", "b-q" + (wide ? " b-q--wide" : ""));
     card.id = "q-" + q.id;
 
@@ -437,42 +413,6 @@
       body.appendChild(ta);
     }
 
-    if(q.type === "frames"){
-      var fg = el("div", "b-frames");
-      fg.setAttribute("role", "group");
-      fg.setAttribute("aria-labelledby", "qt-" + q.id);
-      var fcards = [];
-      FRAMES.forEach(function(fr){
-        var lab = el("label", "b-frame");
-        var top = el("div", "b-top");
-        var c = checkbox();
-        top.appendChild(c);
-        top.appendChild(el("b", null, fr.nm));
-        lab.appendChild(top);
-        lab.appendChild(el("pre", null, fr.tree));
-        lab.appendChild(el("div", "b-cost", fr.cost));
-        lab.chk = c; lab.value = fr.nm;
-        fcards.push(lab);
-        fg.appendChild(lab);
-      });
-      function paintFrames(){
-        var picked = arrOf("frame");
-        fcards.forEach(function(card){
-          var on = picked.indexOf(card.value) > -1;
-          card.chk.checked = on;
-          card.classList.toggle("is-on", on);
-        });
-      }
-      paintFrames();
-      fcards.forEach(function(card){
-        card.chk.addEventListener("change", function(){
-          toggle(arrOf("frame"), card.value);
-          paintFrames(); mark();
-        });
-      });
-      body.appendChild(fg);
-    }
-
     card.classList.toggle("is-done", answered(q));
     return card;
   }
@@ -509,7 +449,7 @@
       s.qs.forEach(function(q){
         i++;
         var v = A[q.id], out;
-        if(q.type === "multi" || q.type === "frames") out = (Array.isArray(v) && v.length) ? v.join(", ") : "—";
+        if(q.type === "multi") out = (Array.isArray(v) && v.length) ? v.join(", ") : "—";
         else if(q.type === "multitext"){
           var parts = [];
           if(v && Array.isArray(v.l) && v.l.length) parts.push(v.l.join(", "));
@@ -539,7 +479,7 @@
     SECTIONS.forEach(function(sec){
       sec.qs.forEach(function(q){
         var v = A[q.id];
-        if(q.type === "multi" || q.type === "frames"){
+        if(q.type === "multi"){
           answers[q.id] = Array.isArray(v) ? v : [];
         } else if(q.type === "multitext"){
           var box = (v && typeof v === "object") ? v : {l:[], t:""};
