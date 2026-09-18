@@ -1,6 +1,6 @@
 # Schemata
 
-Schemata is an open-source browser data modeller for **Oracle Database**. Plain HTML5 and ES modules: no build step, no dependencies, no backend. Interface in Ukrainian and English.
+Schemata is an open-source browser data modeller for **Oracle Database**. Plain HTML5 and ES modules: no build step, no backend. Interface in Ukrainian and English. The only third-party code is [sql.js](https://github.com/sql-js/sql.js) (MIT), vendored in `js/vendor/sqljs/`, which powers the SQL sandbox.
 
 Live: https://munister.com.ua/modeler/
 
@@ -20,6 +20,7 @@ Live: https://munister.com.ua/modeler/
 - Seven ready-made schemas: online store, HR, university, bank, blog/CMS, warehouse, clinic — open or merge into the current model
 - Column presets (ID, audit, status, money, contacts, soft delete) and bulk column entry as text
 - Model check: missing primary keys, unindexed foreign keys (one-click fix), reserved words, type mismatches, long names, circular FK dependencies, repeating-group columns (1NF), inconsistent primary-key naming (one-click fix)
+- SQL sandbox: the model's schema translated to SQLite and run in-browser (sql.js/WASM) — write real SELECT / INSERT / UPDATE against it, click a table or column to insert its name, no backend and no real Oracle involved
 - Duplicate / copy / paste tables, context menu, arrow-key nudging, drag-and-drop of `.sql` / `.json` files, PNG export
 - ER diagram: tables, columns, primary / unique keys, indexes, foreign keys (crow's foot notation)
 - Relations the Oracle Data Modeler way: the parent key is carried into the child table
@@ -64,6 +65,8 @@ js/ddl-parse.js  Oracle DDL importer
 js/i18n.js       Ukrainian / English strings
 js/templates.js  ready-made schemas and column presets
 js/checks.js     model validation
+js/sqlite-gen.js best-effort model → SQLite DDL translation for the sandbox
+js/sandbox.js    sql.js (WASM SQLite) lifecycle: build the sandbox DB, run SQL
 js/diff.js       model diff and migration script
 js/docs.js       data dictionary (HTML / Markdown)
 js/storage.js    projects, snapshots, settings in localStorage

@@ -1,19 +1,20 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609181118';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609181118';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609181118';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609181118';
-import { DiagramTabs } from './diagrams-ui.js?v=202609181118';
-import { Panel } from './panel.js?v=202609181118';
-import { Sidebar } from './sidebar.js?v=202609181118';
-import { Palette } from './palette.js?v=202609181118';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609181118';
-import { parseDDL } from './ddl-parse.js?v=202609181118';
-import { SAMPLE_DDL } from './sample.js?v=202609181118';
-import { initWorkspace } from './workspace.js?v=202609181118';
-import { diffModels } from './diff.js?v=202609181118';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609181118';
-import { migrateModel, listSnapshots } from './storage.js?v=202609181118';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609181118';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609181147';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609181147';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609181147';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609181147';
+import { DiagramTabs } from './diagrams-ui.js?v=202609181147';
+import { Panel } from './panel.js?v=202609181147';
+import { Sidebar } from './sidebar.js?v=202609181147';
+import { Palette } from './palette.js?v=202609181147';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609181147';
+import { parseDDL } from './ddl-parse.js?v=202609181147';
+import { SAMPLE_DDL } from './sample.js?v=202609181147';
+import { initWorkspace } from './workspace.js?v=202609181147';
+import { diffModels } from './diff.js?v=202609181147';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609181147';
+import { migrateModel, listSnapshots } from './storage.js?v=202609181147';
+import { Sandbox } from './sandbox.js?v=202609181147';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609181147';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -249,7 +250,7 @@ const palette = new Palette(store, {
     ['ddl', 'tb.ddl.t'], ['import', 'tb.import'], ['svg', 'tb.svg.t'],
     ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
     ['newView', 'cm.newView'], ['newSequence', 'cm.newSeq'],
-    ['migrate', 'tb.migrate.t'], ['export', 'tb.export.t'],
+    ['migrate', 'tb.migrate.t'], ['export', 'tb.export.t'], ['sandbox', 'tb.sandbox.t'],
     ['projects', 'ws.projects'], ['history', 'ws.history'], ['snapshot', 'ws.saveVersion'], ['settings', 'ws.settings'], ['shortcuts', 'ws.shortcuts', '?'],
     ['save', 'tb.save', '⌘S'], ['open', 'tb.open'],
     ['undo', 'tb.undo.t'], ['redo', 'tb.redo.t'],
@@ -1021,12 +1022,82 @@ actions.more = btn => {
     { label: t('tb.import'), icon: ICONS.import, run: actions.import },
     { label: t('tb.migrate'), icon: ICONS.migrate, run: actions.migrate },
     { label: t('tb.export'), icon: ICONS.export, sub: exportMenuItems },
+    { label: t('tb.sandbox'), icon: ICONS.sandbox, run: actions.sandbox },
   ]);
 };
 function printDocs() {
   const w = window.open(URL.createObjectURL(new Blob([dictionaryHTML(store.model)], { type: 'text/html' })), '_blank');
   if (w) w.addEventListener('load', () => setTimeout(() => w.print(), 300));
 }
+
+// ---------- SQL sandbox ----------
+const sandbox = new Sandbox();
+function renderSandboxSchema() {
+  const tables = store.model.tables;
+  $('#sbx-tables').innerHTML = tables.length ? tables.map(tb => `
+    <li>
+      <button type="button" class="sbx-tbl-name" data-ins="${esc(tb.name)}">${esc(tb.name)}</button>
+      <ul class="sbx-cols">${tb.columns.map(c => `<li><button type="button" data-ins="${esc(tb.name)}.${esc(c.name)}">${esc(c.name)}</button><i>${esc(c.type || '')}</i></li>`).join('')}</ul>
+    </li>`).join('') : `<li class="sbx-empty">${t('sbx.noTables')}</li>`;
+}
+function renderSandboxWarnings(failed) {
+  const el = $('#sbx-warnings');
+  el.hidden = !failed.length;
+  el.innerHTML = failed.length ? `<b>${t('sbx.warn', { n: failed.length })}</b><ul>${failed.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : '';
+}
+const sbxCell = v => v === null ? '<i>NULL</i>' : esc(String(v));
+function renderSandboxResult(results) {
+  const el = $('#sbx-result');
+  if (!results.length) { el.innerHTML = `<div class="sbx-ok">${t('sbx.ok', { n: sandbox.changes })}</div>`; return; }
+  el.innerHTML = results.map(r => {
+    const rows = r.values.slice(0, 200);
+    return `<div class="sbx-table-wrap"><table class="sbx-table"><thead><tr>${r.columns.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(row => `<tr>${row.map(v => `<td>${sbxCell(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>
+      ${r.values.length > 200 ? `<div class="sbx-more">${t('sbx.more', { n: r.values.length - 200 })}</div>` : ''}</div>`;
+  }).join('');
+}
+async function openSandbox() {
+  $('#sandbox-dialog').showModal();
+  renderSandboxSchema();
+  $('#sbx-result').innerHTML = '';
+  $('#sbx-run').disabled = true;
+  renderSandboxWarnings([]);
+  try {
+    renderSandboxWarnings(await sandbox.open(store.model));
+  } catch (e) {
+    renderSandboxWarnings([t('sbx.engineFail', { e: e.message })]);
+  } finally {
+    $('#sbx-run').disabled = false;
+  }
+}
+actions.sandbox = openSandbox;
+function runSandboxSql() {
+  const sql = $('#sbx-sql').value.trim();
+  if (!sql || $('#sbx-run').disabled) return;
+  try { renderSandboxResult(sandbox.run(sql)); }
+  catch (e) { $('#sbx-result').innerHTML = `<div class="sbx-err">${esc(e.message)}</div>`; }
+}
+$('#sbx-run').addEventListener('click', runSandboxSql);
+$('#sbx-sql').addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); runSandboxSql(); } });
+$('#sbx-reset').addEventListener('click', async () => {
+  $('#sbx-run').disabled = true;
+  $('#sbx-result').innerHTML = '';
+  try {
+    renderSandboxWarnings(await sandbox.open(store.model));
+    toast(t('sbx.resetDone'));
+  } catch (e) {
+    renderSandboxWarnings([t('sbx.engineFail', { e: e.message })]);
+  } finally {
+    $('#sbx-run').disabled = false;
+  }
+});
+$('#sbx-tables').addEventListener('click', e => {
+  const b = e.target.closest('[data-ins]');
+  if (!b) return;
+  const ta = $('#sbx-sql');
+  ta.focus();
+  ta.setRangeText(b.dataset.ins, ta.selectionStart, ta.selectionEnd, 'end');
+});
 
 // ---------- migration ----------
 const mig = { src: 'snap', result: null };
