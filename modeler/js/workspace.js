@@ -1,7 +1,7 @@
 // Workspace: projects, version history, settings, status bar, cross-tab sync, offline updates
-import * as S from './storage.js?v=202609181206';
-import { setDiagramOptions } from './diagram.js?v=202609181206';
-import { t, getLang, onLang } from './i18n.js?v=202609181206';
+import * as S from './storage.js?v=202609181354';
+import { setDiagramOptions } from './diagram.js?v=202609181354';
+import { t, getLang, onLang } from './i18n.js?v=202609181354';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -233,7 +233,7 @@ export function initWorkspace(ctx) {
   });
 
   // ---------- settings ----------
-  const SETTINGS = ['snap', 'showTypes', 'compact', 'zebra', 'autoSnapshot'];
+  const SETTINGS = ['snap', 'showTypes', 'compact', 'zebra', 'orthoLinks', 'autoSnapshot'];
   ws.settings = () => {
     SETTINGS.forEach(k => { $(`#set-${k}`).checked = !!ws.settingsState[k]; });
     $('#settings-dialog').showModal();

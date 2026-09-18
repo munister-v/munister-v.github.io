@@ -1,20 +1,21 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609181206';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609181206';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609181206';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609181206';
-import { DiagramTabs } from './diagrams-ui.js?v=202609181206';
-import { Panel } from './panel.js?v=202609181206';
-import { Sidebar } from './sidebar.js?v=202609181206';
-import { Palette } from './palette.js?v=202609181206';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609181206';
-import { parseDDL } from './ddl-parse.js?v=202609181206';
-import { SAMPLE_DDL } from './sample.js?v=202609181206';
-import { initWorkspace } from './workspace.js?v=202609181206';
-import { diffModels } from './diff.js?v=202609181206';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609181206';
-import { migrateModel, listSnapshots } from './storage.js?v=202609181206';
-import { Sandbox } from './sandbox.js?v=202609181206';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609181206';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609181354';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609181354';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609181354';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609181354';
+import { DiagramTabs } from './diagrams-ui.js?v=202609181354';
+import { Panel } from './panel.js?v=202609181354';
+import { Sidebar } from './sidebar.js?v=202609181354';
+import { Palette } from './palette.js?v=202609181354';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609181354';
+import { parseDDL } from './ddl-parse.js?v=202609181354';
+import { SAMPLE_DDL } from './sample.js?v=202609181354';
+import { initWorkspace } from './workspace.js?v=202609181354';
+import { diffModels } from './diff.js?v=202609181354';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609181354';
+import { migrateModel, listSnapshots } from './storage.js?v=202609181354';
+import { Sandbox } from './sandbox.js?v=202609181354';
+import { CanvasSearch } from './canvas-search.js?v=202609181354';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609181354';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -30,6 +31,7 @@ const diagram = new Diagram($('#canvas'), store, {
   onZoom: k => { $('#zoom').textContent = `${Math.round(k * 100)}%`; },
   minimap: $('#minimap'),
 });
+const canvasSearch = new CanvasSearch($('.stage'), store, diagram);
 const diagramTabs = new DiagramTabs($('#diagram-tabs'), store, {
   openMenu: (x, y, items) => openMenu(x, y, items),
   onSwitch: () => { diagram.render(); diagram.fit(false); },
@@ -239,12 +241,15 @@ const actions = {
   fit: () => diagram.fit(),
   sample: () => importDDL(SAMPLE_DDL, true),
   palette: () => palette.open(),
+  search: () => canvasSearch.toggle(),
 };
 
 const ICONS = Object.fromEntries([...document.querySelectorAll('[data-action] svg')].map(s => [s.closest('[data-action]').dataset.action, s.outerHTML]));
+ICONS.search = `<svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>`;
 const palette = new Palette(store, {
   onPick: pick,
   actions: () => [
+    ['search', 'cs.search', '⌘F'],
     ['table', 'tb.table', 'T'], ['relation', 'tb.relation', 'R'], ['zone', 'tb.zone.t', 'Z'],
     ['layout', 'tb.layout'], ['no-overlaps', 'tb.noOverlaps.t'], ['fit', 'tb.fit.t', 'F'],
     ['ddl', 'tb.ddl.t'], ['import', 'tb.import'], ['svg', 'tb.svg.t'],
@@ -278,6 +283,13 @@ document.addEventListener('keydown', e => {
   const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName);
   const mod = e.metaKey || e.ctrlKey;
   if (mod && e.code === 'KeyK') { e.preventDefault(); palette.isOpen ? palette.close() : palette.open(); return; }
+  if (mod && (e.code === 'KeyF' || e.key === 'f' || e.key === 'F')) {
+    if (!typing || document.activeElement?.classList.contains('cs-input')) {
+      e.preventDefault();
+      canvasSearch.toggle();
+      return;
+    }
+  }
   if (palette.isOpen) return;
   if (mod && e.code === 'KeyZ' && !typing) { e.preventDefault(); e.shiftKey ? store.redo() : store.undo(); }
   else if (mod && e.code === 'KeyY' && !typing) { e.preventDefault(); store.redo(); }
@@ -302,6 +314,7 @@ document.addEventListener('keydown', e => {
       store.silent(() => { store.setPos(id, p.x + dx, p.y + dy); }, 'move');
     }
   }
+  else if (e.key === 'Escape' && canvasSearch.isOpen) canvasSearch.close();
   else if (e.key === 'Escape' && diagram.mode === 'relation') setRelationMode(false);
   else if (e.key === 'Escape' && !typing && store.selection) store.select(null);
   else if ((e.key === 'Delete' || e.key === 'Backspace') && !typing && store.selection) {

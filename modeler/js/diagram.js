@@ -1,5 +1,5 @@
 // SVG diagram: tables, relations, pan/zoom, drag, relation mode, zones, marquee selection
-import { t as tr } from './i18n.js?v=202609181206';
+import { t as tr } from './i18n.js?v=202609181354';
 
 const NS = 'http://www.w3.org/2000/svg';
 const HEADER = 38, ROW = 24, PAD = 14;
@@ -11,7 +11,7 @@ const FONT = {
   schema: "10px ui-monospace,'SF Mono',Menlo,Consolas,monospace",
 };
 // display options (set from settings)
-const OPTS = { showTypes: true, compact: false, zebra: true, snap: true };
+const OPTS = { showTypes: true, compact: false, zebra: true, snap: true, orthoLinks: false };
 let STORE = null;
 export const setDiagramOptions = o => Object.assign(OPTS, o);
 // compact mode keeps only key columns
@@ -101,6 +101,29 @@ export class Diagram {
     p.setAttribute('patternTransform', `translate(${x},${y}) scale(${k})`);
     this.hooks.onZoom?.(k);
     this.scheduleMinimap();
+
+    // LoD toggle based on zoom level with hysteresis
+    const visibleTablesCount = this.store.model.tables.length;
+    if (visibleTablesCount > 20) {
+      const nextLod = this._isLod ? k < 0.48 : k < 0.40;
+      if (this._isLod !== nextLod) {
+        this._isLod = nextLod;
+        this.render();
+      }
+    }
+  }
+
+  setSearchHighlight(activeId, matchIds = new Set()) {
+    this.searchActiveId = activeId;
+    this.searchMatchIds = matchIds;
+    if (!this.gTables) return;
+    for (const g of this.gTables.children) {
+      const id = g.dataset.id || g.dataset.view;
+      if (id) {
+        g.classList.toggle('search-match', matchIds.has(id));
+        g.classList.toggle('search-active', id === activeId);
+      }
+    }
   }
 
   scheduleMinimap() {
@@ -138,7 +161,29 @@ export class Diagram {
 
     this.svg.classList.toggle('focus', !!this.related);
     this.renderZones();
-    this.gTables.innerHTML = visibleTables.map(t => this.tableSVG(t, selection)).join('')
+
+    // Viewport bounds for culling in large schemas (>35 tables)
+    const isGlobalLod = !!this._isLod || (this.view.k < 0.42 && visibleTables.length > 20);
+    const r = this.svg.getBoundingClientRect();
+    const vpW = r.width || 1200, vpH = r.height || 800;
+    const minX = -this.view.x / this.view.k - 250;
+    const maxX = (-this.view.x + vpW) / this.view.k + 250;
+    const minY = -this.view.y / this.view.k - 250;
+    const maxY = (-this.view.y + vpH) / this.view.k + 250;
+    const shouldCull = visibleTables.length > 35;
+
+    this.gTables.innerHTML = visibleTables.map(t => {
+      let lod = isGlobalLod;
+      if (!lod && shouldCull) {
+        const p = this.store.posOf(t.id);
+        const s = tableSize(t);
+        const isOffscreen = (p.x + s.w < minX || p.x > maxX || p.y + s.h < minY || p.y > maxY);
+        if (isOffscreen && selection?.id !== t.id && !this.related?.has(t.id) && this.searchActiveId !== t.id) {
+          lod = true;
+        }
+      }
+      return this.tableSVG(t, selection, lod);
+    }).join('')
       + visibleViews.map(v => this.viewSVG(v, selection)).join('');
     this.renderRelations();
     this.applyView();
@@ -161,24 +206,41 @@ export class Diagram {
     }).join('');
   }
 
-  tableSVG(t, sel) {
+  tableSVG(t, sel, lod = false) {
     const { w, h } = tableSize(t);
     const selected = (sel?.kind === 'table' && sel.id === t.id) || (sel?.kind === 'multi' && sel.ids?.includes(t.id));
     const relSrc = this.relFrom === t.id;
     const pos = this.store.posOf(t.id);
     const cols = visibleColumns(t);
-    const rows = cols.map((c, i) => {
-      const top = HEADER + 4 + i * ROW, y = top + 16;
-      const fk = this.store.isFkColumn(t.id, c.id);
-      const key = c.pk && fk ? `<rect class="kbg pk" x="${PAD - 3}" y="${top + 5}" width="22" height="12" rx="3"/><text x="${PAD + 8}" y="${y - 1}" class="key pk" text-anchor="middle">PF</text>`
-        : c.pk ? `<rect class="kbg pk" x="${PAD - 3}" y="${top + 5}" width="22" height="12" rx="3"/><text x="${PAD + 8}" y="${y - 1}" class="key pk" text-anchor="middle">PK</text>`
-        : fk ? `<rect class="kbg fk" x="${PAD - 3}" y="${top + 5}" width="22" height="12" rx="3"/><text x="${PAD + 8}" y="${y - 1}" class="key fk" text-anchor="middle">FK</text>` : '';
-      const nn = !c.nullable || c.pk ? ' nn' : '';
-      return `${i % 2 && OPTS.zebra ? `<rect class="zebra" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>` : ''}<rect class="row-hit" data-col="${c.id}" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>${key}
-        <text x="${PAD + 28}" y="${y}" class="col${nn}${c.virtual ? ' virtual' : ''}">${esc(c.name)}</text>
-        ${OPTS.showTypes ? `<text x="${w - PAD}" y="${y}" class="type${c.virtual ? ' virtual' : ''}" text-anchor="end">${c.virtual ? `= ${esc(c.virtual.length > 22 ? `${c.virtual.slice(0, 21)}…` : c.virtual)}` : esc(c.type)}</text>` : ''}`;
-    }).join('');
-    const cls = ['table', selected && 'selected', relSrc && 'rel-src', this.related?.has(t.id) && 'related', t.color && `c-${t.color}`].filter(Boolean).join(' ');
+    const isSearchMatch = this.searchMatchIds?.has(t.id);
+    const isSearchActive = this.searchActiveId === t.id;
+
+    let bodyRows = '';
+    if (lod && !selected && !this.related?.has(t.id) && !isSearchActive) {
+      const pkCount = cols.filter(c => c.pk).length;
+      const fkCount = cols.filter(c => this.store.isFkColumn(t.id, c.id)).length;
+      const summaryText = `${cols.length} ${cols.length === 1 ? 'col' : 'cols'}${pkCount ? ` · ${pkCount} PK` : ''}${fkCount ? ` · ${fkCount} FK` : ''}`;
+      bodyRows = `<g class="lod-summary">
+        <rect class="lod-bar" x="${PAD}" y="${HEADER + 12}" width="${w - PAD * 2}" height="5" rx="2.5"/>
+        <rect class="lod-bar" x="${PAD}" y="${HEADER + 23}" width="${Math.round((w - PAD * 2) * 0.65)}" height="5" rx="2.5"/>
+        <text x="${w / 2}" y="${HEADER + 46}" class="lod-text" text-anchor="middle">${esc(summaryText)}</text>
+      </g>`;
+    } else {
+      const rows = cols.map((c, i) => {
+        const top = HEADER + 4 + i * ROW, y = top + 16;
+        const fk = this.store.isFkColumn(t.id, c.id);
+        const key = c.pk && fk ? `<rect class="kbg pk" x="${PAD - 3}" y="${top + 5}" width="22" height="12" rx="3"/><text x="${PAD + 8}" y="${y - 1}" class="key pk" text-anchor="middle">PF</text>`
+          : c.pk ? `<rect class="kbg pk" x="${PAD - 3}" y="${top + 5}" width="22" height="12" rx="3"/><text x="${PAD + 8}" y="${y - 1}" class="key pk" text-anchor="middle">PK</text>`
+          : fk ? `<rect class="kbg fk" x="${PAD - 3}" y="${top + 5}" width="22" height="12" rx="3"/><text x="${PAD + 8}" y="${y - 1}" class="key fk" text-anchor="middle">FK</text>` : '';
+        const nn = !c.nullable || c.pk ? ' nn' : '';
+        return `${i % 2 && OPTS.zebra ? `<rect class="zebra" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>` : ''}<rect class="row-hit" data-col="${c.id}" x="1" y="${top}" width="${w - 2}" height="${ROW}"/>${key}
+          <text x="${PAD + 28}" y="${y}" class="col${nn}${c.virtual ? ' virtual' : ''}">${esc(c.name)}</text>
+          ${OPTS.showTypes ? `<text x="${w - PAD}" y="${y}" class="type${c.virtual ? ' virtual' : ''}" text-anchor="end">${c.virtual ? `= ${esc(c.virtual.length > 22 ? `${c.virtual.slice(0, 21)}…` : c.virtual)}` : esc(c.type)}</text>` : ''}`;
+      }).join('');
+      bodyRows = cols.length ? rows : `<text x="${PAD}" y="${HEADER + 19}" class="empty">${tr('d.noColumns')}</text>`;
+    }
+
+    const cls = ['table', selected && 'selected', relSrc && 'rel-src', this.related?.has(t.id) && 'related', isSearchMatch && 'search-match', isSearchActive && 'search-active', t.color && `c-${t.color}`].filter(Boolean).join(' ');
     return `<g class="${cls}" data-id="${t.id}" transform="translate(${pos.x},${pos.y})">
       <rect class="shadow" y="2" width="${w}" height="${h}" rx="10"/>
       <rect class="body" width="${w}" height="${h}" rx="10"/>
@@ -186,8 +248,8 @@ export class Diagram {
       <rect class="accent" x="0" y="${HEADER - 2}" width="${w}" height="2"/>
       <text x="${PAD}" y="25" class="title">${esc(t.name)}</text>
       <text x="${w - PAD}" y="24" class="schema" text-anchor="end">${[t.schema && esc(t.schema.toUpperCase()), t.partition?.type && `⧉ ${t.partition.type}`, t.checks?.length && `✓${t.checks.length}`].filter(Boolean).join(' · ') || t.columns.length}</text>
-      ${cols.length ? rows : `<text x="${PAD}" y="${HEADER + 19}" class="empty">${tr('d.noColumns')}</text>`}
-      <rect class="head-hit" data-head="1" width="${w}" height="${HEADER}"/>
+      ${bodyRows}
+      <rect class="head-hit" data-head="1" width="${w}" height="${lod ? h : HEADER}"/>
       <rect class="outline" x="-3" y="-3" width="${w + 6}" height="${h + 6}" rx="13"/>
       ${selected && sel?.kind === 'table' ? `<g class="add-field" data-add="1" transform="translate(0,${h + 8})"><rect width="${w}" height="26" rx="8"/><text x="${w / 2}" y="17" text-anchor="middle">+ ${tr('d.addField')}</text></g>` : ''}
       ${t.comment ? `<title>${esc(t.comment)}</title>` : ''}
@@ -199,7 +261,9 @@ export class Diagram {
     const selected = (sel?.kind === 'view' && sel.id === v.id) || (sel?.kind === 'multi' && sel.ids?.includes(v.id));
     const pos = this.store.posOf(v.id);
     const lines = viewLines(v);
-    const cls = ['view', selected && 'selected', this.related?.has(v.id) && 'related', v.color && `c-${v.color}`].filter(Boolean).join(' ');
+    const isSearchMatch = this.searchMatchIds?.has(v.id);
+    const isSearchActive = this.searchActiveId === v.id;
+    const cls = ['view', selected && 'selected', this.related?.has(v.id) && 'related', isSearchMatch && 'search-match', isSearchActive && 'search-active', v.color && `c-${v.color}`].filter(Boolean).join(' ');
     return `<g class="${cls}" data-view="${v.id}" transform="translate(${pos.x},${pos.y})">
       <rect class="shadow" y="2" width="${w}" height="${h}" rx="10"/>
       <rect class="body" width="${w}" height="${h}" rx="10"/>
@@ -726,7 +790,9 @@ function relationPath(child, parent, f, pa, pb) {
   if (child === parent) {
     const x = cPos.x + a.w;
     return {
-      path: `M${x} ${ay} h30 V${cPos.y - 20} H${cPos.x + a.w / 2} V${cPos.y}`,
+      path: OPTS.orthoLinks
+        ? roundedOrthoPath([{ x, y: ay }, { x: x + 30, y: ay }, { x: x + 30, y: cPos.y - 20 }, { x: cPos.x + a.w / 2, y: cPos.y - 20 }, { x: cPos.x + a.w / 2, y: cPos.y }])
+        : `M${x} ${ay} h30 V${cPos.y - 20} H${cPos.x + a.w / 2} V${cPos.y}`,
       ax: x, ay, adir: 1, bx: cPos.x + a.w / 2, by: cPos.y, bdir: 0,
     };
   }
@@ -737,6 +803,13 @@ function relationPath(child, parent, f, pa, pb) {
   else if (aCx <= bCx) { ax = cPos.x; bx = pPos.x; adir = -1; bdir = -1; }
   else { ax = cPos.x + a.w; bx = pPos.x + b.w; adir = 1; bdir = 1; }
 
+  if (OPTS.orthoLinks) {
+    return {
+      path: orthoRelationPath(ax, ay, adir, bx, by, bdir, cPos, a, pPos, b),
+      ax, ay, adir, bx, by, bdir,
+    };
+  }
+
   const off = Math.max(40, Math.abs(bx - ax) / 2);
   const c1 = ax + adir * off, c2 = bx + bdir * off;
   const s1 = ax + adir * 26, s2 = bx + bdir * 22;
@@ -744,6 +817,78 @@ function relationPath(child, parent, f, pa, pb) {
     path: `M${ax} ${ay} H${s1} C${c1} ${ay} ${c2} ${by} ${s2} ${by} H${bx}`,
     ax, ay, adir, bx, by, bdir,
   };
+}
+
+// Rounded orthogonal path builder using quadratic bezier curves for corners
+function roundedOrthoPath(points, r = 8) {
+  if (points.length < 2) return '';
+  if (points.length === 2) return `M${points[0].x} ${points[0].y} L${points[1].x} ${points[1].y}`;
+  let d = `M${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length - 1; i++) {
+    const pPrev = points[i - 1], pCur = points[i], pNext = points[i + 1];
+    const d1x = pCur.x - pPrev.x, d1y = pCur.y - pPrev.y;
+    const len1 = Math.hypot(d1x, d1y);
+    const d2x = pNext.x - pCur.x, d2y = pNext.y - pCur.y;
+    const len2 = Math.hypot(d2x, d2y);
+    const curR = Math.min(r, len1 / 2, len2 / 2);
+    if (curR <= 1) {
+      d += ` L${pCur.x} ${pCur.y}`;
+      continue;
+    }
+    const ux1 = d1x / len1, uy1 = d1y / len1;
+    const ux2 = d2x / len2, uy2 = d2y / len2;
+    const sx = pCur.x - ux1 * curR, sy = pCur.y - uy1 * curR;
+    const ex = pCur.x + ux2 * curR, ey = pCur.y + uy2 * curR;
+    d += ` L${sx} ${sy} Q${pCur.x} ${pCur.y} ${ex} ${ey}`;
+  }
+  const last = points[points.length - 1];
+  d += ` L${last.x} ${last.y}`;
+  return d;
+}
+
+function orthoRelationPath(ax, ay, adir, bx, by, bdir, cPos, a, pPos, b) {
+  const stub = 20;
+  const points = [{ x: ax, y: ay }];
+
+  // Case 1: Simple horizontal opposing directions
+  if (adir === 1 && bdir === -1 && ax + 2 * stub <= bx) {
+    const midX = Math.round((ax + bx) / 2);
+    points.push({ x: midX, y: ay }, { x: midX, y: by }, { x: bx, y: by });
+    return roundedOrthoPath(points);
+  }
+  if (adir === -1 && bdir === 1 && bx + 2 * stub <= ax) {
+    const midX = Math.round((ax + bx) / 2);
+    points.push({ x: midX, y: ay }, { x: midX, y: by }, { x: bx, y: by });
+    return roundedOrthoPath(points);
+  }
+
+  // Case 2: Same side exits (both right or both left)
+  if (adir === 1 && bdir === 1) {
+    const maxX = Math.max(ax, bx) + 24;
+    points.push({ x: maxX, y: ay }, { x: maxX, y: by }, { x: bx, y: by });
+    return roundedOrthoPath(points);
+  }
+  if (adir === -1 && bdir === -1) {
+    const minX = Math.min(ax, bx) - 24;
+    points.push({ x: minX, y: ay }, { x: minX, y: by }, { x: bx, y: by });
+    return roundedOrthoPath(points);
+  }
+
+  // Case 3: Overlapping or inverted horizontal tables facing each other
+  const x1 = ax + adir * stub;
+  const x2 = bx + bdir * stub;
+  let midY;
+  if (ay <= by) {
+    const topY = Math.min(cPos.y, pPos.y) - 20;
+    const botY = Math.max(cPos.y + a.h, pPos.y + b.h) + 20;
+    midY = Math.abs(ay - topY) < Math.abs(by - botY) ? topY : botY;
+  } else {
+    const topY = Math.min(cPos.y, pPos.y) - 20;
+    const botY = Math.max(cPos.y + a.h, pPos.y + b.h) + 20;
+    midY = Math.abs(by - topY) < Math.abs(ay - botY) ? topY : botY;
+  }
+  points.push({ x: x1, y: ay }, { x: x1, y: midY }, { x: x2, y: midY }, { x: x2, y: by }, { x: bx, y: by });
+  return roundedOrthoPath(points);
 }
 // Crow's-foot marks at an endpoint; dir points away from the table, off = distance from the edge.
 // dir 0 means a vertical approach from above (self-reference).
