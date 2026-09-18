@@ -69,9 +69,9 @@
 .b-q textarea:focus-visible{outline:2px solid var(--c-ink);outline-offset:2px}
 
 /* ── текст ──────────────────────────────────────────────── */
-.b-q textarea{width:100%;font-family:var(--font-body);font-size:16px;line-height:1.5;color:var(--c-ink);
-  background:var(--c-paper);border:1px solid var(--c-rule);padding:13px 15px;resize:vertical;
-  letter-spacing:-.004em}
+.b-q textarea{width:100%;font-family:var(--font-body);font-size:16px;line-height:1.55;color:var(--c-ink);
+  background:var(--c-paper);border:1px solid var(--c-rule);padding:13px 15px;resize:none;overflow:hidden;
+  min-height:104px;letter-spacing:-.004em;transition:border-color .18s ease}
 .b-q textarea:focus{outline:none;border-color:var(--c-ink)}
 .b-q textarea::placeholder{color:var(--c-faint);font-family:var(--font-head);font-style:italic}
 
@@ -275,6 +275,23 @@
 
   var savedEl = document.getElementById("saved");
   var saveTimer = null;
+  var pendingTimer = null;
+
+  /* Черновик пишется не на каждую букву: пока человек печатает, в памяти
+     ответ уже новый, а на диск он уходит через паузу. Иначе localStorage
+     переписывается на каждое нажатие, а строка состояния мигает без толку. */
+  function saveSoon(){
+    savedEl.textContent = "зберігаю…";
+    clearTimeout(pendingTimer);
+    pendingTimer = setTimeout(function(){ pendingTimer = null; save(); }, 600);
+  }
+  function saveNow(){
+    if(!pendingTimer) return;
+    clearTimeout(pendingTimer);
+    pendingTimer = null;
+    save();
+  }
+
   function save(){
     try{
       localStorage.setItem(KEY, JSON.stringify(A));
@@ -332,6 +349,13 @@
     if(txt !== undefined) e.textContent = txt;
     return e;
   }
+  /* Поле растёт под ответ: три строки по умолчанию прячут длинный текст,
+     а прокрутка внутри поля мешает перечитать написанное. */
+  function grow(ta){
+    ta.style.height = "auto";
+    ta.style.height = Math.max(ta.scrollHeight + 2, 104) + "px";
+  }
+
   function checkbox(){
     var c = document.createElement("input");
     c.type = "checkbox";
@@ -362,10 +386,10 @@
     var body = el("div", "b-answer");
     card.appendChild(body);
 
-    function mark(){
+    function mark(soft){
       card.classList.toggle("is-done", answered(q));
       updateProgress();
-      save();
+      if(soft) saveSoon(); else save();
     }
 
     if(q.type === "multi" || q.type === "multitext"){
@@ -397,7 +421,8 @@
         extra.setAttribute("aria-label", q.q + " — деталі");
         extra.value = pair(q.id).t;
         extra.style.marginTop = "14px";
-        extra.addEventListener("input", function(){ pair(q.id).t = extra.value; mark(); });
+        extra.addEventListener("input", function(){ pair(q.id).t = extra.value; grow(extra); mark(true); });
+        extra.addEventListener("blur", saveNow);
         body.appendChild(extra);
       }
     }
@@ -409,7 +434,8 @@
       ta.placeholder = q.ph || "";
       ta.setAttribute("aria-label", q.q);
       ta.value = A[q.id] || "";
-      ta.addEventListener("input", function(){ A[q.id] = ta.value; mark(); });
+      ta.addEventListener("input", function(){ A[q.id] = ta.value; grow(ta); mark(true); });
+      ta.addEventListener("blur", saveNow);
       body.appendChild(ta);
     }
 
@@ -537,6 +563,20 @@
     try{ localStorage.removeItem(KEY); }catch(e){}
     location.reload();
   });
+
+  /* Разворачиваем поля, когда форма уже в документе: у оторванного узла
+     scrollHeight равен нулю, и сохранённый ответ оказался бы обрезан. */
+  function growAll(){ Array.prototype.forEach.call(document.querySelectorAll(".b-q textarea"), grow); }
+  growAll();
+  var growTimer = null;
+  window.addEventListener("resize", function(){
+    clearTimeout(growTimer);
+    growTimer = setTimeout(growAll, 150);
+  });
+
+  // Вкладку могут закрыть в паузе между нажатием и записью.
+  window.addEventListener("pagehide", saveNow);
+  document.addEventListener("visibilitychange", function(){ if(document.hidden) saveNow(); });
 
   document.getElementById("y").textContent = new Date().getFullYear();
 
