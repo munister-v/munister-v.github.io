@@ -53,7 +53,7 @@
   --font-body:var(--font-sans);
   --font-mono:var(--font-sans);
   --measure:1240px;
-  --bar:56px;
+  --bar:72px;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -137,6 +137,9 @@ p{text-wrap:pretty}
 /* Под срезанными углами должен быть виден цвет полосы, иначе скругление
    рисуется по белому и его просто нет. */
 body:not(.has-hero){background:var(--c-band)}
+/* На главной полоса стоит на самом кадре и потому прозрачна: цвет полосы
+   появляется, только когда кадр ушёл вверх. */
+body.has-hero .site-head:not(.is-scrolled){background:transparent}
 body:not(.has-hero) .site-main{padding-top:0}
 /* Лист начинается ровно под полосой, а не заезжает под неё: иначе срезанные
    углы уходят под полосу и скругления просто не видно. */
@@ -145,9 +148,11 @@ body:not(.has-hero) .site-main > .shell{margin-top:0;padding-top:clamp(3rem,5.4v
 /* Вордмарк набран тем же, чем набраны названия разделов: высокой антиквой
    капителью. Это подпись дома, а не строчка интерфейса, и потому он крупнее
    навигации рядом, а не одного с ней кегля. */
+/* Подпись дома — в две строки, как набирают шапку афиши: имя стоит
+   столбиком и держит левый край страницы. */
 .wordmark{
-  font-family:var(--font-display);font-size:clamp(19px,2vw,25px);font-weight:500;
-  letter-spacing:.14em;line-height:1;text-transform:uppercase;white-space:nowrap;
+  font-family:var(--font-display);font-size:clamp(15px,1.5vw,19px);font-weight:500;
+  letter-spacing:.13em;line-height:1.02;text-transform:uppercase;white-space:nowrap;
 }
 /* Тень вместо линии: пока страница на первом экране, полоса вообще ничем не
    отделена от бумаги, а как только текст уходит под неё - появляется край. */
@@ -230,7 +235,10 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
   position:relative;isolation:isolate;overflow:hidden;
   min-height:min(94vh,900px);display:flex;flex-direction:column;justify-content:flex-end;
   padding-top:calc(var(--bar) + clamp(40px,7vw,90px));
-  background:var(--c-night);
+  /* Цвет лежит в основе кадра, а не плёнкой поверх: снимок работы идёт
+     сверху в режиме наложения и красит собой этот разлив, а не гасит его
+     в серое. */
+  background:linear-gradient(112deg,#2b0704 0%,#7d1c06 26%,#c8300d 52%,#e84a12 74%,#ff6a1f 100%);
 }
 /* Первый экран перелистывает работы по одной: снимок во весь фон, его имя —
    подписью у нижнего края, счёт и стрелки в углу. Имя дома при этом стоит
@@ -242,7 +250,11 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
   transform:scale(1.045);
 }
 .hero-slide[data-on]{opacity:1;transform:scale(1)}
-.hero-slide img{width:100%;height:100%;object-fit:cover;filter:grayscale(.72) contrast(1.06) brightness(.52)}
+.hero-slide img{
+  width:100%;height:100%;object-fit:cover;
+  filter:saturate(1.6) contrast(1.3) blur(34px);transform:scale(1.16);
+  mix-blend-mode:multiply;opacity:.34;
+}
 /* Подпись стоит у правого края, чтобы не спорить с именем слева. */
 .hero-slide figcaption{
   position:absolute;right:clamp(20px,4vw,54px);bottom:clamp(96px,11vw,132px);
@@ -256,7 +268,10 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
   letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.88);
 }
 /* Счёт и стрелки — прямоугольные, как кнопки страницы. */
-.hero-nav{display:flex;align-items:center;gap:12px;margin-top:clamp(26px,3.2vw,38px)}
+.hero-nav{
+  position:absolute;right:clamp(20px,4vw,54px);bottom:clamp(30px,4vw,54px);
+  display:flex;align-items:center;gap:14px;
+}
 .hero-count{color:rgba(255,255,255,.62);min-width:58px}
 .hero-arrow{
   width:40px;height:40px;display:grid;place-items:center;cursor:pointer;
@@ -269,17 +284,19 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
 /* Два слоя поверх стены: ровная заливка гасит светлые скриншоты (у половины
    работ фон белый и без неё они спорят с именем), а градиенты уже лепят
    глубину и тёплый угол снизу слева. */
-/* Тень ложится слева, где стоит текст, и отпускает правую часть кадра,
-   чтобы работа на слайде была видна, а не закрашена целиком. */
+/* Кадр размыт до цветного пятна, а поверх разлит сам цвет дома: снизу
+   слева жжёная киноварь, сверху справа тёплая охра. Слева, под текстом,
+   лежит тень — ровно столько, чтобы белое читалось. */
+/* Тень только слева и у нижнего края — ровно столько, чтобы белое читалось
+   поверх цвета; правая половина кадра остаётся открытой. */
 .hero::after{
   content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:
-    linear-gradient(to right, rgba(11,10,9,.96) 0%, rgba(11,10,9,.88) 34%, rgba(11,10,9,.55) 62%, rgba(11,10,9,.42) 100%),
-    linear-gradient(to top, var(--c-night) 1%, rgba(11,10,9,.72) 26%, rgba(11,10,9,.34) 62%, rgba(11,10,9,.44) 100%),
-    radial-gradient(110% 80% at 10% 98%, rgba(200,70,28,.26), transparent 58%);
+    linear-gradient(to right, rgba(20,5,2,.82) 0%, rgba(20,5,2,.5) 32%, rgba(20,5,2,.08) 66%, transparent 100%),
+    linear-gradient(to top, rgba(14,4,1,.8) 0%, rgba(14,4,1,.14) 32%, transparent 62%);
 }
 .hero-in{
-  width:100%;max-width:var(--measure);margin-inline:auto;
+  position:relative;width:100%;max-width:var(--measure);margin-inline:auto;
   padding:0 clamp(20px,4vw,54px) clamp(26px,3.6vw,44px);
 }
 .hero-kicker{display:flex;align-items:center;gap:12px;color:var(--c-accent-bright)}
@@ -300,8 +317,10 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
 .hero .actions{margin-top:clamp(22px,2.8vw,32px)}
 /* Вторая кнопка на тёмном — контур по белому, а не серая заливка: серая
    плашка на почти чёрном не видна вообще. */
-.hero .btn--soft{background:transparent;border-color:rgba(255,255,255,.4);color:#fff}
-.hero .btn--soft:hover{background:#fff;border-color:#fff;color:var(--c-ink)}
+.hero .btn{border-color:rgba(255,255,255,.55);color:#fff;background:transparent;min-width:clamp(170px,17vw,230px)}
+.hero .btn:hover{background:#fff;border-color:#fff;color:var(--c-band)}
+.hero .btn--solid{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.75)}
+.hero .btn--solid:hover{background:#fff;color:var(--c-band)}
 
 /* Цифры стоят не отдельной плашкой, а нижним краем самого героя: сначала
    утверждение, сразу под ним — чем оно обеспечено. */
@@ -320,7 +339,7 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
   .hero{min-height:auto;padding-top:calc(var(--bar) + 54px);padding-bottom:6px}
   /* На телефоне текст идёт во всю ширину поверх снимка, поэтому он гасится
      сильнее, а подпись слайда убирается: места для неё нет. */
-  .hero-slide img{filter:grayscale(.8) contrast(1.05) brightness(.3)}
+  .hero-slide img{filter:saturate(1.6) contrast(1.25) blur(28px);opacity:.3}
   .hero-slide figcaption{display:none}
   .hero .name{font-size:clamp(46px,14vw,74px)}
   .hero .claim{font-size:clamp(25px,7.4vw,36px);max-width:none}
