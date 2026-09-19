@@ -14,6 +14,8 @@
   --c-paper:#ffffff;
   --c-paper-deep:#f4f3f1;
   --c-ink:#121212;
+  --c-night:#0b0a09;
+  --c-night-2:#16130f;
   --c-accent:#c8461c;
   --c-accent-deep:#9c360f;
   --c-accent-bright:#ff7a3d;
@@ -151,6 +153,104 @@ p{text-wrap:pretty}
 .btn--soft:hover{border-color:transparent;background:rgba(18,18,18,.11);color:var(--c-ink)}
 .btn--lg{min-height:44px;padding:0 22px;font-size:15px}
 
+/* ═══════════════════════════════════════════════════════════════════
+   THE HERO
+
+   The page used to open as a document: white ground, a small portrait,
+   a name set in a column. It read as a CV, not as a practice. The
+   opening is now a full-bleed dark plate — the work itself, greyed
+   down to texture, standing behind the name — so the first screen
+   carries weight before a single line is read. Light and dark then
+   alternate down the page instead of one unbroken sheet of paper.
+   ═══════════════════════════════════════════════════════════════════ */
+body.has-hero .site-main{margin-top:calc(var(--bar) * -1);padding-top:0}
+body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
+/* Пока страница на первом экране, полоса стоит на тёмном: белый текст без
+   подложки. Как только герой уходит вверх (is-scrolled ставит скрипт) —
+   всё возвращается к бумаге. */
+body.has-hero .site-head:not(.is-scrolled){background:transparent;backdrop-filter:none}
+body.has-hero .site-head:not(.is-scrolled) .wordmark{color:#fff}
+body.has-hero .site-head:not(.is-scrolled) nav a,
+body.has-hero .site-head:not(.is-scrolled) .head-right a{color:rgba(255,255,255,.74)}
+body.has-hero .site-head:not(.is-scrolled) nav a:hover{color:#fff}
+body.has-hero .site-head:not(.is-scrolled) .head-right a{border-color:rgba(255,255,255,.34)}
+body.has-hero .site-head:not(.is-scrolled) .head-right a:hover{background:#fff;border-color:#fff;color:var(--c-ink)}
+body.has-hero .site-head:not(.is-scrolled) .nav-mark{background:rgba(255,255,255,.14)}
+body.has-hero .site-head:not(.is-scrolled) .menu-btn{color:#fff;border-color:rgba(255,255,255,.34)}
+
+.hero{
+  position:relative;isolation:isolate;overflow:hidden;
+  min-height:min(94vh,900px);display:flex;flex-direction:column;justify-content:flex-end;
+  padding-top:calc(var(--bar) + clamp(40px,7vw,90px));
+  background:var(--c-night);
+}
+/* Стена работ: восемь настоящих снимков, обесцвеченных и приглушённых до
+   фактуры. Это не галерея — галерея ниже; здесь они держат глубину, чтобы
+   имя стояло на чём-то, а не висело на плашке. */
+.hero-wall{
+  position:absolute;inset:0;z-index:-2;display:grid;gap:4px;
+  grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);
+}
+.hero-wall img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05) brightness(.3)}
+/* Два слоя поверх стены: ровная заливка гасит светлые скриншоты (у половины
+   работ фон белый и без неё они спорят с именем), а градиенты уже лепят
+   глубину и тёплый угол снизу слева. */
+.hero::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+    linear-gradient(to top, var(--c-night) 2%, rgba(11,10,9,.95) 34%, rgba(11,10,9,.88) 68%, rgba(11,10,9,.84) 100%),
+    radial-gradient(120% 90% at 12% 98%, rgba(200,70,28,.32), transparent 60%);
+}
+.hero-in{
+  width:100%;max-width:var(--measure);margin-inline:auto;
+  padding:0 clamp(20px,4vw,54px) clamp(26px,3.6vw,44px);
+}
+.hero-kicker{display:flex;align-items:center;gap:12px;color:var(--c-accent-bright)}
+.hero-kicker .portrait{width:clamp(34px,3.4vw,44px);filter:grayscale(1) contrast(1.05) brightness(1.06)}
+.hero .name{
+  margin-top:clamp(18px,2.4vw,30px);
+  font-family:var(--font-display);font-size:clamp(54px,9.4vw,146px);line-height:.84;
+  letter-spacing:-.055em;color:#fff;
+}
+.hero .claim{
+  max-width:20ch;margin-top:clamp(20px,2.6vw,34px);
+  font-family:var(--font-head);font-size:clamp(25px,3vw,44px);line-height:1.06;
+  letter-spacing:-.018em;color:rgba(255,255,255,.93);
+}
+.hero .claim .hl{color:var(--c-accent-bright);font-style:italic}
+.hero .support{max-width:54ch;margin-top:clamp(18px,2.2vw,26px);color:rgba(255,255,255,.62)}
+.hero .actions{margin-top:clamp(22px,2.8vw,32px)}
+/* Вторая кнопка на тёмном — контур по белому, а не серая заливка: серая
+   плашка на почти чёрном не видна вообще. */
+.hero .btn--soft{background:transparent;border-color:rgba(255,255,255,.4);color:#fff}
+.hero .btn--soft:hover{background:#fff;border-color:#fff;color:var(--c-ink)}
+
+/* Цифры стоят не отдельной плашкой, а нижним краем самого героя: сначала
+   утверждение, сразу под ним — чем оно обеспечено. */
+.figures{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,2.4vw,32px);
+  margin-top:clamp(34px,4.6vw,58px);padding-top:clamp(20px,2.6vw,28px);
+  border-top:1px solid rgba(255,255,255,.16);
+}
+.figures b{
+  display:block;font-family:var(--font-display);font-weight:400;
+  font-size:clamp(30px,3.6vw,52px);line-height:1;letter-spacing:-.045em;color:#fff;
+}
+.figures span{display:block;margin-top:8px;color:rgba(255,255,255,.52)}
+
+@media (max-width:760px){
+  .hero{min-height:auto;padding-top:calc(var(--bar) + 54px);padding-bottom:6px}
+  /* На телефоне текст идёт во всю ширину поверх стены, поэтому она гасится
+     сильнее: на узком экране светлое пятно снимка попадает прямо под строку. */
+  .hero-wall{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr)}
+  .hero-wall img{filter:grayscale(1) contrast(1.05) brightness(.22)}
+  .hero-wall img:nth-child(n+7){display:none}
+  .hero .name{font-size:clamp(46px,14vw,74px)}
+  .hero .claim{font-size:clamp(25px,7.4vw,36px);max-width:none}
+  .hero .support{font-size:16px}
+  .figures{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 16px}
+}
+
 /* The opening is a page, rather than a profile card. */
 .opening{margin-bottom:clamp(4.4rem,8vw,8rem);padding-top:clamp(6px,1vw,14px)}
 /* Решётка первого экрана музея: тонкие вертикали делят полосу на ячейки, в
@@ -283,13 +383,29 @@ p{text-wrap:pretty}
   .reveal{transition:none}
 }
 
-/* Work gets an image-led sequence instead of a grid of equal cards. */
+/* Работы поданы афишами: название стоит на самом снимке, а не подписью под
+   ним. Первая карточка — во всю ширину и крупнее остальных: это ведущая
+   работа, а не первая ячейка равной сетки. */
 .featured{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(28px,4vw,58px) clamp(20px,3vw,42px)}
 .feat{display:flex;flex-direction:column;padding-bottom:16px}
-.feat:first-child,.feat.feat-wide{
-  grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,1.38fr) minmax(260px,.62fr);column-gap:clamp(25px,4vw,56px);align-items:start;
-  padding-bottom:clamp(28px,4vw,44px);
+.feat:first-child{grid-column:1 / -1}
+.feat:first-child .shot{aspect-ratio:16 / 7.4}
+.feat:first-child .shot-title{font-size:clamp(34px,4.6vw,64px)}
+.feat:first-child p{max-width:68ch;font-size:18px}
+.shot-scrim{
+  position:absolute;inset:auto 0 0 0;height:78%;z-index:1;pointer-events:none;
+  background:linear-gradient(to top, rgba(8,7,6,.94) 0%, rgba(8,7,6,.58) 44%, transparent 100%);
 }
+.shot-cap{
+  position:absolute;inset:auto 0 0 0;z-index:2;display:flex;flex-direction:column;gap:7px;
+  padding:clamp(18px,2.4vw,30px) clamp(18px,2.4vw,30px) clamp(16px,2vw,24px);
+}
+.shot-cap .role{margin:0;color:var(--c-accent-bright);letter-spacing:.2em}
+.shot-title{
+  font-family:var(--font-display);font-size:clamp(26px,2.9vw,40px);line-height:1;
+  letter-spacing:-.036em;color:#fff;transition:transform .4s cubic-bezier(.22,.7,.24,1);
+}
+.feat:hover .shot-title{transform:translateX(5px)}
 /* Кадр без рамки: мягкий угол и волосяная линия поверх картинки (::after),
    чтобы белый скриншот не растворялся в белой странице. */
 .feat .shot{position:relative;overflow:hidden;background:var(--c-paper-deep);border-radius:18px;aspect-ratio:16 / 9;
@@ -300,25 +416,14 @@ p{text-wrap:pretty}
 .feat:hover .shot img{transform:scale(1.04);filter:saturate(.95)}
 /* Заголовок и стрелка отвечают на тот же ховер, что и кадр: карточка ведёт
    себя как одна ссылка, а не как картинка с текстом рядом. */
-.feat h3{transition:transform .4s cubic-bezier(.22,.7,.24,1)}
-.feat:hover h3{transform:translateX(4px)}
 .feat .meta span:last-child{display:inline-flex;align-items:center;transition:transform .4s cubic-bezier(.22,.7,.24,1)}
 .feat:hover .meta span:last-child{transform:translateX(5px)}
 @media (prefers-reduced-motion:reduce){
-  .feat .shot,.feat .shot img,.feat h3,.feat .meta span:last-child{transition:none}
+  .feat .shot,.feat .shot img,.shot-title,.feat .meta span:last-child{transition:none}
   .feat:hover .shot{transform:none}.feat:hover .shot img{transform:none}
-  .feat:hover h3,.feat:hover .meta span:last-child{transform:none}
+  .feat:hover .shot-title,.feat:hover .meta span:last-child{transform:none}
 }
-.feat:first-child .shot,.feat.feat-wide .shot{grid-row:1 / span 5;aspect-ratio:16 / 8.2}
-/* Широкие карточки чередуют сторону картинки, иначе три подряд читаются
-   как одна и та же вставка. */
-.feat.feat-flip{grid-template-columns:minmax(260px,.62fr) minmax(0,1.38fr)}
-.feat.feat-flip .shot{grid-column:2}
-.feat.feat-flip > :not(.shot){grid-column:1}
-.feat .role{order:1;margin-top:17px;color:var(--c-faint);letter-spacing:.2em}
-/* Заголовки работ - антиква, как названия материалов в журнале. */
-.feat h3{order:2;margin-top:9px;font-family:var(--font-head);font-size:clamp(25px,2.4vw,35px);line-height:1.06;letter-spacing:-.014em}
-.feat p{order:3;margin-top:13px;max-width:44ch;color:var(--c-muted);font-size:17px;line-height:1.42}
+.feat p{order:3;margin-top:16px;max-width:44ch;color:var(--c-muted);font-size:17px;line-height:1.42}
 .feat .meta{order:4;display:flex;justify-content:space-between;gap:12px;margin-top:24px;padding-top:12px;border-top:1px solid var(--c-rule);color:var(--c-faint)}
 .feat .meta .t{transition:color .2s ease}
 .feat:hover .meta .t{color:var(--c-ink);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
@@ -368,19 +473,35 @@ p{text-wrap:pretty}
 .writing a:hover .go{color:var(--c-accent-deep)}
 
 
-/* Заявление одно на белом, как на Doglyad: первая фраза чернилами, вторая
-   серым. Серый #8f8d89 на белом 3.3:1, для текста такого кегля хватает. */
-.statement{padding-top:clamp(1rem,3vw,2.5rem)}
-.say{max-width:19ch;font-family:var(--font-display);font-size:clamp(38px,5.4vw,76px);line-height:.96;letter-spacing:-.045em;color:var(--c-ink);text-wrap:balance}
-.say span{color:#8f8d89}
-.say-cap{margin-top:24px;font-family:var(--font-head);font-style:italic;font-size:18px;color:var(--c-faint)}
-.close{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:start;margin-top:clamp(3.2rem,6vw,5.5rem);padding:clamp(24px,3vw,36px);border-radius:24px;background:var(--c-paper-deep)}
-.close p{max-width:40ch;margin-top:12px;color:var(--c-muted);font-size:17px;line-height:1.45}
+/* Заявление — тёмный разворот во всю ширину, а не абзац на той же бумаге,
+   что и списки над ним. Это единственная фраза на странице, сказанная от
+   себя, и она стоит отдельно: страница на секунду гаснет. */
+.statement{
+  position:relative;margin-bottom:0;padding:clamp(4.6rem,9vw,8.5rem) 0;
+  background:var(--c-night);color:#fff;
+}
+/* Разворот выходит за колонку .shell на всю ширину окна — отсюда обратные
+   отступы на половину «лишнего» места. */
+.statement{
+  width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
+  padding-inline:max(clamp(20px,4vw,54px), calc(50vw - var(--measure) / 2 + clamp(20px,4vw,54px)));
+}
+.statement::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(90% 120% at 82% 10%, rgba(200,70,28,.24), transparent 58%);
+}
+.statement > *{position:relative;z-index:1}
+.say{max-width:19ch;font-family:var(--font-display);font-size:clamp(38px,5.6vw,80px);line-height:.96;letter-spacing:-.045em;color:#fff;text-wrap:balance}
+.say span{color:rgba(255,255,255,.52)}
+.say-cap{margin-top:24px;font-family:var(--font-head);font-style:italic;font-size:18px;color:var(--c-accent-bright)}
+.close{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:start;margin-top:clamp(3.2rem,6vw,5.5rem);padding:clamp(24px,3vw,36px);border-radius:24px;background:rgba(255,255,255,.055)}
+.close .mono{color:rgba(255,255,255,.56)}
+.close p{max-width:40ch;margin-top:12px;color:rgba(255,255,255,.66);font-size:17px;line-height:1.45}
 .close ol{list-style:none}
-.close li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid rgba(18,18,18,.08);font-family:var(--font-head);font-size:24px;line-height:1.1}
+.close li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.12);font-family:var(--font-head);font-size:24px;line-height:1.1;color:#fff}
 .close li:first-child{padding-top:0}
 .close li:last-child{border-bottom:0;padding-bottom:0}
-.close li i{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;color:var(--c-accent);font-style:normal}
+.close li i{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;color:var(--c-accent-bright);font-style:normal}
 
 /* Конец страницы - серая скруглённая панель, как подвал Doglyad, а не ещё
    одна чернильная линейка. */
@@ -537,7 +658,7 @@ p{text-wrap:pretty}
   .name{font-size:clamp(50px,15vw,80px)}.claim{margin-top:24px;font-size:clamp(30px,8.4vw,44px)}
   .opening-bottom{grid-template-columns:1fr;gap:22px}.opening-bottom .support{grid-column:1}.support{font-size:16px}
   .sec-head{grid-template-columns:1fr;gap:15px}.sec-head .sec-note{justify-self:start}
-  .featured{grid-template-columns:1fr}.feat:first-child,.feat.feat-wide{grid-column:auto;display:flex;padding-bottom:16px}.feat:first-child .shot,.feat.feat-wide .shot{aspect-ratio:16 / 10}.feat h3{font-size:34px}
+  .featured{grid-template-columns:1fr}.feat:first-child .shot{aspect-ratio:16 / 10}.feat:first-child .shot-title{font-size:34px}
   .row{grid-template-columns:minmax(0,1fr) auto;gap:7px 16px}.row .role{grid-column:1 / -1;grid-row:2}.row .what{grid-column:1 / -1;grid-row:3;margin-top:4px}
   .pub{grid-template-columns:48px minmax(0,1fr) auto;gap:8px 14px}.pub .venue{grid-column:2 / -1}
   .cite{grid-template-columns:40px minmax(0,1fr) auto;gap:8px 12px}
