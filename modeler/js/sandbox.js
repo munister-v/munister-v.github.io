@@ -2,8 +2,8 @@
 // so you can write real SELECT/INSERT/UPDATE against your model with no backend and no real Oracle.
 // sql.js is vendored in js/vendor/sqljs/ (MIT license, see LICENSE there) to keep the app
 // self-contained and offline-capable, same as every other module here.
-import { sqliteSchema } from './sqlite-gen.js?v=202609192149';
-import { sqliteSeed } from './sqlite-seed.js?v=202609192149';
+import { sqliteSchema } from './sqlite-gen.js?v=202609192153';
+import { sqliteSeed } from './sqlite-seed.js?v=202609192153';
 
 let engine = null;
 let loading = null;
