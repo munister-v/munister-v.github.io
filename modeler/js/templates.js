@@ -5,9 +5,9 @@ const AUDIT = `created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
 
 export const TEMPLATES = [
   {
-    id: 'shop', icon: '🛒', tables: 7,
+    id: 'shop', icon: '🛒', tables: 10,
     name: { uk: 'Інтернет-магазин', en: 'Online store' },
-    desc: { uk: 'Покупці, адреси, товари, категорії, замовлення, оплати', en: 'Customers, addresses, products, categories, orders, payments' },
+    desc: { uk: 'Покупці, адреси, товари, категорії, замовлення, оплати, купони, відгуки, доставка', en: 'Customers, addresses, products, categories, orders, payments, coupons, reviews, shipping' },
     ddl: `
 CREATE SEQUENCE order_no_seq START WITH 100000 INCREMENT BY 1 CACHE 50 NOCYCLE;
 
@@ -61,6 +61,7 @@ CREATE TABLE orders (
   order_no NUMBER DEFAULT order_no_seq.NEXTVAL NOT NULL,
   customer_id NUMBER NOT NULL,
   address_id NUMBER NOT NULL,
+  coupon_id NUMBER,
   status VARCHAR2(20 CHAR) DEFAULT 'NEW' NOT NULL,
   total NUMBER(12,2) NOT NULL,
   ordered_at DATE DEFAULT SYSDATE NOT NULL,
@@ -94,14 +95,57 @@ CREATE TABLE payments (
 );
 COMMENT ON TABLE payments IS 'Оплати';
 
+CREATE TABLE coupons (
+  coupon_id ${ID},
+  code VARCHAR2(30 CHAR) NOT NULL,
+  discount_pct NUMBER(5,2) NOT NULL,
+  valid_from DATE DEFAULT SYSDATE NOT NULL,
+  valid_to DATE NOT NULL,
+  CONSTRAINT coupons_pk PRIMARY KEY (coupon_id),
+  CONSTRAINT coupons_code_un UNIQUE (code),
+  CONSTRAINT coupons_pct_ck CHECK (discount_pct BETWEEN 0 AND 100)
+);
+COMMENT ON TABLE coupons IS 'Знижкові купони';
+
+CREATE TABLE reviews (
+  review_id ${ID},
+  product_id NUMBER NOT NULL,
+  customer_id NUMBER NOT NULL,
+  rating NUMBER(1) NOT NULL,
+  body VARCHAR2(2000 CHAR),
+  created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+  CONSTRAINT reviews_pk PRIMARY KEY (review_id),
+  CONSTRAINT reviews_one_un UNIQUE (product_id, customer_id),
+  CONSTRAINT reviews_rating_ck CHECK (rating BETWEEN 1 AND 5)
+);
+COMMENT ON TABLE reviews IS 'Відгуки на товари';
+
+CREATE TABLE shipments (
+  shipment_id ${ID},
+  order_id NUMBER NOT NULL,
+  carrier VARCHAR2(50 CHAR) NOT NULL,
+  tracking_no VARCHAR2(40 CHAR),
+  status VARCHAR2(15 CHAR) DEFAULT 'PREPARING' NOT NULL,
+  shipped_at TIMESTAMP,
+  delivered_at TIMESTAMP,
+  CONSTRAINT shipments_pk PRIMARY KEY (shipment_id),
+  CONSTRAINT shipments_order_un UNIQUE (order_id),
+  CONSTRAINT shipments_status_ck CHECK (status IN ('PREPARING', 'SHIPPED', 'DELIVERED', 'RETURNED'))
+);
+COMMENT ON TABLE shipments IS 'Доставка (одна на замовлення)';
+
 ALTER TABLE addresses ADD CONSTRAINT addresses_customers_fk FOREIGN KEY (customer_id) REFERENCES customers (customer_id) ON DELETE CASCADE;
 ALTER TABLE categories ADD CONSTRAINT categories_parent_fk FOREIGN KEY (parent_id) REFERENCES categories (category_id);
 ALTER TABLE products ADD CONSTRAINT products_categories_fk FOREIGN KEY (category_id) REFERENCES categories (category_id);
 ALTER TABLE orders ADD CONSTRAINT orders_customers_fk FOREIGN KEY (customer_id) REFERENCES customers (customer_id);
 ALTER TABLE orders ADD CONSTRAINT orders_addresses_fk FOREIGN KEY (address_id) REFERENCES addresses (address_id);
+ALTER TABLE orders ADD CONSTRAINT orders_coupons_fk FOREIGN KEY (coupon_id) REFERENCES coupons (coupon_id);
 ALTER TABLE order_items ADD CONSTRAINT order_items_orders_fk FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE;
 ALTER TABLE order_items ADD CONSTRAINT order_items_products_fk FOREIGN KEY (product_id) REFERENCES products (product_id);
 ALTER TABLE payments ADD CONSTRAINT payments_orders_fk FOREIGN KEY (order_id) REFERENCES orders (order_id);
+ALTER TABLE reviews ADD CONSTRAINT reviews_products_fk FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE;
+ALTER TABLE reviews ADD CONSTRAINT reviews_customers_fk FOREIGN KEY (customer_id) REFERENCES customers (customer_id) ON DELETE CASCADE;
+ALTER TABLE shipments ADD CONSTRAINT shipments_orders_fk FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE;
 CREATE INDEX orders_customer_idx ON orders (customer_id);
 CREATE INDEX products_category_idx ON products (category_id);
 
@@ -117,9 +161,9 @@ COMMENT ON TABLE v_customer_sales IS 'Продажі по покупцях';
 `,
   },
   {
-    id: 'hr', icon: '👥', tables: 6,
+    id: 'hr', icon: '👥', tables: 9,
     name: { uk: 'Кадри (HR)', en: 'Human resources' },
-    desc: { uk: 'Регіони, локації, відділи, посади, працівники, історія посад', en: 'Regions, locations, departments, jobs, employees, job history' },
+    desc: { uk: 'Регіони, локації, відділи, посади, працівники, історія посад, навички, відпустки', en: 'Regions, locations, departments, jobs, employees, job history, skills, leave' },
     ddl: `
 CREATE TABLE regions (
   region_id NUMBER NOT NULL,
@@ -182,6 +226,37 @@ CREATE TABLE job_history (
 );
 COMMENT ON TABLE job_history IS 'Історія зміни посад';
 
+CREATE TABLE skills (
+  skill_id ${ID},
+  name VARCHAR2(100 CHAR) NOT NULL,
+  CONSTRAINT skills_pk PRIMARY KEY (skill_id),
+  CONSTRAINT skills_name_un UNIQUE (name)
+);
+COMMENT ON TABLE skills IS 'Навички';
+
+CREATE TABLE employee_skills (
+  employee_id NUMBER NOT NULL,
+  skill_id NUMBER NOT NULL,
+  skill_level NUMBER(1) NOT NULL,
+  CONSTRAINT employee_skills_pk PRIMARY KEY (employee_id, skill_id),
+  CONSTRAINT employee_skills_level_ck CHECK (skill_level BETWEEN 1 AND 5)
+);
+COMMENT ON TABLE employee_skills IS 'Навички працівників (M:N), 1-5 — рівень володіння';
+
+CREATE TABLE leave_requests (
+  leave_id ${ID},
+  employee_id NUMBER NOT NULL,
+  leave_type VARCHAR2(10 CHAR) NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  status VARCHAR2(10 CHAR) DEFAULT 'PENDING' NOT NULL,
+  CONSTRAINT leave_requests_pk PRIMARY KEY (leave_id),
+  CONSTRAINT leave_requests_type_ck CHECK (leave_type IN ('VACATION', 'SICK', 'UNPAID')),
+  CONSTRAINT leave_requests_status_ck CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED')),
+  CONSTRAINT leave_requests_dates_ck CHECK (end_date >= start_date)
+);
+COMMENT ON TABLE leave_requests IS 'Заяви на відпустку/лікарняний';
+
 ALTER TABLE locations ADD CONSTRAINT locations_regions_fk FOREIGN KEY (region_id) REFERENCES regions (region_id);
 ALTER TABLE departments ADD CONSTRAINT departments_locations_fk FOREIGN KEY (location_id) REFERENCES locations (location_id);
 ALTER TABLE departments ADD CONSTRAINT departments_manager_fk FOREIGN KEY (manager_id) REFERENCES employees (employee_id);
@@ -191,12 +266,15 @@ ALTER TABLE employees ADD CONSTRAINT employees_departments_fk FOREIGN KEY (depar
 ALTER TABLE job_history ADD CONSTRAINT job_history_employees_fk FOREIGN KEY (employee_id) REFERENCES employees (employee_id);
 ALTER TABLE job_history ADD CONSTRAINT job_history_jobs_fk FOREIGN KEY (job_id) REFERENCES jobs (job_id);
 ALTER TABLE job_history ADD CONSTRAINT job_history_departments_fk FOREIGN KEY (department_id) REFERENCES departments (department_id);
+ALTER TABLE employee_skills ADD CONSTRAINT employee_skills_employees_fk FOREIGN KEY (employee_id) REFERENCES employees (employee_id) ON DELETE CASCADE;
+ALTER TABLE employee_skills ADD CONSTRAINT employee_skills_skills_fk FOREIGN KEY (skill_id) REFERENCES skills (skill_id) ON DELETE CASCADE;
+ALTER TABLE leave_requests ADD CONSTRAINT leave_requests_employees_fk FOREIGN KEY (employee_id) REFERENCES employees (employee_id) ON DELETE CASCADE;
 `,
   },
   {
-    id: 'uni', icon: '🎓', tables: 7,
+    id: 'uni', icon: '🎓', tables: 10,
     name: { uk: 'Університет', en: 'University' },
-    desc: { uk: 'Факультети, групи, студенти, викладачі, дисципліни, оцінки', en: 'Faculties, groups, students, teachers, courses, grades' },
+    desc: { uk: 'Факультети, групи, студенти, викладачі, дисципліни, оцінки, завдання, стипендії', en: 'Faculties, groups, students, teachers, courses, grades, assignments, scholarships' },
     ddl: `
 CREATE TABLE faculties (
   faculty_id ${ID},
@@ -266,6 +344,37 @@ CREATE TABLE grades (
 );
 COMMENT ON TABLE grades IS 'Оцінки (100-бальна шкала)';
 
+CREATE TABLE assignments (
+  assignment_id ${ID},
+  schedule_id NUMBER NOT NULL,
+  title VARCHAR2(200 CHAR) NOT NULL,
+  due_date DATE NOT NULL,
+  max_score NUMBER(3) DEFAULT 100 NOT NULL,
+  CONSTRAINT assignments_pk PRIMARY KEY (assignment_id)
+);
+COMMENT ON TABLE assignments IS 'Завдання по дисципліні групи';
+
+CREATE TABLE submissions (
+  submission_id ${ID},
+  assignment_id NUMBER NOT NULL,
+  student_id NUMBER NOT NULL,
+  submitted_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+  score NUMBER(3),
+  CONSTRAINT submissions_pk PRIMARY KEY (submission_id),
+  CONSTRAINT submissions_one_un UNIQUE (assignment_id, student_id)
+);
+COMMENT ON TABLE submissions IS 'Здані роботи студентів';
+
+CREATE TABLE scholarships (
+  scholarship_id ${ID},
+  student_id NUMBER NOT NULL,
+  name VARCHAR2(150 CHAR) NOT NULL,
+  amount NUMBER(10,2) NOT NULL,
+  granted_at DATE DEFAULT SYSDATE NOT NULL,
+  CONSTRAINT scholarships_pk PRIMARY KEY (scholarship_id)
+);
+COMMENT ON TABLE scholarships IS 'Стипендії';
+
 ALTER TABLE study_groups ADD CONSTRAINT study_groups_faculties_fk FOREIGN KEY (faculty_id) REFERENCES faculties (faculty_id);
 ALTER TABLE students ADD CONSTRAINT students_groups_fk FOREIGN KEY (group_id) REFERENCES study_groups (group_id);
 ALTER TABLE teachers ADD CONSTRAINT teachers_faculties_fk FOREIGN KEY (faculty_id) REFERENCES faculties (faculty_id);
@@ -274,12 +383,16 @@ ALTER TABLE schedule ADD CONSTRAINT schedule_subjects_fk FOREIGN KEY (subject_id
 ALTER TABLE schedule ADD CONSTRAINT schedule_teachers_fk FOREIGN KEY (teacher_id) REFERENCES teachers (teacher_id);
 ALTER TABLE grades ADD CONSTRAINT grades_students_fk FOREIGN KEY (student_id) REFERENCES students (student_id) ON DELETE CASCADE;
 ALTER TABLE grades ADD CONSTRAINT grades_schedule_fk FOREIGN KEY (schedule_id) REFERENCES schedule (schedule_id);
+ALTER TABLE assignments ADD CONSTRAINT assignments_schedule_fk FOREIGN KEY (schedule_id) REFERENCES schedule (schedule_id) ON DELETE CASCADE;
+ALTER TABLE submissions ADD CONSTRAINT submissions_assignments_fk FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id) ON DELETE CASCADE;
+ALTER TABLE submissions ADD CONSTRAINT submissions_students_fk FOREIGN KEY (student_id) REFERENCES students (student_id) ON DELETE CASCADE;
+ALTER TABLE scholarships ADD CONSTRAINT scholarships_students_fk FOREIGN KEY (student_id) REFERENCES students (student_id) ON DELETE CASCADE;
 `,
   },
   {
-    id: 'bank', icon: '🏦', tables: 6,
+    id: 'bank', icon: '🏦', tables: 9,
     name: { uk: 'Банк', en: 'Bank' },
-    desc: { uk: 'Клієнти, рахунки, картки, транзакції, кредити, платежі', en: 'Clients, accounts, cards, transactions, loans, repayments' },
+    desc: { uk: 'Клієнти, рахунки, картки, транзакції, кредити, платежі, відділення, застава', en: 'Clients, accounts, cards, transactions, loans, repayments, branches, collateral' },
     ddl: `
 CREATE TABLE clients (
   client_id ${ID},
@@ -296,6 +409,7 @@ COMMENT ON COLUMN clients.tax_number IS 'РНОКПП';
 CREATE TABLE accounts (
   account_id ${ID},
   client_id NUMBER NOT NULL,
+  branch_id NUMBER NOT NULL,
   iban VARCHAR2(29 CHAR) NOT NULL,
   currency CHAR(3) DEFAULT 'UAH' NOT NULL,
   balance NUMBER(18,2) DEFAULT 0 NOT NULL,
@@ -348,18 +462,47 @@ CREATE TABLE loan_payments (
 );
 COMMENT ON TABLE loan_payments IS 'Графік погашення';
 
+CREATE TABLE branches (
+  branch_id ${ID},
+  name VARCHAR2(100 CHAR) NOT NULL,
+  city VARCHAR2(100 CHAR) NOT NULL,
+  CONSTRAINT branches_pk PRIMARY KEY (branch_id)
+);
+COMMENT ON TABLE branches IS 'Відділення банку';
+
+CREATE TABLE beneficiaries (
+  beneficiary_id ${ID},
+  client_id NUMBER NOT NULL,
+  name VARCHAR2(200 CHAR) NOT NULL,
+  iban VARCHAR2(29 CHAR) NOT NULL,
+  CONSTRAINT beneficiaries_pk PRIMARY KEY (beneficiary_id)
+);
+COMMENT ON TABLE beneficiaries IS 'Збережені отримувачі переказів';
+
+CREATE TABLE loan_collateral (
+  collateral_id ${ID},
+  loan_id NUMBER NOT NULL,
+  description VARCHAR2(400 CHAR) NOT NULL,
+  value NUMBER(18,2) NOT NULL,
+  CONSTRAINT loan_collateral_pk PRIMARY KEY (collateral_id)
+);
+COMMENT ON TABLE loan_collateral IS 'Застава по кредиту';
+
+ALTER TABLE accounts ADD CONSTRAINT accounts_branches_fk FOREIGN KEY (branch_id) REFERENCES branches (branch_id);
 ALTER TABLE accounts ADD CONSTRAINT accounts_clients_fk FOREIGN KEY (client_id) REFERENCES clients (client_id);
 ALTER TABLE cards ADD CONSTRAINT cards_accounts_fk FOREIGN KEY (account_id) REFERENCES accounts (account_id);
 ALTER TABLE transactions ADD CONSTRAINT transactions_accounts_fk FOREIGN KEY (account_id) REFERENCES accounts (account_id);
 ALTER TABLE loans ADD CONSTRAINT loans_clients_fk FOREIGN KEY (client_id) REFERENCES clients (client_id);
 ALTER TABLE loan_payments ADD CONSTRAINT loan_payments_loans_fk FOREIGN KEY (loan_id) REFERENCES loans (loan_id) ON DELETE CASCADE;
+ALTER TABLE beneficiaries ADD CONSTRAINT beneficiaries_clients_fk FOREIGN KEY (client_id) REFERENCES clients (client_id) ON DELETE CASCADE;
+ALTER TABLE loan_collateral ADD CONSTRAINT loan_collateral_loans_fk FOREIGN KEY (loan_id) REFERENCES loans (loan_id) ON DELETE CASCADE;
 CREATE INDEX transactions_account_idx ON transactions (account_id, booked_at);
 `,
   },
   {
-    id: 'blog', icon: '📝', tables: 6,
+    id: 'blog', icon: '📝', tables: 9,
     name: { uk: 'Блог / CMS', en: 'Blog / CMS' },
-    desc: { uk: 'Автори, публікації, рубрики, теги, коментарі', en: 'Authors, posts, sections, tags, comments' },
+    desc: { uk: 'Автори, публікації, рубрики, теги, коментарі, медіа, підписники, ревізії', en: 'Authors, posts, sections, tags, comments, media, subscribers, revisions' },
     ddl: `
 CREATE TABLE authors (
   author_id ${ID},
@@ -420,18 +563,52 @@ CREATE TABLE comments (
 );
 COMMENT ON TABLE comments IS 'Коментарі';
 
+CREATE TABLE media (
+  media_id ${ID},
+  post_id NUMBER,
+  url VARCHAR2(500 CHAR) NOT NULL,
+  kind VARCHAR2(10 CHAR) DEFAULT 'IMAGE' NOT NULL,
+  uploaded_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+  CONSTRAINT media_pk PRIMARY KEY (media_id),
+  CONSTRAINT media_kind_ck CHECK (kind IN ('IMAGE', 'VIDEO', 'FILE'))
+);
+COMMENT ON TABLE media IS 'Медіафайли публікацій';
+
+CREATE TABLE subscribers (
+  subscriber_id ${ID},
+  email VARCHAR2(255 CHAR) NOT NULL,
+  subscribed_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+  confirmed CHAR(1) DEFAULT 'N' NOT NULL,
+  CONSTRAINT subscribers_pk PRIMARY KEY (subscriber_id),
+  CONSTRAINT subscribers_email_un UNIQUE (email)
+);
+COMMENT ON TABLE subscribers IS 'Підписники розсилки';
+
+CREATE TABLE post_revisions (
+  revision_id ${ID},
+  post_id NUMBER NOT NULL,
+  editor_id NUMBER NOT NULL,
+  body CLOB,
+  edited_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+  CONSTRAINT post_revisions_pk PRIMARY KEY (revision_id)
+);
+COMMENT ON TABLE post_revisions IS 'Історія редагувань публікації';
+
 ALTER TABLE posts ADD CONSTRAINT posts_authors_fk FOREIGN KEY (author_id) REFERENCES authors (author_id);
 ALTER TABLE posts ADD CONSTRAINT posts_sections_fk FOREIGN KEY (section_id) REFERENCES sections (section_id) ON DELETE SET NULL;
 ALTER TABLE post_tags ADD CONSTRAINT post_tags_posts_fk FOREIGN KEY (post_id) REFERENCES posts (post_id) ON DELETE CASCADE;
 ALTER TABLE post_tags ADD CONSTRAINT post_tags_tags_fk FOREIGN KEY (tag_id) REFERENCES tags (tag_id) ON DELETE CASCADE;
 ALTER TABLE comments ADD CONSTRAINT comments_posts_fk FOREIGN KEY (post_id) REFERENCES posts (post_id) ON DELETE CASCADE;
 ALTER TABLE comments ADD CONSTRAINT comments_parent_fk FOREIGN KEY (parent_id) REFERENCES comments (comment_id);
+ALTER TABLE media ADD CONSTRAINT media_posts_fk FOREIGN KEY (post_id) REFERENCES posts (post_id) ON DELETE CASCADE;
+ALTER TABLE post_revisions ADD CONSTRAINT post_revisions_posts_fk FOREIGN KEY (post_id) REFERENCES posts (post_id) ON DELETE CASCADE;
+ALTER TABLE post_revisions ADD CONSTRAINT post_revisions_authors_fk FOREIGN KEY (editor_id) REFERENCES authors (author_id);
 `,
   },
   {
-    id: 'warehouse', icon: '📦', tables: 6,
+    id: 'warehouse', icon: '📦', tables: 9,
     name: { uk: 'Склад і логістика', en: 'Warehouse & logistics' },
-    desc: { uk: 'Склади, постачальники, номенклатура, залишки, накладні', en: 'Warehouses, suppliers, items, stock, waybills' },
+    desc: { uk: 'Склади, постачальники, номенклатура, залишки, накладні, категорії, переміщення', en: 'Warehouses, suppliers, items, stock, waybills, categories, transfers' },
     ddl: `
 CREATE TABLE warehouses (
   warehouse_id ${ID},
@@ -453,6 +630,7 @@ COMMENT ON COLUMN suppliers.edrpou IS 'Код ЄДРПОУ';
 
 CREATE TABLE items (
   item_id ${ID},
+  category_id NUMBER,
   sku VARCHAR2(40 CHAR) NOT NULL,
   name VARCHAR2(200 CHAR) NOT NULL,
   unit VARCHAR2(10 CHAR) DEFAULT 'шт' NOT NULL,
@@ -492,18 +670,54 @@ CREATE TABLE waybill_lines (
 );
 COMMENT ON TABLE waybill_lines IS 'Рядки накладних';
 
+CREATE TABLE item_categories (
+  category_id ${ID},
+  parent_id NUMBER,
+  name VARCHAR2(100 CHAR) NOT NULL,
+  CONSTRAINT item_categories_pk PRIMARY KEY (category_id)
+);
+COMMENT ON TABLE item_categories IS 'Категорії номенклатури';
+
+CREATE TABLE item_suppliers (
+  item_id NUMBER NOT NULL,
+  supplier_id NUMBER NOT NULL,
+  supplier_sku VARCHAR2(40 CHAR),
+  lead_time_days NUMBER(4) DEFAULT 0 NOT NULL,
+  CONSTRAINT item_suppliers_pk PRIMARY KEY (item_id, supplier_id)
+);
+COMMENT ON TABLE item_suppliers IS 'Хто з постачальників що постачає (M:N)';
+
+CREATE TABLE stock_transfers (
+  transfer_id ${ID},
+  item_id NUMBER NOT NULL,
+  from_warehouse_id NUMBER NOT NULL,
+  to_warehouse_id NUMBER NOT NULL,
+  quantity NUMBER(12,3) NOT NULL,
+  transferred_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+  CONSTRAINT stock_transfers_pk PRIMARY KEY (transfer_id),
+  CONSTRAINT stock_transfers_qty_ck CHECK (quantity > 0)
+);
+COMMENT ON TABLE stock_transfers IS 'Переміщення між складами';
+
+ALTER TABLE items ADD CONSTRAINT items_categories_fk FOREIGN KEY (category_id) REFERENCES item_categories (category_id);
+ALTER TABLE item_categories ADD CONSTRAINT item_categories_parent_fk FOREIGN KEY (parent_id) REFERENCES item_categories (category_id);
 ALTER TABLE stock ADD CONSTRAINT stock_warehouses_fk FOREIGN KEY (warehouse_id) REFERENCES warehouses (warehouse_id);
 ALTER TABLE stock ADD CONSTRAINT stock_items_fk FOREIGN KEY (item_id) REFERENCES items (item_id);
 ALTER TABLE waybills ADD CONSTRAINT waybills_warehouses_fk FOREIGN KEY (warehouse_id) REFERENCES warehouses (warehouse_id);
 ALTER TABLE waybills ADD CONSTRAINT waybills_suppliers_fk FOREIGN KEY (supplier_id) REFERENCES suppliers (supplier_id);
 ALTER TABLE waybill_lines ADD CONSTRAINT waybill_lines_waybills_fk FOREIGN KEY (waybill_id) REFERENCES waybills (waybill_id) ON DELETE CASCADE;
 ALTER TABLE waybill_lines ADD CONSTRAINT waybill_lines_items_fk FOREIGN KEY (item_id) REFERENCES items (item_id);
+ALTER TABLE item_suppliers ADD CONSTRAINT item_suppliers_items_fk FOREIGN KEY (item_id) REFERENCES items (item_id) ON DELETE CASCADE;
+ALTER TABLE item_suppliers ADD CONSTRAINT item_suppliers_suppliers_fk FOREIGN KEY (supplier_id) REFERENCES suppliers (supplier_id) ON DELETE CASCADE;
+ALTER TABLE stock_transfers ADD CONSTRAINT stock_transfers_items_fk FOREIGN KEY (item_id) REFERENCES items (item_id);
+ALTER TABLE stock_transfers ADD CONSTRAINT stock_transfers_from_fk FOREIGN KEY (from_warehouse_id) REFERENCES warehouses (warehouse_id);
+ALTER TABLE stock_transfers ADD CONSTRAINT stock_transfers_to_fk FOREIGN KEY (to_warehouse_id) REFERENCES warehouses (warehouse_id);
 `,
   },
   {
-    id: 'clinic', icon: '🏥', tables: 6,
+    id: 'clinic', icon: '🏥', tables: 9,
     name: { uk: 'Клініка', en: 'Clinic' },
-    desc: { uk: 'Пацієнти, лікарі, спеціальності, прийоми, діагнози, рецепти', en: 'Patients, doctors, specialties, visits, diagnoses, prescriptions' },
+    desc: { uk: 'Пацієнти, лікарі, спеціальності, прийоми, діагнози, рецепти, страхування, аналізи', en: 'Patients, doctors, specialties, visits, diagnoses, prescriptions, insurance, lab tests' },
     ddl: `
 CREATE TABLE specialties (
   specialty_id ${ID},
@@ -562,11 +776,45 @@ CREATE TABLE prescriptions (
 );
 COMMENT ON TABLE prescriptions IS 'Рецепти';
 
+CREATE TABLE insurance_policies (
+  policy_id ${ID},
+  patient_id NUMBER NOT NULL,
+  provider VARCHAR2(150 CHAR) NOT NULL,
+  policy_no VARCHAR2(30 CHAR) NOT NULL,
+  valid_to DATE NOT NULL,
+  CONSTRAINT insurance_policies_pk PRIMARY KEY (policy_id),
+  CONSTRAINT insurance_policies_no_un UNIQUE (policy_no)
+);
+COMMENT ON TABLE insurance_policies IS 'Страхові поліси пацієнтів';
+
+CREATE TABLE lab_tests (
+  test_id ${ID},
+  visit_id NUMBER NOT NULL,
+  test_name VARCHAR2(150 CHAR) NOT NULL,
+  result VARCHAR2(400 CHAR),
+  performed_at TIMESTAMP,
+  CONSTRAINT lab_tests_pk PRIMARY KEY (test_id)
+);
+COMMENT ON TABLE lab_tests IS 'Лабораторні аналізи';
+
+CREATE TABLE vaccinations (
+  vaccination_id ${ID},
+  patient_id NUMBER NOT NULL,
+  vaccine_name VARCHAR2(150 CHAR) NOT NULL,
+  dose_no NUMBER(2) DEFAULT 1 NOT NULL,
+  given_at DATE NOT NULL,
+  CONSTRAINT vaccinations_pk PRIMARY KEY (vaccination_id)
+);
+COMMENT ON TABLE vaccinations IS 'Щеплення';
+
 ALTER TABLE doctors ADD CONSTRAINT doctors_specialties_fk FOREIGN KEY (specialty_id) REFERENCES specialties (specialty_id);
 ALTER TABLE visits ADD CONSTRAINT visits_patients_fk FOREIGN KEY (patient_id) REFERENCES patients (patient_id);
 ALTER TABLE visits ADD CONSTRAINT visits_doctors_fk FOREIGN KEY (doctor_id) REFERENCES doctors (doctor_id);
 ALTER TABLE diagnoses ADD CONSTRAINT diagnoses_visits_fk FOREIGN KEY (visit_id) REFERENCES visits (visit_id) ON DELETE CASCADE;
 ALTER TABLE prescriptions ADD CONSTRAINT prescriptions_visits_fk FOREIGN KEY (visit_id) REFERENCES visits (visit_id) ON DELETE CASCADE;
+ALTER TABLE insurance_policies ADD CONSTRAINT insurance_policies_patients_fk FOREIGN KEY (patient_id) REFERENCES patients (patient_id) ON DELETE CASCADE;
+ALTER TABLE lab_tests ADD CONSTRAINT lab_tests_visits_fk FOREIGN KEY (visit_id) REFERENCES visits (visit_id) ON DELETE CASCADE;
+ALTER TABLE vaccinations ADD CONSTRAINT vaccinations_patients_fk FOREIGN KEY (patient_id) REFERENCES patients (patient_id) ON DELETE CASCADE;
 CREATE INDEX visits_doctor_idx ON visits (doctor_id, visit_at);
 `,
   },

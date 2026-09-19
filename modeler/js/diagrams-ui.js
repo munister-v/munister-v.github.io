@@ -1,5 +1,5 @@
 // Diagram tabs UI: manage multiple diagrams, switch, rename, duplicate, delete
-import { t } from './i18n.js?v=202609192218';
+import { t } from './i18n.js?v=202609192232';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
