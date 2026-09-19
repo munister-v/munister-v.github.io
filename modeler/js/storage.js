@@ -163,7 +163,7 @@ export function deleteSnapshot(id, snapId) {
 }
 
 // ---------- settings ----------
-export const DEFAULT_SETTINGS = { snap: true, showTypes: true, compact: false, autoSnapshot: true, zebra: true, orthoLinks: false };
+export const DEFAULT_SETTINGS = { snap: true, showTypes: true, compact: false, autoSnapshot: true, zebra: true, orthoLinks: true };
 export const loadSettings = () => ({ ...DEFAULT_SETTINGS, ...(read(`${P}settings`) || {}) });
 export const saveSettings = s => write(`${P}settings`, s);
 

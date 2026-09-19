@@ -243,13 +243,26 @@ kbd { font: 500 10.5px var(--sans); color: var(--muted); background: var(--surfa
 .focus .table:not(.related) { opacity: .38; }
 
 .rel { cursor: pointer; transition: opacity .25s; }
-.rel .line, .rel .mark { fill: none; stroke: #a8a29e; stroke-width: 1.4; transition: stroke .15s; }
+.rel .line { fill: none; stroke: #a8a29e; stroke-width: 1.4; transition: stroke .15s; }
+/* Необязательная связь — пунктир на самой линии; обозначающая (identifying,
+   FK входит в PK ребёнка) — линия потолще. Оба факта читаются в самой линии,
+   а концы несут только множественность текстом (см. .rel-badge ниже). */
 .rel.optional .line { stroke-dasharray: 5 4; }
+.rel.ident .line { stroke-width: 2; }
 .rel .hit { fill: none; stroke: transparent; stroke-width: 14; }
-.rel:hover .line, .rel:hover .mark { stroke: #78716c; }
-.rel.selected .line, .rel.selected .mark { stroke: var(--accent); stroke-width: 2; }
-.rel.selected .line { stroke-dasharray: 6 5; animation: flow 1s linear infinite; }
+.rel:hover .line { stroke: #78716c; }
+.rel .node { fill: var(--canvas); stroke: #a8a29e; stroke-width: 1.4; }
+.rel:hover .node { stroke: #78716c; }
+.rel.selected .line { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 6 5; animation: flow 1s linear infinite; }
+.rel.selected .node { stroke: var(--accent); stroke-width: 1.8; }
 @keyframes flow { to { stroke-dashoffset: -11; } }
+/* Таблетка множественности у конца связи: свой фон поверх линий и ячеек,
+   иначе текст на пересечении нескольких связей нечитаем. */
+.rel-badge rect { fill: var(--surface); stroke: var(--border); stroke-width: 1; }
+.rel-badge text { font: 600 10.5px ui-monospace, 'SF Mono', Menlo, Consolas, monospace; fill: var(--muted); }
+.rel:hover .rel-badge rect { stroke: #78716c; }
+.rel.selected .rel-badge rect { stroke: var(--accent); }
+.rel.selected .rel-badge text { fill: var(--accent); }
 .focus .rel:not(.selected) { opacity: .25; }
 
 /* panel */
@@ -502,11 +515,6 @@ dialog.wide { width: min(1040px, calc(100vw - 32px)); }
 .table .add-field rect { fill: rgba(255, 255, 255, .9); stroke: var(--accent); stroke-dasharray: 4 3; }
 .table .add-field text { font: 500 11.5px var(--sans); fill: var(--accent); pointer-events: none; }
 .table .add-field:hover rect { fill: var(--accent-soft); stroke-dasharray: none; }
-.rel .ring { fill: var(--canvas); stroke: #a8a29e; stroke-width: 1.4; }
-.rel:hover .ring { stroke: #78716c; }
-.rel.selected .ring { stroke: var(--accent); stroke-width: 1.8; }
-.rel.ident .line { stroke-width: 1.8; }
-
 .field-editor { position: absolute; z-index: 20; background: var(--surface); border-radius: 10px; padding: 6px; box-shadow: var(--shadow-lg), 0 0 0 1.5px var(--accent); animation: pop .14s var(--ease); }
 .fe-row { display: flex; gap: 5px; align-items: center; }
 .fe-row input:not([type=checkbox]) { height: 30px; font-size: 12px; }

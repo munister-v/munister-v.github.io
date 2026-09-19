@@ -1,9 +1,10 @@
 // SVG diagram: tables, relations, pan/zoom, drag, relation mode, zones, marquee selection
-import { t as tr } from './i18n.js?v=202609192212';
+import { t as tr } from './i18n.js?v=202609192218';
 
 const NS = 'http://www.w3.org/2000/svg';
 const HEADER = 38, ROW = 24, PAD = 14;
 const FONT = {
+  relLabel: "600 10.5px ui-monospace,'SF Mono',Menlo,Consolas,monospace",
   title: "600 13px Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
   col: "12.5px Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
   colNN: "500 12.5px Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
@@ -11,7 +12,7 @@ const FONT = {
   schema: "10px ui-monospace,'SF Mono',Menlo,Consolas,monospace",
 };
 // display options (set from settings)
-const OPTS = { showTypes: true, compact: false, zebra: true, snap: true, orthoLinks: false };
+const OPTS = { showTypes: true, compact: false, zebra: true, snap: true, orthoLinks: true };
 let STORE = null;
 export const setDiagramOptions = o => Object.assign(OPTS, o);
 // compact mode keeps only key columns
@@ -288,15 +289,20 @@ export class Diagram {
       const pa = this.store.posOf(a.id), pb = this.store.posOf(b.id);
       const d = relationPath(a, b, f, pa, pb);
       const kind = this.store.relationKind(f);
-      const lines = (kind.oneToOne ? barAt(d.ax, d.ay, d.adir, 10) : crowAt(d.ax, d.ay, d.adir))
-        + barAt(d.bx, d.by, d.bdir, 8) + (kind.mandatory ? barAt(d.bx, d.by, d.bdir, 14) : '');
-      const rings = circleAt(d.ax, d.ay, d.adir, 16) + (kind.mandatory ? '' : circleAt(d.bx, d.by, d.bdir, 14));
+      // Множественность как текст на каждом конце вместо «вороньей лапки»/штрихов/колец:
+      // "N" или "1" (потолок задаёт oneToOne), с "0.." спереди, если связь необязательна
+      // (kind.mandatory лжёт). Это то же, что раньше кодировалось значками, — просто
+      // читается сразу, без подсказки по наведению.
+      const childLabel = (kind.mandatory ? '' : '0..') + (kind.oneToOne ? '1' : 'N');
+      const parentLabel = '1';
+      const labels = relLabel(d.ax, d.ay, d.adir, childLabel) + relLabel(d.bx, d.by, d.bdir, parentLabel);
       const sel = selection?.kind === 'fk' && selection.id === f.id
         || (selection?.kind === 'table' && (f.fromTable === selection.id || f.toTable === selection.id))
         || (selection?.kind === 'multi' && (selection.ids?.includes(f.fromTable) || selection.ids?.includes(f.toTable)));
       return `<g class="rel${sel ? ' selected' : ''}${kind.mandatory ? '' : ' optional'}${kind.identifying ? ' ident' : ''}" data-id="${f.id}">
         <path class="hit" d="${d.path}"/><path class="line" d="${d.path}"/>
-        <path class="mark" d="${lines}"/><path class="ring" d="${rings}"/>
+        <circle class="node" cx="${d.ax}" cy="${d.ay}" r="3"/><circle class="node" cx="${d.bx}" cy="${d.by}" r="3"/>
+        ${labels}
         <title>${esc(f.name)}</title></g>`;
     }).join('');
 
@@ -890,11 +896,15 @@ function orthoRelationPath(ax, ay, adir, bx, by, bdir, cPos, a, pPos, b) {
   points.push({ x: x1, y: ay }, { x: x1, y: midY }, { x: x2, y: midY }, { x: x2, y: by }, { x: bx, y: by });
   return roundedOrthoPath(points);
 }
-// Crow's-foot marks at an endpoint; dir points away from the table, off = distance from the edge.
-// dir 0 means a vertical approach from above (self-reference).
-const crowAt = (x, y, dir) => dir ? `M${x} ${y - 7} L${x + dir * 12} ${y} L${x} ${y + 7}` : `M${x - 7} ${y} L${x} ${y - 12} L${x + 7} ${y}`;
-const barAt = (x, y, dir, off) => dir ? `M${x + dir * off} ${y - 7} v14` : `M${x - 7} ${y - off} h14`;
-const circleAt = (x, y, dir, off) => {
-  const cx = dir ? x + dir * (off + 4) : x, cy = dir ? y : y - off - 4;
-  return `M${cx - 4} ${cy} a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0`;
-};
+// Текстовая метка множественности у конца связи: маленькая таблетка чуть в
+// стороне от линии, а не значок прямо на ней — читается без прищура и не
+// путается со штрихами соседних связей, когда их сходится несколько.
+// dir указывает, в какую сторону от таблицы уходит линия (0 — самоссылка,
+// подход сверху).
+function relLabel(x, y, dir, text) {
+  const w = Math.ceil(textW(text, FONT.relLabel)) + 8, h = 13;
+  const cx = dir ? x + dir * 16 : x;
+  const cy = dir ? y - 12 : y - 20;
+  return `<g class="rel-badge"><rect x="${cx - w / 2}" y="${cy - h / 2}" width="${w}" height="${h}" rx="4"/>` +
+    `<text x="${cx}" y="${cy + 3.5}" text-anchor="middle">${text}</text></g>`;
+}
