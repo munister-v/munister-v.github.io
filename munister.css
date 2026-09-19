@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
+
 /*
    Munister is a personal editorial practice, not a product catalogue.
    The page speaks the language of the two EPRIS properties it belongs with:
@@ -26,10 +28,14 @@
   --c-faint:#6e6e6e;
   --c-rule:rgba(18,18,18,.11);
   --c-rule-strong:rgba(18,18,18,.30);
-  /* типографіка знята з museum.eprisjournal.com: системні гарнітури, без вебшрифтів */
+  /* Дисплейный слой — высокая антиква с большим контрастом штриха, набранная
+     капителью с трекингом: имя, названия разделов и работ читаются как
+     набранная афиша, а не как строка интерфейса. Единственный вебшрифт на
+     сайте; всё остальное по-прежнему системное. */
   --font-sans:'KTF Prima','Helvetica Neue',Helvetica,Arial,sans-serif;
   --font-serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
-  --font-display:var(--font-sans);
+  --font-display:'Cormorant Garamond','Didot','Bodoni 72','Iowan Old Style',Georgia,serif;
+  --c-band:#3a160c;
   --font-head:var(--font-serif);
   --font-body:var(--font-sans);
   --font-mono:var(--font-sans);
@@ -84,25 +90,57 @@ p{text-wrap:pretty}
    слова - четыре вертикали на пять пунктов. Вместо них одна плашка, которая
    ездит под курсором и стоит под текущим разделом: границ нет ни одной,
    а разделение всё равно видно. */
+/* Полоса плотная и цветная, а страница выезжает из-под неё скруглённым
+   полотном (см. .site-main ниже): у сайта появляется верхний край, а не
+   просто текст, начинающийся сразу под полупрозрачной плашкой. */
 .site-head{
   position:sticky;top:0;z-index:40;height:var(--bar);
   transition:height .28s cubic-bezier(.22,.7,.24,1),background .28s ease,box-shadow .28s ease;
   display:flex;align-items:center;gap:clamp(12px,2.4vw,34px);
   padding-inline:clamp(20px,4vw,54px);
-  background:color-mix(in srgb,var(--c-paper) 82%,transparent);
-  backdrop-filter:blur(16px) saturate(1.4);
+  background:var(--c-band);color:#fff;
 }
+.site-head .wordmark{color:#fff}
+.site-head nav a,.site-head .head-right a{color:rgba(255,255,255,.76)}
+.site-head nav a:hover,.site-head nav a[aria-current="true"],
+.site-head nav a[aria-current="page"]{color:#fff}
+.site-head .nav-mark{background:rgba(255,255,255,.14)}
+.site-head .head-right a{border-color:rgba(255,255,255,.34)}
+.site-head .head-right a:hover{background:#fff;border-color:#fff;color:var(--c-band)}
+.site-head .menu-btn{color:#fff;border-color:rgba(255,255,255,.34)}
+
+/* Полотно страницы: белый лист с крупным скруглением сверху, который
+   выезжает из-под полосы (на внутренних) или из тёмного героя (на главной).
+   Лист идёт во всю ширину окна, поэтому фон рисует псевдоэлемент на 100vw,
+   а не сам .shell со своей колонкой в 1240px. */
+:root{--sheet:clamp(22px,3.4vw,46px)}
+.site-main{position:relative;z-index:1}
+.site-main > .shell{position:relative;z-index:2;margin-top:calc(var(--sheet) * -1)}
+.site-main > .shell::before{
+  content:"";position:absolute;z-index:-1;inset:0 auto -1px 50%;
+  width:100vw;transform:translateX(-50%);
+  background:var(--c-paper);border-radius:var(--sheet) var(--sheet) 0 0;
+}
+/* Под срезанными углами должен быть виден цвет полосы, иначе скругление
+   рисуется по белому и его просто нет. */
+body:not(.has-hero){background:var(--c-band)}
+body:not(.has-hero) .site-main{padding-top:0}
+/* Лист начинается ровно под полосой, а не заезжает под неё: иначе срезанные
+   углы уходят под полосу и скругления просто не видно. */
+body:not(.has-hero) .site-main > .shell{margin-top:0;padding-top:clamp(3rem,5.4vw,5.6rem)}
 .site-head > *{display:flex;align-items:center}
+/* Вордмарк набран тем же, чем набраны названия разделов: высокой антиквой
+   капителью. Это подпись дома, а не строчка интерфейса, и потому он крупнее
+   навигации рядом, а не одного с ней кегля. */
 .wordmark{
-  font-family:var(--font-display);font-size:15px;letter-spacing:.19em;text-transform:uppercase;
-  white-space:nowrap;
+  font-family:var(--font-display);font-size:clamp(19px,2vw,25px);font-weight:500;
+  letter-spacing:.14em;line-height:1;text-transform:uppercase;white-space:nowrap;
 }
 /* Тень вместо линии: пока страница на первом экране, полоса вообще ничем не
    отделена от бумаги, а как только текст уходит под неё - появляется край. */
 .site-head.is-scrolled{
   height:calc(var(--bar) - 6px);
-  background:color-mix(in srgb,var(--c-paper) 93%,transparent);
-  box-shadow:0 1px 0 rgba(18,18,18,.07),0 18px 30px -26px rgba(18,18,18,.5);
+  box-shadow:0 14px 30px -26px rgba(0,0,0,.8);
 }
 .site-head nav{position:relative;display:flex;align-items:center;gap:2px}
 /* Плашка ездит между разделами: под курсором - за курсором, без него - под
@@ -121,15 +159,16 @@ p{text-wrap:pretty}
   padding:9px clamp(11px,1.3vw,17px);border-radius:999px;
 }
 .site-head nav a,.site-head .head-right a{
-  font-family:var(--font-mono);font-size:10px;letter-spacing:.17em;text-transform:uppercase;
+  font-family:var(--font-body);font-size:13.5px;letter-spacing:.01em;text-transform:none;
   color:var(--c-muted);transition:color .18s ease;
 }
-.site-head nav a:hover,.site-head nav a[aria-current="true"]{color:var(--c-accent-deep)}
+.site-head nav a:hover,.site-head nav a[aria-current="true"]{color:#fff}
 /* CV - служебное действие, а не шестой раздел: контурная пилюля, как кнопки
    страницы, и потому не спорит с разделами за один и тот же вес. */
 .head-right{margin-left:auto}
 .head-right a{
-  padding:8px 16px;border:1px solid var(--c-rule-strong);border-radius:999px;
+  padding:9px 18px;border:1px solid var(--c-rule-strong);border-radius:0;
+  font-size:11px;letter-spacing:.17em;text-transform:uppercase;
   transition:color .18s ease,background .18s ease,border-color .18s ease;
 }
 .head-right a:hover{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-paper)}
@@ -139,9 +178,10 @@ p{text-wrap:pretty}
 /* «Walk the route» / «Visit» в музее - таблетки: залитая чернилами и
    контурная. Тот же жест здесь. */
 .btn{
-  display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 18px;
-  border:1px solid var(--c-rule-strong);border-radius:999px;
-  font-family:var(--font-body);font-size:12.5px;font-weight:400;letter-spacing:-.005em;text-transform:none;
+  display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 22px;
+  border:1px solid var(--c-rule-strong);border-radius:0;
+  font-family:var(--font-body);font-size:11px;font-weight:500;
+  letter-spacing:.17em;text-transform:uppercase;
   color:var(--c-ink);background:transparent;transition:background .2s,color .2s,border-color .2s;
 }
 .btn:hover{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-paper)}
@@ -151,7 +191,7 @@ p{text-wrap:pretty}
    на Doglyad. Рядом с чернильной она читается как «потом», а не как спор. */
 .btn--soft{border-color:transparent;background:rgba(18,18,18,.06);color:var(--c-ink)}
 .btn--soft:hover{border-color:transparent;background:rgba(18,18,18,.11);color:var(--c-ink)}
-.btn--lg{min-height:44px;padding:0 22px;font-size:15px}
+.btn--lg{min-height:52px;padding:0 32px;font-size:12px}
 
 /* ═══════════════════════════════════════════════════════════════════
    THE HERO
@@ -168,15 +208,6 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
 /* Пока страница на первом экране, полоса стоит на тёмном: белый текст без
    подложки. Как только герой уходит вверх (is-scrolled ставит скрипт) —
    всё возвращается к бумаге. */
-body.has-hero .site-head:not(.is-scrolled){background:transparent;backdrop-filter:none}
-body.has-hero .site-head:not(.is-scrolled) .wordmark{color:#fff}
-body.has-hero .site-head:not(.is-scrolled) nav a,
-body.has-hero .site-head:not(.is-scrolled) .head-right a{color:rgba(255,255,255,.74)}
-body.has-hero .site-head:not(.is-scrolled) nav a:hover{color:#fff}
-body.has-hero .site-head:not(.is-scrolled) .head-right a{border-color:rgba(255,255,255,.34)}
-body.has-hero .site-head:not(.is-scrolled) .head-right a:hover{background:#fff;border-color:#fff;color:var(--c-ink)}
-body.has-hero .site-head:not(.is-scrolled) .nav-mark{background:rgba(255,255,255,.14)}
-body.has-hero .site-head:not(.is-scrolled) .menu-btn{color:#fff;border-color:rgba(255,255,255,.34)}
 
 .hero{
   position:relative;isolation:isolate;overflow:hidden;
@@ -209,8 +240,9 @@ body.has-hero .site-head:not(.is-scrolled) .menu-btn{color:#fff;border-color:rgb
 .hero-kicker .portrait{width:clamp(34px,3.4vw,44px);filter:grayscale(1) contrast(1.05) brightness(1.06)}
 .hero .name{
   margin-top:clamp(18px,2.4vw,30px);
-  font-family:var(--font-display);font-size:clamp(54px,9.4vw,146px);line-height:.84;
-  letter-spacing:-.055em;color:#fff;
+  font-family:var(--font-display);font-weight:500;
+  font-size:clamp(46px,8.2vw,124px);line-height:.92;
+  letter-spacing:.012em;text-transform:uppercase;color:#fff;
 }
 .hero .claim{
   max-width:20ch;margin-top:clamp(20px,2.6vw,34px);
@@ -367,7 +399,7 @@ body.has-hero .site-head:not(.is-scrolled) .menu-btn{color:#fff;border-color:rgb
   padding-bottom:14px;border-bottom:1px solid var(--c-ink);margin-bottom:clamp(1.8rem,3vw,2.7rem);
 }
 .sec-head .eyebrow{display:block;margin-bottom:11px;color:var(--c-accent);letter-spacing:.2em}
-.sec-head h2{font-family:var(--font-display);font-size:clamp(35px,4.1vw,58px);line-height:.94;letter-spacing:-.04em}
+.sec-head h2{font-family:var(--font-display);font-weight:500;font-size:clamp(32px,4vw,56px);line-height:1;letter-spacing:.02em;text-transform:uppercase}
 .sec-head .sec-note{max-width:30ch;justify-self:end;color:var(--c-muted);font-size:16px;line-height:1.37}
 .sec-head > span.mono{align-self:end}
 
@@ -402,8 +434,9 @@ body.has-hero .site-head:not(.is-scrolled) .menu-btn{color:#fff;border-color:rgb
 }
 .shot-cap .role{margin:0;color:var(--c-accent-bright);letter-spacing:.2em}
 .shot-title{
-  font-family:var(--font-display);font-size:clamp(26px,2.9vw,40px);line-height:1;
-  letter-spacing:-.036em;color:#fff;transition:transform .4s cubic-bezier(.22,.7,.24,1);
+  font-family:var(--font-display);font-weight:500;font-size:clamp(25px,2.8vw,40px);line-height:1.02;
+  letter-spacing:.02em;text-transform:uppercase;color:#fff;
+  transition:transform .4s cubic-bezier(.22,.7,.24,1);
 }
 .feat:hover .shot-title{transform:translateX(5px)}
 /* Кадр без рамки: мягкий угол и волосяная линия поверх картинки (::after),
@@ -491,7 +524,7 @@ body.has-hero .site-head:not(.is-scrolled) .menu-btn{color:#fff;border-color:rgb
   background:radial-gradient(90% 120% at 82% 10%, rgba(200,70,28,.24), transparent 58%);
 }
 .statement > *{position:relative;z-index:1}
-.say{max-width:19ch;font-family:var(--font-display);font-size:clamp(38px,5.6vw,80px);line-height:.96;letter-spacing:-.045em;color:#fff;text-wrap:balance}
+.say{max-width:22ch;font-family:var(--font-display);font-weight:500;font-size:clamp(36px,5.4vw,78px);line-height:1.04;letter-spacing:.008em;color:#fff;text-wrap:balance}
 .say span{color:rgba(255,255,255,.52)}
 .say-cap{margin-top:24px;font-family:var(--font-head);font-style:italic;font-size:18px;color:var(--c-accent-bright)}
 .close{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:start;margin-top:clamp(3.2rem,6vw,5.5rem);padding:clamp(24px,3vw,36px);border-radius:24px;background:rgba(255,255,255,.055)}
@@ -522,7 +555,7 @@ body.has-hero .site-head:not(.is-scrolled) .menu-btn{color:#fff;border-color:rgb
 
 /* Inner pages share the visual language without inheriting the front-page hero. */
 .page-head{padding-bottom:clamp(2rem,4vw,4rem);border-bottom:1px solid var(--c-ink);margin-bottom:clamp(2rem,4vw,4rem)}
-.page-head h1{margin-top:14px;font-family:var(--font-display);font-size:clamp(45px,6vw,76px);line-height:.9;letter-spacing:-.05em}
+.page-head h1{margin-top:16px;font-family:var(--font-display);font-weight:500;font-size:clamp(40px,5.6vw,72px);line-height:1;letter-spacing:.02em;text-transform:uppercase}
 .page-head p{max-width:58ch;margin-top:18px;color:var(--c-muted)}
 .platform-note{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(220px,.65fr);gap:clamp(24px,4vw,56px);padding:clamp(1.4rem,2.5vw,2rem) 0;border-bottom:1px solid var(--c-ink);margin-bottom:clamp(1.6rem,2.6vw,2.2rem)}
 .platform-note h2{margin-top:10px;font-family:var(--font-head);font-size:clamp(25px,3vw,34px);line-height:1.08}
