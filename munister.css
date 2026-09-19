@@ -3,18 +3,21 @@
    The page speaks the language of the two EPRIS properties it belongs with:
    museum.eprisjournal.com (white ground, hairline cells, one statement set in
    the grotesque, pill actions) and eprisjournal.com (serif titles, small
-   letterspaced labels, images framed by a rule). Warm paper and the clay
-   accent are gone: neither reference carries colour, and the work itself is
-   the only colour on the page.
+   letterspaced labels, images framed by a rule). One accent now runs through
+   it — a burnt vermillion, the colour of a wax seal and of a hazard light on
+   a control panel, standing for the two halves of the practice (archive,
+   system) at once. It marks calls to action, live state and emphasis; the
+   long-form registers (ledger, pubs, writing) stay ink-on-paper so density
+   doesn't fight for the same colour.
 */
 :root{
   --c-paper:#ffffff;
   --c-paper-deep:#f4f3f1;
   --c-ink:#121212;
-  /* Удержан как токен, чтобы не переписывать каждое правило: акцент теперь
-     чернила, а иерархию держат размер, регистр и линейка. */
-  --c-clay:#121212;
-  --c-clay-soft:#e6e4e0;
+  --c-accent:#c8461c;
+  --c-accent-deep:#9c360f;
+  --c-accent-bright:#ff7a3d;
+  --c-accent-soft:#f6ddd0;
   --c-muted:rgba(18,18,18,.68);
   /* В музее служебные подписи набраны #999 (2.9:1). Роль та же, тон чуть
      плотнее: мелкий текст на сайте должен читаться. */
@@ -51,7 +54,7 @@ a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 h1,h2,h3,h4{font-weight:400;text-wrap:balance}
 p{text-wrap:pretty}
-::selection{background:var(--c-clay-soft);color:var(--c-ink)}
+::selection{background:var(--c-accent-soft);color:var(--c-accent-deep)}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(23,21,19,.25);border-radius:999px}
@@ -105,7 +108,7 @@ p{text-wrap:pretty}
    поэтому смена кегля или языка не требует правки CSS. */
 .nav-mark{
   position:absolute;left:0;top:0;width:0;height:0;border-radius:999px;
-  background:rgba(18,18,18,.07);
+  background:var(--c-accent-soft);
   opacity:0;transform:translate(var(--x,0),var(--y,0));
   transition:transform .34s cubic-bezier(.22,.7,.24,1),width .34s cubic-bezier(.22,.7,.24,1),opacity .2s ease;
   pointer-events:none;
@@ -119,7 +122,7 @@ p{text-wrap:pretty}
   font-family:var(--font-mono);font-size:10px;letter-spacing:.17em;text-transform:uppercase;
   color:var(--c-muted);transition:color .18s ease;
 }
-.site-head nav a:hover,.site-head nav a[aria-current="true"]{color:var(--c-ink)}
+.site-head nav a:hover,.site-head nav a[aria-current="true"]{color:var(--c-accent-deep)}
 /* CV - служебное действие, а не шестой раздел: контурная пилюля, как кнопки
    страницы, и потому не спорит с разделами за один и тот же вес. */
 .head-right{margin-left:auto}
@@ -140,8 +143,8 @@ p{text-wrap:pretty}
   color:var(--c-ink);background:transparent;transition:background .2s,color .2s,border-color .2s;
 }
 .btn:hover{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-paper)}
-.btn--solid{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-paper)}
-.btn--solid:hover{background:#2c2c2c;border-color:#2c2c2c;color:#fff}
+.btn--solid{background:var(--c-accent);border-color:var(--c-accent);color:#fff}
+.btn--solid:hover{background:var(--c-accent-deep);border-color:var(--c-accent-deep);color:#fff}
 /* Вторая кнопка без контура: серая заливка, как у второстепенного действия
    на Doglyad. Рядом с чернильной она читается как «потом», а не как спор. */
 .btn--soft{border-color:transparent;background:rgba(18,18,18,.06);color:var(--c-ink)}
@@ -181,21 +184,34 @@ p{text-wrap:pretty}
   /* position обязателен и первой карте: она лежит в потоке и держит высоту
      стопки, но со static z-index на неё не действует - и верхняя карта
      уходила ПОД абсолютно спозиционированные нижние. */
-  position:relative;display:block;background:var(--c-paper);border-radius:16px;padding:8px 8px 0;
+  position:relative;display:block;overflow:hidden;border-radius:16px;background:var(--c-paper-deep);
   box-shadow:0 1px 2px rgba(18,18,18,.07),0 14px 34px -18px rgba(18,18,18,.34),inset 0 0 0 1px rgba(18,18,18,.07);
   transform:rotate(var(--rot,0deg)) translate(var(--tx,0),var(--ty,0)) scale(var(--sc,1));
   transform-origin:50% 92%;
   transition:transform .55s cubic-bezier(.22,.7,.24,1),opacity .45s ease,box-shadow .3s ease;
 }
 .deck-card:not(:first-child){position:absolute;inset:0 0 auto 0}
-.deck-card img{width:100%;height:auto;border-radius:10px;background:var(--c-paper-deep)}
-.deck-card:not([data-pos="0"]) .deck-meta{opacity:0}
-.deck-meta{
-  transition:opacity .35s ease;
-  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
-  padding:9px 4px 10px;color:var(--c-faint);
+.deck-card img{width:100%;height:auto;display:block;filter:saturate(1.04) contrast(1.03);transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.deck-stack:hover .deck-card[data-pos="0"] img{transform:scale(1.045)}
+/* Постерная подача: плашка живёт прямо на снимке, а не подписью снизу под
+   ним — заголовок читается как название работы на афише, а не как метка
+   файла. */
+.deck-scrim{
+  position:absolute;inset:auto 0 0 0;height:72%;pointer-events:none;
+  background:linear-gradient(to top, rgba(10,8,6,.92) 0%, rgba(10,8,6,.55) 42%, transparent 100%);
 }
-.deck-meta span:last-child{color:var(--c-ink);opacity:.45;text-transform:none;letter-spacing:.02em}
+.deck-overlay{
+  position:absolute;inset:auto 0 0 0;display:flex;flex-direction:column;gap:5px;
+  padding:clamp(16px,2.6vw,26px) clamp(16px,2.6vw,24px) clamp(14px,2.2vw,20px);
+}
+.deck-card:not([data-pos="0"]) .deck-overlay{opacity:0}
+.deck-overlay{transition:opacity .35s ease}
+.deck-kicker{color:var(--c-accent-bright)}
+.deck-title{
+  font-family:var(--font-display);font-size:clamp(21px,2.6vw,29px);line-height:1.02;
+  letter-spacing:-.03em;color:#fff;
+}
+.deck-url{margin-top:1px;color:rgba(255,255,255,.55);text-transform:none;letter-spacing:.02em}
 /* Порядок в стопке: чем дальше карта, тем ниже, мельче и бледнее. Индексы
    расставляет скрипт (data-pos), базовое состояние - разметочный порядок. */
 .deck-card{--rot:0deg;--tx:0;--ty:0;--sc:1;z-index:4;opacity:1}
@@ -230,6 +246,7 @@ p{text-wrap:pretty}
 .opening-copy{min-width:0}
 .name{font-family:var(--font-display);font-size:clamp(46px,7.4vw,104px);line-height:.82;letter-spacing:-.055em}
 .claim{max-width:15ch;margin-top:clamp(26px,3.4vw,42px);font-family:var(--font-head);font-size:clamp(29px,3.4vw,48px);line-height:1.04;letter-spacing:-.018em}
+.claim .hl{color:var(--c-accent);font-style:italic}
 
 .opening-bottom{
   display:grid;grid-template-columns:clamp(96px,11vw,150px) minmax(0,1fr) auto;gap:0 clamp(24px,4vw,54px);align-items:end;
@@ -249,7 +266,7 @@ p{text-wrap:pretty}
   display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.38fr);gap:24px;align-items:end;
   padding-bottom:14px;border-bottom:1px solid var(--c-ink);margin-bottom:clamp(1.8rem,3vw,2.7rem);
 }
-.sec-head .eyebrow{display:block;margin-bottom:11px;color:var(--c-faint);letter-spacing:.2em}
+.sec-head .eyebrow{display:block;margin-bottom:11px;color:var(--c-accent);letter-spacing:.2em}
 .sec-head h2{font-family:var(--font-display);font-size:clamp(35px,4.1vw,58px);line-height:.94;letter-spacing:-.04em}
 .sec-head .sec-note{max-width:30ch;justify-self:end;color:var(--c-muted);font-size:16px;line-height:1.37}
 .sec-head > span.mono{align-self:end}
@@ -313,7 +330,7 @@ p{text-wrap:pretty}
 .row .what{color:var(--c-muted);font-size:16px;line-height:1.4}
 .row .arrow{color:var(--c-faint);transition:color .2s ease}
 .row:hover{background:var(--c-paper-deep)}
-.row:hover .arrow,.row:hover .role{color:var(--c-ink)}
+.row:hover .arrow,.row:hover .role{color:var(--c-accent-deep)}
 
 /* Research and writing retain their register logic but gain a calmer scale. */
 .research-support{margin:0 0 26px;max-width:62ch}
@@ -323,7 +340,7 @@ p{text-wrap:pretty}
 .pub .ttl{font-family:var(--font-head);font-size:21px;line-height:1.17}
 .pub .arrow{color:var(--c-faint)}
 .pub:hover{background:var(--c-paper-deep)}
-.pub:hover .arrow{color:var(--c-ink)}
+.pub:hover .arrow{color:var(--c-accent-deep)}
 
 /* Хто цитує роботу — не сам автор, а Semantic Scholar (той самий граф, що
    стоїть за Google Scholar і Scopus): рядок з автором цитуючої роботи, а не
@@ -337,7 +354,7 @@ p{text-wrap:pretty}
 .cite .ttl{font-family:var(--font-head);font-size:19px;line-height:1.24}
 .cite .venue{color:var(--c-faint)}
 .cite .arrow{color:var(--c-faint);align-self:start;padding-top:3px;white-space:nowrap}
-.cite:hover .arrow{color:var(--c-ink)}
+.cite:hover .arrow{color:var(--c-accent-deep)}
 .research-actions,.writing-actions{margin-top:22px}
 .writing{border-top:1px solid var(--c-rule)}
 .writing a{display:grid;grid-template-columns:56px 100px minmax(0,1fr) auto;gap:clamp(14px,2.4vw,32px);align-items:center;padding:17px 0;border-bottom:1px solid var(--c-rule);transition:color .2s ease}
@@ -348,7 +365,7 @@ p{text-wrap:pretty}
 .writing .sub{display:block;margin-top:7px;color:var(--c-faint)}
 .writing .go{color:var(--c-faint)}
 .writing a:hover{background:var(--c-paper-deep)}
-.writing a:hover .go{color:var(--c-ink)}
+.writing a:hover .go{color:var(--c-accent-deep)}
 
 
 /* Заявление одно на белом, как на Doglyad: первая фраза чернилами, вторая
@@ -363,16 +380,7 @@ p{text-wrap:pretty}
 .close li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid rgba(18,18,18,.08);font-family:var(--font-head);font-size:24px;line-height:1.1}
 .close li:first-child{padding-top:0}
 .close li:last-child{border-bottom:0;padding-bottom:0}
-.close li i{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;color:var(--c-faint);font-style:normal}
-
-/* Одна историческая пластина перед контактами: пропорции и скругление те
-   же, что у .contact и .deck-card, чтобы гравюра читалась как ещё одна
-   карточка системы, а не вставка из чужого сайта. Подпись — тем же mono,
-   каким подписаны остальные служебные строки. */
-.plate-sec{padding-block:clamp(8px,1.4vw,20px)}
-.plate{border-radius:24px;overflow:hidden;background:var(--c-paper-deep)}
-.plate img{width:100%;height:auto;display:block}
-.plate figcaption{padding:14px clamp(20px,3vw,28px);color:var(--c-faint)}
+.close li i{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;color:var(--c-accent);font-style:normal}
 
 /* Конец страницы - серая скруглённая панель, как подвал Doglyad, а не ещё
    одна чернильная линейка. */
@@ -389,7 +397,7 @@ p{text-wrap:pretty}
 .contact p{max-width:58ch;margin-top:15px;color:var(--c-muted)}
 .contact .actions{justify-content:flex-end}
 .foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:clamp(3rem,5vw,5rem);padding:18px 0 36px;border-top:1px solid var(--c-rule)}
-.foot a:hover{color:var(--c-ink)}
+.foot a:hover{color:var(--c-accent-deep)}
 
 /* Inner pages share the visual language without inheriting the front-page hero. */
 .page-head{padding-bottom:clamp(2rem,4vw,4rem);border-bottom:1px solid var(--c-ink);margin-bottom:clamp(2rem,4vw,4rem)}
