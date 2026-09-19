@@ -1,21 +1,21 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609192158';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609192158';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609192158';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609192158';
-import { DiagramTabs } from './diagrams-ui.js?v=202609192158';
-import { Panel } from './panel.js?v=202609192158';
-import { Sidebar } from './sidebar.js?v=202609192158';
-import { Palette } from './palette.js?v=202609192158';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609192158';
-import { parseDDL } from './ddl-parse.js?v=202609192158';
-import { SAMPLE_DDL } from './sample.js?v=202609192158';
-import { initWorkspace } from './workspace.js?v=202609192158';
-import { diffModels } from './diff.js?v=202609192158';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609192158';
-import { migrateModel, listSnapshots } from './storage.js?v=202609192158';
-import { Sandbox } from './sandbox.js?v=202609192158';
-import { CanvasSearch } from './canvas-search.js?v=202609192158';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609192158';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609192212';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609192212';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609192212';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609192212';
+import { DiagramTabs } from './diagrams-ui.js?v=202609192212';
+import { Panel } from './panel.js?v=202609192212';
+import { Sidebar } from './sidebar.js?v=202609192212';
+import { Palette } from './palette.js?v=202609192212';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609192212';
+import { parseDDL } from './ddl-parse.js?v=202609192212';
+import { SAMPLE_DDL } from './sample.js?v=202609192212';
+import { initWorkspace } from './workspace.js?v=202609192212';
+import { diffModels } from './diff.js?v=202609192212';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609192212';
+import { migrateModel, listSnapshots } from './storage.js?v=202609192212';
+import { Sandbox } from './sandbox.js?v=202609192212';
+import { CanvasSearch } from './canvas-search.js?v=202609192212';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609192212';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -91,19 +91,16 @@ function addTable(p = diagram.center()) {
   setTimeout(() => $('#panel input[data-f="table.name"]')?.select());
 }
 
-export function autoLayout(model, st = store) {
+// st по умолчанию не привязан к глобальному store: вызов autoLayout(model) для
+// модели, ещё не ставшей активной (свежий шаблон, импорт DDL), раньше молча
+// брал ЖИВОЙ store — isItemOnActiveDiagram сверялся со СТАРОЙ диаграммой, ни одна
+// новая таблица в неё не входила, visibleTables оказывался пустым, и autoLayout
+// ничего не делал: все таблицы оставались на (40, 40) из newTable() и рисовались
+// одна поверх другой. Явная передача store (см. action 'layout' ниже) — осознанный
+// выбор для действия, перекладывающего уже активную модель.
+export function autoLayout(model, st = null) {
   const visibleTables = st ? model.tables.filter(t => st.isItemOnActiveDiagram(t.id)) : model.tables;
-  // Level = longest chain of parents above the table
-  const level = new Map();
-  const parents = id => model.fks.filter(f => f.fromTable === id && f.toTable !== id).map(f => f.toTable);
-  const depth = (id, seen = new Set()) => {
-    if (level.has(id)) return level.get(id);
-    if (seen.has(id)) return 0;
-    seen.add(id);
-    const d = Math.max(-1, ...parents(id).map(p => depth(p, seen))) + 1;
-    level.set(id, d); return d;
-  };
-  visibleTables.forEach(tb => depth(tb.id));
+  const level = tableLevels(model);
   const cols = [];
   visibleTables.forEach(tb => (cols[level.get(tb.id)] ||= []).push(tb));
   let x = 40;

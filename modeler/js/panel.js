@@ -1,8 +1,8 @@
 // Properties panel: model, table (columns, keys, indexes) or foreign key
-import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609192158';
-import { sequenceDDL } from './ddl-gen.js?v=202609192158';
-import { t, getLang, onLang } from './i18n.js?v=202609192158';
-import { COLUMN_PRESETS } from './templates.js?v=202609192158';
+import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609192212';
+import { sequenceDDL } from './ddl-gen.js?v=202609192212';
+import { t, getLang, onLang } from './i18n.js?v=202609192212';
+import { COLUMN_PRESETS } from './templates.js?v=202609192212';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 const CHECK_TEMPLATES = [
@@ -400,7 +400,10 @@ export class Panel {
       case 'idx-add': st.update(m => tb.indexes.push({ id: uid('i'), name: uniqueName(m, `${tb.name}_IDX`), unique: false, columns: [] })); break;
       case 'uk-del': st.update(() => { tb.uniques = tb.uniques.filter(x => x.id !== c.ukId); }); break;
       case 'idx-del': st.update(() => { tb.indexes = tb.indexes.filter(x => x.id !== c.idxId); }); break;
-      case 'fk-del': st.update(m => { m.fks = m.fks.filter(x => x.id !== c.fkId); }); st.select(null); break;
+      // select(null) до update(): та же причина, что в Store.deleteTable/View/Sequence
+      // (см. model.js) — update() эмитит 'change' сразу после мутации, и рендер не должен
+      // в этот момент ещё указывать на только что удалённый FK.
+      case 'fk-del': st.select(null); st.update(m => { m.fks = m.fks.filter(x => x.id !== c.fkId); }); break;
       case 'goto-fk': st.select({ kind: 'fk', id: btn.dataset.id }); break;
       case 'goto-table': st.select({ kind: 'table', id: btn.dataset.id }); break;
     }

@@ -1,5 +1,5 @@
 // Модель данных + история (undo/redo) + автосохранение
-import { t } from './i18n.js?v=202609192158';
+import { t } from './i18n.js?v=202609192212';
 
 let seq = Date.now();
 export const uid = (p = 'id') => `${p}${(seq++).toString(36)}`;
@@ -34,6 +34,24 @@ export function newZone(name = t('zone.default') || 'Subject Area', color = 'blu
 export function emptyModel() {
   const d = newDiagram(t('diag.main') || 'Main');
   return { format: 'schemata-model', version: 4, name: t('model.default'), tables: [], fks: [], sequences: [], views: [], diagrams: [d], activeDiagram: d.id };
+}
+
+// Уровень таблицы — длина самой длинной цепочки родителей над ней (0 у таблиц
+// без внешних ключей наружу). Общая логика для авторазметки диаграммы
+// (колонки слева направо) и списка таблиц слева (родители выше детей) —
+// два места, которым нужен один и тот же порядок, а не два похожих.
+export function tableLevels(model) {
+  const level = new Map();
+  const parents = id => model.fks.filter(f => f.fromTable === id && f.toTable !== id).map(f => f.toTable);
+  const depth = (id, seen = new Set()) => {
+    if (level.has(id)) return level.get(id);
+    if (seen.has(id)) return 0;
+    seen.add(id);
+    const d = Math.max(-1, ...parents(id).map(p => depth(p, seen))) + 1;
+    level.set(id, d); return d;
+  };
+  model.tables.forEach(tb => depth(tb.id));
+  return level;
 }
 
 export function newColumn(name = 'COLUMN_1', type = 'VARCHAR2(100 CHAR)') {
@@ -235,20 +253,32 @@ export class Store {
   }
 
   deleteZone(id) {
+    // Выбор снимается ДО update(), а не после: update() эмитит 'change' сразу
+    // после мутации, и Panel.render() тут же читает this.store.selection — если оно
+    // ещё указывает на только что удалённый объект, store.table(id)/view(id)/... вернёт
+    // undefined, а renderTable/renderView/renderSeq упадут на первом же обращении к
+    // его полям (Cannot read properties of undefined). Кнопка «Видалити» из-за этого
+    // выглядела так, будто ничего не делает: объект пропадал из модели, но экран падал
+    // раньше, чем успевал перерисоваться.
+    if (this.selection?.id === id) this.selection = null;
     this.update(m => {
       const d = this.activeDiagram;
       if (d && d.zones) d.zones = d.zones.filter(z => z.id !== id);
     });
-    if (this.selection?.id === id) {
-      this.selection = null;
-      this.emit('select');
-    }
   }
 
   table(id) { return this.model.tables.find(t => t.id === id); }
   view(id) { return this.model.views?.find(v => v.id === id); }
   sequence(id) { return this.model.sequences?.find(q => q.id === id); }
   deleteView(id) {
+    // Выбор снимается ДО update(), а не после: update() эмитит 'change' сразу
+    // после мутации, и Panel.render() тут же читает this.store.selection — если оно
+    // ещё указывает на только что удалённый объект, store.table(id)/view(id)/... вернёт
+    // undefined, а renderTable/renderView/renderSeq упадут на первом же обращении к
+    // его полям (Cannot read properties of undefined). Кнопка «Видалити» из-за этого
+    // выглядела так, будто ничего не делает: объект пропадал из модели, но экран падал
+    // раньше, чем успевал перерисоваться.
+    this.selection = null;
     this.update(m => {
       m.views = m.views.filter(v => v.id !== id);
       (m.diagrams || []).forEach(d => {
@@ -256,9 +286,9 @@ export class Store {
         if (d.positions) delete d.positions[id];
       });
     });
-    this.selection = null; this.emit('select');
   }
-  deleteSequence(id) { this.update(m => { m.sequences = m.sequences.filter(q => q.id !== id); }); this.selection = null; this.emit('select'); }
+  // см. примечание у deleteZone/deleteView: снимаем выбор до update(), а не после
+  deleteSequence(id) { this.selection = null; this.update(m => { m.sequences = m.sequences.filter(q => q.id !== id); }); }
   // tables a view reads from: table names that occur as words in its SQL
   viewSources(v) {
     const sql = ` ${(v.sql || '').toUpperCase().replace(/"/g, '')} `;
@@ -278,6 +308,14 @@ export class Store {
   }
 
   deleteTable(id) {
+    // Выбор снимается ДО update(), а не после: update() эмитит 'change' сразу
+    // после мутации, и Panel.render() тут же читает this.store.selection — если оно
+    // ещё указывает на только что удалённый объект, store.table(id)/view(id)/... вернёт
+    // undefined, а renderTable/renderView/renderSeq упадут на первом же обращении к
+    // его полям (Cannot read properties of undefined). Кнопка «Видалити» из-за этого
+    // выглядела так, будто ничего не делает: объект пропадал из модели, но экран падал
+    // раньше, чем успевал перерисоваться.
+    this.selection = null;
     this.update(m => {
       m.tables = m.tables.filter(t => t.id !== id);
       m.fks = m.fks.filter(f => f.fromTable !== id && f.toTable !== id);
@@ -286,7 +324,6 @@ export class Store {
         if (d.positions) delete d.positions[id];
       });
     });
-    this.selection = null; this.emit('select');
   }
   deleteColumn(tableId, colId) {
     this.update(m => {

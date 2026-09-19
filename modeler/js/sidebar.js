@@ -1,5 +1,6 @@
 // Left sidebar: filterable table list
-import { t, onLang } from './i18n.js?v=202609192158';
+import { t, onLang } from './i18n.js?v=202609192212';
+import { tableLevels } from './model.js?v=202609192212';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
@@ -100,9 +101,14 @@ export class Sidebar {
     if (this.tab === 'relations') return this.renderRelations();
     if (this.tab === 'objects') return this.renderObjects();
     const fkCount = id => model.fks.filter(f => f.fromTable === id || f.toTable === id).length;
+    // Родители выше детей (тот же порядок, что и колонки диаграммы слева
+    // направо), алфавит — только чтобы разрешить таблицы одного уровня.
+    // Чистый A-Z раньше разбрасывал ADDRESSES/CUSTOMERS и ORDER_ITEMS/ORDERS
+    // по разным концам списка, хотя на холсте они стоят рядом.
+    const level = tableLevels(model);
     const items = model.tables
       .filter(x => !this.query || x.name.includes(this.query) || x.columns.some(c => c.name.includes(this.query)))
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => (level.get(a.id) - level.get(b.id)) || a.name.localeCompare(b.name));
     if (!items.length) {
       this.list.innerHTML = `<li class="sb-empty">${model.tables.length ? t('sb.noMatch') : t('sb.empty')}</li>`;
       return;
