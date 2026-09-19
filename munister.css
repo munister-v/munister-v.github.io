@@ -1,5 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
 
+/* Fixel Text (MacPaw, SIL OFL) — тот самый гротеск, которым набран
+   референс: гуманистический, с настоящей кириллицей, спокойный в мелком
+   кегле. Лежит в репозитории, а не на чужом CDN: страница не должна
+   зависеть от доступности постороннего хоста. */
+@font-face{
+  font-family:'Fixel Text';src:url('/fonts/FixelText-Regular.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Fixel Text';src:url('/fonts/FixelText-Medium.woff2') format('woff2');
+  font-weight:500;font-style:normal;font-display:swap;
+}
+
 /*
    Munister is a personal editorial practice, not a product catalogue.
    The page speaks the language of the two EPRIS properties it belongs with:
@@ -32,7 +45,7 @@
      капителью с трекингом: имя, названия разделов и работ читаются как
      набранная афиша, а не как строка интерфейса. Единственный вебшрифт на
      сайте; всё остальное по-прежнему системное. */
-  --font-sans:'KTF Prima','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-sans:'Fixel Text','KTF Prima','Helvetica Neue',Helvetica,Arial,sans-serif;
   --font-serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
   --font-display:'Cormorant Garamond','Didot','Bodoni 72','Iowan Old Style',Georgia,serif;
   --c-band:#3a160c;
@@ -219,22 +232,51 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
   padding-top:calc(var(--bar) + clamp(40px,7vw,90px));
   background:var(--c-night);
 }
-/* Стена работ: восемь настоящих снимков, обесцвеченных и приглушённых до
-   фактуры. Это не галерея — галерея ниже; здесь они держат глубину, чтобы
-   имя стояло на чём-то, а не висело на плашке. */
-.hero-wall{
-  position:absolute;inset:0;z-index:-2;display:grid;gap:4px;
-  grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);
+/* Первый экран перелистывает работы по одной: снимок во весь фон, его имя —
+   подписью у нижнего края, счёт и стрелки в углу. Имя дома при этом стоит
+   на месте: меняется то, на чём оно стоит, а не оно само. */
+.hero-slides{position:absolute;inset:0;z-index:-2}
+.hero-slide{
+  position:absolute;inset:0;margin:0;opacity:0;
+  transition:opacity .9s ease,transform 1.1s cubic-bezier(.22,.7,.24,1);
+  transform:scale(1.045);
 }
-.hero-wall img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05) brightness(.3)}
+.hero-slide[data-on]{opacity:1;transform:scale(1)}
+.hero-slide img{width:100%;height:100%;object-fit:cover;filter:grayscale(.72) contrast(1.06) brightness(.52)}
+/* Подпись стоит у правого края, чтобы не спорить с именем слева. */
+.hero-slide figcaption{
+  position:absolute;right:clamp(20px,4vw,54px);bottom:clamp(96px,11vw,132px);
+  display:flex;flex-direction:column;align-items:flex-end;gap:5px;text-align:right;
+  opacity:0;transition:opacity .6s ease .2s;
+}
+.hero-slide[data-on] figcaption{opacity:1}
+.hero-slide figcaption .mono{color:var(--c-accent-bright)}
+.hero-slide-name{
+  font-family:var(--font-display);font-weight:500;font-size:clamp(15px,1.5vw,21px);
+  letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.88);
+}
+/* Счёт и стрелки — прямоугольные, как кнопки страницы. */
+.hero-nav{display:flex;align-items:center;gap:12px;margin-top:clamp(26px,3.2vw,38px)}
+.hero-count{color:rgba(255,255,255,.62);min-width:58px}
+.hero-arrow{
+  width:40px;height:40px;display:grid;place-items:center;cursor:pointer;
+  border:1px solid rgba(255,255,255,.34);background:transparent;color:#fff;
+  transition:background .2s,border-color .2s,color .2s;
+}
+.hero-arrow:hover{background:#fff;border-color:#fff;color:var(--c-band)}
+.hero-arrow svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5}
+@media (prefers-reduced-motion:reduce){.hero-slide{transition:opacity .01s}}
 /* Два слоя поверх стены: ровная заливка гасит светлые скриншоты (у половины
    работ фон белый и без неё они спорят с именем), а градиенты уже лепят
    глубину и тёплый угол снизу слева. */
+/* Тень ложится слева, где стоит текст, и отпускает правую часть кадра,
+   чтобы работа на слайде была видна, а не закрашена целиком. */
 .hero::after{
   content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:
-    linear-gradient(to top, var(--c-night) 2%, rgba(11,10,9,.95) 34%, rgba(11,10,9,.88) 68%, rgba(11,10,9,.84) 100%),
-    radial-gradient(120% 90% at 12% 98%, rgba(200,70,28,.32), transparent 60%);
+    linear-gradient(to right, rgba(11,10,9,.96) 0%, rgba(11,10,9,.88) 34%, rgba(11,10,9,.55) 62%, rgba(11,10,9,.42) 100%),
+    linear-gradient(to top, var(--c-night) 1%, rgba(11,10,9,.72) 26%, rgba(11,10,9,.34) 62%, rgba(11,10,9,.44) 100%),
+    radial-gradient(110% 80% at 10% 98%, rgba(200,70,28,.26), transparent 58%);
 }
 .hero-in{
   width:100%;max-width:var(--measure);margin-inline:auto;
@@ -276,11 +318,10 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
 
 @media (max-width:760px){
   .hero{min-height:auto;padding-top:calc(var(--bar) + 54px);padding-bottom:6px}
-  /* На телефоне текст идёт во всю ширину поверх стены, поэтому она гасится
-     сильнее: на узком экране светлое пятно снимка попадает прямо под строку. */
-  .hero-wall{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr)}
-  .hero-wall img{filter:grayscale(1) contrast(1.05) brightness(.22)}
-  .hero-wall img:nth-child(n+7){display:none}
+  /* На телефоне текст идёт во всю ширину поверх снимка, поэтому он гасится
+     сильнее, а подпись слайда убирается: места для неё нет. */
+  .hero-slide img{filter:grayscale(.8) contrast(1.05) brightness(.3)}
+  .hero-slide figcaption{display:none}
   .hero .name{font-size:clamp(46px,14vw,74px)}
   .hero .claim{font-size:clamp(25px,7.4vw,36px);max-width:none}
   .hero .support{font-size:16px}
