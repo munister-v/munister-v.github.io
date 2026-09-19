@@ -1,21 +1,21 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609181354';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609181354';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609181354';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609181354';
-import { DiagramTabs } from './diagrams-ui.js?v=202609181354';
-import { Panel } from './panel.js?v=202609181354';
-import { Sidebar } from './sidebar.js?v=202609181354';
-import { Palette } from './palette.js?v=202609181354';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609181354';
-import { parseDDL } from './ddl-parse.js?v=202609181354';
-import { SAMPLE_DDL } from './sample.js?v=202609181354';
-import { initWorkspace } from './workspace.js?v=202609181354';
-import { diffModels } from './diff.js?v=202609181354';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609181354';
-import { migrateModel, listSnapshots } from './storage.js?v=202609181354';
-import { Sandbox } from './sandbox.js?v=202609181354';
-import { CanvasSearch } from './canvas-search.js?v=202609181354';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609181354';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS } from './model.js?v=202609192149';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609192149';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609192149';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609192149';
+import { DiagramTabs } from './diagrams-ui.js?v=202609192149';
+import { Panel } from './panel.js?v=202609192149';
+import { Sidebar } from './sidebar.js?v=202609192149';
+import { Palette } from './palette.js?v=202609192149';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609192149';
+import { parseDDL } from './ddl-parse.js?v=202609192149';
+import { SAMPLE_DDL } from './sample.js?v=202609192149';
+import { initWorkspace } from './workspace.js?v=202609192149';
+import { diffModels } from './diff.js?v=202609192149';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609192149';
+import { migrateModel, listSnapshots } from './storage.js?v=202609192149';
+import { Sandbox } from './sandbox.js?v=202609192149';
+import { CanvasSearch } from './canvas-search.js?v=202609192149';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609192149';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -1059,9 +1059,15 @@ function renderSandboxWarnings(failed) {
   el.innerHTML = failed.length ? `<b>${t('sbx.warn', { n: failed.length })}</b><ul>${failed.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : '';
 }
 const sbxCell = v => v === null ? '<i>NULL</i>' : esc(String(v));
-function renderSandboxResult(results) {
+function renderSandboxResult(results, sql = '') {
   const el = $('#sbx-result');
-  if (!results.length) { el.innerHTML = `<div class="sbx-ok">${t('sbx.ok', { n: sandbox.changes })}</div>`; return; }
+  if (!results.length) {
+    // SELECT без строк и INSERT — разные события: сказать про «рядків змінено: 0»
+    // на запрос чтения значит показать поломку там, где её нет.
+    const reading = /^\s*(?:WITH|SELECT|PRAGMA|EXPLAIN)\b/i.test(sql);
+    el.innerHTML = `<div class="sbx-ok">${reading ? t('sbx.empty') : t('sbx.ok', { n: sandbox.changes })}</div>`;
+    return;
+  }
   el.innerHTML = results.map(r => {
     const rows = r.values.slice(0, 200);
     return `<div class="sbx-table-wrap"><table class="sbx-table"><thead><tr>${r.columns.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>
@@ -1077,6 +1083,7 @@ async function openSandbox() {
   renderSandboxWarnings([]);
   try {
     renderSandboxWarnings(await sandbox.open(store.model));
+    $('#sbx-result').innerHTML = `<div class="sbx-ok">${t('sbx.seeded', { n: sandbox.seeded })}</div>`;
   } catch (e) {
     renderSandboxWarnings([t('sbx.engineFail', { e: e.message })]);
   } finally {
@@ -1087,7 +1094,7 @@ actions.sandbox = openSandbox;
 function runSandboxSql() {
   const sql = $('#sbx-sql').value.trim();
   if (!sql || $('#sbx-run').disabled) return;
-  try { renderSandboxResult(sandbox.run(sql)); }
+  try { renderSandboxResult(sandbox.run(sql), sql); }
   catch (e) { $('#sbx-result').innerHTML = `<div class="sbx-err">${esc(e.message)}</div>`; }
 }
 $('#sbx-run').addEventListener('click', runSandboxSql);
