@@ -53,7 +53,7 @@
   --font-body:var(--font-sans);
   --font-mono:var(--font-sans);
   --measure:1240px;
-  --bar:72px;
+  --bar:92px;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -126,7 +126,7 @@ p{text-wrap:pretty}
    выезжает из-под полосы (на внутренних) или из тёмного героя (на главной).
    Лист идёт во всю ширину окна, поэтому фон рисует псевдоэлемент на 100vw,
    а не сам .shell со своей колонкой в 1240px. */
-:root{--sheet:clamp(22px,3.4vw,46px)}
+:root{--sheet:clamp(28px,4.4vw,62px)}
 .site-main{position:relative;z-index:1}
 .site-main > .shell{position:relative;z-index:2;margin-top:calc(var(--sheet) * -1)}
 .site-main > .shell::before{
@@ -151,8 +151,8 @@ body:not(.has-hero) .site-main > .shell{margin-top:0;padding-top:clamp(3rem,5.4v
 /* Подпись дома — в две строки, как набирают шапку афиши: имя стоит
    столбиком и держит левый край страницы. */
 .wordmark{
-  font-family:var(--font-display);font-size:clamp(15px,1.5vw,19px);font-weight:500;
-  letter-spacing:.13em;line-height:1.02;text-transform:uppercase;white-space:nowrap;
+  font-family:var(--font-display);font-size:clamp(19px,2.1vw,27px);font-weight:500;
+  letter-spacing:.11em;line-height:1;text-transform:uppercase;white-space:nowrap;
 }
 /* Тень вместо линии: пока страница на первом экране, полоса вообще ничем не
    отделена от бумаги, а как только текст уходит под неё - появляется край. */
@@ -177,8 +177,8 @@ body:not(.has-hero) .site-main > .shell{margin-top:0;padding-top:clamp(3rem,5.4v
   padding:9px clamp(11px,1.3vw,17px);border-radius:999px;
 }
 .site-head nav a{
-  font-family:var(--font-body);font-size:13.5px;letter-spacing:.01em;text-transform:none;
-  color:rgba(255,255,255,.76);transition:color .18s ease;
+  font-family:var(--font-body);font-size:17px;letter-spacing:.005em;text-transform:none;
+  color:rgba(255,255,255,.78);transition:color .18s ease;
 }
 .site-head .head-right a{
   font-family:var(--font-body);font-size:11px;letter-spacing:.17em;text-transform:uppercase;
@@ -317,10 +317,16 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
 .hero .actions{margin-top:clamp(22px,2.8vw,32px)}
 /* Вторая кнопка на тёмном — контур по белому, а не серая заливка: серая
    плашка на почти чёрном не видна вообще. */
-.hero .btn{border-color:rgba(255,255,255,.55);color:#fff;background:transparent;min-width:clamp(170px,17vw,230px)}
+/* Действие первого экрана — одна широкая плашка в меру строки, а не пара
+   мелких пилюль: на афише кнопка равна по весу самому объявлению. */
+.hero .actions{flex-direction:column;align-items:flex-start;gap:14px}
+.hero .btn{
+  width:min(100%,528px);min-height:58px;padding:0 24px;font-size:15px;letter-spacing:.14em;
+  border-color:rgba(255,255,255,.6);color:#fff;background:transparent;
+}
 .hero .btn:hover{background:#fff;border-color:#fff;color:var(--c-band)}
-.hero .btn--solid{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.75)}
-.hero .btn--solid:hover{background:#fff;color:var(--c-band)}
+.hero .btn--soft{border-color:rgba(255,255,255,.28);color:rgba(255,255,255,.82)}
+.hero .btn--soft:hover{background:#fff;border-color:#fff;color:var(--c-band)}
 
 /* Цифры стоят не отдельной плашкой, а нижним краем самого героя: сначала
    утверждение, сразу под ним — чем оно обеспечено. */
@@ -505,7 +511,7 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
 .feat:hover .shot-title{transform:translateX(5px)}
 /* Кадр без рамки: мягкий угол и волосяная линия поверх картинки (::after),
    чтобы белый скриншот не растворялся в белой странице. */
-.feat .shot{position:relative;overflow:hidden;background:var(--c-paper-deep);border-radius:18px;aspect-ratio:16 / 9;
+.feat .shot{position:relative;overflow:hidden;background:var(--c-paper-deep);border-radius:0;aspect-ratio:16 / 9;
   transition:transform .5s cubic-bezier(.22,.7,.24,1),box-shadow .5s ease}
 .feat:hover .shot{transform:translateY(-5px);box-shadow:0 26px 40px -30px rgba(18,18,18,.55)}
 .feat .shot::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(18,18,18,.07);pointer-events:none}
@@ -560,7 +566,7 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
 .research-actions,.writing-actions{margin-top:22px}
 .writing{border-top:1px solid var(--c-rule)}
 .writing a{display:grid;grid-template-columns:56px 100px minmax(0,1fr) auto;gap:clamp(14px,2.4vw,32px);align-items:center;padding:17px 0;border-bottom:1px solid var(--c-rule);transition:color .2s ease}
-.writing .thumb{width:56px;height:56px;overflow:hidden;border-radius:10px;background:var(--c-paper-deep);align-self:center}
+.writing .thumb{width:64px;height:64px;overflow:hidden;border-radius:0;background:var(--c-paper-deep);align-self:center}
 .writing .thumb img{width:100%;height:100%;object-fit:cover;filter:saturate(.94);transition:filter .2s ease}
 .writing a:hover .thumb img{filter:saturate(1.05)}
 .writing h3{font-family:var(--font-head);font-size:25px;line-height:1.08}
@@ -591,7 +597,7 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
 .say{max-width:22ch;font-family:var(--font-display);font-weight:500;font-size:clamp(36px,5.4vw,78px);line-height:1.04;letter-spacing:.008em;color:#fff;text-wrap:balance}
 .say span{color:rgba(255,255,255,.52)}
 .say-cap{margin-top:24px;font-family:var(--font-head);font-style:italic;font-size:18px;color:var(--c-accent-bright)}
-.close{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:start;margin-top:clamp(3.2rem,6vw,5.5rem);padding:clamp(24px,3vw,36px);border-radius:24px;background:rgba(255,255,255,.055)}
+.close{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:start;margin-top:clamp(3.2rem,6vw,5.5rem);padding:clamp(24px,3vw,36px);border-radius:0;background:rgba(255,255,255,.055)}
 .close .mono{color:rgba(255,255,255,.56)}
 .close p{max-width:40ch;margin-top:12px;color:rgba(255,255,255,.66);font-size:17px;line-height:1.45}
 .close ol{list-style:none}
@@ -602,7 +608,7 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
 
 /* Конец страницы - серая скруглённая панель, как подвал Doglyad, а не ещё
    одна чернильная линейка. */
-.contact{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(30px,6vw,100px);align-items:end;padding:clamp(28px,4.4vw,56px);border-radius:40px;background:var(--c-paper-deep)}
+.contact{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(30px,6vw,100px);align-items:end;padding:clamp(28px,4.4vw,56px);border-radius:0;background:var(--c-paper-deep)}
 /* Перенос только по <wbr> после «munister», не посреди «outlook.com»:
    word-break:break-word рвал строку где попало по ширине контейнера, и на
    широких панелях адрес переносился ровно на «outlook.co / m». */
@@ -769,7 +775,7 @@ body.has-hero .shell{padding-top:clamp(3.6rem,6.5vw,7rem)}
   .close{grid-template-columns:1fr;gap:26px;border-radius:20px}
   .say-cap{font-size:16px}
   .opening-bottom{grid-template-columns:1fr}.opening-bottom .actions{grid-column:1;margin-top:0}
-  .feat .shot{border-radius:14px}
+  .feat .shot{border-radius:0}
   /* Подписи 9.5px на телефоне ниже порога чтения: чуть крупнее, трекинг уже. */
   .mono{font-size:10.5px;letter-spacing:.16em}
   .piece{grid-template-columns:1fr}.piece figure img{min-height:0;aspect-ratio:16/9}
