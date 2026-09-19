@@ -1,8 +1,8 @@
 // Properties panel: model, table (columns, keys, indexes) or foreign key
-import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609192153';
-import { sequenceDDL } from './ddl-gen.js?v=202609192153';
-import { t, getLang, onLang } from './i18n.js?v=202609192153';
-import { COLUMN_PRESETS } from './templates.js?v=202609192153';
+import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609192158';
+import { sequenceDDL } from './ddl-gen.js?v=202609192158';
+import { t, getLang, onLang } from './i18n.js?v=202609192158';
+import { COLUMN_PRESETS } from './templates.js?v=202609192158';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 const CHECK_TEMPLATES = [
@@ -36,7 +36,10 @@ export class Panel {
 
   render() {
     const s = this.store.selection;
-    if (!s) return this.renderModel();
+    // Панель существует ради выбранного объекта. Выбора нет — она сворачивается,
+    // и холст занимает её колонку (см. body.no-panel в style.css).
+    document.body.classList.toggle('no-panel', !s);
+    if (!s) { this.el.innerHTML = ''; return; }
     if (s.kind === 'fk') return this.renderFk(this.store.model.fks.find(f => f.id === s.id));
     if (s.kind === 'view') return this.renderView(this.store.view(s.id));
     if (s.kind === 'seq') return this.renderSeq(this.store.sequence(s.id));
@@ -46,7 +49,7 @@ export class Panel {
   }
 
   renderZone(z) {
-    if (!z) return this.renderModel();
+    if (!z) return this.render();
     const colors = TABLE_COLORS.map(c =>
       `<button class="sw${c ? ` c-${c}` : ''}${(z.color || '') === c ? ' on' : ''}" data-a="zone-color" data-c="${c}" type="button" aria-label="${c || 'none'}"></button>`
     ).join('');
@@ -85,22 +88,6 @@ export class Panel {
       <div><span class="eyebrow">${eyebrow}</span><h2>${esc(title)}</h2></div>
       ${del ? `<button class="pill danger" data-a="${del}">${t('p.delete')}</button>` : ''}
     </header>`;
-  }
-
-  renderModel() {
-    const m = this.store.model;
-    this.el.innerHTML = `
-      ${this.head(t('p.model'), m.name)}
-      <label class="field">${t('p.name')}<input data-f="model.name" value="${esc(m.name)}"></label>
-      <div class="stats">
-        <div><b>${m.tables.length}</b>${t('p.stat.tables')}</div>
-        <div><b>${m.fks.length}</b>${t('p.stat.fks')}</div>
-        <div><b>${m.tables.reduce((n, x) => n + x.columns.length, 0)}</b>${t('p.stat.cols')}</div>
-      </div>
-      <h3>${t('p.hints')}</h3>
-      <ol class="hints">
-        <li>${t('p.hint1')}</li><li>${t('p.hint2')}</li><li>${t('p.hint3')}</li><li>${t('p.hint4')}</li>
-      </ol>`;
   }
 
   renderTable(tb) {
