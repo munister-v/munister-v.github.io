@@ -154,7 +154,7 @@ p{text-wrap:pretty}
    левой стоит только год. Здесь то же самое - служебная колонка, заявление,
    портрет. */
 .opening-grid{
-  display:grid;grid-template-columns:clamp(96px,11vw,150px) minmax(0,1fr) minmax(270px,.4fr);
+  display:grid;grid-template-columns:clamp(96px,11vw,150px) minmax(0,1fr);
   gap:0;align-items:stretch;
 }
 /* Третья ячейка - колода работ. Стопка снимков со смещением и лёгким
@@ -170,66 +170,13 @@ p{text-wrap:pretty}
 .opening-index:hover .portrait{filter:grayscale(0) contrast(1)}
 @media (prefers-reduced-motion:reduce){.portrait{transition:none}}
 
-.opening-deck{
-  position:relative;display:flex;align-items:center;justify-content:center;
-  padding:clamp(22px,3vw,34px) 0 clamp(30px,4vw,52px);
-}
-/* Высота стопки задаётся картой: карты позиционированы абсолютно, поэтому
-   первая оставлена в потоке (position:relative) и держит место. */
-.deck-stack{position:relative;width:100%;max-width:360px}
-.deck-card{
-  /* position обязателен и первой карте: она лежит в потоке и держит высоту
-     стопки, но со static z-index на неё не действует - и верхняя карта
-     уходила ПОД абсолютно спозиционированные нижние. */
-  position:relative;display:block;background:var(--c-paper);border-radius:16px;padding:8px 8px 0;
-  box-shadow:0 1px 2px rgba(18,18,18,.07),0 14px 34px -18px rgba(18,18,18,.34),inset 0 0 0 1px rgba(18,18,18,.07);
-  transform:rotate(var(--rot,0deg)) translate(var(--tx,0),var(--ty,0)) scale(var(--sc,1));
-  transform-origin:50% 92%;
-  transition:transform .55s cubic-bezier(.22,.7,.24,1),opacity .45s ease,box-shadow .3s ease;
-}
-.deck-card:not(:first-child){position:absolute;inset:0 0 auto 0}
-.deck-card img{width:100%;height:auto;border-radius:10px;background:var(--c-paper-deep)}
-.deck-card:not([data-pos="0"]) .deck-meta{opacity:0}
-.deck-meta{
-  transition:opacity .35s ease;
-  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
-  padding:9px 4px 10px;color:var(--c-faint);
-}
-.deck-meta span:last-child{color:var(--c-ink);opacity:.45;text-transform:none;letter-spacing:.02em}
-/* Порядок в стопке: чем дальше карта, тем ниже, мельче и бледнее. Индексы
-   расставляет скрипт (data-pos), базовое состояние - разметочный порядок. */
-.deck-card{--rot:0deg;--tx:0;--ty:0;--sc:1;z-index:4;opacity:1}
-.deck-card:nth-child(2),.deck-card[data-pos="1"]{--rot:2.2deg;--ty:12px;--sc:.955;z-index:3;opacity:.96}
-.deck-card:nth-child(3),.deck-card[data-pos="2"]{--rot:-2.6deg;--ty:23px;--sc:.912;z-index:2;opacity:.9}
-.deck-card:nth-child(4),.deck-card[data-pos="3"]{--rot:3.4deg;--ty:33px;--sc:.87;z-index:1;opacity:.82}
-.deck-card[data-pos="0"]{--rot:0deg;--ty:0;--sc:1;z-index:4;opacity:1}
-.deck-card[data-pos="0"]{pointer-events:auto}
-.deck-card:not([data-pos="0"]){pointer-events:none}
-/* Уход карты: сдача вправо и вверх, до возврата в хвост стопки. */
-.deck-card.is-dealt{--rot:9deg;--tx:46%;--ty:-16px;--sc:.98;opacity:0;z-index:5}
-.deck-stack:hover .deck-card[data-pos="0"]{--ty:-6px}
-.deck-card[data-pos="0"]:focus-visible{outline:2px solid var(--c-ink);outline-offset:4px}
-/* Кнопка «дальше» - такая же пилюля, как действия страницы, только квадратом
-   под иконку: у неё нет слова, потому что жест и так один. */
-.deck-next{
-  position:absolute;right:0;bottom:clamp(12px,2vw,22px);
-  width:34px;height:34px;display:grid;place-items:center;
-  border:1px solid var(--c-rule-strong);border-radius:999px;background:var(--c-paper);
-  color:var(--c-ink);cursor:pointer;transition:background .2s,color .2s,border-color .2s;
-}
-.deck-next:hover{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-paper)}
-.deck-next svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6}
-.opening-index{position:relative}
-.deck-count{color:var(--c-ink)}
-.deck-now{text-transform:none;letter-spacing:.02em;color:var(--c-faint)}
-
 .opening-copy{
   padding:clamp(22px,3vw,32px) clamp(24px,4vw,54px) clamp(28px,4vw,48px);
 }
 
 .opening-copy{min-width:0}
 .name{font-family:var(--font-display);font-size:clamp(46px,7.4vw,104px);line-height:.82;letter-spacing:-.055em}
-.claim{max-width:15ch;margin-top:clamp(26px,3.4vw,42px);font-family:var(--font-head);font-size:clamp(29px,3.4vw,48px);line-height:1.04;letter-spacing:-.018em}
+.claim{max-width:24ch;margin-top:clamp(26px,3.4vw,42px);font-family:var(--font-head);font-size:clamp(29px,3.4vw,48px);line-height:1.04;letter-spacing:-.018em}
 
 .opening-bottom{
   display:grid;grid-template-columns:clamp(96px,11vw,150px) minmax(0,1fr) auto;gap:0 clamp(24px,4vw,54px);align-items:end;
@@ -494,7 +441,7 @@ p{text-wrap:pretty}
 @media (max-width:980px){
   /* Портрет остаётся: в отличие от прежней пустой ячейки, ему есть что
      показать, поэтому колонка просто сужается вместе с ним. */
-  .opening-grid{grid-template-columns:clamp(88px,10vw,120px) minmax(0,1fr) minmax(215px,.34fr)}
+  .opening-grid{grid-template-columns:clamp(88px,10vw,120px) minmax(0,1fr)}
   .row{grid-template-columns:1.25fr .9fr auto}.row .what{grid-column:1 / -1;margin-top:-6px}
   .pub{grid-template-columns:62px minmax(0,1fr) auto}.pub .venue{grid-column:2 / -1;margin-top:-5px}
   .stats{grid-template-columns:1fr 1fr}.stats div:nth-child(-n+2){padding-bottom:16px}
@@ -514,9 +461,6 @@ p{text-wrap:pretty}
   .opening-grid{grid-template-columns:minmax(0,1fr);gap:0;padding-top:0}
   .opening-index{display:none}
   .opening-copy{grid-column:1 / -1;grid-row:1;padding:26px 0 30px}
-  .opening-deck{grid-column:1 / -1;grid-row:2;border-left:none;padding:24px 0 34px}
-  .deck-stack{max-width:420px;margin-inline:auto}
-  .deck-next{right:0;bottom:6px}
   .name{font-size:clamp(50px,15vw,80px)}.claim{margin-top:24px;font-size:clamp(30px,8.4vw,44px)}
   .opening-bottom{grid-template-columns:1fr;gap:22px}.opening-bottom .support{grid-column:1}.support{font-size:16px}
   .sec-head{grid-template-columns:1fr;gap:15px}.sec-head .sec-note{justify-self:start}
