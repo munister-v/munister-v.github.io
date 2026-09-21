@@ -1,21 +1,21 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609210933';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609210933';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609210933';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609210933';
-import { DiagramTabs } from './diagrams-ui.js?v=202609210933';
-import { Panel } from './panel.js?v=202609210933';
-import { Sidebar } from './sidebar.js?v=202609210933';
-import { Palette } from './palette.js?v=202609210933';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609210933';
-import { parseDDL } from './ddl-parse.js?v=202609210933';
-import { SAMPLE_DDL } from './sample.js?v=202609210933';
-import { initWorkspace } from './workspace.js?v=202609210933';
-import { diffModels } from './diff.js?v=202609210933';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609210933';
-import { migrateModel, listSnapshots } from './storage.js?v=202609210933';
-import { Sandbox } from './sandbox.js?v=202609210933';
-import { CanvasSearch } from './canvas-search.js?v=202609210933';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609210933';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609210937';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609210937';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609210937';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609210937';
+import { DiagramTabs } from './diagrams-ui.js?v=202609210937';
+import { Panel } from './panel.js?v=202609210937';
+import { Sidebar } from './sidebar.js?v=202609210937';
+import { Palette } from './palette.js?v=202609210937';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609210937';
+import { parseDDL } from './ddl-parse.js?v=202609210937';
+import { SAMPLE_DDL } from './sample.js?v=202609210937';
+import { initWorkspace } from './workspace.js?v=202609210937';
+import { diffModels } from './diff.js?v=202609210937';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609210937';
+import { migrateModel, listSnapshots } from './storage.js?v=202609210937';
+import { Sandbox } from './sandbox.js?v=202609210937';
+import { CanvasSearch } from './canvas-search.js?v=202609210937';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609210937';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -1037,7 +1037,11 @@ actions['dock-more'] = btn => {
 // Narrow screens hide the secondary toolbar groups; this puts them behind one button.
 actions.more = btn => {
   const r = btn.getBoundingClientRect();
+  const checkBadge = $('#check-badge');
   openMenu(r.right, r.bottom + 6, [
+    { label: t('tb.templates'), icon: ICONS.templates, run: actions.templates },
+    { label: t('tb.check'), icon: ICONS.check, kbd: checkBadge.hidden ? undefined : checkBadge.textContent, run: actions.check },
+    '-',
     { label: t('ws.projects'), icon: ICONS.projects, run: actions.projects },
     { label: t('ws.history'), icon: ICONS.history, run: actions.history },
     { label: t('tb.save'), icon: ICONS.save, kbd: '⌘S', run: actions.save },
