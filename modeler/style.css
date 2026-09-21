@@ -436,7 +436,16 @@ dialog footer .switch { margin-right: auto; }
   .app { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) 42%; }
   body.no-panel .app { grid-template-rows: minmax(0, 1fr); }
   .panel { border-left: 0; border-top: 1px solid var(--border); }
-  .nav-card { display: none; }
+  /* The minimap is hidden already (see the 1080px breakpoint above), but the
+     old rule hid the whole nav-card - taking the zoom buttons out with it.
+     There's no pinch-to-zoom gesture on the canvas (touch-action: none, no
+     multi-touch handling), so that left touch users with no way to zoom in
+     at all beyond the single "Fit" button, which re-fits to the same tiny
+     scale every time. Keep the (now minimap-less) zoom group, moved above
+     the dock so the two don't overlap, with bigger touch targets. */
+  .nav-card { width: auto; right: 10px; bottom: 66px; background: rgba(255, 255, 255, .95); }
+  .zoom button { height: 40px; min-width: 40px; }
+  .zoom svg { width: 18px; height: 18px; }
   .dock { bottom: 10px; }
 }
 

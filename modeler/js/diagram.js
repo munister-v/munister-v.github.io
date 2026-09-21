@@ -1,5 +1,5 @@
 // SVG diagram: tables, relations, pan/zoom, drag, relation mode, zones, marquee selection
-import { t as tr } from './i18n.js?v=202609192232';
+import { t as tr } from './i18n.js?v=202609210927';
 
 const NS = 'http://www.w3.org/2000/svg';
 const HEADER = 38, ROW = 24, PAD = 14;
@@ -712,7 +712,12 @@ export class Diagram {
     });
     const r = this.svg.getBoundingClientRect();
     if (!r.width) return;
-    const k = Math.min(1.1, Math.max(0.15, Math.min((r.width - 160) / (x2 - x1), (r.height - 160) / (y2 - y1))));
+    // A flat 160px margin is fine against a desktop canvas but eats nearly
+    // half a phone's width, forcing the diagram down to the 0.15 floor and
+    // rendering it as an unreadable, untappable smear. Below the width
+    // where that starts to bite, scale the margin down with it instead.
+    const margin = r.width < 600 ? Math.max(32, r.width * 0.2) : 160;
+    const k = Math.min(1.1, Math.max(0.15, Math.min((r.width - margin) / (x2 - x1), (r.height - margin) / (y2 - y1))));
     const target = { k, x: (r.width - (x2 - x1) * k) / 2 - x1 * k, y: (r.height - (y2 - y1) * k) / 2 - y1 * k };
     if (animate) this.animateTo(target); else { this.view = target; this.applyView(); }
   }

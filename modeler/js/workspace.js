@@ -1,7 +1,7 @@
 // Workspace: projects, version history, settings, status bar, cross-tab sync, offline updates
-import * as S from './storage.js?v=202609192232';
-import { setDiagramOptions } from './diagram.js?v=202609192232';
-import { t, getLang, onLang } from './i18n.js?v=202609192232';
+import * as S from './storage.js?v=202609210927';
+import { setDiagramOptions } from './diagram.js?v=202609210927';
+import { t, getLang, onLang } from './i18n.js?v=202609210927';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
