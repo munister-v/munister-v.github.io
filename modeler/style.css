@@ -364,7 +364,15 @@ dialog { border: 0; border-radius: 14px; background: var(--surface); color: var(
 dialog[open] { animation: pop .22s var(--ease); }
 @keyframes pop { from { opacity: 0; transform: scale(.97) translateY(6px); } }
 dialog::backdrop { background: rgba(28, 25, 23, .32); backdrop-filter: blur(3px); }
-dialog form { display: flex; flex-direction: column; gap: 14px; padding: 18px 20px 18px; max-height: calc(100vh - 48px); }
+/* Individual lists inside dialogs (.tpl-grid, .chk-list, .sbx-tables, etc.)
+   scroll on their own, but the form itself never could: max-height clips at
+   the viewport with no overflow rule to fall back on. That's invisible on
+   desktop where content usually fits, but the sandbox dialog stacks a
+   schema list, a fixed 130px textarea, run/reset buttons AND a results
+   panel - on a phone, especially once the on-screen keyboard shrinks the
+   visible area for the textarea, that stack can run past the bottom of the
+   screen with nothing to scroll to reach the Run button or the results. */
+dialog form { display: flex; flex-direction: column; gap: 14px; padding: 18px 20px 18px; max-height: calc(100vh - 48px); overflow-y: auto; }
 dialog header { display: flex; align-items: flex-start; gap: 12px; }
 dialog header > div { flex: 1; min-width: 0; }
 dialog header h2 { margin: 1px 0 0; font: 650 16px var(--sans); letter-spacing: -.01em; }

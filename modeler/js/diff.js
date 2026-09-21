@@ -1,6 +1,6 @@
 // Model diff → Oracle migration script (from = what the database has, to = the current model)
-import { ident, qname, str, generateDDL, columnDef, tableOptions, sequenceDDL, viewDDL } from './ddl-gen.js?v=202609210937';
-import { t as tr } from './i18n.js?v=202609210937';
+import { ident, qname, str, generateDDL, columnDef, tableOptions, sequenceDDL, viewDDL } from './ddl-gen.js?v=202609210942';
+import { t as tr } from './i18n.js?v=202609210942';
 
 const U = s => (s || '').toUpperCase();
 const norm = s => (s || '').replace(/\s+/g, ' ').trim().toUpperCase();
