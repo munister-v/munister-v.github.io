@@ -1,21 +1,21 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609210927';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609210927';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609210927';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609210927';
-import { DiagramTabs } from './diagrams-ui.js?v=202609210927';
-import { Panel } from './panel.js?v=202609210927';
-import { Sidebar } from './sidebar.js?v=202609210927';
-import { Palette } from './palette.js?v=202609210927';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609210927';
-import { parseDDL } from './ddl-parse.js?v=202609210927';
-import { SAMPLE_DDL } from './sample.js?v=202609210927';
-import { initWorkspace } from './workspace.js?v=202609210927';
-import { diffModels } from './diff.js?v=202609210927';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609210927';
-import { migrateModel, listSnapshots } from './storage.js?v=202609210927';
-import { Sandbox } from './sandbox.js?v=202609210927';
-import { CanvasSearch } from './canvas-search.js?v=202609210927';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609210927';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609210933';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609210933';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609210933';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609210933';
+import { DiagramTabs } from './diagrams-ui.js?v=202609210933';
+import { Panel } from './panel.js?v=202609210933';
+import { Sidebar } from './sidebar.js?v=202609210933';
+import { Palette } from './palette.js?v=202609210933';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609210933';
+import { parseDDL } from './ddl-parse.js?v=202609210933';
+import { SAMPLE_DDL } from './sample.js?v=202609210933';
+import { initWorkspace } from './workspace.js?v=202609210933';
+import { diffModels } from './diff.js?v=202609210933';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609210933';
+import { migrateModel, listSnapshots } from './storage.js?v=202609210933';
+import { Sandbox } from './sandbox.js?v=202609210933';
+import { CanvasSearch } from './canvas-search.js?v=202609210933';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609210933';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -1020,6 +1020,19 @@ function exportMenuItems() {
 actions.export = () => {
   const b = $('[data-action="export"]').getBoundingClientRect();
   openMenu(b.left, b.bottom + 6, exportMenuItems());
+};
+// Narrow screens hide the less-common dock actions (see .dock-adv in
+// style.css); this puts them behind one button, same idea as actions.more
+// below for the top bar's own overflow.
+actions['dock-more'] = btn => {
+  const r = btn.getBoundingClientRect();
+  openMenu(r.left, r.top - 6, [
+    { label: t('tb.relation'), icon: ICONS.relation, kbd: 'R', run: actions.relation },
+    { label: t('tb.zone'), icon: ICONS.zone, run: actions.zone },
+    '-',
+    { label: t('tb.layout'), icon: ICONS.layout, run: actions.layout },
+    { label: t('tb.noOverlaps'), icon: ICONS['no-overlaps'], run: actions['no-overlaps'] },
+  ]);
 };
 // Narrow screens hide the secondary toolbar groups; this puts them behind one button.
 actions.more = btn => {
