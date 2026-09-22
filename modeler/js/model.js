@@ -1,5 +1,5 @@
 // Модель данных + история (undo/redo) + автосохранение
-import { t } from './i18n.js?v=202609210942';
+import { t } from './i18n.js?v=202609221104';
 
 let seq = Date.now();
 export const uid = (p = 'id') => `${p}${(seq++).toString(36)}`;
@@ -74,8 +74,8 @@ export class Store {
     this.selection = null; // {kind:'table'|'fk', id}
   }
   subscribe(fn) { this.listeners.add(fn); }
-  emit(reason) {
-    this.listeners.forEach(fn => fn(reason));
+  emit(reason, detail) {
+    this.listeners.forEach(fn => fn(reason, detail));
     // selection changes and in-progress drags are not edits
     if (reason !== 'select' && reason !== 'move') this.persist();
   }
@@ -93,7 +93,9 @@ export class Store {
     this.undoStack.push(JSON.stringify(this.model));
     this.redoStack = [];
   }
-  silent(fn, reason = 'move') { fn(this.model); this.emit(reason); }
+  // detail: ids that actually moved, so listeners (the diagram) can patch just those
+  // instead of rebuilding everything on every pointermove/arrow-key step.
+  silent(fn, reason = 'move', detail) { fn(this.model); this.emit(reason, detail); }
 
   undo() {
     if (!this.undoStack.length) return;

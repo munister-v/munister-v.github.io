@@ -1,6 +1,6 @@
 // Import Oracle DDL: CREATE TABLE, ALTER TABLE ... ADD CONSTRAINT, CREATE INDEX, COMMENT ON
-import { newTable, newColumn, uid } from './model.js?v=202609210942';
-import { t as tr } from './i18n.js?v=202609210942';
+import { newTable, newColumn, uid } from './model.js?v=202609221104';
+import { t as tr } from './i18n.js?v=202609221104';
 
 function tokenize(src) {
   const toks = [];

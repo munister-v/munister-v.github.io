@@ -1,21 +1,21 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609210942';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609210942';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609210942';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609210942';
-import { DiagramTabs } from './diagrams-ui.js?v=202609210942';
-import { Panel } from './panel.js?v=202609210942';
-import { Sidebar } from './sidebar.js?v=202609210942';
-import { Palette } from './palette.js?v=202609210942';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609210942';
-import { parseDDL } from './ddl-parse.js?v=202609210942';
-import { SAMPLE_DDL } from './sample.js?v=202609210942';
-import { initWorkspace } from './workspace.js?v=202609210942';
-import { diffModels } from './diff.js?v=202609210942';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609210942';
-import { migrateModel, listSnapshots } from './storage.js?v=202609210942';
-import { Sandbox } from './sandbox.js?v=202609210942';
-import { CanvasSearch } from './canvas-search.js?v=202609210942';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609210942';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609221104';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609221104';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609221104';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609221104';
+import { DiagramTabs } from './diagrams-ui.js?v=202609221104';
+import { Panel } from './panel.js?v=202609221104';
+import { Sidebar } from './sidebar.js?v=202609221104';
+import { Palette } from './palette.js?v=202609221104';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609221104';
+import { parseDDL } from './ddl-parse.js?v=202609221104';
+import { SAMPLE_DDL } from './sample.js?v=202609221104';
+import { initWorkspace } from './workspace.js?v=202609221104';
+import { diffModels } from './diff.js?v=202609221104';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609221104';
+import { migrateModel, listSnapshots } from './storage.js?v=202609221104';
+import { Sandbox } from './sandbox.js?v=202609221104';
+import { CanvasSearch } from './canvas-search.js?v=202609221104';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609221104';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -304,11 +304,11 @@ document.addEventListener('keydown', e => {
           const p = store.posOf(id);
           store.setPos(id, p.x + dx, p.y + dy);
         });
-      }, 'move');
+      }, 'move', store.selection.ids);
     } else {
       const id = store.selection.id;
       const p = store.posOf(id);
-      store.silent(() => { store.setPos(id, p.x + dx, p.y + dy); }, 'move');
+      store.silent(() => { store.setPos(id, p.x + dx, p.y + dy); }, 'move', [id]);
     }
   }
   else if (e.key === 'Escape' && canvasSearch.isOpen) canvasSearch.close();

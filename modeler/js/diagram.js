@@ -1,5 +1,5 @@
 // SVG diagram: tables, relations, pan/zoom, drag, relation mode, zones, marquee selection
-import { t as tr } from './i18n.js?v=202609210942';
+import { t as tr } from './i18n.js?v=202609221104';
 
 const NS = 'http://www.w3.org/2000/svg';
 const HEADER = 38, ROW = 24, PAD = 14;
@@ -78,9 +78,14 @@ export class Diagram {
     this.gTables = svg.querySelector('.tables');
     this.gOverlay = svg.querySelector('.overlay');
     this.bindEvents();
-    store.subscribe(r => {
+    store.subscribe((r, ids) => {
       if (r === 'move') {
-        this.renderRelations();
+        // ids tells us exactly what moved (a drag or an arrow-key nudge), so we can
+        // patch just those tables/relations. No ids (a caller that doesn't pass one)
+        // falls back to a full rebuild; an explicit empty array (e.g. a zone drag,
+        // which doesn't touch tables or relations) means there's nothing to do here.
+        if (ids) { if (ids.length) this.updateDragPositions(ids); }
+        else this.renderRelations();
         this.scheduleMinimap();
       } else {
         this.render();
@@ -278,36 +283,31 @@ export class Diagram {
     </g>`;
   }
 
-  renderRelations() {
-    const { model, selection } = this.store;
-    const visibleTables = model.tables.filter(t => this.store.isItemOnActiveDiagram(t.id));
-    const byId = Object.fromEntries(visibleTables.map(t => [t.id, t]));
-    const visibleViews = (model.views || []).filter(v => this.store.isItemOnActiveDiagram(v.id));
+  relMarkup(f, byId, selection) {
+    const a = byId[f.fromTable], b = byId[f.toTable];
+    const pa = this.store.posOf(a.id), pb = this.store.posOf(b.id);
+    const d = relationPath(a, b, f, pa, pb);
+    const kind = this.store.relationKind(f);
+    // Множественность как текст на каждом конце вместо «вороньей лапки»/штрихов/колец:
+    // "N" или "1" (потолок задаёт oneToOne), с "0.." спереди, если связь необязательна
+    // (kind.mandatory лжёт). Это то же, что раньше кодировалось значками, — просто
+    // читается сразу, без подсказки по наведению.
+    const childLabel = (kind.mandatory ? '' : '0..') + (kind.oneToOne ? '1' : 'N');
+    const parentLabel = '1';
+    const labels = relLabel(d.ax, d.ay, d.adir, childLabel) + relLabel(d.bx, d.by, d.bdir, parentLabel);
+    const sel = selection?.kind === 'fk' && selection.id === f.id
+      || (selection?.kind === 'table' && (f.fromTable === selection.id || f.toTable === selection.id))
+      || (selection?.kind === 'multi' && (selection.ids?.includes(f.fromTable) || selection.ids?.includes(f.toTable)));
+    return `<g class="rel${sel ? ' selected' : ''}${kind.mandatory ? '' : ' optional'}${kind.identifying ? ' ident' : ''}" data-id="${f.id}">
+      <path class="hit" d="${d.path}"/><path class="line" d="${d.path}"/>
+      <circle class="node" cx="${d.ax}" cy="${d.ay}" r="3"/><circle class="node" cx="${d.bx}" cy="${d.by}" r="3"/>
+      ${labels}
+      <title>${esc(f.name)}</title></g>`;
+  }
 
-    this.gRels.innerHTML = model.fks.filter(f => byId[f.fromTable] && byId[f.toTable]).map(f => {
-      const a = byId[f.fromTable], b = byId[f.toTable];
-      const pa = this.store.posOf(a.id), pb = this.store.posOf(b.id);
-      const d = relationPath(a, b, f, pa, pb);
-      const kind = this.store.relationKind(f);
-      // Множественность как текст на каждом конце вместо «вороньей лапки»/штрихов/колец:
-      // "N" или "1" (потолок задаёт oneToOne), с "0.." спереди, если связь необязательна
-      // (kind.mandatory лжёт). Это то же, что раньше кодировалось значками, — просто
-      // читается сразу, без подсказки по наведению.
-      const childLabel = (kind.mandatory ? '' : '0..') + (kind.oneToOne ? '1' : 'N');
-      const parentLabel = '1';
-      const labels = relLabel(d.ax, d.ay, d.adir, childLabel) + relLabel(d.bx, d.by, d.bdir, parentLabel);
-      const sel = selection?.kind === 'fk' && selection.id === f.id
-        || (selection?.kind === 'table' && (f.fromTable === selection.id || f.toTable === selection.id))
-        || (selection?.kind === 'multi' && (selection.ids?.includes(f.fromTable) || selection.ids?.includes(f.toTable)));
-      return `<g class="rel${sel ? ' selected' : ''}${kind.mandatory ? '' : ' optional'}${kind.identifying ? ' ident' : ''}" data-id="${f.id}">
-        <path class="hit" d="${d.path}"/><path class="line" d="${d.path}"/>
-        <circle class="node" cx="${d.ax}" cy="${d.ay}" r="3"/><circle class="node" cx="${d.bx}" cy="${d.by}" r="3"/>
-        ${labels}
-        <title>${esc(f.name)}</title></g>`;
-    }).join('');
-
-    // view dependencies: dashed lines from source tables
-    this.gRels.innerHTML += visibleViews.map(v => {
+  // view dependencies: dashed lines from source tables
+  depMarkup(visibleViews, byId, selection) {
+    return visibleViews.map(v => {
       const vs = viewSize(v);
       const pv = this.store.posOf(v.id);
       const on = (selection?.kind === 'view' && selection.id === v.id) || (selection?.kind === 'multi' && selection.ids?.includes(v.id));
@@ -321,6 +321,17 @@ export class Diagram {
         return `<path class="dep${on ? ' on' : ''}" d="M${x1} ${y1} C${x1 + dx} ${y1} ${x2 - dx} ${y2} ${x2} ${y2}"/>`;
       }).join('');
     }).join('');
+  }
+
+  renderRelations() {
+    const { model, selection } = this.store;
+    const visibleTables = model.tables.filter(t => this.store.isItemOnActiveDiagram(t.id));
+    const byId = Object.fromEntries(visibleTables.map(t => [t.id, t]));
+    const visibleViews = (model.views || []).filter(v => this.store.isItemOnActiveDiagram(v.id));
+
+    this.gRels.innerHTML = model.fks.filter(f => byId[f.fromTable] && byId[f.toTable])
+      .map(f => this.relMarkup(f, byId, selection)).join('')
+      + this.depMarkup(visibleViews, byId, selection);
 
     // keep positions in sync while dragging
     for (const g of this.gTables.children) {
@@ -329,6 +340,38 @@ export class Diagram {
         const p = this.store.posOf(id);
         g.setAttribute('transform', `translate(${p.x},${p.y})`);
       }
+    }
+  }
+
+  // Fast path for 'move' events that tell us exactly which ids changed (a table drag
+  // or an arrow-key nudge): patch just those tables and the relations/dependencies
+  // touching them, instead of rebuilding every relation in the model on every
+  // pointermove. renderRelations() above is O(all FKs) and gets slow past a few
+  // hundred tables; this is O(relations touching the dragged ids).
+  updateDragPositions(ids) {
+    const { model, selection } = this.store;
+    const visibleTables = model.tables.filter(t => this.store.isItemOnActiveDiagram(t.id));
+    const byId = Object.fromEntries(visibleTables.map(t => [t.id, t]));
+    const idSet = new Set(ids);
+
+    for (const id of ids) {
+      const el = this.gTables.querySelector(`[data-id="${id}"],[data-view="${id}"]`);
+      if (el) { const p = this.store.posOf(id); el.setAttribute('transform', `translate(${p.x},${p.y})`); }
+    }
+    for (const f of model.fks) {
+      if (!byId[f.fromTable] || !byId[f.toTable]) continue;
+      if (!idSet.has(f.fromTable) && !idSet.has(f.toTable)) continue;
+      const el = this.gRels.querySelector(`.rel[data-id="${f.id}"]`);
+      if (el) el.outerHTML = this.relMarkup(f, byId, selection);
+    }
+    // View-dependency lines have no per-edge id to target individually, but there
+    // are usually few views; only pay for redrawing them if a dragged id could
+    // plausibly be one of the endpoints.
+    const visibleViews = (model.views || []).filter(v => this.store.isItemOnActiveDiagram(v.id));
+    const touchesViews = visibleViews.some(v => idSet.has(v.id) || this.store.viewSources(v).some(t => idSet.has(t.id)));
+    if (touchesViews) {
+      this.gRels.querySelectorAll('.dep').forEach(el => el.remove());
+      this.gRels.insertAdjacentHTML('beforeend', this.depMarkup(visibleViews, byId, selection));
     }
   }
 
@@ -473,7 +516,7 @@ export class Diagram {
         const cur = this.store.posOf(drag.id);
         if (nx === cur.x && ny === cur.y) return;
         if (!drag.moved) { this.store.checkpoint(); drag.moved = true; }
-        this.store.silent(() => this.store.setPos(drag.id, nx, ny));
+        this.store.silent(() => this.store.setPos(drag.id, nx, ny), 'move', [drag.id]);
       } else if (drag.kind === 'multi-table') {
         const p = this.toWorld(e);
         const deltaX = Math.round((p.x - drag.startPx) / g) * g;
@@ -483,13 +526,13 @@ export class Diagram {
           drag.items.forEach(it => {
             this.store.setPos(it.id, it.startX + deltaX, it.startY + deltaY);
           });
-        });
+        }, 'move', drag.items.map(it => it.id));
       } else if (drag.kind === 'zone') {
         const p = this.toWorld(e);
         const nx = Math.round((p.x - drag.dx) / g) * g, ny = Math.round((p.y - drag.dy) / g) * g;
         if (nx === drag.z.x && ny === drag.z.y) return;
         if (!drag.moved) { this.store.checkpoint(); drag.moved = true; }
-        this.store.silent(() => { drag.z.x = nx; drag.z.y = ny; });
+        this.store.silent(() => { drag.z.x = nx; drag.z.y = ny; }, 'move', []);
         const el = this.gZones.querySelector(`[data-zone="${drag.z.id}"]`);
         if (el) el.setAttribute('transform', `translate(${nx},${ny})`);
       } else if (drag.kind === 'zone-resize') {
@@ -497,7 +540,7 @@ export class Diagram {
         const nw = Math.max(160, Math.round((drag.startW + (p.x - drag.sx)) / g) * g);
         const nh = Math.max(100, Math.round((drag.startH + (p.y - drag.sy)) / g) * g);
         if (!drag.moved) { this.store.checkpoint(); drag.moved = true; }
-        this.store.silent(() => { drag.z.w = nw; drag.z.h = nh; });
+        this.store.silent(() => { drag.z.w = nw; drag.z.h = nh; }, 'move', []);
         this.renderZones();
       }
     });
