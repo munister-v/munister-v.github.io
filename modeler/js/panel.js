@@ -1,9 +1,9 @@
 // Properties panel: model, table (columns, keys, indexes) or foreign key
-import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609241259';
-import { sequenceDDL } from './ddl-gen.js?v=202609241259';
-import { t, getLang, onLang } from './i18n.js?v=202609241259';
-import { COLUMN_PRESETS } from './templates.js?v=202609241259';
-import { physName, isLogical } from './autodef.js?v=202609241259';
+import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609241319';
+import { sequenceDDL } from './ddl-gen.js?v=202609241319';
+import { t, getLang, onLang } from './i18n.js?v=202609241319';
+import { COLUMN_PRESETS } from './templates.js?v=202609241319';
+import { physName, isLogical } from './autodef.js?v=202609241319';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 const CHECK_TEMPLATES = [

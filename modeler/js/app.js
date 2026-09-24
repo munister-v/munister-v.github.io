@@ -1,23 +1,24 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609241259';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609241259';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609241259';
-import { guessType, inferColumn, describe, findParent, physName, isLogical, applyInference, toPhysical, L2P_STEPS, suggestFieldNames } from './autodef.js?v=202609241259';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609241259';
-import { DiagramTabs } from './diagrams-ui.js?v=202609241259';
-import { Panel } from './panel.js?v=202609241259';
-import { Sidebar } from './sidebar.js?v=202609241259';
-import { Palette } from './palette.js?v=202609241259';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609241259';
-import { parseDDL } from './ddl-parse.js?v=202609241259';
-import { SAMPLE_DDL } from './sample.js?v=202609241259';
-import { initWorkspace } from './workspace.js?v=202609241259';
-import { diffModels } from './diff.js?v=202609241259';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609241259';
-import { migrateModel, listSnapshots } from './storage.js?v=202609241259';
-import { Sandbox } from './sandbox.js?v=202609241259';
-import { parseText, buildModel, TEXT_EXAMPLES } from './textmodel.js?v=202609241259';
-import { CanvasSearch } from './canvas-search.js?v=202609241259';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609241259';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609241319';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609241319';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609241319';
+import { guessType, inferColumn, describe, findParent, physName, isLogical, applyInference, toPhysical, L2P_STEPS, suggestFieldNames } from './autodef.js?v=202609241319';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609241319';
+import { DiagramTabs } from './diagrams-ui.js?v=202609241319';
+import { Panel } from './panel.js?v=202609241319';
+import { Sidebar } from './sidebar.js?v=202609241319';
+import { Palette } from './palette.js?v=202609241319';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609241319';
+import { parseDDL } from './ddl-parse.js?v=202609241319';
+import { SAMPLE_DDL } from './sample.js?v=202609241319';
+import { initWorkspace } from './workspace.js?v=202609241319';
+import { diffModels } from './diff.js?v=202609241319';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609241319';
+import { migrateModel, listSnapshots } from './storage.js?v=202609241319';
+import { Sandbox } from './sandbox.js?v=202609241319';
+import { parseText, buildModel, TEXT_EXAMPLES } from './textmodel.js?v=202609241319';
+import { ENTITY_GROUPS, ATTRIBUTE_GROUPS, RELATION_BLOCKS, findEntity, findAttrSet, tableForBlock, placeEntity, addColumns } from './blocks.js?v=202609241319';
+import { CanvasSearch } from './canvas-search.js?v=202609241319';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609241319';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -25,13 +26,14 @@ const store = new Store();
 
 const diagram = new Diagram($('#canvas'), store, {
   onAddTable: p => addTable(p),
-  onRelation: (child, parent, e) => openMenu(e.clientX, e.clientY, relationTypeItems(child, parent)),
+  onRelation: (child, parent, e) => kitRelation(child, parent) || openMenu(e.clientX, e.clientY, relationTypeItems(child, parent)),
   onAddField: id => openFieldEditor(id, null),
   onEditColumn: (id, colId) => openFieldEditor(id, colId),
   onRenameTable: id => openRenameTable(id),
   onEditView: id => { store.select({ kind: 'view', id }); setTimeout(() => $('#panel .sql-edit')?.focus()); },
   onZoom: k => { $('#zoom').textContent = `${Math.round(k * 100)}%`; },
   minimap: $('#minimap'),
+  insetLeft: () => { try { return kitVisibleRect().left; } catch { return 0; } }, // the builder panel is declared further down
 });
 const canvasSearch = new CanvasSearch($('.stage'), store, diagram);
 const diagramTabs = new DiagramTabs($('#diagram-tabs'), store, {
@@ -193,7 +195,9 @@ function importDDL(text, replace) {
   if (created && !warnings.length && $('#import-dialog').open) $('#import-dialog').close();
 }
 
+let kitPendingRel = null; // builder relation waiting for its parent click
 function setRelationMode(on) {
+  if (!on) { kitPendingRel = null; $('#mode-hint-text').textContent = t('t.relHint'); }
   diagram.setMode(on ? 'relation' : 'select');
   $('.dock [data-action="relation"]').classList.toggle('on', on);
   $('.dock [data-action="select"]').classList.toggle('on', !on);
@@ -244,6 +248,7 @@ const actions = {
   physical: () => openPhysical(),
   assistant: () => toggleAssistant(),
   fromText: () => openTextModel(),
+  kit: () => toggleKit(),
 };
 
 const ICONS = Object.fromEntries([...document.querySelectorAll('[data-action] svg')].map(s => [s.closest('[data-action]').dataset.action, s.outerHTML]));
@@ -255,7 +260,7 @@ const palette = new Palette(store, {
     ['table', 'tb.table', 'T'], ['relation', 'tb.relation', 'R'], ['zone', 'tb.zone.t', 'Z'],
     ['layout', 'tb.layout'], ['no-overlaps', 'tb.noOverlaps.t'], ['fit', 'tb.fit.t', 'F'],
     ['ddl', 'tb.ddl.t'], ['import', 'tb.import'], ['svg', 'tb.svg.t'],
-    ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['fromText', 'tb.text.t'], ['physical', 'tb.l2p.t'], ['assistant', 'as.toggle'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
+    ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['kit', 'kit.toggle'], ['fromText', 'tb.text.t'], ['physical', 'tb.l2p.t'], ['assistant', 'as.toggle'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
     ['newView', 'cm.newView'], ['newSequence', 'cm.newSeq'],
     ['migrate', 'tb.migrate.t'], ['export', 'tb.export.t'], ['sandbox', 'tb.sandbox.t'],
     ['projects', 'ws.projects'], ['history', 'ws.history'], ['snapshot', 'ws.saveVersion'], ['settings', 'ws.settings'], ['shortcuts', 'ws.shortcuts', '?'],
@@ -697,6 +702,250 @@ $('#tm-mode').addEventListener('click', e => { const b = e.target.closest('[data
 $('#tm-rules').addEventListener('change', () => tmUpdate(true));
 $('#tm-create').addEventListener('click', tmCreate);
 onLang(() => { if ($('#tm-dialog').open) openTextModel(); });
+
+
+// ---------- builder (constructor library) ----------
+// Ready entities, field sets and relations dragged (or clicked) onto the canvas.
+const KIT_KEY = 'schemata:kit';
+let kitOpen = matchMedia('(min-width: 1081px)').matches, kitTab = 'entities', kitDrag = null;
+try { const v = localStorage.getItem(KIT_KEY); if (v !== null) kitOpen = v === '1'; } catch {}
+const kitLabel = b => b.label[getLang()] || b.label.en;
+const inModel = b => !!tableForBlock(store.model, b);
+function toggleKit(force) {
+  kitOpen = force ?? !kitOpen;
+  try { localStorage.setItem(KIT_KEY, kitOpen ? '1' : '0'); } catch {}
+  renderKit();
+  if (kitOpen) requestAnimationFrame(() => $('#kit-q').focus({ preventScroll: true }));
+}
+function renderKit() {
+  $('#kit').hidden = !kitOpen;
+  $('.stage').classList.toggle('kit-open', kitOpen);
+  $('#kit-btn').classList.toggle('on', kitOpen);
+  if (!kitOpen) return;
+  const q = $('#kit-q').value.trim().toLowerCase();
+  const hit = (b, extra = '') => !q || `${b.label.uk} ${b.label.en} ${b.name || ''} ${(b.cols || []).join(' ')} ${extra}`.toLowerCase().includes(q);
+  const tabs = [['entities', ENTITY_GROUPS], ['attrs', ATTRIBUTE_GROUPS], ['rels', null]];
+  const count = groups => groups ? groups.reduce((n, g) => n + g.items.filter(b => hit(b)).length, 0) : RELATION_BLOCKS.filter(b => hit(b, `${b.hint.uk} ${b.hint.en}`)).length;
+  $('#kit-tabs').innerHTML = tabs.map(([id, g]) => `<button type="button" data-tab="${id}" class="${kitTab === id ? 'on' : ''}">${esc(t(`kit.tab.${id}`))}${q ? ` <small>${count(g)}</small>` : ''}</button>`).join('');
+  const tile = (kind, b, sub, extra = '') => `<button type="button" class="kit-tile${extra}" data-kind="${kind}" data-id="${b.id}">
+      <span class="kit-ic">${b.icon}</span><span class="kit-txt"><b>${esc(kitLabel(b))}</b><small>${esc(sub)}</small></span></button>`;
+  let html = `<p class="kit-help">${esc(t(`kit.help.${kitTab}`))}</p>`;
+  if (kitTab === 'rels') {
+    const items = RELATION_BLOCKS.filter(b => hit(b, `${b.hint.uk} ${b.hint.en}`));
+    html += items.length ? `<div class="kit-grid one">${items.map(b => tile('rel', b, b.hint[getLang()] || b.hint.en)).join('')}</div>` : '';
+  } else {
+    const groups = (kitTab === 'entities' ? ENTITY_GROUPS : ATTRIBUTE_GROUPS).map(g => [g, g.items.filter(b => hit(b))]).filter(([, l]) => l.length);
+    html += groups.map(([g, list]) => `<section><h5>${esc(kitLabel(g))}</h5><div class="kit-grid">${list.map(b => kitTab === 'entities'
+      ? tile('entity', b, inModel(b) ? `✓ ${t('kit.in')}` : b.name, inModel(b) ? ' in' : '')
+      : tile('attr', b, b.cols.map(c => c.replace(/[#!]|:.*$/g, '')).join(', '))).join('')}</div></section>`).join('');
+  }
+  $('#kit-body').innerHTML = html + (html.includes('kit-tile') ? '' : `<p class="kit-empty">${esc(t('kit.empty'))}</p>`);
+  kitPeek(null);
+}
+// what a hovered block will do: its fields and the tables it will wire itself to
+function kitPeek(el) {
+  const box = $('#kit-peek');
+  if (!el) { box.hidden = true; return; }
+  const { kind, id } = el.dataset;
+  let html = '';
+  if (kind === 'entity') {
+    const b = findEntity(id);
+    const cols = ['ID', ...b.cols.map(c => c.replace(/[#!]|:.*$/g, ''))];
+    const linkNames = b.links.map(l => l.replace('!', '')).filter(x => x !== b.id);
+    const present = linkNames.map(x => tableForBlock(store.model, findEntity(x))?.name).filter(Boolean);
+    const missing = linkNames.filter(x => !tableForBlock(store.model, findEntity(x))).map(x => kitLabel(findEntity(x)));
+    html = `<b>${esc(b.name)}</b><code>${esc(cols.join(', '))}</code>` +
+      (present.length ? `<span class="ok">${esc(t('kit.peek.links', { t: present.join(', ') }))}</span>` : '') +
+      (missing.length ? `<span>${esc(t('kit.peek.wait', { t: missing.join(', ') }))}</span>` : '');
+  } else if (kind === 'attr') {
+    const a = findAttrSet(id);
+    html = `<b>${esc(kitLabel(a))}</b><code>${esc(a.cols.map(c => { const n = c.replace(/[#!]|:.*$/g, ''); return `${n} ${inferColumn(n).type}`; }).join('\n'))}</code>`;
+  } else {
+    const r = RELATION_BLOCKS.find(x => x.id === id);
+    html = `<b>${esc(kitLabel(r))}</b><span>${esc(r.hint[getLang()] || r.hint.en)}</span>`;
+  }
+  box.innerHTML = html; box.hidden = false;
+}
+// first spot near p where a table of this size overlaps nothing on the active diagram
+function freeSpot(p, size) {
+  const rects = store.model.tables.filter(x => store.isItemOnActiveDiagram(x.id)).map(x => ({ ...store.posOf(x.id), ...tableSize(x) }));
+  const hits = (x, y) => rects.some(r => x < r.x + r.w + 30 && x + size.w + 30 > r.x && y < r.y + r.h + 30 && y + size.h + 30 > r.y);
+  for (let ring = 0; ring < 30; ring++) for (let i = 0; i <= ring * 4; i++) {
+    const a = ring ? (i / (ring * 4)) * Math.PI * 2 : 0;
+    const x = Math.round((p.x + Math.cos(a) * ring * 80) / 10) * 10, y = Math.round((p.y + Math.sin(a) * ring * 60) / 10) * 10;
+    if (!hits(x, y)) return { x, y };
+  }
+  return p;
+}
+// the canvas area not covered by the builder panel (screen px relative to the svg)
+function kitVisibleRect() {
+  const r = diagram.svg.getBoundingClientRect(), k = $('#kit');
+  const left = kitOpen && !k.hidden ? Math.max(0, k.getBoundingClientRect().right - r.left + 16) : 0;
+  return { left, top: 0, width: r.width - left, height: r.height };
+}
+function kitCenterWorld() {
+  const v = kitVisibleRect(), { x, y, k } = diagram.view;
+  return { x: (v.left + v.width / 2 - x) / k, y: (v.top + v.height / 2 - y) / k };
+}
+// pan (without zooming) just enough to bring a table out from under the panel / off-screen
+function kitReveal(id) {
+  const tb = store.table(id);
+  if (!tb) return;
+  const v = kitVisibleRect(), s = tableSize(tb), p = store.posOf(id), { x, y, k } = diagram.view;
+  const sx = p.x * k + x, sy = p.y * k + y, w = s.w * k, h = s.h * k;
+  if (sx >= v.left + 8 && sx + w <= v.left + v.width - 8 && sy >= 8 && sy + h <= v.height - 8) return;
+  diagram.animateTo({ k, x: v.left + v.width / 2 - (p.x + s.w / 2) * k, y: v.height / 2 - (p.y + s.h / 2) * k });
+}
+const tableAt = (x, y) => document.elementFromPoint(x, y)?.closest('#canvas .table')?.dataset.id || null;
+function kitPlaceEntity(id, at, exact) {
+  const b = findEntity(id);
+  let placed = null;
+  store.update(m => {
+    const r = placeEntity(m, b, getLang(), 0, 0);
+    const size = tableSize(r.table);
+    // next to what it is wired to: a child to the right of its parent, a parent to the left of its child
+    const d0 = m.diagrams?.find(x => x.id === m.activeDiagram) || m.diagrams?.[0];
+    const posOf = tb => d0?.positions?.[tb.id] || { x: tb.x, y: tb.y };
+    const f = m.fks.find(x => x.fromTable === r.table.id && x.toTable !== r.table.id) || m.fks.find(x => x.toTable === r.table.id && x.fromTable !== r.table.id);
+    const other = f && m.tables.find(x => x.id === (f.fromTable === r.table.id ? f.toTable : f.fromTable));
+    let anchor = { x: at.x - size.w / 2, y: at.y - size.h / 2 };
+    if (other) { const op = posOf(other); anchor = f.fromTable === r.table.id ? { x: op.x + tableSize(other).w + 120, y: op.y } : { x: op.x - size.w - 120, y: op.y }; }
+    const p = exact ? { x: Math.round((at.x - size.w / 2) / 10) * 10, y: Math.round((at.y - 18) / 10) * 10 } : freeSpot(anchor, size);
+    Object.assign(r.table, p);
+    const d = m.diagrams?.find(x => x.id === m.activeDiagram) || m.diagrams?.[0];
+    if (d) { d.tableIds ||= []; d.tableIds.push(r.table.id); d.positions ||= {}; d.positions[r.table.id] = { ...p }; }
+    placed = r;
+  });
+  store.select({ kind: 'table', id: placed.table.id });
+  requestAnimationFrame(() => document.querySelector(`#canvas .table[data-id="${placed.table.id}"]`)?.classList.add('kit-new'));
+  toast(placed.linked.length ? t('kit.t.linked', { t: placed.table.name, l: placed.linked.join(', ') }) : t('kit.t.placed', { t: placed.table.name }));
+  renderKit();
+  return placed.table.id;
+}
+function kitAddFields(id, tableId) {
+  const tb = store.table(tableId);
+  if (!tb) return toast(t('kit.t.pickTable'), true);
+  let added = [];
+  store.update(m => { added = addColumns(m, tb, findAttrSet(id).cols); });
+  store.select({ kind: 'table', id: tableId });
+  toast(added.length ? t('kit.t.cols', { t: tb.name, c: added.join(', ') }) : t('kit.t.noCols', { t: tb.name }), !added.length);
+}
+function kitStartRelation(kind, childId) {
+  if (!store.table(childId)) return toast(t('kit.t.pickTable'), true);
+  if (kind === 'self') return createRelation(childId, childId, {});
+  setRelationMode(true);
+  kitPendingRel = kind;
+  diagram.relFrom = childId;
+  diagram.render();
+  $('#mode-hint-text').textContent = t('kit.t.pickParent');
+}
+// relation mode finished on a parent: a pending builder relation is created without the type menu
+function kitRelation(child, parent) {
+  const kind = kitPendingRel;
+  if (!kind) return false;
+  setRelationMode(false);
+  if (kind === 'mn') createJunction(child, parent);
+  else createRelation(child, parent, { '1n': {}, '1nm': { mandatory: true }, '11': { kind: '11' }, ident: { identifying: true } }[kind]);
+  return true;
+}
+$('#kit-q').addEventListener('input', () => {
+  renderKit();
+  // jump to the tab that has results
+  const tabWith = [...$('#kit-tabs').querySelectorAll('[data-tab]')].find(b => +b.querySelector('small')?.textContent > 0);
+  if (!$('#kit-body .kit-tile') && tabWith) { kitTab = tabWith.dataset.tab; renderKit(); }
+});
+$('#kit-q').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Escape') { e.target.value ? (e.target.value = '', renderKit()) : toggleKit(false); } });
+$('#kit-tabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) { kitTab = b.dataset.tab; renderKit(); } });
+$('#kit-body').addEventListener('pointerover', e => kitPeek(e.target.closest('.kit-tile')));
+$('#kit-body').addEventListener('pointerleave', () => kitPeek(null));
+$('#kit-body').addEventListener('click', e => {
+  const el = e.target.closest('.kit-tile');
+  if (!el) return;
+  const { kind, id } = el.dataset, sel = store.selection?.kind === 'table' ? store.selection.id : null;
+  if (kind === 'entity') {
+    const existing = tableForBlock(store.model, findEntity(id));
+    if (existing) { store.select({ kind: 'table', id: existing.id }); kitReveal(existing.id); toast(t('kit.t.exists', { t: existing.name })); return; }
+    kitReveal(kitPlaceEntity(id, kitCenterWorld(), false));
+  } else if (kind === 'attr') kitAddFields(id, sel);
+  else kitStartRelation(id, sel);
+});
+// Drag with pointer events rather than HTML5 drag-and-drop: works with touch, lets <button>
+// tiles be dragged in every browser, and gives a custom ghost under the pointer.
+let kitHoverId = null, kitPress = null, kitSuppressClick = false;
+function kitHover(id) {
+  if (id === kitHoverId) return;
+  document.querySelectorAll('#canvas .table.drop-target').forEach(g => g.classList.remove('drop-target'));
+  kitHoverId = id;
+  if (id) document.querySelector(`#canvas .table[data-id="${id}"]`)?.classList.add('drop-target');
+}
+const stage = $('.stage');
+const overCanvas = (x, y) => { const el = document.elementFromPoint(x, y); return !!el && stage.contains(el) && !el.closest('#kit, .dock, .nav-card, .assistant, .diagram-tabs'); };
+function kitDragMove(x, y) {
+  const g = kitDrag.ghost;
+  g.style.transform = `translate(${x - 18}px, ${y - 18}px)`;
+  const hint = $('#kit-hint');
+  if (!overCanvas(x, y)) { kitHover(null); hint.hidden = true; g.classList.remove('armed'); return; }
+  const target = kitDrag.kind === 'entity' ? null : tableAt(x, y);
+  kitHover(target);
+  const tb = target && store.table(target), r = stage.getBoundingClientRect();
+  hint.textContent = kitDrag.kind === 'entity' ? t('kit.h.entity', { n: kitLabel(findEntity(kitDrag.id)) })
+    : tb ? t(kitDrag.kind === 'attr' ? 'kit.h.attr' : 'kit.h.rel', { t: tb.name }) : t('kit.h.need');
+  const ok = kitDrag.kind === 'entity' || !!tb;
+  hint.classList.toggle('warn', !ok);
+  g.classList.toggle('armed', ok);
+  hint.style.transform = `translate(${x - r.left + 20}px, ${y - r.top + 22}px)`;
+  hint.hidden = false;
+}
+function kitDragEnd(x, y, cancel = false) {
+  const d = kitDrag;
+  kitDrag = null;
+  d.ghost.remove(); d.el.classList.remove('dragging');
+  document.body.classList.remove('kit-dragging');
+  kitHover(null); $('#kit-hint').hidden = true;
+  if (cancel || !overCanvas(x, y)) return;
+  const target = tableAt(x, y);
+  if (d.kind === 'entity') kitReveal(kitPlaceEntity(d.id, diagram.toWorld({ clientX: x, clientY: y }), true));
+  else if (!target) toast(t('kit.t.pickTable'), true);
+  else if (d.kind === 'attr') kitAddFields(d.id, target);
+  else kitStartRelation(d.id, target);
+}
+$('#kit-body').addEventListener('pointerdown', e => {
+  const el = e.target.closest('.kit-tile');
+  if (!el || e.button !== 0) return;
+  kitPress = { el, x: e.clientX, y: e.clientY, id: e.pointerId, touch: e.pointerType !== 'mouse' };
+});
+window.addEventListener('pointermove', e => {
+  if (kitDrag) { e.preventDefault(); kitDragMove(e.clientX, e.clientY); return; }
+  if (!kitPress || e.pointerId !== kitPress.id) return;
+  const dx = e.clientX - kitPress.x, dy = e.clientY - kitPress.y;
+  if (Math.hypot(dx, dy) < 6) return;
+  // on touch a mostly vertical move is the panel scrolling, not a drag
+  if (kitPress.touch && Math.abs(dy) > Math.abs(dx)) { kitPress = null; return; }
+  const el = kitPress.el;
+  kitPress = null;
+  const ghost = el.cloneNode(true);
+  ghost.className = 'kit-tile kit-ghost';
+  ghost.style.width = `${el.offsetWidth}px`;
+  document.body.append(ghost);
+  el.classList.add('dragging');
+  document.body.classList.add('kit-dragging');
+  kitDrag = { kind: el.dataset.kind, id: el.dataset.id, el, ghost };
+  kitSuppressClick = true;
+  kitDragMove(e.clientX, e.clientY);
+}, { passive: false });
+window.addEventListener('pointerup', e => {
+  kitPress = null;
+  if (kitDrag) kitDragEnd(e.clientX, e.clientY);
+  // the click (if any) follows pointerup synchronously; after that the guard must not linger
+  setTimeout(() => { kitSuppressClick = false; });
+});
+window.addEventListener('pointercancel', () => { kitPress = null; if (kitDrag) kitDragEnd(0, 0, true); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && kitDrag) kitDragEnd(0, 0, true); }, true);
+// the click that ends a drag must not also run the tile's click action
+$('#kit-body').addEventListener('click', e => { if (kitSuppressClick) { kitSuppressClick = false; e.stopImmediatePropagation(); } }, true);
+store.subscribe(r => { if (kitOpen && (r === 'load' || r === 'change') && kitTab === 'entities') { clearTimeout(renderKit.timer); renderKit.timer = setTimeout(renderKit, 150); } });
+onLang(renderKit);
+renderKit();
 
 // ---------- duplicate / copy / paste ----------
 function cloneTables(tables, fks, offset = 40) {
@@ -1185,6 +1434,7 @@ $('#canvas').addEventListener('contextmenu', e => {
     { label: t('cm.layout'), icon: '⊞', run: actions.layout },
     { label: t('cm.fit'), icon: '⤢', kbd: 'F', run: actions.fit },
     { label: t('cm.check'), icon: '✓', run: actions.check },
+    { label: t('kit.title'), icon: '▦', run: actions.kit },
     { label: t('tb.text.t'), icon: '✎', run: actions.fromText },
     { label: t('tb.l2p.t'), icon: '⇲', run: actions.physical },
   ]);
@@ -1308,6 +1558,7 @@ actions.more = btn => {
   openMenu(r.right, r.bottom + 6, [
     { label: t('tb.templates'), icon: ICONS.templates, run: actions.templates },
     { label: t('tb.check'), icon: ICONS.check, kbd: checkBadge.hidden ? undefined : checkBadge.textContent, run: actions.check },
+    { label: t('kit.title'), icon: ICONS.kit, run: actions.kit },
     { label: t('tb.text'), icon: ICONS.fromText, run: actions.fromText },
     { label: t('tb.l2p'), icon: ICONS.physical, run: actions.physical },
     '-',

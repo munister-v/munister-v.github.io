@@ -9,7 +9,7 @@
 
 ## Код (чистый HTML5 + ES-модули + один вендорный пакет)
 `index.html`, `style.css`, `sw.js` (офлайн), `bump-version.sh`
-`js/`: `app.js` (связка, меню, редактор полей) · `model.js` (Store, undo) · `autodef.js` (автовизначення по імені, транслітерація, логічна → фізична) · `textmodel.js` (модель з тексту) · `diagram.js` (SVG) · `diagrams-ui.js` (вкладки діаграм) · `panel.js` · `sidebar.js` · `palette.js` (⌘K) · `ddl-parse.js` / `ddl-gen.js` (Oracle DDL) · `sqlite-gen.js` / `sandbox.js` (SQL-пісочниця: модель → SQLite DDL → sql.js) · `diff.js` (миграции) · `checks.js` · `docs.js` · `storage.js` / `workspace.js` (проекты, версии) · `templates.js` · `i18n.js` (uk/en)
+`js/`: `app.js` (связка, меню, редактор полей) · `model.js` (Store, undo) · `autodef.js` (автовизначення по імені, транслітерація, логічна → фізична) · `textmodel.js` (модель з тексту) · `blocks.js` (конструктор: готові блоки) · `diagram.js` (SVG) · `diagrams-ui.js` (вкладки діаграм) · `panel.js` · `sidebar.js` · `palette.js` (⌘K) · `ddl-parse.js` / `ddl-gen.js` (Oracle DDL) · `sqlite-gen.js` / `sandbox.js` (SQL-пісочниця: модель → SQLite DDL → sql.js) · `diff.js` (миграции) · `checks.js` · `docs.js` · `storage.js` / `workspace.js` (проекты, версии) · `templates.js` · `i18n.js` (uk/en)
 `js/vendor/sqljs/`: sql.js (SQLite → WASM, MIT), скачан с cdnjs и закоммичен как есть — единственная не-своя зависимость в проекте. Обновление: перезалить `sql-wasm.js` + `sql-wasm.wasm` с cdnjs новой версией, `bump-version.sh` не трогает vendor (это plain `<script src>`, не ES-импорт).
 
 ## Запуск локально
@@ -61,6 +61,13 @@ gh auth switch -u munister-v && git pull --rebase && git push && gh auth switch 
 - UI `#tm-dialog`: превью — второй `Diagram` на отдельном `Store` (без `onPersist`, в автосохранение не пишет). `diagram.js` теперь `STORE ||= store`, чтобы превью не перехватило compact-режим главной диаграммы. Курсор в тексте подсвечивает таблицу строки (`lineTable`). ⌘↵ — создать, Tab — вставить «, ». Черновик в `localStorage['schemata:textmodel']`.
 - Вход: тулбар «З тексту», ⌘K, контекстное меню холста, мобильное «…», карточка «Описати словами» в «Готових схемах».
 - Пастка из этой сессии: при вставке uk/en-строк в `i18n.js` по одинаковому якорю в обе секции второй `replace` попадал в только что вставленный uk-блок → en-ключи оказывались в uk. Проверять скриптом, что множества ключей uk и en совпадают.
+
+## Сделано 2026-09-24 (3): «Конструктор»
+- `js/blocks.js`: данные (`ENTITY_GROUPS` ~50 сущностей с `cols` и `links`, `ATTRIBUTE_GROUPS`, `RELATION_BLOCKS`) + `placeEntity()` (таблица + FK в обе стороны: к родителям из `links` и от уже существующих детей, которые ждут этот блок), `addColumns()`, `linkTables()`. Спецификация колонки: `NAME`, `NAME!` (NOT NULL), `#ID`, `NAME:TYPE`; остальное — правила `autodef`.
+- UI в `app.js` (раздел «builder»): панель `#kit` поверх левой части холста. Перетаскивание сделано на pointer-событиях, НЕ HTML5 DnD (touch, Firefox не тащит `<button>`, свой «призрак» `.kit-ghost`). На touch вертикальное движение = прокрутка панели, горизонтальное = перетаскивание. Клик без перетаскивания тоже работает (сущность — рядом со связанными таблицами/в центр видимой области; поля/связь — к выбранной таблице).
+- Режим связи из блока: `kitPendingRel` + `diagram.relFrom = child`; хук `onRelation` сначала отдаёт его `kitRelation()`, иначе старое меню типов. `setRelationMode(false)` сбрасывает pending и текст подсказки.
+- `Diagram` получил хук `insetLeft()` — `fit()`/`centerOn()` не прячут таблицы под панелью. Помощник переехал в правый верхний угол.
+- Пастка: флаг подавления клика после drag сбрасывается `setTimeout` в `pointerup` — иначе drag, закончившийся вне панели, «съедал» следующий клик по плитке.
 
 ## Что дальше (план)
 1. **Большие схемы:** несколько диаграмм (предметные области), цветные зоны, выделение рамкой, LoD-культинг при большом числе таблиц/низком зуме, орфографическая маршрутизация связей — всё уже сделано (`diagrams-ui.js`, `resolveOverlaps`/LoD в `diagram.js`, `canvas-search.js`). Точечное обновление при драге (см. выше) снимает основной перф-затык на 300+ таблицах; не профилировали именно полный `render()` (открытие модели, autoLayout, LoD-переключение по зуму) — если станет узким местом, тот же подход (patch, не rebuild) применим и там.

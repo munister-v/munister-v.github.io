@@ -7,8 +7,8 @@
 //   Замовлення *-* Товар                           ← M:N through a junction table
 //
 // Barker notation from Oracle Academy works too: # identifier, * mandatory, o optional.
-import { newTable, newColumn, uid, uniqueName, emptyModel } from './model.js?v=202609241259';
-import { physName, isLogical, singular, plural, applyInference, toPhysical } from './autodef.js?v=202609241259';
+import { newTable, newColumn, uid, uniqueName, emptyModel } from './model.js?v=202609241319';
+import { physName, isLogical, singular, plural, applyInference, toPhysical } from './autodef.js?v=202609241319';
 
 const TYPE_RE = /\s+((?:N?VARCHAR2|N?CHAR|RAW|NUMBER|FLOAT|TIMESTAMP)(?:\s*\([^)]*\))?(?:\s+WITH(?:\s+LOCAL)?\s+TIME\s+ZONE)?|INTEGER|DATE|CLOB|NCLOB|BLOB|JSON|BOOLEAN|BINARY_(?:FLOAT|DOUBLE)|XMLTYPE)\s*$/; // upper case only: "birth date" is a name, "born DATE" is a type
 // \b only knows ASCII letters, so word edges are spelled out for Cyrillic

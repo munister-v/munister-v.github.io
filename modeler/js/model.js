@@ -1,6 +1,6 @@
 // Модель данных + история (undo/redo) + автосохранение
-import { t } from './i18n.js?v=202609241259';
-import { singular } from './autodef.js?v=202609241259';
+import { t } from './i18n.js?v=202609241319';
+import { singular } from './autodef.js?v=202609241319';
 
 let seq = Date.now();
 export const uid = (p = 'id') => `${p}${(seq++).toString(36)}`;

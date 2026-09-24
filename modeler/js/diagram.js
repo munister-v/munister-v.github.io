@@ -1,5 +1,5 @@
 // SVG diagram: tables, relations, pan/zoom, drag, relation mode, zones, marquee selection
-import { t as tr } from './i18n.js?v=202609241259';
+import { t as tr } from './i18n.js?v=202609241319';
 
 const NS = 'http://www.w3.org/2000/svg';
 const HEADER = 38, ROW = 24, PAD = 14;
@@ -714,7 +714,8 @@ export class Diagram {
     const s = t.sql !== undefined ? viewSize(t) : tableSize(t), r = this.svg.getBoundingClientRect();
     const pos = this.store.posOf(id);
     const k = Math.max(this.view.k, 0.8);
-    this.animateTo({ k, x: r.width / 2 - (pos.x + s.w / 2) * k, y: r.height / 2 - (pos.y + s.h / 2) * k });
+    const inset = Math.min(r.width * 0.6, this.hooks.insetLeft?.() || 0);
+    this.animateTo({ k, x: inset + (r.width - inset) / 2 - (pos.x + s.w / 2) * k, y: r.height / 2 - (pos.y + s.h / 2) * k });
   }
 
   bounds() {
@@ -753,15 +754,18 @@ export class Diagram {
       x1 = Math.min(x1, p.x); y1 = Math.min(y1, p.y);
       x2 = Math.max(x2, p.x + s.w); y2 = Math.max(y2, p.y + s.h);
     });
-    const r = this.svg.getBoundingClientRect();
-    if (!r.width) return;
+    const full = this.svg.getBoundingClientRect();
+    if (!full.width) return;
+    // a panel floating over the left of the canvas (the builder) is not usable space
+    const inset = Math.min(full.width * 0.6, this.hooks.insetLeft?.() || 0);
+    const r = { width: full.width - inset, height: full.height };
     // A flat 160px margin is fine against a desktop canvas but eats nearly
     // half a phone's width, forcing the diagram down to the 0.15 floor and
     // rendering it as an unreadable, untappable smear. Below the width
     // where that starts to bite, scale the margin down with it instead.
     const margin = r.width < 600 ? Math.max(32, r.width * 0.2) : 160;
     const k = Math.min(1.1, Math.max(0.15, Math.min((r.width - margin) / (x2 - x1), (r.height - margin) / (y2 - y1))));
-    const target = { k, x: (r.width - (x2 - x1) * k) / 2 - x1 * k, y: (r.height - (y2 - y1) * k) / 2 - y1 * k };
+    const target = { k, x: inset + (r.width - (x2 - x1) * k) / 2 - x1 * k, y: (r.height - (y2 - y1) * k) / 2 - y1 * k };
     if (animate) this.animateTo(target); else { this.view = target; this.applyView(); }
   }
 
