@@ -1,7 +1,7 @@
 // Workspace: projects, version history, settings, status bar, cross-tab sync, offline updates
-import * as S from './storage.js?v=202609221104';
-import { setDiagramOptions } from './diagram.js?v=202609221104';
-import { t, getLang, onLang } from './i18n.js?v=202609221104';
+import * as S from './storage.js?v=202609241121';
+import { setDiagramOptions } from './diagram.js?v=202609241121';
+import { t, getLang, onLang } from './i18n.js?v=202609241121';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -43,6 +43,11 @@ export function initWorkspace(ctx) {
     const id = S.createProject(model);
     open(id, S.loadProject(id));
     return id;
+  };
+  // Shared demo links: reopen the project made from the same template instead of piling up copies
+  ws.openOrCreate = (name, make) => {
+    const p = S.listProjects().find(x => x.name === name);
+    if (p) ws.open(p.id); else ws.create(make());
   };
 
   let startId = S.getCurrent();

@@ -1,21 +1,21 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609221104';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609221104';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609221104';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609221104';
-import { DiagramTabs } from './diagrams-ui.js?v=202609221104';
-import { Panel } from './panel.js?v=202609221104';
-import { Sidebar } from './sidebar.js?v=202609221104';
-import { Palette } from './palette.js?v=202609221104';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609221104';
-import { parseDDL } from './ddl-parse.js?v=202609221104';
-import { SAMPLE_DDL } from './sample.js?v=202609221104';
-import { initWorkspace } from './workspace.js?v=202609221104';
-import { diffModels } from './diff.js?v=202609221104';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609221104';
-import { migrateModel, listSnapshots } from './storage.js?v=202609221104';
-import { Sandbox } from './sandbox.js?v=202609221104';
-import { CanvasSearch } from './canvas-search.js?v=202609221104';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609221104';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609241121';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609241121';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609241121';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609241121';
+import { DiagramTabs } from './diagrams-ui.js?v=202609241121';
+import { Panel } from './panel.js?v=202609241121';
+import { Sidebar } from './sidebar.js?v=202609241121';
+import { Palette } from './palette.js?v=202609241121';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609241121';
+import { parseDDL } from './ddl-parse.js?v=202609241121';
+import { SAMPLE_DDL } from './sample.js?v=202609241121';
+import { initWorkspace } from './workspace.js?v=202609241121';
+import { diffModels } from './diff.js?v=202609241121';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609241121';
+import { migrateModel, listSnapshots } from './storage.js?v=202609241121';
+import { Sandbox } from './sandbox.js?v=202609241121';
+import { CanvasSearch } from './canvas-search.js?v=202609241121';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609241121';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -987,6 +987,7 @@ function templateModel(tp) {
   const { model } = parseDDL(tp.ddl);
   const m = { ...emptyModel(), ...model, name: tp.name[getLang()] || tp.name.en };
   autoLayout(m);
+  if (tp.layout) m.tables.forEach(x => { const p = tp.layout[x.name]; if (p) [x.x, x.y] = p; });
   m.tables.forEach((x, i) => { x.color = TABLE_COLORS[(i % 6) + 1]; });
   let vy = 40;
   const vx = Math.max(0, ...m.tables.map(x => x.x + tableSize(x).w)) + 160;
@@ -994,14 +995,22 @@ function templateModel(tp) {
   return m;
 }
 renderLang();
+const linkedTpl = TEMPLATES.find(x => x.id === new URLSearchParams(location.search).get('template'));
 const ws = initWorkspace({
   store, diagram, toast, download, readFile,
   openTemplates: () => openTemplates(),
-  firstModel: blank => blank ? emptyModel() : templateModel(TEMPLATES[0]),
+  firstModel: blank => blank ? emptyModel() : templateModel(linkedTpl || TEMPLATES[0]),
   openMigration: id => openMigration(id),
   afterLoad: () => { nameInput.value = store.model.name; updateCheckBadge(); },
 });
 actions.projects = () => ws.projects();
+// ?template=<id> opens a ready-made schema, so a schema can be linked to directly
+if (linkedTpl) {
+  const name = linkedTpl.name[getLang()] || linkedTpl.name.en;
+  ws.openOrCreate(name, () => templateModel(linkedTpl));
+  history.replaceState(null, '', location.pathname + location.hash);
+  toast(t('t.tplLoaded', { n: name }));
+}
 
 // ---------- export menu ----------
 function exportMenuItems() {

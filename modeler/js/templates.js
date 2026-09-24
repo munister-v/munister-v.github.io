@@ -818,6 +818,105 @@ ALTER TABLE vaccinations ADD CONSTRAINT vaccinations_patients_fk FOREIGN KEY (pa
 CREATE INDEX visits_doctor_idx ON visits (doctor_id, visit_at);
 `,
   },
+  {
+    id: 'obl', icon: '⚾', tables: 7,
+    // hand placement mirroring the Oracle Academy ERD (autoLayout crosses the M:N lines here)
+    layout: {
+      SALES_REPRESENTATIVE: [40, 40], CUSTOMER: [480, 40], TEAM: [920, 40],
+      ORDERS: [480, 360], ORDER_ITEM: [920, 400], ITEM: [1360, 360], INVENTORY_LIST: [1360, 40],
+    },
+    name: { uk: 'OBL Store (Oracle Academy)', en: 'OBL Store (Oracle Academy)' },
+    desc: { uk: 'Навчальний проєкт Oracle Academy: покупці, команди, продавці, замовлення, товари, склад. Зв\'язки 1:1, 1:N і M:N', en: 'Oracle Academy course project: customers, teams, sales reps, orders, items, inventory. 1:1, 1:N and M:N relations' },
+    ddl: `
+CREATE TABLE sales_representative (
+  id NUMBER(10) NOT NULL,
+  email VARCHAR2(200) NOT NULL,
+  name VARCHAR2(200) NOT NULL,
+  address VARCHAR2(300) NOT NULL,
+  phone_number VARCHAR2(20) NOT NULL,
+  commission_rate NUMBER(5,2) NOT NULL,
+  CONSTRAINT sales_representative_pk PRIMARY KEY (id),
+  CONSTRAINT sales_rep_email_un UNIQUE (email)
+);
+COMMENT ON TABLE sales_representative IS 'Продавці-консультанти: офіційно обслуговують команди';
+
+CREATE TABLE customer (
+  customer_number NUMBER(10) NOT NULL,
+  email VARCHAR2(200) NOT NULL,
+  name VARCHAR2(200) NOT NULL,
+  address VARCHAR2(300) NOT NULL,
+  phone_number VARCHAR2(20) NOT NULL,
+  current_balance NUMBER(10,2) NOT NULL,
+  team_they_belong_to VARCHAR2(100),
+  sales_representative_id NUMBER(10),
+  CONSTRAINT customer_pk PRIMARY KEY (customer_number),
+  CONSTRAINT customer_email_un UNIQUE (email)
+);
+COMMENT ON TABLE customer IS 'Покупці: індивідуальні клієнти і представники команд';
+COMMENT ON COLUMN customer.sales_representative_id IS 'Може бути призначений продавець (необовʼязковий звʼязок)';
+
+CREATE TABLE team (
+  id NUMBER(10) NOT NULL,
+  name VARCHAR2(200) NOT NULL,
+  number_of_players NUMBER(4) NOT NULL,
+  discount NUMBER(5,2),
+  customer_number NUMBER(10) NOT NULL,
+  CONSTRAINT team_pk PRIMARY KEY (id),
+  CONSTRAINT team_customer_un UNIQUE (customer_number)
+);
+COMMENT ON TABLE team IS 'Команди: знижка залежить від кількості гравців';
+COMMENT ON COLUMN team.customer_number IS 'Представник команди, звʼязок 1:1';
+
+CREATE TABLE inventory_list (
+  id NUMBER(10) NOT NULL,
+  cost_of_the_unit NUMBER(10,2) NOT NULL,
+  units_on_hand NUMBER(8) NOT NULL,
+  CONSTRAINT inventory_list_pk PRIMARY KEY (id)
+);
+COMMENT ON TABLE inventory_list IS 'Списки товарів на складі';
+
+CREATE TABLE item (
+  item_number NUMBER(10) NOT NULL,
+  name VARCHAR2(200) NOT NULL,
+  description VARCHAR2(1000) NOT NULL,
+  price NUMBER(10,2) NOT NULL,
+  category VARCHAR2(100) NOT NULL,
+  color VARCHAR2(50),
+  item_size VARCHAR2(20),
+  inventory_list_id NUMBER(10) NOT NULL,
+  CONSTRAINT item_pk PRIMARY KEY (item_number)
+);
+COMMENT ON TABLE item IS 'Товари: мʼячі, бутси, рукавички, футболки, шорти';
+
+CREATE TABLE orders (
+  id NUMBER(10) NOT NULL,
+  order_date DATE NOT NULL,
+  items_purchased VARCHAR2(1000) NOT NULL,
+  item_size VARCHAR2(20) NOT NULL,
+  color VARCHAR2(50) NOT NULL,
+  price NUMBER(10,2) NOT NULL,
+  number_of_units NUMBER(6) NOT NULL,
+  total_order_price NUMBER(10,2) NOT NULL,
+  customer_number NUMBER(10) NOT NULL,
+  CONSTRAINT orders_pk PRIMARY KEY (id)
+);
+COMMENT ON TABLE orders IS 'Замовлення (ORDER зарезервоване слово Oracle)';
+
+CREATE TABLE order_item (
+  order_id NUMBER(10) NOT NULL,
+  item_number NUMBER(10) NOT NULL,
+  CONSTRAINT order_item_pk PRIMARY KEY (order_id, item_number)
+);
+COMMENT ON TABLE order_item IS 'Таблиця перетину для звʼязку M:N між замовленнями і товарами';
+
+ALTER TABLE customer ADD CONSTRAINT customer_sales_rep_fk FOREIGN KEY (sales_representative_id) REFERENCES sales_representative (id);
+ALTER TABLE team ADD CONSTRAINT team_customer_fk FOREIGN KEY (customer_number) REFERENCES customer (customer_number);
+ALTER TABLE item ADD CONSTRAINT item_inventory_list_fk FOREIGN KEY (inventory_list_id) REFERENCES inventory_list (id);
+ALTER TABLE orders ADD CONSTRAINT orders_customer_fk FOREIGN KEY (customer_number) REFERENCES customer (customer_number);
+ALTER TABLE order_item ADD CONSTRAINT order_item_orders_fk FOREIGN KEY (order_id) REFERENCES orders (id);
+ALTER TABLE order_item ADD CONSTRAINT order_item_item_fk FOREIGN KEY (item_number) REFERENCES item (item_number);
+`,
+  },
 ];
 
 // Column presets for the properties panel

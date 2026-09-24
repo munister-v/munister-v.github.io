@@ -17,7 +17,7 @@ Live: https://munister.com.ua/modeler/
 - Inline field editing on the diagram: double-click a table to add fields (Enter adds the next one), a field to edit it; types are guessed from names, and `CUSTOMER_ID` automatically becomes a foreign key to `CUSTOMERS`
 - Right-click menus for tables, fields and relations: 1:N, 1:1, identifying and M:N (junction table) relations, PK / NOT NULL / unique / index toggles, field types, ordering, ON DELETE
 - Crow's-foot notation with optionality circles and one-to-one bars
-- Seven ready-made schemas: online store, HR, university, bank, blog/CMS, warehouse, clinic — open or merge into the current model
+- Eight ready-made schemas: online store, HR, university, bank, blog/CMS, warehouse, clinic, Oracle Academy OBL Store (1:1, 1:N, M:N) — open or merge into the current model
 - Column presets (ID, audit, status, money, contacts, soft delete) and bulk column entry as text
 - Model check: missing primary keys, unindexed foreign keys (one-click fix), reserved words, type mismatches, long names, circular FK dependencies, repeating-group columns (1NF), inconsistent primary-key naming (one-click fix)
 - SQL sandbox: the model's schema translated to SQLite and run in-browser (sql.js/WASM) — write real SELECT / INSERT / UPDATE against it, click a table or column to insert its name, no backend and no real Oracle involved
