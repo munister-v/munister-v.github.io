@@ -245,6 +245,16 @@ p{text-wrap:pretty}
 .feat.feat-flip{grid-template-columns:minmax(260px,.62fr) minmax(0,1.38fr)}
 .feat.feat-flip .shot{grid-column:2}
 .feat.feat-flip > :not(.shot){grid-column:1}
+/* Музей и журнал: кадр во всю ширину, текст двумя колонками под ним.
+   Всех детей ставим явно, иначе авторазмещение grid разъезжается. */
+.feat.feat-full{grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);grid-template-rows:auto auto auto 1fr;column-gap:clamp(25px,4vw,64px)}
+.feat.feat-full .shot{grid-column:1 / -1;grid-row:1;aspect-ratio:16 / 9}
+.feat.feat-full .role{grid-column:1;grid-row:2;margin-top:26px}
+.feat.feat-full h3{grid-column:1;grid-row:3;font-size:clamp(30px,3vw,44px)}
+.feat.feat-full p{grid-column:2;grid-row:2 / span 3;margin-top:24px;max-width:64ch;font-size:18px}
+.feat.feat-full .meta{grid-column:1;grid-row:4;align-self:end}
+/* Снимок журнала обрезан снизу (1600x867): рамка повторяет его пропорцию, чтобы не резать логотип по бокам. */
+@media (min-width:761px){.feat.feat-full.feat-wide .shot{aspect-ratio:1600 / 867}}
 .feat .role{order:1;margin-top:17px;color:var(--c-faint);letter-spacing:.2em}
 /* Заголовки работ - антиква, как названия материалов в журнале. */
 .feat h3{order:2;margin-top:9px;font-family:var(--font-head);font-size:clamp(25px,2.4vw,35px);line-height:1.06;letter-spacing:-.014em}
