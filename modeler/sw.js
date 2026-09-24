@@ -1,6 +1,6 @@
 // Schemata service worker: works offline and picks up new releases cleanly.
 // VERSION is rewritten by bump-version.sh on every release.
-const VERSION = '202609241121';
+const VERSION = '202609241246';
 const CACHE = `schemata-${VERSION}`;
 const SHELL = ['./', './index.html', './icon.svg', './manifest.webmanifest'];
 

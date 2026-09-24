@@ -1,21 +1,22 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609241121';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609241121';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609241121';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609241121';
-import { DiagramTabs } from './diagrams-ui.js?v=202609241121';
-import { Panel } from './panel.js?v=202609241121';
-import { Sidebar } from './sidebar.js?v=202609241121';
-import { Palette } from './palette.js?v=202609241121';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609241121';
-import { parseDDL } from './ddl-parse.js?v=202609241121';
-import { SAMPLE_DDL } from './sample.js?v=202609241121';
-import { initWorkspace } from './workspace.js?v=202609241121';
-import { diffModels } from './diff.js?v=202609241121';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609241121';
-import { migrateModel, listSnapshots } from './storage.js?v=202609241121';
-import { Sandbox } from './sandbox.js?v=202609241121';
-import { CanvasSearch } from './canvas-search.js?v=202609241121';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609241121';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609241246';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609241246';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609241246';
+import { guessType, inferColumn, describe, findParent, physName, isLogical, applyInference, toPhysical, L2P_STEPS, suggestFieldNames } from './autodef.js?v=202609241246';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609241246';
+import { DiagramTabs } from './diagrams-ui.js?v=202609241246';
+import { Panel } from './panel.js?v=202609241246';
+import { Sidebar } from './sidebar.js?v=202609241246';
+import { Palette } from './palette.js?v=202609241246';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609241246';
+import { parseDDL } from './ddl-parse.js?v=202609241246';
+import { SAMPLE_DDL } from './sample.js?v=202609241246';
+import { initWorkspace } from './workspace.js?v=202609241246';
+import { diffModels } from './diff.js?v=202609241246';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609241246';
+import { migrateModel, listSnapshots } from './storage.js?v=202609241246';
+import { Sandbox } from './sandbox.js?v=202609241246';
+import { CanvasSearch } from './canvas-search.js?v=202609241246';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609241246';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -239,6 +240,8 @@ const actions = {
   sample: () => importDDL(SAMPLE_DDL, true),
   palette: () => palette.open(),
   search: () => canvasSearch.toggle(),
+  physical: () => openPhysical(),
+  assistant: () => toggleAssistant(),
 };
 
 const ICONS = Object.fromEntries([...document.querySelectorAll('[data-action] svg')].map(s => [s.closest('[data-action]').dataset.action, s.outerHTML]));
@@ -250,7 +253,7 @@ const palette = new Palette(store, {
     ['table', 'tb.table', 'T'], ['relation', 'tb.relation', 'R'], ['zone', 'tb.zone.t', 'Z'],
     ['layout', 'tb.layout'], ['no-overlaps', 'tb.noOverlaps.t'], ['fit', 'tb.fit.t', 'F'],
     ['ddl', 'tb.ddl.t'], ['import', 'tb.import'], ['svg', 'tb.svg.t'],
-    ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
+    ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['physical', 'tb.l2p.t'], ['assistant', 'as.toggle'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
     ['newView', 'cm.newView'], ['newSequence', 'cm.newSeq'],
     ['migrate', 'tb.migrate.t'], ['export', 'tb.export.t'], ['sandbox', 'tb.sandbox.t'],
     ['projects', 'ws.projects'], ['history', 'ws.history'], ['snapshot', 'ws.saveVersion'], ['settings', 'ws.settings'], ['shortcuts', 'ws.shortcuts', '?'],
@@ -436,6 +439,95 @@ function updateCheckBadge(issues) {
 }
 store.subscribe(r => { if (r !== 'select' && r !== 'move') updateCheckBadge(); });
 
+// ---------- logical → physical ----------
+const L2P_KEY = 'schemata:l2p';
+let l2pSteps = Object.fromEntries(L2P_STEPS.map(x => [x.id, x.on]));
+try { Object.assign(l2pSteps, JSON.parse(localStorage.getItem(L2P_KEY) || '{}')); } catch {}
+function openPhysical() { renderPhysical(); $('#l2p-dialog').showModal(); }
+function renderPhysical() {
+  // preview on a copy: the same function later runs on the live model inside store.update()
+  const log = toPhysical(JSON.parse(JSON.stringify(store.model)), l2pSteps, t);
+  const count = id => log.filter(x => x.step === id).length;
+  $('#l2p-steps').innerHTML = L2P_STEPS.map(({ id }) => `
+    <li><label class="check">
+      <input type="checkbox" data-step="${id}" ${l2pSteps[id] ? 'checked' : ''}>
+      <span><b>${esc(t(`l2p.s.${id}`))}</b>${l2pSteps[id] && count(id) ? ` <span class="count">${count(id)}</span>` : ''}<small>${esc(t(`l2p.d.${id}`))}</small></span>
+    </label></li>`).join('');
+  $('#l2p-log').innerHTML = !log.length
+    ? `<div class="chk-ok"><span>✓</span>${esc(t('l2p.none'))}</div>`
+    : L2P_STEPS.filter(({ id }) => count(id)).map(({ id }) => `
+      <section class="chk-group info">
+        <h4><i></i>${esc(t(`l2p.s.${id}`))} <span class="count">${count(id)}</span></h4>
+        <ul>${log.filter(x => x.step === id).slice(0, 300).map(x => `<li class="mono">${esc(x.text)}</li>`).join('')}</ul>
+      </section>`).join('');
+  const btn = $('#l2p-apply');
+  btn.disabled = !log.length;
+  btn.textContent = log.length ? t('l2p.applyN', { n: log.length }) : t('l2p.apply');
+}
+$('#l2p-steps').addEventListener('change', e => {
+  const cb = e.target.closest('[data-step]');
+  if (!cb) return;
+  l2pSteps[cb.dataset.step] = cb.checked;
+  try { localStorage.setItem(L2P_KEY, JSON.stringify(l2pSteps)); } catch {}
+  renderPhysical();
+  renderAssistant();
+});
+$('#l2p-apply').addEventListener('click', () => {
+  let log = [];
+  store.update(m => { log = toPhysical(m, l2pSteps, t); });
+  $('#l2p-dialog').close();
+  toast(t('l2p.done', { n: log.length }));
+});
+onLang(() => { if ($('#l2p-dialog').open) renderPhysical(); });
+
+
+// ---------- assistant mode ----------
+// Live version of the same rules: after every edit it shows what can still be auto-defined
+// for the selected table (or the whole model) and applies it in one click.
+const AS_KEY = 'schemata:assistant';
+let assistantOn = false;
+try { assistantOn = localStorage.getItem(AS_KEY) === '1'; } catch {}
+const asScope = () => {
+  const s = store.selection;
+  if (s?.kind === 'table' && store.table(s.id)) return new Set([s.id]);
+  if (s?.kind === 'multi') return new Set(s.ids.filter(id => store.table(id)));
+  return null;
+};
+function renderAssistant() {
+  $('#assistant-btn').classList.toggle('on', assistantOn);
+  $('#assistant').hidden = !assistantOn;
+  const scope = asScope();
+  const log = toPhysical(JSON.parse(JSON.stringify(store.model)), l2pSteps, t, scope);
+  const b = $('#assistant-badge');
+  b.hidden = assistantOn || !log.length; b.textContent = log.length > 99 ? '99+' : log.length;
+  if (!assistantOn) return;
+  $('#as-scope').textContent = scope?.size === 1 ? t('as.table', { t: store.table([...scope][0]).name }) : t('as.model');
+  const shown = log.slice(0, 7);
+  $('#as-list').innerHTML = !log.length
+    ? `<li class="as-ok">✓ ${esc(t('as.ok'))}</li>`
+    : shown.map(x => `<li class="mono" data-id="${x.target}" title="${esc(t(`l2p.s.${x.step}`))}"><i class="as-${x.step}"></i>${esc(x.text)}</li>`).join('') +
+      (log.length > shown.length ? `<li class="as-more">${esc(t('as.more', { n: log.length - shown.length }))}</li>` : '');
+  const btn = $('#as-apply');
+  btn.hidden = !log.length;
+  btn.textContent = t('as.apply', { n: log.length });
+}
+function toggleAssistant() {
+  assistantOn = !assistantOn;
+  try { localStorage.setItem(AS_KEY, assistantOn ? '1' : '0'); } catch {}
+  renderAssistant();
+}
+let asTimer;
+store.subscribe(r => { if (r === 'move') return; clearTimeout(asTimer); asTimer = setTimeout(renderAssistant, r === 'select' ? 0 : 200); });
+$('#as-apply').addEventListener('click', () => {
+  const scope = asScope();
+  let log = [];
+  store.update(m => { log = toPhysical(m, l2pSteps, t, scope); });
+  toast(t('as.done', { n: log.length }));
+});
+$('#as-list').addEventListener('click', e => { const li = e.target.closest('[data-id]'); if (li && store.table(li.dataset.id)) pick(li.dataset.id); });
+onLang(renderAssistant);
+renderAssistant();
+
 // ---------- duplicate / copy / paste ----------
 function cloneTables(tables, fks, offset = 40) {
   const model = store.model;
@@ -590,37 +682,13 @@ function relationTypeItems(child, parent, extra = {}) {
 }
 
 // ---------- inline field editor ----------
-const guessType = name => {
-  const n = name.toUpperCase();
-  if (/(^|_)ID$/.test(n)) return 'NUMBER';
-  if (/_AT$|TIMESTAMP/.test(n)) return 'TIMESTAMP';
-  if (/_(DATE|ON)$|^DATE_|BIRTH/.test(n)) return 'DATE';
-  if (/^(IS|HAS|CAN)_/.test(n)) return 'CHAR(1)';
-  if (/EMAIL/.test(n)) return 'VARCHAR2(255 CHAR)';
-  if (/PHONE/.test(n)) return 'VARCHAR2(20 CHAR)';
-  if (/PRICE|AMOUNT|TOTAL|SUM|BALANCE|SALARY|COST/.test(n)) return 'NUMBER(12,2)';
-  if (/QTY|QUANTITY|COUNT|NUMBER|_NO$|YEAR|AGE/.test(n)) return 'NUMBER(10)';
-  if (/DESCRIPTION|NOTE|COMMENT|TEXT|BODY/.test(n)) return 'VARCHAR2(4000 CHAR)';
-  if (/CODE|STATUS|TYPE|KIND/.test(n)) return 'VARCHAR2(30 CHAR)';
-  if (/CURRENCY/.test(n)) return 'CHAR(3)';
-  if (/JSON|ATTRIBUTES|PAYLOAD/.test(n)) return 'JSON';
-  return 'VARCHAR2(100 CHAR)';
-};
-// CUSTOMER_ID → CUSTOMERS / CUSTOMER table with a single-column PK
-function findParentFor(tableId, name) {
-  const m = name.toUpperCase().match(/^(.+)_ID$/);
-  if (!m) return null;
-  const base = m[1];
-  const cands = [base, `${base}S`, `${base}ES`, base.replace(/Y$/, 'IES')];
-  return store.model.tables.find(x => x.id !== tableId && cands.includes(x.name.toUpperCase()) && x.columns.filter(c => c.pk).length === 1) || null;
-}
-
 const editor = document.createElement('div');
 editor.className = 'field-editor';
 editor.hidden = true;
 editor.innerHTML = `
   <div class="fe-row">
-    <input class="fe-name mono" spellcheck="false" autocomplete="off">
+    <input class="fe-name mono" list="field-names" spellcheck="false" autocomplete="off">
+    <datalist id="field-names"></datalist>
     <input class="fe-type mono" list="oracle-types" spellcheck="false" autocomplete="off">
     <label class="tog" title="PK"><input type="checkbox" class="fe-pk"><span>PK</span></label>
     <label class="tog" title="NOT NULL"><input type="checkbox" class="fe-nn"><span>NN</span></label>
@@ -652,6 +720,8 @@ function openFieldEditor(tableId, colId, insertAt = null) {
   fe.type.placeholder = t('ie.type');
   fe.pk.checked = !!col?.pk; fe.nn.checked = col ? (!col.nullable || col.pk) : false;
   fe.hint.textContent = col ? t('ie.hintEdit') : t('ie.hint');
+  // autocomplete: FK columns to other tables, typical fields for this kind of table, common names
+  editor.querySelector('#field-names').innerHTML = col ? '' : suggestFieldNames(store.model, tb).slice(0, 40).map(n => `<option value="${n}"></option>`).join('');
   placeEditor(tb, index);
   editor.hidden = false;
   requestAnimationFrame(() => { fe.name.focus(); fe.name.select(); });
@@ -674,39 +744,55 @@ function commitEditor(next) {
   const st = feState;
   if (!st) return;
   const tb = store.table(st.tableId);
-  const name = fe.name.value.trim().toUpperCase().replace(/\s+/g, '_');
+  // logical names ("Дата народження", "unit price") become identifiers; the wording stays as the comment
+  const raw = fe.name.value.trim();
+  const name = physName(raw);
+  const note = isLogical(raw) ? raw.replace(/\s+/g, ' ').replace(/^./, ch => ch.toUpperCase()) : '';
   if (st.mode === 'rename') {
-    if (name && tb) store.update(() => { tb.name = name; });
+    if (name && tb) store.update(() => { tb.name = name; if (note && !tb.comment) tb.comment = note; });
     closeEditor();
     return;
   }
   if (!name) { closeEditor(); return; }
-  const type = (fe.type.value.trim() || guessType(name)).toUpperCase();
-  let autoParent = null;
+  const typed = fe.type.value.trim().toUpperCase();
   if (st.colId) {
     const col = tb.columns.find(c => c.id === st.colId);
     store.update(() => {
-      Object.assign(col, { name, type, pk: fe.pk.checked });
+      Object.assign(col, { name, type: typed || col.type, pk: fe.pk.checked });
       col.nullable = !(fe.nn.checked || fe.pk.checked);
+      if (note && !col.comment) col.comment = note;
     });
     closeEditor();
     return;
   }
-  const col = newColumn(name, type);
+  const col = newColumn(name, typed || guessType(name));
   col.pk = fe.pk.checked;
   col.nullable = !(fe.nn.checked || fe.pk.checked);
-  autoParent = findParentFor(tb.id, name);
-  if (autoParent && !fe.type.value.trim()) col.type = autoParent.columns.find(c => c.pk).type;
-  store.update(() => tb.columns.splice(st.index, 0, col));
+  if (note) col.comment = note;
+  const autoParent = findParent(store.model, tb.id, name);
+  if (autoParent && !typed) col.type = autoParent.columns.find(c => c.pk).type;
+  let inf = null;
+  store.update(m => {
+    tb.columns.splice(st.index, 0, col);
+    // a FK column takes its type from the parent key; everything else gets the full auto-definition
+    if (!autoParent) inf = applyInference(m, tb, col, { keepType: !!typed, keepNn: fe.nn.checked || fe.pk.checked });
+  });
   if (autoParent && !store.model.fks.some(f => f.fromTable === tb.id && f.toTable === autoParent.id)) {
     store.addRelation(tb.id, autoParent.id, { columnId: col.id, mandatory: !col.nullable });
     toast(t('t.autoFk', { c: name, t: autoParent.name }));
-  }
+  } else if (inf?.rule && (inf.check || inf.unique || inf.def || inf.nn)) toast(t('t.autoDef', { c: name, v: describe(inf) }));
   if (next) openFieldEditor(tb.id, null, st.index + 1);
   else closeEditor();
 }
 fe.name.addEventListener('input', () => {
-  if (feState?.mode === 'field' && !feState.typeTouched) fe.type.placeholder = guessType(fe.name.value || 'X');
+  if (!feState) return;
+  const raw = fe.name.value.trim(), name = physName(raw);
+  if (feState.mode === 'rename') { fe.hint.textContent = name && name !== raw ? `→ ${name}` : t('ie.hintEdit'); return; }
+  if (!feState.typeTouched) fe.type.placeholder = guessType(name || 'X');
+  if (!raw) { fe.hint.textContent = feState.colId ? t('ie.hintEdit') : t('ie.hint'); return; }
+  const parent = !feState.colId && findParent(store.model, feState.tableId, name);
+  const facts = feState.colId ? '' : parent ? `FK → ${parent.name}` : describe(inferColumn(name));
+  fe.hint.textContent = [name !== raw ? `→ ${name}` : '', facts].filter(Boolean).join('  ·  ') || t('ie.hint');
 });
 fe.type.addEventListener('input', () => { if (feState) feState.typeTouched = true; });
 editor.addEventListener('keydown', e => {
@@ -929,6 +1015,7 @@ $('#canvas').addEventListener('contextmenu', e => {
     { label: t('cm.layout'), icon: '⊞', run: actions.layout },
     { label: t('cm.fit'), icon: '⤢', kbd: 'F', run: actions.fit },
     { label: t('cm.check'), icon: '✓', run: actions.check },
+    { label: t('tb.l2p.t'), icon: '⇲', run: actions.physical },
   ]);
 });
 // right-click on the sidebar list opens the same table menu
@@ -1050,6 +1137,7 @@ actions.more = btn => {
   openMenu(r.right, r.bottom + 6, [
     { label: t('tb.templates'), icon: ICONS.templates, run: actions.templates },
     { label: t('tb.check'), icon: ICONS.check, kbd: checkBadge.hidden ? undefined : checkBadge.textContent, run: actions.check },
+    { label: t('tb.l2p'), icon: ICONS.physical, run: actions.physical },
     '-',
     { label: t('ws.projects'), icon: ICONS.projects, run: actions.projects },
     { label: t('ws.history'), icon: ICONS.history, run: actions.history },

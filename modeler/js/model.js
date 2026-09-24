@@ -1,5 +1,6 @@
 // Модель данных + история (undo/redo) + автосохранение
-import { t } from './i18n.js?v=202609241121';
+import { t } from './i18n.js?v=202609241246';
+import { singular } from './autodef.js?v=202609241246';
 
 let seq = Date.now();
 export const uid = (p = 'id') => `${p}${(seq++).toString(36)}`;
@@ -356,7 +357,7 @@ export class Store {
           const col = c.columns.find(x => x.id === columnId);
           if (col) return { from: col.id, to: pc.id };
         }
-        const base = pc.name === 'ID' ? `${parent.name.replace(/S$/, '')}_ID` : pc.name;
+        const base = pc.name === 'ID' ? `${singular(parent.name)}_ID` : pc.name;
         let colName = childId === parentId ? `PARENT_${base}` : base;
         const existing = c.columns.find(x => x.name.toUpperCase() === colName.toUpperCase());
         const used = m.fks.some(f => f.fromTable === childId && f.columns.some(p => p.from === existing?.id));

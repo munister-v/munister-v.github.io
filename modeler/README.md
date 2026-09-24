@@ -14,7 +14,10 @@ Live: https://munister.com.ua/modeler/
 - Offline-capable PWA: a service worker caches the app, and a banner offers new releases
 - Responsive layout: usable down to phone width, with an overflow menu for the less-used toolbar actions
 - Settings: column types, compact keys-only view, striped rows, snap to grid
-- Inline field editing on the diagram: double-click a table to add fields (Enter adds the next one), a field to edit it; types are guessed from names, and `CUSTOMER_ID` automatically becomes a foreign key to `CUSTOMERS`
+- Logical → physical model: one dialog turns names written the logical way ("Дата народження", "unit price", "orderDate") into Oracle identifiers with the wording kept as comments (Ukrainian transliterated by the official KMU 2010 scheme), pluralises English table names, adds surrogate or composite (M:N) primary keys, creates foreign keys from `<TABLE>_ID` columns, infers data types, NOT NULL / DEFAULT / CHECK / UNIQUE from ~60 name rules (English and Ukrainian), date-range checks, FK indexes and optional audit columns — every rule can be switched off, with a preview of each change and one-step undo
+- Assistant mode: a live card that lists what can still be auto-defined for the selected table (or the whole model) after every edit and applies it in one click
+- Field-name autocomplete: FK columns to the existing tables and the fields a table of that kind usually has (customer → FIRST_NAME, EMAIL…; payment → AMOUNT, CURRENCY…)
+- Inline field editing on the diagram: double-click a table to add fields (Enter adds the next one), a field to edit it; a new field gets its type, NOT NULL, DEFAULT, CHECK and UNIQUE from its name, and `CUSTOMER_ID` automatically becomes a foreign key to `CUSTOMERS`
 - Right-click menus for tables, fields and relations: 1:N, 1:1, identifying and M:N (junction table) relations, PK / NOT NULL / unique / index toggles, field types, ordering, ON DELETE
 - Crow's-foot notation with optionality circles and one-to-one bars
 - Eight ready-made schemas: online store, HR, university, bank, blog/CMS, warehouse, clinic, Oracle Academy OBL Store (1:1, 1:N, M:N) — open or merge into the current model
@@ -55,6 +58,7 @@ python3 -m http.server 8765
 ## Layout
 ```
 js/model.js      model, undo/redo, autosave
+js/autodef.js    auto-definitions from names, transliteration, logical → physical
 js/diagram.js    SVG diagram, pan/zoom, drag
 js/diagrams-ui.js diagram tabs: multiple diagrams (subject areas) per model
 js/panel.js      properties panel

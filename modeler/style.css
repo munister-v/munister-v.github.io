@@ -783,3 +783,42 @@ dialog.wide { width: min(1040px, calc(100vw - 32px)); }
 .lod-bar { fill: #d6d3d1; opacity: .7; pointer-events: none; }
 .lod-text { font: 500 11px var(--mono); fill: var(--muted); pointer-events: none; }
 
+
+/* logical → physical dialog: rules on the left, change preview on the right */
+.l2p-body { display: grid; grid-template-columns: minmax(240px, 300px) 1fr; gap: 18px; min-height: 0; }
+.l2p-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; align-content: start; overflow-y: auto; max-height: 56vh; }
+.l2p-steps label.check { margin: 0; display: flex; align-items: flex-start; gap: 9px; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+.l2p-steps label.check:hover { background: var(--bg); }
+.l2p-steps input { margin-top: 2px; flex: none; }
+.l2p-steps b { font-weight: 600; font-size: 12.5px; color: var(--text); }
+.l2p-steps small { display: block; margin-top: 2px; font-size: 11px; line-height: 1.4; color: var(--muted); }
+.l2p-steps .count, .l2p-log .count { font-size: 10.5px; font-weight: 600; padding: 1px 6px; border-radius: 99px; background: var(--bg); color: var(--text-2); }
+.l2p-log { overflow-y: auto; max-height: 56vh; display: grid; gap: 14px; align-content: start; }
+.l2p-log li { cursor: default; font-size: 12px; }
+.l2p-note { margin-right: auto; font-size: 11.5px; color: var(--muted); }
+@media (max-width: 760px) { .l2p-body { grid-template-columns: 1fr; } .l2p-steps, .l2p-log { max-height: none; } }
+
+/* assistant mode: live auto-definition hints, bottom-left of the canvas */
+.assistant { position: absolute; left: 16px; top: 54px; width: 330px; max-width: calc(100% - 32px); background: rgba(255, 255, 255, .95); backdrop-filter: blur(12px); border-radius: 12px; box-shadow: var(--shadow-md), 0 0 0 1px var(--border); animation: as-in .25s var(--ease); z-index: 5; }
+@keyframes as-in { from { opacity: 0; transform: translateY(-6px); } }
+.assistant header { display: flex; align-items: center; gap: 9px; padding: 10px 10px 6px 12px; }
+.assistant header > div { flex: 1; min-width: 0; }
+.assistant header b { display: block; font-size: 12.5px; font-weight: 650; }
+.assistant header small { display: block; font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.assistant .as-ic { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; background: linear-gradient(160deg, #e6f6f3, #d2efe9); color: var(--accent); flex: none; }
+.assistant .as-ic svg { width: 15px; height: 15px; fill: currentColor; }
+.assistant .ic { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 7px; color: var(--muted); }
+.assistant .ic:hover { background: var(--hover); color: var(--text); }
+.assistant .ic svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 1.6; fill: none; }
+#as-list { list-style: none; margin: 0; padding: 0 8px; max-height: 190px; overflow-y: auto; display: grid; gap: 1px; }
+#as-list li { display: flex; align-items: baseline; gap: 7px; padding: 5px 6px; border-radius: 6px; font-size: 11px; color: var(--text-2); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#as-list li:hover { background: var(--bg); color: var(--text); }
+#as-list li i { width: 6px; height: 6px; border-radius: 50%; flex: none; background: var(--c-blue); transform: translateY(-1px); }
+#as-list li i.as-names, #as-list li i.as-plural { background: var(--c-violet, #8b5cf6); }
+#as-list li i.as-pk, #as-list li i.as-fks, #as-list li i.as-fkIdx { background: var(--c-amber); }
+#as-list li i.as-rules, #as-list li i.as-ranges { background: var(--c-green); }
+#as-list li.as-ok, #as-list li.as-more { cursor: default; font-family: var(--sans); color: var(--muted); }
+.assistant footer { display: flex; justify-content: flex-end; gap: 6px; padding: 8px 10px 10px; }
+.assistant footer .small { height: 28px; padding: 0 11px; font-size: 12px; }
+.dock button#assistant-btn .badge { top: -3px; right: -3px; }
+@media (max-width: 760px) { .assistant { left: 10px; right: 10px; width: auto; } #as-list { max-height: 120px; } }
