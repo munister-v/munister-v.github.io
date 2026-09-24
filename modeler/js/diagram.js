@@ -1,5 +1,5 @@
 // SVG diagram: tables, relations, pan/zoom, drag, relation mode, zones, marquee selection
-import { t as tr } from './i18n.js?v=202609241246';
+import { t as tr } from './i18n.js?v=202609241258';
 
 const NS = 'http://www.w3.org/2000/svg';
 const HEADER = 38, ROW = 24, PAD = 14;
@@ -57,7 +57,7 @@ export function viewSize(v) {
 export class Diagram {
   constructor(svg, store, hooks) {
     this.svg = svg; this.store = store; this.hooks = hooks;
-    STORE = store;
+    STORE ||= store; // the first diagram is the main one; a preview diagram must not take over compact mode
     this.view = { x: 0, y: 0, k: 1 };
     this.mode = 'select'; // 'select' | 'relation'
     this.relFrom = null;

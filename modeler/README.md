@@ -14,6 +14,7 @@ Live: https://munister.com.ua/modeler/
 - Offline-capable PWA: a service worker caches the app, and a banner offers new releases
 - Responsive layout: usable down to phone width, with an overflow menu for the less-used toolbar actions
 - Settings: column types, compact keys-only view, striped rows, snap to grid
+- **Model from text**: describe the domain in plain sentences (Ukrainian or English) — `Клієнт: імʼя!, email [унікальний]`, `Кожне замовлення належить клієнту`, `Замовлення *-* Товар`, or Oracle Academy Barker notation (`#` identifier, `*` mandatory, `o` optional) — and a live ER diagram of the physical model builds on the right as you type, following the cursor; create it as a new project or merge it into the current model (matching entities extend existing tables)
 - Logical → physical model: one dialog turns names written the logical way ("Дата народження", "unit price", "orderDate") into Oracle identifiers with the wording kept as comments (Ukrainian transliterated by the official KMU 2010 scheme), pluralises English table names, adds surrogate or composite (M:N) primary keys, creates foreign keys from `<TABLE>_ID` columns, infers data types, NOT NULL / DEFAULT / CHECK / UNIQUE from ~60 name rules (English and Ukrainian), date-range checks, FK indexes and optional audit columns — every rule can be switched off, with a preview of each change and one-step undo
 - Assistant mode: a live card that lists what can still be auto-defined for the selected table (or the whole model) after every edit and applies it in one click
 - Field-name autocomplete: FK columns to the existing tables and the fields a table of that kind usually has (customer → FIRST_NAME, EMAIL…; payment → AMOUNT, CURRENCY…)
@@ -59,6 +60,7 @@ python3 -m http.server 8765
 ```
 js/model.js      model, undo/redo, autosave
 js/autodef.js    auto-definitions from names, transliteration, logical → physical
+js/textmodel.js  model from text: sentence parser + model builder
 js/diagram.js    SVG diagram, pan/zoom, drag
 js/diagrams-ui.js diagram tabs: multiple diagrams (subject areas) per model
 js/panel.js      properties panel

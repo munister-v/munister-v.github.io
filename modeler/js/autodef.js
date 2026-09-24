@@ -3,8 +3,8 @@
 // Names can be written the logical way — "Дата народження", "unitPrice",
 // "first name" — and become Oracle identifiers (DATA_NARODZHENNIA, UNIT_PRICE…);
 // the original wording is kept as the column/table comment.
-import { newColumn, uid, uniqueName } from './model.js?v=202609241246';
-import { fixFkIndexes } from './checks.js?v=202609241246';
+import { newColumn, uid, uniqueName } from './model.js?v=202609241258';
+import { fixFkIndexes } from './checks.js?v=202609241258';
 
 // Ukrainian → Latin, official KMU 2010 scheme (є/ї/й/ю/я differ at word start)
 const UK = { а: 'a', б: 'b', в: 'v', г: 'h', ґ: 'g', д: 'd', е: 'e', є: 'ie', ж: 'zh', з: 'z', и: 'y', і: 'i', ї: 'i', й: 'i', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ь: '', ю: 'iu', я: 'ia', ъ: '', ы: 'y', э: 'e', ё: 'io' };
@@ -100,7 +100,7 @@ const RULES = [
   { id: 'percent', test: W('PERCENT', 'PCT', 'RATE', 'DISCOUNT', 'VAT', 'PDV', 'ZNYZHKA', 'VIDSOTOK', 'STAVKA'), type: 'NUMBER(5,2)', check: c => `${c} BETWEEN 0 AND 100` },
   { id: 'balance', test: W('BALANCE', 'BALANS', 'ZALYSHOK_KOSHTIV'), type: 'NUMBER(14,2)', def: '0', nn: true },
   { id: 'money', test: W('PRICE', 'COST', 'AMOUNT', 'TOTAL', 'SUM', 'SUMA', 'FEE', 'SALARY', 'WAGE', 'BUDGET', 'DEBIT', 'CREDIT', 'TSINA', 'VARTIST', 'ZARPLATA', 'OPLATA', 'OKLAD', 'VYTRATY'), type: 'NUMBER(12,2)', check: c => `${c} >= 0` },
-  { id: 'qty', test: W('QTY', 'QUANTITY', 'KILKIST', 'STOCK', 'UNITS', 'ZALYSHOK', 'COUNT', 'MISTSIA', 'SEATS', 'CAPACITY'), type: 'NUMBER(10)', def: n => /^(QTY|QUANTITY|KILKIST)$/.test(n) ? '1' : '', check: c => `${c} >= 0` },
+  { id: 'qty', test: W('QTY', 'QUANTITY', 'KILKIST', 'STOCK', 'UNITS', 'ZALYSHOK', 'COUNT', 'MISTSIA', 'SEATS', 'CAPACITY', 'CREDITS', 'KREDYTY', 'HOURS_TOTAL'), type: 'NUMBER(10)', def: n => /^(QTY|QUANTITY|KILKIST)$/.test(n) ? '1' : '', check: c => `${c} >= 0` },
   { id: 'year', test: W('YEAR', 'RIK'), type: 'NUMBER(4)', check: c => `${c} BETWEEN 1900 AND 2100` },
   { id: 'age', test: W('AGE', 'VIK'), type: 'NUMBER(3)', check: c => `${c} BETWEEN 0 AND 150` },
   { id: 'rating', test: W('RATING', 'STARS', 'REITYNH'), type: 'NUMBER(2,1)', check: c => `${c} BETWEEN 1 AND 5` },

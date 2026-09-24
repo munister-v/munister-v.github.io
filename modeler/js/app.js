@@ -1,22 +1,23 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609241246';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609241246';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609241246';
-import { guessType, inferColumn, describe, findParent, physName, isLogical, applyInference, toPhysical, L2P_STEPS, suggestFieldNames } from './autodef.js?v=202609241246';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609241246';
-import { DiagramTabs } from './diagrams-ui.js?v=202609241246';
-import { Panel } from './panel.js?v=202609241246';
-import { Sidebar } from './sidebar.js?v=202609241246';
-import { Palette } from './palette.js?v=202609241246';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609241246';
-import { parseDDL } from './ddl-parse.js?v=202609241246';
-import { SAMPLE_DDL } from './sample.js?v=202609241246';
-import { initWorkspace } from './workspace.js?v=202609241246';
-import { diffModels } from './diff.js?v=202609241246';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609241246';
-import { migrateModel, listSnapshots } from './storage.js?v=202609241246';
-import { Sandbox } from './sandbox.js?v=202609241246';
-import { CanvasSearch } from './canvas-search.js?v=202609241246';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609241246';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609241258';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609241258';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609241258';
+import { guessType, inferColumn, describe, findParent, physName, isLogical, applyInference, toPhysical, L2P_STEPS, suggestFieldNames } from './autodef.js?v=202609241258';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609241258';
+import { DiagramTabs } from './diagrams-ui.js?v=202609241258';
+import { Panel } from './panel.js?v=202609241258';
+import { Sidebar } from './sidebar.js?v=202609241258';
+import { Palette } from './palette.js?v=202609241258';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609241258';
+import { parseDDL } from './ddl-parse.js?v=202609241258';
+import { SAMPLE_DDL } from './sample.js?v=202609241258';
+import { initWorkspace } from './workspace.js?v=202609241258';
+import { diffModels } from './diff.js?v=202609241258';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609241258';
+import { migrateModel, listSnapshots } from './storage.js?v=202609241258';
+import { Sandbox } from './sandbox.js?v=202609241258';
+import { parseText, buildModel, TEXT_EXAMPLES } from './textmodel.js?v=202609241258';
+import { CanvasSearch } from './canvas-search.js?v=202609241258';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609241258';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -242,6 +243,7 @@ const actions = {
   search: () => canvasSearch.toggle(),
   physical: () => openPhysical(),
   assistant: () => toggleAssistant(),
+  fromText: () => openTextModel(),
 };
 
 const ICONS = Object.fromEntries([...document.querySelectorAll('[data-action] svg')].map(s => [s.closest('[data-action]').dataset.action, s.outerHTML]));
@@ -253,7 +255,7 @@ const palette = new Palette(store, {
     ['table', 'tb.table', 'T'], ['relation', 'tb.relation', 'R'], ['zone', 'tb.zone.t', 'Z'],
     ['layout', 'tb.layout'], ['no-overlaps', 'tb.noOverlaps.t'], ['fit', 'tb.fit.t', 'F'],
     ['ddl', 'tb.ddl.t'], ['import', 'tb.import'], ['svg', 'tb.svg.t'],
-    ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['physical', 'tb.l2p.t'], ['assistant', 'as.toggle'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
+    ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['fromText', 'tb.text.t'], ['physical', 'tb.l2p.t'], ['assistant', 'as.toggle'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
     ['newView', 'cm.newView'], ['newSequence', 'cm.newSeq'],
     ['migrate', 'tb.migrate.t'], ['export', 'tb.export.t'], ['sandbox', 'tb.sandbox.t'],
     ['projects', 'ws.projects'], ['history', 'ws.history'], ['snapshot', 'ws.saveVersion'], ['settings', 'ws.settings'], ['shortcuts', 'ws.shortcuts', '?'],
@@ -362,6 +364,11 @@ function renderTemplates() {
       <div class="tpl-art"><span>+</span></div>
       <h3>${t('tpl.blank')}</h3><p>${t('tpl.blankDesc')}</p>
       <div class="tpl-actions"><button class="primary" type="button" data-tpl="blank">${t('tpl.open')}</button></div>
+    </article>
+    <article class="tpl text">
+      <div class="tpl-art"><em>✎</em><div class="tpl-lines"><i></i><i></i><i></i></div></div>
+      <h3>${t('tpl.text')}</h3><p>${t('tpl.textDesc')}</p>
+      <div class="tpl-actions"><button class="primary" type="button" data-tpl="text">${t('tpl.textOpen')}</button></div>
     </article>` + TEMPLATES.map(tp => `
     <article class="tpl">
       <div class="tpl-art"><em>${tp.icon}</em><div class="tpl-mini">${preview(tp.tables)}</div></div>
@@ -379,6 +386,7 @@ $('#tpl-grid').addEventListener('click', e => {
   if (!open && !add) return;
   $('#tpl-dialog').close();
   if (open?.dataset.tpl === 'blank') { ws.create(emptyModel()); toast(t('ws.created')); return; }
+  if (open?.dataset.tpl === 'text') { tmMode = 'new'; openTextModel(); return; }
   const tp = TEMPLATES.find(x => x.id === (open || add).dataset[open ? 'tpl' : 'tplAdd']);
   const name = tp.name[getLang()] || tp.name.en;
   if (open) { ws.create(templateModel(tp)); toast(t('t.tplLoaded', { n: name })); return; }
@@ -527,6 +535,168 @@ $('#as-apply').addEventListener('click', () => {
 $('#as-list').addEventListener('click', e => { const li = e.target.closest('[data-id]'); if (li && store.table(li.dataset.id)) pick(li.dataset.id); });
 onLang(renderAssistant);
 renderAssistant();
+
+
+// ---------- model from text ----------
+// Plain sentences on the left, a live diagram on the right (a second Diagram on its own
+// throwaway Store, so the preview can pan/zoom but never touches the real model or autosave).
+const TM_KEY = 'schemata:textmodel';
+const tmText = $('#tm-text');
+const tmStore = new Store();
+let tmDiagram = null, tmResult = null, tmTimer = null, tmFitted = false;
+let tmMode = 'new';
+const noop = () => {};
+const TM_CHIPS = [
+  { label: 'tm.c.entity', ins: () => `\n${t('tm.i.entity')}` },
+  { label: 'tm.c.belongs', ins: () => `\n${t('tm.i.belongs')}` },
+  { label: 'tm.c.many', ins: () => `\n${t('tm.i.many')}` },
+  { label: 'tm.c.mn', ins: () => `\n${t('tm.i.mn')}` },
+  { label: 'tm.c.11', ins: () => `\n${t('tm.i.11')}` },
+  { code: '#', label: 'tm.c.pk', ins: () => '# ' },
+  { code: '*', label: 'tm.c.nn', ins: () => '* ' },
+  { code: 'o', label: 'tm.c.opt', ins: () => 'o ' },
+  { code: '[…]', label: 'tm.c.uq', ins: () => getLang() === 'uk' ? ' [унікальний]' : ' [unique]' },
+  { code: 'NUMBER(5)', label: 'tm.c.type', ins: () => ' NUMBER(5)' },
+];
+function tmInsert(text) {
+  const { selectionStart: a, selectionEnd: b, value } = tmText;
+  const pre = value.slice(0, a);
+  const put = text.startsWith('\n') && (!pre || pre.endsWith('\n')) ? text.slice(1) : text;
+  tmText.setRangeText(put, a, b, 'end');
+  tmText.focus();
+  tmUpdate();
+}
+function openTextModel() {
+  try { if (!tmText.value) tmText.value = localStorage.getItem(TM_KEY) || ''; } catch {}
+  tmMode = store.model.tables.length ? tmMode : 'new';
+  $('#tm-examples').innerHTML = (TEXT_EXAMPLES[getLang()] || TEXT_EXAMPLES.en).map(x => `<button type="button" class="pill small" data-ex="${x.id}">${esc(x.label)}</button>`).join('');
+  $('#tm-chips').innerHTML = TM_CHIPS.map((c, i) => `<button type="button" class="tm-chip" data-chip="${i}">${c.code ? `<code>${esc(c.code)}</code>` : ''}${esc(t(c.label))}</button>`).join('');
+  $('#tm-dialog').showModal();
+  if (!tmDiagram) {
+    tmDiagram = new Diagram($('#tm-canvas'), tmStore, { onAddTable: noop, onRelation: noop, onAddField: noop, onEditColumn: noop, onRenameTable: noop, onEditView: noop, onZoom: noop });
+  }
+  tmFitted = false;
+  tmUpdate(true);
+  requestAnimationFrame(() => { tmText.focus(); tmText.setSelectionRange(tmText.value.length, tmText.value.length); });
+}
+function tmUpdate(now = false) {
+  clearTimeout(tmTimer);
+  tmGutter();
+  tmTimer = setTimeout(tmRender, now ? 0 : 140);
+}
+function tmGutter() {
+  const n = tmText.value.split('\n').length;
+  const bad = new Set((tmResult?.parsed.issues || []).map(x => x.line));
+  $('#tm-gutter').innerHTML = Array.from({ length: n }, (_, i) => `<span${bad.has(i + 1) ? ' class="bad"' : ''}>${i + 1}</span>`).join('\n');
+  $('#tm-gutter').scrollTop = tmText.scrollTop;
+}
+function tmBuild() {
+  const parsed = parseText(tmText.value);
+  const merge = tmMode === 'merge';
+  const base = merge ? structuredClone(store.model) : emptyModel();
+  const res = buildModel(parsed, { base, steps: $('#tm-rules').checked ? l2pSteps : null, t });
+  const m = res.model;
+  const fresh = m.tables.filter(x => res.created.includes(x.id));
+  fresh.forEach((x, i) => { x.color = TABLE_COLORS[(i % 6) + 1]; });
+  if (!merge) autoLayout(m);
+  else if (fresh.length) {
+    // new tables go to the right of what is already there, like DDL import
+    const d = m.diagrams.find(x => x.id === m.activeDiagram) || m.diagrams[0];
+    const pos = x => d?.positions?.[x.id] || { x: x.x, y: x.y };
+    const old = m.tables.filter(x => !res.created.includes(x.id));
+    autoLayout({ tables: fresh, fks: m.fks.filter(f => res.created.includes(f.fromTable) && res.created.includes(f.toTable)) });
+    const offX = old.length ? Math.max(...old.map(x => pos(x).x + tableSize(x).w)) + 160 : 0;
+    fresh.forEach(x => { x.x += offX; });
+  }
+  migrateModel(m);
+  if (merge) {
+    // the preview only needs what the text touches: new and extended tables plus their parents
+    const keep = new Set([...res.created, ...res.extended]);
+    m.fks.forEach(f => { if (keep.has(f.fromTable)) keep.add(f.toTable); });
+    m.diagrams.forEach(d => { d.tableIds = d.tableIds.filter(id => keep.has(id)); d.viewIds = []; });
+  }
+  return { parsed, ...res };
+}
+function tmRender() {
+  let r;
+  try { r = tmBuild(); } catch (e) { console.error(e); return; }
+  tmResult = r;
+  try { localStorage.setItem(TM_KEY, tmText.value); } catch {}
+  const m = r.model, scope = new Set([...r.created, ...r.extended]);
+  const tables = m.tables.filter(x => scope.has(x.id));
+  const cols = tables.reduce((n, x) => n + x.columns.length, 0);
+  const rels = m.fks.filter(f => scope.has(f.fromTable)).length;
+  const cons = tables.reduce((n, x) => n + x.uniques.length + (x.checks || []).length, 0);
+  const stat = (v, k, cls = '') => `<span class="tm-stat ${cls}"><b>${v}</b>${esc(t(k))}</span>`;
+  $('#tm-stats').innerHTML = !tables.length ? '' : [stat(r.created.length, 'tm.s.tables'), r.extended.length ? stat(r.extended.length, 'tm.s.ext', 'ext') : '', stat(cols, 'tm.s.cols'), stat(rels, 'tm.s.rels'), stat(cons, 'tm.s.cons')].join('');
+  $('#tm-issues').innerHTML = [...r.parsed.issues.map(x => t(x.key, { n: x.line })), ...r.notes.map(x => t(x.key, x.p))].map(x => `<li>${esc(x)}</li>`).join('');
+  $('#tm-empty').hidden = !!tables.length;
+  // keep the view while typing; fit once when the first tables appear
+  const view = { ...tmDiagram.view };
+  tmStore.model = m;
+  tmStore.selection = null;
+  tmStore.emit('load');
+  if (!tmFitted && tables.length) { requestAnimationFrame(() => tmDiagram.fit(false)); tmFitted = true; }
+  else if (tmFitted) { tmDiagram.view = view; tmDiagram.applyView(); }
+  tmFollowCursor();
+  tmGutter();
+  const btn = $('#tm-create');
+  btn.disabled = !r.created.length && !r.extended.length;
+  btn.textContent = tmMode === 'merge' ? t('tm.addN', { n: r.created.length }) : r.created.length ? t('tm.createN', { n: r.created.length }) : t('tm.create');
+  btn.title = '⌘↵';
+  document.querySelectorAll('#tm-mode [data-mode]').forEach(b => { b.classList.toggle('on', b.dataset.mode === tmMode); b.disabled = b.dataset.mode === 'merge' && !store.model.tables.length; });
+}
+// the table the cursor's line is about is highlighted (with its relations) in the preview
+function tmFollowCursor() {
+  if (!tmResult) return;
+  const line = tmText.value.slice(0, tmText.selectionStart).split('\n').length;
+  const id = tmResult.lineTable.get(line);
+  const sel = id ? { kind: 'table', id } : null;
+  if (tmStore.selection?.id === sel?.id) return;
+  tmStore.select(sel);
+}
+function tmCreate() {
+  const r = tmBuild();
+  if (!r.created.length && !r.extended.length) return;
+  if (tmMode === 'merge') {
+    store.update(m => {
+      const full = r.model;
+      m.tables = full.tables; m.fks = full.fks;
+      migrateModel(m);
+      const d = m.diagrams.find(x => x.id === m.activeDiagram) || m.diagrams[0];
+      r.created.forEach(id => { const x = m.tables.find(y => y.id === id); if (x && d) d.positions[id] = { x: x.x, y: x.y }; });
+    }, 'load');
+    toast(t('tm.merged', { n: r.created.length, e: r.extended.length }));
+  } else {
+    const m = r.model;
+    m.name = r.parsed.title || t('model.default');
+    // the new project gets the whole model on its main diagram (the preview filter is merge-only)
+    ws.create(m);
+    toast(t('tm.done', { n: r.created.length }));
+  }
+  $('#tm-dialog').close();
+  requestAnimationFrame(() => diagram.fit());
+}
+tmText.addEventListener('input', () => tmUpdate());
+tmText.addEventListener('scroll', () => { $('#tm-gutter').scrollTop = tmText.scrollTop; });
+['keyup', 'click', 'select'].forEach(ev => tmText.addEventListener(ev, tmFollowCursor));
+tmText.addEventListener('keydown', e => {
+  e.stopPropagation();
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); tmCreate(); }
+  else if (e.key === 'Tab' && !e.shiftKey) { e.preventDefault(); tmText.setRangeText(', ', tmText.selectionStart, tmText.selectionEnd, 'end'); tmUpdate(); }
+});
+$('#tm-examples').addEventListener('click', e => {
+  const b = e.target.closest('[data-ex]');
+  if (!b) return;
+  tmText.value = (TEXT_EXAMPLES[getLang()] || TEXT_EXAMPLES.en).find(x => x.id === b.dataset.ex).text;
+  tmFitted = false;
+  tmUpdate(true);
+});
+$('#tm-chips').addEventListener('click', e => { const b = e.target.closest('[data-chip]'); if (b) tmInsert(TM_CHIPS[+b.dataset.chip].ins()); });
+$('#tm-mode').addEventListener('click', e => { const b = e.target.closest('[data-mode]'); if (b && !b.disabled) { tmMode = b.dataset.mode; tmFitted = false; tmUpdate(true); } });
+$('#tm-rules').addEventListener('change', () => tmUpdate(true));
+$('#tm-create').addEventListener('click', tmCreate);
+onLang(() => { if ($('#tm-dialog').open) openTextModel(); });
 
 // ---------- duplicate / copy / paste ----------
 function cloneTables(tables, fks, offset = 40) {
@@ -1015,6 +1185,7 @@ $('#canvas').addEventListener('contextmenu', e => {
     { label: t('cm.layout'), icon: '⊞', run: actions.layout },
     { label: t('cm.fit'), icon: '⤢', kbd: 'F', run: actions.fit },
     { label: t('cm.check'), icon: '✓', run: actions.check },
+    { label: t('tb.text.t'), icon: '✎', run: actions.fromText },
     { label: t('tb.l2p.t'), icon: '⇲', run: actions.physical },
   ]);
 });
@@ -1137,6 +1308,7 @@ actions.more = btn => {
   openMenu(r.right, r.bottom + 6, [
     { label: t('tb.templates'), icon: ICONS.templates, run: actions.templates },
     { label: t('tb.check'), icon: ICONS.check, kbd: checkBadge.hidden ? undefined : checkBadge.textContent, run: actions.check },
+    { label: t('tb.text'), icon: ICONS.fromText, run: actions.fromText },
     { label: t('tb.l2p'), icon: ICONS.physical, run: actions.physical },
     '-',
     { label: t('ws.projects'), icon: ICONS.projects, run: actions.projects },

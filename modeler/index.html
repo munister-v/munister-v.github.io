@@ -27,7 +27,7 @@
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:alt" content="Schemata: an ER diagram of an Oracle schema on the canvas">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="style.css?v=202609241246">
+  <link rel="stylesheet" href="style.css?v=202609241258">
 </head>
 <body>
   <header class="top">
@@ -54,6 +54,7 @@
       <div class="btn-group btn-group-primary">
         <button class="tb text" data-action="templates" data-i18n-title="tb.templates.t"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1.2"/><rect x="9" y="2" width="5" height="5" rx="1.2"/><rect x="2" y="9" width="5" height="5" rx="1.2"/><rect x="9" y="9" width="5" height="5" rx="1.2"/></svg><span data-i18n="tb.templates"></span></button>
         <button class="tb text check-btn" data-action="check" data-i18n-title="tb.check.t"><svg viewBox="0 0 16 16"><path d="M8 1.75l5.25 2v4c0 3.2-2.3 5.6-5.25 6.5C5.05 13.35 2.75 10.95 2.75 7.75v-4z"/><path d="M5.75 8l1.6 1.6 3-3.2"/></svg><span data-i18n="tb.check"></span><b class="badge" id="check-badge" hidden></b></button>
+        <button class="tb text tm-btn" data-action="fromText" data-i18n-title="tb.text.t"><svg viewBox="0 0 16 16"><path d="M2.5 3.5h7M2.5 6.5h5M2.5 9.5h6M2.5 12.5h3.5"/><path d="M11.5 7.5l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7z"/></svg><span data-i18n="tb.text"></span></button>
         <button class="tb text" data-action="physical" data-i18n-title="tb.l2p.t"><svg viewBox="0 0 16 16"><rect x="1.75" y="3" width="5" height="4" rx="1"/><rect x="9.25" y="9" width="5" height="4" rx="1"/><path d="M4.25 7v4h5M7.5 9.25L9.25 11 7.5 12.75"/></svg><span data-i18n="tb.l2p"></span></button>
       </div>
       <div class="btn-group">
@@ -163,6 +164,39 @@
         <button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
       </header>
       <div class="tpl-grid" id="tpl-grid"></div>
+    </form>
+  </dialog>
+
+  <dialog id="tm-dialog" class="tm">
+    <form method="dialog">
+      <header>
+        <span class="dlg-ic"><svg viewBox="0 0 16 16"><path d="M2.5 3.5h7M2.5 6.5h5M2.5 9.5h6M2.5 12.5h3.5"/><path d="M11.5 7.5l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7z"/></svg></span>
+        <div><h2 data-i18n="tm.title"></h2><p class="sub" data-i18n="tm.sub"></p></div>
+        <button value="close" class="ic" data-i18n-title="close"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </header>
+      <div class="tm-body">
+        <section class="tm-editor">
+          <div class="tm-examples"><span data-i18n="tm.examples"></span><span id="tm-examples"></span></div>
+          <div class="tm-area">
+            <pre class="tm-gutter" id="tm-gutter" aria-hidden="true"></pre>
+            <textarea id="tm-text" class="mono" spellcheck="false" autocomplete="off" data-i18n-ph="tm.ph"></textarea>
+          </div>
+          <div class="tm-chips" id="tm-chips"></div>
+          <ul class="tm-issues" id="tm-issues"></ul>
+        </section>
+        <section class="tm-preview">
+          <div class="tm-stats" id="tm-stats"></div>
+          <div class="tm-canvas-wrap"><svg id="tm-canvas"></svg><div class="tm-empty" id="tm-empty" data-i18n="tm.empty"></div></div>
+        </section>
+      </div>
+      <footer>
+        <div class="seg-switch tm-mode" id="tm-mode" role="radiogroup">
+          <button type="button" data-mode="new" data-i18n="tm.modeNew"></button>
+          <button type="button" data-mode="merge" data-i18n="tm.modeMerge"></button>
+        </div>
+        <label class="check tm-rules"><input type="checkbox" id="tm-rules" checked> <span data-i18n="tm.rules"></span></label>
+        <button class="primary" type="button" id="tm-create"></button>
+      </footer>
     </form>
   </dialog>
 
@@ -347,6 +381,6 @@
       document.body.append(d);
     }, 4000);
   </script>
-  <script type="module" src="js/app.js?v=202609241246"></script>
+  <script type="module" src="js/app.js?v=202609241258"></script>
 </body>
 </html>
