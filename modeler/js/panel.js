@@ -1,9 +1,9 @@
 // Properties panel: model, table (columns, keys, indexes) or foreign key
-import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609241331';
-import { sequenceDDL } from './ddl-gen.js?v=202609241331';
-import { t, getLang, onLang } from './i18n.js?v=202609241331';
-import { COLUMN_PRESETS } from './templates.js?v=202609241331';
-import { physName, isLogical, cascadeTableRename } from './autodef.js?v=202609241331';
+import { ORACLE_TYPES, TABLE_COLORS, newColumn, uid, uniqueName } from './model.js?v=202609241405';
+import { sequenceDDL } from './ddl-gen.js?v=202609241405';
+import { t, getLang, onLang } from './i18n.js?v=202609241405';
+import { COLUMN_PRESETS } from './templates.js?v=202609241405';
+import { physName, isLogical, cascadeTableRename, safeColumnName } from './autodef.js?v=202609241405';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 const CHECK_TEMPLATES = [
@@ -304,7 +304,7 @@ export class Panel {
         case 'table.name': { const was = tb.name; tb.name = el.value = physName(val) || tb.name; cascadeTableRename(m, tb, was); if (isLogical(val) && !tb.comment) tb.comment = val.trim(); rerender = true; break; }
         case 'table.schema': tb.schema = el.value = upper(val); break;
         case 'table.comment': tb.comment = val; break;
-        case 'col.name': col.name = el.value = physName(val) || col.name; if (isLogical(val) && !col.comment) { col.comment = val.trim(); rerender = true; } break;
+        case 'col.name': col.name = el.value = safeColumnName(tb.name, physName(val)) || col.name; if (isLogical(val) && !col.comment) { col.comment = val.trim(); rerender = true; } break;
         case 'col.type': col.type = el.value = val.trim().toUpperCase(); break;
         case 'col.pk': col.pk = val; if (val) col.nullable = false; rerender = true; break;
         case 'col.nn': col.nullable = !val; break;

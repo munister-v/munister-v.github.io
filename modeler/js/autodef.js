@@ -3,8 +3,9 @@
 // Names can be written the logical way — "Дата народження", "unitPrice",
 // "first name" — and become Oracle identifiers (DATA_NARODZHENNIA, UNIT_PRICE…);
 // the original wording is kept as the column/table comment.
-import { newColumn, uid, uniqueName } from './model.js?v=202609241331';
-import { fixFkIndexes } from './checks.js?v=202609241331';
+import { newColumn, uid, uniqueName } from './model.js?v=202609241405';
+import { translateName } from './translate.js?v=202609241405';
+import { fixFkIndexes, RESERVED } from './checks.js?v=202609241405';
 
 // Ukrainian → Latin, official KMU 2010 scheme (є/ї/й/ю/я differ at word start)
 const UK = { а: 'a', б: 'b', в: 'v', г: 'h', ґ: 'g', д: 'd', е: 'e', є: 'ie', ж: 'zh', з: 'z', и: 'y', і: 'i', ї: 'i', й: 'i', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ь: '', ю: 'iu', я: 'ia', ъ: '', ы: 'y', э: 'e', ё: 'io' };
@@ -25,10 +26,24 @@ export function translit(s) {
   return out;
 }
 
-// Any logical name → Oracle identifier. "unitPrice" / "Unit price" / "Ціна за од." → UNIT_PRICE / TSINA_ZA_OD
-export function physName(raw) {
+// How Ukrainian names become identifiers: 'translate' (Клієнт → CUSTOMER) or 'translit' (→ KLIIENT)
+const NAMING_KEY = 'schemata:naming';
+let NAMING = 'translate';
+try { NAMING = localStorage.getItem(NAMING_KEY) || 'translate'; } catch {}
+export const getNaming = () => NAMING;
+export function setNaming(mode) { NAMING = mode; try { localStorage.setItem(NAMING_KEY, mode); } catch {} }
+// the identifier plus the Ukrainian words the dictionary did not know (left transliterated)
+export function nameInfo(raw, mode = NAMING) {
+  const s = String(raw ?? '').trim();
+  if (mode === 'translate' && CYR.test(s)) { const r = translateName(s, translit); return { name: physName(r.name, 'translit'), unknown: r.unknown }; }
+  return { name: physName(s, 'translit'), unknown: [] };
+}
+
+// Any logical name → Oracle identifier. "unitPrice" / "Unit price" → UNIT_PRICE; "Ціна за одиницю" → UNIT_PRICE (or TSINA_ZA_ODYNYTSIU)
+export function physName(raw, mode = NAMING) {
   let s = String(raw ?? '').trim();
   if (!s) return '';
+  if (mode === 'translate' && CYR.test(s)) s = translateName(s, translit).name;
   s = s.replace(/([a-z0-9])([A-Z])/g, '$1_$2');
   s = translit(s).replace(/['’ʼ`]/g, '');
   s = s.replace(/[^A-Za-z0-9_$#]+/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '').toUpperCase();
@@ -197,7 +212,7 @@ const AUDIT = [
 ];
 const RANGE_PAIRS = [[/^START_(.+)$/, 'END_$1'], [/^(.+)_FROM$/, '$1_TO'], [/^VALID_FROM$/, 'VALID_TO'], [/^STARTS_AT$/, 'ENDS_AT'], [/^MIN_(.+)$/, 'MAX_$1'], [/^(.+)_START$/, '$1_END'], [/^DATA_POCHATKU$/, 'DATA_ZAKINCHENNIA']];
 const escRe = s => s.replace(/[$#]/g, '\\$&');
-const renameIn = (text, from, to) => text ? String(text).replace(new RegExp(`(^|[^A-Za-z0-9_$#"])${escRe(from)}(?![A-Za-z0-9_$#])`, 'gi'), `$1${to}`) : text;
+export const renameIn = (text, from, to) => text ? String(text).replace(new RegExp(`(^|[^A-Za-z0-9_$#"])${escRe(from)}(?![A-Za-z0-9_$#])`, 'gi'), `$1${to}`) : text;
 
 // Mutates model; returns the change log [{step, text, target}]. Run it on a copy for the preview.
 // scope: optional Set of table ids to limit the work to (the assistant runs it per selected table)
@@ -215,7 +230,7 @@ export function toPhysical(model, steps, t, scope = null) {
       const oldT = tb.name;
       let name = on('names') ? physName(oldT) || oldT : oldT;
       // only English-looking names are pluralised; transliterated Ukrainian stays as written
-      if (on('plural') && !CYR.test(oldT) && !CYR.test(tb.comment || '') && /^[A-Z0-9_]+$/.test(name) && !/^TABLE_\d+$/.test(name) && !isJunction(model, tb)) name = plural(name);
+      if (on('plural') && !CYR.test(oldT) && pluralizable(name, tb.comment) && /^[A-Z0-9_]+$/.test(name) && !/^TABLE_\d+$/.test(name) && !isJunction(model, tb)) name = plural(name);
       if (name !== oldT && !all.some(x => x !== tb && x.name === name)) {
         tb.name = name;
         add(CYR.test(oldT) || physName(oldT) !== oldT ? 'names' : 'plural', 'renameT', { a: oldT, b: name }, tb.id);
@@ -228,7 +243,7 @@ export function toPhysical(model, steps, t, scope = null) {
       if (on('names') && isLogical(oldT) && !tb.comment) { tb.comment = niceComment(oldT); add('names', 'comment', { t: tb.name, v: tb.comment }, tb.id); }
       if (!on('names')) continue;
       for (const c of tb.columns) {
-        const oldC = c.name, cn = physName(oldC) || oldC;
+        const oldC = c.name, cn = safeColumnName(tb.name, physName(oldC) || oldC);
         if (isLogical(oldC) && !c.comment) c.comment = niceComment(oldC);
         if (cn === oldC || tb.columns.some(x => x !== c && x.name === cn)) continue;
         c.name = cn;
@@ -280,7 +295,8 @@ export function toPhysical(model, steps, t, scope = null) {
         if (c.pk || c.virtual || carried.has(c.id) || (c.type && c.type.toUpperCase() !== DEFAULT_TYPE)) continue;
         const ty = inferColumn(c.name).type;
         // only a real type change: a VARCHAR2 length may well have been chosen on purpose
-        if (ty === (c.type || '').toUpperCase() || (c.type && /^VARCHAR2/.test(ty))) continue;
+        // in the wizard (retypeDefault) the default type is known to be a placeholder, so VARCHAR2 lengths may change too
+        if (ty === (c.type || '').toUpperCase() || (c.type && /^VARCHAR2/.test(ty) && !steps.retypeDefault)) continue;
         c.type = ty;
         add('types', 'type', { t: tb.name, c: c.name, v: ty }, tb.id);
       }
@@ -336,6 +352,14 @@ export function toPhysical(model, steps, t, scope = null) {
   return log;
 }
 
+// English names get plurals; a transliterated Ukrainian name (KLIIENT, comment "Клієнт") must not
+// become KLIIENTS — the name counts as English when it is the translation of its Ukrainian comment
+function pluralizable(name, comment) {
+  if (!CYR.test(comment || '')) return true;
+  const tr = physName(comment, 'translate');
+  return tr === name || plural(tr) === name || singular(name) === tr;
+}
+
 // junction (M:N) table: at least two outgoing FKs and nothing but key/FK columns
 function isJunction(model, tb) {
   const fks = model.fks.filter(f => f.fromTable === tb.id && f.toTable !== tb.id);
@@ -370,6 +394,13 @@ export function suggestFieldNames(model, tb) {
   return [...new Set([...own, ...fk, ...COMMON])].filter(n => !taken.has(n));
 }
 
+// Column names that are Oracle reserved words (NUMBER, DATE, LEVEL, SIZE…) get the table's
+// singular in front: ORDERS.DATE → ORDER_DATE, ORDERS.NUMBER → ORDER_NO
+export function safeColumnName(tableName, name) {
+  if (!RESERVED.has(name)) return name;
+  return `${singular(tableName)}_${name === 'NUMBER' ? 'NO' : name}`;
+}
+
 // A table was renamed: FK columns that were named after it (<OLD>_ID) and constraint names that
 // embed the old name follow along. Only derived names are touched; a hand-picked FK column name stays.
 export function cascadeTableRename(model, tb, oldName) {
@@ -380,12 +411,15 @@ export function cascadeTableRename(model, tb, oldName) {
       const child = model.tables.find(x => x.id === f.fromTable);
       for (const p of f.columns) {
         const c = child?.columns.find(x => x.id === p.from);
+        const was = c?.name;
         if (c && c.name === oldCol && !child.columns.some(x => x.name === newCol)) c.name = newCol;
         if (c && c.name === `PARENT_${oldCol}` && !child.columns.some(x => x.name === `PARENT_${newCol}`)) c.name = `PARENT_${newCol}`;
+        // indexes / uniques / checks named after that FK column (<CHILD>_<OLD>_ID_IDX) follow it
+        if (c && was !== c.name) [...child.uniques, ...child.indexes, ...(child.checks || [])].forEach(x => { x.name = renameToken(x.name, was, c.name); });
       }
     }
     if (f.toTable === tb.id || f.fromTable === tb.id) f.name = renameToken(f.name, oldName, tb.name);
   }
   for (const x of [...tb.uniques, ...tb.indexes, ...(tb.checks || [])]) x.name = renameToken(x.name, oldName, tb.name);
 }
-const renameToken = (name, from, to) => name.split(new RegExp(`(?<=^|_)${from.replace(/[$#]/g, '\\$&')}(?=_|$)`)).join(to);
+export const renameToken = (name, from, to) => name.split(new RegExp(`(?<=^|_)${from.replace(/[$#]/g, '\\$&')}(?=_|$)`)).join(to);

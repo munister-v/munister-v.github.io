@@ -1,5 +1,5 @@
 // Data dictionary: a standalone HTML document and a Markdown file
-import { t as tr, getLang } from './i18n.js?v=202609241331';
+import { t as tr, getLang } from './i18n.js?v=202609241405';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 const anchor = name => `t-${name.toLowerCase().replace(/[^a-z0-9_]+/g, '-')}`;

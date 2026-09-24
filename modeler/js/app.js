@@ -1,24 +1,25 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609241331';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609241331';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609241331';
-import { guessType, inferColumn, describe, findParent, physName, isLogical, applyInference, toPhysical, L2P_STEPS, suggestFieldNames, singular, cascadeTableRename } from './autodef.js?v=202609241331';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609241331';
-import { DiagramTabs } from './diagrams-ui.js?v=202609241331';
-import { Panel } from './panel.js?v=202609241331';
-import { Sidebar } from './sidebar.js?v=202609241331';
-import { Palette } from './palette.js?v=202609241331';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609241331';
-import { parseDDL } from './ddl-parse.js?v=202609241331';
-import { SAMPLE_DDL } from './sample.js?v=202609241331';
-import { initWorkspace } from './workspace.js?v=202609241331';
-import { diffModels } from './diff.js?v=202609241331';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609241331';
-import { migrateModel, listSnapshots } from './storage.js?v=202609241331';
-import { Sandbox } from './sandbox.js?v=202609241331';
-import { parseText, buildModel, TEXT_EXAMPLES } from './textmodel.js?v=202609241331';
-import { ENTITY_GROUPS, ATTRIBUTE_GROUPS, RELATION_BLOCKS, findEntity, findAttrSet, tableForBlock, placeEntity, addColumns } from './blocks.js?v=202609241331';
-import { CanvasSearch } from './canvas-search.js?v=202609241331';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609241331';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609241405';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609241405';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609241405';
+import { guessType, inferColumn, describe, findParent, physName, isLogical, applyInference, toPhysical, L2P_STEPS, suggestFieldNames, singular, cascadeTableRename, safeColumnName, nameInfo, getNaming, setNaming } from './autodef.js?v=202609241405';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609241405';
+import { DiagramTabs } from './diagrams-ui.js?v=202609241405';
+import { Panel } from './panel.js?v=202609241405';
+import { Sidebar } from './sidebar.js?v=202609241405';
+import { Palette } from './palette.js?v=202609241405';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609241405';
+import { parseDDL } from './ddl-parse.js?v=202609241405';
+import { SAMPLE_DDL } from './sample.js?v=202609241405';
+import { initWorkspace } from './workspace.js?v=202609241405';
+import { diffModels } from './diff.js?v=202609241405';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609241405';
+import { migrateModel, listSnapshots } from './storage.js?v=202609241405';
+import { Sandbox } from './sandbox.js?v=202609241405';
+import { parseText, buildModel, TEXT_EXAMPLES } from './textmodel.js?v=202609241405';
+import { ENTITY_GROUPS, ATTRIBUTE_GROUPS, RELATION_BLOCKS, findEntity, findAttrSet, tableForBlock, placeEntity, addColumns } from './blocks.js?v=202609241405';
+import { Wizard } from './wizard.js?v=202609241405';
+import { CanvasSearch } from './canvas-search.js?v=202609241405';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609241405';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -249,7 +250,8 @@ const actions = {
   sample: () => importDDL(SAMPLE_DDL, true),
   palette: () => palette.open(),
   search: () => canvasSearch.toggle(),
-  physical: () => openPhysical(),
+  physical: () => wizard.open(),
+  rules: () => openPhysical(),
   assistant: () => toggleAssistant(),
   fromText: () => openTextModel(),
   kit: () => toggleKit(),
@@ -288,7 +290,7 @@ const palette = new Palette(store, {
     ['table', 'tb.table', 'T'], ['relation', 'tb.relation', 'R'], ['zone', 'tb.zone.t', 'Z'],
     ['layout', 'tb.layout'], ['no-overlaps', 'tb.noOverlaps.t'], ['fit', 'tb.fit.t', 'F'],
     ['ddl', 'tb.ddl.t'], ['import', 'tb.import'], ['svg', 'tb.svg.t'],
-    ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['kit', 'kit.toggle'], ['fromText', 'tb.text.t'], ['physical', 'tb.l2p.t'], ['assistant', 'as.toggle'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
+    ['templates', 'tb.templates.t'], ['check', 'tb.check.t'], ['kit', 'kit.toggle'], ['fromText', 'tb.text.t'], ['physical', 'tb.l2p.t'], ['rules', 'l2p.title'], ['assistant', 'as.toggle'], ['duplicate', 'cm.duplicate', '⌘D'], ['png', 'tb.png.t'],
     ['newView', 'cm.newView'], ['newSequence', 'cm.newSeq'],
     ['migrate', 'tb.migrate.t'], ['export', 'tb.export.t'], ['sandbox', 'tb.sandbox.t'],
     ['projects', 'ws.projects'], ['history', 'ws.history'], ['snapshot', 'ws.saveVersion'], ['settings', 'ws.settings'], ['shortcuts', 'ws.shortcuts', '?'],
@@ -984,6 +986,7 @@ function renderEmptyState() {
   const card = (act, ic, key) => `<button type="button" class="es-card" data-es="${act}"><span class="es-ic">${ic}</span><b>${esc(t(`es.${key}`))}</b><small>${esc(t(`es.${key}.d`))}</small></button>`;
   el.innerHTML = `<div class="es-box">
     <h2>${esc(t('es.title'))}</h2><p>${esc(t('es.sub'))}</p>
+    <ol class="es-steps">${[1, 2, 3].map(i => `<li><b>${i}</b><span>${esc(t(`es.p${i}`))}</span></li>`).join('')}</ol>
     <div class="es-grid">
       ${card('kit', ICONS.kit || '▦', 'kit')}
       ${card('fromText', ICONS.fromText || '✎', 'text')}
@@ -1000,6 +1003,20 @@ $('#empty-state').addEventListener('click', e => {
 store.subscribe(r => { if (r !== 'move' && r !== 'select') renderEmptyState(); });
 onLang(renderEmptyState);
 renderEmptyState();
+
+// ---------- logical → physical wizard ----------
+const wizard = new Wizard({
+  store, dialog: $('#wz-dialog'), highlight: sql => highlightSQL(sql),
+  openKit: () => toggleKit(true),
+  openText: () => openTextModel(),
+  onApply: (r, snap) => {
+    if (snap) ws.snapshot(false);
+    store.update(m => { m.tables = r.m.tables; m.fks = r.m.fks; m.views = r.m.views; });
+    toast(t('wz.done'));
+    requestAnimationFrame(() => diagram.fit());
+  },
+});
+onLang(() => { if ($('#wz-dialog').open) wizard.render(); });
 
 // ---------- duplicate / copy / paste ----------
 function cloneTables(tables, fks, offset = 40) {
@@ -1228,7 +1245,7 @@ function commitEditor(next) {
   const tb = store.table(st.tableId);
   // logical names ("Дата народження", "unit price") become identifiers; the wording stays as the comment
   const raw = fe.name.value.trim();
-  const name = physName(raw);
+  const name = st.mode === 'rename' ? physName(raw) : safeColumnName(tb.name, physName(raw));
   const note = isLogical(raw) ? raw.replace(/\s+/g, ' ').replace(/^./, ch => ch.toUpperCase()) : '';
   if (st.mode === 'rename') {
     if (name && tb) store.update(m => {
@@ -1273,13 +1290,18 @@ function commitEditor(next) {
 }
 fe.name.addEventListener('input', () => {
   if (!feState) return;
-  const raw = fe.name.value.trim(), name = physName(raw);
-  if (feState.mode === 'rename') { fe.hint.textContent = name && name !== raw ? `→ ${name}` : t('ie.hintEdit'); return; }
+  const raw = fe.name.value.trim(), info = nameInfo(raw);
+  const tbName = store.table(feState.tableId)?.name || '';
+  const name = feState.mode === 'rename' ? info.name : safeColumnName(tbName, info.name);
+  // words the dictionary does not know stay transliterated — say so, the user may want to type the English
+  const warn = info.unknown.length ? `  ·  ⚠ ${t('ie.unknown', { w: info.unknown.join(', ') })}` : '';
+  fe.hint.classList.toggle('warn', !!info.unknown.length);
+  if (feState.mode === 'rename') { fe.hint.textContent = name && name !== raw ? `→ ${name}${warn}` : t('ie.hintEdit'); return; }
   if (!feState.typeTouched) fe.type.placeholder = guessType(name || 'X');
   if (!raw) { fe.hint.textContent = feState.colId ? t('ie.hintEdit') : t('ie.hint'); return; }
   const parent = !feState.colId && findParent(store.model, feState.tableId, name);
   const facts = feState.colId ? '' : parent ? `FK → ${parent.name}` : describe(inferColumn(name));
-  fe.hint.textContent = [name !== raw ? `→ ${name}` : '', facts].filter(Boolean).join('  ·  ') || t('ie.hint');
+  fe.hint.textContent = ([name !== raw ? `→ ${name}` : '', facts].filter(Boolean).join('  ·  ') || t('ie.hint')) + warn;
 });
 fe.type.addEventListener('input', () => { if (feState) feState.typeTouched = true; });
 editor.addEventListener('keydown', e => {

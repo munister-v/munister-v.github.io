@@ -14,6 +14,8 @@ Live: https://munister.com.ua/modeler/
 - Offline-capable PWA: a service worker caches the app, and a banner offers new releases
 - Responsive layout: usable down to phone width, with an overflow menu for the less-used toolbar actions
 - Settings: column types, compact keys-only view, striped rows, snap to grid
+- **Logical → physical wizard**: five steps — logical model overview with hints, names (translate / transliterate / keep, plural tables, every name editable, unknown words flagged), keys and relations (PK naming style, FKs from names, FK indexes, relation list), types and constraints (rules, audit, per-column type and NOT NULL), review with a change summary and the resulting DDL; nothing is applied until the last step, with an optional version snapshot
+- **Ukrainian → English names** from an offline domain dictionary (~600 words and phrases, case endings and word order handled): «Дата народження» → `BIRTH_DATE`, «Кількість на складі» → `STOCK_QUANTITY`, «Загальна сума замовлення» → `ORDER_TOTAL_AMOUNT`, «Чи активний» → `IS_ACTIVE`; transliteration stays available as a mode; Oracle reserved words as column names get the table prefix (`ORDERS.DATE` → `ORDER_DATE`)
 - **Direct manipulation**: drag the ● connector on a table's edge onto another table to relate them (or onto empty canvas — a new parent table appears, already linked, ready to be named; its FK column follows the name), smart alignment guides with snapping while moving tables (hold Alt to move freely), auto layout and "no overlaps" glide tables into place, and an empty canvas offers the ways to start
 - Renaming a table renames the FK columns derived from it (`CUSTOMER_ID` → `CLIENT_ID`) and the constraint names that embed it
 - **Builder**: a library of ready blocks on the canvas — ~50 entities in 9 domains (people, commerce, finance, organisation, education, healthcare, warehouse, content, system), ~40 field sets (full name, address, money + currency, period, audit, coordinates…) and relation blocks (1:N, mandatory, 1:1, identifying, M:N, hierarchy). Drag with mouse or touch, or click: an entity lands next to the tables it relates to and wires the FKs both ways (drop ORDERS and CUSTOMERS gets its relation), a field set dropped on a table adds typed, constrained columns, a relation block dropped on a child waits for a click on the parent; hovering a block previews its fields and the tables it will link to
@@ -65,6 +67,8 @@ js/model.js      model, undo/redo, autosave
 js/autodef.js    auto-definitions from names, transliteration, logical → physical
 js/textmodel.js  model from text: sentence parser + model builder
 js/blocks.js     builder library: ready entities, field sets, relation blocks
+js/translate.js  Ukrainian → English identifiers (dictionary, case endings, word order)
+js/wizard.js     logical → physical wizard
 js/diagram.js    SVG diagram, pan/zoom, drag
 js/diagrams-ui.js diagram tabs: multiple diagrams (subject areas) per model
 js/panel.js      properties panel

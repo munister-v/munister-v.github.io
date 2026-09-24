@@ -5,8 +5,8 @@
 //   relations  — dropped onto the child table, then the parent is clicked
 // Column spec: NAME, NAME! (NOT NULL), NAME:TYPE. Physical names are English (Oracle
 // convention); the labels become table comments in the interface language.
-import { newTable, newColumn, uid, uniqueName } from './model.js?v=202609241331';
-import { applyInference, singular, plural } from './autodef.js?v=202609241331';
+import { newTable, newColumn, uid, uniqueName } from './model.js?v=202609241405';
+import { applyInference, singular, plural } from './autodef.js?v=202609241405';
 
 const E = (id, icon, name, uk, en, cols, links = []) => ({ id, icon, name, label: { uk, en }, cols, links });
 export const ENTITY_GROUPS = [

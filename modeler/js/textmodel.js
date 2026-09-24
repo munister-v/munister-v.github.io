@@ -7,8 +7,8 @@
 //   Замовлення *-* Товар                           ← M:N through a junction table
 //
 // Barker notation from Oracle Academy works too: # identifier, * mandatory, o optional.
-import { newTable, newColumn, uid, uniqueName, emptyModel } from './model.js?v=202609241331';
-import { physName, isLogical, singular, plural, applyInference, toPhysical } from './autodef.js?v=202609241331';
+import { newTable, newColumn, uid, uniqueName, emptyModel } from './model.js?v=202609241405';
+import { physName, isLogical, singular, plural, applyInference, toPhysical, safeColumnName } from './autodef.js?v=202609241405';
 
 const TYPE_RE = /\s+((?:N?VARCHAR2|N?CHAR|RAW|NUMBER|FLOAT|TIMESTAMP)(?:\s*\([^)]*\))?(?:\s+WITH(?:\s+LOCAL)?\s+TIME\s+ZONE)?|INTEGER|DATE|CLOB|NCLOB|BLOB|JSON|BOOLEAN|BINARY_(?:FLOAT|DOUBLE)|XMLTYPE)\s*$/; // upper case only: "birth date" is a name, "born DATE" is a type
 // \b only knows ASCII letters, so word edges are spelled out for Cyrillic
@@ -35,7 +35,8 @@ function sameName(a, b) {
   if (!pa || !pb) return false;
   if (pa === pb || singular(pa) === singular(pb) || plural(pa) === pb || plural(pb) === pa) return true;
   const wa = a.toLowerCase().split(/[\s_]+/).filter(Boolean), wb = b.toLowerCase().split(/[\s_]+/).filter(Boolean);
-  return wa.length === wb.length && wa.every((w, i) => w.startsWith(stem(wb[i])) || wb[i].startsWith(stem(w)));
+  // a case ending changes a word by a few letters at most: "видача" must not match "видавництво"
+  return wa.length === wb.length && wa.every((w, i) => Math.abs(w.length - wb[i].length) <= 3 && (w.startsWith(stem(wb[i])) || wb[i].startsWith(stem(w))));
 }
 
 // text → { entities: [{ raw, attrs: [{ raw, pk, nn, optional, unique, type }] }], rels: [{ a, b, kind, nn, line }], issues }
@@ -125,7 +126,7 @@ export function buildModel(parsed, { base = emptyModel(), steps = null, t = k =>
     }
     byRaw.set(e.raw, tb);
     for (const a of e.attrs) {
-      const cn = physName(a.raw);
+      const cn = safeColumnName(tb.name, physName(a.raw));
       if (tb.columns.some(c => c.name === cn)) continue;
       const col = newColumn(cn, a.type || undefined);
       if (isLogical(a.raw)) col.comment = a.raw.charAt(0).toUpperCase() + a.raw.slice(1);
