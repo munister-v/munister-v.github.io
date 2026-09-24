@@ -3,8 +3,8 @@
 // Names can be written the logical way — "Дата народження", "unitPrice",
 // "first name" — and become Oracle identifiers (DATA_NARODZHENNIA, UNIT_PRICE…);
 // the original wording is kept as the column/table comment.
-import { newColumn, uid, uniqueName } from './model.js?v=202609241258';
-import { fixFkIndexes } from './checks.js?v=202609241258';
+import { newColumn, uid, uniqueName } from './model.js?v=202609241259';
+import { fixFkIndexes } from './checks.js?v=202609241259';
 
 // Ukrainian → Latin, official KMU 2010 scheme (є/ї/й/ю/я differ at word start)
 const UK = { а: 'a', б: 'b', в: 'v', г: 'h', ґ: 'g', д: 'd', е: 'e', є: 'ie', ж: 'zh', з: 'z', и: 'y', і: 'i', ї: 'i', й: 'i', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ь: '', ю: 'iu', я: 'ia', ъ: '', ы: 'y', э: 'e', ё: 'io' };
