@@ -1,24 +1,24 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609241319';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609241319';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609241319';
-import { guessType, inferColumn, describe, findParent, physName, isLogical, applyInference, toPhysical, L2P_STEPS, suggestFieldNames } from './autodef.js?v=202609241319';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609241319';
-import { DiagramTabs } from './diagrams-ui.js?v=202609241319';
-import { Panel } from './panel.js?v=202609241319';
-import { Sidebar } from './sidebar.js?v=202609241319';
-import { Palette } from './palette.js?v=202609241319';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609241319';
-import { parseDDL } from './ddl-parse.js?v=202609241319';
-import { SAMPLE_DDL } from './sample.js?v=202609241319';
-import { initWorkspace } from './workspace.js?v=202609241319';
-import { diffModels } from './diff.js?v=202609241319';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609241319';
-import { migrateModel, listSnapshots } from './storage.js?v=202609241319';
-import { Sandbox } from './sandbox.js?v=202609241319';
-import { parseText, buildModel, TEXT_EXAMPLES } from './textmodel.js?v=202609241319';
-import { ENTITY_GROUPS, ATTRIBUTE_GROUPS, RELATION_BLOCKS, findEntity, findAttrSet, tableForBlock, placeEntity, addColumns } from './blocks.js?v=202609241319';
-import { CanvasSearch } from './canvas-search.js?v=202609241319';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609241319';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609241331';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609241331';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609241331';
+import { guessType, inferColumn, describe, findParent, physName, isLogical, applyInference, toPhysical, L2P_STEPS, suggestFieldNames, singular, cascadeTableRename } from './autodef.js?v=202609241331';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609241331';
+import { DiagramTabs } from './diagrams-ui.js?v=202609241331';
+import { Panel } from './panel.js?v=202609241331';
+import { Sidebar } from './sidebar.js?v=202609241331';
+import { Palette } from './palette.js?v=202609241331';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202609241331';
+import { parseDDL } from './ddl-parse.js?v=202609241331';
+import { SAMPLE_DDL } from './sample.js?v=202609241331';
+import { initWorkspace } from './workspace.js?v=202609241331';
+import { diffModels } from './diff.js?v=202609241331';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609241331';
+import { migrateModel, listSnapshots } from './storage.js?v=202609241331';
+import { Sandbox } from './sandbox.js?v=202609241331';
+import { parseText, buildModel, TEXT_EXAMPLES } from './textmodel.js?v=202609241331';
+import { ENTITY_GROUPS, ATTRIBUTE_GROUPS, RELATION_BLOCKS, findEntity, findAttrSet, tableForBlock, placeEntity, addColumns } from './blocks.js?v=202609241331';
+import { CanvasSearch } from './canvas-search.js?v=202609241331';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609241331';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -33,6 +33,8 @@ const diagram = new Diagram($('#canvas'), store, {
   onEditView: id => { store.select({ kind: 'view', id }); setTimeout(() => $('#panel .sql-edit')?.focus()); },
   onZoom: k => { $('#zoom').textContent = `${Math.round(k * 100)}%`; },
   minimap: $('#minimap'),
+  onLinkClick: from => { setRelationMode(true); diagram.relFrom = from; diagram.render(); },
+  onLinkToEmpty: (from, p) => linkToNewTable(from, p),
   insetLeft: () => { try { return kitVisibleRect().left; } catch { return 0; } }, // the builder panel is declared further down
 });
 const canvasSearch = new CanvasSearch($('.stage'), store, diagram);
@@ -76,7 +78,7 @@ onLang(renderLang);
 document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
 
 // ---------- actions ----------
-function addTable(p = diagram.center()) {
+function addTable(p = diagram.center(), focusPanel = true) {
   const tb = newTable(nextTableName(store.model), Math.round((p.x - 110) / 10) * 10, Math.round((p.y - 40) / 10) * 10);
   const id = newColumn('ID', 'NUMBER');
   Object.assign(id, { pk: true, identity: true, nullable: false });
@@ -92,7 +94,8 @@ function addTable(p = diagram.center()) {
     }
   });
   store.select({ kind: 'table', id: tb.id });
-  setTimeout(() => $('#panel input[data-f="table.name"]')?.select());
+  if (focusPanel) setTimeout(() => $('#panel input[data-f="table.name"]')?.select());
+  return tb.id;
 }
 
 // st по умолчанию не привязан к глобальному store: вызов autoLayout(model) для
@@ -227,15 +230,16 @@ const actions = {
     store.addZone(t('zone.default'), 'blue', Math.round((c.x - 200) / 10) * 10, Math.round((c.y - 140) / 10) * 10);
     diagram.render();
   },
-  'no-overlaps': () => {
+  'no-overlaps': () => animateLayout(() => {
     const visibleTables = store.model.tables.filter(t => store.isItemOnActiveDiagram(t.id));
     store.checkpoint();
     resolveOverlaps(visibleTables, id => store.posOf(id), (id, x, y) => store.setPos(id, x, y));
     store.emit('load');
     store.persist();
     toast(t('tb.noOverlaps.t'));
-  },
-  layout: () => { store.update(m => autoLayout(m, store), 'load'); diagram.fit(); },
+  }),
+
+  layout: () => animateLayout(() => store.update(m => autoLayout(m, store), 'load')),
   undo: () => store.undo(),
   redo: () => store.redo(),
   'zoom-in': () => diagram.zoomBy(1.25),
@@ -251,7 +255,31 @@ const actions = {
   kit: () => toggleKit(),
 };
 
-const ICONS = Object.fromEntries([...document.querySelectorAll('[data-action] svg')].map(s => [s.closest('[data-action]').dataset.action, s.outerHTML]));
+// Rearranging glides tables to their new places instead of jumping: the change is applied (and
+// undoable) at once, then the diagram replays it from the old positions over ~half a second.
+function animateLayout(run) {
+  const ids = [...store.model.tables, ...(store.model.views || [])].map(x => x.id).filter(id => store.isItemOnActiveDiagram(id));
+  const from = new Map(ids.map(id => [id, { ...store.posOf(id) }]));
+  run();
+  const to = new Map(ids.map(id => [id, { ...store.posOf(id) }]));
+  const moved = ids.filter(id => from.get(id).x !== to.get(id).x || from.get(id).y !== to.get(id).y);
+  diagram.fit();
+  if (!moved.length || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const t0 = performance.now(), dur = 560, ease = x => 1 - Math.pow(1 - x, 3);
+  const frame = now => {
+    const k = Math.min(1, (now - t0) / dur), e = ease(k);
+    store.silent(() => moved.forEach(id => {
+      const a = from.get(id), b = to.get(id);
+      store.setPos(id, a.x + (b.x - a.x) * e, a.y + (b.y - a.y) * e);
+    }), 'move', moved);
+    if (k < 1) requestAnimationFrame(frame);
+    else { store.silent(() => moved.forEach(id => { const b = to.get(id); store.setPos(id, b.x, b.y); }), 'move', moved); store.persist(); }
+  };
+  requestAnimationFrame(frame);
+}
+
+// icons come from the toolbar and dock only: close buttons inside panels share an action but show a ×
+const ICONS = Object.fromEntries([...document.querySelectorAll('[data-action] svg')].filter(s => !s.closest('.kit, .assistant, dialog')).map(s => [s.closest('[data-action]').dataset.action, s.outerHTML]));
 ICONS.search = `<svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>`;
 const palette = new Palette(store, {
   onPick: pick,
@@ -947,6 +975,32 @@ store.subscribe(r => { if (kitOpen && (r === 'load' || r === 'change') && kitTab
 onLang(renderKit);
 renderKit();
 
+// ---------- empty canvas: ways to start ----------
+function renderEmptyState() {
+  const empty = !store.model.tables.some(x => store.isItemOnActiveDiagram(x.id)) && !(store.model.views || []).some(x => store.isItemOnActiveDiagram(x.id));
+  const el = $('#empty-state');
+  el.hidden = !empty;
+  if (!empty) return;
+  const card = (act, ic, key) => `<button type="button" class="es-card" data-es="${act}"><span class="es-ic">${ic}</span><b>${esc(t(`es.${key}`))}</b><small>${esc(t(`es.${key}.d`))}</small></button>`;
+  el.innerHTML = `<div class="es-box">
+    <h2>${esc(t('es.title'))}</h2><p>${esc(t('es.sub'))}</p>
+    <div class="es-grid">
+      ${card('kit', ICONS.kit || '▦', 'kit')}
+      ${card('fromText', ICONS.fromText || '✎', 'text')}
+      ${card('templates', ICONS.templates || '▦', 'tpl')}
+      ${card('import', ICONS.import || '⇪', 'ddl')}
+    </div>
+    <p class="es-tip">${esc(t('es.tip'))}</p></div>`;
+}
+$('#empty-state').addEventListener('click', e => {
+  const b = e.target.closest('[data-es]');
+  if (!b) return;
+  if (b.dataset.es === 'kit') toggleKit(true); else actions[b.dataset.es]();
+});
+store.subscribe(r => { if (r !== 'move' && r !== 'select') renderEmptyState(); });
+onLang(renderEmptyState);
+renderEmptyState();
+
 // ---------- duplicate / copy / paste ----------
 function cloneTables(tables, fks, offset = 40) {
   const model = store.model;
@@ -1100,6 +1154,15 @@ function relationTypeItems(child, parent, extra = {}) {
   ];
 }
 
+// drag a relation out of a table onto empty canvas: a new parent table appears there, already
+// linked, and its name is typed right away (the FK column follows the name on rename)
+function linkToNewTable(childId, p) {
+  const id = addTable({ x: p.x + 110, y: p.y + 20 }, false);
+  try { store.addRelation(childId, id, {}); } catch (e) { toast(e.message, true); }
+  // bring it into view first (the pan animates), then type its name on top of it
+  kitReveal(id);
+  setTimeout(() => openRenameTable(id), 420);
+}
 // ---------- inline field editor ----------
 const editor = document.createElement('div');
 editor.className = 'field-editor';
@@ -1168,7 +1231,12 @@ function commitEditor(next) {
   const name = physName(raw);
   const note = isLogical(raw) ? raw.replace(/\s+/g, ' ').replace(/^./, ch => ch.toUpperCase()) : '';
   if (st.mode === 'rename') {
-    if (name && tb) store.update(() => { tb.name = name; if (note && !tb.comment) tb.comment = note; });
+    if (name && tb) store.update(m => {
+      const oldName = tb.name;
+      tb.name = name;
+      if (note && !tb.comment) tb.comment = note;
+      cascadeTableRename(m, tb, oldName);
+    });
     closeEditor();
     return;
   }

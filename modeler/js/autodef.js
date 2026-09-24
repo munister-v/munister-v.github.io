@@ -3,8 +3,8 @@
 // Names can be written the logical way — "Дата народження", "unitPrice",
 // "first name" — and become Oracle identifiers (DATA_NARODZHENNIA, UNIT_PRICE…);
 // the original wording is kept as the column/table comment.
-import { newColumn, uid, uniqueName } from './model.js?v=202609241319';
-import { fixFkIndexes } from './checks.js?v=202609241319';
+import { newColumn, uid, uniqueName } from './model.js?v=202609241331';
+import { fixFkIndexes } from './checks.js?v=202609241331';
 
 // Ukrainian → Latin, official KMU 2010 scheme (є/ї/й/ю/я differ at word start)
 const UK = { а: 'a', б: 'b', в: 'v', г: 'h', ґ: 'g', д: 'd', е: 'e', є: 'ie', ж: 'zh', з: 'z', и: 'y', і: 'i', ї: 'i', й: 'i', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ь: '', ю: 'iu', я: 'ia', ъ: '', ы: 'y', э: 'e', ё: 'io' };
@@ -369,3 +369,23 @@ export function suggestFieldNames(model, tb) {
   const own = BY_TABLE.filter(([re]) => re.test(tb.name)).flatMap(([, names]) => names);
   return [...new Set([...own, ...fk, ...COMMON])].filter(n => !taken.has(n));
 }
+
+// A table was renamed: FK columns that were named after it (<OLD>_ID) and constraint names that
+// embed the old name follow along. Only derived names are touched; a hand-picked FK column name stays.
+export function cascadeTableRename(model, tb, oldName) {
+  if (!oldName || oldName === tb.name) return;
+  const oldCol = `${singular(oldName)}_ID`, newCol = `${singular(tb.name)}_ID`;
+  for (const f of model.fks) {
+    if (f.toTable === tb.id) {
+      const child = model.tables.find(x => x.id === f.fromTable);
+      for (const p of f.columns) {
+        const c = child?.columns.find(x => x.id === p.from);
+        if (c && c.name === oldCol && !child.columns.some(x => x.name === newCol)) c.name = newCol;
+        if (c && c.name === `PARENT_${oldCol}` && !child.columns.some(x => x.name === `PARENT_${newCol}`)) c.name = `PARENT_${newCol}`;
+      }
+    }
+    if (f.toTable === tb.id || f.fromTable === tb.id) f.name = renameToken(f.name, oldName, tb.name);
+  }
+  for (const x of [...tb.uniques, ...tb.indexes, ...(tb.checks || [])]) x.name = renameToken(x.name, oldName, tb.name);
+}
+const renameToken = (name, from, to) => name.split(new RegExp(`(?<=^|_)${from.replace(/[$#]/g, '\\$&')}(?=_|$)`)).join(to);

@@ -1,5 +1,5 @@
 // SVG diagram: tables, relations, pan/zoom, drag, relation mode, zones, marquee selection
-import { t as tr } from './i18n.js?v=202609241319';
+import { t as tr } from './i18n.js?v=202609241331';
 
 const NS = 'http://www.w3.org/2000/svg';
 const HEADER = 38, ROW = 24, PAD = 14;
@@ -257,6 +257,7 @@ export class Diagram {
       ${bodyRows}
       <rect class="head-hit" data-head="1" width="${w}" height="${lod ? h : HEADER}"/>
       <rect class="outline" x="-3" y="-3" width="${w + 6}" height="${h + 6}" rx="13"/>
+      ${lod ? '' : `<g class="link-handle" data-link="1" transform="translate(${w + 1},${HEADER / 2})"><circle class="lh-hit" r="14"/><circle class="lh-dot" r="7.5"/><path d="M-3 0h6M0-3v6"/><title>${tr('d.linkHandle')}</title></g>`}
       ${selected && sel?.kind === 'table' ? `<g class="add-field" data-add="1" transform="translate(0,${h + 8})"><rect width="${w}" height="26" rx="8"/><text x="${w / 2}" y="17" text-anchor="middle">+ ${tr('d.addField')}</text></g>` : ''}
       ${t.comment ? `<title>${esc(t.comment)}</title>` : ''}
     </g>`;
@@ -423,6 +424,15 @@ export class Diagram {
         return;
       }
 
+      // 3a. Connector handle: drag a relation out of a table onto its parent (or onto empty canvas)
+      if (tg && e.target.closest('[data-link]') && this.mode !== 'relation') {
+        const t = this.store.table(tg.dataset.id), pos = this.store.posOf(t.id), sz = tableSize(t);
+        drag = { kind: 'link', from: t.id, ox: pos.x + sz.w + 1, oy: pos.y + HEADER / 2, moved: false };
+        svg.setPointerCapture(e.pointerId);
+        svg.classList.add('linking');
+        return;
+      }
+
       // 3. Table add field button
       if (tg && e.target.closest('[data-add]')) {
         this.hooks.onAddField?.(tg.dataset.id);
@@ -510,9 +520,30 @@ export class Diagram {
         const x = Math.min(drag.startX, p.x), y = Math.min(drag.startY, p.y);
         const w = Math.abs(p.x - drag.startX), h = Math.abs(p.y - drag.startY);
         this.gOverlay.innerHTML = `<rect class="selection-marquee" x="${x}" y="${y}" width="${w}" height="${h}"/>`;
+      } else if (drag.kind === 'link') {
+        const p = this.toWorld(e);
+        drag.moved = true;
+        const el = document.elementFromPoint(e.clientX, e.clientY)?.closest('.table');
+        const target = el && this.svg.contains(el) ? el.dataset.id : null;
+        if (target !== drag.target) {
+          this.gTables.querySelectorAll('.link-target').forEach(x => x.classList.remove('link-target'));
+          if (target) el.classList.add('link-target');
+          drag.target = target;
+        }
+        const tt = target && this.store.table(target);
+        const dx = Math.max(40, Math.abs(p.x - drag.ox) / 2);
+        const label = tt ? (target === drag.from ? `↺ ${tt.name}` : `→ ${tt.name}`) : `+ ${tr('d.linkNew')}`;
+        this.gOverlay.innerHTML = `<path class="link-drag${tt ? ' on' : ''}" d="M${drag.ox} ${drag.oy}C${drag.ox + dx} ${drag.oy} ${p.x - dx} ${p.y} ${p.x} ${p.y}"/>
+          <circle class="link-drag-end${tt ? ' on' : ''}" cx="${p.x}" cy="${p.y}" r="5"/>
+          <g class="link-drag-label" transform="translate(${p.x + 12},${p.y + 18})"><rect x="-6" y="-13" width="${label.length * 6.6 + 12}" height="19" rx="6"/><text>${esc(label)}</text></g>`;
       } else if (drag.kind === 'table') {
         const p = this.toWorld(e);
-        const nx = Math.round((p.x - drag.dx) / g) * g, ny = Math.round((p.y - drag.dy) / g) * g;
+        let nx = Math.round((p.x - drag.dx) / g) * g, ny = Math.round((p.y - drag.dy) / g) * g;
+        // smart guides: snap edges/centres to nearby tables and draw the alignment lines
+        if (OPTS.guides !== false && !e.altKey) {
+          const snapped = this.snapToGuides(drag, nx, ny);
+          nx = snapped.x; ny = snapped.y;
+        }
         const cur = this.store.posOf(drag.id);
         if (nx === cur.x && ny === cur.y) return;
         if (!drag.moved) { this.store.checkpoint(); drag.moved = true; }
@@ -578,7 +609,17 @@ export class Diagram {
           const isTable = model.tables.some(t => t.id === matched[0]);
           this.store.select({ kind: isTable ? 'table' : 'view', id: matched[0] });
         }
+      } else if (drag.kind === 'link') {
+        this.gOverlay.innerHTML = '';
+        svg.classList.remove('linking');
+        this.gTables.querySelectorAll('.link-target').forEach(x => x.classList.remove('link-target'));
+        if (!drag.moved && e.type === 'pointerup') this.hooks.onLinkClick?.(drag.from);
+        else if (drag.moved && e.type === 'pointerup') {
+          if (drag.target) this.hooks.onRelation(drag.from, drag.target, e);
+          else if (!document.elementFromPoint(e.clientX, e.clientY)?.closest('.view, .zone-handle')) this.hooks.onLinkToEmpty?.(drag.from, this.toWorld(e), e);
+        }
       } else if (drag.moved) {
+        if (drag.kind === 'table') this.gOverlay.innerHTML = '';
         this.store.persist();
         this.store.emit('moved');
       }
@@ -708,6 +749,38 @@ export class Diagram {
     this.anim = requestAnimationFrame(step);
   }
 
+  // Align a dragged table with its neighbours (left/centre/right, top/middle/bottom) within a few
+  // screen pixels, and draw the guide lines. Neighbour rectangles are cached for the whole drag.
+  snapToGuides(drag, nx, ny) {
+    const t = this.store.table(drag.id) || this.store.view(drag.id);
+    if (!t) return { x: nx, y: ny };
+    const s = t.sql !== undefined ? viewSize(t) : tableSize(t);
+    drag.others ||= [...this.store.model.tables, ...(this.store.model.views || [])]
+      .filter(o => o.id !== drag.id && this.store.isItemOnActiveDiagram(o.id))
+      .map(o => { const p = this.store.posOf(o.id), z = o.sql !== undefined ? viewSize(o) : tableSize(o); return { x: p.x, y: p.y, w: z.w, h: z.h }; });
+    const tol = 6 / this.view.k;
+    let bx = null, by = null;
+    for (const o of drag.others) {
+      // only neighbours that are reasonably close count, or everything would snap to everything
+      if (Math.abs(o.y - ny) > 900 && Math.abs(o.x - nx) > 900) continue;
+      for (const [mine, theirs] of [[nx, o.x], [nx + s.w, o.x + o.w], [nx + s.w / 2, o.x + o.w / 2], [nx, o.x + o.w], [nx + s.w, o.x]]) {
+        const d = theirs - mine;
+        if (Math.abs(d) <= tol && (!bx || Math.abs(d) < Math.abs(bx.d))) bx = { d, at: theirs, o };
+      }
+      for (const [mine, theirs] of [[ny, o.y], [ny + s.h, o.y + o.h], [ny + s.h / 2, o.y + o.h / 2], [ny, o.y + o.h], [ny + s.h, o.y]]) {
+        const d = theirs - mine;
+        if (Math.abs(d) <= tol && (!by || Math.abs(d) < Math.abs(by.d))) by = { d, at: theirs, o };
+      }
+    }
+    if (bx) nx += bx.d;
+    if (by) ny += by.d;
+    const lines = [];
+    if (bx) { const y1 = Math.min(ny, bx.o.y) - 24, y2 = Math.max(ny + s.h, bx.o.y + bx.o.h) + 24; lines.push(`<line class="guide" x1="${bx.at}" y1="${y1}" x2="${bx.at}" y2="${y2}"/>`); }
+    if (by) { const x1 = Math.min(nx, by.o.x) - 24, x2 = Math.max(nx + s.w, by.o.x + by.o.w) + 24; lines.push(`<line class="guide" x1="${x1}" y1="${by.at}" x2="${x2}" y2="${by.at}"/>`); }
+    this.gOverlay.innerHTML = lines.join('');
+    return { x: nx, y: ny };
+  }
+
   centerOn(id) {
     const t = this.store.table(id) || this.store.view(id);
     if (!t) return;
@@ -783,11 +856,15 @@ export class Diagram {
       x2 = Math.max(...visibleTables.map(t => this.store.posOf(t.id).x + tableSize(t).w)) + 20;
       y2 = Math.max(...visibleTables.map(t => this.store.posOf(t.id).y + tableSize(t).h)) + 20;
     }
+    // editor-only chrome (connector handles, add-field bar) has no CSS in the export and must not leak into it
+    const tg = this.gTables.cloneNode(true);
+    tg.querySelectorAll('.link-handle, .add-field').forEach(x => x.remove());
+    const tablesForExport = tg.outerHTML;
     const style = [...document.styleSheets].flatMap(sh => { try { return [...sh.cssRules]; } catch { return []; } })
       .map(r => r.cssText).filter(c => /\.(table|rel|key|col|type|title|schema|rule|zebra|shadow|body|line|mark|hit|empty|zone)\b/.test(c) || c.startsWith(':root')).join('\n');
     return `<svg xmlns="${NS}" viewBox="${x1} ${y1} ${x2 - x1} ${y2 - y1}" width="${x2 - x1}" height="${y2 - y1}">
       <style>${style}</style><rect x="${x1}" y="${y1}" width="100%" height="100%" fill="#ffffff"/>
-      ${this.gZones.outerHTML}${this.gRels.outerHTML}${this.gTables.outerHTML}</svg>`;
+      ${this.gZones.outerHTML}${this.gRels.outerHTML}${tablesForExport}</svg>`;
   }
 }
 
