@@ -8,19 +8,22 @@
    the only colour on the page.
 */
 :root{
-  --c-paper:#ffffff;
-  --c-paper-deep:#f4f3f1;
-  --c-ink:#121212;
+  /* Темна тема, спільна з розділом /irpin/: майже чорне тло з холодною хвоєю,
+     світлі чорнила, один акцент. Усі сторінки читають кольори лише звідси. */
+  --c-paper:#0c0f0e;
+  --c-paper-deep:#131817;
+  --c-ink:#eef2f0;
+  --accent:#6fcf9f;
   /* Удержан как токен, чтобы не переписывать каждое правило: акцент теперь
      чернила, а иерархию держат размер, регистр и линейка. */
-  --c-clay:#121212;
-  --c-clay-soft:#e6e4e0;
-  --c-muted:rgba(18,18,18,.68);
+  --c-clay:#eef2f0;
+  --c-clay-soft:rgba(111,207,159,.32);
+  --c-muted:rgba(238,242,240,.66);
   /* В музее служебные подписи набраны #999 (2.9:1). Роль та же, тон чуть
      плотнее: мелкий текст на сайте должен читаться. */
-  --c-faint:#6e6e6e;
-  --c-rule:rgba(18,18,18,.11);
-  --c-rule-strong:rgba(18,18,18,.30);
+  --c-faint:#879189;
+  --c-rule:rgba(238,242,240,.09);
+  --c-rule-strong:rgba(238,242,240,.2);
   /* типографіка знята з museum.eprisjournal.com: системні гарнітури, без вебшрифтів */
   --font-sans:'KTF Prima','Helvetica Neue',Helvetica,Arial,sans-serif;
   --font-serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
@@ -30,6 +33,7 @@
   --font-mono:var(--font-sans);
   --measure:1240px;
   --bar:56px;
+  color-scheme:dark;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -54,8 +58,8 @@ p{text-wrap:pretty}
 ::selection{background:var(--c-clay-soft);color:var(--c-ink)}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(23,21,19,.25);border-radius:999px}
-*{scrollbar-width:thin;scrollbar-color:rgba(23,21,19,.25) transparent}
+::-webkit-scrollbar-thumb{background:rgba(238,242,240,.18);border-radius:999px}
+*{scrollbar-width:thin;scrollbar-color:rgba(238,242,240,.18) transparent}
 
 .mono{font-family:var(--font-mono);font-size:9.5px;line-height:1.5;letter-spacing:.2em;text-transform:uppercase;color:var(--c-faint)}
 
@@ -97,7 +101,7 @@ p{text-wrap:pretty}
 .site-head.is-scrolled{
   height:calc(var(--bar) - 6px);
   background:color-mix(in srgb,var(--c-paper) 93%,transparent);
-  box-shadow:0 1px 0 rgba(18,18,18,.07),0 18px 30px -26px rgba(18,18,18,.5);
+  box-shadow:0 1px 0 var(--c-rule);
 }
 .site-head nav{position:relative;display:flex;align-items:center;gap:2px}
 /* Плашка ездит между разделами: под курсором - за курсором, без него - под
@@ -105,7 +109,7 @@ p{text-wrap:pretty}
    поэтому смена кегля или языка не требует правки CSS. */
 .nav-mark{
   position:absolute;left:0;top:0;width:0;height:0;border-radius:999px;
-  background:rgba(18,18,18,.07);
+  background:rgba(255,255,255,.07);
   opacity:0;transform:translate(var(--x,0),var(--y,0));
   transition:transform .34s cubic-bezier(.22,.7,.24,1),width .34s cubic-bezier(.22,.7,.24,1),opacity .2s ease;
   pointer-events:none;
@@ -124,10 +128,10 @@ p{text-wrap:pretty}
    страницы, и потому не спорит с разделами за один и тот же вес. */
 .head-right{margin-left:auto}
 .head-right a{
-  padding:8px 16px;border:1px solid var(--c-rule-strong);border-radius:999px;
+  padding:8px 16px;border:0;border-radius:999px;background:rgba(255,255,255,.08);
   transition:color .18s ease,background .18s ease,border-color .18s ease;
 }
-.head-right a:hover{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-paper)}
+.head-right a:hover{background:rgba(255,255,255,.14);color:var(--c-ink)}
 .site-main{padding-top:clamp(2.7rem,5vw,5.5rem)}
 
 /* Buttons are editorial labels, not generic rounded controls. */
@@ -135,17 +139,17 @@ p{text-wrap:pretty}
    контурная. Тот же жест здесь. */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 18px;
-  border:1px solid var(--c-rule-strong);border-radius:999px;
+  border:1px solid transparent;border-radius:999px;
   font-family:var(--font-body);font-size:12.5px;font-weight:400;letter-spacing:-.005em;text-transform:none;
-  color:var(--c-ink);background:transparent;transition:background .2s,color .2s,border-color .2s;
+  color:var(--c-ink);background:rgba(255,255,255,.08);transition:background .2s,color .2s,border-color .2s;
 }
-.btn:hover{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-paper)}
+.btn:hover{background:rgba(255,255,255,.14);color:var(--c-ink)}
 .btn--solid{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-paper)}
-.btn--solid:hover{background:#2c2c2c;border-color:#2c2c2c;color:#fff}
+.btn--solid:hover{background:#fff;border-color:#fff;color:var(--c-paper)}
 /* Вторая кнопка без контура: серая заливка, как у второстепенного действия
    на Doglyad. Рядом с чернильной она читается как «потом», а не как спор. */
-.btn--soft{border-color:transparent;background:rgba(18,18,18,.06);color:var(--c-ink)}
-.btn--soft:hover{border-color:transparent;background:rgba(18,18,18,.11);color:var(--c-ink)}
+.btn--soft{border-color:transparent;background:rgba(255,255,255,.08);color:var(--c-ink)}
+.btn--soft:hover{border-color:transparent;background:rgba(255,255,255,.14);color:var(--c-ink)}
 .btn--lg{min-height:44px;padding:0 22px;font-size:15px}
 
 /* The opening is a page, rather than a profile card. */
@@ -175,7 +179,7 @@ p{text-wrap:pretty}
 }
 
 .opening-copy{min-width:0}
-.name{font-family:var(--font-display);font-size:clamp(46px,7.4vw,104px);line-height:.82;letter-spacing:-.055em}
+.name{font-family:var(--font-head);font-weight:400;font-size:clamp(50px,7.6vw,108px);line-height:.92;letter-spacing:-.03em}
 .claim{max-width:24ch;margin-top:clamp(26px,3.4vw,42px);font-family:var(--font-head);font-size:clamp(29px,3.4vw,48px);line-height:1.04;letter-spacing:-.018em}
 
 .opening-bottom{
@@ -194,10 +198,10 @@ p{text-wrap:pretty}
 .sec{margin-bottom:clamp(4.8rem,8vw,8rem)}
 .sec-head{
   display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.38fr);gap:24px;align-items:end;
-  padding-bottom:14px;border-bottom:1px solid var(--c-ink);margin-bottom:clamp(1.8rem,3vw,2.7rem);
+  padding-bottom:0;margin-bottom:clamp(1.8rem,3vw,2.7rem);
 }
-.sec-head .eyebrow{display:block;margin-bottom:11px;color:var(--c-faint);letter-spacing:.2em}
-.sec-head h2{font-family:var(--font-display);font-size:clamp(35px,4.1vw,58px);line-height:.94;letter-spacing:-.04em}
+.sec-head .eyebrow{display:block;margin-bottom:12px;color:var(--accent);letter-spacing:.14em}
+.sec-head h2{font-family:var(--font-head);font-weight:400;font-size:clamp(36px,4.2vw,60px);line-height:1;letter-spacing:-.022em}
 .sec-head .sec-note{max-width:30ch;justify-self:end;color:var(--c-muted);font-size:16px;line-height:1.37}
 .sec-head > span.mono{align-self:end}
 
@@ -224,10 +228,11 @@ p{text-wrap:pretty}
    чтобы белый скриншот не растворялся в белой странице. */
 .feat .shot{position:relative;overflow:hidden;background:var(--c-paper-deep);border-radius:18px;aspect-ratio:16 / 9;
   transition:transform .5s cubic-bezier(.22,.7,.24,1),box-shadow .5s ease}
-.feat:hover .shot{transform:translateY(-5px);box-shadow:0 26px 40px -30px rgba(18,18,18,.55)}
-.feat .shot::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(18,18,18,.07);pointer-events:none}
-.feat .shot img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1),filter .6s ease}
-.feat:hover .shot img{transform:scale(1.04);filter:saturate(.95)}
+.feat:hover .shot{transform:translateY(-5px);box-shadow:0 30px 50px -30px rgba(0,0,0,.8)}
+.feat .shot::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);pointer-events:none}
+.feat .shot img{width:100%;height:100%;object-fit:cover;filter:brightness(.9);transition:transform .6s cubic-bezier(.2,.7,.2,1),filter .6s ease}
+/* Світлі знімки інших проєктів на темному тлі трохи приглушені, на ховері - повна яскравість. */
+.feat:hover .shot img{transform:scale(1.04);filter:none}
 /* Заголовок и стрелка отвечают на тот же ховер, что и кадр: карточка ведёт
    себя как одна ссылка, а не как картинка с текстом рядом. */
 .feat h3{transition:transform .4s cubic-bezier(.22,.7,.24,1)}
@@ -255,11 +260,11 @@ p{text-wrap:pretty}
 .feat.feat-full .meta{grid-column:1;grid-row:4;align-self:end}
 /* Снимок журнала обрезан снизу (1600x867): рамка повторяет его пропорцию, чтобы не резать логотип по бокам. */
 @media (min-width:761px){.feat.feat-full.feat-wide .shot{aspect-ratio:1600 / 867}}
-.feat .role{order:1;margin-top:17px;color:var(--c-faint);letter-spacing:.2em}
+.feat .role{order:1;margin-top:17px;color:var(--accent);letter-spacing:.14em}
 /* Заголовки работ - антиква, как названия материалов в журнале. */
 .feat h3{order:2;margin-top:9px;font-family:var(--font-head);font-size:clamp(25px,2.4vw,35px);line-height:1.06;letter-spacing:-.014em}
 .feat p{order:3;margin-top:13px;max-width:44ch;color:var(--c-muted);font-size:17px;line-height:1.42}
-.feat .meta{order:4;display:flex;justify-content:space-between;gap:12px;margin-top:24px;padding-top:12px;border-top:1px solid var(--c-rule);color:var(--c-faint)}
+.feat .meta{order:4;display:flex;justify-content:space-between;gap:12px;margin-top:24px;color:var(--c-faint)}
 /* Бейдж App Store — офіційний SVG Apple без змін, не нижче 40px (вимога гайдлайнів). */
 /* Кадр застосунку — темна обкладинка, тому тло картки в тон її градієнту, а contain: телефони не обрізаються на вузьких екранах. */
 .feat.feat-app .shot{background:linear-gradient(#161e1b,#0a0d0c)}
@@ -269,15 +274,14 @@ p{text-wrap:pretty}
 .feat:hover .meta .t{color:var(--c-ink);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
 
 .competencies{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(28px,4vw,50px) clamp(24px,3vw,48px);margin-top:8px}
-.competency{border-top:1px solid var(--c-rule);padding-top:18px}
+.competency{padding-top:0}
 .competency .eyebrow{display:block;margin-bottom:8px}
 .competency h3{font-family:var(--font-head);font-size:22px;line-height:1.15;letter-spacing:-.02em}
 .competency p{margin-top:8px;color:var(--c-muted);font-size:16px;line-height:1.5}
 
 /* Wordmarks of the tools themselves, kept to the ink colour so nothing in
    this quiet, monochrome page suddenly speaks in brand colour. */
-.stack-marks{display:flex;flex-wrap:wrap;gap:28px 24px;margin-top:44px;padding-top:26px;
-  border-top:1px solid var(--c-rule)}
+.stack-marks{display:flex;flex-wrap:wrap;gap:28px 24px;margin-top:52px}
 .mark{display:flex;flex-direction:column;align-items:center;gap:9px;width:72px;text-align:center}
 .mark img{width:28px;height:28px;opacity:.72;transition:opacity .2s ease}
 .mark .mono{font-size:10.5px;letter-spacing:.03em;color:var(--c-faint);line-height:1.25}
@@ -287,7 +291,7 @@ p{text-wrap:pretty}
 
 /* Research and writing retain their register logic but gain a calmer scale. */
 .research-support{margin:0 0 26px;max-width:62ch}
-.pubs{border-top:1px solid var(--c-ink)}
+.pubs{border-top:1px solid var(--c-rule)}
 .pub{display:grid;grid-template-columns:62px minmax(0,1fr) 270px auto;gap:clamp(14px,2.4vw,32px);align-items:baseline;padding:18px 0;border-bottom:1px solid var(--c-rule);transition:color .2s ease}
 .pub .yr,.writing .when{color:var(--c-faint)}
 .pub .ttl{font-family:var(--font-head);font-size:21px;line-height:1.17}
@@ -324,13 +328,13 @@ p{text-wrap:pretty}
 /* Заявление одно на белом, как на Doglyad: первая фраза чернилами, вторая
    серым. Серый #8f8d89 на белом 3.3:1, для текста такого кегля хватает. */
 .statement{padding-top:clamp(1rem,3vw,2.5rem)}
-.say{max-width:19ch;font-family:var(--font-display);font-size:clamp(38px,5.4vw,76px);line-height:.96;letter-spacing:-.045em;color:var(--c-ink);text-wrap:balance}
-.say span{color:#8f8d89}
+.say{max-width:19ch;font-family:var(--font-head);font-weight:400;font-size:clamp(40px,5.4vw,78px);line-height:1;letter-spacing:-.025em;color:var(--c-ink);text-wrap:balance}
+.say span{color:var(--c-faint)}
 .say-cap{margin-top:24px;font-family:var(--font-head);font-style:italic;font-size:18px;color:var(--c-faint)}
 .close{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:start;margin-top:clamp(3.2rem,6vw,5.5rem);padding:clamp(24px,3vw,36px);border-radius:24px;background:var(--c-paper-deep)}
 .close p{max-width:40ch;margin-top:12px;color:var(--c-muted);font-size:17px;line-height:1.45}
 .close ol{list-style:none}
-.close li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid rgba(18,18,18,.08);font-family:var(--font-head);font-size:24px;line-height:1.1}
+.close li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--c-rule);font-family:var(--font-head);font-size:24px;line-height:1.1}
 .close li:first-child{padding-top:0}
 .close li:last-child{border-bottom:0;padding-bottom:0}
 .close li i{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;color:var(--c-faint);font-style:normal}
@@ -341,10 +345,10 @@ p{text-wrap:pretty}
 /* Перенос только по <wbr> после «munister», не посреди «outlook.com»:
    word-break:break-word рвал строку где попало по ширине контейнера, и на
    широких панелях адрес переносился ровно на «outlook.co / m». */
-.contact .mail{display:inline-block;margin-top:16px;font-family:var(--font-display);font-size:clamp(34px,5vw,72px);line-height:.95;letter-spacing:-.045em;overflow-wrap:normal;word-break:normal}
+.contact .mail{display:inline-block;margin-top:16px;font-family:var(--font-head);font-weight:400;font-size:clamp(34px,5vw,72px);line-height:1;letter-spacing:-.025em;overflow-wrap:normal;word-break:normal}
 .contact .btn{min-height:44px;padding:0 22px;font-size:15px}
-.contact .btn:not(.btn--solid){border-color:transparent;background:rgba(18,18,18,.06)}
-.contact .btn:not(.btn--solid):hover{background:rgba(18,18,18,.11);color:var(--c-ink)}
+.contact .btn:not(.btn--solid){border-color:transparent;background:rgba(255,255,255,.08)}
+.contact .btn:not(.btn--solid):hover{background:rgba(255,255,255,.14);color:var(--c-ink)}
 .contact + .foot{margin-top:0;padding-inline:clamp(28px,4.4vw,56px);border-top:0}
 .contact .mail:hover{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
 .contact p{max-width:58ch;margin-top:15px;color:var(--c-muted)}
@@ -353,21 +357,21 @@ p{text-wrap:pretty}
 .foot a:hover{color:var(--c-ink)}
 
 /* Inner pages share the visual language without inheriting the front-page hero. */
-.page-head{padding-bottom:clamp(2rem,4vw,4rem);border-bottom:1px solid var(--c-ink);margin-bottom:clamp(2rem,4vw,4rem)}
-.page-head h1{margin-top:14px;font-family:var(--font-display);font-size:clamp(45px,6vw,76px);line-height:.9;letter-spacing:-.05em}
+.page-head{padding-bottom:clamp(1rem,2vw,2rem);margin-bottom:clamp(2rem,4vw,4rem)}
+.page-head h1{margin-top:14px;font-family:var(--font-head);font-weight:400;font-size:clamp(46px,6.2vw,80px);line-height:.98;letter-spacing:-.025em}
 .page-head p{max-width:58ch;margin-top:18px;color:var(--c-muted)}
-.platform-note{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(220px,.65fr);gap:clamp(24px,4vw,56px);padding:clamp(1.4rem,2.5vw,2rem) 0;border-bottom:1px solid var(--c-ink);margin-bottom:clamp(1.6rem,2.6vw,2.2rem)}
+.platform-note{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(220px,.65fr);gap:clamp(24px,4vw,56px);padding:clamp(1.4rem,2.5vw,2rem) 0;border-bottom:1px solid var(--c-rule);margin-bottom:clamp(1.6rem,2.6vw,2.2rem)}
 .platform-note h2{margin-top:10px;font-family:var(--font-head);font-size:clamp(25px,3vw,34px);line-height:1.08}
 .platform-note p{max-width:65ch;margin-top:12px;color:var(--c-muted)}
-.platform-note .mono{color:var(--c-faint);letter-spacing:.2em}
+.platform-note .mono{color:var(--accent);letter-spacing:.14em}
 .platform-note code{font-family:var(--font-mono);font-size:.86em;color:var(--c-ink)}
 .pieces{display:flex;flex-direction:column;gap:clamp(22px,3vw,36px)}
-.piece{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);border-bottom:1px solid var(--c-rule-strong)}
+.piece{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);border-bottom:1px solid var(--c-rule)}
 .piece figure{position:relative;margin:0;border-right:1px solid var(--c-rule);background:var(--c-paper-deep)}
 .piece figure img{width:100%;height:100%;min-height:260px;object-fit:cover}
 .piece figure figcaption{position:absolute;inset:auto 0 0 0;padding:8px 12px;color:rgba(255,255,255,.86);background:linear-gradient(transparent,rgba(0,0,0,.55))}
 .piece .body{display:flex;flex-direction:column;padding:clamp(20px,2.5vw,34px)}
-.piece .kicker{color:var(--c-faint);letter-spacing:.2em}
+.piece .kicker{color:var(--accent);letter-spacing:.14em}
 .piece h2{margin-top:12px;font-family:var(--font-head);font-size:clamp(26px,2.7vw,35px);line-height:1.07;letter-spacing:-.014em}
 .piece .abstract{max-width:62ch;margin-top:14px;color:var(--c-muted);font-size:17px;line-height:1.48}
 .piece .tags{display:flex;flex-wrap:wrap;gap:0 20px;margin-top:18px;margin-bottom:22px}
@@ -396,7 +400,7 @@ p{text-wrap:pretty}
    а не прикраса. */
 .menu-btn{
   display:none;width:40px;height:40px;align-items:center;justify-content:center;
-  margin-left:auto;border:1px solid var(--c-rule-strong);border-radius:999px;background:transparent;
+  margin-left:auto;border:0;border-radius:999px;background:rgba(255,255,255,.08);
   color:var(--c-ink);cursor:pointer;flex:none;
 }
 .menu-btn svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.6;
@@ -420,7 +424,7 @@ p{text-wrap:pretty}
     max-height:0;overflow:hidden;overscroll-behavior:contain;
     background:var(--c-paper);
     border-top:1px solid var(--c-rule);
-    box-shadow:0 22px 40px -28px rgba(18,18,18,.5);
+    box-shadow:0 22px 40px -28px rgba(0,0,0,.8);
     transition:max-height .26s cubic-bezier(.22,.7,.24,1);
   }
   /* Полоса на скролле ниже на 6px - панель идёт за её нижним краем, иначе
@@ -440,7 +444,7 @@ p{text-wrap:pretty}
     /* backdrop-filter на шапке делает её containing block для fixed-детей:
        inset снизу считается от шапки, а не от окна, и затемнение получало
        нулевую высоту. Поэтому высота задана явно. */
-    content:"";position:fixed;inset:var(--bar) 0 auto 0;height:100vh;background:rgba(18,18,18,.42);
+    content:"";position:fixed;inset:var(--bar) 0 auto 0;height:100vh;background:rgba(0,0,0,.55);
     opacity:0;pointer-events:none;transition:opacity .24s ease;z-index:0;
   }
   .site-head.nav-open::after{opacity:1}
@@ -513,7 +517,7 @@ p{text-wrap:pretty}
 .feat.feat-full .feat-body{grid-column:2;grid-row:2 / span 3;margin-top:24px;max-width:64ch}
 .feat .feat-body>p{margin:0;font-size:18px;line-height:1.45;color:var(--c-muted);max-width:none}
 .feat-points{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 28px;margin:22px 0 0}
-.feat-points>div{border-top:1px solid var(--c-rule);padding-top:10px}
-.feat-points dt{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--c-faint);margin:0 0 4px}
+.feat-points>div{padding-top:0}
+.feat-points dt{font-size:15px;font-weight:600;color:var(--c-ink);margin:0 0 4px}
 .feat-points dd{margin:0;font-size:15px;line-height:1.4;color:var(--c-muted)}
 @media (max-width:640px){.feat-points{grid-template-columns:1fr}}
