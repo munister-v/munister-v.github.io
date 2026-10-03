@@ -43,14 +43,14 @@ jobs:
       - name: Commit if changed
         id: commit
         run: |
-          if git diff --quiet -- writing/index.html index.html; then
+          if git diff --quiet -- writing/index.html index.html uk/index.html; then
             echo "No changes."
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "munister-writing-sync[bot]"
           git config user.email "actions@users.noreply.github.com"
-          git add writing/index.html index.html
+          git add writing/index.html index.html uk/index.html
           git commit -m "writing: sync articles from EPRIS Journal [auto]"
           git push
           echo "changed=true" >> "$GITHUB_OUTPUT"
