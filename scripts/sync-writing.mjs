@@ -304,6 +304,60 @@ ${figure}
   } else {
     console.log('Homepage teaser already up to date.');
   }
+
+  syncUkHome(pieces, total);
+}
+
+// ── Ukrainian homepage teaser (uk/index.html) ──────────────────────────────
+// Same five pieces; the pieces themselves are in English, so titles keep
+// lang="en", while the date, the kind of piece and the counts speak Ukrainian.
+const UK_MONTHS = ['січ.', 'лют.', 'бер.', 'квіт.', 'трав.', 'черв.', 'лип.', 'серп.', 'вер.', 'жовт.', 'лист.', 'груд.'];
+function displayDateUk(raw) {
+  const str = String(raw || '').trim();
+  if (!/(?:^|[^0-9])([0-9]{1,2})(?:[^0-9]|$)/.test(str)) return str;
+  const d = new Date(str);
+  if (Number.isNaN(d.getTime())) return str;
+  return `${d.getDate()} ${UK_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+function piecesUk(n) {
+  const n10 = n % 10, n100 = n % 100;
+  if (n10 === 1 && n100 !== 11) return 'матеріал';
+  if (n10 >= 2 && n10 <= 4 && !(n100 >= 12 && n100 <= 14)) return 'матеріали';
+  return 'матеріалів';
+}
+const UK_KIND = { Essay: 'Есей', Interview: 'Інтервʼю', Review: 'Рецензія' };
+function syncUkHome(pieces, total) {
+  const file = path.join(__dirname, '..', 'uk', 'index.html');
+  let html;
+  try { html = readFileSync(file, 'utf8'); } catch { return; }
+  const cards = pieces.slice(0, HOME_TEASER_COUNT).map((p) => {
+    const url = `https://eprisjournal.com/${p.kind === 'review' ? 'review' : 'article'}/${p.slug}`;
+    const img = p.image
+      ? `<span class="thumb"><img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.title)}" width="240" height="240" loading="lazy" decoding="async"></span>\n        `
+      : '';
+    const sub = homeSubline(p).replace(/^(Essay|Interview|Review)\b/, (k) => UK_KIND[k]);
+    return `      <a href="${url}" target="_blank" rel="noopener" hreflang="en">
+        ${img}<span class="mono when">${escapeHtml(displayDateUk(p.date))}</span>
+        <div class="body">
+          <h3 lang="en">${escapeHtml(p.title)}</h3>
+          <span class="sub mono">${escapeHtml(sub)}</span>
+        </div>
+        <span class="go mono">Читати<i class="ext" aria-hidden="true"></i></span>
+      </a>`;
+  }).join('\n');
+  let out = html;
+  out = out.replace(/(<!-- AUTO:HOME_WRITING_NOTE:START -->)[\s\S]*?(<!-- AUTO:HOME_WRITING_NOTE:END -->)/,
+    `$1Есеї, критика та інтервʼю в EPRIS Journal англійською. ${total} ${piecesUk(total)}, від найновіших.$2`);
+  out = out.replace(/(<!-- AUTO:HOME_WRITING_CARDS:START -->)[\s\S]*?(<!-- AUTO:HOME_WRITING_CARDS:END -->)/,
+    () => `<!-- AUTO:HOME_WRITING_CARDS:START -->\n${cards}\n<!-- AUTO:HOME_WRITING_CARDS:END -->`);
+  out = out.replace(/(<!-- AUTO:HOME_WRITING_BUTTON:START -->)[\s\S]*?(<!-- AUTO:HOME_WRITING_BUTTON:END -->)/,
+    `$1Усі ${total} ${piecesUk(total)}$2`);
+  if (out !== html) {
+    writeFileSync(file, out);
+    console.log('Synced Ukrainian homepage teaser.');
+  } else {
+    console.log('Ukrainian homepage teaser already up to date.');
+  }
 }
 
 main().catch((e) => {

@@ -14,6 +14,42 @@
   const nav = head && head.querySelector('nav');
   if (!head || !btn || !nav) return;
 
+  // Низ шторки: переключатель языка и почта. Языки берём из альтернатив,
+  // которые страница и так объявляет поисковикам (link rel=alternate
+  // hreflang), поэтому шторка сама знает про /uk/ и /irpin/uk/ и молчит
+  // там, где перевода нет. Строится скриптом: без JS нет и шторки.
+  if (!nav.querySelector('.nav-foot')) {
+    const lang = (document.documentElement.lang || 'en').slice(0, 2);
+    const uk = lang === 'uk';
+    const names = { en: 'English', uk: 'Українська' };
+    const alts = [...document.querySelectorAll('link[rel="alternate"][hreflang]')]
+      .map((l) => ({ code: l.hreflang.slice(0, 2), href: l.getAttribute('href') }))
+      .filter((a) => names[a.code]);
+    const foot = document.createElement('div');
+    foot.className = 'nav-foot';
+    if (alts.length > 1) {
+      const box = document.createElement('div');
+      box.className = 'nav-langs';
+      box.setAttribute('role', 'group');
+      box.setAttribute('aria-label', uk ? 'Мова' : 'Language');
+      alts.forEach((a) => {
+        const el = document.createElement('a');
+        el.href = a.href.replace(/^https?:\/\/munister\.com\.ua/, '');
+        el.hreflang = a.code;
+        el.lang = a.code;
+        el.textContent = names[a.code];
+        if (a.code === lang) el.setAttribute('aria-current', 'true');
+        box.appendChild(el);
+      });
+      foot.appendChild(box);
+    }
+    const contact = document.createElement('div');
+    contact.className = 'nav-contact';
+    contact.innerHTML = `<span>${uk ? 'Напишіть мені' : 'Write to me'}</span><a href="mailto:munister@outlook.com">munister@outlook.com</a>`;
+    foot.appendChild(contact);
+    nav.appendChild(foot);
+  }
+
   // Замок страницы: без него жест по затемнению прокручивает страницу под
   // панелью, и читатель закрывает меню не там, где открывал. Класс на html,
   // а не на body: прокручивает страницу корень, на body overflow не сработал
@@ -70,7 +106,7 @@
   const head = document.querySelector('.site-head');
   const nav = head?.querySelector('nav');
   if (!head || !nav) return;
-  const links = [...nav.querySelectorAll('a')];
+  const links = [...nav.querySelectorAll(':scope > a')];
   links.forEach((a, i) => a.style.setProperty('--i', String(i)));
 
   const onScroll = () => head.classList.toggle('is-scrolled', window.scrollY > 12);

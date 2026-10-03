@@ -399,71 +399,88 @@ p{text-wrap:pretty}
    потрапити інакше, ніж прямим посиланням. Кнопка й панель нижче — заміна,
    а не прикраса. */
 .menu-btn{
-  display:none;width:40px;height:40px;align-items:center;justify-content:center;
+  display:none;position:relative;width:40px;height:40px;align-items:center;justify-content:center;
   margin-left:auto;border:0;border-radius:999px;background:rgba(255,255,255,.08);
-  color:var(--c-ink);cursor:pointer;flex:none;
+  color:var(--c-ink);cursor:pointer;flex:none;transition:background .2s ease;
 }
-.menu-btn svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.6;
-  stroke-linecap:round;fill:none}
-.menu-btn .i-close{display:none}
-.site-head.nav-open .menu-btn .i-open{display:none}
-.site-head.nav-open .menu-btn .i-close{display:block}
+.menu-btn:hover{background:rgba(255,255,255,.14)}
+/* Иконки не переключаются display, а проворачиваются одна в другую: кнопка
+   отвечает на нажатие движением, а не подменой картинки. */
+.menu-btn svg{position:absolute;width:18px;height:18px;stroke:currentColor;stroke-width:1.6;
+  stroke-linecap:round;fill:none;transition:opacity .22s ease,transform .45s cubic-bezier(.16,1,.3,1)}
+.menu-btn .i-close{opacity:0;transform:rotate(-90deg) scale(.6)}
+.site-head.nav-open .menu-btn .i-open{opacity:0;transform:rotate(90deg) scale(.6)}
+.site-head.nav-open .menu-btn .i-close{opacity:1;transform:none}
+.nav-foot{display:none}
+
+/* Переключатель языка в шапке. На телефоне его роль берёт низ шторки. */
+.lang-switch{
+  margin-left:auto;display:inline-flex;align-items:center;gap:6px;
+  padding:7px 13px;border-radius:999px;background:rgba(255,255,255,.06);
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--c-muted);transition:color .18s ease,background .18s ease;
+}
+.lang-switch:hover{color:var(--c-ink);background:rgba(255,255,255,.12)}
 
 @media (max-width:760px){
-  /* Кнопка держит тот же отступ от края, что и логотип слева: прижатая к
-     самому краю, она читалась как кнопка НЕ этой полосы, а панель под ней
-     была отбита от краёв ещё на десять пикселей - три разных отступа в
-     одном узле. */
+  .lang-switch{display:none}
   .menu-btn{display:flex;margin-right:20px}
+  /* Шторка на весь экран. Прежняя панель раскрывалась на высоту пяти строк, а
+     страница просвечивала под затемнением: меню выглядело выпадающим
+     списком, а не навигацией сайта. Теперь это отдельный экран: крупные
+     разделы набраны тем же антиквенным шрифтом, что и заголовки страницы,
+     внизу язык и почта. Шторка открывается клипом сверху вниз, без смены
+     высоты: раскладка внутри не пересчитывается на каждом кадре. */
+  .site-head.nav-open{height:var(--bar);background:var(--c-paper);box-shadow:none}
   .site-head nav{
-    /* Панель во всю ширину, а не карточка с отбивкой: края совпадают с
-       краями полосы, и меню читается как продолжение шапки. Пункты - строки
-       с линейками, в ту же клетку, что и весь остальной сайт. */
-    display:flex;flex-direction:column;align-items:stretch;gap:0;
     position:fixed;top:var(--bar);left:0;right:0;z-index:1;
-    max-height:0;overflow:hidden;overscroll-behavior:contain;
-    background:var(--c-paper);
-    border-top:1px solid var(--c-rule);
-    box-shadow:0 22px 40px -28px rgba(0,0,0,.8);
-    transition:max-height .26s cubic-bezier(.22,.7,.24,1);
+    height:calc(100vh - var(--bar));height:calc(100dvh - var(--bar));
+    display:flex;flex-direction:column;align-items:stretch;gap:0;
+    padding:clamp(10px,3vh,28px) 20px calc(22px + env(safe-area-inset-bottom));
+    background:var(--c-paper);overflow-y:auto;overscroll-behavior:contain;
+    clip-path:inset(0 0 100% 0);visibility:hidden;
+    transition:clip-path .42s cubic-bezier(.7,0,.25,1),visibility 0s linear .42s;
   }
-  /* Полоса на скролле ниже на 6px - панель идёт за её нижним краем, иначе
-     в шве видно страницу. */
   .site-head.is-scrolled nav{top:calc(var(--bar) - 6px)}
-  .site-head.nav-open nav{max-height:calc(100vh - var(--bar));overflow-y:auto}
-  /* Пункты въезжают по очереди: панель без этого раскрывается как пустая
-     шторка, и список появляется уже готовым, без признака, что он приехал. */
-  .site-head nav a{opacity:0;transform:translateY(-6px);transition:opacity .22s ease,transform .28s cubic-bezier(.22,.7,.24,1)}
-  .site-head.nav-open nav a{opacity:1;transform:none;transition-delay:calc(40ms * var(--i,0))}
+  .site-head.nav-open nav{top:var(--bar);clip-path:inset(0);visibility:visible;
+    transition:clip-path .6s cubic-bezier(.16,1,.3,1),visibility 0s}
   .nav-mark{display:none}
-  /* Затемнение под панелью: страница под открытым меню перестаёт спорить
-     с ним за внимание, а тап по нему закрывает - обработчик уже есть.
-     16% на белой бумаге не видно вообще: страница оставалась в полную силу
-     и спорила с меню за внимание. */
-  .site-head::after{
-    /* backdrop-filter на шапке делает её containing block для fixed-детей:
-       inset снизу считается от шапки, а не от окна, и затемнение получало
-       нулевую высоту. Поэтому высота задана явно. */
-    content:"";position:fixed;inset:var(--bar) 0 auto 0;height:100vh;background:rgba(0,0,0,.55);
-    opacity:0;pointer-events:none;transition:opacity .24s ease;z-index:0;
+  .site-head nav > a{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:clamp(12px,2.2vh,18px) 0;margin:0;border-radius:0;
+    font-family:var(--font-head);font-size:clamp(31px,9.4vw,42px);line-height:1.05;
+    letter-spacing:-.02em;text-transform:none;color:var(--c-ink);
+    border-bottom:1px solid var(--c-rule);
+    opacity:0;transform:translateY(16px);
+    transition:opacity .3s ease,transform .55s cubic-bezier(.16,1,.3,1),color .2s ease;
   }
-  .site-head.nav-open::after{opacity:1}
-  /* Разделы набраны своим кеглем, а не служебным: в колонке мелкая разрядка
-     капителью читается как список настроек, тогда как это главная навигация
-     страницы. */
-  .site-head nav a{
-    padding:17px 20px;border-radius:0;margin:0;justify-content:flex-start;
-    font-family:var(--font-display);font-size:21px;letter-spacing:-.01em;
-    text-transform:none;color:var(--c-ink);
+  .site-head nav > a::after{
+    content:"";flex:none;width:20px;height:20px;background:currentColor;opacity:.3;
+    -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="black" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat center/contain;mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="black" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat center/contain;
+    transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .2s ease,background .2s ease;
   }
-  .site-head nav a + a{box-shadow:inset 0 1px 0 var(--c-rule)}
-  /* Замок страницы: меню живёт только здесь, поэтому на широком экране
-     правило не существует вообще. */
+  .site-head nav > a:active::after{transform:translateX(5px);opacity:1}
+  .site-head nav > a[aria-current]::after{background:var(--accent);opacity:1}
+  .site-head.nav-open nav > a{opacity:1;transform:none;transition-delay:calc(80ms + 45ms * var(--i,0))}
+  .nav-foot{
+    display:flex;flex-direction:column;align-items:flex-start;gap:18px;
+    margin-top:auto;padding-top:30px;
+    opacity:0;transform:translateY(16px);
+    transition:opacity .3s ease,transform .55s cubic-bezier(.16,1,.3,1);
+  }
+  .site-head.nav-open .nav-foot{opacity:1;transform:none;transition-delay:.34s}
+  .site-head .nav-foot a{padding:0;border-radius:0;font-family:var(--font-sans);font-size:15px;letter-spacing:0;text-transform:none}
+  .nav-langs{display:inline-flex;gap:2px;padding:4px;border-radius:999px;background:rgba(255,255,255,.06)}
+  .site-head .nav-langs a{padding:9px 16px;border-radius:999px;font-size:14px;color:var(--c-muted)}
+  .site-head .nav-langs a[aria-current]{background:var(--c-ink);color:var(--c-paper)}
+  .nav-contact{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--c-faint)}
+  .site-head .nav-contact a{font-size:17px;color:var(--c-ink)}
   html.nav-locked{overflow:hidden}
-  .site-head nav a[aria-current="page"],.site-head nav a[aria-current="true"]{color:var(--c-ink);background:var(--c-paper-deep)}
   .head-right{margin-left:0}
 }
-@media (prefers-reduced-motion:reduce){.site-head nav{transition:none}}
+@media (prefers-reduced-motion:reduce){
+  .site-head nav,.site-head nav > a,.nav-foot,.menu-btn svg{transition:none!important}
+}
 
 @media (max-width:980px){
   /* Портрет остаётся: в отличие от прежней пустой ячейки, ему есть что
@@ -521,3 +538,12 @@ p{text-wrap:pretty}
 .feat-points dt{font-size:15px;font-weight:600;color:var(--c-ink);margin:0 0 4px}
 .feat-points dd{margin:0;font-size:15px;line-height:1.4;color:var(--c-muted)}
 @media (max-width:640px){.feat-points{grid-template-columns:1fr}}
+
+/* Quieter labels (2026-10-03): lowercase domains and venues, neutral section eyebrows */
+.sec-head .eyebrow{color:var(--c-faint)}
+.feat .meta,.pub .venue,.writing .sub{text-transform:none;letter-spacing:.01em;font-size:13px}
+@media (max-width:760px){
+  .pub .ttl{font-size:18px;line-height:1.25}
+  .writing h3{font-size:21px;line-height:1.12}
+  .pub .arrow,.writing .go{display:none}
+}
