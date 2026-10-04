@@ -2,7 +2,7 @@ import json, sys
 STORE="https://apps.apple.com/us/app/architectura-italy-drawn/id6816227873"
 APPLE='<svg class="apple" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 12.7c0-2.4 2-3.6 2.1-3.7-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.6 1.3 10.1.8 1.2 1.8 2.6 3.1 2.5 1.3 0 1.7-.8 3.3-.8 1.5 0 1.9.8 3.3.8 1.4 0 2.2-1.2 3-2.5 1-1.4 1.4-2.8 1.4-2.8s-2.7-1-2.7-4.1ZM14 5.4c.7-.8 1.1-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4Z"/></svg>'
 L=json.load(open(sys.argv[1]))
-def ph(f,alt,cls="phone",lazy=True): return f'<img class="{cls}" src="/architectura/img/{f}.webp" alt="{alt}" width="780" height="1695"{" loading=\"lazy\"" if lazy else " fetchpriority=\"high\""} decoding="async">'
+def ph(f,alt,cls="phone",lazy=True): return f'<img class="{cls}" src="/architectura/img/{f}.webp" alt="{alt}" width="780" height="1624"{" loading=\"lazy\"" if lazy else " fetchpriority=\"high\""} decoding="async">'
 def feat(sec,i):
     pics=''.join(ph(f,sec['eyebrow'],"phone"+(" second" if k else "")) for k,f in enumerate(sec['pics']))
     cls="feature"+(" pair" if len(sec['pics'])>1 else (" flip" if i%2 else ""))
@@ -39,7 +39,7 @@ html=f'''<!DOCTYPE html>
 <meta name="twitter:image" content="https://munister.com.ua/architectura/img/og.jpg">
 <link rel="stylesheet" href="/munister.css?v=52">
 <link rel="stylesheet" href="/irpin/irpin.css?v=9">
-<style>.irpin .phone{{aspect-ratio:780/1695;height:auto;border-radius:11%/5%;box-shadow:0 0 0 1px rgba(255,255,255,.14)}}.irpin .hero .app-icon{{border-radius:20px}}</style>
+<style>.irpin .phone{{aspect-ratio:780/1624;height:auto}}.irpin .hero .app-icon{{border-radius:20px}}</style>
 </head>
 <body>
 <a class="skip" href="#main">{L['skip']}</a>
