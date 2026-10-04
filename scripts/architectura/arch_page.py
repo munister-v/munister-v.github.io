@@ -37,6 +37,7 @@ html=f'''<!DOCTYPE html>
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://munister.com.ua/architectura/img/og.jpg">
+<script type="application/ld+json">{json.dumps({"@context":"https://schema.org","@type":"MobileApplication","name":"Architectura: Italy Drawn","operatingSystem":"iOS","applicationCategory":"EducationalApplication","url":"https://munister.com.ua"+pre,"downloadUrl":STORE,"installUrl":STORE,"image":"https://munister.com.ua/architectura/img/icon-512.png","screenshot":"https://munister.com.ua/architectura/img/og.jpg","description":L['desc'],"inLanguage":["en","ru","it"],"author":{"@type":"Person","name":"Viacheslav Munister","url":"https://munister.com.ua/"},"publisher":{"@type":"Organization","name":"EPRIS Journal","url":"https://eprisjournal.com/"}},ensure_ascii=False)}</script>
 <link rel="stylesheet" href="/munister.css?v=52">
 <link rel="stylesheet" href="/irpin/irpin.css?v=9">
 <style>.irpin .phone{{aspect-ratio:780/1624;height:auto}}.irpin .hero .app-icon{{border-radius:20px}}</style>
