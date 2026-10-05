@@ -10,6 +10,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { formatText } from './typography.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FILE = path.join(__dirname, '..', 'writing', 'index.html');
@@ -67,6 +68,10 @@ function escapeHtml(s) {
   return String(s || '').replace(/[&<>"']/g, (c) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   }[c]));
+}
+
+function escapeCopy(s) {
+  return escapeHtml(formatText(s, 'en'));
 }
 
 // Категории в журнале набраны как попало: «Architecture», «contemporary art»,
@@ -217,8 +222,8 @@ async function main() {
 ${figure}
       <div class="body">
         <p class="mono kicker">${escapeHtml(titleCase(p.category))}${p.category ? ' · ' : ''}${escapeHtml(displayDate(p.date))}</p>
-        <h2>${escapeHtml(p.title)}</h2>
-        <p class="abstract">${escapeHtml(p.abstract)}</p>
+        <h2>${escapeCopy(p.title)}</h2>
+        <p class="abstract">${escapeCopy(p.abstract)}</p>
         ${tagsHtml}
         <div class="byline">
           <span class="mono who">By ${escapeHtml(creditLine(p.coauthors))} · ${escapeHtml(p.role)}</span>
@@ -276,8 +281,8 @@ ${figure}
     return `      <a href="${url}" target="_blank" rel="noopener">
         ${img}<span class="mono when">${escapeHtml(displayDate(p.date))}</span>
         <div class="body">
-          <h3>${escapeHtml(p.title)}</h3>
-          <span class="sub mono">${escapeHtml(homeSubline(p))}</span>
+          <h3>${escapeCopy(p.title)}</h3>
+          <span class="sub mono">${escapeCopy(homeSubline(p))}</span>
         </div>
         <span class="go mono">Read<i class="ext" aria-hidden="true"></i></span>
       </a>`;
@@ -339,8 +344,8 @@ function syncUkHome(pieces, total) {
     return `      <a href="${url}" target="_blank" rel="noopener" hreflang="en">
         ${img}<span class="mono when">${escapeHtml(displayDateUk(p.date))}</span>
         <div class="body">
-          <h3 lang="en">${escapeHtml(p.title)}</h3>
-          <span class="sub mono">${escapeHtml(sub)}</span>
+          <h3 lang="en">${escapeCopy(p.title)}</h3>
+          <span class="sub mono">${escapeCopy(sub)}</span>
         </div>
         <span class="go mono">Читати<i class="ext" aria-hidden="true"></i></span>
       </a>`;

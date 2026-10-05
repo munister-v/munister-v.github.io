@@ -32,6 +32,8 @@
   --font-body:var(--font-sans);
   --font-mono:var(--font-sans);
   --measure:1240px;
+  --gutter:clamp(20px,4vw,54px);
+  --section-space:clamp(56px,7vw,104px);
   --bar:56px;
   color-scheme:dark;
 }
@@ -53,15 +55,17 @@ body{
 }
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
-h1,h2,h3,h4{font-weight:400;text-wrap:balance}
-p{text-wrap:pretty}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance;overflow-wrap:break-word;word-break:normal;hyphens:manual}
+p,li,dd,figcaption{text-wrap:pretty;overflow-wrap:break-word;word-break:normal;hyphens:manual}
+/* Emergency wrapping belongs to long addresses, not ordinary words. */
+a[href^="mailto:"],a[href^="https://doi.org/"]{overflow-wrap:anywhere}
 ::selection{background:var(--c-clay-soft);color:var(--c-ink)}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(238,242,240,.18);border-radius:999px}
 *{scrollbar-width:thin;scrollbar-color:rgba(238,242,240,.18) transparent}
 
-.mono{font-family:var(--font-mono);font-size:11px;line-height:1.5;letter-spacing:.14em;text-transform:uppercase;color:var(--c-faint)}
+.mono{font-family:var(--font-mono);font-size:12px;line-height:1.6;letter-spacing:.1em;text-transform:uppercase;color:var(--c-faint)}
 
 /* Значок зовнішнього посилання — нарисован, а не «↗».
    U+2197 в стандартному Юнікоді за замовчуванням emoji-presentation: на
@@ -76,7 +80,8 @@ p{text-wrap:pretty}
   -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="black" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat center/contain;
   mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="black" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat center/contain;
 }
-.shell{max-width:var(--measure);margin-inline:auto;padding-inline:clamp(20px,4vw,54px)}
+.shell{max-width:var(--measure);margin-inline:auto;padding-inline:var(--gutter)}
+.shell > *, .sec-head > *, .feat > *, .pub > *, .writing a > *, .piece > *, .close > *, .contact > *{min-width:0}
 
 /* Шапка: без ячеек и без линий. Решётка по хайрлайнам осталась языком
    первого экрана, но в самой полосе она читалась как рамка вокруг каждого
@@ -117,7 +122,7 @@ p{text-wrap:pretty}
 .nav-mark.is-on{opacity:1}
 .site-head nav a{
   position:relative;z-index:1;display:flex;align-items:center;
-  padding:9px clamp(11px,1.3vw,17px);border-radius:999px;
+  min-height:44px;padding:9px clamp(11px,1.3vw,17px);border-radius:999px;
 }
 .site-head nav a,.site-head .head-right a{
   font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
@@ -132,13 +137,13 @@ p{text-wrap:pretty}
   transition:color .18s ease,background .18s ease,border-color .18s ease;
 }
 .head-right a:hover{background:rgba(255,255,255,.14);color:var(--c-ink)}
-.site-main{padding-top:clamp(2.7rem,5vw,5.5rem)}
+.site-main{padding-top:clamp(32px,4vw,64px)}
 
 /* Buttons are editorial labels, not generic rounded controls. */
 /* «Walk the route» / «Visit» в музее - таблетки: залитая чернилами и
    контурная. Тот же жест здесь. */
 .btn{
-  display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 18px;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;max-width:100%;padding:8px 18px;text-align:center;line-height:1.35;
   border:1px solid transparent;border-radius:999px;
   font-family:var(--font-body);font-size:12.5px;font-weight:400;letter-spacing:-.005em;text-transform:none;
   color:var(--c-ink);background:rgba(255,255,255,.08);transition:background .2s,color .2s,border-color .2s;
@@ -153,7 +158,7 @@ p{text-wrap:pretty}
 .btn--lg{min-height:44px;padding:0 22px;font-size:15px}
 
 /* The opening is a page, rather than a profile card. */
-.opening{margin-bottom:clamp(4.4rem,8vw,8rem);padding-top:clamp(6px,1vw,14px)}
+.opening{margin-bottom:var(--section-space);padding-top:clamp(6px,1vw,14px)}
 /* Решётка первого экрана музея: тонкие вертикали делят полосу на ячейки, в
    левой стоит только год. Здесь то же самое - служебная колонка, заявление,
    портрет. */
@@ -179,8 +184,8 @@ p{text-wrap:pretty}
 }
 
 .opening-copy{min-width:0}
-.name{font-family:var(--font-head);font-weight:400;font-size:clamp(50px,7.6vw,108px);line-height:.92;letter-spacing:-.03em}
-.claim{max-width:24ch;margin-top:clamp(26px,3.4vw,42px);font-family:var(--font-head);font-size:clamp(29px,3.4vw,48px);line-height:1.04;letter-spacing:-.018em}
+.name{font-family:var(--font-head);font-weight:400;font-size:clamp(50px,7.6vw,108px);line-height:1;letter-spacing:-.03em}
+.claim{max-width:24ch;margin-top:clamp(24px,3vw,40px);font-family:var(--font-head);font-size:clamp(29px,3.4vw,48px);line-height:1.15;letter-spacing:-.018em}
 
 .opening-bottom{
   display:grid;grid-template-columns:clamp(96px,11vw,150px) minmax(0,1fr) auto;gap:0 clamp(24px,4vw,54px);align-items:end;
@@ -195,13 +200,13 @@ p{text-wrap:pretty}
 .actions,.research-actions,.writing-actions{display:flex;gap:8px;flex-wrap:wrap}
 
 /* Section system: one strong rule and clear type, no framed dashboard panels. */
-.sec{margin-bottom:clamp(4.8rem,8vw,8rem)}
+.sec{margin-bottom:var(--section-space)}
 .sec-head{
   display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.38fr);gap:24px;align-items:end;
   padding-bottom:0;margin-bottom:clamp(1.8rem,3vw,2.7rem);
 }
 .sec-head .eyebrow{display:block;margin-bottom:12px;color:var(--accent);letter-spacing:.14em}
-.sec-head h2{font-family:var(--font-head);font-weight:400;font-size:clamp(36px,4.2vw,60px);line-height:1;letter-spacing:-.022em}
+.sec-head h2{font-family:var(--font-head);font-weight:400;font-size:clamp(36px,4.2vw,60px);line-height:1.12;letter-spacing:-.022em}
 .sec-head .sec-note{max-width:30ch;justify-self:end;color:var(--c-muted);font-size:16px;line-height:1.5}
 .sec-head > span.mono{align-self:end}
 
@@ -260,9 +265,9 @@ p{text-wrap:pretty}
 .feat.feat-full .meta{grid-column:1;grid-row:4;align-self:end}
 /* Снимок журнала обрезан снизу (1600x867): рамка повторяет его пропорцию, чтобы не резать логотип по бокам. */
 @media (min-width:761px){.feat.feat-full.feat-wide .shot{aspect-ratio:1600 / 867}}
-.feat .role{order:1;margin-top:17px;color:var(--accent);letter-spacing:.14em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feat .role{order:1;margin-top:16px;color:var(--accent);letter-spacing:.1em;white-space:normal;line-height:1.6}
 /* Заголовки работ - антиква, как названия материалов в журнале. */
-.feat h3{order:2;margin-top:9px;font-family:var(--font-head);font-size:clamp(25px,2.4vw,35px);line-height:1.06;letter-spacing:-.014em}
+.feat h3{order:2;margin-top:8px;font-family:var(--font-head);font-size:clamp(25px,2.4vw,35px);line-height:1.18;letter-spacing:-.014em}
 .feat p{order:3;margin-top:13px;max-width:46ch;color:var(--c-muted);font-size:17px;line-height:1.55}
 .feat .meta{order:4;display:flex;justify-content:space-between;gap:12px;margin-top:24px;color:var(--c-faint)}
 /* Бейдж App Store — офіційний SVG Apple без змін, не нижче 40px (вимога гайдлайнів). */
@@ -270,7 +275,7 @@ p{text-wrap:pretty}
 .feat.feat-app .shot{background:linear-gradient(#161e1b,#0a0d0c)}
 .feat.feat-app .shot img{object-fit:contain}
 .feat .app-badge{order:4;display:block;width:120px;height:40px;margin-top:22px}
-.feat .meta .t{transition:color .2s ease}
+.feat .meta .t{min-width:0;overflow-wrap:anywhere;transition:color .2s ease}
 .feat:hover .meta .t{color:var(--c-ink);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
 
 .competencies{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(28px,4vw,50px) clamp(24px,3vw,48px);margin-top:8px}
@@ -294,7 +299,7 @@ p{text-wrap:pretty}
 .pubs{border-top:1px solid var(--c-rule)}
 .pub{display:grid;grid-template-columns:62px minmax(0,1fr) 270px auto;gap:clamp(14px,2.4vw,32px);align-items:baseline;padding:18px 0;border-bottom:1px solid var(--c-rule);transition:color .2s ease}
 .pub .yr,.writing .when{color:var(--c-faint)}
-.pub .ttl{font-family:var(--font-head);font-size:21px;line-height:1.17}
+.pub .ttl{font-family:var(--font-head);font-size:21px;line-height:1.28}
 .pub .arrow{color:var(--c-faint)}
 .pub:hover{background:var(--c-paper-deep)}
 .pub:hover .arrow{color:var(--c-ink)}
@@ -318,7 +323,7 @@ p{text-wrap:pretty}
 .writing .thumb{width:56px;height:56px;overflow:hidden;border-radius:10px;background:var(--c-paper-deep);align-self:center}
 .writing .thumb img{width:100%;height:100%;object-fit:cover;filter:saturate(.94);transition:filter .2s ease}
 .writing a:hover .thumb img{filter:saturate(1.05)}
-.writing h3{font-family:var(--font-head);font-size:25px;line-height:1.08}
+.writing h3{font-family:var(--font-head);font-size:25px;line-height:1.22}
 .writing .sub{display:block;margin-top:7px;color:var(--c-faint)}
 .writing .go{color:var(--c-faint)}
 .writing a:hover{background:var(--c-paper-deep)}
@@ -334,7 +339,7 @@ p{text-wrap:pretty}
 .close{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:start;margin-top:clamp(3.2rem,6vw,5.5rem);padding:clamp(24px,3vw,36px);border-radius:24px;background:var(--c-paper-deep)}
 .close p{max-width:40ch;margin-top:12px;color:var(--c-muted);font-size:17px;line-height:1.45}
 .close ol{list-style:none}
-.close li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--c-rule);font-family:var(--font-head);font-size:24px;line-height:1.1}
+.close li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--c-rule);font-family:var(--font-head);font-size:24px;line-height:1.3}
 .close li:first-child{padding-top:0}
 .close li:last-child{border-bottom:0;padding-bottom:0}
 .close li i{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;color:var(--c-faint);font-style:normal}
@@ -354,14 +359,15 @@ p{text-wrap:pretty}
 .contact p{max-width:58ch;margin-top:15px;color:var(--c-muted)}
 .contact .actions{justify-content:flex-end}
 .foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:clamp(3rem,5vw,5rem);padding:18px 0 36px;border-top:1px solid var(--c-rule)}
-.foot a:hover{color:var(--c-ink)}
+.foot a{overflow-wrap:anywhere}.foot a:hover{color:var(--c-ink)}
+.foot > span{min-width:0;line-height:1.8}
 
 /* Inner pages share the visual language without inheriting the front-page hero. */
 .page-head{padding-bottom:clamp(1rem,2vw,2rem);margin-bottom:clamp(2rem,4vw,4rem)}
-.page-head h1{margin-top:14px;font-family:var(--font-head);font-weight:400;font-size:clamp(46px,6.2vw,80px);line-height:.98;letter-spacing:-.025em}
+.page-head h1{margin-top:16px;font-family:var(--font-head);font-weight:400;font-size:clamp(46px,6.2vw,80px);line-height:1.1;letter-spacing:-.025em}
 .page-head p{max-width:58ch;margin-top:18px;color:var(--c-muted)}
 .platform-note{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(220px,.65fr);gap:clamp(24px,4vw,56px);padding:clamp(1.4rem,2.5vw,2rem) 0;border-bottom:1px solid var(--c-rule);margin-bottom:clamp(1.6rem,2.6vw,2.2rem)}
-.platform-note h2{margin-top:10px;font-family:var(--font-head);font-size:clamp(25px,3vw,34px);line-height:1.08}
+.platform-note h2{margin-top:12px;font-family:var(--font-head);font-size:clamp(25px,3vw,34px);line-height:1.2}
 .platform-note p{max-width:65ch;margin-top:12px;color:var(--c-muted)}
 .platform-note .mono{color:var(--accent);letter-spacing:.14em}
 .platform-note code{font-family:var(--font-mono);font-size:.86em;color:var(--c-ink)}
@@ -372,9 +378,9 @@ p{text-wrap:pretty}
 .piece figure figcaption{position:absolute;inset:auto 0 0 0;padding:8px 12px;color:rgba(255,255,255,.86);background:linear-gradient(transparent,rgba(0,0,0,.55))}
 .piece .body{display:flex;flex-direction:column;padding:clamp(20px,2.5vw,34px)}
 .piece .kicker{color:var(--accent);letter-spacing:.14em}
-.piece h2{margin-top:12px;font-family:var(--font-head);font-size:clamp(26px,2.7vw,35px);line-height:1.07;letter-spacing:-.014em}
+.piece h2{margin-top:12px;font-family:var(--font-head);font-size:clamp(26px,2.7vw,35px);line-height:1.2;letter-spacing:-.014em}
 .piece .abstract{max-width:62ch;margin-top:14px;color:var(--c-muted);font-size:17px;line-height:1.48}
-.piece .tags{display:flex;flex-wrap:wrap;gap:0 20px;margin-top:18px;margin-bottom:22px}
+.piece .tags{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:16px;margin-bottom:24px}
 .piece .tags span{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--c-faint)}
 .piece .byline{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:auto;padding-top:14px;border-top:1px solid var(--c-rule)}
 .piece .byline .who{color:var(--c-faint)}
@@ -383,7 +389,8 @@ p{text-wrap:pretty}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:28px;border-top:1px solid var(--c-rule)}
 /* П’ять пунктів на сторінці Research (додано «Cited by») — той самий блок,
    ширший на одну клітинку; мобільні розкладки нижче перебивають обидва. */
-.stats-5{grid-template-columns:repeat(5,1fr)}
+.stats-5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.stats > div{min-width:0}
 .stats div{padding:16px 26px 0 0}.stats b{display:block;margin-top:7px;font-family:var(--font-head);font-size:32px;font-weight:400;line-height:1}
 
 :focus{outline:none}
@@ -399,7 +406,7 @@ p{text-wrap:pretty}
    потрапити інакше, ніж прямим посиланням. Кнопка й панель нижче — заміна,
    а не прикраса. */
 .menu-btn{
-  display:none;position:relative;width:40px;height:40px;align-items:center;justify-content:center;
+  display:none;position:relative;width:44px;height:44px;align-items:center;justify-content:center;
   margin-left:auto;border:0;border-radius:999px;background:rgba(255,255,255,.08);
   color:var(--c-ink);cursor:pointer;flex:none;transition:background .2s ease;
 }
@@ -416,7 +423,7 @@ p{text-wrap:pretty}
 /* Переключатель языка в шапке. На телефоне его роль берёт низ шторки. */
 .lang-switch{
   margin-left:auto;display:inline-flex;align-items:center;gap:6px;
-  padding:7px 13px;border-radius:999px;background:rgba(255,255,255,.06);
+  min-height:44px;padding:7px 13px;border-radius:999px;background:rgba(255,255,255,.06);
   font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--c-muted);transition:color .18s ease,background .18s ease;
 }
@@ -488,7 +495,7 @@ p{text-wrap:pretty}
   .opening-grid{grid-template-columns:clamp(88px,10vw,120px) minmax(0,1fr)}
   .pub{grid-template-columns:62px minmax(0,1fr) auto}.pub .venue{grid-column:2 / -1;margin-top:-5px}
   .stats{grid-template-columns:1fr 1fr}.stats div:nth-child(-n+2){padding-bottom:16px}
-  .stats-5{grid-template-columns:1fr 1fr 1fr}.stats-5 div:nth-child(-n+3){padding-bottom:16px}
+  .stats-5{grid-template-columns:repeat(3,minmax(0,1fr))}.stats-5 div:nth-child(-n+3){padding-bottom:16px}
 }
 @media (max-width:760px){
   :root{--bar:52px}
@@ -523,11 +530,21 @@ p{text-wrap:pretty}
   .opening-bottom{grid-template-columns:1fr}.opening-bottom .actions{grid-column:1;margin-top:0}
   .feat .shot{border-radius:14px}
   /* Подписи 9.5px на телефоне ниже порога чтения: чуть крупнее, трекинг уже. */
-  .mono{font-size:11px;letter-spacing:.12em}
+  .mono{font-size:12px;letter-spacing:.08em}
+  .feat.feat-full .role{margin-top:16px}
+  .feat.feat-full p{margin-top:12px}
+  .feat.feat-full .feat-body{margin-top:12px}
+  .close li i{flex:none}
+  .stats{gap:16px 12px}.stats div{padding-right:0}
   .piece{grid-template-columns:1fr}.piece figure img{min-height:0;aspect-ratio:16/9}
   .platform-note{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+
+@media (max-width:560px){
+  .stats-5{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stats-5 div:nth-child(2) b{font-size:24px;white-space:nowrap}
+}
 
 /* Карточка Ірпеня: короткий вступ і підписані пункти замість суцільного абзацу. */
 .feat .feat-body{order:3;margin-top:13px}
@@ -544,6 +561,6 @@ p{text-wrap:pretty}
 .feat .meta,.pub .venue,.writing .sub{text-transform:none;letter-spacing:.01em;font-size:13px}
 @media (max-width:760px){
   .pub .ttl{font-size:18px;line-height:1.25}
-  .writing h3{font-size:21px;line-height:1.12}
+  .writing h3{font-size:22px;line-height:1.25}
   .pub .arrow,.writing .go{display:none}
 }
