@@ -1,25 +1,26 @@
-import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202609241405';
-import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202609241405';
-import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202609241405';
-import { guessType, inferColumn, describe, findParent, physName, isLogical, applyInference, toPhysical, L2P_STEPS, suggestFieldNames, singular, cascadeTableRename, safeColumnName, nameInfo, getNaming, setNaming } from './autodef.js?v=202609241405';
-import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202609241405';
-import { DiagramTabs } from './diagrams-ui.js?v=202609241405';
-import { Panel } from './panel.js?v=202609241405';
-import { Sidebar } from './sidebar.js?v=202609241405';
-import { Palette } from './palette.js?v=202609241405';
-import { generateDDL, viewDDL } from './ddl-gen.js?v=202609241405';
-import { parseDDL } from './ddl-parse.js?v=202609241405';
-import { SAMPLE_DDL } from './sample.js?v=202609241405';
-import { initWorkspace } from './workspace.js?v=202609241405';
-import { diffModels } from './diff.js?v=202609241405';
-import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202609241405';
-import { migrateModel, listSnapshots } from './storage.js?v=202609241405';
-import { Sandbox } from './sandbox.js?v=202609241405';
-import { parseText, buildModel, TEXT_EXAMPLES } from './textmodel.js?v=202609241405';
-import { ENTITY_GROUPS, ATTRIBUTE_GROUPS, RELATION_BLOCKS, findEntity, findAttrSet, tableForBlock, placeEntity, addColumns } from './blocks.js?v=202609241405';
-import { Wizard } from './wizard.js?v=202609241405';
-import { CanvasSearch } from './canvas-search.js?v=202609241405';
-import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202609241405';
+import { Store, newTable, nextTableName, newColumn, newSequence, newView, emptyModel, uid, uniqueName, TABLE_COLORS, tableLevels } from './model.js?v=202610060854';
+import { TEMPLATES, COLUMN_PRESETS } from './templates.js?v=202610060854';
+import { checkModel, fixFkIndexes, fixPkNaming } from './checks.js?v=202610060854';
+import { guessType, inferColumn, describe, findParent, physName, isLogical, applyInference, toPhysical, L2P_STEPS, suggestFieldNames, singular, cascadeTableRename, safeColumnName, nameInfo, getNaming, setNaming } from './autodef.js?v=202610060854';
+import { Diagram, tableSize, viewSize, resolveOverlaps } from './diagram.js?v=202610060854';
+import { DiagramTabs } from './diagrams-ui.js?v=202610060854';
+import { Panel } from './panel.js?v=202610060854';
+import { Sidebar } from './sidebar.js?v=202610060854';
+import { Palette } from './palette.js?v=202610060854';
+import { generateDDL, viewDDL } from './ddl-gen.js?v=202610060854';
+import { parseDDL } from './ddl-parse.js?v=202610060854';
+import { SAMPLE_DDL } from './sample.js?v=202610060854';
+import { initWorkspace } from './workspace.js?v=202610060854';
+import { diffModels } from './diff.js?v=202610060854';
+import { dictionaryHTML, dictionaryMarkdown } from './docs.js?v=202610060854';
+import { migrateModel, listSnapshots } from './storage.js?v=202610060854';
+import { Sandbox } from './sandbox.js?v=202610060854';
+import { parseText, buildModel, TEXT_EXAMPLES } from './textmodel.js?v=202610060854';
+import { ENTITY_GROUPS, ATTRIBUTE_GROUPS, RELATION_BLOCKS, findEntity, findAttrSet, tableForBlock, placeEntity, addColumns } from './blocks.js?v=202610060854';
+import { blockIcon, menuIcon, templateIcon, uiIcon } from './ui-icons.js?v=202610060854';
+import { Wizard } from './wizard.js?v=202610060854';
+import { CanvasSearch } from './canvas-search.js?v=202610060854';
+import { t, getLang, setLang, onLang, applyStatic } from './i18n.js?v=202610060854';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -147,7 +148,7 @@ function toast(msg, err = false) {
 }
 
 // ---------- DDL ----------
-const SQL_KW = /\b(CREATE|TABLE|ALTER|ADD|CONSTRAINT|PRIMARY|FOREIGN|KEY|REFERENCES|UNIQUE|INDEX|ON|DELETE|CASCADE|SET|NULL|NOT|DEFAULT|GENERATED|BY|AS|IDENTITY|COMMENT|IS|COLUMN|DROP|CONSTRAINTS|PURGE)\b/g;
+const SQL_KW = /\b(CREATE|REPLACE|TABLE|VIEW|SEQUENCE|TRIGGER|ALTER|ADD|MODIFY|RENAME|CONSTRAINT|PRIMARY|FOREIGN|KEY|REFERENCES|UNIQUE|INDEX|ON|DELETE|CASCADE|SET|NULL|NOT|DEFAULT|GENERATED|BY|AS|IDENTITY|COMMENT|IS|COLUMN|DROP|CONSTRAINTS|PURGE|SELECT|DISTINCT|FROM|WHERE|JOIN|INNER|LEFT|RIGHT|FULL|OUTER|CROSS|USING|GROUP|ORDER|HAVING|ASC|DESC|FETCH|FIRST|ROWS|ONLY|OFFSET|INSERT|INTO|VALUES|UPDATE|MERGE|WHEN|MATCHED|THEN|ELSE|END|CASE|AND|OR|IN|EXISTS|BETWEEN|LIKE|UNION|ALL|MINUS|INTERSECT|COMMIT|ROLLBACK)\b/gi;
 const SQL_TY = /\b(VARCHAR2|NVARCHAR2|CHAR|NUMBER|INTEGER|FLOAT|BINARY_FLOAT|BINARY_DOUBLE|DATE|TIMESTAMP|WITH|LOCAL|TIME|ZONE|INTERVAL|DAY|TO|SECOND|YEAR|MONTH|CLOB|NCLOB|BLOB|RAW|BOOLEAN|JSON|XMLTYPE|ROWID)\b/g;
 function highlightSQL(sql) {
   return sql.split('\n').map(line => {
@@ -159,6 +160,30 @@ function highlightSQL(sql) {
     ).join('');
   }).join('\n');
 }
+
+// Native textareas keep selection, undo and mobile keyboards reliable. A synchronized
+// highlighted layer beneath them adds syntax colour without pulling in a code editor.
+function enhanceSqlEditor(textarea, kind = 'sql') {
+  if (!textarea || textarea.closest('.sql-editor')) return;
+  const shell = document.createElement('div');
+  shell.className = `sql-editor sql-editor--${kind}`;
+  const layer = document.createElement('pre');
+  layer.className = 'sql-editor__highlight code';
+  textarea.parentNode.insertBefore(shell, textarea);
+  shell.append(layer, textarea);
+  textarea.classList.add('sql-editor__input');
+  const sync = () => {
+    layer.innerHTML = `${highlightSQL(textarea.value)}\n`;
+    layer.scrollTop = textarea.scrollTop;
+    layer.scrollLeft = textarea.scrollLeft;
+    shell.classList.toggle('is-empty', !textarea.value);
+  };
+  textarea.addEventListener('input', sync);
+  textarea.addEventListener('scroll', sync, { passive: true });
+  sync();
+}
+enhanceSqlEditor($('#import-text'), 'import');
+enhanceSqlEditor($('#sbx-sql'), 'sandbox');
 function showDDL() {
   const sql = generateDDL(store.model, { comments: $('#opt-comments').checked, drop: $('#opt-drop').checked });
   $('#ddl-out').value = sql;
@@ -304,7 +329,10 @@ document.addEventListener('click', e => {
   if (b && !b.closest('.palette')) actions[b.dataset.action]?.(b);
 });
 
-$('#import-file').addEventListener('click', async () => { $('#import-text').value = await readFile('.sql,.ddl,.txt'); });
+$('#import-file').addEventListener('click', async () => {
+  $('#import-text').value = await readFile('.sql,.ddl,.txt');
+  $('#import-text').dispatchEvent(new Event('input', { bubbles: true }));
+});
 $('#import-run').addEventListener('click', e => {
   e.preventDefault();
   const text = $('#import-text').value;
@@ -401,12 +429,12 @@ function renderTemplates() {
       <div class="tpl-actions"><button class="primary" type="button" data-tpl="blank">${t('tpl.open')}</button></div>
     </article>
     <article class="tpl text">
-      <div class="tpl-art"><em>✎</em><div class="tpl-lines"><i></i><i></i><i></i></div></div>
+      <div class="tpl-art"><em>${uiIcon('edit')}</em><div class="tpl-lines"><i></i><i></i><i></i></div></div>
       <h3>${t('tpl.text')}</h3><p>${t('tpl.textDesc')}</p>
       <div class="tpl-actions"><button class="primary" type="button" data-tpl="text">${t('tpl.textOpen')}</button></div>
     </article>` + TEMPLATES.map(tp => `
     <article class="tpl">
-      <div class="tpl-art"><em>${tp.icon}</em><div class="tpl-mini">${preview(tp.tables)}</div></div>
+      <div class="tpl-art"><em>${templateIcon(tp.id)}</em><div class="tpl-mini">${preview(tp.tables)}</div></div>
       <h3>${esc(tp.name[lang] || tp.name.en)}</h3>
       <p>${esc(tp.desc[lang] || tp.desc.en)}</p>
       <span class="tpl-meta">${t('tpl.tables', { n: tp.tables })}</span>
@@ -757,17 +785,17 @@ function renderKit() {
   const tabs = [['entities', ENTITY_GROUPS], ['attrs', ATTRIBUTE_GROUPS], ['rels', null]];
   const count = groups => groups ? groups.reduce((n, g) => n + g.items.filter(b => hit(b)).length, 0) : RELATION_BLOCKS.filter(b => hit(b, `${b.hint.uk} ${b.hint.en}`)).length;
   $('#kit-tabs').innerHTML = tabs.map(([id, g]) => `<button type="button" data-tab="${id}" class="${kitTab === id ? 'on' : ''}">${esc(t(`kit.tab.${id}`))}${q ? ` <small>${count(g)}</small>` : ''}</button>`).join('');
-  const tile = (kind, b, sub, extra = '') => `<button type="button" class="kit-tile${extra}" data-kind="${kind}" data-id="${b.id}">
-      <span class="kit-ic">${b.icon}</span><span class="kit-txt"><b>${esc(kitLabel(b))}</b><small>${esc(sub)}</small></span></button>`;
+  const tile = (kind, groupId, b, sub, extra = '') => `<button type="button" class="kit-tile${extra}" data-kind="${kind}" data-id="${b.id}">
+      <span class="kit-ic">${blockIcon(kind, groupId, b.id)}</span><span class="kit-txt"><b>${esc(kitLabel(b))}</b><small>${esc(sub)}</small></span></button>`;
   let html = `<p class="kit-help">${esc(t(`kit.help.${kitTab}`))}</p>`;
   if (kitTab === 'rels') {
     const items = RELATION_BLOCKS.filter(b => hit(b, `${b.hint.uk} ${b.hint.en}`));
-    html += items.length ? `<div class="kit-grid one">${items.map(b => tile('rel', b, b.hint[getLang()] || b.hint.en)).join('')}</div>` : '';
+    html += items.length ? `<div class="kit-grid one">${items.map(b => tile('rel', 'relations', b, b.hint[getLang()] || b.hint.en)).join('')}</div>` : '';
   } else {
     const groups = (kitTab === 'entities' ? ENTITY_GROUPS : ATTRIBUTE_GROUPS).map(g => [g, g.items.filter(b => hit(b))]).filter(([, l]) => l.length);
     html += groups.map(([g, list]) => `<section><h5>${esc(kitLabel(g))}</h5><div class="kit-grid">${list.map(b => kitTab === 'entities'
-      ? tile('entity', b, inModel(b) ? `✓ ${t('kit.in')}` : b.name, inModel(b) ? ' in' : '')
-      : tile('attr', b, b.cols.map(c => c.replace(/[#!]|:.*$/g, '')).join(', '))).join('')}</div></section>`).join('');
+      ? tile('entity', g.id, b, inModel(b) ? `✓ ${t('kit.in')}` : b.name, inModel(b) ? ' in' : '')
+      : tile('attr', g.id, b, b.cols.map(c => c.replace(/[#!]|:.*$/g, '')).join(', '))).join('')}</div></section>`).join('');
   }
   $('#kit-body').innerHTML = html + (html.includes('kit-tile') ? '' : `<p class="kit-empty">${esc(t('kit.empty'))}</p>`);
   kitPeek(null);
@@ -1330,7 +1358,7 @@ function renderMenu(el, items) {
     if (it.header) return `<div class="ctx-head">${esc(it.header)}</div>`;
     if (it.colors) return `<div class="ctx-colors">${TABLE_COLORS.map(c => `<button class="sw${c ? ` c-${c}` : ''}${it.value === c ? ' on' : ''}" data-color="${c}" data-i="${i}"></button>`).join('')}</div>`;
     if (it.note) return `<div class="ctx-note">${esc(it.note)}</div>`;
-    const check = it.checked !== undefined ? `<span class="ctx-check">${it.checked ? '✓' : ''}</span>` : `<span class="ctx-ic">${it.icon || ''}</span>`;
+    const check = it.checked !== undefined ? `<span class="ctx-check">${it.checked ? uiIcon('check') : ''}</span>` : `<span class="ctx-ic">${menuIcon(it.icon || '')}</span>`;
     return `<button data-i="${i}" class="${it.danger ? 'danger' : ''}${it.sub ? ' has-sub' : ''}"${it.disabled ? ' disabled' : ''}>${check}<span class="ctx-label">${esc(it.label)}</span>${it.kbd ? `<kbd>${it.kbd}</kbd>` : ''}${it.sub ? '<i class="ctx-arrow">›</i>' : ''}</button>`;
   }).join('');
 }
@@ -1741,6 +1769,7 @@ $('#sbx-tables').addEventListener('click', e => {
   const ta = $('#sbx-sql');
   ta.focus();
   ta.setRangeText(b.dataset.ins, ta.selectionStart, ta.selectionEnd, 'end');
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
 });
 
 // ---------- migration ----------

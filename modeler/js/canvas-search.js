@@ -1,5 +1,5 @@
 // Canvas Quick Search: floating search overlay for tables and columns on diagram (⌘F)
-import { t } from './i18n.js?v=202609241405';
+import { t } from './i18n.js?v=202610060854';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 

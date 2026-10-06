@@ -1,6 +1,6 @@
 // Left sidebar: filterable table list
-import { t, onLang } from './i18n.js?v=202609241405';
-import { tableLevels } from './model.js?v=202609241405';
+import { t, onLang } from './i18n.js?v=202610060854';
+import { tableLevels } from './model.js?v=202610060854';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 

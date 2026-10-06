@@ -2,9 +2,9 @@
 // to an Oracle schema, with every decision visible and editable, and nothing applied until the end.
 // Each step re-computes the whole result from the current model on a copy (compute()), so going
 // back and changing an earlier choice is always safe.
-import { nameInfo, physName, plural, singular, toPhysical, cascadeTableRename, safeColumnName, renameIn, renameToken, getNaming, setNaming } from './autodef.js?v=202609241405';
-import { generateDDL } from './ddl-gen.js?v=202609241405';
-import { t } from './i18n.js?v=202609241405';
+import { nameInfo, physName, plural, singular, toPhysical, cascadeTableRename, safeColumnName, renameIn, renameToken, getNaming, setNaming } from './autodef.js?v=202610060854';
+import { generateDDL } from './ddl-gen.js?v=202610060854';
+import { t } from './i18n.js?v=202610060854';
 
 const CYR = /[а-яёєіїґ]/i;
 const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
