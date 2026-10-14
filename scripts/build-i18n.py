@@ -55,11 +55,12 @@ def alternates(page):
 
 
 def switcher(cur, page):
-    links = []
+    items = []
     for lang in ORDER:
         cur_attr = ' aria-current="true"' if lang == cur else ""
-        links.append(f'<a href="{url_for(lang, page)}" hreflang="{lang}" lang="{lang}" title="{NAMES[lang]}"{cur_attr}>{SHORT[lang]}</a>')
-    return f'<nav class="lang-switch" aria-label="{LANG_LABEL[cur]}">' + "".join(links) + "</nav>"
+        items.append(f'<a href="{url_for(lang, page)}" hreflang="{lang}" lang="{lang}"{cur_attr}><b>{SHORT[lang]}</b> {NAMES[lang]}</a>')
+    return (f'<details class="lang-switch"><summary aria-label="{LANG_LABEL[cur]}: {NAMES[cur]}">{SHORT[cur]}</summary>'
+            f'<div class="lang-menu">' + "".join(items) + "</div></details>")
 
 
 def chips(cur, page):
