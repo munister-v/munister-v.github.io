@@ -21,7 +21,9 @@
   if (!nav.querySelector('.nav-foot')) {
     const lang = (document.documentElement.lang || 'en').slice(0, 2);
     const uk = lang === 'uk';
-    const names = { en: 'English', uk: 'Українська' };
+    const names = { en: 'English', uk: 'Українська', it: 'Italiano', fr: 'Français', de: 'Deutsch' };
+    const langWord = { en: 'Language', uk: 'Мова', it: 'Lingua', fr: 'Langue', de: 'Sprache' };
+    const writeTo = { en: 'Write to me', uk: 'Напишіть мені', it: 'Scrivimi', fr: 'Écrivez-moi', de: 'Schreiben Sie mir' };
     const alts = [...document.querySelectorAll('link[rel="alternate"][hreflang]')]
       .map((l) => ({ code: l.hreflang.slice(0, 2), href: l.getAttribute('href') }))
       .filter((a) => names[a.code]);
@@ -31,7 +33,7 @@
       const box = document.createElement('div');
       box.className = 'nav-langs';
       box.setAttribute('role', 'group');
-      box.setAttribute('aria-label', uk ? 'Мова' : 'Language');
+      box.setAttribute('aria-label', langWord[lang] || 'Language');
       alts.forEach((a) => {
         const el = document.createElement('a');
         el.href = a.href.replace(/^https?:\/\/munister\.com\.ua/, '');
@@ -45,7 +47,7 @@
     }
     const contact = document.createElement('div');
     contact.className = 'nav-contact';
-    contact.innerHTML = `<span>${uk ? 'Напишіть мені' : 'Write to me'}</span><a href="mailto:munister@outlook.com">munister@outlook.com</a>`;
+    contact.innerHTML = `<span>${writeTo[lang] || 'Write to me'}</span><a href="mailto:munister@outlook.com">munister@outlook.com</a>`;
     foot.appendChild(contact);
     nav.appendChild(foot);
   }
