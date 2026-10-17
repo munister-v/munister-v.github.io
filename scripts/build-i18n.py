@@ -134,7 +134,6 @@ def build(page, lang):
     s = s.replace('<a class="chip" href="/">', f'<a class="chip" href="{base}">')
     s = s.replace('<a href="/">Back', f'<a href="{base}">Back')
     s = s.replace('="images/', '="/images/').replace(', images/', ', /images/')
-    s = s.replace('href="italy/"', 'href="/italy/"')
     if page == "cv":
         s = put(s, "chips", chips(lang, "cv"), r'<a class="chip" href="/uk/cv\.html"[^>]*>[^<]*</a>')
     if page == "home":

@@ -9,7 +9,7 @@ export const pages = [
   'index.html', 'uk/index.html', 'research/index.html', 'uk/research/index.html',
   'writing/index.html', 'cv.html', 'uk/cv.html', '404.html',
   'course/index.html', 'course/databases/index.html', 'course/databases/reference/index.html',
-  'architectura/index.html', 'architectura/uk/index.html', 'italy/index.html',
+  'architectura/index.html', 'architectura/uk/index.html',
   'irpin/index.html', 'irpin/uk/index.html',
   ...['privacy', 'terms', 'licenses', 'support'].flatMap(section => [
     `irpin/${section}/index.html`, `irpin/uk/${section}/index.html`,
@@ -24,8 +24,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     const after = formatHtml(before)
       .replace(/munister\.css\?v=52/g, 'munister.css?v=53')
       .replace(/systems\.css\?v=11/g, 'systems.css?v=12')
-      .replace(/irpin\.css\?v=9/g, 'irpin.css?v=10')
-      .replace(/italy\.css\?v=2/g, 'italy.css?v=3');
+      .replace(/irpin\.css\?v=9/g, 'irpin.css?v=10');
     if (after !== before) { writeFileSync(path, after); count++; }
   }
   console.log(`Updated typography and stylesheet versions on ${count} public pages.`);

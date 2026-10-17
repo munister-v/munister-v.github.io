@@ -99,18 +99,6 @@ T = {
     "Un modellatore relazionale per Oracle che funziona nel browser: tabelle e relazioni come in uno strumento di design, import ed export DDL e una sandbox SQL. Nessuna fase di build, nessun backend.",
     "Un modeleur relationnel pour Oracle, natif du navigateur : tables et relations comme dans un outil de design, import et export DDL, et un bac à sable SQL. Sans étape de build, sans backend.",
     "Ein browsernativer relationaler Modellierer für Oracle: Tabellen und Beziehungen wie in einem Designwerkzeug, DDL-Import und -Export sowie eine SQL-Sandbox. Kein Build-Schritt, kein Backend."),
-"Public archive": ("Archivio pubblico", "Archive publique", "Öffentliches Archiv"),
-"Museum of Donetsk Photography": ("Museo della fotografia di Donetsk", "Musée de la photographie de Donetsk", "Museum der Donezker Fotografie"),
-"A photographic museum of a city that can now only be walked through in pictures: over four hundred images across eight halls, open to readers’ own frames.": (
-    "Un museo fotografico di una città che oggi si può attraversare solo attraverso le immagini: oltre quattrocento fotografie in otto sale, aperto alle immagini dei lettori.",
-    "Un musée photographique d’une ville que l’on ne peut plus parcourir qu’en images : plus de quatre cents photographies réparties en huit salles, ouvert aux clichés des lecteurs.",
-    "Ein Fotomuseum einer Stadt, die sich heute nur noch in Bildern durchwandern lässt: über vierhundert Aufnahmen in acht Sälen, offen für die eigenen Bilder der Leserinnen und Leser."),
-"Digital humanities": ("Digital humanities", "Humanités numériques", "Digital Humanities"),
-"Italy Chapter": ("Capitolo Italia", "Chapitre Italie", "Kapitel Italien"),
-"A bilingual study of Italy’s visual language in proportion, light and material, told through an atlas, a timeline and side-by-side comparisons.": (
-    "Uno studio bilingue del linguaggio visivo dell’Italia in proporzione, luce e materia, raccontato attraverso un atlante, una linea del tempo e confronti affiancati.",
-    "Une étude bilingue du langage visuel de l’Italie à travers la proportion, la lumière et la matière, racontée par un atlas, une chronologie et des comparaisons côte à côte.",
-    "Eine zweisprachige Studie zur visuellen Sprache Italiens in Proportion, Licht und Material, erzählt über einen Atlas, eine Zeitleiste und Gegenüberstellungen."),
 "Registered software · Copyright No. 142485": ("Software registrato · Copyright n. 142485", "Logiciel enregistré · Droit d’auteur n° 142485", "Registrierte Software · Urheberrecht Nr. 142485"),
 "Fuzzy Risk Assessment System": ("Sistema di valutazione del rischio fuzzy", "Système d’évaluation floue des risques", "System zur Fuzzy-Risikobewertung"),
 "A software complex for intelligent assessment of financial risks built on fuzzy logic and Boolean minimisation. Registered with the Ukrainian National Office of Intellectual Property and Innovation on 12 February 2026; author and sole owner of the economic rights.": (
@@ -320,10 +308,10 @@ T = {
     "Auslieferung und Betrieb von Produkten in Verlagswesen, Bildung, Einzelhandel, ERP und zivilen Diensten, darunter native iOS-Apps."),
 "Heritage and Digital Art Practice": ("Pratica di patrimonio e arte digitale", "Pratique du patrimoine et de l’art numérique", "Praxis für Kulturerbe und digitale Kunst"),
 "Independent research, writing and interactive works": ("Ricerca indipendente, scrittura e opere interattive", "Recherche indépendante, écriture et œuvres interactives", "Unabhängige Forschung, Schreiben und interaktive Arbeiten"),
-"Visual atlases and documentary platforms where an archive becomes a route: 062 Donetsk, Italy as visual code.": (
-    "Atlanti visivi e piattaforme documentarie in cui un archivio diventa un percorso: 062 Donetsk, l’Italia come codice visivo.",
-    "Atlas visuels et plateformes documentaires où une archive devient un parcours : 062 Donetsk, l’Italie comme code visuel.",
-    "Visuelle Atlanten und Dokumentationsplattformen, in denen ein Archiv zu einem Weg wird: 062 Donetsk, Italien als visueller Code."),
+"Visual atlases and documentary platforms where an archive becomes a route.": (
+    "Atlanti visivi e piattaforme documentarie in cui un archivio diventa un percorso.",
+    "Atlas visuels et plateformes documentaires où une archive devient un parcours .",
+    "Visuelle Atlanten und Dokumentationsplattformen, in denen ein Archiv zu einem Weg wird."),
 "Selected work": ("Lavori selezionati", "Réalisations choisies", "Ausgewählte Arbeiten"),
 "Irpin City": ("Irpin City", "Irpin City", "Irpin City"),
 "iOS · 2026": ("iOS · 2026", "iOS · 2026", "iOS · 2026"),
@@ -360,10 +348,6 @@ T = {
     "Catalogo, importazione delle giacenze e collegamento dei record per un rivenditore di abbigliamento, corretti anche con scritture concorrenti.",
     "Catalogue, import des stocks et liaison d’enregistrements pour un détaillant de vêtements, justes même sous écritures concurrentes.",
     "Katalog, Bestandsimport und Datensatzverknüpfung für einen Bekleidungshändler, korrekt auch bei gleichzeitigen Schreibzugriffen."),
-"A photographic museum of a city: over four hundred images across eight halls, open to readers’ frames.": (
-    "Un museo fotografico di una città: oltre quattrocento immagini in otto sale, aperto alle fotografie dei lettori.",
-    "Un musée photographique d’une ville : plus de quatre cents images réparties en huit salles, ouvert aux clichés des lecteurs.",
-    "Ein Fotomuseum einer Stadt: über vierhundert Bilder in acht Sälen, offen für die Aufnahmen der Leserinnen und Leser."),
 "29 peer-reviewed papers, 2021–2026, mostly in Scopus-indexed proceedings; cited 70+ times, including in": (
     "29 articoli con revisione paritaria, 2021–2026, per lo più in atti indicizzati in Scopus; citati più di 70 volte, anche in",
     "29 articles évalués par les pairs, 2021–2026, surtout dans des actes indexés par Scopus ; cités plus de 70 fois, notamment dans",

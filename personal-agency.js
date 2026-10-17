@@ -13,7 +13,7 @@
   }
 
   function removeSecondaryShowcases() {
-    ['army-bank-mvp', 'italy-showcase', 'experience', 'skills-block'].forEach((id) => {
+    ['army-bank-mvp', 'experience', 'skills-block'].forEach((id) => {
       const section = document.getElementById(id);
       if (section) section.remove();
     });
