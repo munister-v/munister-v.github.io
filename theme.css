@@ -471,3 +471,17 @@ body.th{overflow-x:clip}
 }
 .th .foot > span:last-child{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:0}
 .th .foot > span:last-child a{font-size:14px}
+
+/* project tiles, quality pass: concentric radii, no baseline gap under pictures,
+   a clean crop of the museum picture, no sticky hover on touch screens */
+.th .feat{--pad:10px}
+@media (max-width:760px){.th .feat{--pad:8px}}
+.th .feat .shot{border-radius:calc(var(--r-lg) - var(--pad))}
+.th .feat .shot picture{display:contents}
+.th .feat .shot img{display:block}
+.th .feat[href*="museum.eprisjournal.com"] .shot img{object-position:50% 0}
+.th .feat:focus-visible{outline-offset:4px;border-radius:var(--r-lg)}
+@media (hover:none){
+  .th .feat:hover{transform:none;box-shadow:var(--lift)}
+  .th .feat:hover .shot img{transform:none}
+}
