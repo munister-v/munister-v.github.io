@@ -241,6 +241,8 @@ T = {
     "Auteur, rédacteur et responsable produit. Journalisme de fond, curation muséale et les systèmes éditoriaux et civiques qui les portent.",
     "Autor, Redakteur und Produktverantwortlicher. Langform-Journalismus, Museumskuration und die redaktionellen und zivilen Systeme, die sie tragen."),
 "Europe · remote": ("Europa · da remoto", "Europe · à distance", "Europa · remote"),
+"Work Experience": ("Esperienza lavorativa", "Expérience professionnelle", "Berufserfahrung"),
+"Projects": ("Progetti", "Projets", "Projekte"),
 "Profile": ("Profilo", "Profil", "Profil"),
 "Author and co-editor of EPRIS Journal, curator of the EPRIS Museum and a native iOS developer. I write and edit long-form work on architecture, art and cultural memory, and I lead the product side of editorial, educational, commerce and civic systems from discovery to launch. 29 peer-reviewed papers in industrial automation and measurement.": (
     "Autore e co-editor di EPRIS Journal, curatore dell’EPRIS Museum e sviluppatore iOS nativo. Scrivo e curo testi lunghi su architettura, arte e memoria culturale, e guido la parte di prodotto di sistemi editoriali, didattici, commerciali e civici dalla scoperta al lancio. 29 articoli con revisione paritaria in automazione e misurazione industriale.",

@@ -4,15 +4,11 @@
 
 | Що | Де |
 |----|-----|
-| Портфоліо | `/index.html` |
-| Army Bank лендінг (UK) | `/army-bank/` → якір **`#products`** |
-| Army Bank застосунок | **https://bank.munister.com.ua/dashboard** |
-| API | **https://bank.munister.com.ua/api** |
-| Army Admin | `/army-admin/` |
+| Портфоліо | `/index.html` (+ `uk/`, `it/`, `fr/`, `de/`; it/fr/de збирає `scripts/build-i18n.py`) |
+| CV | `/cv.html` + `Viacheslav-Munister-CV.pdf` (ATS-friendly, один стовпчик; `cv-ats.css`) |
+| Застосунки | `/irpin/`, `/vidmar/`, `/architectura/`, `ampublishing.html` |
 | Домен | `CNAME` → `munister.com.ua` |
 
-**Правило:** CTA на застосунок у лендінгу = `https://bank.munister.com.ua/dashboard`; у `army-bank/app.js` на onrender → перепис на `/dashboard`.
+**PDF CV:** після змін у `cv.html` перегенерувати: `python3 -m http.server 8123` і `Chrome --headless=new --no-pdf-header-footer --print-to-pdf=Viacheslav-Munister-CV.pdf http://localhost:8123/cv.html`.
 
 **Деплой:** `git push origin main` (статика, без білду).
-
-Повний опис: **`docs/CODEX-PROJECT-CONTEXT.md`**.
