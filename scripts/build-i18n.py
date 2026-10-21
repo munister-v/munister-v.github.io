@@ -63,11 +63,18 @@ def switcher(cur, page):
             f'<div class="lang-menu">' + "".join(items) + "</div></details>")
 
 
+CODES = {"en": "EN", "uk": "UA", "it": "IT", "fr": "FR", "de": "DE"}
+
+
 def chips(cur, page):
-    return "".join(
-        f'<a class="chip" href="{url_for(l, page)}" hreflang="{l}" lang="{l}">{NAMES[l]}</a>'
-        for l in ORDER if l != cur
+    """Language dropdown for the CV toolbar (same idea as the home page switcher)."""
+    items = "".join(
+        f'<a href="{url_for(l, page)}" hreflang="{l}" lang="{l}"{" aria-current=\"true\"" if l == cur else ""}>'
+        f'<b>{CODES[l]}</b> {NAMES[l]}</a>'
+        for l in ORDER
     )
+    return (f'<details class="cv-lang"><summary aria-label="{LANG_LABEL[cur]}: {NAMES[cur]}">{CODES[cur]}</summary>'
+            f'<div class="cv-lang-menu">{items}</div></details>')
 
 
 def footer_links(cur, page):
