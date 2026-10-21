@@ -28,6 +28,7 @@ CARDS = {
     "epris-ios-logo": (1600, 2400),
     "architectura-logo": (1600, 2400),
     "ampub-ios-logo": (1600, 2400),
+    "irpin-ios-logo": (1600, 2400),
     "horreum": (800, 1600),
     "teached": (800, 1600),
     "schemata": (1600, 2400),

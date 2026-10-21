@@ -89,6 +89,11 @@ T = {
     "Un atlante dell’architettura italiana disegnato linea per linea: 47 tavole misurate da Aosta alla Sicilia, 599 elementi nominati, il sole vivo di Roma attraverso l’oculo del Pantheon, modelli 3D e sette corsi con esami e diplomi.",
     "Un atlas de l’architecture italienne dessiné trait par trait : 47 planches mesurées d’Aoste à la Sicile, 599 éléments nommés, le soleil de Rome en direct à travers l’oculus du Panthéon, des modèles 3D et sept cours avec examens et diplômes.",
     "Ein Atlas der italienischen Architektur, Linie für Linie gezeichnet: 47 vermessene Tafeln von Aosta bis Sizilien, 599 benannte Bauteile, die lebendige Sonne Roms durch das Opaion des Pantheons, 3D-Modelle und sieben Kurse mit Prüfungen und Diplomen."),
+"Irpin City for iPhone": ("Irpin City per iPhone", "Irpin City pour iPhone", "Irpin City für iPhone"),
+"An independent guide to Irpin: trains and minibuses, a 3D map with shelters, air raid alerts, DTEK outages, utilities and 50 routes. Free; your data stays on the phone.": (
+    "Una guida indipendente a Irpin: treni e marshrutke, una mappa 3D con rifugi, allarmi aerei, interruzioni DTEK, utenze e 50 percorsi. Gratuita; i dati restano sul telefono.",
+    "Un guide indépendant d’Irpin : trains et marchroutkas, une carte 3D avec abris, alertes aériennes, coupures DTEK, services et 50 itinéraires. Gratuit ; vos données restent sur le téléphone.",
+    "Ein unabhängiger Führer durch Irpin: Züge und Marschrutkas, eine 3D-Karte mit Schutzräumen, Luftalarme, DTEK-Ausfälle, Versorgung und 50 Routen. Kostenlos; Ihre Daten bleiben auf dem Telefon."),
 "AM Publishing for iPhone": ("AM Publishing per iPhone", "AM Publishing pour iPhone", "AM Publishing für iPhone"),
 "The publisher’s app: the catalogue with covers and excerpts, a literary workshop with quizzes, events in Berlin and a reader’s card with points and medals. Free; reader data stays on the device.": (
     "L’app della casa editrice: il catalogo con copertine ed estratti, un laboratorio letterario con quiz, eventi a Berlino e una tessera del lettore con punti e medaglie. Gratuita; i dati del lettore restano sul dispositivo.",
