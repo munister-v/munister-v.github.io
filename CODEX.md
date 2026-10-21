@@ -9,6 +9,6 @@
 | Застосунки | `/irpin/`, `/vidmar/`, `/architectura/`, `ampublishing.html` |
 | Домен | `CNAME` → `munister.com.ua` |
 
-**PDF CV:** після змін у `cv.html` перегенерувати: `python3 -m http.server 8123` і `Chrome --headless=new --no-pdf-header-footer --print-to-pdf=Viacheslav-Munister-CV.pdf http://localhost:8123/cv.html`.
+**PDF CV:** є 5 файлів: `Viacheslav-Munister-CV.pdf` (EN) і `-uk/-it/-fr/-de.pdf`; кнопка на кожній мовній версії веде на свій. Після змін у CV перегенерувати (для кожної мови з `/<lang>/cv.html`): `python3 -m http.server 8123` і `Chrome --headless=new --no-pdf-header-footer --print-to-pdf=Viacheslav-Munister-CV.pdf http://localhost:8123/cv.html`.
 
 **Деплой:** `git push origin main` (статика, без білду).

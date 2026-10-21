@@ -135,6 +135,7 @@ def build(page, lang):
     s = s.replace('<a href="/">Back', f'<a href="{base}">Back')
     s = s.replace('="images/', '="/images/').replace(', images/', ', /images/')
     if page == "cv":
+        s = s.replace('/Viacheslav-Munister-CV.pdf', f'/Viacheslav-Munister-CV-{lang}.pdf')
         s = put(s, "chips", chips(lang, "cv"), r'<a class="chip" href="/uk/cv\.html"[^>]*>[^<]*</a>')
     if page == "home":
         s = put(s, "footlangs", footer_links(lang, "home"), r'<a href="/uk/" hreflang="uk" lang="uk">[^<]*</a>')
