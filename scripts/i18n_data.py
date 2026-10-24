@@ -369,6 +369,9 @@ T = {
     "Ufficio nazionale ucraino per la proprietà intellettuale e l’innovazione · registrato il 12 febbraio 2026 · autore e unico titolare dei diritti patrimoniali",
     "Office national ukrainien de la propriété intellectuelle et de l’innovation · enregistré le 12 février 2026 · auteur et unique titulaire des droits patrimoniaux",
     "Ukrainisches Nationales Amt für geistiges Eigentum und Innovation · registriert am 12. Februar 2026 · Autor und alleiniger Inhaber der wirtschaftlichen Rechte"),
+"Certifications": ("Certificazioni", "Certifications", "Zertifikate"),
+"Linux Essentials (verified badge)": ("Linux Essentials (badge verificato)", "Linux Essentials (badge vérifié)", "Linux Essentials (verifiziertes Abzeichen)"),
+"Cisco Linux Essentials · verified": ("Cisco Linux Essentials · verificato", "Cisco Linux Essentials · vérifié", "Cisco Linux Essentials · verifiziert"),
 "Skills": ("Competenze", "Compétences", "Fähigkeiten"),
 "Long-form writing and interviewing, structural and line editing, fact-checking, issue planning, print production, picture research, Creative Commons and rights clearance.": (
     "Scrittura e interviste di approfondimento, editing strutturale e di riga, fact-checking, pianificazione dei numeri, produzione di stampa, ricerca iconografica, Creative Commons e gestione dei diritti.",
