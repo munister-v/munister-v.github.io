@@ -371,7 +371,12 @@ T = {
     "Ukrainisches Nationales Amt für geistiges Eigentum und Innovation · registriert am 12. Februar 2026 · Autor und alleiniger Inhaber der wirtschaftlichen Rechte"),
 "Certifications": ("Certificazioni", "Certifications", "Zertifikate"),
 "Linux Essentials (verified badge)": ("Linux Essentials (badge verificato)", "Linux Essentials (badge vérifié)", "Linux Essentials (verifiziertes Abzeichen)"),
-"Cisco Linux Essentials · verified": ("Cisco Linux Essentials · verificato", "Cisco Linux Essentials · vérifié", "Cisco Linux Essentials · verifiziert"),
+"Verified badge for the NDG Linux Essentials course: command line, files and permissions, processes, users and system administration basics.": (
+    "Badge verificato del corso NDG Linux Essentials: riga di comando, file e permessi, processi, utenti e basi di amministrazione del sistema.",
+    "Badge vérifié du cours NDG Linux Essentials : ligne de commande, fichiers et droits, processus, utilisateurs et bases de l’administration système.",
+    "Verifiziertes Abzeichen des Kurses NDG Linux Essentials: Kommandozeile, Dateien und Rechte, Prozesse, Benutzer und Grundlagen der Systemadministration."),
+"Verify on netacad.com": ("Verifica su netacad.com", "Vérifier sur netacad.com", "Auf netacad.com prüfen"),
+"Cisco Networking Academy Linux Essentials verified badge": ("Badge verificato Linux Essentials di Cisco Networking Academy", "Badge vérifié Linux Essentials de Cisco Networking Academy", "Verifiziertes Linux-Essentials-Abzeichen der Cisco Networking Academy"),
 "Skills": ("Competenze", "Compétences", "Fähigkeiten"),
 "Long-form writing and interviewing, structural and line editing, fact-checking, issue planning, print production, picture research, Creative Commons and rights clearance.": (
     "Scrittura e interviste di approfondimento, editing strutturale e di riga, fact-checking, pianificazione dei numeri, produzione di stampa, ricerca iconografica, Creative Commons e gestione dei diritti.",
