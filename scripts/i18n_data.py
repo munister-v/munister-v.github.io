@@ -99,6 +99,16 @@ T = {
     "L’app della casa editrice: il catalogo con copertine ed estratti, un laboratorio letterario con quiz, eventi a Berlino e una tessera del lettore con punti e medaglie. Gratuita; i dati del lettore restano sul dispositivo.",
     "L’application de la maison d’édition : le catalogue avec couvertures et extraits, un atelier littéraire avec quiz, des événements à Berlin et une carte de lecteur avec points et médailles. Gratuite ; les données du lecteur restent sur l’appareil.",
     "Die App des Verlags: der Katalog mit Covern und Leseproben, eine Literaturwerkstatt mit Quizfragen, Veranstaltungen in Berlin und ein Leserausweis mit Punkten und Medaillen. Kostenlos; die Leserdaten bleiben auf dem Gerät."),
+"Novel · free to read": ("Romanzo · da leggere gratis", "Roman · à lire gratuitement", "Roman · kostenlos zu lesen"),
+"My novel of 1922: an empire has ended and the people who believed in it flee by sea, until the ship breaks on a coast that was never empty. Free to download as PDF and EPUB.": (
+    "Il mio romanzo del 1922: un impero è finito e chi ci credeva fugge per mare, finché la nave non si spezza su una costa che non è mai stata vuota. Da scaricare gratis in PDF ed EPUB.",
+    "Mon roman de 1922 : un empire a pris fin et ceux qui y croyaient fuient par la mer, jusqu’à ce que le navire se brise sur une côte qui n’a jamais été vide. À télécharger gratuitement en PDF et EPUB.",
+    "Mein Roman von 1922: Ein Imperium ist zu Ende, und wer an es glaubte, flieht über das Meer, bis das Schiff an einer Küste zerbricht, die nie leer war. Kostenlos als PDF und EPUB herunterladen."),
+"Cover of the novel Sunset of the Midnight Sun: a pair of eyes between the words of the title on a pink ground": (
+    "Copertina del romanzo Sunset of the Midnight Sun: un paio d’occhi tra le parole del titolo su fondo rosa",
+    "Couverture du roman Sunset of the Midnight Sun : une paire d’yeux entre les mots du titre sur fond rose",
+    "Cover des Romans Sunset of the Midnight Sun: ein Augenpaar zwischen den Wörtern des Titels auf rosa Grund"),
+"Sunset of the Midnight Sun": ("Sunset of the Midnight Sun", "Sunset of the Midnight Sun", "Sunset of the Midnight Sun"),
 "Open source · Oracle": ("Open source · Oracle", "Open source · Oracle", "Open Source · Oracle"),
 "A browser-native relational modeller for Oracle: tables and relations like a design tool, DDL import and export, and an SQL sandbox. No build step, no backend.": (
     "Un modellatore relazionale per Oracle che funziona nel browser: tabelle e relazioni come in uno strumento di design, import ed export DDL e una sandbox SQL. Nessuna fase di build, nessun backend.",
