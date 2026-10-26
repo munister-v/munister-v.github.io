@@ -254,10 +254,10 @@ T = {
 "Work Experience": ("Esperienza lavorativa", "Expérience professionnelle", "Berufserfahrung"),
 "Projects": ("Progetti", "Projets", "Projekte"),
 "Profile": ("Profilo", "Profil", "Profil"),
-"Author and co-editor of EPRIS Journal, curator of the EPRIS Museum and a native iOS developer. I write and edit long-form work on architecture, art and cultural memory, and I lead the product side of editorial, educational, commerce and civic systems from discovery to launch. 29 peer-reviewed papers in industrial automation and measurement.": (
-    "Autore e co-editor di EPRIS Journal, curatore dell’EPRIS Museum e sviluppatore iOS nativo. Scrivo e curo testi lunghi su architettura, arte e memoria culturale, e guido la parte di prodotto di sistemi editoriali, didattici, commerciali e civici dalla scoperta al lancio. 29 articoli con revisione paritaria in automazione e misurazione industriale.",
-    "Auteur et co-rédacteur d’EPRIS Journal, commissaire de l’EPRIS Museum et développeur iOS natif. J’écris et je relis des textes longs sur l’architecture, l’art et la mémoire culturelle, et je dirige le volet produit de systèmes éditoriaux, éducatifs, commerciaux et civiques, de la découverte au lancement. 29 articles évalués par les pairs en automatisation et mesure industrielles.",
-    "Autor und Mitherausgeber des EPRIS Journal, Kurator des EPRIS Museum und nativer iOS-Entwickler. Ich schreibe und redigiere Langtexte zu Architektur, Kunst und kulturellem Gedächtnis und verantworte die Produktseite redaktioneller, pädagogischer, kommerzieller und ziviler Systeme von der Entdeckung bis zum Launch. 29 begutachtete Beiträge zu industrieller Automatisierung und Messtechnik."),
+"Creative director of EPRIS Journal, curator of the EPRIS Museum and a native iOS developer. I write and edit long-form work on architecture, art and cultural memory, and I lead the product side of editorial, educational, commerce and civic systems from discovery to launch. 29 peer-reviewed papers in industrial automation and measurement.": (
+    "Direttore creativo di EPRIS Journal, curatore dell’EPRIS Museum e sviluppatore iOS nativo. Scrivo e curo testi lunghi su architettura, arte e memoria culturale, e guido la parte di prodotto di sistemi editoriali, didattici, commerciali e civici dalla scoperta al lancio. 29 articoli con revisione paritaria in automazione e misurazione industriale.",
+    "Directeur de la création d’EPRIS Journal, commissaire de l’EPRIS Museum et développeur iOS natif. J’écris et je relis des textes longs sur l’architecture, l’art et la mémoire culturelle, et je dirige le volet produit de systèmes éditoriaux, éducatifs, commerciaux et civiques, de la découverte au lancement. 29 articles évalués par les pairs en automatisation et mesure industrielles.",
+    "Creative Director des EPRIS Journal, Kurator des EPRIS Museum und nativer iOS-Entwickler. Ich schreibe und redigiere Langtexte zu Architektur, Kunst und kulturellem Gedächtnis und verantworte die Produktseite redaktioneller, pädagogischer, kommerzieller und ziviler Systeme von der Entdeckung bis zum Launch. 29 begutachtete Beiträge zu industrieller Automatisierung und Messtechnik."),
 "Experience": ("Esperienza", "Expérience", "Berufserfahrung"),
 "Enterprise Systems Automation Specialist": ("Specialista di automazione dei sistemi aziendali", "Spécialiste en automatisation des systèmes d’entreprise", "Spezialist für Unternehmenssystem-Automatisierung"),
 "Apr 2026 – present": ("apr 2026 – oggi", "avr. 2026 – aujourd’hui", "Apr. 2026 – heute"),
@@ -277,15 +277,7 @@ T = {
     "Responsabile della direzione di prodotto e tecnologia: lavagne di lezione, strumenti per la classe, schede generate e più di trenta giochi per la classe.",
     "Responsable de la direction produit et technologie : tableaux de leçon, outils de classe, fiches générées et plus de trente jeux de classe.",
     "Verantwortung für Produkt- und Technikrichtung: Lektionstafeln, Klassenzimmer-Werkzeuge, erzeugte Arbeitsblätter und mehr als dreißig Klassenspiele."),
-"Set the roadmap and architecture; bring AI-assisted features into reliable production use.": (
-    "Definizione di roadmap e architettura; messa in produzione affidabile di funzioni assistite dall’IA.",
-    "Définition de la feuille de route et de l’architecture ; mise en production fiable de fonctionnalités assistées par l’IA.",
-    "Festlegung von Roadmap und Architektur; Überführung KI-gestützter Funktionen in den zuverlässigen Produktivbetrieb."),
-"Improved the mobile board experience and the deployment workflow.": (
-    "Miglioramento dell’esperienza della lavagna su mobile e del flusso di distribuzione.",
-    "Amélioration de l’expérience du tableau sur mobile et du flux de déploiement.",
-    "Verbesserung der mobilen Tafelerfahrung und des Bereitstellungsablaufs."),
-"Author, Co-Editor and Digital Director": ("Autore, co-editor e direttore digitale", "Auteur, co-rédacteur et directeur numérique", "Autor, Mitherausgeber und Digitaldirektor"),
+"Creative Director": ("Direttore creativo", "Directeur de la création", "Creative Director"),
 "Jul 2025 – present": ("lug 2025 – oggi", "juil. 2025 – aujourd’hui", "Juli 2025 – heute"),
 "· independent journal of art, architecture and design, Milan and Kyiv": (
     "· rivista indipendente di arte, architettura e design, Milano e Kyiv",
@@ -304,10 +296,50 @@ T = {
     ": 52 contributi in sei sezioni, un’impaginazione di stampa di 230 × 300 mm e un lettore online.",
     " : 52 contributions en six sections, une mise en page imprimée de 230 × 300 mm et un lecteur en ligne.",
     ": 52 Beiträge in sechs Rubriken, ein Drucklayout von 230 × 300 mm und ein Online-Reader."),
-"Conceived and curate the EPRIS Museum: 583 openly licensed works by 360 artists in 40 halls, each credited with its licence and collection.": (
-    "Ideatore e curatore dell’EPRIS Museum: 583 opere con licenza aperta di 360 artisti in 40 sale, ciascuna con licenza e collezione indicate.",
-    "Concepteur et commissaire de l’EPRIS Museum : 583 œuvres sous licence libre de 360 artistes dans 40 salles, chacune créditée avec sa licence et sa collection.",
-    "Konzeption und Kuration des EPRIS Museum: 583 offen lizenzierte Werke von 360 Künstlerinnen und Künstlern in 40 Sälen, jedes mit Lizenz und Sammlung ausgewiesen."),
+"Architecture: Node.js and Express API on PostgreSQL, WebSockets for live boards, Stripe billing, a native iOS app; about 90 backend test files.": (
+    "Architettura: API Node.js ed Express su PostgreSQL, WebSocket per le lavagne in tempo reale, pagamenti con Stripe, app iOS nativa; circa 90 file di test del backend.",
+    "Architecture : API Node.js et Express sur PostgreSQL, WebSockets pour les tableaux en direct, facturation Stripe, application iOS native ; environ 90 fichiers de tests côté serveur.",
+    "Architektur: Node.js- und Express-API auf PostgreSQL, WebSockets für Live-Tafeln, Stripe-Abrechnung, native iOS-App; rund 90 Backend-Testdateien."),
+"Brought AI-assisted features into production behind content-safety and personal-data tests.": (
+    "Messa in produzione di funzioni assistite dall’IA con test su sicurezza dei contenuti e dati personali.",
+    "Mise en production de fonctionnalités assistées par l’IA, protégées par des tests de sécurité des contenus et de données personnelles.",
+    "KI-gestützte Funktionen in den Produktivbetrieb gebracht, abgesichert durch Tests zu Inhaltssicherheit und personenbezogenen Daten."),
+"Reworked the phone experience of the board in the iOS app (touch handling, pan and zoom, card opening) and improved the deployment workflow.": (
+    "Rielaborazione dell’esperienza della lavagna su telefono nell’app iOS (gestione del tocco, scorrimento e zoom, apertura delle schede) e miglioramento del flusso di distribuzione.",
+    "Refonte de l’expérience du tableau sur téléphone dans l’application iOS (gestion du toucher, défilement et zoom, ouverture des fiches) et amélioration du flux de déploiement.",
+    "Überarbeitung der Tafelbedienung auf dem Telefon in der iOS-App (Touch-Steuerung, Verschieben und Zoomen, Öffnen von Karten) und Verbesserung des Bereitstellungsablaufs."),
+"Conceived and curate the EPRIS Museum: 686 openly licensed works by 384 artists in 48 halls, each credited with its licence and collection.": (
+    "Ideatore e curatore dell’EPRIS Museum: 686 opere con licenza aperta di 384 artisti in 48 sale, ciascuna con licenza e collezione indicate.",
+    "Concepteur et commissaire de l’EPRIS Museum : 686 œuvres sous licence libre de 384 artistes dans 48 salles, chacune créditée avec sa licence et sa collection.",
+    "Konzeption und Kuration des EPRIS Museum: 686 offen lizenzierte Werke von 384 Künstlerinnen und Künstlern in 48 Sälen, jedes mit Lizenz und Sammlung ausgewiesen."),
+"Built and run its platform: halls, works and artists kept as structured data and generated into a static site, with a private admin for exhibitions and publishing, on a Linux VPS under systemd; every publish pings IndexNow.": (
+    "Sviluppo e gestione della piattaforma: sale, opere e artisti come dati strutturati, generati in un sito statico, con un’area di amministrazione privata per mostre e pubblicazione, su un VPS Linux sotto systemd; a ogni pubblicazione parte un ping a IndexNow.",
+    "Développement et exploitation de la plateforme : salles, œuvres et artistes tenus comme données structurées et générés en site statique, avec une administration privée pour les expositions et la publication, sur un VPS Linux sous systemd ; chaque publication notifie IndexNow.",
+    "Aufbau und Betrieb der Plattform: Säle, Werke und Künstler als strukturierte Daten, daraus generiert eine statische Website, mit privatem Admin für Ausstellungen und Veröffentlichung, auf einem Linux-VPS unter systemd; jede Veröffentlichung meldet sich bei IndexNow."),
+"Designed its REST API: scoped tokens (read, write, publish, payments), rate limits and an audit log. One idempotent request creates a whole exhibition (hall, images, wall dimensions, captions) and a repeat request updates it instead of duplicating it.": (
+    "Progettazione dell’API REST: token con permessi (lettura, scrittura, pubblicazione, pagamenti), limiti di richieste e registro di audit. Una sola richiesta idempotente crea un’intera mostra (sala, immagini, dimensioni a parete, didascalie) e una richiesta ripetuta la aggiorna senza duplicarla.",
+    "Conception de l’API REST : jetons à droits limités (lecture, écriture, publication, paiements), limites de débit et journal d’audit. Une seule requête idempotente crée une exposition entière (salle, images, dimensions au mur, cartels) et une requête répétée la met à jour sans doublon.",
+    "Entwurf der REST-API: Token mit Berechtigungen (Lesen, Schreiben, Veröffentlichen, Zahlungen), Ratenbegrenzung und Audit-Log. Eine idempotente Anfrage legt eine ganze Ausstellung an (Saal, Bilder, Wandmaße, Bildtexte), eine wiederholte Anfrage aktualisiert sie, statt sie zu duplizieren."),
+"Source works through the open-access APIs and IIIF image services of the Rijksmuseum, the Met and the Cleveland Museum of Art. Each work stores its own licence, credit line and source link, checked against the collection record before publication.": (
+    "Reperimento delle opere tramite le API open access e i servizi di immagini IIIF di Rijksmuseum, Met e Cleveland Museum of Art. Ogni opera conserva licenza, crediti e link alla fonte, verificati sulla scheda della collezione prima della pubblicazione.",
+    "Sélection des œuvres via les API en accès libre et les services d’images IIIF du Rijksmuseum, du Met et du Cleveland Museum of Art. Chaque œuvre conserve sa licence, sa mention de crédit et son lien source, vérifiés sur la notice de la collection avant publication.",
+    "Recherche der Werke über die Open-Access-APIs und IIIF-Bilddienste von Rijksmuseum, Met und Cleveland Museum of Art. Jedes Werk speichert Lizenz, Credit-Zeile und Quellenlink, vor der Veröffentlichung am Sammlungseintrag geprüft."),
+"Image pipeline: WebP variants and wall thumbnails generated on upload, with size limits and low-resolution warnings.": (
+    "Pipeline delle immagini: varianti WebP e miniature per le pareti generate al caricamento, con limiti di dimensione e avvisi di bassa risoluzione.",
+    "Chaîne d’images : variantes WebP et vignettes murales générées au téléversement, avec limites de taille et alertes de faible résolution.",
+    "Bildpipeline: WebP-Varianten und Wandminiaturen beim Hochladen erzeugt, mit Größenlimits und Warnungen bei niedriger Auflösung."),
+"A free online museum of 686 public-domain and openly licensed works: static site, token-scoped publishing API, open-access collection imports and an open call for living artists.": (
+    "Un museo online gratuito di 686 opere di pubblico dominio e con licenza aperta: sito statico, API di pubblicazione con token, importazione da collezioni open access e un invito aperto agli artisti viventi.",
+    "Un musée en ligne gratuit de 686 œuvres du domaine public et sous licence libre : site statique, API de publication à jetons, imports de collections en accès libre et appel ouvert aux artistes vivants.",
+    "Ein kostenloses Online-Museum mit 686 gemeinfreien und offen lizenzierten Werken: statische Website, tokenbasierte Veröffentlichungs-API, Importe aus Open-Access-Sammlungen und offener Aufruf an lebende Künstlerinnen und Künstler."),
+"Teacher workspace: editable lessons, worksheets, YouTube as class material and classroom games. Node.js, PostgreSQL, WebSockets, Stripe, native iOS app.": (
+    "Spazio di lavoro per insegnanti: lezioni modificabili, schede di lavoro, YouTube come materiale didattico e giochi per la classe. Node.js, PostgreSQL, WebSocket, Stripe, app iOS nativa.",
+    "Espace de travail pour enseignants : leçons modifiables, fiches d’exercices, YouTube comme support de cours et jeux de classe. Node.js, PostgreSQL, WebSockets, Stripe, application iOS native.",
+    "Arbeitsraum für Lehrkräfte: bearbeitbare Lektionen, Arbeitsblätter, YouTube als Unterrichtsmaterial und Klassenspiele. Node.js, PostgreSQL, WebSockets, Stripe, native iOS-App."),
+"Swift and SwiftUI, TypeScript, Node.js and Express, Python, SQL (PostgreSQL, SQLite, Oracle), React and Next.js, REST API design (scoped tokens, idempotent writes, rate limiting), WebSockets, Stripe, IIIF and museum open-access APIs, LLM integrations, Linux and systemd, Docker, CI/CD, automated testing.": (
+    "Swift e SwiftUI, TypeScript, Node.js ed Express, Python, SQL (PostgreSQL, SQLite, Oracle), React e Next.js, progettazione di API REST (token con permessi, scritture idempotenti, limiti di richieste), WebSocket, Stripe, IIIF e API open access dei musei, integrazioni LLM, Linux e systemd, Docker, CI/CD, test automatici.",
+    "Swift et SwiftUI, TypeScript, Node.js et Express, Python, SQL (PostgreSQL, SQLite, Oracle), React et Next.js, conception d’API REST (jetons à droits limités, écritures idempotentes, limitation de débit), WebSockets, Stripe, IIIF et API en accès libre des musées, intégrations LLM, Linux et systemd, Docker, CI/CD, tests automatisés.",
+    "Swift und SwiftUI, TypeScript, Node.js und Express, Python, SQL (PostgreSQL, SQLite, Oracle), React und Next.js, REST-API-Design (Token mit Berechtigungen, idempotente Schreibzugriffe, Ratenbegrenzung), WebSockets, Stripe, IIIF und Open-Access-APIs der Museen, LLM-Integrationen, Linux und systemd, Docker, CI/CD, automatisierte Tests."),
 "Built the editorial system: publishing flow, translation into seven languages, picture research and rights clearance.": (
     "Realizzazione del sistema editoriale: flusso di pubblicazione, traduzione in sette lingue, ricerca iconografica e gestione dei diritti.",
     "Construction du système éditorial : flux de publication, traduction en sept langues, recherche iconographique et clarification des droits.",
@@ -344,18 +376,10 @@ T = {
     "Die Zeitschrift auf iPhone und iPad: native Typografie, vollflächige Fotografie, Offline-Lesen. Im App Store."),
 "EPRIS Museum": ("EPRIS Museum", "EPRIS Museum", "EPRIS Museum"),
 "web": ("web", "web", "Web"),
-"A free online museum of 583 public-domain and openly licensed works, with an open call for living artists.": (
-    "Un museo online gratuito di 583 opere di pubblico dominio e con licenza aperta, con un invito aperto agli artisti viventi.",
-    "Un musée en ligne gratuit de 583 œuvres du domaine public et sous licence libre, avec un appel ouvert aux artistes vivants.",
-    "Ein kostenloses Online-Museum mit 583 gemeinfreien und offen lizenzierten Werken, mit offenem Aufruf an lebende Künstlerinnen und Künstler."),
 "47 measured drawings of Italian buildings and seven courses, in English, Italian and Russian.": (
     "47 disegni misurati di edifici italiani e sette corsi, in inglese, italiano e russo.",
     "47 relevés dessinés de bâtiments italiens et sept cours, en anglais, italien et russe.",
     "47 vermessene Zeichnungen italienischer Bauten und sieben Kurse, auf Englisch, Italienisch und Russisch."),
-"Teacher workspace: editable lessons, worksheets, YouTube as class material and classroom games.": (
-    "Spazio di lavoro per insegnanti: lezioni modificabili, schede di lavoro, YouTube come materiale didattico e giochi per la classe.",
-    "Espace de travail pour enseignants : leçons modifiables, fiches d’exercices, YouTube comme support de cours et jeux de classe.",
-    "Arbeitsraum für Lehrkräfte: bearbeitbare Lektionen, Arbeitsblätter, YouTube als Unterrichtsmaterial und Klassenspiele."),
 "web · open source": ("web · open source", "web · open source", "Web · Open Source"),
 "Relational modeller for Oracle with DDL import and export and an SQL sandbox, no build step.": (
     "Modellatore relazionale per Oracle con import ed export DDL e una sandbox SQL, senza fase di build.",
@@ -398,10 +422,6 @@ T = {
     "Découverte, stratégie, architecture de l’information, design de services, direction UX, feuilles de route, besoins, assurance qualité et lancement.",
     "Discovery, Strategie, Informationsarchitektur, Service Design, UX-Leitung, Roadmaps, Anforderungen, QA und Launch."),
 "Technical": ("Tecniche", "Techniques", "Technik"),
-"Swift and SwiftUI, TypeScript, Python, SQL (PostgreSQL, SQLite, Oracle), React and Next.js, REST APIs, LLM integrations, Linux, Docker, CI/CD.": (
-    "Swift e SwiftUI, TypeScript, Python, SQL (PostgreSQL, SQLite, Oracle), React e Next.js, API REST, integrazioni LLM, Linux, Docker, CI/CD.",
-    "Swift et SwiftUI, TypeScript, Python, SQL (PostgreSQL, SQLite, Oracle), React et Next.js, API REST, intégrations LLM, Linux, Docker, CI/CD.",
-    "Swift und SwiftUI, TypeScript, Python, SQL (PostgreSQL, SQLite, Oracle), React und Next.js, REST-APIs, LLM-Integrationen, Linux, Docker, CI/CD."),
 "Languages": ("Lingue", "Langues", "Sprachen"),
 "Ukrainian (native), English (B1), German (B1), Polish (A2), Italian (A1).": (
     "Ucraino (madrelingua), inglese (B1), tedesco (B1), polacco (A2), italiano (A1).",
