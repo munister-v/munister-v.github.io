@@ -58,6 +58,24 @@ T = {
     "Sistemi attivi selezionati, ciascuno costruito attorno a un problema concreto di ricerca o di operatività, a un modello di dati e a un percorso di rilascio sostenibile.",
     "Une sélection de systèmes en service, chacun organisé autour d’un problème concret de recherche ou d’exploitation, d’un modèle de données et d’une chaîne de livraison maintenable.",
     "Ausgewählte Live-Systeme, jedes um ein konkretes Forschungs- oder Betriebsproblem, ein Datenmodell und einen wartbaren Auslieferungsweg herum gebaut."),
+"Online shop": ("Negozio online", "Boutique en ligne", "Online-Shop"),
+"Training bank · iOS and web": ("Banca didattica · iOS e web", "Banque pédagogique · iOS et web", "Lernbank · iOS und Web"),
+"A fashion shop with a catalogue by brand, sizes with live stock, quantity limits, delivery terms and one-tap payment with a TaxTech card.": (
+    "Un negozio di moda con catalogo per marchio, taglie con giacenze in tempo reale, limiti di quantità, condizioni di consegna e pagamento con un tocco tramite carta TaxTech.",
+    "Une boutique de mode avec un catalogue par marque, des tailles au stock en temps réel, des quantités limitées, les conditions de livraison et le paiement en un geste avec une carte TaxTech.",
+    "Ein Modeshop mit Katalog nach Marken, Größen mit Live-Bestand, Mengenbegrenzung, Lieferbedingungen und Zahlung mit einem Fingertipp per TaxTech-Karte."),
+"A training digital bank on virtual money: account, cards, transfers, deposits, credit and 28 antifraud rules, with every receipt checked by QR. TAX is a token, not money.": (
+    "Una banca digitale didattica con denaro virtuale: conto, carte, bonifici, depositi, credito e 28 regole antifrode, con ogni ricevuta verificabile tramite QR. TAX è un token, non denaro.",
+    "Une banque numérique pédagogique en monnaie virtuelle : compte, cartes, virements, dépôts, crédit et 28 règles antifraude, chaque reçu étant vérifiable par QR. TAX est un jeton, pas de l’argent.",
+    "Eine digitale Lernbank mit virtuellem Geld: Konto, Karten, Überweisungen, Einlagen, Kredit und 28 Betrugsregeln, jeder Beleg per QR prüfbar. TAX ist ein Token, kein Geld."),
+"Saint Agnes: the opening screen, three people in autumn coats in front of mountains under the line “Autumn has arrived”": (
+    "Saint Agnes: la schermata iniziale, tre persone in cappotti autunnali davanti alle montagne sotto la scritta «Autumn has arrived»",
+    "Saint Agnes : l’écran d’ouverture, trois personnes en manteaux d’automne devant des montagnes sous la ligne « Autumn has arrived »",
+    "Saint Agnes: der Startbildschirm, drei Personen in Herbstmänteln vor Bergen unter der Zeile „Autumn has arrived“"),
+"TaxTech: the opening screen, the Colosseum at night under the line “Pay like Rome” with a bank card and a payment": (
+    "TaxTech: la schermata iniziale, il Colosseo di notte sotto la scritta «Pay like Rome» con una carta bancaria e un pagamento",
+    "TaxTech : l’écran d’ouverture, le Colisée de nuit sous la ligne « Pay like Rome » avec une carte bancaire et un paiement",
+    "TaxTech: der Startbildschirm, das Kolosseum bei Nacht unter der Zeile „Pay like Rome“ mit Bankkarte und Zahlung"),
 "Virtual museum": ("Museo virtuale", "Musée virtuel", "Virtuelles Museum"),
 "A museum without a building: 583 openly licensed works by 360 artists, hung as one route through 40 halls, each shown at its true scale with source and licence.": (
     "Un museo senza edificio: 583 opere con licenza aperta di 360 artisti, disposte come un unico percorso attraverso 40 sale, ciascuna mostrata nella sua scala reale con fonte e licenza.",
