@@ -3,7 +3,7 @@
 
     python3 scripts/build_og.py
 
-Пише images/og-en.jpg, og-research.jpg, og-writing.jpg, og-course.jpg, og-cv.jpg.
+Пише images/og-en.jpg, og-ua.jpg, og-research.jpg, og-writing.jpg, og-course.jpg, og-cv.jpg.
 Кольори - ті самі токени, що в munister.css; шрифти системні (macOS). Потрібен Pillow.
 """
 from pathlib import Path
@@ -20,6 +20,9 @@ CARDS = {
     "og-en": ("Independent practice · Europe / remote", "Viacheslav Munister",
               "Writer, editor and heritage researcher. Long-form journalism, museum curation and the systems that publish them.",
               "EPRIS Journal · EPRIS Museum · Irpin City · 29 papers", "munister.com.ua"),
+    "og-ua": ("Незалежна практика · Європа / віддалено", "Вʼячеслав Муністер",
+              "Автор, редактор і дослідник спадщини. Довгі тексти, музейна кураторія та системи, що їх публікують.",
+              "EPRIS Journal · EPRIS Museum · Irpin City · 29 статей", "munister.com.ua"),
     "og-research": ("Peer-reviewed papers · 2021–2026", "Research",
                     "Industrial automation, edge computing and machine learning in measurement systems.",
                     "29 papers · Scopus · 70+ citations", "munister.com.ua/research"),
@@ -51,13 +54,12 @@ def wrap(draw, text, f, width):
 def portrait():
     src = Image.open(IMG / "munister.jpg").convert("RGB")
     pw = 440
-    # кадр під висоту картки, обличчя ближче до центру
-    scale = H / (src.height * 0.78)
-    im = src.resize((round(src.width * scale), round(src.height * scale)), Image.LANCZOS)
-    left = max(0, im.width - pw)
-    im = im.crop((left, round(im.height * 0.12), left + pw, round(im.height * 0.12) + H))
-    # притемнення до тла сайту й м'який перехід зліва
-    im = Image.blend(im, Image.new("RGB", im.size, PAPER), 0.18)
+    # full-height crop of the 2026 portrait, the face centred in the panel
+    cw = round(src.height * pw / H)
+    left = max(0, min(src.width - cw, 560 - cw // 2))
+    im = src.crop((left, 0, left + cw, src.height)).resize((pw, H), Image.LANCZOS)
+    # slight dimming towards the site's dark ground and a soft fade on the left
+    im = Image.blend(im, Image.new("RGB", im.size, PAPER), 0.12)
     mask = Image.new("L", im.size, 255)
     d = ImageDraw.Draw(mask)
     for x in range(160):
