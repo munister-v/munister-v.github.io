@@ -334,10 +334,18 @@ T = {
     "· rivista indipendente di arte, architettura e design, Milano e Kyiv",
     "· revue indépendante d’art, d’architecture et de design, Milan et Kyiv",
     "· unabhängige Zeitschrift für Kunst, Architektur und Design, Mailand und Kyjiw"),
-"Wrote 33 of the journal’s 45 stories and 6 of its 7 reviews, including 12 long-form interviews with artists, architects and institutions such as Museo Nivola.": (
-    "Autore di 33 dei 45 articoli della rivista e di 6 delle sue 7 recensioni, tra cui 12 interviste approfondite con artisti, architetti e istituzioni come il Museo Nivola.",
-    "Auteur de 33 des 45 articles de la revue et de 6 de ses 7 critiques, dont 12 longs entretiens avec des artistes, des architectes et des institutions comme le Museo Nivola.",
-    "Autor von 33 der 45 Beiträge und 6 der 7 Rezensionen der Zeitschrift, darunter 12 ausführliche Interviews mit Künstlern, Architekten und Institutionen wie dem Museo Nivola."),
+"Wrote 62 of the journal’s 78 stories and 9 of its 10 reviews (as of November 2026).": (
+    "Autore di 62 dei 78 articoli della rivista e di 9 delle sue 10 recensioni (a novembre 2026).",
+    "Auteur de 62 des 78 articles de la revue et de 9 de ses 10 critiques (en novembre 2026).",
+    "Autor von 62 der 78 Beiträge und 9 der 10 Rezensionen der Zeitschrift (Stand November 2026)."),
+"Stories on contemporary art, architecture and design: Cape Town’s Zeitz MOCAA, Seville, Copenhagen’s museums, the Bauhaus years, Antony Gormley, Tomás Saraceno, Pierre Huyghe and Mona Hatoum; the reviews cover restaurants and interiors where design is the experience.": (
+    "Testi su arte contemporanea, architettura e design: lo Zeitz MOCAA di Città del Capo, Siviglia, i musei di Copenaghen, gli anni del Bauhaus, Antony Gormley, Tomás Saraceno, Pierre Huyghe e Mona Hatoum; le recensioni riguardano ristoranti e interni in cui il design è l’esperienza.",
+    "Textes sur l’art contemporain, l’architecture et le design : le Zeitz MOCAA du Cap, Séville, les musées de Copenhague, les années du Bauhaus, Antony Gormley, Tomás Saraceno, Pierre Huyghe et Mona Hatoum ; les critiques portent sur des restaurants et des intérieurs où le design est l’expérience.",
+    "Texte zu zeitgenössischer Kunst, Architektur und Design: das Zeitz MOCAA in Kapstadt, Sevilla, Kopenhagens Museen, die Bauhaus-Jahre, Antony Gormley, Tomás Saraceno, Pierre Huyghe und Mona Hatoum; die Rezensionen behandeln Restaurants und Interieurs, in denen das Design das Erlebnis ist."),
+"17 long-form interviews with artists, architects, photographers and institutions, among them Museo Nivola, Federica Gioffredi, Nicolas Delarre and Stephen Spartana.": (
+    "17 interviste approfondite con artisti, architetti, fotografi e istituzioni, tra cui il Museo Nivola, Federica Gioffredi, Nicolas Delarre e Stephen Spartana.",
+    "17 longs entretiens avec des artistes, des architectes, des photographes et des institutions, dont le Museo Nivola, Federica Gioffredi, Nicolas Delarre et Stephen Spartana.",
+    "17 ausführliche Interviews mit Künstlern, Architekten, Fotografen und Institutionen, darunter das Museo Nivola, Federica Gioffredi, Nicolas Delarre und Stephen Spartana."),
 "Run interviews end to end: research, questionnaires in English and French, editing and approval by the interviewee.": (
     "Gestione completa delle interviste: ricerca, questionari in inglese e francese, redazione e approvazione da parte dell’intervistato.",
     "Conduite complète des entretiens : recherche, questionnaires en anglais et en français, édition et validation par la personne interrogée.",
