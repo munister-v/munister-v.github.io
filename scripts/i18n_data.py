@@ -469,6 +469,15 @@ T = {
     "Badge vérifié du cours NDG Linux Essentials : ligne de commande, fichiers et droits, processus, utilisateurs et bases de l’administration système.",
     "Verifiziertes Abzeichen des Kurses NDG Linux Essentials: Kommandozeile, Dateien und Rechte, Prozesse, Benutzer und Grundlagen der Systemadministration."),
 "Verify on netacad.com": ("Verifica su netacad.com", "Vérifier sur netacad.com", "Auf netacad.com prüfen"),
+"Introduction to Linux (certificate)": ("Introduction to Linux (certificato)", "Introduction to Linux (certificat)", "Introduction to Linux (Zertifikat)"),
+"Prometheus · The Linux Foundation": ("Prometheus · The Linux Foundation",)*3,
+"Introduction to Linux": ("Introduction to Linux",)*3,
+"Certificate for the Linux Foundation course Introduction to Linux: system concepts, command line, file operations, processes, text processing, networking, bash scripting and local security.": (
+    "Certificato del corso Introduction to Linux della Linux Foundation: concetti di sistema, riga di comando, operazioni sui file, processi, elaborazione del testo, rete, scripting bash e sicurezza locale.",
+    "Certificat du cours Introduction to Linux de la Linux Foundation : concepts du système, ligne de commande, opérations sur les fichiers, processus, traitement de texte, réseau, scripts bash et sécurité locale.",
+    "Zertifikat für den Kurs Introduction to Linux der Linux Foundation: Systemkonzepte, Kommandozeile, Dateioperationen, Prozesse, Textverarbeitung, Netzwerk, Bash-Skripte und lokale Sicherheit."),
+"Verify on certs.prometheus.org.ua": ("Verifica su certs.prometheus.org.ua", "Vérifier sur certs.prometheus.org.ua", "Auf certs.prometheus.org.ua prüfen"),
+"Prometheus certificate: Introduction to Linux, The Linux Foundation": ("Certificato Prometheus: Introduction to Linux, The Linux Foundation", "Certificat Prometheus : Introduction to Linux, The Linux Foundation", "Prometheus-Zertifikat: Introduction to Linux, The Linux Foundation"),
 "Cisco Networking Academy Linux Essentials verified badge": ("Badge verificato Linux Essentials di Cisco Networking Academy", "Badge vérifié Linux Essentials de Cisco Networking Academy", "Verifiziertes Linux-Essentials-Abzeichen der Cisco Networking Academy"),
 "Skills": ("Competenze", "Compétences", "Fähigkeiten"),
 "Long-form writing and interviewing, structural and line editing, fact-checking, issue planning, print production, picture research, Creative Commons and rights clearance.": (
