@@ -175,6 +175,13 @@ def build(page, lang):
 
     s = re.sub(r'(<meta (?:name|property)="(?:description|og:title|og:description|og:image:alt|twitter:title|twitter:description|twitter:image:alt)" content=)"([^"]*)"', meta, s)
 
+    # image alt texts (only those with a translation in T)
+    def alt(m):
+        tr = translate_text(html.unescape(m.group(1)), lang)
+        return 'alt="' + html.escape(tr, quote=False).replace('"', "&quot;") + '"' if tr else m.group(0)
+
+    s = re.sub(r'\balt="([^"]*)"', alt, s)
+
     # document language, canonical, og
     s = s.replace('<html lang="en">', f'<html lang="{lang}">')
     here = f"{SITE}{url_for(lang, page)}"

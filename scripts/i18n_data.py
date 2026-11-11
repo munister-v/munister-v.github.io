@@ -93,10 +93,10 @@ T = {
     "Un negozio di moda con catalogo per marchio, taglie con giacenze in tempo reale, limiti di quantità, condizioni di consegna e pagamento con un tocco tramite carta TaxTech.",
     "Une boutique de mode avec un catalogue par marque, des tailles au stock en temps réel, des quantités limitées, les conditions de livraison et le paiement en un geste avec une carte TaxTech.",
     "Ein Modeshop mit Katalog nach Marken, Größen mit Live-Bestand, Mengenbegrenzung, Lieferbedingungen und Zahlung mit einem Fingertipp per TaxTech-Karte."),
-"A training digital bank on virtual money: account, cards, transfers, deposits, credit and 28 antifraud rules, with every receipt checked by QR. TAX is a token, not money.": (
-    "Una banca digitale didattica con denaro virtuale: conto, carte, bonifici, depositi, credito e 28 regole antifrode, con ogni ricevuta verificabile tramite QR. TAX è un token, non denaro.",
-    "Une banque numérique pédagogique en monnaie virtuelle : compte, cartes, virements, dépôts, crédit et 28 règles antifraude, chaque reçu étant vérifiable par QR. TAX est un jeton, pas de l’argent.",
-    "Eine digitale Lernbank mit virtuellem Geld: Konto, Karten, Überweisungen, Einlagen, Kredit und 28 Betrugsregeln, jeder Beleg per QR prüfbar. TAX ist ein Token, kein Geld."),
+"A training digital bank on virtual money: account, cards, transfers, deposits, credit and 28 antifraud rules, with every receipt checked by QR.": (
+    "Una banca digitale didattica con denaro virtuale: conto, carte, bonifici, depositi, credito e 28 regole antifrode, con ogni ricevuta verificabile tramite QR.",
+    "Une banque numérique pédagogique en monnaie virtuelle : compte, cartes, virements, dépôts, crédit et 28 règles antifraude, chaque reçu étant vérifiable par QR.",
+    "Eine digitale Lernbank mit virtuellem Geld: Konto, Karten, Überweisungen, Einlagen, Kredit und 28 Betrugsregeln, jeder Beleg per QR prüfbar."),
 "Saint Agnes: the opening screen, three people in autumn coats in front of mountains under the line “Autumn has arrived”": (
     "Saint Agnes: la schermata iniziale, tre persone in cappotti autunnali davanti alle montagne sotto la scritta «Autumn has arrived»",
     "Saint Agnes : l’écran d’ouverture, trois personnes en manteaux d’automne devant des montagnes sous la ligne « Autumn has arrived »",
@@ -524,10 +524,35 @@ T = {
     "Ucraino (madrelingua), inglese (B1), tedesco (B1), polacco (A2), italiano (A1).",
     "Ukrainien (langue maternelle), anglais (B1), allemand (B1), polonais (A2), italien (A1).",
     "Ukrainisch (Muttersprache), Englisch (B1), Deutsch (B1), Polnisch (A2), Italienisch (A1)."),
-"Updated October 2026 · munister.com.ua/cv.html": (
-    "Aggiornato a ottobre 2026 · munister.com.ua/cv.html",
-    "Mis à jour en octobre 2026 · munister.com.ua/cv.html",
-    "Stand Oktober 2026 · munister.com.ua/cv.html"),
+"Updated November 2026 · munister.com.ua/cv.html": (
+    "Aggiornato a novembre 2026 · munister.com.ua/cv.html",
+    "Mis à jour en novembre 2026 · munister.com.ua/cv.html",
+    "Stand November 2026 · munister.com.ua/cv.html"),
+# ---- home: heritage block and project picture alt texts -------------------
+'EPRIS Museum: the opening screen, a single wall of paintings under the line “Look closely, at any hour”': (
+    'EPRIS Museum: la schermata iniziale, un’unica parete di dipinti sotto la frase «Look closely, at any hour»',
+    'EPRIS Museum : l’écran d’accueil, un seul mur de tableaux sous la phrase « Look closely, at any hour »',
+    'EPRIS Museum: der Startbildschirm, eine einzige Wand mit Gemälden unter der Zeile „Look closely, at any hour“'),
+'TaxTech: the opening screen, a gold TaxTech card over a night map of Rome under the line “Pay like Rome”': (
+    'TaxTech: la schermata iniziale, una carta TaxTech dorata sopra una mappa notturna di Roma sotto la frase «Pay like Rome»',
+    'TaxTech : l’écran d’accueil, une carte TaxTech dorée sur un plan nocturne de Rome sous la phrase « Pay like Rome »',
+    'TaxTech: der Startbildschirm, eine goldene TaxTech-Karte über einem nächtlichen Stadtplan von Rom unter der Zeile „Pay like Rome“'),
+'TeachEd for iPhone and iPad: the app icon': (
+    'TeachEd per iPhone e iPad: l’icona dell’app',
+    'TeachEd pour iPhone et iPad : l’icône de l’app',
+    'TeachEd für iPhone und iPad: das App-Symbol'),
+'EPRIS Journal: the essay “One Dot Among a Million Stars: Yayoi Kusama, 1929–2026”, a mirror room of yellow polka-dot pumpkins above the headline': (
+    'EPRIS Journal: il saggio «One Dot Among a Million Stars: Yayoi Kusama, 1929–2026», una stanza a specchi con zucche gialle a pois sopra il titolo',
+    'EPRIS Journal : l’essai « One Dot Among a Million Stars: Yayoi Kusama, 1929–2026 », une salle de miroirs aux citrouilles jaunes à pois au-dessus du titre',
+    'EPRIS Journal: der Essay „One Dot Among a Million Stars: Yayoi Kusama, 1929–2026“, ein Spiegelraum mit gelben gepunkteten Kürbissen über der Überschrift'),
+'Heritage associations and networks': (
+    'Associazioni e reti per il patrimonio',
+    'Associations et réseaux du patrimoine',
+    'Vereine und Netzwerke für Kulturerbe'),
+'Member of two French associations that research cultural heritage and keep it close to lived places and public conversation. Also a member of Europa Nostra, the European voice of civil society committed to cultural heritage.': (
+    'Membro di due associazioni francesi che studiano il patrimonio culturale e lo tengono vicino ai luoghi vissuti e al dibattito pubblico. Membro anche di Europa Nostra, la voce europea della società civile impegnata per il patrimonio culturale.',
+    'Membre de deux associations françaises qui étudient le patrimoine culturel et le gardent proche des lieux vécus et du débat public. Également membre d’Europa Nostra, la voix européenne de la société civile engagée pour le patrimoine culturel.',
+    'Mitglied in zwei französischen Vereinen, die Kulturerbe erforschen und es nah an den gelebten Orten und am öffentlichen Gespräch halten. Außerdem Mitglied von Europa Nostra, der europäischen Stimme der Zivilgesellschaft für das kulturelle Erbe.'),
 }
 
 MONTHS = {
