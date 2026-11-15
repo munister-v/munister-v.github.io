@@ -160,11 +160,16 @@ T = {
     "Couverture du roman Sunset of the Midnight Sun : une paire d’yeux entre les mots du titre sur fond rose",
     "Cover des Romans Sunset of the Midnight Sun: ein Augenpaar zwischen den Wörtern des Titels auf rosa Grund"),
 "Sunset of the Midnight Sun": ("Sunset of the Midnight Sun", "Sunset of the Midnight Sun", "Sunset of the Midnight Sun"),
-"Open source · Oracle": ("Open source · Oracle", "Open source · Oracle", "Open Source · Oracle"),
-"A browser-native relational modeller for Oracle: tables and relations like a design tool, DDL import and export, and an SQL sandbox. No build step, no backend.": (
-    "Un modellatore relazionale per Oracle che funziona nel browser: tabelle e relazioni come in uno strumento di design, import ed export DDL e una sandbox SQL. Nessuna fase di build, nessun backend.",
-    "Un modeleur relationnel pour Oracle, natif du navigateur : tables et relations comme dans un outil de design, import et export DDL, et un bac à sable SQL. Sans étape de build, sans backend.",
-    "Ein browsernativer relationaler Modellierer für Oracle: Tabellen und Beziehungen wie in einem Designwerkzeug, DDL-Import und -Export sowie eine SQL-Sandbox. Kein Build-Schritt, kein Backend."),
+"Messenger · iOS and web": ("Messenger · iOS e web", "Messagerie · iOS et web", "Messenger · iOS und Web"),
+"Direct chats and groups, voice calls, voice notes, files and news channels, with every message encrypted on the device.": (
+    "Chat dirette e gruppi, chiamate vocali, messaggi vocali, file e canali di notizie, con ogni messaggio cifrato sul dispositivo.",
+    "Conversations directes et groupes, appels vocaux, messages vocaux, fichiers et canaux d’actualités, chaque message étant chiffré sur l’appareil.",
+    "Direkte Chats und Gruppen, Sprachanrufe, Sprachnachrichten, Dateien und Nachrichtenkanäle, jede Nachricht auf dem Gerät verschlüsselt."),
+"EPRIS Messenger": ("EPRIS Messenger", "EPRIS Messenger", "EPRIS Messenger"),
+"Teleepris: the app icon, a blue EPRIS flower on a white tile": (
+    "Teleepris: l’icona dell’app, un fiore EPRIS blu su una tessera bianca",
+    "Teleepris : l’icône de l’app, une fleur EPRIS bleue sur une tuile blanche",
+    "Teleepris: das App-Symbol, eine blaue EPRIS-Blume auf einer weißen Kachel"),
 "Registered software · Copyright No. 142485": ("Software registrato · Copyright n. 142485", "Logiciel enregistré · Droit d’auteur n° 142485", "Registrierte Software · Urheberrecht Nr. 142485"),
 "Fuzzy Risk Assessment System": ("Sistema di valutazione del rischio fuzzy", "Système d’évaluation floue des risques", "System zur Fuzzy-Risikobewertung"),
 "A software complex for intelligent assessment of financial risks built on fuzzy logic and Boolean minimisation. Registered with the Ukrainian National Office of Intellectual Property and Innovation on 12 February 2026; author and sole owner of the economic rights.": (
@@ -533,10 +538,10 @@ T = {
     'EPRIS Museum: la schermata iniziale, un’unica parete di dipinti sotto la frase «Look closely, at any hour»',
     'EPRIS Museum : l’écran d’accueil, un seul mur de tableaux sous la phrase « Look closely, at any hour »',
     'EPRIS Museum: der Startbildschirm, eine einzige Wand mit Gemälden unter der Zeile „Look closely, at any hour“'),
-'TaxTech: the opening screen, a gold TaxTech card over a night map of Rome under the line “Pay like Rome”': (
-    'TaxTech: la schermata iniziale, una carta TaxTech dorata sopra una mappa notturna di Roma sotto la frase «Pay like Rome»',
-    'TaxTech : l’écran d’accueil, une carte TaxTech dorée sur un plan nocturne de Rome sous la phrase « Pay like Rome »',
-    'TaxTech: der Startbildschirm, eine goldene TaxTech-Karte über einem nächtlichen Stadtplan von Rom unter der Zeile „Pay like Rome“'),
+'TaxTech in Italian on two iPhones: the opening screen over a spiral staircase, and a QR payment screen': (
+    'TaxTech in italiano su due iPhone: la schermata iniziale sopra una scala a chiocciola e la schermata di pagamento con QR',
+    'TaxTech en italien sur deux iPhone : l’écran d’accueil au-dessus d’un escalier en colimaçon et l’écran de paiement par QR code',
+    'TaxTech auf Italienisch auf zwei iPhones: der Startbildschirm über einer Wendeltreppe und der QR-Zahlungsbildschirm'),
 'TeachEd for iPhone and iPad: the app icon': (
     'TeachEd per iPhone e iPad: l’icona dell’app',
     'TeachEd pour iPhone et iPad : l’icône de l’app',

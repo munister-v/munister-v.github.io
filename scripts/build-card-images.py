@@ -9,8 +9,8 @@ than the target. Run from the repo root (needs ImageMagick, cwebp, avifenc):
     python3 scripts/build-card-images.py [card ...]
 
 Source = the largest existing images/works/<name>*.jpg. The existing JPEGs are
-never rewritten. Widths: full cards 1600/2400/3200, wide, app and Schemata cards
-1600/2400, half-width cards 800/1600 (Horreum, TeachEd).
+never rewritten. Widths: full cards 1600/2400/3200, wide and app cards
+1600/2400, half-width cards 800/1600 (Horreum, TaxTech, TeachEd).
 """
 import os
 import re
@@ -31,8 +31,9 @@ CARDS = {
     "mist-ios-logo": (1600, 2400),
     "irpin-ios-logo": (1600, 2400),
     "horreum": (800, 1600),
+    "taxtech": (800, 1600),
     "teached": (800, 1600),
-    "schemata": (1600, 2400),
+    "teleepris": (1600, 2400),
     "book": (1600, 2400),
 }
 
