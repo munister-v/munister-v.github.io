@@ -44,7 +44,7 @@
 
 /* виробничий контур */
 .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;justify-content:center}
-.node{flex:1 1 140px;max-width:200px;background:var(--tile);border-radius:6px;padding:14px 12px;text-align:center;position:relative}
+.node{background:var(--tile);border-radius:10px;padding:14px 12px;text-align:center;position:relative}
 .node b{display:block;font-weight:400;font-size:16px}
 .node span{display:block;font-size:13px;color:#666;margin-top:4px}
 .node .cnt{font-family:var(--font-head);font-size:26px;color:#000;margin-top:6px;min-height:32px}
@@ -93,8 +93,7 @@ table.t td.wrap{white-space:normal;min-width:180px}
 .filters{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
 .filters button{border:0;border-radius:999px;background:var(--chip);color:var(--chip-ink);padding:6px 14px;font:inherit;font-size:15px;cursor:pointer}
 .filters button[aria-pressed=true]{background:var(--chip-ink);color:#fff}
-.route{display:grid;gap:8px;grid-template-columns:repeat(4,minmax(0,1fr))}
-@media(max-width:860px){.route{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.route{display:grid;gap:8px}
 .route div{background:var(--tile);border-radius:6px;padding:12px 14px;font-size:15px}
 .route b{display:block;font-weight:400;font-size:26px;font-family:var(--font-head)}
 .verdict{margin-top:12px;padding:14px 16px;border-radius:6px;font-size:17px}
@@ -107,9 +106,68 @@ table.t td.wrap{white-space:normal;min-width:180px}
 .eq{display:block;margin:12px 0;padding:12px 14px;background:var(--tile);border-radius:6px;font-family:var(--font-head);font-size:15px;overflow:auto;white-space:nowrap}
 .sw-foot{margin:56px 0 0;padding:0 0 32px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;font-size:15px;color:#444}
 .sw-foot a{color:inherit}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#000;color:#fff;padding:10px 18px;border-radius:999px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:50}
+.toast{width:max-content;max-width:calc(100vw - 32px);text-align:center;position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#000;color:#fff;padding:10px 18px;border-radius:999px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:50}
 .toast.on{opacity:1}
 @media(prefers-reduced-motion:reduce){.bar i,.toast{transition:none}}
+
+/* ── polish ── */
+.sw{padding-bottom:8px}
+.sw-hero p{font-size:clamp(16px,1.6vw,18px)}
+.sw-hero .sw-note{font-size:14px}
+.sw-sec>.lead{margin-bottom:18px;font-size:16px}
+.sw-sec>h2{margin-bottom:14px}
+.linkbtn{border:0;background:none;padding:0;font:inherit;color:var(--chip-ink);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.sw-tile{border-radius:10px}
+.kpi{border-radius:10px}
+.node{border-radius:10px}
+.file label.btn{margin:0}
+details.adv{background:var(--tile);border-radius:10px;padding:0}
+details.adv>summary{list-style:none;cursor:pointer;padding:16px 18px;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;justify-content:space-between;font-size:20px}
+details.adv>summary::-webkit-details-marker{display:none}
+details.adv>summary::after{content:"+";font-size:24px;line-height:1;color:var(--chip-ink);margin-left:auto}
+details.adv[open]>summary::after{content:"–"}
+details.adv>summary em{font-style:normal;font-size:14px;color:#666}
+details.adv>.sw-grid,details.adv>.sw-actions{padding:0 10px 12px}
+.tile-head{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.tile-head h3{margin:0}
+.tile-head .filters{margin:0 auto 0 4px}
+.res-wrap{max-height:520px}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
+.route{grid-template-columns:repeat(2,minmax(0,1fr))}
+.route div{padding:10px 12px;font-size:14px;line-height:1.35}
+.route b{font-size:24px}
+.steps .n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--chip);color:var(--chip-ink);font-size:14px;margin-bottom:8px}
+.steps h3{font-size:18px;margin-bottom:6px}
+.steps p{margin:0;font-size:15px;line-height:1.5;color:#333}
+.sw-foot{margin-top:40px}
+.flow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.node{max-width:none;flex:none}
+.node .cnt{font-size:clamp(20px,2.4vw,26px)}
+@media(max-width:1000px){.flow{grid-template-columns:repeat(3,minmax(0,1fr))}.node::after{display:none!important}}
+@media(max-width:760px){
+  .sw{padding-inline:12px}
+  .sw-hero{padding-top:18px}
+  .sw-actions .btn{flex:1 1 100%;text-align:center}
+  .flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fields{grid-template-columns:1fr}
+  .tile-head .filters{margin:0;order:3;width:100%}
+  .tile-head .btn{margin-left:auto}
+  .mu{grid-template-columns:1fr 1fr 1fr}
+  /* протокол картками */
+  table.stack thead{display:none}
+  table.stack,table.stack tbody{display:block}
+  table.stack tr{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;padding:12px;border-bottom:8px solid var(--tile)}
+  table.stack td{display:flex;flex-direction:column;border:0;padding:2px 0;white-space:normal}
+  table.stack td::before{content:attr(data-l);font-size:11px;letter-spacing:.04em;color:#777;text-transform:uppercase}
+  table.stack td.n{text-align:left}
+  table.stack td.full{grid-column:1/-1}
+  .res-wrap{max-height:none;overflow:visible}
+  .tbl-wrap{max-height:none}
+  .verdict{font-size:16px}
+}
+@media(max-width:480px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi{padding:12px}.kpi .v{font-size:26px}.kpi .l{font-size:13px}.route{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){table.stack td.empty{display:none}}
+@supports(padding:max(0px)){.toast{bottom:max(24px,env(safe-area-inset-bottom))}}
 </style>
 </head>
 <body class="th">
@@ -140,8 +198,8 @@ table.t td.wrap{white-space:normal;min-width:180px}
 <section class="sw-hero">
   <span class="tag">Програмне середовище</span>
   <h1>Робот звірки податкових накладних із ЄРПН</h1>
-  <p>Працюючий прототип моделі з тез конференції «Інноваційні технології в інженерії, виробництві та будівництві» (Одеса, 8–9 грудня 2026). Робот зіставляє журнал ПН в ERP з вивантаженням ЄРПН, розкладає розбіжності за відповідальними у виробничому контурі й показує, чи виправдана роботизація економічно.</p>
-  <p class="sw-note">Усі обчислення відбуваються у вашому браузері, дані нікуди не надсилаються. Демо-дані й параметри умовні та не є результатом дослідження.</p>
+  <p>Прототип моделі з тез конференції «Інноваційні технології в інженерії, виробництві та будівництві» (Одеса, 8–9 грудня 2026): зіставляє журнал ПН в ERP з ЄРПН, розподіляє розбіжності між відповідальними й показує, чи виправдана роботизація.</p>
+  <p class="sw-note">Усе рахується у вашому браузері, дані нікуди не надсилаються. Демо-дані й параметри умовні.</p>
   <div class="sw-actions">
     <button class="btn btn--solid btn--lg" id="btnDemo" type="button">Завантажити демо-дані</button>
     <a class="btn btn--soft btn--lg" href="#data">Власні дані (CSV)</a>
@@ -150,64 +208,63 @@ table.t td.wrap{white-space:normal;min-width:180px}
 
 <!-- ══ КОНТУР ══ -->
 <section class="sw-sec" id="contour">
-  <h2>Місце робота у виробничому контурі</h2>
-  <p class="lead">Накладні постачальників сировини й матеріалів проходять закупівлі та склад, потрапляють до журналу ERP і мають відповідати реєстру ЄРПН. Лічильники показують, скільки записів проходить кожну ланку після запуску звірки.</p>
+  <h2>Виробничий контур</h2>
   <div class="flow" id="flow">
-    <div class="node"><b>Закупівлі</b><span>постачальники, замовлення</span><div class="cnt" id="f_buy">–</div></div>
-    <div class="node"><b>Склад</b><span>надходження сировини</span><div class="cnt" id="f_wh">–</div></div>
+    <div class="node"><b>Закупівлі</b><span>постачальники</span><div class="cnt" id="f_buy">–</div></div>
+    <div class="node"><b>Склад</b><span>надходження</span><div class="cnt" id="f_wh">–</div></div>
     <div class="node"><b>ERP</b><span>журнал ПН</span><div class="cnt" id="f_erp">–</div></div>
-    <div class="node rob"><b>Робот звірки</b><span>3 етапи</span><div class="cnt" id="f_rob">–</div></div>
-    <div class="node reg"><b>ЄРПН</b><span>вивантаження реєстру</span><div class="cnt" id="f_reg">–</div></div>
-    <div class="node"><b>Податковий кредит</b><span>облік, закриття місяця</span><div class="cnt" id="f_tax">–</div></div>
+    <div class="node rob"><b>Робот</b><span>автоматично</span><div class="cnt" id="f_rob">–</div></div>
+    <div class="node reg"><b>ЄРПН</b><span>реєстр</span><div class="cnt" id="f_reg">–</div></div>
+    <div class="node"><b>Податковий кредит</b><span>закриття місяця</span><div class="cnt" id="f_tax">–</div></div>
   </div>
 </section>
 
 <!-- ══ ДАНІ ══ -->
 <section class="sw-sec" id="data">
   <h2>Вхідні дані</h2>
-  <p class="lead">Завантажте демо-набір або власні вивантаження. Формат CSV: роздільник «;» або «,», перший рядок із заголовками <code>ipn; supplier; number; date; sum; receipt</code>. Колонки supplier і receipt (номер надходження на складі) необовʼязкові.</p>
+  <p class="lead">CSV із роздільником «;» або «,» і заголовками <code>ipn; supplier; number; date; sum; receipt</code>. Колонки supplier і receipt необовʼязкові. <button class="linkbtn" id="btnTpl" type="button">Шаблон CSV</button></p>
   <div class="sw-grid g2">
     <div class="sw-tile">
       <h3>Журнал ПН в ERP</h3>
-      <div class="file"><label class="btn btn--soft" for="fErp" style="margin:0">Обрати CSV</label><input id="fErp" type="file" accept=".csv,.txt"><span class="name" id="nErp">не завантажено</span></div>
+      <div class="file"><label class="btn btn--soft" for="fErp">Обрати CSV</label><input id="fErp" type="file" accept=".csv,.txt"><span class="name" id="nErp">не завантажено</span></div>
       <div id="cErp" class="cap"></div>
-      <details class="prev"><summary>Переглянути записи</summary><div class="tbl-wrap"><table class="t" id="tErp"></table></div></details>
+      <details class="prev"><summary>Записи</summary><div class="tbl-wrap"><table class="t" id="tErp"></table></div></details>
     </div>
     <div class="sw-tile">
       <h3>Вивантаження з ЄРПН</h3>
-      <div class="file"><label class="btn btn--soft" for="fReg" style="margin:0">Обрати CSV</label><input id="fReg" type="file" accept=".csv,.txt"><span class="name" id="nReg">не завантажено</span></div>
+      <div class="file"><label class="btn btn--soft" for="fReg">Обрати CSV</label><input id="fReg" type="file" accept=".csv,.txt"><span class="name" id="nReg">не завантажено</span></div>
       <div id="cReg" class="cap"></div>
-      <details class="prev"><summary>Переглянути записи</summary><div class="tbl-wrap"><table class="t" id="tReg"></table></div></details>
+      <details class="prev"><summary>Записи</summary><div class="tbl-wrap"><table class="t" id="tReg"></table></div></details>
     </div>
   </div>
-  <div class="sw-actions" style="margin-top:12px"><button class="btn btn--soft" id="btnTpl" type="button">Завантажити шаблон CSV</button></div>
 </section>
 
 <!-- ══ ПАРАМЕТРИ ══ -->
 <section class="sw-sec" id="params">
-  <h2>Параметри моделі</h2>
-  <p class="lead">Ймовірнісне зіставлення (етап 3) використовує теорію Fellegi–Sunter. Пороги рішень виводяться з витрат часу, а не задаються довільно.</p>
-  <div class="sw-grid g3">
-    <div class="sw-tile">
-      <h3>Допуск і частка пар</h3>
-      <label>Допуск суми ε, грн<input type="number" id="pEps" step="0.01" min="0" value="0.5"></label>
-      <label>Частка справжніх пар π серед кандидатів<input type="number" id="pPi" step="0.001" min="0.0001" max="0.9999" value="0.01"></label>
-    </div>
-    <div class="sw-tile">
-      <h3>Ймовірності збігу полів</h3>
-      <div class="mu" id="muGrid">
-        <span class="h">Поле</span><span class="h">m (справжня пара)</span><span class="h">u (випадкова)</span>
+  <details class="adv">
+    <summary><span>Параметри моделі</span><em id="thrSum"></em></summary>
+    <div class="sw-grid g3" style="margin-top:12px">
+      <div class="sw-tile">
+        <h3>Допуск і частка пар</h3>
+        <label>Допуск суми ε, грн<input type="number" id="pEps" step="0.01" min="0" value="0.5"></label>
+        <label>Частка справжніх пар π<input type="number" id="pPi" step="0.001" min="0.0001" max="0.9999" value="0.01"></label>
+      </div>
+      <div class="sw-tile">
+        <h3>Ймовірності збігу полів</h3>
+        <div class="mu" id="muGrid">
+          <span class="h">Поле</span><span class="h">m</span><span class="h">u</span>
+        </div>
+      </div>
+      <div class="sw-tile">
+        <h3>Витрати часу, хв</h3>
+        <label>tв – перевірка фахівцем<input type="number" id="pTv" step="0.5" min="0.1" value="6"></label>
+        <label>tк – хибний збіг<input type="number" id="pTk" step="1" min="0.1" value="30"></label>
+        <label>tн – пропуск справжнього збігу<input type="number" id="pTn" step="1" min="0.1" value="60"></label>
+        <div class="thr" id="thr"></div>
       </div>
     </div>
-    <div class="sw-tile">
-      <h3>Витрати часу, хв</h3>
-      <label>tв – перевірка фахівцем<input type="number" id="pTv" step="0.5" min="0.1" value="6"></label>
-      <label>tк – вартість хибного збігу<input type="number" id="pTk" step="1" min="0.1" value="30"></label>
-      <label>tн – вартість пропуску справжнього збігу<input type="number" id="pTn" step="1" min="0.1" value="60"></label>
-      <div class="thr" id="thr"></div>
-    </div>
-  </div>
-  <div class="sw-actions"><button class="btn btn--soft" id="btnReset" type="button">Скинути параметри</button></div>
+    <div class="sw-actions" style="margin-top:12px"><button class="btn btn--soft" id="btnReset" type="button">Скинути параметри</button></div>
+  </details>
 </section>
 
 <!-- ══ РЕЗУЛЬТАТ ══ -->
@@ -216,24 +273,29 @@ table.t td.wrap{white-space:normal;min-width:180px}
   <p class="lead" id="resLead">Завантажте дані, щоб побачити протокол зіставлення.</p>
   <div id="resBody" hidden>
     <div class="sw-grid g4" id="kpis"></div>
-    <div class="sw-tile" style="margin-top:8px">
-      <h3>Де закриваються записи</h3>
-      <div class="bar" id="funnel"></div>
-      <div class="legend" id="funnelLegend"></div>
-    </div>
-    <div class="sw-tile" style="margin-top:8px">
-      <h3>Кому йдуть винятки</h3>
-      <div class="route" id="routes"></div>
-    </div>
-    <div class="sw-tile" style="margin-top:8px">
-      <h3>Протокол зіставлення</h3>
-      <div class="filters" role="group" aria-label="Фільтр протоколу" id="filters">
-        <button type="button" data-f="all" aria-pressed="true">Усі</button>
-        <button type="button" data-f="exc" aria-pressed="false">Лише винятки</button>
-        <button type="button" data-f="clean" aria-pressed="false">Лише збіги</button>
+    <div class="sw-grid g2" style="margin-top:8px">
+      <div class="sw-tile">
+        <h3>Де закриваються записи</h3>
+        <div class="bar" id="funnel"></div>
+        <div class="legend" id="funnelLegend"></div>
       </div>
-      <div class="tbl-wrap" style="max-height:480px"><table class="t" id="tRes"></table></div>
-      <div class="sw-actions" style="justify-content:flex-start"><button class="btn btn--soft" id="btnCsv" type="button">Завантажити протокол CSV</button></div>
+      <div class="sw-tile">
+        <h3>Кому йдуть винятки</h3>
+        <div class="route" id="routes"></div>
+      </div>
+    </div>
+    <div class="sw-tile" style="margin-top:8px">
+      <div class="tile-head">
+        <h3>Протокол зіставлення</h3>
+        <div class="filters" role="group" aria-label="Фільтр протоколу" id="filters">
+          <button type="button" data-f="all" aria-pressed="true">Усі</button>
+          <button type="button" data-f="exc" aria-pressed="false">Винятки</button>
+          <button type="button" data-f="clean" aria-pressed="false">Збіги</button>
+        </div>
+        <button class="btn btn--soft" id="btnCsv" type="button">Завантажити CSV</button>
+      </div>
+      <div class="tbl-wrap res-wrap"><table class="t stack" id="tRes"></table></div>
+      <div class="sw-actions"><button class="btn btn--soft" id="btnMore" type="button" hidden></button></div>
     </div>
   </div>
 </section>
@@ -241,19 +303,19 @@ table.t td.wrap{white-space:normal;min-width:180px}
 <!-- ══ ЕКОНОМІКА ══ -->
 <section class="sw-sec" id="econ">
   <h2>Економічна доцільність</h2>
-  <p class="lead">Місячна економія часу: ΔT = N(t<sub>м</sub> − e·t<sub>в</sub> − f·t<sub>к</sub>) − T<sub>с</sub>. Роботизація виправдана, доки частка винятків e нижча за граничну e*.</p>
+  <p class="lead">ΔT = N(t<sub>м</sub> − e·t<sub>в</sub> − f·t<sub>к</sub>) − T<sub>с</sub>. Роботизація виправдана, доки частка винятків e менша за граничну e*.</p>
   <div class="sw-grid g2">
     <div class="sw-tile">
       <h3>Параметри місяця</h3>
-      <div class="sw-grid g2" style="gap:0 12px">
+      <div class="fields">
         <label>N – ПН за місяць<input type="number" id="eN" step="1" min="1" value="1200"></label>
-        <label>tм – ручна звірка однієї ПН, хв<input type="number" id="eTm" step="0.5" min="0.1" value="4"></label>
+        <label>tм – ручна звірка, хв<input type="number" id="eTm" step="0.5" min="0.1" value="4"></label>
         <label>e – частка винятків<input type="number" id="eE" step="0.01" min="0" max="1" value="0.15"></label>
         <label>f – частка хибних збігів<input type="number" id="eF" step="0.001" min="0" max="1" value="0.002"></label>
-        <label>Tс – супровід робота, год/міс<input type="number" id="eTs" step="1" min="0" value="8"></label>
+        <label>Tс – супровід, год/міс<input type="number" id="eTs" step="1" min="0" value="8"></label>
       </div>
-      <div class="sw-actions" style="justify-content:flex-start;margin-top:0">
-        <button class="btn btn--soft" id="btnEFromRun" type="button">Взяти e з результату звірки</button>
+      <div class="sw-actions" style="justify-content:flex-start;margin-top:4px">
+        <button class="btn btn--soft" id="btnEFromRun" type="button">e зі звірки</button>
         <button class="btn btn--soft" id="btnThesis" type="button">Приклад із тез</button>
       </div>
       <div class="cap" id="eHint" style="margin-top:10px"></div>
@@ -262,33 +324,24 @@ table.t td.wrap{white-space:normal;min-width:180px}
       <h3>Підсумок</h3>
       <div class="sw-grid g2">
         <div class="kpi" id="kDT"><div class="v">–</div><div class="l">економія ΔT за місяць</div></div>
-        <div class="kpi" id="kEs"><div class="v">–</div><div class="l">гранична частка винятків e*</div></div>
+        <div class="kpi" id="kEs"><div class="v">–</div><div class="l">гранична частка e*</div></div>
       </div>
       <div class="verdict" id="verdict"></div>
+      <svg id="chart" viewBox="0 0 640 230" role="img" aria-label="Залежність економії часу від частки винятків" style="width:100%;height:auto;margin-top:12px"></svg>
     </div>
-  </div>
-  <div class="sw-tile" style="margin-top:8px">
-    <h3>Чутливість до частки винятків</h3>
-    <svg id="chart" viewBox="0 0 640 230" role="img" aria-label="Залежність економії часу від частки винятків" style="width:100%;height:auto"></svg>
   </div>
 </section>
 
 <!-- ══ МЕТОД ══ -->
 <section class="sw-sec" id="method">
   <h2>Як це працює</h2>
-  <div class="how">
-    <ol>
-      <li><b>Етап 1.</b> Точний збіг ключа: ІПН, номер, дата, сума.</li>
-      <li><b>Етап 2.</b> Нормалізація номера (регістр, пробіли, кириличні й латинські літери-двійники, провідні нулі) і допуск суми <code>ε</code>.</li>
-      <li><b>Етап 3.</b> Для решти записів із тим самим ІПН рахується ваговий показник пари, а за ним ймовірність збігу:</li>
-    </ol>
-    <span class="eq">w = Σ [ γₖ·ln(mₖ/uₖ) + (1 − γₖ)·ln((1 − mₖ)/(1 − uₖ)) ],  P = 1 / (1 + e^−(w + ln(π/(1−π))))</span>
-    <ol start="4">
-      <li><b>Рішення за витратами часу.</b> Пара підтверджується, якщо <code>P ≥ 1 − tв/tк</code>, відхиляється, якщо <code>P ≤ tв/tн</code>, інакше її перевіряє фахівець.</li>
-      <li><b>Маршрутизація.</b> Підтверджена пара з розбіжністю отримує позначку. Розбіжності суми, номера чи дати йдуть до бухгалтерії, накладна без запису в ЄРПН – до закупівель, накладна без надходження на складі – на склад.</li>
-    </ol>
-    <p>Рішення щодо винятків завжди залишається за людиною, дії робота фіксуються в протоколі для аудиту. Параметри mₖ, uₖ, π потрібно оцінювати на реальних даних підприємства.</p>
+  <div class="sw-grid g4 steps">
+    <div class="sw-tile"><span class="n">1</span><h3>Точний збіг</h3><p>ІПН, номер, дата й сума збігаються повністю.</p></div>
+    <div class="sw-tile"><span class="n">2</span><h3>Нормалізація</h3><p>Регістр, пробіли, схожі літери, провідні нулі в номері; сума в межах допуску ε.</p></div>
+    <div class="sw-tile"><span class="n">3</span><h3>Ймовірність</h3><p>Для решти пар із тим самим ІПН за моделлю Fellegi–Sunter рахується P.</p></div>
+    <div class="sw-tile"><span class="n">4</span><h3>Рішення за часом</h3><p>Підтвердити, якщо P ≥ 1 − tв/tк; відхилити, якщо P ≤ tв/tн; інакше перевіряє фахівець.</p></div>
   </div>
+  <p class="sw-note" style="margin-top:14px">Рішення щодо винятків залишається за людиною, дії робота фіксуються в протоколі для аудиту. Параметри m, u, π потрібно оцінювати на реальних даних підприємства.</p>
 </section>
 
 <footer class="sw-foot">
@@ -335,6 +388,7 @@ function thresholds(){
 function showThr(){
   const t=thresholds();
   $('#thr').innerHTML=`Підтвердження: <b>P ≥ ${fmt(t.Pm,2)}</b> (вага w ≥ ${fmt(t.Tm,2)})<br>Відхилення: <b>P ≤ ${fmt(t.Pl,2)}</b> (вага w ≤ ${fmt(t.Tl,2)})<br>Між порогами – перевірка фахівцем`;
+  const ts=$('#thrSum');if(ts)ts.textContent=`пороги: P ≥ ${fmt(t.Pm,2)} підтвердити, P ≤ ${fmt(t.Pl,2)} відхилити`;
 }
 
 /* ───────── дані ───────── */
@@ -513,7 +567,7 @@ function showData(){
   if(ERP.length)tableOf('#tErp',ERP,true);
   if(REG.length)tableOf('#tReg',REG,false);
 }
-let FILTER='all';
+let FILTER='all',SHOW=15;
 function show(){
   if(!RES){ $('#resBody').hidden=true; $('#resLead').hidden=false; return }
   $('#resLead').hidden=true; $('#resBody').hidden=false;
@@ -533,7 +587,7 @@ function show(){
   $('#funnelLegend').innerHTML=seg.map(s=>`<span><s style="background:${s[2]}"></s>${s[0]}: ${s[1]}</span>`).join('');
   const rt={'Бухгалтерія':0,'Закупівлі':0,'Склад':0};
   R.rows.forEach(r=>r.route.forEach(x=>{rt[x]++}));
-  $('#routes').innerHTML=`<div><b>${rt['Бухгалтерія']}</b>Бухгалтерія: суми, номери, дати, записи без пари в ERP</div><div><b>${rt['Закупівлі']}</b>Закупівлі: накладної немає в ЄРПН, звернення до постачальника</div><div><b>${rt['Склад']}</b>Склад: накладна без надходження</div><div><b>${R.cnt.spec}</b>Пари до перевірки фахівцем</div>`;
+  $('#routes').innerHTML=`<div><b>${rt['Бухгалтерія']}</b>Бухгалтерія</div><div><b>${rt['Закупівлі']}</b>Закупівлі</div><div><b>${rt['Склад']}</b>Склад</div><div><b>${R.cnt.spec}</b>Фахівцеві</div>`;
   renderRows();
   // контур
   $('#f_buy').textContent=fmtN(new Set(ERP.map(e=>e.ipn)).size);
@@ -549,18 +603,23 @@ function show(){
   $('#eHint').textContent=hint;
 }
 function renderRows(){
-  const rows=RES.rows.filter(r=>FILTER==='all'||(FILTER==='exc'?r.kind!=='ok':r.kind==='ok'));
+  const all=RES.rows.filter(r=>FILTER==='all'||(FILTER==='exc'?r.kind!=='ok':r.kind==='ok'));
+  const rows=all.slice(0,SHOW);
+  const mb=$('#btnMore');mb.hidden=all.length<=SHOW;mb.textContent=`Показати ще ${Math.min(15,all.length-SHOW)} із ${all.length-SHOW}`;
   const cls={ok:'p-ok',flag:'p-flag',spec:'p-spec',no:'p-no'};
+  const L=['Контрагент','ERP номер','ERP дата','ERP сума','ЄРПН номер','ЄРПН дата','ЄРПН сума','Етап','w','P'];
   $('#tRes').innerHTML='<thead><tr><th>Контрагент / ІПН</th><th>ERP: номер</th><th>Дата</th><th class="n">Сума</th><th>ЄРПН: номер</th><th>Дата</th><th class="n">Сума</th><th>Етап</th><th class="n">w</th><th class="n">P</th><th>Рішення</th><th>Клас розбіжності</th><th>Кому</th></tr></thead><tbody>'+
   rows.map(r=>{const e=r.e,g=r.g;
     const diffN=e&&g&&normNum(e.num)!==normNum(g.num), diffD=e&&g&&e.date!==g.date, diffS=e&&g&&Math.abs(e.sum-g.sum)>P.eps+1e-9;
-    return `<tr><td>${esc(e?(e.supplier||e.ipn):g.ipn)}</td>
-    <td>${e?esc(e.num):'–'}</td><td>${e?d2s(e.date):'–'}</td><td class="n">${e?fmt(e.sum):'–'}</td>
-    <td${diffN?' style="color:var(--bad)"':''}>${g?esc(g.num):'–'}</td><td${diffD?' style="color:var(--bad)"':''}>${g?d2s(g.date):'–'}</td><td class="n"${diffS?' style="color:var(--bad)"':''}>${g?fmt(g.sum):'–'}</td>
-    <td>${r.stage||'–'}</td><td class="n">${r.w===null?'–':fmt(r.w)}</td><td class="n">${r.p===null?'–':fmt(r.p,4)}</td>
-    <td><span class="pill ${cls[r.kind]}">${r.dec}</span></td><td class="wrap">${esc(r.classes.join('; '))||'–'}</td><td>${esc(r.route.join(', '))||'–'}</td></tr>`}).join('')+'</tbody>';
+    const bad=' style="color:var(--bad)"';
+    return `<tr><td class="full" data-l="${L[0]}">${esc(e?(e.supplier||e.ipn):g.ipn)}</td>
+    <td data-l="${L[1]}">${e?esc(e.num):'–'}</td><td data-l="${L[2]}">${e?d2s(e.date):'–'}</td><td class="n" data-l="${L[3]}">${e?fmt(e.sum):'–'}</td>
+    <td data-l="${L[4]}"${diffN?bad:''}>${g?esc(g.num):'–'}</td><td data-l="${L[5]}"${diffD?bad:''}>${g?d2s(g.date):'–'}</td><td class="n" data-l="${L[6]}"${diffS?bad:''}>${g?fmt(g.sum):'–'}</td>
+    <td data-l="${L[7]}">${r.stage||'–'}</td><td class="n" data-l="${L[8]}">${r.w===null?'–':fmt(r.w)}</td><td class="n" data-l="${L[9]}">${r.p===null?'–':fmt(r.p,4)}</td>
+    <td class="full" data-l="Рішення"><span class="pill ${cls[r.kind]}">${r.dec}</span></td><td class="wrap full" data-l="Клас розбіжності">${esc(r.classes.join('; '))||'–'}</td><td class="full" data-l="Кому">${esc(r.route.join(', '))||'–'}</td></tr>`}).join('')+'</tbody>';
+  $('#tRes').querySelectorAll('td').forEach(td=>{const t=td.textContent.trim();if(t==='–'||t==='')td.classList.add('empty')});
 }
-$('#filters').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;FILTER=b.dataset.f;
+$('#filters').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;FILTER=b.dataset.f;SHOW=15;
   $('#filters').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));if(RES)renderRows()});
 
 /* ───────── економіка ───────── */
@@ -623,6 +682,7 @@ $('#btnCsv').addEventListener('click',()=>{if(!RES)return;
   const head=['Контрагент','ІПН','ERP номер','ERP дата','ERP сума','ЄРПН номер','ЄРПН дата','ЄРПН сума','Етап','w','P','Рішення','Клас розбіжності','Кому'];
   const lines=[head.map(q).join(';')].concat(RES.rows.map(r=>{const e=r.e,g=r.g;return [e?e.supplier:'',(e||g).ipn,e?e.num:'',e?d2s(e.date):'',e?String(e.sum).replace('.',','):'',g?g.num:'',g?d2s(g.date):'',g?String(g.sum).replace('.',','):'',r.stage||'',r.w===null?'':r.w.toFixed(3).replace('.',','),r.p===null?'':r.p.toFixed(5).replace('.',','),r.dec,r.classes.join('; '),r.route.join(', ')].map(q).join(';')}));
   download('protokol_zvirky_pn.csv','﻿'+lines.join('\n'),'text/csv;charset=utf-8')});
+$('#btnMore').addEventListener('click',()=>{SHOW+=15;if(RES)renderRows()});
 recompute();
 window.__sw={reconcile:()=>RES,demo,P,load};
 })();
