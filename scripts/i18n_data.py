@@ -339,10 +339,10 @@ T = {
     "· rivista indipendente di arte, architettura e design, Milano e Kyiv",
     "· revue indépendante d’art, d’architecture et de design, Milan et Kyiv",
     "· unabhängige Zeitschrift für Kunst, Architektur und Design, Mailand und Kyjiw"),
-"Wrote most of the journal’s stories and reviews.": (
-    "Autore della maggior parte degli articoli e delle recensioni della rivista.",
-    "Auteur de la plupart des articles et des critiques de la revue.",
-    "Autor der meisten Beiträge und Rezensionen der Zeitschrift."),
+"Wrote stories and reviews for the journal.": (
+    "Autore di articoli e recensioni per la rivista.",
+    "Auteur d’articles et de critiques pour la revue.",
+    "Autor von Beiträgen und Rezensionen der Zeitschrift."),
 "Stories on contemporary art, architecture and design: Cape Town’s Zeitz MOCAA, Seville, Copenhagen’s museums, the Bauhaus years, Antony Gormley, Tomás Saraceno, Pierre Huyghe and Mona Hatoum; the reviews cover restaurants and interiors where design is the experience.": (
     "Testi su arte contemporanea, architettura e design: lo Zeitz MOCAA di Città del Capo, Siviglia, i musei di Copenaghen, gli anni del Bauhaus, Antony Gormley, Tomás Saraceno, Pierre Huyghe e Mona Hatoum; le recensioni riguardano ristoranti e interni in cui il design è l’esperienza.",
     "Textes sur l’art contemporain, l’architecture et le design : le Zeitz MOCAA du Cap, Séville, les musées de Copenhague, les années du Bauhaus, Antony Gormley, Tomás Saraceno, Pierre Huyghe et Mona Hatoum ; les critiques portent sur des restaurants et des intérieurs où le design est l’expérience.",
