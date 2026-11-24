@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Звірка податкових накладних · Вʼячеслав Муністер</title>
+<meta name="description" content="Працюючий прототип робота звірки податкових накладних із ЄРПН: триетапне зіставлення, модель Fellegi–Sunter, пороги з витрат часу та умова економічної доцільності. Усе рахується в браузері.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://munister.com.ua/uk/zvirka-pn/">
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml">
+<meta name="author" content="Вʼячеслав Муністер">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://munister.com.ua/uk/zvirka-pn/">
+<meta property="og:site_name" content="Вʼячеслав Муністер">
+<meta property="og:title" content="Звірка податкових накладних із ЄРПН · Вʼячеслав Муністер">
+<meta property="og:description" content="Робот звірки ПН: три етапи, ймовірнісна модель, маршрутизація винятків у виробничому контурі та розрахунок економічної доцільності.">
+<meta property="og:locale" content="uk_UA">
+<link rel="stylesheet" href="/munister.css?v=58">
+<link rel="stylesheet" href="/theme.css?v=15">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cousine:ital,wght@0,400;0,700;1,400&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+/* Програмне середовище: лише додаткові елементи, решта береться з теми сайту (body.th) */
+.sw{--tile:#f3f3f1;--ok:#0b7a43;--ok-bg:#e3f5ea;--warn:#8a5a00;--warn-bg:#fff1cf;--bad:#b42318;--bad-bg:#fde8e6;max-width:1180px;margin-inline:auto;padding-inline:15px}
+.sw *{min-width:0}
+.sw-hero{text-align:center;padding:clamp(28px,5vw,64px) 0 0}
+.sw-hero h1{font-family:var(--font-head);font-weight:400;font-size:clamp(34px,5vw,52px);letter-spacing:-.01em;line-height:1.1;margin:14px 0 0}
+.sw-hero p{max-width:62ch;margin:18px auto 0;font-family:var(--font-sans);font-size:18px;line-height:1.55;color:#222}
+.sw-note{max-width:62ch;margin:12px auto 0;font-size:15px;color:#555}
+.sw-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:24px}
+.sw .btn{cursor:pointer;font-family:var(--font-sans)}
+.sw-sec{margin-top:clamp(40px,6vw,72px)}
+.sw-sec>h2{font-family:var(--font-head);font-weight:400;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.01em;line-height:1.15;text-align:center;margin:0 0 8px}
+.sw-sec>.lead{max-width:64ch;margin:0 auto 22px;text-align:center;font-size:17px;line-height:1.5;color:#222}
+.sw-tile .btn--soft{background:#fff}
+.sw-tile{background:var(--tile);border-radius:6px;padding:18px 18px 20px}
+.sw-grid{display:grid;gap:8px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:860px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}}
+@media(max-width:480px){.g4{grid-template-columns:1fr}}
+.sw h3{font-family:var(--font-sans);font-weight:400;font-size:20px;margin:0 0 10px;letter-spacing:-.01em}
+.sw .cap{font-size:13px;letter-spacing:.04em;color:#666;margin:0 0 4px}
+
+/* виробничий контур */
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;justify-content:center}
+.node{background:var(--tile);border-radius:10px;padding:14px 12px;text-align:center;position:relative}
+.node b{display:block;font-weight:400;font-size:16px}
+.node span{display:block;font-size:13px;color:#666;margin-top:4px}
+.node .cnt{font-family:var(--font-head);font-size:26px;color:#000;margin-top:6px;min-height:32px}
+.node.rob{background:#000;color:#fff}
+.node.rob span{color:#c9c9c9}.node.rob .cnt{color:#fff}
+.node.reg{background:var(--chip)}
+.node:not(:last-child)::after{content:"→";position:absolute;right:-12px;top:50%;transform:translateY(-50%);font-size:16px;color:#999;z-index:1}
+@media(max-width:860px){.node:not(:last-child)::after{display:none}}
+
+/* поля */
+.sw label{display:block;font-size:14px;color:#444;margin-bottom:10px}
+.sw input[type=number],.sw input[type=text],.sw select{width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--c-rule-strong);border-radius:5px;background:#fff;font:inherit;font-size:16px;color:#000}
+.sw input:focus-visible,.sw select:focus-visible,.sw button:focus-visible,.sw summary:focus-visible{outline:2px solid var(--chip-ink);outline-offset:2px}
+.mu{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:6px 8px;align-items:center;font-size:15px}
+.mu .h{font-size:13px;color:#666}
+.mu input{margin:0!important;padding:6px 8px!important;font-size:15px!important}
+.thr{margin-top:12px;padding:10px 12px;background:#fff;border-radius:5px;font-size:15px;line-height:1.6}
+.thr b{font-weight:600}
+.file{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.file input[type=file]{display:none}
+.file .name{font-size:14px;color:#555}
+details.prev{margin-top:10px;font-size:14px}
+details.prev summary{cursor:pointer;color:var(--chip-ink)}
+.tbl-wrap{overflow:auto;max-height:340px;border-radius:5px;background:#fff;margin-top:8px}
+table.t{border-collapse:collapse;width:100%;font-size:14px}
+table.t th,table.t td{padding:7px 10px;border-bottom:1px solid var(--c-rule);text-align:left;white-space:nowrap}
+table.t thead th{position:sticky;top:0;background:#fff;font-weight:600;font-size:13px;color:#444;z-index:1;box-shadow:0 1px 0 var(--c-rule-strong)}
+table.t td.n,table.t th.n{text-align:right;font-variant-numeric:tabular-nums}
+table.t tr.diff td{color:var(--bad)}
+table.t td.wrap{white-space:normal;min-width:180px}
+
+/* підсумки */
+.kpi{background:var(--tile);border-radius:6px;padding:14px 16px}
+.kpi .v{font-family:var(--font-head);font-size:clamp(26px,3vw,34px);line-height:1.1}
+.kpi .l{font-size:14px;color:#555;margin-top:4px}
+.kpi.ok .v{color:var(--ok)}.kpi.warn .v{color:var(--warn)}.kpi.bad .v{color:var(--bad)}
+.bar{display:flex;height:34px;border-radius:5px;overflow:hidden;background:#fff;margin:6px 0 8px;font-size:13px}
+.bar i{display:flex;align-items:center;justify-content:center;font-style:normal;color:#fff;overflow:hidden;white-space:nowrap;transition:flex-basis .3s}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:#333}
+.legend s{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;text-decoration:none}
+.pill{display:inline-block;padding:2px 9px;border-radius:5px;font-size:13px;line-height:1.35}
+.p-ok{background:var(--ok-bg);color:var(--ok)}
+.p-flag{background:var(--chip);color:var(--chip-ink)}
+.p-spec{background:var(--warn-bg);color:var(--warn)}
+.p-no{background:var(--bad-bg);color:var(--bad)}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+.filters button{border:0;border-radius:999px;background:var(--chip);color:var(--chip-ink);padding:6px 14px;font:inherit;font-size:15px;cursor:pointer}
+.filters button[aria-pressed=true]{background:var(--chip-ink);color:#fff}
+.route{display:grid;gap:8px}
+.route div{background:var(--tile);border-radius:6px;padding:12px 14px;font-size:15px}
+.route b{display:block;font-weight:400;font-size:26px;font-family:var(--font-head)}
+.verdict{margin-top:12px;padding:14px 16px;border-radius:6px;font-size:17px}
+.verdict.yes{background:var(--ok-bg);color:var(--ok)}
+.verdict.no{background:var(--bad-bg);color:var(--bad)}
+.sw svg text{font-family:var(--font-sans)}
+.how{max-width:860px;margin:0 auto;font-size:17px;line-height:1.6;color:#222}
+.how li{margin:0 0 8px}
+.how code{font-family:var(--font-head);background:var(--chip);color:var(--chip-ink);padding:1px 6px;border-radius:4px;font-size:.92em}
+.eq{display:block;margin:12px 0;padding:12px 14px;background:var(--tile);border-radius:6px;font-family:var(--font-head);font-size:15px;overflow:auto;white-space:nowrap}
+.sw-foot{margin:56px 0 0;padding:0 0 32px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;font-size:15px;color:#444}
+.sw-foot a{color:inherit}
+.toast{width:max-content;max-width:calc(100vw - 32px);text-align:center;position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#000;color:#fff;padding:10px 18px;border-radius:999px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:50}
+.toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){.bar i,.toast{transition:none}}
+
+/* ── polish ── */
+.sw{padding-bottom:8px}
+.sw-hero p{font-size:clamp(16px,1.6vw,18px)}
+.sw-hero .sw-note{font-size:14px}
+.sw-sec>.lead{margin-bottom:18px;font-size:16px}
+.sw-sec>h2{margin-bottom:14px}
+.linkbtn{border:0;background:none;padding:0;font:inherit;color:var(--chip-ink);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.sw-tile{border-radius:10px}
+.kpi{border-radius:10px}
+.node{border-radius:10px}
+.file label.btn{margin:0}
+details.adv{background:var(--tile);border-radius:10px;padding:0}
+details.adv>summary{list-style:none;cursor:pointer;padding:16px 18px;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;justify-content:space-between;font-size:20px}
+details.adv>summary::-webkit-details-marker{display:none}
+details.adv>summary::after{content:"+";font-size:24px;line-height:1;color:var(--chip-ink);margin-left:auto}
+details.adv[open]>summary::after{content:"–"}
+details.adv>summary em{font-style:normal;font-size:14px;color:#666}
+details.adv>.sw-grid,details.adv>.sw-actions{padding:0 10px 12px}
+.tile-head{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.tile-head h3{margin:0}
+.tile-head .filters{margin:0 auto 0 4px}
+.res-wrap{max-height:520px}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
+.route{grid-template-columns:repeat(2,minmax(0,1fr))}
+.route div{padding:10px 12px;font-size:14px;line-height:1.35}
+.route b{font-size:24px}
+.steps .n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--chip);color:var(--chip-ink);font-size:14px;margin-bottom:8px}
+.steps h3{font-size:18px;margin-bottom:6px}
+.steps p{margin:0;font-size:15px;line-height:1.5;color:#333}
+.sw-foot{margin-top:40px}
+.flow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.node{max-width:none;flex:none}
+.node .cnt{font-size:clamp(20px,2.4vw,26px)}
+@media(max-width:1000px){.flow{grid-template-columns:repeat(3,minmax(0,1fr))}.node::after{display:none!important}}
+@media(max-width:760px){
+  .sw{padding-inline:12px}
+  .sw-hero{padding-top:18px}
+  .sw-actions .btn{flex:1 1 100%;text-align:center}
+  .flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fields{grid-template-columns:1fr}
+  .tile-head .filters{margin:0;order:3;width:100%}
+  .tile-head .btn{margin-left:auto}
+  .mu{grid-template-columns:1fr 1fr 1fr}
+  /* протокол картками */
+  table.stack thead{display:none}
+  table.stack,table.stack tbody{display:block}
+  table.stack tr{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;padding:12px;border-bottom:8px solid var(--tile)}
+  table.stack td{display:flex;flex-direction:column;border:0;padding:2px 0;white-space:normal}
+  table.stack td::before{content:attr(data-l);font-size:11px;letter-spacing:.04em;color:#777;text-transform:uppercase}
+  table.stack td.n{text-align:left}
+  table.stack td.full{grid-column:1/-1}
+  .res-wrap{max-height:none;overflow:visible}
+  .tbl-wrap{max-height:none}
+  .verdict{font-size:16px}
+}
+@media(max-width:480px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi{padding:12px}.kpi .v{font-size:26px}.kpi .l{font-size:13px}.route{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){table.stack td.empty{display:none}}
+@supports(padding:max(0px)){.toast{bottom:max(24px,env(safe-area-inset-bottom))}}
+</style>
+</head>
+<body class="th">
+
+<a class="skip" href="#main">Перейти до змісту</a>
+
+<header class="site-head">
+  <a class="wordmark" href="/uk/">Munister</a>
+</header>
+
+<main class="site-main" id="main">
+<div class="sw">
+
+<!-- ══ ВСТУП ══ -->
+<section class="sw-hero">
+  <span class="tag">Звірка ПН</span>
+  <h1>Робот звірки податкових накладних із ЄРПН</h1>
+  <p>Прототип моделі з тез конференції «Інноваційні технології в інженерії, виробництві та будівництві» (Одеса, 8–9 грудня 2026): зіставляє журнал ПН в ERP з ЄРПН, розподіляє розбіжності між відповідальними й показує, чи виправдана роботизація.</p>
+  <p class="sw-note">Усе рахується у вашому браузері, дані нікуди не надсилаються. Демо-дані й параметри умовні.</p>
+  <div class="sw-actions">
+    <button class="btn btn--solid btn--lg" id="btnDemo" type="button">Завантажити демо-дані</button>
+    <a class="btn btn--soft btn--lg" href="#data">Власні дані (CSV)</a>
+  </div>
+</section>
+
+<!-- ══ КОНТУР ══ -->
+<section class="sw-sec" id="contour">
+  <h2>Виробничий контур</h2>
+  <div class="flow" id="flow">
+    <div class="node"><b>Закупівлі</b><span>постачальники</span><div class="cnt" id="f_buy">–</div></div>
+    <div class="node"><b>Склад</b><span>надходження</span><div class="cnt" id="f_wh">–</div></div>
+    <div class="node"><b>ERP</b><span>журнал ПН</span><div class="cnt" id="f_erp">–</div></div>
+    <div class="node rob"><b>Робот</b><span>автоматично</span><div class="cnt" id="f_rob">–</div></div>
+    <div class="node reg"><b>ЄРПН</b><span>реєстр</span><div class="cnt" id="f_reg">–</div></div>
+    <div class="node"><b>Податковий кредит</b><span>закриття місяця</span><div class="cnt" id="f_tax">–</div></div>
+  </div>
+</section>
+
+<!-- ══ ДАНІ ══ -->
+<section class="sw-sec" id="data">
+  <h2>Вхідні дані</h2>
+  <p class="lead">CSV із роздільником «;» або «,» і заголовками <code>ipn; supplier; number; date; sum; receipt</code>. Колонки supplier і receipt необовʼязкові. <button class="linkbtn" id="btnTpl" type="button">Шаблон CSV</button></p>
+  <div class="sw-grid g2">
+    <div class="sw-tile">
+      <h3>Журнал ПН в ERP</h3>
+      <div class="file"><label class="btn btn--soft" for="fErp">Обрати CSV</label><input id="fErp" type="file" accept=".csv,.txt"><span class="name" id="nErp">не завантажено</span></div>
+      <div id="cErp" class="cap"></div>
+      <details class="prev"><summary>Записи</summary><div class="tbl-wrap"><table class="t" id="tErp"></table></div></details>
+    </div>
+    <div class="sw-tile">
+      <h3>Вивантаження з ЄРПН</h3>
+      <div class="file"><label class="btn btn--soft" for="fReg">Обрати CSV</label><input id="fReg" type="file" accept=".csv,.txt"><span class="name" id="nReg">не завантажено</span></div>
+      <div id="cReg" class="cap"></div>
+      <details class="prev"><summary>Записи</summary><div class="tbl-wrap"><table class="t" id="tReg"></table></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ПАРАМЕТРИ ══ -->
+<section class="sw-sec" id="params">
+  <details class="adv">
+    <summary><span>Параметри моделі</span><em id="thrSum"></em></summary>
+    <div class="sw-grid g3" style="margin-top:12px">
+      <div class="sw-tile">
+        <h3>Допуск і частка пар</h3>
+        <label>Допуск суми ε, грн<input type="number" id="pEps" step="0.01" min="0" value="0.5"></label>
+        <label>Частка справжніх пар π<input type="number" id="pPi" step="0.001" min="0.0001" max="0.9999" value="0.01"></label>
+      </div>
+      <div class="sw-tile">
+        <h3>Ймовірності збігу полів</h3>
+        <div class="mu" id="muGrid">
+          <span class="h">Поле</span><span class="h">m</span><span class="h">u</span>
+        </div>
+      </div>
+      <div class="sw-tile">
+        <h3>Витрати часу, хв</h3>
+        <label>tв – перевірка фахівцем<input type="number" id="pTv" step="0.5" min="0.1" value="6"></label>
+        <label>tк – хибний збіг<input type="number" id="pTk" step="1" min="0.1" value="30"></label>
+        <label>tн – пропуск справжнього збігу<input type="number" id="pTn" step="1" min="0.1" value="60"></label>
+        <div class="thr" id="thr"></div>
+      </div>
+    </div>
+    <div class="sw-actions" style="margin-top:12px"><button class="btn btn--soft" id="btnReset" type="button">Скинути параметри</button></div>
+  </details>
+</section>
+
+<!-- ══ РЕЗУЛЬТАТ ══ -->
+<section class="sw-sec" id="result">
+  <h2>Результат звірки</h2>
+  <p class="lead" id="resLead">Завантажте дані, щоб побачити протокол зіставлення.</p>
+  <div id="resBody" hidden>
+    <div class="sw-grid g4" id="kpis"></div>
+    <div class="sw-grid g2" style="margin-top:8px">
+      <div class="sw-tile">
+        <h3>Де закриваються записи</h3>
+        <div class="bar" id="funnel"></div>
+        <div class="legend" id="funnelLegend"></div>
+      </div>
+      <div class="sw-tile">
+        <h3>Кому йдуть винятки</h3>
+        <div class="route" id="routes"></div>
+      </div>
+    </div>
+    <div class="sw-tile" style="margin-top:8px">
+      <div class="tile-head">
+        <h3>Протокол зіставлення</h3>
+        <div class="filters" role="group" aria-label="Фільтр протоколу" id="filters">
+          <button type="button" data-f="all" aria-pressed="true">Усі</button>
+          <button type="button" data-f="exc" aria-pressed="false">Винятки</button>
+          <button type="button" data-f="clean" aria-pressed="false">Збіги</button>
+        </div>
+        <button class="btn btn--soft" id="btnCsv" type="button">Завантажити CSV</button>
+      </div>
+      <div class="tbl-wrap res-wrap"><table class="t stack" id="tRes"></table></div>
+      <div class="sw-actions"><button class="btn btn--soft" id="btnMore" type="button" hidden></button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ЕКОНОМІКА ══ -->
+<section class="sw-sec" id="econ">
+  <h2>Економічна доцільність</h2>
+  <p class="lead">ΔT = N(t<sub>м</sub> − e·t<sub>в</sub> − f·t<sub>к</sub>) − T<sub>с</sub>. Роботизація виправдана, доки частка винятків e менша за граничну e*.</p>
+  <div class="sw-grid g2">
+    <div class="sw-tile">
+      <h3>Параметри місяця</h3>
+      <div class="fields">
+        <label>N – ПН за місяць<input type="number" id="eN" step="1" min="1" value="1200"></label>
+        <label>tм – ручна звірка, хв<input type="number" id="eTm" step="0.5" min="0.1" value="4"></label>
+        <label>e – частка винятків<input type="number" id="eE" step="0.01" min="0" max="1" value="0.15"></label>
+        <label>f – частка хибних збігів<input type="number" id="eF" step="0.001" min="0" max="1" value="0.002"></label>
+        <label>Tс – супровід, год/міс<input type="number" id="eTs" step="1" min="0" value="8"></label>
+      </div>
+      <div class="sw-actions" style="justify-content:flex-start;margin-top:4px">
+        <button class="btn btn--soft" id="btnEFromRun" type="button">e зі звірки</button>
+        <button class="btn btn--soft" id="btnThesis" type="button">Приклад із тез</button>
+      </div>
+      <div class="cap" id="eHint" style="margin-top:10px"></div>
+    </div>
+    <div class="sw-tile">
+      <h3>Підсумок</h3>
+      <div class="sw-grid g2">
+        <div class="kpi" id="kDT"><div class="v">–</div><div class="l">економія ΔT за місяць</div></div>
+        <div class="kpi" id="kEs"><div class="v">–</div><div class="l">гранична частка e*</div></div>
+      </div>
+      <div class="verdict" id="verdict"></div>
+      <svg id="chart" viewBox="0 0 640 230" role="img" aria-label="Залежність економії часу від частки винятків" style="width:100%;height:auto;margin-top:12px"></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ══ МЕТОД ══ -->
+<section class="sw-sec" id="method">
+  <h2>Як це працює</h2>
+  <div class="sw-grid g4 steps">
+    <div class="sw-tile"><span class="n">1</span><h3>Точний збіг</h3><p>ІПН, номер, дата й сума збігаються повністю.</p></div>
+    <div class="sw-tile"><span class="n">2</span><h3>Нормалізація</h3><p>Регістр, пробіли, схожі літери, провідні нулі в номері; сума в межах допуску ε.</p></div>
+    <div class="sw-tile"><span class="n">3</span><h3>Ймовірність</h3><p>Для решти пар із тим самим ІПН за моделлю Fellegi–Sunter рахується P.</p></div>
+    <div class="sw-tile"><span class="n">4</span><h3>Рішення за часом</h3><p>Підтвердити, якщо P ≥ 1 − tв/tк; відхилити, якщо P ≤ tв/tн; інакше перевіряє фахівець.</p></div>
+  </div>
+  <p class="sw-note" style="margin-top:14px">Рішення щодо винятків залишається за людиною, дії робота фіксуються в протоколі для аудиту. Параметри m, u, π потрібно оцінювати на реальних даних підприємства.</p>
+</section>
+
+<footer class="sw-foot">
+  <span>© <span id="y"></span> Вʼячеслав Муністер</span>
+  <span><a href="/uk/">Головна</a> · <a href="/uk/cv.html">Резюме</a> · <a href="mailto:munister@outlook.com">munister@outlook.com</a></span>
+</footer>
+
+</div>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s);
+const fmt=(x,d=2)=>Number(x).toLocaleString('uk-UA',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtN=(x,d=0)=>Number(x).toLocaleString('uk-UA',{maximumFractionDigits:d});
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),2600)}
+$('#y').textContent=new Date().getFullYear();
+
+/* ───────── параметри ───────── */
+const FIELDS=['ІПН','Номер','Дата','Сума'];
+const DEF={eps:.5,pi:.01,tv:6,tk:30,tn:60,m:[.99,.97,.95,.98],u:[.001,.01,.05,.02]};
+const P={...DEF,m:[...DEF.m],u:[...DEF.u]};
+const muGrid=$('#muGrid');
+FIELDS.forEach((f,k)=>{
+  muGrid.insertAdjacentHTML('beforeend',`<span>${f}</span><input type="number" step="0.001" min="0.0001" max="0.9999" data-k="${k}" data-t="m" value="${P.m[k]}" aria-label="m для поля ${f}"><input type="number" step="0.001" min="0.0001" max="0.9999" data-k="${k}" data-t="u" value="${P.u[k]}" aria-label="u для поля ${f}">`);
+});
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+function readParams(){
+  const n=(id,d)=>{const v=parseFloat($(id).value);return Number.isFinite(v)?v:d};
+  P.eps=Math.max(0,n('#pEps',DEF.eps));
+  P.pi=clamp(n('#pPi',DEF.pi),1e-4,.9999);
+  P.tv=Math.max(.1,n('#pTv',DEF.tv));P.tk=Math.max(P.tv*1.0001,n('#pTk',DEF.tk));P.tn=Math.max(P.tv*1.0001,n('#pTn',DEF.tn));
+  muGrid.querySelectorAll('input').forEach(i=>{const v=clamp(parseFloat(i.value)||DEF[i.dataset.t][i.dataset.k],1e-4,.9999);P[i.dataset.t][+i.dataset.k]=v});
+}
+function thresholds(){
+  const Pm=1-P.tv/P.tk, Pl=P.tv/P.tn;
+  const lo=Math.log(P.pi/(1-P.pi));
+  const Tm=Math.log(Pm/(1-Pm))-lo, Tl=Math.log(Pl/(1-Pl))-lo;
+  return {Pm,Pl,Tm,Tl};
+}
+function showThr(){
+  const t=thresholds();
+  $('#thr').innerHTML=`Підтвердження: <b>P ≥ ${fmt(t.Pm,2)}</b> (вага w ≥ ${fmt(t.Tm,2)})<br>Відхилення: <b>P ≤ ${fmt(t.Pl,2)}</b> (вага w ≤ ${fmt(t.Tl,2)})<br>Між порогами – перевірка фахівцем`;
+  const ts=$('#thrSum');if(ts)ts.textContent=`пороги: P ≥ ${fmt(t.Pm,2)} підтвердити, P ≤ ${fmt(t.Pl,2)} відхилити`;
+}
+
+/* ───────── дані ───────── */
+let ERP=[],REG=[],RES=null;
+const HOMO={'А':'A','В':'B','С':'C','Е':'E','Н':'H','І':'I','К':'K','М':'M','О':'O','Р':'P','Т':'T','Х':'X'};
+function normNum(s){
+  s=String(s??'').toUpperCase();
+  s=[...s].map(c=>HOMO[c]||c).join('');
+  s=s.replace(/[\s\-_.№#]/g,'');
+  s=s.replace(/^([^\d\/]*)0+(?=\d)/,'$1');
+  return s;
+}
+const d2s=d=>d?d.split('-').reverse().join('.'):'';
+function parseDate(s){
+  s=String(s??'').trim(); let m;
+  if((m=s.match(/^(\d{4})-(\d{2})-(\d{2})/)))return `${m[1]}-${m[2]}-${m[3]}`;
+  if((m=s.match(/^(\d{1,2})[.\/](\d{1,2})[.\/](\d{4})/)))return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  return '';
+}
+function parseSum(s){const v=parseFloat(String(s??'').replace(/\s/g,'').replace(',','.'));return Number.isFinite(v)?v:NaN}
+function parseCSV(text){
+  text=text.replace(/^﻿/,'');
+  const first=text.split(/\r?\n/)[0]||'';
+  const sep=[';','\t',','].map(s=>[s,first.split(s).length]).sort((a,b)=>b[1]-a[1])[0][0];
+  const rows=[];let row=[],cur='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){cur+='"';i++}else q=false}else cur+=c}
+    else if(c==='"')q=true;
+    else if(c===sep){row.push(cur);cur=''}
+    else if(c==='\n'){row.push(cur);rows.push(row);row=[];cur=''}
+    else if(c!=='\r')cur+=c}
+  if(cur!==''||row.length){row.push(cur);rows.push(row)}
+  const head=rows.shift().map(h=>h.trim().toLowerCase());
+  const idx=(...names)=>head.findIndex(h=>names.includes(h));
+  const ix={ipn:idx('ipn','іпн','inn'),sup:idx('supplier','контрагент','постачальник'),num:idx('number','num','номер'),date:idx('date','дата'),sum:idx('sum','сума','amount'),rec:idx('receipt','надходження')};
+  if(ix.ipn<0||ix.num<0||ix.date<0||ix.sum<0)throw new Error('Потрібні колонки: ipn, number, date, sum');
+  const out=[];
+  rows.forEach((r,i)=>{if(r.every(c=>!c.trim()))return;
+    const rec={id:i+1,ipn:(r[ix.ipn]||'').trim(),supplier:ix.sup>=0?(r[ix.sup]||'').trim():'',num:(r[ix.num]||'').trim(),date:parseDate(r[ix.date]),sum:parseSum(r[ix.sum]),receipt:ix.rec>=0?(r[ix.rec]||'').trim():null,truth:null};
+    if(rec.ipn&&rec.num&&rec.date&&Number.isFinite(rec.sum))out.push(rec)});
+  if(!out.length)throw new Error('У файлі немає коректних записів');
+  return out;
+}
+function readFile(file,cb){
+  const fr=new FileReader();
+  fr.onload=()=>{try{cb(parseCSV(String(fr.result)))}catch(e){toast(e.message)}};
+  fr.readAsText(file,'utf-8');
+}
+
+/* ───────── демо-дані (фіксований генератор) ───────── */
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const SUP=[['401200000011','Постач. 1 · металопрокат','СТ'],['401200000022','Постач. 2 · кабельна продукція','АК'],['401200000033','Постач. 3 · електроенергія','ЕН'],['401200000044','Постач. 4 · пакування','ТР'],['401200000055','Постач. 5 · метизи','МТ'],['401200000066','Постач. 6 · хімреагенти','ХР'],['401200000077','Постач. 7 · підшипники','ВК'],['401200000088','Постач. 8 · транспорт','НС']];
+const LAT={'А':'A','В':'B','С':'C','Е':'E','Н':'H','К':'K','М':'M','Т':'T','Х':'X','Р':'P'};
+function demo(){
+  const r=rng(20261208), erp=[], reg=[]; let t=0;
+  const cnt={};
+  const N=60;
+  for(let i=0;i<N;i++){
+    const s=SUP[Math.floor(r()*SUP.length)]; cnt[s[0]]=(cnt[s[0]]||100)+1+Math.floor(r()*4);
+    const day=1+Math.floor(r()*28), date=`2026-10-${String(day).padStart(2,'0')}`;
+    const sum=Math.round((5000+r()*395000)*100)/100;
+    const num=`${s[2]}-${String(cnt[s[0]]).padStart(4,'0')}`;
+    const receipt=r()<.05?'':`ПО-${3000+i}`;
+    const tr=++t;
+    const e={ipn:s[0],supplier:s[1],num,date,sum,receipt,truth:tr};
+    let g={ipn:s[0],num,date,sum,truth:tr};
+    const x=r();
+    if(x<.52){}
+    else if(x<.62){ // формат номера
+      const v=Math.floor(r()*3);
+      if(v===0)g.num=num.replace('-0','-');
+      else if(v===1)g.num=[...num].map(c=>LAT[c]||c).join('');
+      else g.num=num.toLowerCase().replace('-',' ');
+    }
+    else if(x<.69){g.sum=Math.round((sum+(r()-.5)*.8)*100)/100}
+    else if(x<.77){g.sum=Math.round((sum*(1+(.005+r()*.03)))*100)/100}
+    else if(x<.82){const dd=new Date(date);dd.setDate(dd.getDate()+(r()<.5?1:-1));g.date=dd.toISOString().slice(0,10)}
+    else if(x<.87){g.num=num.replace(/\d$/,d=>String((+d+1)%10));g.sum=Math.round((sum*1.02)*100)/100}
+    else if(x<.92){g=null} // немає в ЄРПН
+    erp.push(e); if(g)reg.push(g);
+  }
+  // записи тільки в ЄРПН
+  for(let k=0;k<3;k++){const s=SUP[Math.floor(r()*SUP.length)];reg.push({ipn:s[0],num:`${s[2]}-${String(900+k)}`,date:`2026-10-${String(5+k*7)}`,sum:Math.round((8000+r()*90000)*100)/100,truth:-(k+1)})}
+  // "двійник" із того ж ІПН, схожий лише ІПН-ом
+  const s0=SUP[0];reg.push({ipn:s0[0],num:'СТ-7777',date:'2026-10-30',sum:12345.67,truth:-9});
+  // перемішування ЄРПН
+  for(let i=reg.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[reg[i],reg[j]]=[reg[j],reg[i]]}
+  erp.forEach((e,i)=>e.id=i+1);reg.forEach((e,i)=>e.id=i+1);
+  return {erp,reg};
+}
+
+/* ───────── звірка ───────── */
+function reconcile(){
+  const T=thresholds();
+  const eps=P.eps;
+  const usedR=new Set(), pair=new Array(ERP.length).fill(null);
+  const diffsOf=(a,b)=>{
+    const d=[];
+    if(normNum(a.num)!==normNum(b.num))d.push('номера');
+    if(a.date!==b.date)d.push('дати');
+    if(Math.abs(a.sum-b.sum)>eps+1e-9)d.push('суми');
+    return d;
+  };
+  // етап 1
+  const k1=new Map();
+  REG.forEach((g,j)=>{const k=`${g.ipn}|${g.num}|${g.date}|${g.sum.toFixed(2)}`;(k1.get(k)||k1.set(k,[]).get(k)).push(j)});
+  ERP.forEach((e,i)=>{const k=`${e.ipn}|${e.num}|${e.date}|${e.sum.toFixed(2)}`;const l=k1.get(k);
+    if(l){const j=l.find(j=>!usedR.has(j));if(j!==undefined){usedR.add(j);pair[i]={j,stage:1,w:null,p:null}}}});
+  // етап 2
+  const k2=new Map();
+  REG.forEach((g,j)=>{if(usedR.has(j))return;const k=`${g.ipn}|${normNum(g.num)}|${g.date}`;(k2.get(k)||k2.set(k,[]).get(k)).push(j)});
+  ERP.forEach((e,i)=>{if(pair[i])return;const l=k2.get(`${e.ipn}|${normNum(e.num)}|${e.date}`);
+    if(l){const j=l.find(j=>!usedR.has(j)&&Math.abs(REG[j].sum-e.sum)<=eps+1e-9);if(j!==undefined){usedR.add(j);pair[i]={j,stage:2,w:null,p:null}}}});
+  // етап 3
+  const byIpn=new Map();
+  REG.forEach((g,j)=>{if(usedR.has(j))return;(byIpn.get(g.ipn)||byIpn.set(g.ipn,[]).get(g.ipn)).push(j)});
+  const cand=[];
+  const lo=Math.log(P.pi/(1-P.pi));
+  ERP.forEach((e,i)=>{if(pair[i])return;(byIpn.get(e.ipn)||[]).forEach(j=>{
+    const g=REG[j];
+    const gam=[1,normNum(e.num)===normNum(g.num)?1:0,e.date===g.date?1:0,Math.abs(e.sum-g.sum)<=eps+1e-9?1:0];
+    let w=0;for(let k=0;k<4;k++)w+=gam[k]?Math.log(P.m[k]/P.u[k]):Math.log((1-P.m[k])/(1-P.u[k]));
+    const p=1/(1+Math.exp(-(w+lo)));
+    cand.push({i,j,w,p})})});
+  cand.sort((a,b)=>b.p-a.p);
+  const doneE=new Set();
+  cand.forEach(c=>{
+    if(c.p<=T.Pl)return;
+    if(doneE.has(c.i)||usedR.has(c.j))return;
+    doneE.add(c.i);usedR.add(c.j);
+    pair[c.i]={j:c.j,stage:3,w:c.w,p:c.p};
+  });
+  // протокол
+  const rows=[];
+  ERP.forEach((e,i)=>{
+    const pr=pair[i];
+    const row={e,g:pr?REG[pr.j]:null,stage:pr?pr.stage:0,w:pr?pr.w:null,p:pr?pr.p:null,classes:[],route:[],dec:'',kind:''};
+    if(!pr){row.dec='Немає в ЄРПН';row.kind='no';row.classes=['накладної немає в реєстрі'];row.route=['Закупівлі']}
+    else{
+      const d=diffsOf(e,row.g);
+      const noRec=e.receipt!==null&&e.receipt==='';
+      const spec=pr.stage===3&&pr.p<T.Pm;
+      if(d.length)row.classes.push('розбіжність '+d.join(' і '));
+      if(noRec)row.classes.push('немає надходження на складі');
+      if(d.length)row.route.push('Бухгалтерія');
+      if(noRec)row.route.push('Склад');
+      if(spec){row.dec='Фахівцеві';row.kind='spec';if(!row.route.includes('Бухгалтерія'))row.route.unshift('Бухгалтерія')}
+      else if(row.classes.length){row.dec='Збіг із позначкою';row.kind='flag'}
+      else{row.dec='Збіг';row.kind='ok'}
+    }
+    rows.push(row);
+  });
+  REG.forEach((g,j)=>{if(usedR.has(j))return;
+    rows.push({e:null,g,stage:0,w:null,p:null,classes:['накладної немає в ERP'],route:['Бухгалтерія'],dec:'Немає в ERP',kind:'no'})});
+  // істина (для демо)
+  let truthOK=null;
+  if(ERP.every(e=>e.truth!==null)||REG.some(g=>g.truth!==null)){
+    let conf=0,bad=0;
+    rows.forEach(r=>{if(r.e&&r.g&&(r.kind==='ok'||r.kind==='flag')){conf++;if(r.e.truth!==r.g.truth)bad++}});
+    truthOK={conf,bad};
+  }
+  const n=rows.length, exc=rows.filter(r=>r.kind!=='ok').length;
+  const stages=[1,2,3].map(s=>rows.filter(r=>r.stage===s&&(r.kind==='ok'||r.kind==='flag')).length);
+  RES={rows,n,exc,e:n?exc/n:0,stages,T,truthOK,
+    cnt:{ok:rows.filter(r=>r.kind==='ok').length,flag:rows.filter(r=>r.kind==='flag').length,spec:rows.filter(r=>r.kind==='spec').length,noReg:rows.filter(r=>r.dec==='Немає в ЄРПН').length,noErp:rows.filter(r=>r.dec==='Немає в ERP').length}};
+}
+
+/* ───────── відображення ───────── */
+function tableOf(id,list,withSup){
+  const head=withSup?'<tr><th>#</th><th>ІПН</th><th>Контрагент</th><th>Номер</th><th>Дата</th><th class="n">Сума</th><th>Надходження</th></tr>':'<tr><th>#</th><th>ІПН</th><th>Номер</th><th>Дата</th><th class="n">Сума</th></tr>';
+  $(id).innerHTML='<thead>'+head+'</thead><tbody>'+list.map(r=>withSup?`<tr><td>${r.id}</td><td>${esc(r.ipn)}</td><td>${esc(r.supplier)}</td><td>${esc(r.num)}</td><td>${d2s(r.date)}</td><td class="n">${fmt(r.sum)}</td><td>${r.receipt===null?'–':(r.receipt?esc(r.receipt):'<span class="pill p-no">немає</span>')}</td></tr>`:`<tr><td>${r.id}</td><td>${esc(r.ipn)}</td><td>${esc(r.num)}</td><td>${d2s(r.date)}</td><td class="n">${fmt(r.sum)}</td></tr>`).join('')+'</tbody>';
+}
+function showData(){
+  $('#cErp').textContent=ERP.length?`Записів: ${ERP.length}`:'';
+  $('#cReg').textContent=REG.length?`Записів: ${REG.length}`:'';
+  if(ERP.length)tableOf('#tErp',ERP,true);
+  if(REG.length)tableOf('#tReg',REG,false);
+}
+let FILTER='all',SHOW=15;
+function show(){
+  if(!RES){ $('#resBody').hidden=true; $('#resLead').hidden=false; return }
+  $('#resLead').hidden=true; $('#resBody').hidden=false;
+  const R=RES;
+  const kp=[
+    ['',R.n,'записів у звірці'],
+    ['ok',R.cnt.ok,'збігів без зауважень'],
+    ['warn',R.cnt.flag+R.cnt.spec,'збігів із позначкою або до перевірки'],
+    ['bad',R.cnt.noReg+R.cnt.noErp,'без пари'],
+  ];
+  $('#kpis').innerHTML=kp.map(k=>`<div class="kpi ${k[0]}"><div class="v">${fmtN(k[1])}</div><div class="l">${k[2]}</div></div>`).join('');
+  const seg=[['Етап 1: точний збіг',R.cnt.ok&&R.stages[0],'#3b4ee8'],['Етап 2: нормалізація',R.stages[1],'#0089ff'],['Етап 3: ймовірнісний',R.stages[2],'#6ab4ff'],['Фахівцеві',R.cnt.spec,'#d99a00'],['Без пари',R.cnt.noReg+R.cnt.noErp,'#c9463d']];
+  // етап 1 і 2 рахуються серед ok+flag
+  seg[0][1]=R.stages[0];
+  const tot=seg.reduce((a,s)=>a+s[1],0)||1;
+  $('#funnel').innerHTML=seg.filter(s=>s[1]>0).map(s=>`<i style="flex:${s[1]} 0 0;background:${s[2]}" title="${s[0]}: ${s[1]}">${s[1]/tot>.06?s[1]:''}</i>`).join('');
+  $('#funnelLegend').innerHTML=seg.map(s=>`<span><s style="background:${s[2]}"></s>${s[0]}: ${s[1]}</span>`).join('');
+  const rt={'Бухгалтерія':0,'Закупівлі':0,'Склад':0};
+  R.rows.forEach(r=>r.route.forEach(x=>{rt[x]++}));
+  $('#routes').innerHTML=`<div><b>${rt['Бухгалтерія']}</b>Бухгалтерія</div><div><b>${rt['Закупівлі']}</b>Закупівлі</div><div><b>${rt['Склад']}</b>Склад</div><div><b>${R.cnt.spec}</b>Фахівцеві</div>`;
+  renderRows();
+  // контур
+  $('#f_buy').textContent=fmtN(new Set(ERP.map(e=>e.ipn)).size);
+  const withRec=ERP.filter(e=>e.receipt!==null);
+  $('#f_wh').textContent=withRec.length?fmtN(withRec.filter(e=>e.receipt).length):'–';
+  $('#f_erp').textContent=fmtN(ERP.length);
+  $('#f_rob').textContent=fmtN(R.n-R.exc)+' авто';
+  $('#f_reg').textContent=fmtN(REG.length);
+  $('#f_tax').textContent=fmtN(R.cnt.ok+R.cnt.flag);
+  // підказка e
+  let hint=`За результатом звірки частка винятків e = ${fmt(R.e*100,1)} % (${R.exc} із ${R.n}).`;
+  if(R.truthOK)hint+=` У демо відомі справжні пари: серед ${R.truthOK.conf} підтверджених хибних ${R.truthOK.bad}.`;
+  $('#eHint').textContent=hint;
+}
+function renderRows(){
+  const all=RES.rows.filter(r=>FILTER==='all'||(FILTER==='exc'?r.kind!=='ok':r.kind==='ok'));
+  const rows=all.slice(0,SHOW);
+  const mb=$('#btnMore');mb.hidden=all.length<=SHOW;mb.textContent=`Показати ще ${Math.min(15,all.length-SHOW)} із ${all.length-SHOW}`;
+  const cls={ok:'p-ok',flag:'p-flag',spec:'p-spec',no:'p-no'};
+  const L=['Контрагент','ERP номер','ERP дата','ERP сума','ЄРПН номер','ЄРПН дата','ЄРПН сума','Етап','w','P'];
+  $('#tRes').innerHTML='<thead><tr><th>Контрагент / ІПН</th><th>ERP: номер</th><th>Дата</th><th class="n">Сума</th><th>ЄРПН: номер</th><th>Дата</th><th class="n">Сума</th><th>Етап</th><th class="n">w</th><th class="n">P</th><th>Рішення</th><th>Клас розбіжності</th><th>Кому</th></tr></thead><tbody>'+
+  rows.map(r=>{const e=r.e,g=r.g;
+    const diffN=e&&g&&normNum(e.num)!==normNum(g.num), diffD=e&&g&&e.date!==g.date, diffS=e&&g&&Math.abs(e.sum-g.sum)>P.eps+1e-9;
+    const bad=' style="color:var(--bad)"';
+    return `<tr><td class="full" data-l="${L[0]}">${esc(e?(e.supplier||e.ipn):g.ipn)}</td>
+    <td data-l="${L[1]}">${e?esc(e.num):'–'}</td><td data-l="${L[2]}">${e?d2s(e.date):'–'}</td><td class="n" data-l="${L[3]}">${e?fmt(e.sum):'–'}</td>
+    <td data-l="${L[4]}"${diffN?bad:''}>${g?esc(g.num):'–'}</td><td data-l="${L[5]}"${diffD?bad:''}>${g?d2s(g.date):'–'}</td><td class="n" data-l="${L[6]}"${diffS?bad:''}>${g?fmt(g.sum):'–'}</td>
+    <td data-l="${L[7]}">${r.stage||'–'}</td><td class="n" data-l="${L[8]}">${r.w===null?'–':fmt(r.w)}</td><td class="n" data-l="${L[9]}">${r.p===null?'–':fmt(r.p,4)}</td>
+    <td class="full" data-l="Рішення"><span class="pill ${cls[r.kind]}">${r.dec}</span></td><td class="wrap full" data-l="Клас розбіжності">${esc(r.classes.join('; '))||'–'}</td><td class="full" data-l="Кому">${esc(r.route.join(', '))||'–'}</td></tr>`}).join('')+'</tbody>';
+  $('#tRes').querySelectorAll('td').forEach(td=>{const t=td.textContent.trim();if(t==='–'||t==='')td.classList.add('empty')});
+}
+$('#filters').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;FILTER=b.dataset.f;SHOW=15;
+  $('#filters').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));if(RES)renderRows()});
+
+/* ───────── економіка ───────── */
+function econ(){
+  const g=id=>parseFloat($(id).value);
+  const N=Math.max(1,g('#eN')||1200),tm=g('#eTm')||0,tv=P.tv,e=clamp(g('#eE')||0,0,1),f=clamp(g('#eF')||0,0,1),Ts=Math.max(0,g('#eTs')||0),tk=P.tk;
+  const dT=N*(tm-e*tv-f*tk)-Ts*60;
+  const manual=N*tm;
+  const es=(tm-f*tk-Ts*60/N)/tv;
+  $('#kDT').querySelector('.v').textContent=`${fmtN(dT,0)} хв`;
+  $('#kDT').querySelector('.l').textContent=`≈ ${fmt(dT/60,1)} год, ${fmt(manual?dT/manual*100:0,0)} % ручних витрат`;
+  $('#kDT').className='kpi '+(dT>0?'ok':'bad');
+  $('#kEs').querySelector('.v').textContent=fmt(es,2);
+  $('#kEs').className='kpi '+(es>e?'ok':'bad');
+  const v=$('#verdict');
+  if(dT>0){v.className='verdict yes';v.textContent=`Роботизація виправдана: e = ${fmt(e,2)} менша за e* = ${fmt(es,2)}, економія ${fmt(dT/60,1)} год на місяць.`}
+  else{v.className='verdict no';v.textContent=`Роботизація не виправдана за цих параметрів: e = ${fmt(e,2)} не менша за e* = ${fmt(es,2)}.`}
+  // графік
+  const W=640,H=230,L=58,B=36,Tp=14,Rt=16, pw=W-L-Rt, ph=H-B-Tp;
+  const y=x=>N*(tm-x*tv-f*tk)-Ts*60;
+  const y0=y(0),y1=y(1); const ymax=Math.max(y0,y1,0)*1.08||1, ymin=Math.min(y0,y1,0)*1.08;
+  const X=x=>L+x*pw, Y=v=>Tp+(ymax-v)/((ymax-ymin)||1)*ph;
+  let s=`<rect x="${L}" y="${Tp}" width="${pw}" height="${ph}" fill="#fff" stroke="rgba(0,0,0,.12)"/>`;
+  s+=`<line x1="${L}" x2="${L+pw}" y1="${Y(0)}" y2="${Y(0)}" stroke="#999" stroke-dasharray="4 4"/>`;
+  s+=`<polyline fill="none" stroke="#3b4ee8" stroke-width="2.5" points="${X(0)},${Y(y0)} ${X(1)},${Y(y1)}"/>`;
+  if(es>0&&es<1)s+=`<line x1="${X(es)}" x2="${X(es)}" y1="${Tp}" y2="${Tp+ph}" stroke="#0b7a43" stroke-dasharray="3 3"/><text x="${X(es)+5}" y="${Tp+14}" font-size="13" fill="#0b7a43">e* = ${fmt(es,2)}</text>`;
+  s+=`<line x1="${X(e)}" x2="${X(e)}" y1="${Tp}" y2="${Tp+ph}" stroke="#000" stroke-width="1.5"/><circle cx="${X(e)}" cy="${Y(y(e))}" r="5" fill="#000"/><text x="${Math.min(X(e)+7,W-70)}" y="${Tp+ph-8}" font-size="13">e = ${fmt(e,2)}</text>`;
+  [0,.25,.5,.75,1].forEach(t=>{s+=`<text x="${X(t)}" y="${H-12}" font-size="12" text-anchor="middle" fill="#555">${fmt(t,2)}</text>`});
+  s+=`<text x="${L-8}" y="${Y(ymax)+12}" font-size="12" text-anchor="end" fill="#555">${fmtN(ymax/60,0)} год</text><text x="${L-8}" y="${Y(ymin)}" font-size="12" text-anchor="end" fill="#555">${fmtN(ymin/60,0)} год</text><text x="${L-8}" y="${Y(0)+4}" font-size="12" text-anchor="end" fill="#555">0</text>`;
+  $('#chart').innerHTML=s;
+}
+
+/* ───────── події ───────── */
+let timer=null;
+function recompute(){
+  readParams();showThr();
+  if(ERP.length&&REG.length){reconcile()}else RES=null;
+  show();econ();
+}
+function later(){clearTimeout(timer);timer=setTimeout(recompute,120)}
+function load(erp,reg,nameE,nameR){
+  ERP=erp;REG=reg;
+  $('#nErp').textContent=nameE;$('#nReg').textContent=nameR;
+  showData();recompute();
+  if(RES){$('#eE').value=RES.e.toFixed(3);econ()}
+}
+$('#btnDemo').addEventListener('click',()=>{const d=demo();load(d.erp,d.reg,'демо-журнал (умовні дані)','демо-вивантаження (умовні дані)');toast('Демо-дані завантажено');$('#result').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'})});
+$('#fErp').addEventListener('change',ev=>{const f=ev.target.files[0];if(f)readFile(f,r=>{ERP=r;$('#nErp').textContent=f.name;showData();recompute();if(RES){$('#eE').value=RES.e.toFixed(3);econ()}})});
+$('#fReg').addEventListener('change',ev=>{const f=ev.target.files[0];if(f)readFile(f,r=>{REG=r;$('#nReg').textContent=f.name;showData();recompute();if(RES){$('#eE').value=RES.e.toFixed(3);econ()}})});
+document.querySelectorAll('#params input').forEach(i=>i.addEventListener('input',later));
+['#eN','#eTm','#eE','#eF','#eTs'].forEach(id=>$(id).addEventListener('input',econ));
+$('#btnReset').addEventListener('click',()=>{$('#pEps').value=DEF.eps;$('#pPi').value=DEF.pi;$('#pTv').value=DEF.tv;$('#pTk').value=DEF.tk;$('#pTn').value=DEF.tn;
+  muGrid.querySelectorAll('input').forEach(i=>i.value=DEF[i.dataset.t][i.dataset.k]);recompute()});
+$('#btnEFromRun').addEventListener('click',()=>{if(!RES){toast('Спочатку запустіть звірку');return}$('#eE').value=RES.e.toFixed(3);econ()});
+$('#btnThesis').addEventListener('click',()=>{$('#eN').value=1200;$('#eTm').value=4;$('#eE').value=.15;$('#eF').value=.002;$('#eTs').value=8;$('#pTv').value=6;$('#pTk').value=30;recompute();econ()});
+function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+$('#btnTpl').addEventListener('click',()=>download('pn_template.csv','﻿ipn;supplier;number;date;sum;receipt\n401200000011;Постачальник;СТ-0101;2026-10-05;12500,00;ПО-3001\n','text/csv;charset=utf-8'));
+$('#btnCsv').addEventListener('click',()=>{if(!RES)return;
+  const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
+  const head=['Контрагент','ІПН','ERP номер','ERP дата','ERP сума','ЄРПН номер','ЄРПН дата','ЄРПН сума','Етап','w','P','Рішення','Клас розбіжності','Кому'];
+  const lines=[head.map(q).join(';')].concat(RES.rows.map(r=>{const e=r.e,g=r.g;return [e?e.supplier:'',(e||g).ipn,e?e.num:'',e?d2s(e.date):'',e?String(e.sum).replace('.',','):'',g?g.num:'',g?d2s(g.date):'',g?String(g.sum).replace('.',','):'',r.stage||'',r.w===null?'':r.w.toFixed(3).replace('.',','),r.p===null?'':r.p.toFixed(5).replace('.',','),r.dec,r.classes.join('; '),r.route.join(', ')].map(q).join(';')}));
+  download('protokol_zvirky_pn.csv','﻿'+lines.join('\n'),'text/csv;charset=utf-8')});
+$('#btnMore').addEventListener('click',()=>{SHOW+=15;if(RES)renderRows()});
+recompute();
+window.__sw={reconcile:()=>RES,demo,P,load};
+})();
+</script>
+<script src="/munister.js?v=10" defer></script>
+</body>
+</html>
